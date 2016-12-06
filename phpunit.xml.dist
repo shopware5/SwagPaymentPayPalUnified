@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit bootstrap="./Tests/Bootstrap.php"
+         colors="true">
+    <testsuite name="PayPal Unified Test Suite">
+        <directory>Tests</directory>
+    </testsuite>
+</phpunit>
