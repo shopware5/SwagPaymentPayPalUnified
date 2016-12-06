@@ -22,38 +22,43 @@
  * our trademarks remain entirely with us.
  */
 
-require __DIR__ . '/../../../../tests/Functional/bootstrap.php';
+namespace SwagPaymentPayPalUnified\Components;
 
-class PayPalUnifiedTestKernel extends TestKernel
+use Doctrine\ORM\EntityManager;
+use Shopware\Models\Payment\Payment;
+
+class PaymentMethodProvider
 {
-    public static function start()
+    /** @var EntityManager $entityManager */
+    private $entityManager;
+
+    /**
+     * @param EntityManager $entityManager
+     */
+    public function __construct(EntityManager $entityManager)
     {
-        parent::start();
-
-        if (!self::isPluginInstalledAndActivated()) {
-            die('Error: The plugin is not installed or activated, tests aborted!');
-        }
-
-        Shopware()->Loader()->registerNamespace('SwagPaymentPayPalUnified', __DIR__ . '/../');
-        Shopware()->Loader()->registerNamespace(
-            'Shopware\CustomModels',
-            __DIR__ . '/../' . 'Models/'
-        );
+        $this->entityManager = $entityManager;
     }
 
     /**
-     * @return bool
+     * @return null|Payment
      */
-    private static function isPluginInstalledAndActivated()
+    public function getPaymentMethodModel()
     {
-        /** @var \Doctrine\DBAL\Connection $db */
-        $db = Shopware()->Container()->get('dbal_connection');
+        return $this->entityManager->getRepository(Payment::class)->findOneBy([
+            'name' => 'SwagPaymentPayPalUnified'
+        ]);
+    }
 
-        $sql = "SELECT active FROM s_core_plugins WHERE name='SwagPaymentPayPalUnified'";
-        $active = $db->fetchColumn($sql);
+    /**
+     * @param bool $active
+     */
+    public function setPaymentMethodActive($active)
+    {
+        $paymentMethod = $this->getPaymentMethodModel();
+        $paymentMethod->setActive($active);
 
-        return (bool) $active;
+        $this->entityManager->persist($paymentMethod);
+        $this->entityManager->flush($paymentMethod);
     }
 }
-
-PayPalUnifiedTestKernel::start();

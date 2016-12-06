@@ -25,12 +25,15 @@
 namespace SwagPaymentPayPalUnified;
 
 use Shopware\Components\Plugin;
+use Shopware\Components\Plugin\Context\ActivateContext;
+use Shopware\Components\Plugin\Context\DeactivateContext;
 use Shopware\Components\Plugin\Context\InstallContext;
 use Shopware\Components\Plugin\Context\UninstallContext;
+use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Setup\Installer;
 
-class SwagPaymentPayPalUnified extends Plugin {
-
+class SwagPaymentPayPalUnified extends Plugin
+{
     /**
      * {@inheritdoc}
      */
@@ -47,9 +50,34 @@ class SwagPaymentPayPalUnified extends Plugin {
      */
     public function uninstall(UninstallContext $context)
     {
-        $installer = new Installer($this->container->get('models'));
-        $installer->uninstall($context);
+        /** @var PaymentMethodProvider $paymentMethodProvider */
+        $paymentMethodProvider = new PaymentMethodProvider($this->container->get('models'));
+        $paymentMethodProvider->setPaymentMethodActive(false);
 
         parent::uninstall($context);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function activate(ActivateContext $context)
+    {
+        /** @var PaymentMethodProvider $paymentMethodProvider */
+        $paymentMethodProvider = new PaymentMethodProvider($this->container->get('models'));
+        $paymentMethodProvider->setPaymentMethodActive(true);
+
+        parent::activate($context);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function deactivate(DeactivateContext $context)
+    {
+        /** @var PaymentMethodProvider $paymentMethodProvider */
+        $paymentMethodProvider = new PaymentMethodProvider($this->container->get('models'));
+        $paymentMethodProvider->setPaymentMethodActive(false);
+
+        parent::deactivate($context);
     }
 }
