@@ -26,10 +26,11 @@ namespace SwagPaymentPayPalUnified\Setup;
 
 use Doctrine\ORM\EntityManager;
 use Shopware\Components\Plugin\Context\InstallContext;
-use Shopware\Components\Plugin\Context\UninstallContext;
+use Shopware\Models\Payment\Payment;
 use Shopware\Models\Plugin\Plugin;
 
-class Installer {
+class Installer
+{
 
     /** @var EntityManager $kernel */
     private $entityManager;
@@ -53,15 +54,9 @@ class Installer {
             throw new InstallationException('This plugin can not be used while PayPal Classic or PayPal Plus are installed and active.');
         }
 
+        $this->createPaymentMethod();
+
         return true;
-    }
-
-    /**
-     * @param UninstallContext $uninstallContext
-     */
-    public function uninstall(UninstallContext $uninstallContext)
-    {
-
     }
 
     /**
@@ -71,13 +66,35 @@ class Installer {
     {
         $classicPlugin = $this->entityManager->getRepository(Plugin::class)->findOneBy([
             'name' => 'SwagPaymentPaypal',
-            'active' => 1]
-        );
+            'active' => 1
+        ]);
         $classicPlusPlugin = $this->entityManager->getRepository(Plugin::class)->findOneBy([
             'name' => 'SwagPaymentPaypalPlus',
-            'active' => 1]
-        );
+            'active' => 1
+        ]);
 
         return $classicPlugin != null || $classicPlusPlugin != null;
+    }
+
+    public function createPaymentMethod()
+    {
+        $existingPayment = $this->entityManager->getRepository(Payment::class)->findOneBy([
+            'name' => 'SwagPaymentPayPalUnified'
+        ]);
+
+        if ($existingPayment !== null) {
+            //If the payment does already exist, we don't need to add it again.
+            return;
+        }
+
+        $entity = new Payment();
+        $entity->setActive(false);
+        $entity->setName('SwagPaymentPayPalUnified');
+        $entity->setAdditionalDescription('<div id="ppplus"></div>'); //This is the placeholder for the iframe
+        $entity->setDescription('PayPal');
+        $entity->setAction('PayPal');
+
+        $this->entityManager->persist($entity);
+        $this->entityManager->flush($entity);
     }
 }
