@@ -22,8 +22,10 @@
  * our trademarks remain entirely with us.
  */
 
-namespace SwagPaymentPayPalUnified\Setup;
+namespace SwagPaymentPayPalUnified\SDK;
 
-class InstallationException extends \Exception
+class BaseURL
 {
+    const SANDBOX = 'https://api.sandbox.paypal.com/v1/';
+    const LIVE = 'https://api.paypal.com/v1/';
 }

@@ -22,43 +22,53 @@
  * our trademarks remain entirely with us.
  */
 
-namespace SwagPaymentPayPalUnified\Components;
+namespace SwagPaymentPayPalUnified\SDK\Structs;
 
-use Doctrine\ORM\EntityManager;
-use Shopware\Models\Payment\Payment;
-
-class PaymentMethodProvider
+class OAuthCredentials
 {
-    /** @var EntityManager $entityManager */
-    private $entityManager;
+    /** @var string $restId */
+    private $restId;
+
+    /** @var string $restSecret */
+    private $restSecret;
 
     /**
-     * @param EntityManager $entityManager
+     * @return string
      */
-    public function __construct(EntityManager $entityManager)
+    public function getRestId()
     {
-        $this->entityManager = $entityManager;
+        return $this->restId;
     }
 
     /**
-     * @return null|Payment
+     * @param string $restId
      */
-    public function getPaymentMethodModel()
+    public function setRestId($restId)
     {
-        return $this->entityManager->getRepository(Payment::class)->findOneBy([
-            'name' => 'SwagPaymentPayPalUnified'
-        ]);
+        $this->restId = $restId;
     }
 
     /**
-     * @param bool $active
+     * @return string
      */
-    public function setPaymentMethodActiveFlag($active)
+    public function getRestSecret()
     {
-        $paymentMethod = $this->getPaymentMethodModel();
-        $paymentMethod->setActive($active);
+        return $this->restSecret;
+    }
 
-        $this->entityManager->persist($paymentMethod);
-        $this->entityManager->flush($paymentMethod);
+    /**
+     * @param string $restSecret
+     */
+    public function setRestSecret($restSecret)
+    {
+        $this->restSecret = $restSecret;
+    }
+
+    /**
+     * @return string
+     */
+    public function toString()
+    {
+        return 'Basic ' . base64_encode($this->restId . ':' . $this->restSecret);
     }
 }

@@ -26,6 +26,7 @@ namespace SwagPaymentPayPalUnified\Setup;
 
 use Doctrine\ORM\EntityManager;
 use Shopware\Components\Plugin\Context\InstallContext;
+use Shopware\Models\Config\Form;
 use Shopware\Models\Payment\Payment;
 use Shopware\Models\Plugin\Plugin;
 
@@ -76,7 +77,7 @@ class Installer
         return $classicPlugin != null || $classicPlusPlugin != null;
     }
 
-    public function createPaymentMethod()
+    private function createPaymentMethod()
     {
         $existingPayment = $this->entityManager->getRepository(Payment::class)->findOneBy([
             'name' => 'SwagPaymentPayPalUnified'

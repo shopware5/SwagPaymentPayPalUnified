@@ -38,7 +38,7 @@ class PaymentMethodProviderTest extends \PHPUnit_Framework_TestCase
     public function test_set_payment_inactive()
     {
         $provider = new PaymentMethodProvider(Shopware()->Models());
-        $provider->setPaymentMethodActive(false);
+        $provider->setPaymentMethodActiveFlag(false);
 
         $payment = $provider->getPaymentMethodModel();
         $this->assertFalse($payment->getActive());
@@ -47,7 +47,7 @@ class PaymentMethodProviderTest extends \PHPUnit_Framework_TestCase
     public function test_set_payment_active()
     {
         $provider = new PaymentMethodProvider(Shopware()->Models());
-        $provider->setPaymentMethodActive(true);
+        $provider->setPaymentMethodActiveFlag(true);
 
         $payment = $provider->getPaymentMethodModel();
         $this->assertTrue($payment->getActive());

@@ -3,4 +3,16 @@
 <container xmlns="http://symfony.com/schema/dic/services"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <!-- Services -->
+        <service id="paypal_unified.client_service" class="SwagPaymentPayPalUnified\SDK\Services\ClientService">
+            <argument type="service" id="config" />
+            <argument type="service" id="paypal_unified.token_service" />
+            <argument type="service" id="pluginlogger" />
+        </service>
+        <service id="paypal_unified.token_service" class="SwagPaymentPayPalUnified\SDK\Services\TokenService">
+            <argument type="service" id="shopware.cache_manager" />
+        </service>
+    </services>
 </container>

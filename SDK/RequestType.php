@@ -22,8 +22,14 @@
  * our trademarks remain entirely with us.
  */
 
-namespace SwagPaymentPayPalUnified\Setup;
+namespace SwagPaymentPayPalUnified\SDK;
 
-class InstallationException extends \Exception
+class RequestType
 {
+    const GET = 'GET';
+    const POST = 'POST';
+    const PUT = 'PUT';
+    const PATCH = 'PATCH';
+    const HEAD = 'HEAD';
+    const DELETE = 'DELETE';
 }
