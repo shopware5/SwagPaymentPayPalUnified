@@ -76,7 +76,7 @@ class Installer
         return $classicPlugin != null || $classicPlusPlugin != null;
     }
 
-    public function createPaymentMethod()
+    private function createPaymentMethod()
     {
         $existingPayment = $this->entityManager->getRepository(Payment::class)->findOneBy([
             'name' => 'SwagPaymentPayPalUnified'

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/shopware/shopware/5.2/engine/Shopware/Components/Plugin/schema/config.xsd">
+    <elements>
+        <!--API configuration-->
+        <element required="true" type="text">
+            <name>restId</name>
+            <label lang="de">REST ID</label>
+            <label lang="en">REST ID</label>
+        </element>
+        <element required="true" type="text">
+            <name>restSecret</name>
+            <label lang="de">REST Secret</label>
+            <label lang="en">REST Secret</label>
+        </element>
+        <element required="false"  type="boolean">
+            <name>enableSandbox</name>
+            <label lang="de">Sandbox aktivieren</label>
+            <label lang="en">Enable sandbox</label>
+        </element>
+
+        <!--Web profile configuration-->
+        <element required="true" type="text">
+            <name>brandName</name>
+            <label lang="de">Markenname</label>
+            <label lang="en">Brand name</label>
+        </element>
+        <element required="true" type="mediaselection">
+            <name>logoImage</name>
+            <label lang="de">Logo</label>
+            <label lang="en">Logo</label>
+        </element>
+
+    </elements>
+</config>

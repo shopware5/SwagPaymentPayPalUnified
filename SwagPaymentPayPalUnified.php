@@ -41,7 +41,6 @@ class SwagPaymentPayPalUnified extends Plugin
     {
         $installer = new Installer($this->container->get('models'));
         $installer->install($context);
-
         parent::install($context);
     }
 
@@ -52,7 +51,7 @@ class SwagPaymentPayPalUnified extends Plugin
     {
         /** @var PaymentMethodProvider $paymentMethodProvider */
         $paymentMethodProvider = new PaymentMethodProvider($this->container->get('models'));
-        $paymentMethodProvider->setPaymentMethodActive(false);
+        $paymentMethodProvider->setPaymentMethodActiveFlag(false);
 
         parent::uninstall($context);
     }
@@ -64,7 +63,7 @@ class SwagPaymentPayPalUnified extends Plugin
     {
         /** @var PaymentMethodProvider $paymentMethodProvider */
         $paymentMethodProvider = new PaymentMethodProvider($this->container->get('models'));
-        $paymentMethodProvider->setPaymentMethodActive(true);
+        $paymentMethodProvider->setPaymentMethodActiveFlag(true);
 
         parent::activate($context);
     }
@@ -76,7 +75,7 @@ class SwagPaymentPayPalUnified extends Plugin
     {
         /** @var PaymentMethodProvider $paymentMethodProvider */
         $paymentMethodProvider = new PaymentMethodProvider($this->container->get('models'));
-        $paymentMethodProvider->setPaymentMethodActive(false);
+        $paymentMethodProvider->setPaymentMethodActiveFlag(false);
 
         parent::deactivate($context);
     }

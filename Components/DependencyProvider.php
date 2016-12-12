@@ -24,41 +24,26 @@
 
 namespace SwagPaymentPayPalUnified\Components;
 
-use Doctrine\ORM\EntityManager;
-use Shopware\Models\Payment\Payment;
+use Shopware\Components\DependencyInjection\Container as DIContainer;
 
-class PaymentMethodProvider
+class DependencyProvider
 {
-    /** @var EntityManager $entityManager */
-    private $entityManager;
+    /** @var DIContainer $container */
+    private $container;
 
     /**
-     * @param EntityManager $entityManager
+     * @param DIContainer $container
      */
-    public function __construct(EntityManager $entityManager)
+    public function __construct(DIContainer $container)
     {
-        $this->entityManager = $entityManager;
+        $this->container = $container;
     }
 
     /**
-     * @return null|Payment
+     * @return \Shopware\Models\Shop\DetachedShop
      */
-    public function getPaymentMethodModel()
+    public function getShop()
     {
-        return $this->entityManager->getRepository(Payment::class)->findOneBy([
-            'name' => 'SwagPaymentPayPalUnified'
-        ]);
-    }
-
-    /**
-     * @param bool $active
-     */
-    public function setPaymentMethodActiveFlag($active)
-    {
-        $paymentMethod = $this->getPaymentMethodModel();
-        $paymentMethod->setActive($active);
-
-        $this->entityManager->persist($paymentMethod);
-        $this->entityManager->flush($paymentMethod);
+        return $this->container->get('Shop');
     }
 }

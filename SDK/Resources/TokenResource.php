@@ -22,43 +22,43 @@
  * our trademarks remain entirely with us.
  */
 
-namespace SwagPaymentPayPalUnified\Components;
+namespace SwagPaymentPayPalUnified\SDK\Resources;
 
-use Doctrine\ORM\EntityManager;
-use Shopware\Models\Payment\Payment;
+use SwagPaymentPayPalUnified\SDK\RequestType;
+use SwagPaymentPayPalUnified\SDK\Services\ClientService;
+use SwagPaymentPayPalUnified\SDK\Structs\OAuthCredentials;
+use SwagPaymentPayPalUnified\SDK\Structs\Token;
 
-class PaymentMethodProvider
+class TokenResource
 {
-    /** @var EntityManager $entityManager */
-    private $entityManager;
+    const TOKEN_RESOURCE = 'oauth2/token';
+
+    /** @var ClientService $client */
+    private $client;
 
     /**
-     * @param EntityManager $entityManager
+     * @param ClientService $client
      */
-    public function __construct(EntityManager $entityManager)
+    public function __construct(ClientService $client)
     {
-        $this->entityManager = $entityManager;
+        $this->client = $client;
     }
 
     /**
-     * @return null|Payment
+     * @param OAuthCredentials $credentials
+     * @return Token
      */
-    public function getPaymentMethodModel()
+    public function requestToken(OAuthCredentials $credentials)
     {
-        return $this->entityManager->getRepository(Payment::class)->findOneBy([
-            'name' => 'SwagPaymentPayPalUnified'
-        ]);
-    }
+        $data = [
+            'grant_type' => 'client_credentials'
+        ];
 
-    /**
-     * @param bool $active
-     */
-    public function setPaymentMethodActiveFlag($active)
-    {
-        $paymentMethod = $this->getPaymentMethodModel();
-        $paymentMethod->setActive($active);
+        //Set the header temporarily for this request
+        $this->client->setHeader('Authorization', $credentials->toString());
 
-        $this->entityManager->persist($paymentMethod);
-        $this->entityManager->flush($paymentMethod);
+        $response = $this->client->sendRequest(RequestType::POST, self::TOKEN_RESOURCE, $data, false);
+
+        return Token::fromArray($response);
     }
 }
