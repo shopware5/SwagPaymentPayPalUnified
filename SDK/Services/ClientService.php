@@ -30,8 +30,8 @@ use Shopware\Components\HttpClient\RequestException;
 use Shopware\Components\Logger;
 use SwagPaymentPayPalUnified\SDK\BaseURL;
 use SwagPaymentPayPalUnified\SDK\RequestType;
-use SwagPaymentPayPalUnified\SDK\Resources\TokenResource;
 use SwagPaymentPayPalUnified\SDK\Structs\OAuthCredentials;
+use SwagPaymentPayPalUnified\SDK\Structs\Token;
 
 class ClientService
 {
@@ -54,16 +54,21 @@ class ClientService
      * @param \Shopware_Components_Config $config
      * @param TokenService $tokenService
      * @param Logger $logger
+     * @param GuzzleFactory $factory
      */
-    public function __construct(\Shopware_Components_Config $config, TokenService $tokenService, Logger $logger)
-    {
+    public function __construct(
+        \Shopware_Components_Config $config,
+        TokenService $tokenService,
+        Logger $logger,
+        GuzzleFactory $factory
+    ) {
         $this->tokenService = $tokenService;
         $this->logger = $logger;
 
         $environment = (bool) $config->getByNamespace('SwagPaymentPayPalUnified', 'enableSandbox');
         $environment === true ? $this->baseUrl = BaseURL::SANDBOX : $this->baseUrl = BaseURL::LIVE;
 
-        $this->client = new GuzzleClient(new GuzzleFactory());
+        $this->client = new GuzzleClient($factory);
 
         //Create authentication
         $restId = $config->getByNamespace('SwagPaymentPayPalUnified', 'restId');
@@ -83,24 +88,16 @@ class ClientService
     private function createAuthentication(OAuthCredentials $credentials)
     {
         try {
-            $cachedToken = $this->tokenService->getCachedToken();
-
-            if ($cachedToken === false || !$this->tokenService->isValid($cachedToken)) {
-                $tokenResource = new TokenResource($this);
-                $token = $tokenResource->requestToken($credentials);
-                $this->tokenService->setToken($token);
-
-                $cachedToken = $token;
-            }
-
-            $this->setHeader('Authorization', $cachedToken->getTokenType() . ' ' . $cachedToken->getAccessToken());
+            /** @var Token $cachedToken */
+            $token = $this->tokenService->getToken($this, $credentials);
+            $this->setHeader('Authorization', $token->getTokenType() . ' ' . $token->getAccessToken());
         } catch (RequestException $requestException) {
-            $this->logger->error('PayPal: Could not create authentication during request exception', [
+            $this->logger->error('PayPal: Could not create authentication - request exception', [
                 $requestException->getBody(),
                 $requestException->getMessage()
             ]);
         } catch (\Exception $e) {
-            $this->logger->error('PayPal: Could not create authentication during unknown exception', [
+            $this->logger->error('PayPal: Could not create authentication - unknown exception', [
                 $e->getMessage()
             ]);
         }
@@ -140,6 +137,7 @@ class ClientService
 
         if ($jsonPayload) {
             $data = json_encode($data);
+            $this->setHeader('content-type', 'application/json');
         } else {
             unset($this->headers['content-type']);
         }

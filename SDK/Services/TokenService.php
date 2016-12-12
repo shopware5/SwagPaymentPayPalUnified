@@ -24,6 +24,8 @@
 
 namespace SwagPaymentPayPalUnified\SDK\Services;
 
+use SwagPaymentPayPalUnified\SDK\Resources\TokenResource;
+use SwagPaymentPayPalUnified\SDK\Structs\OAuthCredentials;
 use SwagPaymentPayPalUnified\SDK\Structs\Token;
 use Shopware\Components\CacheManager;
 
@@ -43,32 +45,49 @@ class TokenService
     }
 
     /**
-     * @param Token $token
+     * @param ClientService $client
+     * @param OAuthCredentials $credentials
+     * @return Token
      */
-    public function setToken(Token $token)
+    public function getToken(ClientService $client, OAuthCredentials $credentials)
     {
-        $this->cacheManager->getCoreCache()->save(serialize($token), self::CACHE_ID);
+        $token = $this->getTokenFromCache();
+
+        if (!$this->isTokenValid($token)) {
+            $tokenResource = new TokenResource($client);
+            $token = $tokenResource->requestToken($credentials);
+            $this->setToken($token);
+        }
+
+        return $token;
     }
 
     /**
      * @return Token
      */
-    public function getCachedToken()
+    private function getTokenFromCache()
     {
         return unserialize($this->cacheManager->getCoreCache()->load(self::CACHE_ID));
     }
 
-    public function removeToken()
+    /**
+     * @param Token $token
+     */
+    private function setToken(Token $token)
     {
-        $this->cacheManager->getCoreCache()->remove(self::CACHE_ID);
+        $this->cacheManager->getCoreCache()->save(serialize($token), self::CACHE_ID);
     }
 
     /**
      * @param Token $token
      * @return bool
      */
-    public function isValid(Token $token)
+    private function isTokenValid(Token $token)
     {
+        if ($token === false) {
+            return $token;
+        }
+
         $dateTimeNow = new \DateTime();
         $dateTimeExpire = $token->getExpireDateTime();
         //Decrease expire date by one hour just to make sure, we don't run into an unauthorized exception.

@@ -77,7 +77,7 @@ class Token
     /**
      * @param string $scope
      */
-    public function setScope($scope)
+    private function setScope($scope)
     {
         $this->scope = $scope;
     }
@@ -93,7 +93,7 @@ class Token
     /**
      * @param string $accessToken
      */
-    public function setAccessToken($accessToken)
+    private function setAccessToken($accessToken)
     {
         $this->accessToken = $accessToken;
     }
@@ -109,7 +109,7 @@ class Token
     /**
      * @param string $tokenType
      */
-    public function setTokenType($tokenType)
+    private function setTokenType($tokenType)
     {
         $this->tokenType = $tokenType;
     }
@@ -125,7 +125,7 @@ class Token
     /**
      * @param int $expiresIn
      */
-    public function setExpiresIn($expiresIn)
+    private function setExpiresIn($expiresIn)
     {
         $this->expiresIn = $expiresIn;
     }
@@ -141,30 +141,30 @@ class Token
     /**
      * @param DateTime $expireDateTime
      */
-    public function setExpireDateTime($expireDateTime)
+    private function setExpireDateTime($expireDateTime)
     {
         $this->expireDateTime = $expireDateTime;
     }
 
     /**
-     * @param $data
+     * @param array $data
      * @return Token
      */
-    public static function fromArray($data)
+    public static function fromArray(array $data)
     {
-        $result = new Token();
+        $token = new Token();
 
-        $result->setAccessToken($data['access_token']);
-        $result->setExpiresIn((int)$data['expires_in']);
-        $result->setScope($data['scope']);
-        $result->setTokenType($data['token_type']);
+        $token->setAccessToken($data['access_token']);
+        $token->setExpiresIn((int)$data['expires_in']);
+        $token->setScope($data['scope']);
+        $token->setTokenType($data['token_type']);
 
         //Calculate the expiration date manually
         $expirationDateTime = new DateTime();
-        $interval = \DateInterval::createFromDateString($result->getExpiresIn() . ' seconds');
+        $interval = \DateInterval::createFromDateString($token->getExpiresIn() . ' seconds');
         $expirationDateTime = $expirationDateTime->add($interval);
 
-        $result->setExpireDateTime($expirationDateTime);
-        return $result;
+        $token->setExpireDateTime($expirationDateTime);
+        return $token;
     }
 }

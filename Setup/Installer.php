@@ -26,7 +26,6 @@ namespace SwagPaymentPayPalUnified\Setup;
 
 use Doctrine\ORM\EntityManager;
 use Shopware\Components\Plugin\Context\InstallContext;
-use Shopware\Models\Config\Form;
 use Shopware\Models\Payment\Payment;
 use Shopware\Models\Plugin\Plugin;
 
