@@ -22,38 +22,32 @@
  * our trademarks remain entirely with us.
  */
 
-namespace SwagPaymentPayPalUnified\Components\Structs\Payment;
+namespace SwagPaymentPayPalUnified\SDK\Structs;
 
-use SwagPaymentPayPalUnified\Components\Structs\Basket\Payer;
-use SwagPaymentPayPalUnified\Components\Structs\Basket\RedirectUrls;
-use SwagPaymentPayPalUnified\Components\Structs\Basket\Transactions;
+use SwagPaymentPayPalUnified\SDK\Structs\Payment\Links;
+use SwagPaymentPayPalUnified\SDK\Structs\Payment\Payer;
+use SwagPaymentPayPalUnified\SDK\Structs\Payment\RedirectUrls;
+use SwagPaymentPayPalUnified\SDK\Structs\Payment\Transactions;
 
 class Payment
 {
-    /**
-     * @var string $intent
-     */
+    /** @var string $intent */
     private $intent;
 
-    /**
-     * @var integer $experienceProfileId
-     */
+    /** @var string $experienceProfileId */
     private $experienceProfileId;
 
-    /**
-     * @var Payer $payer
-     */
+    /** @var Payer $payer */
     private $payer;
 
-    /**
-     * @var Transactions $transactions
-     */
+    /** @var Transactions $transactions */
     private $transactions;
 
-    /**
-     * @var RedirectUrls $redirectUrls
-     */
+    /** @var RedirectUrls $redirectUrls */
     private $redirectUrls;
+
+    /** @var Links $links */
+    private $links;
 
     /**
      * @return string
@@ -72,7 +66,7 @@ class Payment
     }
 
     /**
-     * @return integer
+     * @return string
      */
     public function getProfile()
     {
@@ -80,7 +74,7 @@ class Payment
     }
 
     /**
-     * @param integer $experienceProfileId
+     * @param string $experienceProfileId
      */
     public function setProfile($experienceProfileId)
     {
@@ -133,6 +127,44 @@ class Payment
     public function setRedirectUrls(RedirectUrls $redirectUrls)
     {
         $this->redirectUrls = $redirectUrls;
+    }
+
+    /**
+     * @return Links
+     */
+    public function getLinks()
+    {
+        return $this->links;
+    }
+
+    /**
+     * @param Links $links
+     */
+    public function setLinks(Links $links)
+    {
+        $this->links = $links;
+    }
+
+    /**
+     * @param array $data
+     * @return Payment
+     */
+    public static function fromArray(array $data = [])
+    {
+        $result = new Payment();
+
+        $result->setIntent($data['intent']);
+        $result->setProfile($data['experience_profile_id']);
+        if (array_key_exists('amount', $data['transactions'][0])) {
+            $result->setTransactions(Transactions::fromArray($data['transactions'][0]));
+        } else {
+            $result->setTransactions(Transactions::fromArray($data['transactions']));
+        }
+
+        $result->setPayer(Payer::fromArray($data['payer']));
+        $result->setLinks(Links::fromArray($data['links']));
+
+        return $result;
     }
 
     /**

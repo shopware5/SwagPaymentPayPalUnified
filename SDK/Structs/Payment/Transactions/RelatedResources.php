@@ -22,60 +22,39 @@
  * our trademarks remain entirely with us.
  */
 
-namespace SwagPaymentPayPalUnified\Components\Structs\Basket;
+namespace SwagPaymentPayPalUnified\SDK\Structs\Payment\Transactions;
 
-class RedirectUrls
+class RelatedResources
 {
-    /**
-     * @var string $returnUrl
-     */
-    private $returnUrl;
+    /** @var Sale $sale */
+    private $sale;
 
     /**
-     * @var string $cancelUrl
+     * @return Sale
      */
-    private $cancelUrl;
-
-    /**
-     * @return string
-     */
-    public function getReturnUrl()
+    public function getSale()
     {
-        return $this->returnUrl;
+        return $this->sale;
     }
 
     /**
-     * @param string $returnUrl
+     * @param Sale $sale
      */
-    public function setReturnUrl($returnUrl)
+    public function setSale(Sale $sale)
     {
-        $this->returnUrl = $returnUrl;
+        $this->sale = $sale;
     }
 
     /**
-     * @return string
+     * @param array $data
+     * @return RelatedResources
      */
-    public function getCancelUrl()
+    public static function fromArray(array $data = [])
     {
-        return $this->cancelUrl;
-    }
+        $result = new RelatedResources();
 
-    /**
-     * @param string $cancelUrl
-     */
-    public function setCancelUrl($cancelUrl)
-    {
-        $this->cancelUrl = $cancelUrl;
-    }
+        $result->setSale(Sale::fromArray($data[0]['sale']));
 
-    /**
-     * @return array
-     */
-    public function toArray()
-    {
-        return [
-            'return_url' => $this->getReturnUrl(),
-            'cancel_url' => $this->getCancelUrl()
-        ];
+        return $result;
     }
 }

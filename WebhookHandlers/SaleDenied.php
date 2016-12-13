@@ -28,15 +28,13 @@ use Doctrine\ORM\EntityManager;
 use Shopware\Components\Logger;
 use Shopware\Models\Order\Order;
 use Shopware\Models\Order\Status;
+use SwagPaymentPayPalUnified\Components\PaymentStatus;
 use SwagPaymentPayPalUnified\SDK\Components\Webhook\WebhookEventTypes;
 use SwagPaymentPayPalUnified\SDK\Components\Webhook\WebhookHandler;
 use SwagPaymentPayPalUnified\SDK\Structs\Webhook;
 
 class SaleDenied implements WebhookHandler
 {
-    /** Status: Open */
-    const PAYMENT_STATUS_OPEN = 17;
-
     /** @var Logger $pluginLogger */
     private $pluginLogger;
 
@@ -69,7 +67,7 @@ class SaleDenied implements WebhookHandler
         /** @var Order $orderModel */
         $orderModel = $this->em->getRepository(Order::class)->findOneBy(['transactionId' => $webhook->getSummary()['parent_payment']]);
         /** @var Status $orderStatusModel */
-        $orderStatusModel = $this->em->getRepository(Status::class)->find(self::PAYMENT_STATUS_OPEN);
+        $orderStatusModel = $this->em->getRepository(Status::class)->find(PaymentStatus::PAYMENT_STATUS_OPEN);
 
         if ($orderModel === null) {
             $this->pluginLogger->error('PayPal Unified: Could not find associated order with the transactionId ' . $webhook->getSummary()['parent_payment']);

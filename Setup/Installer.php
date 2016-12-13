@@ -91,10 +91,19 @@ class Installer
         $entity->setActive(false);
         $entity->setName('SwagPaymentPayPalUnified');
         $entity->setDescription('PayPal');
-        $entity->setAdditionalDescription('<p>PayPal. <em>Sicherererer.</em></p>');
+        $entity->setAdditionalDescription($this->getPaymentLogo() . 'Bezahlung per PayPal - einfach, schnell und sicher.');
         $entity->setAction('PaypalUnified');
 
         $this->entityManager->persist($entity);
         $this->entityManager->flush($entity);
+    }
+
+    private function getPaymentLogo()
+    {
+        return '<!-- PayPal Logo -->'
+        . '<a onclick="window.open(this.href, \'olcwhatispaypal\',\'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=400, height=500\'); return false;"'
+        . ' href="https://www.paypal.com/de/cgi-bin/webscr?cmd=xpt/cps/popup/OLCWhatIsPayPal-outside" target="_blank">'
+        . '<img src="{link file=\'frontend/_public/src/img/sidebar-paypal-generic.png\' fullPath}" alt="Logo \'PayPal empfohlen\'">'
+        . '</a><br>' . '<!-- PayPal Logo -->';
     }
 }

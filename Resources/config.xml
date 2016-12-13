@@ -22,6 +22,11 @@
             <label lang="de">PayPal Plus nutzen</label>
             <label lang="en">Use PayPal Plus</label>
         </element>
+        <element required="true" type="boolean">
+            <name>sendOrderNumberToPayPal</name>
+            <label lang="de">Bestellnummer an PayPal senden</label>
+            <label lang="en">Send order number to PayPal</label>
+        </element>
 
         <!--Web profile configuration-->
         <element required="true" type="text">

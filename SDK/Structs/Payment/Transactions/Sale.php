@@ -22,38 +22,59 @@
  * our trademarks remain entirely with us.
  */
 
-namespace SwagPaymentPayPalUnified\Components\Structs\Basket\Transactions;
+namespace SwagPaymentPayPalUnified\SDK\Structs\Payment\Transactions;
 
-class ItemList
+class Sale
 {
-    /**
-     * @var array $items
-     */
-    private $items;
+    /** @var integer $id */
+    private $id;
+
+    /** @var string $state */
+    private $state;
 
     /**
-     * @return array
+     * @return integer
      */
-    public function getItems()
+    public function getId()
     {
-        return $this->items;
+        return $this->id;
     }
 
     /**
-     * @param array $items
+     * @param integer $id
      */
-    public function setItems($items)
+    public function setId($id)
     {
-        $this->items = $items;
+        $this->id = $id;
     }
 
     /**
-     * @return array
+     * @return string
      */
-    public function toArray()
+    public function getState()
     {
-        return [
-            'items' => $this->getItems()
-        ];
+        return $this->state;
+    }
+
+    /**
+     * @param string $state
+     */
+    public function setState($state)
+    {
+        $this->state = $state;
+    }
+
+    /**
+     * @param array $data
+     * @return Sale
+     */
+    public static function fromArray(array $data = [])
+    {
+        $result = new Sale();
+
+        $result->setId($data['id']);
+        $result->setState($data['state']);
+
+        return $result;
     }
 }

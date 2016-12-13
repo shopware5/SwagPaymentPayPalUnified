@@ -28,15 +28,13 @@ use Doctrine\ORM\EntityManager;
 use Shopware\Components\Logger;
 use Shopware\Models\Order\Order;
 use Shopware\Models\Order\Status;
+use SwagPaymentPayPalUnified\Components\PaymentStatus;
 use SwagPaymentPayPalUnified\SDK\Components\Webhook\WebhookEventTypes;
 use SwagPaymentPayPalUnified\SDK\Components\Webhook\WebhookHandler;
 use SwagPaymentPayPalUnified\SDK\Structs\Webhook;
 
 class SaleComplete implements WebhookHandler
 {
-    /** Status: Completely Payed */
-    const PAYMENT_STATUS_COMPLETELY_PAYED = 12;
-
     /** @var Logger $pluginLogger*/
     private $pluginLogger;
 
@@ -69,7 +67,7 @@ class SaleComplete implements WebhookHandler
         /** @var Order $orderRepository */
         $orderRepository = $this->em->getRepository(Order::class)->findOneBy(['transactionId' => $webhook->getSummary()['parent_payment']]);
         /** @var Status $orderStatusModel */
-        $orderStatusModel = $this->em->getRepository(Status::class)->find(self::PAYMENT_STATUS_COMPLETELY_PAYED);
+        $orderStatusModel = $this->em->getRepository(Status::class)->find(PaymentStatus::PAYMENT_STATUS_APPROVED);
 
         if ($orderRepository === null) {
             $this->pluginLogger->error('PayPal Unified: Could not find associated order with the transactionId ' . $webhook->getSummary()['parent_payment']);

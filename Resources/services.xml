@@ -17,6 +17,10 @@
             <argument type="service" id="shopware.cache_manager" />
         </service>
 
+        <service id="paypal_unified.order_data_service" class="SwagPaymentPayPalUnified\Components\Services\OrderDataService">
+            <argument type="service" id="models" />
+        </service>
+
         <service id="paypal_unified.dependency_provider" class="SwagPaymentPayPalUnified\Components\DependencyProvider">
             <argument type="service" id="service_container" />
         </service>
@@ -32,13 +36,14 @@
         <service id="paypal_unified.webhook_guard_service" class="SwagPaymentPayPalUnified\SDK\Services\WebhookGuardService">
             <argument type="service" id="paypal_unified.client_service" />
         </service>
-        <service id="paypal_unified.basket_service" class="SwagPaymentPayPalUnified\Components\BasketService">
+        <service id="paypal_unified.basket_service" class="SwagPaymentPayPalUnified\Components\Services\BasketService">
             <argument type="service" id="router" />
         </service>
 
         <!-- Resources -->
         <service id="paypal_unified.payment_resource" class="SwagPaymentPayPalUnified\SDK\Resources\PaymentResource">
             <argument type="service" id="service_container" />
+            <argument type="service" id="paypal_unified.basket_service" />
         </service>
 
         <!-- Subscribers -->

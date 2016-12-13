@@ -22,22 +22,22 @@
  * our trademarks remain entirely with us.
  */
 
-namespace SwagPaymentPayPalUnified\Components\Structs\Basket;
+namespace SwagPaymentPayPalUnified\SDK\Structs\Payment;
 
-use SwagPaymentPayPalUnified\Components\Structs\Basket\Transactions\Amount;
-use SwagPaymentPayPalUnified\Components\Structs\Basket\Transactions\ItemList;
+use SwagPaymentPayPalUnified\SDK\Structs\Payment\Transactions\Amount;
+use SwagPaymentPayPalUnified\SDK\Structs\Payment\Transactions\ItemList;
+use SwagPaymentPayPalUnified\SDK\Structs\Payment\Transactions\RelatedResources;
 
 class Transactions
 {
-    /**
-     * @var Amount $amount
-     */
+    /** @var Amount $amount */
     private $amount;
 
-    /**
-     * @var ItemList $itemList
-     */
+    /** @var ItemList $itemList */
     private $itemList;
+
+    /** @var RelatedResources $relatedResources */
+    private $relatedResources;
 
     /**
      * @return Amount
@@ -69,6 +69,42 @@ class Transactions
     public function setItemList($itemList)
     {
         $this->itemList = $itemList;
+    }
+
+    /**
+     * @return RelatedResources
+     */
+    public function getRelatedResources()
+    {
+        return $this->relatedResources;
+    }
+
+    /**
+     * @param RelatedResources $relatedResources
+     */
+    public function setRelatedResources(RelatedResources $relatedResources)
+    {
+        $this->relatedResources = $relatedResources;
+    }
+
+    /**
+     * @param array $data
+     * @return Transactions
+     */
+    public static function fromArray(array $data = [])
+    {
+        $result = new Transactions();
+
+        if ($data['amount']) {
+            $result->setAmount(Amount::fromArray($data['amount']));
+            $result->setItemList(ItemList::fromArray($data['item_list']));
+        }
+
+        if ($data['related_resources']) {
+            $result->setRelatedResources(RelatedResources::fromArray($data['related_resources']));
+        }
+
+        return $result;
     }
 
     /**

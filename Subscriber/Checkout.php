@@ -27,43 +27,33 @@ namespace SwagPaymentPayPalUnified\Subscriber;
 use Doctrine\Common\Collections\ArrayCollection;
 use Enlight\Event\SubscriberInterface;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
+use SwagPaymentPayPalUnified\SDK\Resources\PaymentResource;
+use SwagPaymentPayPalUnified\SDK\Structs\Payment;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use SwagPaymentPayPalUnified\SDK\Services\WebProfileService;
 use SwagPaymentPayPalUnified\SDK\Services\ClientService;
 
 class Checkout implements SubscriberInterface
 {
-    /**
-     * @var array
-     */
+    /** @var array $allowedActions */
     private $allowedActions = ['shippingPayment', 'confirm'];
 
     /** @var ContainerInterface $container */
     protected $container;
 
-    /**
-     * @var PaymentMethodProvider
-     */
+    /** @var PaymentMethodProvider $paymentMethodProvider */
     protected $paymentMethodProvider;
 
-    /**
-     * @var WebProfileService
-     */
+    /** @var WebProfileService $profileService */
     protected $profileService;
 
-    /**
-     * @var ClientService
-     */
+    /** @var ClientService $clientService */
     protected $clientService;
 
-    /**
-     * @var \Shopware_Components_Config
-     */
+    /** @var \Shopware_Components_Config $config */
     protected $config;
 
-    /**
-     * @var string
-     */
+    /** @var string $pluginDir */
     protected $pluginDir;
 
     /**
@@ -148,8 +138,7 @@ class Checkout implements SubscriberInterface
         /** @var \Enlight_Controller_Action $controller */
         $view = $controller->View();
 
-        $view->addTemplateDir($this->pluginDir . '/Resources/views');
-
+        /** @var PaymentResource $paymentResource */
         $paymentResource = $this->container->get('paypal_unified.payment_resource');
 
         $payment = $paymentResource->create([
@@ -157,8 +146,11 @@ class Checkout implements SubscriberInterface
             'sUserData' => $view->getAssign('sUserData')
         ]);
 
-        if (!empty($payment['links'][1]['href'])) {
-            $view->assign('paypalUnifiedApprovalUrl', $payment['links'][1]['href']);
+        /** @var Payment $paymentStruct */
+        $paymentStruct = Payment::fromArray($payment);
+
+        if (!empty($paymentStruct->getLinks()->getApprovalUrl())) {
+            $view->assign('paypalUnifiedApprovalUrl', $paymentStruct->getLinks()->getApprovalUrl());
         }
 
         $view->assign('paypalUnifiedModeSandbox', $this->config->getByNamespace('SwagPaymentPayPalUnified', 'enableSandbox'));

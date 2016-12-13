@@ -2,7 +2,7 @@
 
 {block name="frontend_index_header_javascript_jquery_lib"}
     {$smarty.block.parent}
-    <script src="https://www.paypalobjects.com/webstatic/ppplus/ppplus.min.js" async></script>
+    <script src="https://www.paypalobjects.com/webstatic/ppplus/ppplus.min.js"></script>
 {/block}
 
 {block name='frontend_checkout_confirm_premiums'}
