@@ -32,8 +32,21 @@
         <service id="paypal_unified.webhook_guard_service" class="SwagPaymentPayPalUnified\SDK\Services\WebhookGuardService">
             <argument type="service" id="paypal_unified.client_service" />
         </service>
+        <service id="paypal_unified.basket_service" class="SwagPaymentPayPalUnified\Components\BasketService">
+            <argument type="service" id="router" />
+        </service>
 
-        <!-- Subscriber -->
+        <!-- Resources -->
+        <service id="paypal_unified.payment_resource" class="SwagPaymentPayPalUnified\SDK\Resources\PaymentResource">
+            <argument type="service" id="service_container" />
+        </service>
+
+        <!-- Subscribers -->
+        <service id="paypal_unified.subscriber.checkout" class="SwagPaymentPayPalUnified\Subscriber\Checkout">
+            <argument type="service" id="service_container" />
+            <argument type="service" id="config" />
+            <tag name="shopware.event_subscriber" />
+        </service>
         <service id="paypal_unified.subscriber.backend" class="SwagPaymentPayPalUnified\Subscriber\Backend">
             <argument>%paypal_unified.plugin_dir%</argument>
             <tag name="shopware.event_subscriber" />
