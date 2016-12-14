@@ -53,7 +53,7 @@ class TokenService
     {
         $token = $this->getTokenFromCache();
 
-        if (!$this->isTokenValid($token)) {
+        if ($token === false || !$this->isTokenValid($token)) {
             $tokenResource = new TokenResource($client);
             $token = $tokenResource->requestToken($credentials);
             $this->setToken($token);
@@ -84,10 +84,6 @@ class TokenService
      */
     private function isTokenValid(Token $token)
     {
-        if ($token === false) {
-            return $token;
-        }
-
         $dateTimeNow = new \DateTime();
         $dateTimeExpire = $token->getExpireDateTime();
         //Decrease expire date by one hour just to make sure, we don't run into an unauthorized exception.

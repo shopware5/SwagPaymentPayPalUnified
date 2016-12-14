@@ -26,5 +26,12 @@
             <argument type="service" id="config" />
             <argument type="service" id="paypal_unified.dependency_provider" />
         </service>
+
+        <service id="paypal_unified.webhook_service" class="SwagPaymentPayPalUnified\SDK\Services\WebhookService" />
+
+        <service id="paypal_unified.webhook_guard_service" class="SwagPaymentPayPalUnified\SDK\Services\WebhookGuardService">
+            <argument type="service" id="paypal_unified.client_service" />
+        </service>
+
     </services>
 </container>
