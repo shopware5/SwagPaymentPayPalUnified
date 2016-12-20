@@ -27,7 +27,7 @@ namespace SwagPaymentPayPalUnified\Tests\Functional\SDK\Services;
 use Shopware\Components\Logger;
 use SwagPaymentPayPalUnified\SDK\Components\Webhook\WebhookException;
 use SwagPaymentPayPalUnified\SDK\Services\WebhookService;
-use SwagPaymentPayPalUnified\Webhooks\SaleComplete;
+use SwagPaymentPayPalUnified\WebhookHandlers\SaleComplete;
 
 class WebhookServiceTest extends \PHPUnit_Framework_TestCase
 {
