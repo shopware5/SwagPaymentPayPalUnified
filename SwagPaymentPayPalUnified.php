@@ -37,6 +37,16 @@ class SwagPaymentPayPalUnified extends Plugin
     /**
      * {@inheritdoc}
      */
+    public static function getSubscribedEvents()
+    {
+        return [
+            'Enlight_Controller_Dispatcher_ControllerPath_Frontend_PaypalUnifiedWebhook' => 'registerWebhookController'
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function install(InstallContext $context)
     {
         $installer = new Installer($this->container->get('models'));
@@ -78,5 +88,16 @@ class SwagPaymentPayPalUnified extends Plugin
         $paymentMethodProvider->setPaymentMethodActiveFlag(false);
 
         parent::deactivate($context);
+    }
+
+    /**
+     * Handles the Enlight_Controller_Dispatcher_ControllerPath_Frontend_PaypalUnifiedWebhook event.
+     * Returns the path to the webhook controller.
+     *
+     * @return string
+     */
+    public function registerWebhookController()
+    {
+        return $this->getPath() . '/Controllers/Frontend/PaypalUnifiedWebhook.php';
     }
 }
