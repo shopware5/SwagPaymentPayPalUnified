@@ -31,6 +31,7 @@ use Shopware\Components\Plugin\Context\InstallContext;
 use Shopware\Components\Plugin\Context\UninstallContext;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Setup\Installer;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class SwagPaymentPayPalUnified extends Plugin
 {
@@ -40,7 +41,7 @@ class SwagPaymentPayPalUnified extends Plugin
     public static function getSubscribedEvents()
     {
         return [
-            'Enlight_Controller_Dispatcher_ControllerPath_Frontend_PaypalUnifiedWebhook' => 'registerWebhookController'
+            'Enlight_Controller_Dispatcher_ControllerPath_Frontend_PaypalUnifiedWebhook' => 'onGetWebhookControllerPath'
         ];
     }
 
@@ -91,12 +92,21 @@ class SwagPaymentPayPalUnified extends Plugin
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function build(ContainerBuilder $container)
+    {
+        $container->setParameter('paypal_unified.plugin_dir', $this->getPath());
+        parent::build($container);
+    }
+
+    /**
      * Handles the Enlight_Controller_Dispatcher_ControllerPath_Frontend_PaypalUnifiedWebhook event.
      * Returns the path to the webhook controller.
      *
      * @return string
      */
-    public function registerWebhookController()
+    public function onGetWebhookControllerPath()
     {
         return $this->getPath() . '/Controllers/Frontend/PaypalUnifiedWebhook.php';
     }

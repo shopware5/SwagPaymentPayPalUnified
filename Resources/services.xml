@@ -33,5 +33,10 @@
             <argument type="service" id="paypal_unified.client_service" />
         </service>
 
+        <!-- Subscriber -->
+        <service id="paypal_unified.subscriber.backend" class="SwagPaymentPayPalUnified\Subscriber\Backend">
+            <argument>%paypal_unified.plugin_dir%</argument>
+            <tag name="shopware.event_subscriber" />
+        </service>
     </services>
 </container>
