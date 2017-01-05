@@ -61,6 +61,6 @@ class Backend implements SubscriberInterface
         /** @var Enlight_View_Default $view */
         $view = $args->getSubject()->View();
         $view->addTemplateDir($this->pluginDir . '/Resources/views');
-        $view->extendsTemplate('backend/swag_payment_paypal_unified/menu_icon.tpl');
+        $view->extendsTemplate('backend/paypal_unified/menu_icon.tpl');
     }
 }
