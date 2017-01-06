@@ -24,11 +24,13 @@
 
 namespace SwagPaymentPayPalUnified;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Shopware\Components\Plugin;
 use Shopware\Components\Plugin\Context\ActivateContext;
 use Shopware\Components\Plugin\Context\DeactivateContext;
 use Shopware\Components\Plugin\Context\InstallContext;
 use Shopware\Components\Plugin\Context\UninstallContext;
+use Shopware\Components\Theme\LessDefinition;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Setup\Installer;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -42,7 +44,8 @@ class SwagPaymentPayPalUnified extends Plugin
     {
         return [
             'Enlight_Controller_Dispatcher_ControllerPath_Frontend_PaypalUnifiedWebhook' => 'onGetWebhookControllerPath',
-            'Enlight_Controller_Dispatcher_ControllerPath_Backend_PaypalUnified' => 'onGetBackendControllerPath'
+            'Enlight_Controller_Dispatcher_ControllerPath_Backend_PaypalUnified' => 'onGetBackendControllerPath',
+            'Theme_Compiler_Collect_Plugin_Less' => 'onCollectLessFiles'
         ];
     }
 
@@ -124,5 +127,25 @@ class SwagPaymentPayPalUnified extends Plugin
             $this->getPath() . '/Resources/views/'
         );
         return $this->getPath() . '/Controllers/Backend/PaypalUnified.php';
+    }
+
+    /**
+     * Handles the Theme_Compiler_Collect_Plugin_Less event.
+     * Will return an ArrayCollection object of all less files that the plugin provides.
+     *
+     * @return ArrayCollection
+     */
+    public function onCollectLessFiles()
+    {
+        $less = new LessDefinition(
+            //configuration
+            [],
+            //less files to compile
+            [ $this->getPath() . '/Resources/views/frontend/_public/src/less/all.less' ],
+            //import directory
+            $this->getPath()
+        );
+
+        return new ArrayCollection([ $less ]);
     }
 }
