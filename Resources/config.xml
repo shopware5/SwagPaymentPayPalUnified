@@ -30,5 +30,12 @@
             <label lang="en">Logo</label>
         </element>
 
+        <!-- Shop-config -->
+        <element type="boolean">
+            <name>showSidebarLogo</name>
+            <label lang="de">PayPal Logo in Sidebar anzeigen</label>
+            <label lang="en">Display PayPal logo in sidebar</label>
+            <value>true</value>
+        </element>
     </elements>
 </config>
