@@ -1,7 +1,28 @@
 .paypal--sidebar {
-    .unitize(margin-bottom, 20);
+    .paypal--sidebar-inner {
+        .unitize-padding(10, 10);
+    }
 
     .logo--image {
-        .unitize(margin-left, 16);
+        .unitize(height, 28);
+
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+
+@media screen and(min-width: @tabletViewportWidth) {
+    .paypal--sidebar {
+        .unitize(margin-bottom, 20);
+
+        border: 1px solid @panel-border;
+
+        .paypal--sidebar-inner {
+            .unitize-padding(12, 12);
+        }
+
+        .logo--image {
+            .unitize(height, 38);
+        }
     }
 }
