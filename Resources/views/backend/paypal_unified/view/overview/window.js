@@ -4,11 +4,11 @@ Ext.define('Shopware.apps.PaypalUnified.view.overview.Window', {
     extend: 'Shopware.window.Listing',
     alias: 'widget.paypal-unified-overview-window',
 
-    height: '80%',
-    width: '90%',
+    height: '70%',
+    width: '80%',
 
     /**
-     * @Shopware.apps.PaypalUnified.view.overview.Sidebar
+     * @type { Shopware.apps.PaypalUnified.view.overview.Sidebar }
      */
     sidebar: null,
 
@@ -21,7 +21,7 @@ Ext.define('Shopware.apps.PaypalUnified.view.overview.Window', {
         me.title = '{s name="window/title"}{/s}';
 
         return {
-            listingGrid: 'Shopware.apps.PaypalUnified.view.overview.List',
+            listingGrid: 'Shopware.apps.PaypalUnified.view.overview.Grid',
             listingStore: 'Shopware.apps.PaypalUnified.store.UnifiedOrder'
         };
     },

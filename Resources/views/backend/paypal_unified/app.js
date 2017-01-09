@@ -6,45 +6,52 @@ Ext.define('Shopware.apps.PaypalUnified', {
     /**
      * Enable bulk loading
      *
-     * @boolean
+     * @type { Boolean }
      */
     bulkLoad: true,
 
     /**
      * Sets the loading path for the sub-application.
      *
-     * @string
+     * @type { String }
      */
     loadPath: '{url action="load"}',
 
     /**
-     * @array
+     * @type { Array }
      */
     controllers: [
         'Main'
     ],
 
     /**
-     * @array
+     * @type { Array }
      */
     models: [
         'UnifiedOrder'
     ],
 
     /**
-     * @array
+     * @type { Array }
      */
     stores: [
         'UnifiedOrder'
     ],
 
     /**
-     * @array
+     * @type { Array }
      */
     views: [
         'overview.Window',
-        'overview.List',
-        'overview.Sidebar'
+        'overview.Grid',
+        'overview.Sidebar',
+        'sidebar.Order',
+        'sidebar.Payment',
+        'sidebar.order.Details',
+        'sidebar.order.Customer',
+        'sidebar.payment.Details',
+        'sidebar.payment.Customer',
+        'sidebar.payment.Address'
     ],
 
     /**
