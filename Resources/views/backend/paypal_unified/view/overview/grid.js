@@ -1,6 +1,6 @@
 //{namespace name="backend/paypal_unified/overview/list"}
 //{block name="backend/paypal_unified/overview/list"}
-Ext.define('Shopware.apps.PaypalUnified.view.overview.List', {
+Ext.define('Shopware.apps.PaypalUnified.view.overview.Grid', {
     extend: 'Shopware.grid.Panel',
     alias: 'widget.paypal-unified-overview-grid',
 
