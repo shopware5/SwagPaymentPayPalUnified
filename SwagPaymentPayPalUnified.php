@@ -50,6 +50,15 @@ class SwagPaymentPayPalUnified extends Plugin
     }
 
     /**
+     * @param ContainerBuilder $container
+     */
+    public function build(ContainerBuilder $container)
+    {
+        $container->setParameter('paypal_unified.plugin_dir', $this->getPath());
+        parent::build($container);
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function install(InstallContext $context)
@@ -93,15 +102,6 @@ class SwagPaymentPayPalUnified extends Plugin
         $paymentMethodProvider->setPaymentMethodActiveFlag(false);
 
         parent::deactivate($context);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function build(ContainerBuilder $container)
-    {
-        $container->setParameter('paypal_unified.plugin_dir', $this->getPath());
-        parent::build($container);
     }
 
     /**

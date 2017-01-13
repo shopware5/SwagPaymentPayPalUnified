@@ -17,6 +17,11 @@
             <label lang="de">Sandbox aktivieren</label>
             <label lang="en">Enable sandbox</label>
         </element>
+        <element required="true" type="boolean">
+            <name>usePayPalPlus</name>
+            <label lang="de">PayPal Plus nutzen</label>
+            <label lang="en">Use PayPal Plus</label>
+        </element>
 
         <!--Web profile configuration-->
         <element required="true" type="text">

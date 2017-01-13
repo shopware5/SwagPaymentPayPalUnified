@@ -90,9 +90,9 @@ class Installer
         $entity = new Payment();
         $entity->setActive(false);
         $entity->setName('SwagPaymentPayPalUnified');
-        $entity->setAdditionalDescription('<div id="ppplus"></div>'); //This is the placeholder for the iframe
         $entity->setDescription('PayPal');
-        $entity->setAction('PayPal');
+        $entity->setAdditionalDescription('<p>PayPal. <em>Sicherererer.</em></p>');
+        $entity->setAction('PaypalUnified');
 
         $this->entityManager->persist($entity);
         $this->entityManager->flush($entity);
