@@ -1,4 +1,4 @@
-//{namespace name="backend/paypal_unified/overview/list"}
+//{namespace name="backend/paypal_unified/overview/grid"}
 //{block name="backend/paypal_unified/overview/list"}
 Ext.define('Shopware.apps.PaypalUnified.view.overview.Grid', {
     extend: 'Shopware.grid.Panel',
@@ -94,7 +94,7 @@ Ext.define('Shopware.apps.PaypalUnified.view.overview.Grid', {
         //Order details button
         items.push({
             iconCls: 'sprite-shopping-basket',
-            tooltip: '{s name="tooltip/order"}Open customer details{/s}',
+            tooltip: '{s name="tooltip/order"}Open order details{/s}',
 
             handler: function (view, rowIndex, colIndex, item, opts, record) {
                 Shopware.app.Application.addSubApplication({
