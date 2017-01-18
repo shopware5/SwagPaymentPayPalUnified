@@ -22,19 +22,21 @@
  * our trademarks remain entirely with us.
  */
 
-namespace SwagPaymentPayPalUnified\Components;
+namespace SwagPaymentPayPalUnified\Components\Services;
 
-use SwagPaymentPayPalUnified\Components\Structs\Basket\Payer;
-use SwagPaymentPayPalUnified\Components\Structs\Basket\RedirectUrls;
-use SwagPaymentPayPalUnified\Components\Structs\Payment\Payment;
-use SwagPaymentPayPalUnified\Components\Structs\Basket\Transactions;
-use SwagPaymentPayPalUnified\Components\Structs\Basket\Transactions\Amount;
-use SwagPaymentPayPalUnified\Components\Structs\Basket\Transactions\AmountDetails;
-use SwagPaymentPayPalUnified\Components\Structs\Basket\Transactions\ItemList;
+use SwagPaymentPayPalUnified\SDK\Structs\Payment\Payer;
+use SwagPaymentPayPalUnified\SDK\Structs\Payment\RedirectUrls;
+use SwagPaymentPayPalUnified\SDK\Structs\Payment;
+use SwagPaymentPayPalUnified\SDK\Structs\Payment\Transactions;
+use SwagPaymentPayPalUnified\SDK\Structs\Payment\Transactions\Amount;
+use SwagPaymentPayPalUnified\SDK\Structs\Payment\Transactions\AmountDetails;
+use SwagPaymentPayPalUnified\SDK\Structs\Payment\Transactions\ItemList;
+use SwagPaymentPayPalUnified\SDK\Structs\Payment\Transactions\ItemList\Item;
 use SwagPaymentPayPalUnified\SDK\Structs\WebProfile;
+use SwagPaymentPayPalUnified\SDK\Components\BasketServiceInterface;
 use Shopware\Components\Routing\Router;
 
-class BasketService
+class BasketService implements BasketServiceInterface
 {
     /** @var Router $router */
     protected $router;
@@ -55,10 +57,7 @@ class BasketService
     }
 
     /**
-     * @param WebProfile $profile
-     * @param array $basketData
-     * @param array $userData
-     * @return array
+     * @inheritdoc
      */
     public function getRequestParameters(WebProfile $profile, array $basketData, array $userData)
     {
@@ -113,7 +112,7 @@ class BasketService
     }
 
     /**
-     * @return array
+     * @return Item[]
      */
     private function getItemList()
     {
@@ -137,18 +136,27 @@ class BasketService
                         break;
                     case 2: // Option
                         if (empty($sku) && isset($list[$lastCustomProduct])) {
-                            $sku = $list[$lastCustomProduct]['sku'];
+                            /** @var Item $lastItem */
+                            $lastItem = $list[$lastCustomProduct];
+                            $sku = $lastItem->getSku();
                         }
                         break;
                     case 3: // Value
                         $last = count($list) - 1;
                         if (isset($list[$last])) {
-                            if (strpos($list[$last]['name'], ': ') === false) {
-                                $list[$last]['name'] .= ': ' . $name;
+                            /** @var Item $lastItem */
+                            $lastItem = $list[$last];
+
+                            $lastItemName = $lastItem->getName();
+                            $lastItemPrice = (float) $lastItem->getPrice();
+
+                            if (strpos($lastItemName, ': ') === false) {
+                                $lastItem->setName($lastItemName . ': ' . $name);
                             } else {
-                                $list[$last]['name'] .= ', ' . $name;
+                                $lastItem->setName($lastItemName . ', ' . $name);
                             }
-                            $list[$last]['price'] += $price;
+
+                            $lastItem->setPrice($lastItemPrice + $price);
                         }
                         continue 2;
                     default:
@@ -156,13 +164,14 @@ class BasketService
                 }
             }
 
-            $list[] = [
-                'name' => $name,
-                'sku' => $sku,
-                'price' => $price,
-                'currency' => $this->basketData['sCurrencyName'],
-                'quantity' => $quantity
-            ];
+            $result = new Item();
+            $result->setCurrency($this->basketData['sCurrencyName']);
+            $result->setName($name);
+            $result->setSku($sku);
+            $result->setPrice($price);
+            $result->setQuantity($quantity);
+
+            $list[] = $result;
         }
 
         return $list;
@@ -176,7 +185,7 @@ class BasketService
     {
         return $this->router->assemble(
             [
-                'controller' => 'payment_paypal',
+                'controller' => 'PaypalUnified',
                 'action' => $action,
                 'forceSecure' => true
             ]

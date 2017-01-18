@@ -22,7 +22,7 @@
  * our trademarks remain entirely with us.
  */
 
-namespace SwagPaymentPayPalUnified\Components\Structs\Basket\Transactions;
+namespace SwagPaymentPayPalUnified\SDK\Structs\Payment\Transactions;
 
 class AmountDetails
 {
@@ -87,6 +87,21 @@ class AmountDetails
     public function setTax($tax)
     {
         $this->tax = $tax;
+    }
+
+    /**
+     * @param array $data
+     * @return AmountDetails
+     */
+    public static function fromArray(array $data = [])
+    {
+        $result = new AmountDetails();
+
+        $result->setShipping($data['shipping']);
+        $result->setTax($data['tax']);
+        $result->setSubTotal($data['subtotal']);
+
+        return $result;
     }
 
     /**

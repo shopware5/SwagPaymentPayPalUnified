@@ -60,6 +60,8 @@
                 $confirmPage = $(me.opts.confirmPageSelector),
                 bbFunction = 'val',
                 preSelection = 'none',
+                paypalSandbox = me.opts['paypal-unified-sandbox'],
+                mode = (paypalSandbox === 1 ? 'sandbox' : 'live'),
                 $payPalCheckBox = $(me.opts.paymentMeanSelector + paymentId),
                 isConfirmAction = $(me.opts.confirmCheckSelector).length > 0,
                 ppp;
@@ -85,7 +87,7 @@
             ppp = PAYPAL.apps.PPP({
                 approvalUrl: me.opts['paypal-unified-approval-url'],
                 placeholder: me.opts.placeHolder,
-                mode: me.opts['paypal-unified-sandbox'],
+                mode: mode,
                 buttonLocation: me.opts.buttonLocation,
                 useraction: me.opts.userAction,
                 country: me.opts['paypal-unified-country-iso'],
@@ -122,7 +124,7 @@
         callback: function(event) {
             var me = this,
                 paypalSandbox = me.opts['paypal-unified-sandbox'],
-                originUrl = (paypalSandbox === true ? 'https://www.sandbox.paypal.com' : 'https://www.paypal.com'),
+                originUrl = (paypalSandbox === 1 ? 'https://www.sandbox.paypal.com' : 'https://www.paypal.com'),
                 data;
 
             if (event.origin !== originUrl) {

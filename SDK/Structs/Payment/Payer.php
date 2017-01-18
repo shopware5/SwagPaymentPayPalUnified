@@ -22,7 +22,7 @@
  * our trademarks remain entirely with us.
  */
 
-namespace SwagPaymentPayPalUnified\Components\Structs\Basket;
+namespace SwagPaymentPayPalUnified\SDK\Structs\Payment;
 
 class Payer
 {
@@ -47,6 +47,19 @@ class Payer
     public function setMethod($paymentMethod)
     {
         $this->paymentMethod = $paymentMethod;
+    }
+
+    /**
+     * @param array $data
+     * @return Payer
+     */
+    public static function fromArray(array $data = [])
+    {
+        $result = new Payer();
+
+        $result->setMethod($data['payment_method']);
+
+        return $result;
     }
 
     /**
