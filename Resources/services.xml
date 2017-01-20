@@ -11,6 +11,7 @@
             <argument type="service" id="paypal_unified.token_service" />
             <argument type="service" id="pluginlogger" />
             <argument type="service" id="guzzle_http_client_factory" />
+            <argument type="service" id="paypal_unified.partner_attribution_service" />
         </service>
 
         <service id="paypal_unified.token_service" class="SwagPaymentPayPalUnified\SDK\Services\TokenService">
@@ -36,8 +37,13 @@
         <service id="paypal_unified.webhook_guard_service" class="SwagPaymentPayPalUnified\SDK\Services\WebhookGuardService">
             <argument type="service" id="paypal_unified.client_service" />
         </service>
+
         <service id="paypal_unified.basket_service" class="SwagPaymentPayPalUnified\Components\Services\BasketService">
             <argument type="service" id="router" />
+        </service>
+
+        <service id="paypal_unified.partner_attribution_service" class="SwagPaymentPayPalUnified\SDK\Services\PartnerAttributionService">
+            <argument type="service" id="config" />
         </service>
 
         <!-- Resources -->

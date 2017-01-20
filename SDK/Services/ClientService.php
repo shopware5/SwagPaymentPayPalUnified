@@ -55,12 +55,14 @@ class ClientService
      * @param TokenService $tokenService
      * @param Logger $logger
      * @param GuzzleFactory $factory
+     * @param PartnerAttributionService $partnerAttributionService
      */
     public function __construct(
         \Shopware_Components_Config $config,
         TokenService $tokenService,
         Logger $logger,
-        GuzzleFactory $factory
+        GuzzleFactory $factory,
+        PartnerAttributionService $partnerAttributionService
     ) {
         $this->tokenService = $tokenService;
         $this->logger = $logger;
@@ -70,6 +72,9 @@ class ClientService
 
         $this->client = new GuzzleClient($factory);
 
+        //Set Partner-Attribution-Id
+        $this->setPartnerAttributionId($partnerAttributionService->getPartnerAttributionId());
+
         //Create authentication
         $restId = $config->getByNamespace('SwagPaymentPayPalUnified', 'restId');
         $restSecret = $config->getByNamespace('SwagPaymentPayPalUnified', 'restSecret');
@@ -77,47 +82,6 @@ class ClientService
         $credentials->setRestId($restId);
         $credentials->setRestSecret($restSecret);
         $this->createAuthentication($credentials);
-    }
-
-    /**
-     * Creates the authentication header for the PayPal API.
-     * If there is no cached token yet, it will be generated on the fly.
-     *
-     * @param OAuthCredentials $credentials
-     */
-    private function createAuthentication(OAuthCredentials $credentials)
-    {
-        try {
-            /** @var Token $cachedToken */
-            $token = $this->tokenService->getToken($this, $credentials);
-            $this->setHeader('Authorization', $token->getTokenType() . ' ' . $token->getAccessToken());
-        } catch (RequestException $requestException) {
-            $this->logger->error('PayPal: Could not create authentication - request exception', [
-                $requestException->getBody(),
-                $requestException->getMessage()
-            ]);
-        } catch (\Exception $e) {
-            $this->logger->error('PayPal: Could not create authentication - unknown exception', [
-                $e->getMessage()
-            ]);
-        }
-    }
-
-    /**
-     * @param string $key
-     * @param string $value
-     */
-    public function setHeader($key, $value)
-    {
-        $this->headers[$key] = $value;
-    }
-
-    /**
-     * @param string $partnerId
-     */
-    public function setPartnerAttributionId($partnerId)
-    {
-        $this->setHeader('PayPal-Partner-Attribution-Id', $partnerId);
     }
 
     /**
@@ -172,5 +136,55 @@ class ClientService
         }
 
         return json_decode($response, true);
+    }
+
+    /**
+     * @param string $key
+     * @param string $value
+     */
+    public function setHeader($key, $value)
+    {
+        $this->headers[$key] = $value;
+    }
+
+    /**
+     * @param string $key
+     * @return string
+     */
+    public function getHeader($key)
+    {
+        return $this->headers[$key];
+    }
+
+    /**
+     * Creates the authentication header for the PayPal API.
+     * If there is no cached token yet, it will be generated on the fly.
+     *
+     * @param OAuthCredentials $credentials
+     */
+    private function createAuthentication(OAuthCredentials $credentials)
+    {
+        try {
+            /** @var Token $cachedToken */
+            $token = $this->tokenService->getToken($this, $credentials);
+            $this->setHeader('Authorization', $token->getTokenType() . ' ' . $token->getAccessToken());
+        } catch (RequestException $requestException) {
+            $this->logger->error('PayPal: Could not create authentication - request exception', [
+                $requestException->getBody(),
+                $requestException->getMessage()
+            ]);
+        } catch (\Exception $e) {
+            $this->logger->error('PayPal: Could not create authentication - unknown exception', [
+                $e->getMessage()
+            ]);
+        }
+    }
+
+    /**
+     * @param string $partnerId
+     */
+    private function setPartnerAttributionId($partnerId)
+    {
+        $this->setHeader('PayPal-Partner-Attribution-Id', $partnerId);
     }
 }
