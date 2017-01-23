@@ -6,7 +6,7 @@
 {/block}
 
 {block name='frontend_checkout_confirm_premiums'}
-    {if $usePayPalPlus && !$cameFromPaymentSelection && $payment_mean.id == $paypalUnifiedPaymentId && $paypalUnifiedApprovalUrl}
+    {if $usePayPalPlus && !$cameFromPaymentSelection && $sUserData.additional.payment.id == $paypalUnifiedPaymentId && $paypalUnifiedApprovalUrl}
         {include file="frontend/paypal_unified/payment_wall.tpl" paypalPaymentWall=true}
     {/if}
     {$smarty.block.parent}

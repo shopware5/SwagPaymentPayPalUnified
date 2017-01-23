@@ -9,7 +9,7 @@
         data-paypal-unified-payment-id="{$paypalUnifiedPaymentId}"
         data-paypal-unified-approval-url="{$paypalUnifiedApprovalUrl}"
         data-paypal-unified-sandbox="{$paypalUnifiedModeSandbox}"
-        data-paypal-unified-user-payment-id="{$userPaymentId}"
+        data-paypal-unified-user-payment-id="{$sUserData.additional.payment.id}"
         data-paypal-unified-country-iso="{$sUserData.additional.country.countryiso}">
     </div>
 {/block}
