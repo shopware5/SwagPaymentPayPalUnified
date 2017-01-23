@@ -29,12 +29,12 @@
         </element>
 
         <!--Web profile configuration-->
-        <element required="true" type="text">
+        <element required="false" type="text">
             <name>brandName</name>
             <label lang="de">Markenname</label>
             <label lang="en">Brand name</label>
         </element>
-        <element required="true" type="mediaselection">
+        <element required="false" type="mediaselection">
             <name>logoImage</name>
             <label lang="de">Logo</label>
             <label lang="en">Logo</label>
