@@ -55,6 +55,8 @@
             confirmCheckSelector: '.is--act-confirm',
             /** @string default selector for the PayPal Plus container */
             containerSelector: '#ppplus',
+            /** @string default sandbox usage */
+            'paypal-unified-sandbox': '',
             /** @string default selector for the payment mean */
             paymentMeanSelector: '#payment_mean'
         },
@@ -67,6 +69,7 @@
         init: function () {
             var me = this;
 
+            me.applyDataAttributes();
             me.initEventListener();
             me.events = [];
         },
@@ -82,9 +85,8 @@
                 timeOut;
 
             window.addEventListener('message', function (event) {
-                var $paypalPlusContainer = $(me.opts.containerSelector),
-                    paypalSandbox = $paypalPlusContainer.attr('data-paypal-unified-sandbox'),
-                    originUrl = (paypalSandbox === true ? "https://www.sandbox.paypal.com" : 'https://www.paypal.com'),
+                var paypalSandbox = me.opts['paypal-unified-sandbox'],
+                    originUrl = (paypalSandbox === 1 ? 'https://www.sandbox.paypal.com' : 'https://www.paypal.com'),
                     isConfirmAction = $(me.opts.confirmCheckSelector).length > 0;
 
                 if (isConfirmAction) {

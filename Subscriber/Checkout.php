@@ -121,6 +121,7 @@ class Checkout implements SubscriberInterface
         }
 
         if (!in_array($request->getActionName(), $this->allowedActions)) {
+            $session->offsetUnset('PayPalUnifiedCameFromPaymentSelection');
             return;
         }
 
@@ -129,10 +130,14 @@ class Checkout implements SubscriberInterface
         }
 
         // Check if the user is coming from checkout step 2 (payment & shipping)
-        $cameFromPaymentSelection = $session->get('paypalUnifiedCameFromPaymentSelection', false);
+        $cameFromPaymentSelection = $session->get('PayPalUnifiedCameFromPaymentSelection', false);
 
         if (!$cameFromPaymentSelection) {
             $session->offsetUnset('paypalUnifiedPayment');
+        }
+
+        if ($request->getActionName() === 'shippingPayment') {
+            $session->offsetSet('PayPalUnifiedCameFromPaymentSelection', true);
         }
 
         /** @var \Enlight_Controller_Action $controller */
