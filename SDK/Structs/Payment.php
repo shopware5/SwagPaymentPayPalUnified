@@ -26,6 +26,7 @@ namespace SwagPaymentPayPalUnified\SDK\Structs;
 
 use SwagPaymentPayPalUnified\SDK\Structs\Payment\Links;
 use SwagPaymentPayPalUnified\SDK\Structs\Payment\Payer;
+use SwagPaymentPayPalUnified\SDK\Structs\Payment\PaymentInstruction;
 use SwagPaymentPayPalUnified\SDK\Structs\Payment\RedirectUrls;
 use SwagPaymentPayPalUnified\SDK\Structs\Payment\Transactions;
 
@@ -48,6 +49,9 @@ class Payment
 
     /** @var Links $links */
     private $links;
+
+    /** @var PaymentInstruction $paymentInstruction */
+    private $paymentInstruction;
 
     /** @var string $state */
     private $state;
@@ -257,6 +261,22 @@ class Payment
     }
 
     /**
+     * @return PaymentInstruction
+     */
+    public function getPaymentInstruction()
+    {
+        return $this->paymentInstruction;
+    }
+
+    /**
+     * @param PaymentInstruction $paymentInstruction
+     */
+    public function setPaymentInstruction(PaymentInstruction $paymentInstruction)
+    {
+        $this->paymentInstruction = $paymentInstruction;
+    }
+
+    /**
      * @param array $data
      * @return Payment
      */
@@ -276,6 +296,10 @@ class Payment
             $result->setTransactions(Transactions::fromArray($data['transactions'][0]));
         } else {
             $result->setTransactions(Transactions::fromArray($data['transactions']));
+        }
+
+        if (array_key_exists('payment_instruction', $data)) {
+            $result->setPaymentInstruction(PaymentInstruction::fromArray($data['payment_instruction']));
         }
 
         $result->setPayer(Payer::fromArray($data['payer']));

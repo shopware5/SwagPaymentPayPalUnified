@@ -52,4 +52,10 @@ class PaymentMethodProviderTest extends \PHPUnit_Framework_TestCase
         $payment = $provider->getPaymentMethodModel();
         $this->assertTrue($payment->getActive());
     }
+
+    public function test_get_payment_id()
+    {
+        $provider = new PaymentMethodProvider(Shopware()->Models());
+        $this->assertEquals(7, $provider->getPaymentId(Shopware()->Container()->get('dbal_connection')));
+    }
 }

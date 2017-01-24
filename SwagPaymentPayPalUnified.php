@@ -63,7 +63,13 @@ class SwagPaymentPayPalUnified extends Plugin
      */
     public function install(InstallContext $context)
     {
-        $installer = new Installer($this->container->get('models'));
+        $installer = new Installer(
+            $this->container->get('models'),
+            $this->container->get('dbal_connection'),
+            $this->container->get('shopware_attribute.crud_service'),
+            $this->getPath()
+        );
+
         $installer->install($context);
         parent::install($context);
     }

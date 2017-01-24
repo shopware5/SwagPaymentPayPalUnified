@@ -22,6 +22,8 @@
  * our trademarks remain entirely with us.
  */
 
+namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services;
+
 use SwagPaymentPayPalUnified\Tests\FixtureImportTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use Doctrine\DBAL\Connection;

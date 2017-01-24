@@ -22,6 +22,8 @@
  * our trademarks remain entirely with us.
  */
 
+use SwagPaymentPayPalUnified\Components\Services\PaymentAddressPatchService;
+use SwagPaymentPayPalUnified\Components\Services\PaymentInstructionService;
 use SwagPaymentPayPalUnified\SDK\Resources\PaymentResource;
 use SwagPaymentPayPalUnified\Components\PaymentStatus;
 use Shopware\Components\HttpClient\RequestException;
@@ -47,23 +49,36 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
     public function gatewayAction()
     {
         $orderData = $this->get('session')->get('sOrderVariables');
+        $shippingAddress = $orderData['sUserData']['shippingaddress'];
 
         /** @var PaymentResource $paymentResource */
         $paymentResource = $this->container->get('paypal_unified.payment_resource');
 
         $response = $paymentResource->create($orderData);
+
         /** @var Payment $responseStruct */
         $responseStruct = Payment::fromArray($response);
+
+        //Patch the address data into the payment.
+        //This function is only being called for PayPal classic, therefore,
+        //there is an additional action (patchAddressAction()) for the PayPal plus integration.
+        /** @var PaymentAddressPatchService $patchService */
+        $patchService = $this->get('paypal_unified.payment_address_patch_service');
+        $paymentResource->patch($responseStruct->getId(), $patchService->getPatch($shippingAddress));
 
         $this->redirect($responseStruct->getLinks()->getApprovalUrl());
     }
 
     /**
-     * This action is called when the user is redirected back from PayPal. Here we save the order in the system
-     * and handle the data exchange with PayPal
+     * This action is called when the user is being redirected back from PayPal after a successful payment process. Here we save the order in the system
+     * and handle the data exchange with PayPal.
+     * Required parameters:
+     *  (string) paymentId
+     *  (string) PayerID
      */
     public function returnAction()
     {
+        $this->Front()->Plugins()->ViewRenderer()->setNoRender();
         $request = $this->Request();
         $paymentId = $request->get('paymentId');
         $payerId = $request->get('PayerID');
@@ -82,16 +97,15 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
             if ($sendOrderNumber) {
                 $orderNumber = $this->saveOrder($paymentId, $paymentId, PaymentStatus::PAYMENT_STATUS_OPEN);
                 /** @var PaymentOrderNumberPatch $paymentPatch */
-                $paymentPatches[] = new PaymentOrderNumberPatch($orderNumber);
+                $paymentPatch = new PaymentOrderNumberPatch($orderNumber);
 
-                $paymentResource->patch($paymentId, $paymentPatches);
+                $paymentResource->patch($paymentId, $paymentPatch);
             }
 
             // execute the payment to the PayPal API
             $executionResponse = $paymentResource->execute($payerId, $paymentId);
 
             // convert the response into a struct
-            /** @var Payment $response */
             $response = Payment::fromArray($executionResponse);
 
             // if the order number is not sent to PayPal do it here to avoid broken orders
@@ -100,7 +114,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
             }
 
             /** @var Sale $responseSale */
-            $responseSale = $this->getResponseSale($response);
+            $responseSale = $response->getTransactions()->getRelatedResources()->getSales()[0];
 
             // apply the payment status if its completed by PayPal
             $paymentState = $responseSale->getState();
@@ -115,18 +129,56 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
                 $saleId
             );
 
+            // if we get payment instructions from PayPal save them to database
+            if ($response->getPaymentInstruction()) {
+                /** @var PaymentInstructionService $instructionService */
+                $instructionService = $this->container->get('paypal_unified.payment_instruction_service');
+                $instructionService->createInstructions($orderNumber, $response->getPaymentInstruction());
+            }
+
+            $orderDataService->applyPaymentTypeAttribute($orderNumber, $response);
+
             // Done, redirect to the finish page
-            $this->redirect(['module' => 'frontend', 'controller' => 'checkout', 'action' => 'finish']);
+            $this->redirect([
+                'module' => 'frontend',
+                'controller' => 'checkout',
+                'action' => 'finish'
+            ]);
         } catch (RequestException $exception) {
         }
     }
 
     /**
-     * @param Payment $response
-     * @return Sale
+     * This action is being called via Ajax by the PayPal-Plus integration only.
+     * Required parameters:
+     *  (string) paymentId
      */
-    private function getResponseSale(Payment $response)
+    public function patchAddressAction()
     {
-        return $response->getTransactions()->getRelatedResources()->getSales()[0];
+        $this->Front()->Plugins()->ViewRenderer()->setNoRender();
+
+        $paymentId = $this->Request()->get('paymentId');
+        $shippingAddress = $this->get('session')->get('sOrderVariables')['sUserData']['shippingaddress'];
+
+        /** @var PaymentResource $paymentResource */
+        $paymentResource = $this->container->get('paypal_unified.payment_resource');
+
+        /** @var PaymentAddressPatchService $patchService */
+        $patchService = $this->get('paypal_unified.payment_address_patch_service');
+
+        $paymentResource->patch($paymentId, $patchService->getPatch($shippingAddress));
+    }
+
+    /**
+     * This action is being called by the PayPal frontend if the user
+     * wants to cancel the process or the payment has been declined by PayPal.
+     */
+    public function cancelAction()
+    {
+        $this->redirect([
+            'module' => 'frontend',
+            'controller' => 'checkout',
+            'action' => 'shippingPayment'
+        ]);
     }
 }

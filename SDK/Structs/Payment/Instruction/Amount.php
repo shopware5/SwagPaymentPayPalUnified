@@ -22,32 +22,39 @@
  * our trademarks remain entirely with us.
  */
 
-namespace SwagPaymentPayPalUnified\SDK\Components\Patches;
+namespace SwagPaymentPayPalUnified\SDK\Structs\Payment\Instruction;
 
-interface PatchInterface
+class Amount
 {
-    const OPERATION_ADD = 'add';
-
-    const OPERATION_REPLACE = 'replace';
-
-    /**
-     * Returns the value that should be transferred to PayPal
-     *
-     * @return mixed
-     */
-    public function getValue();
+    /** @var float $value */
+    private $value;
 
     /**
-     * Returns the operation that should be triggered.
-     *
-     * @return string
+     * @return float
      */
-    public function getOperation();
+    public function getValue()
+    {
+        return $this->value;
+    }
 
     /**
-     * Returns the path for the patch call.
-     *
-     * @return string
+     * @param float $value
      */
-    public function getPath();
+    public function setValue($value)
+    {
+        $this->value = $value;
+    }
+
+    /**
+     * @param array $data
+     * @return Amount
+     */
+    public static function fromArray(array $data = [])
+    {
+        $result = new Amount();
+
+        $result->setValue($data['value']);
+
+        return $result;
+    }
 }

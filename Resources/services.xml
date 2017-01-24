@@ -20,6 +20,8 @@
 
         <service id="paypal_unified.order_data_service" class="SwagPaymentPayPalUnified\Components\Services\OrderDataService">
             <argument type="service" id="models" />
+            <argument type="service" id="dbal_connection" />
+            <argument type="service" id="config" />
         </service>
 
         <service id="paypal_unified.dependency_provider" class="SwagPaymentPayPalUnified\Components\DependencyProvider">
@@ -48,6 +50,18 @@
 
         <service id="paypal_unified.sales_history_builder_service" class="SwagPaymentPayPalUnified\Components\Services\SalesHistoryBuilderService"/>
 
+        <service id="paypal_unified.payment_instruction_service" class="SwagPaymentPayPalUnified\Components\Services\PaymentInstructionService">
+            <argument type="service" id="models" />
+        </service>
+
+        <service id="paypal_unified.payment_address_patch_service" class="SwagPaymentPayPalUnified\Components\Services\PaymentAddressPatchService">
+            <argument type="service" id="models" />
+        </service>
+
+        <service id="paypal_unified.document_template_service" class="SwagPaymentPayPalUnified\Components\Services\DocumentTemplateService">
+            <argument type="service" id="dbal_connection" />
+        </service>
+
         <!-- Resources -->
         <service id="paypal_unified.payment_resource" class="SwagPaymentPayPalUnified\SDK\Resources\PaymentResource">
             <argument type="service" id="paypal_unified.client_service" />
@@ -69,13 +83,22 @@
             <argument type="service" id="config" />
             <tag name="shopware.event_subscriber" />
         </service>
+
         <service id="paypal_unified.subscriber.backend" class="SwagPaymentPayPalUnified\Subscriber\Backend">
             <argument>%paypal_unified.plugin_dir%</argument>
             <tag name="shopware.event_subscriber" />
         </service>
+
         <service id="paypal_unified.subscriber.frontend" class="SwagPaymentPayPalUnified\Subscriber\Frontend">
             <argument>%paypal_unified.plugin_dir%</argument>
             <argument type="service" id="config" />
+            <tag name="shopware.event_subscriber" />
+        </service>
+
+        <service id="paypal_unified.subscriber.document" class="SwagPaymentPayPalUnified\Subscriber\Document">
+            <argument type="service" id="paypal_unified.payment_instruction_service" />
+            <argument type="service" id="paypal_unified.document_template_service" />
+            <argument type="service" id="models" />
             <tag name="shopware.event_subscriber" />
         </service>
     </services>

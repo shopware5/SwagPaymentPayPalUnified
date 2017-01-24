@@ -22,6 +22,8 @@
  * our trademarks remain entirely with us.
  */
 
+namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services;
+
 use SwagPaymentPayPalUnified\SDK\Structs\WebProfile\WebProfilePresentation;
 use SwagPaymentPayPalUnified\SDK\Structs\WebProfile;
 use SwagPaymentPayPalUnified\SDK\Structs\WebProfile\WebProfileFlowConfig;

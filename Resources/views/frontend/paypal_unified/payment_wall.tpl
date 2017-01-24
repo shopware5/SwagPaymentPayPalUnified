@@ -1,15 +1,17 @@
 {block name="frontend_checkout_paypal_unified_paymentwall"}
     <div id="ppplus" class="method--description"
         {if $paypalConfirmPayment}
-            data-paypal-unified-confirm-payment="true"
+            data-paypalUnifiedConfirmPayment="true"
         {/if}
         {if $paypalPaymentWall}
-            data-paypal-unified-payment-wall="true"
+            data-paypalUnifiedPaymentWall="true"
         {/if}
-        data-paypal-unified-payment-id="{$paypalUnifiedPaymentId}"
-        data-paypal-unified-approval-url="{$paypalUnifiedApprovalUrl}"
-        data-paypal-unified-sandbox="{$paypalUnifiedModeSandbox}"
-        data-paypal-unified-user-payment-id="{$sUserData.additional.payment.id}"
-        data-paypal-unified-country-iso="{$sUserData.additional.country.countryiso}">
+        data-paypalUnifiedPaymentId="{$paypalUnifiedPaymentId}"
+        data-paypalUnifiedApprovalUrl="{$paypalUnifiedApprovalUrl}"
+        data-paypalUnifiedSandbox="{$paypalUnifiedModeSandbox}"
+        data-paypalUnifiedUserPaymentId="{$sUserData.additional.payment.id}"
+        data-paypalUnifiedAddressPatchUrl="{url controller=PaypalUnified action=patchAddress forceSecure=true}"
+        data-paypalUnifiedRemotePaymentId="{$paypalUnifiedRemotePaymentId}"
+        data-paypalUnifiedCountryIso="{$sUserData.additional.country.countryiso}">
     </div>
 {/block}

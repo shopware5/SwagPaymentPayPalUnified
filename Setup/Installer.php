@@ -24,23 +24,45 @@
 
 namespace SwagPaymentPayPalUnified\Setup;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\DBAL\Connection;
+use Shopware\Bundle\AttributeBundle\Service\CrudService;
+use Shopware\Components\Model\ModelManager;
 use Shopware\Components\Plugin\Context\InstallContext;
 use Shopware\Models\Payment\Payment;
 use Shopware\Models\Plugin\Plugin;
 
 class Installer
 {
+    /** @var ModelManager $modelManager */
+    private $modelManager;
 
-    /** @var EntityManager $kernel */
-    private $entityManager;
+    /** @var Connection $connection */
+    private $connection;
+
+    /** @var CrudService $attributeCrudService */
+    private $attributeCrudService;
+
+    /** @var string $bootstrapPath */
+    private $bootstrapPath;
 
     /**
-     * @param EntityManager $entityManager
+     * Installer constructor.
+     *
+     * @param ModelManager $modelManager
+     * @param Connection $connection
+     * @param CrudService $attributeCrudService
+     * @param string $bootstrapPath
      */
-    public function __construct(EntityManager $entityManager)
-    {
-        $this->entityManager = $entityManager;
+    public function __construct(
+        ModelManager $modelManager,
+        Connection $connection,
+        CrudService $attributeCrudService,
+        $bootstrapPath
+    ) {
+        $this->modelManager = $modelManager;
+        $this->connection = $connection;
+        $this->attributeCrudService = $attributeCrudService;
+        $this->bootstrapPath = $bootstrapPath;
     }
 
     /**
@@ -54,7 +76,10 @@ class Installer
             throw new InstallationException('This plugin can not be used while PayPal Classic or PayPal Plus are installed and active.');
         }
 
+        $this->createDatabaseTables();
         $this->createPaymentMethod();
+        $this->createAttributes();
+        $this->createDocumentTemplates();
 
         return true;
     }
@@ -64,11 +89,11 @@ class Installer
      */
     private function hasPayPalClassicInstalled()
     {
-        $classicPlugin = $this->entityManager->getRepository(Plugin::class)->findOneBy([
+        $classicPlugin = $this->modelManager->getRepository(Plugin::class)->findOneBy([
             'name' => 'SwagPaymentPaypal',
             'active' => 1
         ]);
-        $classicPlusPlugin = $this->entityManager->getRepository(Plugin::class)->findOneBy([
+        $classicPlusPlugin = $this->modelManager->getRepository(Plugin::class)->findOneBy([
             'name' => 'SwagPaymentPaypalPlus',
             'active' => 1
         ]);
@@ -76,9 +101,52 @@ class Installer
         return $classicPlugin != null || $classicPlusPlugin != null;
     }
 
+    private function createDatabaseTables()
+    {
+        $sql = "CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_payment_instruction (
+                `id` INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                `order_number` VARCHAR(255),
+                `bank_name` VARCHAR(255),
+                `account_holder` VARCHAR(255),
+                `iban` VARCHAR(255),
+                `bic` VARCHAR(255),
+                `amount` VARCHAR(255),
+                `reference` VARCHAR(255),
+                `due_date` DATETIME) 
+                 ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;";
+
+        $this->connection->query($sql);
+    }
+
+    private function createAttributes()
+    {
+        $this->attributeCrudService->update('s_order_attributes', 'paypal_payment_type', 'integer');
+        $this->modelManager->generateAttributeModels(['s_order_attributes']);
+    }
+
+    private function createDocumentTemplates()
+    {
+        $sql = "
+			INSERT INTO `s_core_documents_box` (`documentID`, `name`, `style`, `value`) VALUES
+			(1, 'PayPal_Unified_Instructions_Footer', 'width: 170mm;\r\nposition:fixed;\r\nbottom:-20mm;\r\nheight: 15mm;', :footerValue),
+			(1, 'PayPal_Unified_Instructions_Content', :contentStyle, :contentValue);
+		";
+
+        //Load the assets
+        $instructionsContent = file_get_contents($this->bootstrapPath . '/Setup/Assets/Document/PayPal_Unified_Instructions_Content.html');
+        $instructionsContentStyle = file_get_contents($this->bootstrapPath . '/Setup/Assets/Document/PayPal_Unified_Instructions_Content_Style.css');
+        $instructionsFooter = file_get_contents($this->bootstrapPath . '/Setup/Assets/Document/PayPal_Unified_Instructions_Footer.html');
+
+        $this->connection->executeQuery($sql, [
+            'footerValue' => $instructionsFooter,
+            'contentStyle' => $instructionsContentStyle,
+            'contentValue' => $instructionsContent
+        ]);
+    }
+
     private function createPaymentMethod()
     {
-        $existingPayment = $this->entityManager->getRepository(Payment::class)->findOneBy([
+        $existingPayment = $this->modelManager->getRepository(Payment::class)->findOneBy([
             'name' => 'SwagPaymentPayPalUnified'
         ]);
 
@@ -94,8 +162,8 @@ class Installer
         $entity->setAdditionalDescription($this->getPaymentLogo() . 'Bezahlung per PayPal - einfach, schnell und sicher.');
         $entity->setAction('PaypalUnified');
 
-        $this->entityManager->persist($entity);
-        $this->entityManager->flush($entity);
+        $this->modelManager->persist($entity);
+        $this->modelManager->flush($entity);
     }
 
     private function getPaymentLogo()

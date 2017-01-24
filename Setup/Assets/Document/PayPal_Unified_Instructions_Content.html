@@ -1,0 +1,36 @@
+<div class="unified_payment_note">
+    <br />
+    Demo GmbH hat die Forderung gegen Sie im Rahmen eines laufenden Factoringvertrages an die PayPal (Europe) S.àr.l. et Cie, S.C.A. abgetreten. Zahlungen mit schuldbefreiender Wirkung können nur an die PayPal (Europe) S.àr.l. et Cie, S.C.A. geleistet werden
+    <br /><br />
+    Bitte überweisen Sie {$instruction.amount|currency} bis {$instruction.dueDate|date_format: "%d.%m.%Y"} an PayPal
+    <br /><br />
+</div>
+
+<table class="unified_payment_instruction">
+    <tbody>
+    <tr>
+        <td>Empf&auml;nger:</td>
+        <td>{$instruction.accountHolder}</td>
+    </tr>
+    <tr>
+        <td>IBAN:</td>
+        <td>{$instruction.iban}</td>
+    </tr>
+    <tr>
+        <td>BIC:</td>
+        <td>{$instruction.bic}</td>
+    </tr>
+    <tr>
+        <td>Bank:</td>
+        <td>{$instruction.bankName}</td>
+    </tr>
+    <tr>
+        <td>Betrag:</td>
+        <td>{$instruction.amount|currency}</td>
+    </tr>
+    <tr>
+        <td>Verwendungszweck:</td>
+        <td>{$instruction.reference}</td>
+    </tr>
+    </tbody>
+</table>

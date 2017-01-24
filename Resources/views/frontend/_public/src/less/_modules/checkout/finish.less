@@ -1,0 +1,82 @@
+.unified-instructions--table {
+    margin: 0 auto;
+    width: 100%;
+    table-layout: fixed;
+
+    tr {
+        width: 100%;
+
+        td {
+            background: none;
+            width: 50%;
+            word-wrap:break-word;
+        }
+
+        td.bolder {
+            font-weight: bolder;
+        }
+    }
+}
+
+.unified--panel {
+    .unitize-margin(20, 0, 20, 0);
+    width: 100%;
+
+    .unified--instruction {
+        font-weight: bolder;
+        text-align: center;
+    }
+
+    .unified-header--left-td {
+        width: 45%;
+        text-align: right;
+
+        h3 {
+            .unitize(margin-top, 10);
+        }
+    }
+
+    .unified-header--center-td {
+        .unitize(min-width, 100);
+        width: auto;
+    }
+
+    .unified-header--right-td {
+        width: 45%;
+    }
+
+    .unified-legal--message {
+        text-align: center;
+    }
+}
+
+@media screen and (min-width: @phoneLandscapeViewportWidth) {
+    .unified-instructions--container {
+        .unitize-margin(20, 0, 20, 0);
+    }
+
+    .unified-instructions--table {
+        width: 80%;
+        border: 1px solid @border-color;
+        border-radius: 3px;
+
+        tr {
+            width: 100%;
+
+            td {
+                font-size: inherit;
+            }
+
+            td.bolder {
+                font-size: inherit;
+                width: 50%
+            }
+        }
+    }
+}
+
+@media screen and (min-width: @tabletLandscapeViewportWidth) {
+    .unified-instructions--table {
+        width: 50%;
+    }
+}

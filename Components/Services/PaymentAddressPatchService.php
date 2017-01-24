@@ -22,13 +22,13 @@
  * our trademarks remain entirely with us.
  */
 
-namespace SwagPaymentPayPalUnified\Components;
+namespace SwagPaymentPayPalUnified\Components\Services;
 
-use Doctrine\DBAL\Connection;
 use Shopware\Components\Model\ModelManager;
-use Shopware\Models\Payment\Payment;
+use Shopware\Models\Country\Country;
+use SwagPaymentPayPalUnified\SDK\Components\Patches\PaymentAddressPatch;
 
-class PaymentMethodProvider
+class PaymentAddressPatchService
 {
     /** @var ModelManager $modelManager */
     private $modelManager;
@@ -42,34 +42,29 @@ class PaymentMethodProvider
     }
 
     /**
-     * @return null|Payment
+     * @param array $addressData
+     * @return PaymentAddressPatch
+     * @throws \Exception
      */
-    public function getPaymentMethodModel()
+    public function getPatch(array $addressData)
     {
-        return $this->modelManager->getRepository(Payment::class)->findOneBy([
-            'name' => 'SwagPaymentPayPalUnified'
-        ]);
+        $country = $this->getBillingCountry($addressData['country']['id']);
+
+        if ($country === null) {
+            throw new \Exception('The provided address data does not contain a valid country');
+        }
+
+        $addressData['countryiso'] = $country->getIso();
+
+        return new PaymentAddressPatch($addressData);
     }
 
     /**
-     * @param bool $active
+     * @param int $countryId
+     * @return null|Country
      */
-    public function setPaymentMethodActiveFlag($active)
+    private function getBillingCountry($countryId)
     {
-        $paymentMethod = $this->getPaymentMethodModel();
-        $paymentMethod->setActive($active);
-
-        $this->modelManager->persist($paymentMethod);
-        $this->modelManager->flush($paymentMethod);
-    }
-
-    /**
-     * @param Connection $connection
-     * @return int
-     */
-    public function getPaymentId(Connection $connection)
-    {
-        $sql = 'SELECT `id` FROM s_core_paymentmeans WHERE `name`=:paymentName';
-        return (int) $connection->fetchColumn($sql, [':paymentName' => 'SwagPaymentPayPalUnified']);
+        return $this->modelManager->getRepository(Country::class)->find($countryId);
     }
 }

@@ -24,8 +24,8 @@
 
 namespace SwagPaymentPayPalUnified\WebhookHandlers;
 
-use Doctrine\ORM\EntityManager;
 use Shopware\Components\Logger;
+use Shopware\Components\Model\ModelManager;
 use Shopware\Models\Order\Order;
 use Shopware\Models\Order\Status;
 use SwagPaymentPayPalUnified\Components\PaymentStatus;
@@ -38,17 +38,17 @@ class SaleDenied implements WebhookHandler
     /** @var Logger $pluginLogger */
     private $pluginLogger;
 
-    /** @var EntityManager */
-    private $em;
+    /** @var ModelManager */
+    private $modelManager;
 
     /**
      * @param Logger $pluginLogger
-     * @param EntityManager $em
+     * @param ModelManager $modelManager
      */
-    public function __construct(Logger $pluginLogger, EntityManager $em)
+    public function __construct(Logger $pluginLogger, ModelManager $modelManager)
     {
         $this->pluginLogger = $pluginLogger;
-        $this->em = $em;
+        $this->modelManager = $modelManager;
     }
 
     /**
@@ -65,9 +65,9 @@ class SaleDenied implements WebhookHandler
     public function invoke(Webhook $webhook)
     {
         /** @var Order $orderModel */
-        $orderModel = $this->em->getRepository(Order::class)->findOneBy(['transactionId' => $webhook->getSummary()['parent_payment']]);
+        $orderModel = $this->modelManager->getRepository(Order::class)->findOneBy(['transactionId' => $webhook->getSummary()['parent_payment']]);
         /** @var Status $orderStatusModel */
-        $orderStatusModel = $this->em->getRepository(Status::class)->find(PaymentStatus::PAYMENT_STATUS_OPEN);
+        $orderStatusModel = $this->modelManager->getRepository(Status::class)->find(PaymentStatus::PAYMENT_STATUS_OPEN);
 
         if ($orderModel === null) {
             $this->pluginLogger->error('PayPal Unified: Could not find associated order with the transactionId ' . $webhook->getSummary()['parent_payment']);
@@ -77,6 +77,6 @@ class SaleDenied implements WebhookHandler
         //Set the payment status to "open"
         $orderModel->setPaymentStatus($orderStatusModel);
 
-        $this->em->flush($orderModel);
+        $this->modelManager->flush($orderModel);
     }
 }
