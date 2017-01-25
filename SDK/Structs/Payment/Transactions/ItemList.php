@@ -57,7 +57,13 @@ class ItemList
     {
         $result = new ItemList();
 
-        $result->setItems($data['items']);
+        $items = [];
+
+        foreach ($data['items'] as $item) {
+            $items[] = Item::fromArray($item);
+        }
+
+        $result->setItems($items);
 
         return $result;
     }

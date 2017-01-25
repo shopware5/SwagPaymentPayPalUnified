@@ -22,40 +22,40 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebar.order.Customer', {
      */
     createItems: function () {
         return [{
-            'xtype': 'textfield',
-            'name': 'salutation',
-            'itemId': 'salutation',
-            'fieldLabel': '{s name="field/salutation"}Salutation{/s}',
-            'readOnly': true,
-            'anchor': '100%'
+            xtype: 'textfield',
+            name: 'salutation',
+            itemId: 'salutation',
+            fieldLabel: '{s name="field/salutation"}Salutation{/s}',
+            readOnly: true,
+            anchor: '100%'
         }, {
-            'xtype': 'textfield',
-            'name': 'firstname',
-            'itemId': 'firstname',
-            'fieldLabel': '{s name="field/firstName"}First name{/s}',
-            'readOnly': true,
-            'anchor': '100%'
+            xtype: 'textfield',
+            name: 'firstname',
+            itemId: 'firstname',
+            fieldLabel: '{s name="field/firstName"}First name{/s}',
+            readOnly: true,
+            anchor: '100%'
         }, {
-            'xtype': 'textfield',
-            'name': 'lastname',
-            'itemId': 'lastname',
-            'fieldLabel': '{s name="field/lastname"}Last name{/s}',
-            'readOnly': true,
-            'anchor': '100%'
+            xtype: 'textfield',
+            name: 'lastname',
+            itemId: 'lastname',
+            fieldLabel: '{s name="field/lastname"}Last name{/s}',
+            readOnly: true,
+            anchor: '100%'
         }, {
-            'xtype': 'textfield',
-            'name': 'email',
-            'itemId': 'email',
-            'fieldLabel': '{s name="field/email"}E-mail{/s}',
-            'readOnly': true,
-            'anchor': '100%'
+            xtype: 'textfield',
+            name: 'email',
+            itemId: 'email',
+            fieldLabel: '{s name="field/email"}E-mail{/s}',
+            readOnly: true,
+            anchor: '100%'
         }, {
-            'xtype': 'textfield',
-            'name': 'groupKey',
-            'itemId': 'groupKey',
-            'fieldLabel': '{s name="field/groupKey"}Group key{/s}',
-            'readOnly': true,
-            'anchor': '100%'
+            xtype: 'textfield',
+            name: 'groupKey',
+            itemId: 'groupKey',
+            fieldLabel: '{s name="field/groupKey"}Group key{/s}',
+            readOnly: true,
+            anchor: '100%'
         }];
     }
 });

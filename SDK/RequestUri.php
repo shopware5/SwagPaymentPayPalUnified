@@ -26,5 +26,8 @@ namespace SwagPaymentPayPalUnified\SDK;
 
 class RequestUri
 {
-    const PAYMENT_URI = 'payments/payment';
+    const PAYMENT_RESOURCE = 'payments/payment';
+    const PROFILE_RESOURCE = 'payment-experience/web-profiles';
+    const WEBHOOK_RESOURCE = 'notifications/webhooks';
+    const TOKEN_RESOURCE = 'oauth2/token';
 }

@@ -28,14 +28,21 @@ Ext.define('Shopware.apps.PaypalUnified', {
      * @type { Array }
      */
     models: [
-        'UnifiedOrder'
+        'Order',
+        'Payment',
+        'PaymentCustomer',
+        'PaymentCartItem',
+        'PaymentInvoice',
+        'PaymentInvoiceDetails',
+        'PaymentCustomerShipping'
     ],
 
     /**
      * @type { Array }
      */
     stores: [
-        'UnifiedOrder'
+        'Order',
+        'PaymentCart'
     ],
 
     /**
@@ -51,7 +58,9 @@ Ext.define('Shopware.apps.PaypalUnified', {
         'sidebar.order.Customer',
         'sidebar.payment.Details',
         'sidebar.payment.Customer',
-        'sidebar.payment.Address'
+        'sidebar.payment.Address',
+        'sidebar.payment.Invoice',
+        'sidebar.payment.Cart'
     ],
 
     /**

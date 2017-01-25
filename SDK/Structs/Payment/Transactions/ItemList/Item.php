@@ -41,6 +41,25 @@ class Item
     /** @var int $quantity */
     private $quantity;
 
+    /** @var string $tax */
+    private $tax;
+
+    /**
+     * @return string
+     */
+    public function getTax()
+    {
+        return $this->tax;
+    }
+
+    /**
+     * @param string $tax
+     */
+    public function setTax($tax)
+    {
+        $this->tax = $tax;
+    }
+
     /**
      * @return string
      */
@@ -122,10 +141,29 @@ class Item
     }
 
     /**
+     * @param array $data
+     * @return Item
+     */
+    public static function fromArray(array $data)
+    {
+        $result = new Item();
+
+        $result->setName($data['name']);
+        $result->setSku($data['sku']);
+        $result->setPrice($data['price']);
+        $result->setCurrency($data['currency']);
+        $result->setTax($data['tax']);
+        $result->setQuantity($data['quantity']);
+
+        return $result;
+    }
+
+    /**
      * @return array
      */
     public function toArray()
     {
+        //We don't work with taxes in this case to avoid calculation errors.
         return [
             'name' => $this->getName(),
             'sku' => $this->getSku(),

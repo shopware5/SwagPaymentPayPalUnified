@@ -22,7 +22,7 @@
  * our trademarks remain entirely with us.
  */
 
-namespace SwagPaymentPayPalUnified\SDK\Structs\Payment\Transactions;
+namespace SwagPaymentPayPalUnified\SDK\Structs\Payment\Transactions\Amount;
 
 class AmountDetails
 {

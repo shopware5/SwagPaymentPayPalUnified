@@ -24,6 +24,8 @@
 
 namespace SwagPaymentPayPalUnified\SDK\Structs\Payment;
 
+use SwagPaymentPayPalUnified\SDK\Structs\Payment\Payer\PayerInfo;
+
 class Payer
 {
     /**
@@ -33,10 +35,16 @@ class Payer
      */
     private $paymentMethod = 'paypal';
 
+    /** @var string $status */
+    private $status;
+
+    /** @var PayerInfo $payerInfo */
+    private $payerInfo;
+
     /**
      * @return string
      */
-    public function getMethod()
+    public function getPaymentMethod()
     {
         return $this->paymentMethod;
     }
@@ -44,9 +52,41 @@ class Payer
     /**
      * @param string $paymentMethod
      */
-    public function setMethod($paymentMethod)
+    public function setPaymentMethod($paymentMethod)
     {
         $this->paymentMethod = $paymentMethod;
+    }
+
+    /**
+     * @return string
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    /**
+     * @param string $status
+     */
+    public function setStatus($status)
+    {
+        $this->status = $status;
+    }
+
+    /**
+     * @return PayerInfo
+     */
+    public function getPayerInfo()
+    {
+        return $this->payerInfo;
+    }
+
+    /**
+     * @param PayerInfo $payerInfo
+     */
+    public function setPayerInfo($payerInfo)
+    {
+        $this->payerInfo = $payerInfo;
     }
 
     /**
@@ -57,7 +97,9 @@ class Payer
     {
         $result = new Payer();
 
-        $result->setMethod($data['payment_method']);
+        $result->setPaymentMethod($data['payment_method']);
+        $result->setPayerInfo(PayerInfo::fromArray($data['payer_info']));
+        $result->setStatus($data['status']);
 
         return $result;
     }
@@ -67,8 +109,15 @@ class Payer
      */
     public function toArray()
     {
-        return [
-            'payment_method' => $this->getMethod()
+        $result = [
+            'payment_method' => $this->getPaymentMethod(),
+            'status' => $this->getStatus(),
         ];
+
+        if ($this->payerInfo !== null) {
+            $result['payer_info'] = $this->payerInfo->toArray();
+        }
+
+        return $result;
     }
 }

@@ -1,16 +1,16 @@
-//{block name="backend/paypal_unified/store/unified_order"}
-Ext.define('Shopware.apps.PaypalUnified.store.UnifiedOrder', {
+//{block name="backend/paypal_unified/store/order"}
+Ext.define('Shopware.apps.PaypalUnified.store.Order', {
     /**
      * extends from the standard ExtJs store class
-     * @string
+     * @type { String }
      */
     extend: 'Shopware.store.Listing',
 
     /**
      * the model which belongs to the store
-     * @string
+     * @type { String }
      */
-    model: 'Shopware.apps.PaypalUnified.model.UnifiedOrder',
+    model: 'Shopware.apps.PaypalUnified.model.Order',
 
     /**
      * @return { Object }

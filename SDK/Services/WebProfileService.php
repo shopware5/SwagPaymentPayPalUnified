@@ -74,8 +74,9 @@ class WebProfileService
         $selectedRemoteProfile = null;
 
         foreach ($profileList as $remoteProfile) {
-            if ($remoteProfile->getName() === $currentWebProfile->getName()) {
-                $selectedRemoteProfile = $remoteProfile;
+            $profileStruct = WebProfile::fromArray($remoteProfile);
+            if ($profileStruct->getName() === $currentWebProfile->getName()) {
+                $selectedRemoteProfile = $profileStruct;
                 break;
             }
         }

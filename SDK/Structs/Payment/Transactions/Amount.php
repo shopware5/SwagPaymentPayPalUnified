@@ -24,6 +24,8 @@
 
 namespace SwagPaymentPayPalUnified\SDK\Structs\Payment\Transactions;
 
+use SwagPaymentPayPalUnified\SDK\Structs\Payment\Transactions\Amount\AmountDetails;
+
 class Amount
 {
     /**

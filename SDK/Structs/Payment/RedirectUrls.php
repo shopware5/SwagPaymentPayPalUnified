@@ -69,6 +69,24 @@ class RedirectUrls
     }
 
     /**
+     * @param array|null $data
+     * @return RedirectUrls
+     */
+    public static function fromArray(array $data = null)
+    {
+        $result = new RedirectUrls();
+
+        if ($data === null) {
+            return $result;
+        }
+
+        $result->setCancelUrl($data['cancel_url']);
+        $result->setReturnUrl($data['return_url']);
+
+        return $result;
+    }
+
+    /**
      * @return array
      */
     public function toArray()

@@ -55,7 +55,7 @@ class TokenService
 
         if ($token === false || !$this->isTokenValid($token)) {
             $tokenResource = new TokenResource($client);
-            $token = $tokenResource->requestToken($credentials);
+            $token = Token::fromArray($tokenResource->get($credentials));
             $this->setToken($token);
         }
 

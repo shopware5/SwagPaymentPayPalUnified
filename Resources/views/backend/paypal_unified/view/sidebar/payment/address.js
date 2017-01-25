@@ -22,41 +22,41 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebar.payment.Address', {
      */
     createItems: function () {
         return [{
-            'xtype': 'textfield',
-            'name': 'name',
-            'fieldLabel': '{s name="field/name"}Name{/s}',
-            'readOnly': true,
-            'anchor': '100%'
+            xtype: 'textfield',
+            name: 'recipient_name',
+            fieldLabel: '{s name="field/recipient"}Recipient{/s}',
+            readOnly: true,
+            anchor: '100%'
         }, {
-            'xtype': 'textfield',
-            'name': 'street',
-            'fieldLabel': '{s name="field/street"}Street{/s}',
-            'readOnly': true,
-            'anchor': '100%'
+            xtype: 'textfield',
+            name: 'line1',
+            fieldLabel: '{s name="field/street"}Street{/s}',
+            readOnly: true,
+            anchor: '100%'
         }, {
-            'xtype': 'textfield',
-            'name': 'city',
-            'fieldLabel': '{s name="field/city"}City{/s}',
-            'readOnly': true,
-            'anchor': '100%'
+            xtype: 'textfield',
+            name: 'city',
+            fieldLabel: '{s name="field/city"}City{/s}',
+            readOnly: true,
+            anchor: '100%'
         }, {
-            'xtype': 'textfield',
-            'name': 'state',
-            'fieldLabel': '{s name="field/state"}State{/s}',
-            'readOnly': true,
-            'anchor': '100%'
+            xtype: 'textfield',
+            name: 'state',
+            fieldLabel: '{s name="field/state"}State{/s}',
+            readOnly: true,
+            anchor: '100%'
         }, {
-            'xtype': 'textfield',
-            'name': 'zip',
-            'fieldLabel': '{s name="field/zip"}Zip{/s}',
-            'readOnly': true,
-            'anchor': '100%'
+            xtype: 'textfield',
+            name: 'postal_code',
+            fieldLabel: '{s name="field/postalCode"}Postal code{/s}',
+            readOnly: true,
+            anchor: '100%'
         }, {
-            'xtype': 'textfield',
-            'name': 'country',
-            'fieldLabel': '{s name="field/country"}Country{/s}',
-            'readOnly': true,
-            'anchor': '100%'
+            xtype: 'textfield',
+            name: 'country_code',
+            fieldLabel: '{s name="field/country"}Country{/s}',
+            readOnly: true,
+            anchor: '100%'
         }];
     }
 });
