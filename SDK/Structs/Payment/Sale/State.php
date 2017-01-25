@@ -22,14 +22,18 @@
  * our trademarks remain entirely with us.
  */
 
-namespace SwagPaymentPayPalUnified\SDK;
+namespace SwagPaymentPayPalUnified\SDK\Structs\Payment\Sale;
 
-class RequestUri
+class State
 {
-    const PAYMENT_RESOURCE = 'payments/payment';
-    const PROFILE_RESOURCE = 'payment-experience/web-profiles';
-    const WEBHOOK_RESOURCE = 'notifications/webhooks';
-    const TOKEN_RESOURCE = 'oauth2/token';
-    const SALE_RESOURCE = 'payments/sale';
-    const REFUND_RESOURCE = 'payments/refund';
+    /** The transaction has completed. */
+    const COMPLETED = 'completed';
+    /** The transaction was partially refunded. */
+    const PARTIALLY_REFUNDED = 'partially_refunded';
+    /** The transaction is pending. */
+    const PENDING = 'pending';
+    /** The transaction was fully refunded. */
+    const REFUNDED = 'refunded';
+    /** The transaction was denied. */
+    const DENIED = 'denied';
 }

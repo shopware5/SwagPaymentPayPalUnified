@@ -27,49 +27,48 @@ namespace SwagPaymentPayPalUnified\SDK\Resources;
 use SwagPaymentPayPalUnified\SDK\RequestType;
 use SwagPaymentPayPalUnified\SDK\RequestUri;
 use SwagPaymentPayPalUnified\SDK\Services\ClientService;
-use SwagPaymentPayPalUnified\SDK\Structs\WebProfile;
+use SwagPaymentPayPalUnified\SDK\Structs\Payment\Transactions\Amount;
 
-class WebProfileResource
+class SaleResource
 {
-
-    /** @var ClientService $client */
-    private $client;
+    /**
+     * @var ClientService $clientService
+     */
+    private $clientService;
 
     /**
-     * @param ClientService $client
+     * @param ClientService $clientService
      */
-    public function __construct(ClientService $client)
+    public function __construct(ClientService $clientService)
     {
-        $this->client = $client;
+        $this->clientService = $clientService;
     }
 
     /**
-     * @param WebProfile $profile
-     * @return WebProfile
-     */
-    public function create(WebProfile $profile)
-    {
-        $payload = $profile->toArray();
-        $data = $this->client->sendRequest(RequestType::POST, RequestUri::PROFILE_RESOURCE, $payload);
-
-        return WebProfile::fromArray($data);
-    }
-
-    /**
+     * @param string $saleId
      * @return array
      */
-    public function getList()
+    public function get($saleId)
     {
-        return $this->client->sendRequest(RequestType::GET, RequestUri::PROFILE_RESOURCE . '/');
+        return $this->clientService->sendRequest(RequestType::GET, RequestUri::SALE_RESOURCE . '/' . $saleId);
     }
 
     /**
-     * @param string $remoteProfileId
-     * @param WebProfile $profile
+     * @param string $saleId
+     * @param Amount $amount
+     * @param string $invoiceNumber
+     * @return array
      */
-    public function update($remoteProfileId, WebProfile $profile)
+    public function refund($saleId, Amount $amount = null, $invoiceNumber = '')
     {
-        $payload = $profile->toArray();
-        $this->client->sendRequest(RequestType::PUT, RequestUri::PROFILE_RESOURCE . '/'. $remoteProfileId, $payload);
+        $requestData = [];
+
+        if ($amount !== null) {
+            $requestData['amount'] = $amount->toArray();
+        }
+
+        $requestData['invoice_number'] = $invoiceNumber;
+
+        return $this->clientService->sendRequest(RequestType::POST, RequestUri::SALE_RESOURCE . '/' . $saleId . '/refund', $requestData);
     }
 }

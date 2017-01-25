@@ -22,59 +22,33 @@
  * our trademarks remain entirely with us.
  */
 
-namespace SwagPaymentPayPalUnified\SDK\Structs\Payment\Transactions;
+namespace SwagPaymentPayPalUnified\SDK\Resources;
 
-class Sale
+use SwagPaymentPayPalUnified\SDK\RequestType;
+use SwagPaymentPayPalUnified\SDK\RequestUri;
+use SwagPaymentPayPalUnified\SDK\Services\ClientService;
+
+class RefundResource
 {
-    /** @var integer $id */
-    private $id;
-
-    /** @var string $state */
-    private $state;
+    /**
+     * @var ClientService $clientService
+     */
+    private $clientService;
 
     /**
-     * @return integer
+     * @param ClientService $clientService
      */
-    public function getId()
+    public function __construct(ClientService $clientService)
     {
-        return $this->id;
+        $this->clientService = $clientService;
     }
 
     /**
-     * @param integer $id
+     * @param string $refundId
+     * @return array
      */
-    public function setId($id)
+    public function get($refundId)
     {
-        $this->id = $id;
-    }
-
-    /**
-     * @return string
-     */
-    public function getState()
-    {
-        return $this->state;
-    }
-
-    /**
-     * @param string $state
-     */
-    public function setState($state)
-    {
-        $this->state = $state;
-    }
-
-    /**
-     * @param array $data
-     * @return Sale
-     */
-    public static function fromArray(array $data = [])
-    {
-        $result = new Sale();
-
-        $result->setId($data['id']);
-        $result->setState($data['state']);
-
-        return $result;
+        return $this->clientService->sendRequest(RequestType::GET, RequestUri::REFUND_RESOURCE . '/' . $refundId);
     }
 }

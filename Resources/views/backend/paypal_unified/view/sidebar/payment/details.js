@@ -8,6 +8,10 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebar.payment.Details', {
     anchor: '100%',
     bodyPadding: 5,
     margin: 5,
+    fieldDefaults: {
+        anchor: '100%',
+        readOnly: true
+    },
 
     initComponent: function () {
         var me = this;
@@ -24,40 +28,28 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebar.payment.Details', {
         return [{
             xtype: 'textfield',
             name: 'intent',
-            fieldLabel: '{s name=field/intent}Intent{/s}',
-            readOnly: true,
-            anchor: '100%'
+            fieldLabel: '{s name=field/intent}Intent{/s}'
         }, {
             xtype: 'textfield',
             name: 'id',
-            fieldLabel: '{s name=field/paymentId}Payment ID{/s}',
-            readOnly: true,
-            anchor: '100%'
+            fieldLabel: '{s name=field/paymentId}Payment ID{/s}'
         }, {
             xtype: 'textfield',
             name: 'cart',
-            fieldLabel: '{s name=field/cartId}Cart ID{/s}',
-            readOnly: true,
-            anchor: '100%'
+            fieldLabel: '{s name=field/cartId}Cart ID{/s}'
         }, {
             xtype: 'textfield',
             name: 'state',
-            fieldLabel: '{s name=field/state}State{/s}',
-            readOnly: true,
-            anchor: '100%'
+            fieldLabel: '{s name=field/state}State{/s}'
         }, {
             xtype: 'textfield',
             name: 'create_time',
             itemId: 'createTime',
-            fieldLabel: '{s name=field/createTime}Create time{/s}',
-            readOnly: true,
-            anchor: '100%'
+            fieldLabel: '{s name=field/createTime}Create time{/s}'
         }, {
             xtype: 'textfield',
             itemId: 'updateTime',
-            fieldLabel: '{s name=field/updateTime}Update time{/s}',
-            readOnly: true,
-            anchor: '100%'
+            fieldLabel: '{s name=field/updateTime}Update time{/s}'
         }]
     }
 });

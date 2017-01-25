@@ -26,7 +26,7 @@ use SwagPaymentPayPalUnified\SDK\Resources\PaymentResource;
 use SwagPaymentPayPalUnified\Components\PaymentStatus;
 use Shopware\Components\HttpClient\RequestException;
 use SwagPaymentPayPalUnified\Components\Services\OrderDataService;
-use SwagPaymentPayPalUnified\SDK\Structs\Payment\Transactions\Sale;
+use SwagPaymentPayPalUnified\SDK\Structs\Payment\Sale;
 use SwagPaymentPayPalUnified\SDK\Components\Patches\PaymentOrderNumberPatch;
 use SwagPaymentPayPalUnified\SDK\Structs\Payment;
 
@@ -127,6 +127,6 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
      */
     private function getResponseSale(Payment $response)
     {
-        return $response->getTransactions()->getRelatedResources()->getSale();
+        return $response->getTransactions()->getRelatedResources()->getSales()[0];
     }
 }

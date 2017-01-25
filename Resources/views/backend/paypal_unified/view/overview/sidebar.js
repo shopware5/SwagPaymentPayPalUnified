@@ -20,6 +20,11 @@ Ext.define('Shopware.apps.PaypalUnified.view.overview.Sidebar', {
      */
     paymentTab: null,
 
+    /**
+     * @type { Shopware.apps.PaypalUnified.view.sidebar.Refund }
+     */
+    refundTab: null,
+
     initComponent: function () {
         var me = this;
 
@@ -36,9 +41,11 @@ Ext.define('Shopware.apps.PaypalUnified.view.overview.Sidebar', {
 
         me.orderTab = Ext.create('Shopware.apps.PaypalUnified.view.sidebar.Order');
         me.paymentTab = Ext.create('Shopware.apps.PaypalUnified.view.sidebar.Payment');
+        me.refundTab = Ext.create('Shopware.apps.PaypalUnified.view.sidebar.Refund');
 
         items.push(me.orderTab);
         items.push(me.paymentTab);
+        items.push(me.refundTab);
 
         return items;
     }

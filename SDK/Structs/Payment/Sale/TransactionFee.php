@@ -22,49 +22,57 @@
  * our trademarks remain entirely with us.
  */
 
-namespace SwagPaymentPayPalUnified\SDK\Structs\Payment\Transactions;
+namespace SwagPaymentPayPalUnified\SDK\Structs\Payment\Sale;
 
-use SwagPaymentPayPalUnified\SDK\Structs\Payment\Sale;
-
-class RelatedResources
+class TransactionFee
 {
-    /** @var Sale[] $sales */
-    private $sales;
+    /** @var float $value */
+    private $value;
+
+    /** @var string $currency */
+    private $currency;
 
     /**
-     * @return Sale[]
+     * @return float
      */
-    public function getSales()
+    public function getValue()
     {
-        return $this->sales;
+        return $this->value;
     }
 
     /**
-     * @param Sale[] $sales
+     * @param float $value
      */
-    public function setSales($sales)
+    public function setValue($value)
     {
-        $this->sales = $sales;
+        $this->value = $value;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCurrency()
+    {
+        return $this->currency;
+    }
+
+    /**
+     * @param string $currency
+     */
+    public function setCurrency($currency)
+    {
+        $this->currency = $currency;
     }
 
     /**
      * @param array $data
-     * @return RelatedResources
+     * @return TransactionFee
      */
     public static function fromArray(array $data)
     {
-        $result = new RelatedResources();
-
-        /** @var Sale[] $sales */
-        $sales = [];
-
-        foreach ($data as $resource) {
-            foreach ($resource as $key => $sale) {
-                $sales[] = Sale::fromArray($sale, $key);
-            }
-        }
-
-        $result->setSales($sales);
+        $result = new TransactionFee();
+        $result->setCurrency($data['currency']);
+        $result->setValue((float) $data['value']);
 
         return $result;
     }

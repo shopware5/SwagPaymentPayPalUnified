@@ -25,7 +25,11 @@
 use Shopware\Components\Model\QueryBuilder;
 use Shopware\Models\Order\Order;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
+use SwagPaymentPayPalUnified\Components\Services\SalesHistoryBuilderService;
 use SwagPaymentPayPalUnified\SDK\Resources\PaymentResource;
+use SwagPaymentPayPalUnified\SDK\Resources\RefundResource;
+use SwagPaymentPayPalUnified\SDK\Resources\SaleResource;
+use SwagPaymentPayPalUnified\SDK\Structs\Payment\Transactions\Amount;
 
 class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Backend_Application
 {
@@ -45,12 +49,64 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
         'paymentStatus.description'
     ];
 
+    /**
+     * Handles the payment detail action.
+     * It first requests the payment details from the PayPal API and assigns the whole object
+     * to the response. Afterwards, it uses the paypal_unified.sales_history_builder_service service to
+     * parse the sales history. The sales history is also being assigned to the response.
+     */
     public function paymentDetailsAction()
     {
         $paymentId = $this->Request()->get('paymentId');
-        $paymentResource = $this->container->get('paypal_unified.payment_resource');
 
-        $this->View()->assign('payment', $paymentResource->get($paymentId));
+        /** @var PaymentResource $paymentResource */
+        $paymentResource = $this->container->get('paypal_unified.payment_resource');
+        $paymentDetails = $paymentResource->get($paymentId);
+
+        /** @var SalesHistoryBuilderService $salesBuilder */
+        $salesBuilder = $this->container->get('paypal_unified.sales_history_builder_service');
+
+        $this->View()->assign('payment', $paymentDetails);
+        $this->View()->assign('sales', $salesBuilder->getSalesHistory($paymentDetails));
+    }
+
+    public function saleDetailsAction()
+    {
+        $saleId = $this->Request()->get('saleId');
+
+        /** @var SaleResource $saleResource */
+        $saleResource = $this->container->get('paypal_unified.sale_resource');
+        $this->View()->assign('sale', $saleResource->get($saleId));
+    }
+
+    public function refundDetailsAction()
+    {
+        $saleId = $this->Request()->get('refundId');
+
+        /** @var RefundResource $refundResource */
+        $refundResource = $this->container->get('paypal_unified.refund_resource');
+        $this->View()->assign('refund', $refundResource->get($saleId));
+    }
+
+    public function refundSaleAction()
+    {
+        $saleId = $this->Request()->get('saleId');
+        $totalAmount = $this->Request()->get('amount');
+        $invoiceNumber = $this->Request()->get('invoiceNumber');
+        $refundCompletely = $this->Request()->get('refundCompletely');
+
+        /** @var SaleResource $saleResource */
+        $saleResource = $this->container->get('paypal_unified.sale_resource');
+
+        if (!$refundCompletely) {
+            $amountStruct = new Amount();
+            $amountStruct->setTotal($totalAmount);
+            $amountStruct->setCurrency('EUR');
+
+            $this->View()->assign('refund', $saleResource->refund($saleId, $amountStruct, $invoiceNumber));
+        } else {
+            $this->View()->assign('refund', $saleResource->refund($saleId, null, $invoiceNumber));
+        }
     }
 
     /**

@@ -8,6 +8,10 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebar.order.Details', {
     anchor: '100%',
     bodyPadding: 5,
     margin: 5,
+    fieldDefaults: {
+        anchor: '100%',
+        readOnly: true
+    },
 
     initComponent: function () {
         var me = this;
@@ -24,33 +28,24 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebar.order.Details', {
         return [{
             xtype: 'textfield',
             name: 'number',
-            fieldLabel: '{s name=field/number}Order number{/s}',
-            readOnly: true,
-            anchor: '100%'
+            fieldLabel: '{s name=field/number}Order number{/s}'
         }, {
             xtype: 'textfield',
             name: 'transactionId',
-            fieldLabel: '{s name=field/transactionId}Transaction ID{/s}',
-            readOnly: true,
-            anchor: '100%'
+            fieldLabel: '{s name=field/transactionId}Transaction ID{/s}'
         }, {
             xtype: 'textfield',
             name: 'currency',
-            fieldLabel: '{s name=field/currency}Currency{/s}',
-            readOnly: true,
-            anchor: '100%'
+            fieldLabel: '{s name=field/currency}Currency{/s}'
         }, {
             xtype: 'textfield',
             name: 'invoiceAmount',
             itemId: 'invoiceAmount',
-            fieldLabel: '{s name=field/invoiceAmount}Invoice amount{/s}',
-            readOnly: true,
-            anchor: '100%'
+            fieldLabel: '{s name=field/invoiceAmount}Invoice amount{/s}'
         }, {
             xtype: 'base-element-datetime',
             name: 'orderTime',
             fieldLabel: '{s name=field/orderTime}Order time{/s}',
-            anchor: '100%',
             dateCfg: {
                 readOnly: true
             },
@@ -61,16 +56,12 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebar.order.Details', {
             xtype: 'textfield',
             name: 'orderStatus',
             itemId: 'orderStatus',
-            fieldLabel: '{s name=field/orderStatus}Order status{/s}',
-            readOnly: true,
-            anchor: '100%'
+            fieldLabel: '{s name=field/orderStatus}Order status{/s}'
         }, {
             xtype: 'textfield',
             name: 'paymentStatus',
             itemId: 'paymentStatus',
-            fieldLabel: '{s name=field/paymentStatus}Payment status{/s}',
-            readOnly: true,
-            anchor: '100%'
+            fieldLabel: '{s name=field/paymentStatus}Payment status{/s}'
         }]
     }
 });

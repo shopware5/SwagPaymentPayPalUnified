@@ -8,6 +8,10 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebar.payment.Invoice', {
     anchor: '100%',
     bodyPadding: 5,
     margin: 5,
+    fieldDefaults: {
+        anchor: '100%',
+        readOnly: true
+    },
 
     initComponent: function () {
         var me = this;
@@ -25,23 +29,17 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebar.payment.Invoice', {
             xtype: 'textfield',
             name: 'total',
             itemId: 'total',
-            fieldLabel: '{s name=field/total}Total amount{/s}',
-            readOnly: true,
-            anchor: '100%'
+            fieldLabel: '{s name=field/total}Total amount{/s}'
         }, {
             xtype: 'textfield',
             name: 'subtotal',
             itemId: 'subtotal',
-            fieldLabel: '{s name=field/subtotal}Subtotal{/s}',
-            readOnly: true,
-            anchor: '100%'
+            fieldLabel: '{s name=field/subtotal}Subtotal{/s}'
         }, {
             xtype: 'textfield',
             name: 'shipping',
             itemId: 'shipping',
-            fieldLabel: '{s name=field/shipping}Shipping{/s}',
-            readOnly: true,
-            anchor: '100%'
+            fieldLabel: '{s name=field/shipping}Shipping{/s}'
         }];
     }
 });

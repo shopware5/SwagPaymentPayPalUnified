@@ -1,5 +1,5 @@
-//{block name="backend/paypal_unified/model/payment_invoice"}
-Ext.define('Shopware.apps.PaypalUnified.model.PaymentInvoice', {
+//{block name="backend/paypal_unified/model/payment_amount"}
+Ext.define('Shopware.apps.PaypalUnified.model.PaymentAmount', {
 
     /**
      * Extends the standard Ext Model
@@ -12,7 +12,7 @@ Ext.define('Shopware.apps.PaypalUnified.model.PaymentInvoice', {
      * @type { Array }
      */
     fields: [
-        //{block name="backend/paypal_unified/model/payment_invoice/fields"}{/block}
+        //{block name="backend/paypal_unified/model/payment_amount/fields"}{/block}
         { name: 'total', type: 'float' },
         { name: 'currency', type: 'string' }
     ]

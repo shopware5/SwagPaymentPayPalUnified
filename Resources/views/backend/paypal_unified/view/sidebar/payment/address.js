@@ -8,6 +8,10 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebar.payment.Address', {
     anchor: '100%',
     bodyPadding: 5,
     margin: 5,
+    fieldDefaults: {
+        anchor: '100%',
+        readOnly: true
+    },
 
     initComponent: function () {
         var me = this;
@@ -24,39 +28,27 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebar.payment.Address', {
         return [{
             xtype: 'textfield',
             name: 'recipient_name',
-            fieldLabel: '{s name="field/recipient"}Recipient{/s}',
-            readOnly: true,
-            anchor: '100%'
+            fieldLabel: '{s name="field/recipient"}Recipient{/s}'
         }, {
             xtype: 'textfield',
             name: 'line1',
-            fieldLabel: '{s name="field/street"}Street{/s}',
-            readOnly: true,
-            anchor: '100%'
+            fieldLabel: '{s name="field/street"}Street{/s}'
         }, {
             xtype: 'textfield',
             name: 'city',
-            fieldLabel: '{s name="field/city"}City{/s}',
-            readOnly: true,
-            anchor: '100%'
+            fieldLabel: '{s name="field/city"}City{/s}'
         }, {
             xtype: 'textfield',
             name: 'state',
-            fieldLabel: '{s name="field/state"}State{/s}',
-            readOnly: true,
-            anchor: '100%'
+            fieldLabel: '{s name="field/state"}State{/s}'
         }, {
             xtype: 'textfield',
             name: 'postal_code',
-            fieldLabel: '{s name="field/postalCode"}Postal code{/s}',
-            readOnly: true,
-            anchor: '100%'
+            fieldLabel: '{s name="field/postalCode"}Postal code{/s}'
         }, {
             xtype: 'textfield',
             name: 'country_code',
-            fieldLabel: '{s name="field/country"}Country{/s}',
-            readOnly: true,
-            anchor: '100%'
+            fieldLabel: '{s name="field/country"}Country{/s}'
         }];
     }
 });
