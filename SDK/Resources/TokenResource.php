@@ -25,14 +25,12 @@
 namespace SwagPaymentPayPalUnified\SDK\Resources;
 
 use SwagPaymentPayPalUnified\SDK\RequestType;
+use SwagPaymentPayPalUnified\SDK\RequestUri;
 use SwagPaymentPayPalUnified\SDK\Services\ClientService;
 use SwagPaymentPayPalUnified\SDK\Structs\OAuthCredentials;
-use SwagPaymentPayPalUnified\SDK\Structs\Token;
 
 class TokenResource
 {
-    const TOKEN_RESOURCE = 'oauth2/token';
-
     /** @var ClientService $client */
     private $client;
 
@@ -46,9 +44,9 @@ class TokenResource
 
     /**
      * @param OAuthCredentials $credentials
-     * @return Token
+     * @return array
      */
-    public function requestToken(OAuthCredentials $credentials)
+    public function get(OAuthCredentials $credentials)
     {
         $data = [
             'grant_type' => 'client_credentials'
@@ -57,8 +55,8 @@ class TokenResource
         //Set the header temporarily for this request
         $this->client->setHeader('Authorization', $credentials->toString());
 
-        $response = $this->client->sendRequest(RequestType::POST, self::TOKEN_RESOURCE, $data, false);
+        $response = $this->client->sendRequest(RequestType::POST, RequestUri::TOKEN_RESOURCE, $data, false);
 
-        return Token::fromArray($response);
+        return $response;
     }
 }

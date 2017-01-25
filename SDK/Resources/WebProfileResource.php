@@ -25,12 +25,12 @@
 namespace SwagPaymentPayPalUnified\SDK\Resources;
 
 use SwagPaymentPayPalUnified\SDK\RequestType;
+use SwagPaymentPayPalUnified\SDK\RequestUri;
 use SwagPaymentPayPalUnified\SDK\Services\ClientService;
 use SwagPaymentPayPalUnified\SDK\Structs\WebProfile;
 
 class WebProfileResource
 {
-    const PROFILE_RESOURCE = 'payment-experience/web-profiles';
 
     /** @var ClientService $client */
     private $client;
@@ -50,34 +50,18 @@ class WebProfileResource
     public function create(WebProfile $profile)
     {
         $payload = $profile->toArray();
-        $data = $this->client->sendRequest(RequestType::POST, self::PROFILE_RESOURCE, $payload);
+        $data = $this->client->sendRequest(RequestType::POST, RequestUri::PROFILE_RESOURCE, $payload);
 
         return WebProfile::fromArray($data);
     }
 
     /**
-     * @param string $id
-     * @return WebProfile
-     */
-    public function get($id)
-    {
-        $data = $this->client->sendRequest(RequestType::GET, self::PROFILE_RESOURCE . '/' . $id);
-        return WebProfile::fromArray($data);
-    }
-
-    /**
-     * @return WebProfile[]
+     * @return array
      */
     public function getList()
     {
-        $data = $this->client->sendRequest(RequestType::GET, self::PROFILE_RESOURCE . '/');
+        return $this->client->sendRequest(RequestType::GET, RequestUri::PROFILE_RESOURCE . '/');
 
-        $result = [];
-        foreach ($data as $profile) {
-            $result[] = WebProfile::fromArray($profile);
-        }
-
-        return $result;
     }
 
     /**
@@ -87,6 +71,6 @@ class WebProfileResource
     public function update($remoteProfileId, WebProfile $profile)
     {
         $payload = $profile->toArray();
-        $this->client->sendRequest(RequestType::PUT, self::PROFILE_RESOURCE . '/'. $remoteProfileId, $payload);
+        $this->client->sendRequest(RequestType::PUT, RequestUri::PROFILE_RESOURCE . '/'. $remoteProfileId, $payload);
     }
 }

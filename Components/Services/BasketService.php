@@ -29,7 +29,7 @@ use SwagPaymentPayPalUnified\SDK\Structs\Payment\RedirectUrls;
 use SwagPaymentPayPalUnified\SDK\Structs\Payment;
 use SwagPaymentPayPalUnified\SDK\Structs\Payment\Transactions;
 use SwagPaymentPayPalUnified\SDK\Structs\Payment\Transactions\Amount;
-use SwagPaymentPayPalUnified\SDK\Structs\Payment\Transactions\AmountDetails;
+use SwagPaymentPayPalUnified\SDK\Structs\Payment\Transactions\Amount\AmountDetails;
 use SwagPaymentPayPalUnified\SDK\Structs\Payment\Transactions\ItemList;
 use SwagPaymentPayPalUnified\SDK\Structs\Payment\Transactions\ItemList\Item;
 use SwagPaymentPayPalUnified\SDK\Structs\WebProfile;
@@ -69,7 +69,7 @@ class BasketService implements BasketServiceInterface
         $requestParameters->setProfile($profile->getId());
 
         $payer = new Payer();
-        $payer->setMethod('paypal');
+        $payer->setPaymentMethod('paypal');
 
         $redirectUrls = new RedirectUrls();
         $redirectUrls->setCancelUrl($this->getRedirectUrl('cancel'));

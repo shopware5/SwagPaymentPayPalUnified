@@ -1,150 +1,159 @@
- <?php
+<?php
 /**
-  * Shopware 5
-  * Copyright (c) shopware AG
-  *
-  * According to our dual licensing model, this program can be used either
-  * under the terms of the GNU Affero General Public License, version 3,
-  * or under a proprietary license.
-  *
-  * The texts of the GNU Affero General Public License with an additional
-  * permission and of our proprietary license can be found at and
-  * in the LICENSE file you have received along with this program.
-  *
-  * This program is distributed in the hope that it will be useful,
-  * but WITHOUT ANY WARRANTY; without even the implied warranty of
-  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  * GNU Affero General Public License for more details.
-  *
-  * "Shopware" is a registered trademark of shopware AG.
-  * The licensing of the program under the AGPLv3 does not imply a
-  * trademark license. Therefore any rights, title and interest in
-  * our trademarks remain entirely with us.
-  */
+ * Shopware 5
+ * Copyright (c) shopware AG
+ *
+ * According to our dual licensing model, this program can be used either
+ * under the terms of the GNU Affero General Public License, version 3,
+ * or under a proprietary license.
+ *
+ * The texts of the GNU Affero General Public License with an additional
+ * permission and of our proprietary license can be found at and
+ * in the LICENSE file you have received along with this program.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ *
+ * "Shopware" is a registered trademark of shopware AG.
+ * The licensing of the program under the AGPLv3 does not imply a
+ * trademark license. Therefore any rights, title and interest in
+ * our trademarks remain entirely with us.
+ */
 
- use Shopware\Components\Model\QueryBuilder;
- use Shopware\Models\Order\Order;
- use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
+use Shopware\Components\Model\QueryBuilder;
+use Shopware\Models\Order\Order;
+use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
+use SwagPaymentPayPalUnified\SDK\Resources\PaymentResource;
 
- class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Backend_Application
- {
-     /** @var string $model */
-     protected $model = Order::class;
+class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Backend_Application
+{
+    /** @var string $model */
+    protected $model = Order::class;
 
-     /** @var string $alias */
-     protected $alias = 'sOrder';
+    /** @var string $alias */
+    protected $alias = 'sOrder';
 
-     /** @var array $filterFields */
-     protected $filterFields = [
-         'number',
-         'orderTime',
-         'invoiceAmount',
-         'customer.email',
-         'orderStatus.description',
-         'paymentStatus.description'
-     ];
+    /** @var array $filterFields */
+    protected $filterFields = [
+        'number',
+        'orderTime',
+        'invoiceAmount',
+        'customer.email',
+        'orderStatus.description',
+        'paymentStatus.description'
+    ];
 
-     /**
-      * {@inheritdoc}
-      */
-     public function getDetailQuery($id)
-     {
-         return $this->prepareOrderQueryBuilder(parent::getDetailQuery($id));
-     }
+    public function paymentDetailsAction()
+    {
+        $paymentId = $this->Request()->get('paymentId');
+        $paymentResource = $this->container->get('paypal_unified.payment_resource');
 
-     /**
-      * {@inheritdoc}
-      */
-     protected function getListQuery()
-     {
-         return $this->prepareOrderQueryBuilder(parent::getListQuery());
-     }
+        $this->View()->assign('payment', $paymentResource->get($paymentId));
+    }
 
-     /**
-      * {@inheritdoc}
-      */
-     protected function getList($offset, $limit, $sort = [], $filter = [], array $wholeParams = [])
-     {
-         //Sets the initial sort to orderTime descending
-         if (!$sort) {
-             $defaultSort = [
-                 'property' => 'orderTime',
-                 'direction' => 'DESC'
-             ];
-             $sort[] = $defaultSort;
-         }
+    /**
+     * {@inheritdoc}
+     */
+    public function getDetailQuery($id)
+    {
+        return $this->prepareOrderQueryBuilder(parent::getDetailQuery($id));
+    }
 
-         return parent::getList($offset, $limit, $sort, $filter, $wholeParams);
-     }
+    /**
+     * {@inheritdoc}
+     */
+    protected function getListQuery()
+    {
+        return $this->prepareOrderQueryBuilder(parent::getListQuery());
+    }
 
-     /**
-      * {@inheritdoc}
-      */
-     protected function getFilterConditions($filters, $model, $alias, $whiteList = array())
-     {
-         $conditions = parent::getFilterConditions(
-             $filters,
-             $model,
-             $alias,
-             $whiteList
-         );
+    /**
+     * {@inheritdoc}
+     */
+    protected function getList($offset, $limit, $sort = [], $filter = [], array $wholeParams = [])
+    {
+        //Sets the initial sort to orderTime descending
+        if (!$sort) {
+            $defaultSort = [
+                'property' => 'orderTime',
+                'direction' => 'DESC'
+            ];
+            $sort[] = $defaultSort;
+        }
 
-         //Ignore canceled or incomplete orders
-         $conditions[] = [
-             'property' => 'sOrder.number',
-             'expression' => '!=',
-             'value' => 0
-         ];
+        return parent::getList($offset, $limit, $sort, $filter, $wholeParams);
+    }
 
-         return $conditions;
-     }
+    /**
+     * {@inheritdoc}
+     */
+    protected function getFilterConditions($filters, $model, $alias, $whiteList = [])
+    {
+        $conditions = parent::getFilterConditions(
+            $filters,
+            $model,
+            $alias,
+            $whiteList
+        );
 
-     /**
-      * @param QueryBuilder $builder
-      * @return QueryBuilder
-      */
-     private function prepareOrderQueryBuilder(QueryBuilder $builder)
-     {
-         $paymentMethodProvider = new PaymentMethodProvider($this->container->get('models'));
+        //Ignore canceled or incomplete orders
+        $conditions[] = [
+            'property' => 'sOrder.number',
+            'expression' => '!=',
+            'value' => 0
+        ];
 
-         $builder->innerJoin(
-             'sOrder.payment',
-             'payment',
-             \Doctrine\ORM\Query\Expr\Join::WITH,
-             "payment.id = " . $paymentMethodProvider->getPaymentMethodModel()->getId()
-         )
-         ->leftJoin('sOrder.shop', 'shop')
-         ->leftJoin('sOrder.customer', 'customer')
-         ->leftJoin('sOrder.orderStatus', 'orderStatus')
-         ->leftJoin('sOrder.paymentStatus', 'paymentStatus')
+        return $conditions;
+    }
 
-         ->addSelect('shop')
-         ->addSelect('payment')
-         ->addSelect('customer')
-         ->addSelect('orderStatus')
-         ->addSelect('paymentStatus');
+    /**
+     * {@inheritdoc}
+     */
+    protected function getModelFields($model, $alias = null)
+    {
+        $fields = parent::getModelFields($model, $alias);
 
-         return $builder;
-     }
+        if ($model === $this->model) {
+            $fields = array_merge(
+                $fields,
+                [
+                    'customer.email' => [ 'alias' => 'customer.email', 'type' => 'string' ],
+                    'orderStatus.description' => ['alias' => 'orderStatus.description', 'type' => 'string'],
+                    'paymentStatus.description' => ['alias' => 'paymentStatus.description', 'type' => 'string']
+                ]
+            );
+        }
 
-     /**
-      * {@inheritdoc}
-      */
-     protected function getModelFields($model, $alias = null)
-     {
-         $fields = parent::getModelFields($model, $alias);
+        return $fields;
+    }
 
-         if ($model === $this->model) {
-             $fields = array_merge(
-                 $fields,
-                 [
-                     'customer.email' => [ 'alias' => 'customer.email', 'type' => 'string' ],
-                     'orderStatus.description' => ['alias' => 'orderStatus.description', 'type' => 'string'],
-                     'paymentStatus.description' => ['alias' => 'paymentStatus.description', 'type' => 'string']
-                 ]
-             );
-         }
+    /**
+     * @param QueryBuilder $builder
+     * @return QueryBuilder
+     */
+    private function prepareOrderQueryBuilder(QueryBuilder $builder)
+    {
+        $paymentMethodProvider = new PaymentMethodProvider($this->container->get('models'));
 
-         return $fields;
-     }
- }
+        $builder->innerJoin(
+            'sOrder.payment',
+            'payment',
+            \Doctrine\ORM\Query\Expr\Join::WITH,
+            'payment.id = ' . $paymentMethodProvider->getPaymentMethodModel()->getId()
+        )
+            ->leftJoin('sOrder.shop', 'shop')
+            ->leftJoin('sOrder.customer', 'customer')
+            ->leftJoin('sOrder.orderStatus', 'orderStatus')
+            ->leftJoin('sOrder.paymentStatus', 'paymentStatus')
+
+            ->addSelect('shop')
+            ->addSelect('payment')
+            ->addSelect('customer')
+            ->addSelect('orderStatus')
+            ->addSelect('paymentStatus');
+
+        return $builder;
+    }
+}

@@ -22,7 +22,7 @@ Ext.define('Shopware.apps.PaypalUnified.view.overview.Window', {
 
         return {
             listingGrid: 'Shopware.apps.PaypalUnified.view.overview.Grid',
-            listingStore: 'Shopware.apps.PaypalUnified.store.UnifiedOrder'
+            listingStore: 'Shopware.apps.PaypalUnified.store.Order'
         };
     },
 

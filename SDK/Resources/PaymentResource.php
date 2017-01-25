@@ -30,16 +30,10 @@ use SwagPaymentPayPalUnified\SDK\RequestUri;
 use SwagPaymentPayPalUnified\SDK\Components\Patches\PatchInterface;
 use SwagPaymentPayPalUnified\SDK\Services\ClientService;
 use SwagPaymentPayPalUnified\SDK\Services\WebProfileService;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use SwagPaymentPayPalUnified\Components\Services\BasketService;
 
 class PaymentResource
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
-
     /**
      * @var BasketService $basketService
      */
@@ -57,15 +51,17 @@ class PaymentResource
 
     /**
      * PaymentResource constructor.
-     * @param ContainerInterface $container
+     *
+     * @param ClientService $clientService
+     * @param WebProfileService $webProfileService
      * @param BasketServiceInterface $basketService
+     * @internal param ContainerInterface $container
      */
-    public function __construct(ContainerInterface $container, BasketServiceInterface $basketService)
+    public function __construct(ClientService $clientService, WebProfileService $webProfileService, BasketServiceInterface $basketService)
     {
-        $this->container = $container;
         $this->basketService = $basketService;
-        $this->profileService = $this->container->get('paypal_unified.web_profile_service');
-        $this->clientService = $this->container->get('paypal_unified.client_service');
+        $this->profileService = $webProfileService;
+        $this->clientService = $clientService;
     }
 
     /**
@@ -84,7 +80,7 @@ class PaymentResource
             $userData
         );
 
-        return $this->clientService->sendRequest(RequestType::POST, RequestUri::PAYMENT_URI, $params, true);
+        return $this->clientService->sendRequest(RequestType::POST, RequestUri::PAYMENT_RESOURCE, $params, true);
     }
 
     /**
@@ -98,10 +94,19 @@ class PaymentResource
 
         return $this->clientService->sendRequest(
             RequestType::POST,
-            RequestUri::PAYMENT_URI . '/' . $paymentId . '/execute',
+            RequestUri::PAYMENT_RESOURCE . '/' . $paymentId . '/execute',
             $requestData,
             true
         );
+    }
+
+    /**
+     * @param string $paymentId
+     * @return array
+     */
+    public function get($paymentId)
+    {
+        return $this->clientService->sendRequest(RequestType::GET, RequestUri::PAYMENT_RESOURCE . '/' . $paymentId);
     }
 
     /**
@@ -123,7 +128,7 @@ class PaymentResource
 
         $this->clientService->sendRequest(
             RequestType::PATCH,
-            RequestUri::PAYMENT_URI . '/' . $paymentId,
+            RequestUri::PAYMENT_RESOURCE . '/' . $paymentId,
             $requestData,
             true
         );

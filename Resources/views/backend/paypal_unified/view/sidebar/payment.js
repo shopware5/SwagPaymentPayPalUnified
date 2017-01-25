@@ -21,6 +21,16 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebar.Payment', {
      */
     addressContainer: null,
 
+    /**
+     * @type { Shopware.apps.PaypalUnified.view.sidebar.payment.Cart }
+     */
+    cartGrid: null,
+
+    /**
+     * @type { Shopware.apps.PaypalUnified.view.sidebar.payment.Invoice }
+     */
+    invoiceContainer: null,
+
     initComponent: function () {
         var me = this;
 
@@ -39,7 +49,11 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebar.Payment', {
         me.detailsContainer = Ext.create('Shopware.apps.PaypalUnified.view.sidebar.payment.Details');
         me.customerContainer = Ext.create('Shopware.apps.PaypalUnified.view.sidebar.payment.Customer');
         me.addressContainer = Ext.create('Shopware.apps.PaypalUnified.view.sidebar.payment.Address');
+        me.cartGrid = Ext.create('Shopware.apps.PaypalUnified.view.sidebar.payment.Cart');
+        me.invoiceContainer = Ext.create('Shopware.apps.PaypalUnified.view.sidebar.payment.Invoice');
 
+        items.push(me.cartGrid);
+        items.push(me.invoiceContainer);
         items.push(me.detailsContainer);
         items.push(me.customerContainer);
         items.push(me.addressContainer);

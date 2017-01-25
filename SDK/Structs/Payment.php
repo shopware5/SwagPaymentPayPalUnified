@@ -49,6 +49,21 @@ class Payment
     /** @var Links $links */
     private $links;
 
+    /** @var string $state */
+    private $state;
+
+    /** @var string $id */
+    private $id;
+
+    /** @var string $cart */
+    private $cart;
+
+    /** @var string $createTime */
+    private $createTime;
+
+    /** @var string $updateTime */
+    private $updateTime;
+
     /**
      * @return string
      */
@@ -146,6 +161,102 @@ class Payment
     }
 
     /**
+     * @return string
+     */
+    public function getExperienceProfileId()
+    {
+        return $this->experienceProfileId;
+    }
+
+    /**
+     * @param string $experienceProfileId
+     */
+    public function setExperienceProfileId($experienceProfileId)
+    {
+        $this->experienceProfileId = $experienceProfileId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getState()
+    {
+        return $this->state;
+    }
+
+    /**
+     * @param string $state
+     */
+    public function setState($state)
+    {
+        $this->state = $state;
+    }
+
+    /**
+     * @return string
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param string $id
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCart()
+    {
+        return $this->cart;
+    }
+
+    /**
+     * @param string $cart
+     */
+    public function setCart($cart)
+    {
+        $this->cart = $cart;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCreateTime()
+    {
+        return $this->createTime;
+    }
+
+    /**
+     * @param string $createTime
+     */
+    public function setCreateTime($createTime)
+    {
+        $this->createTime = $createTime;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUpdateTime()
+    {
+        return $this->updateTime;
+    }
+
+    /**
+     * @param string $updateTime
+     */
+    public function setUpdateTime($updateTime)
+    {
+        $this->updateTime = $updateTime;
+    }
+
+    /**
      * @param array $data
      * @return Payment
      */
@@ -155,6 +266,12 @@ class Payment
 
         $result->setIntent($data['intent']);
         $result->setProfile($data['experience_profile_id']);
+        $result->setCart($data['cart']);
+        $result->setId($data['id']);
+        $result->setState($data['state']);
+        $result->setCreateTime($data['create_time']);
+        $result->setUpdateTime($data['update_time']);
+
         if (array_key_exists('amount', $data['transactions'][0])) {
             $result->setTransactions(Transactions::fromArray($data['transactions'][0]));
         } else {
@@ -163,6 +280,7 @@ class Payment
 
         $result->setPayer(Payer::fromArray($data['payer']));
         $result->setLinks(Links::fromArray($data['links']));
+        $result->setRedirectUrls(RedirectUrls::fromArray($data['redirect_urls']));
 
         return $result;
     }
@@ -179,7 +297,12 @@ class Payment
             'transactions' => [
                 $this->getTransactions()->toArray()
             ],
-            'redirect_urls' => $this->getRedirectUrls()->toArray()
+            'redirect_urls' => $this->getRedirectUrls()->toArray(),
+            'create_time' => $this->getCreateTime(),
+            'update_time' => $this->getUpdateTime(),
+            'id' => $this->getId(),
+            'cart' => $this->getCart(),
+            'state' => $this->getState()
         ];
     }
 }

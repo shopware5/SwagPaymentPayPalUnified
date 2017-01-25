@@ -25,12 +25,11 @@
 namespace SwagPaymentPayPalUnified\SDK\Resources;
 
 use SwagPaymentPayPalUnified\SDK\RequestType;
+use SwagPaymentPayPalUnified\SDK\RequestUri;
 use SwagPaymentPayPalUnified\SDK\Services\ClientService;
 
 class WebhookResource
 {
-    const WEBHOOK_RESOURCE = 'notifications/webhooks';
-
     /** @var ClientService $client */
     private $client;
 
@@ -47,7 +46,7 @@ class WebhookResource
      */
     public function getList()
     {
-        return $this->client->sendRequest(RequestType::GET, self::WEBHOOK_RESOURCE);
+        return $this->client->sendRequest(RequestType::GET, RequestUri::WEBHOOK_RESOURCE);
     }
 
     /**
@@ -68,6 +67,6 @@ class WebhookResource
             ];
         }
 
-        return $this->client->sendRequest(RequestType::POST, self::WEBHOOK_RESOURCE, $data);
+        return $this->client->sendRequest(RequestType::POST, RequestUri::WEBHOOK_RESOURCE, $data);
     }
 }

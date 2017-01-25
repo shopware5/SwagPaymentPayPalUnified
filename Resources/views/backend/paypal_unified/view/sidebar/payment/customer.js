@@ -22,36 +22,42 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebar.payment.Customer', {
      */
     createItems: function () {
         return [{
-            'xtype': 'textfield',
-            'name': 'status',
-            'fieldLabel': '{s name="field/status"}Status{/s}',
-            'readOnly': true,
-            'anchor': '100%'
+            xtype: 'textfield',
+            name: 'payer_id',
+            fieldLabel: '{s name="field/payerId"}Payer ID{/s}',
+            readOnly: true,
+            anchor: '100%'
         }, {
-            'xtype': 'textfield',
-            'name': 'firstname',
-            'fieldLabel': '{s name="field/firstName"}First name{/s}',
-            'readOnly': true,
-            'anchor': '100%'
+            xtype: 'textfield',
+            name: 'email',
+            fieldLabel: '{s name="field/email"}E-mail{/s}',
+            readOnly: true,
+            anchor: '100%'
         }, {
-            'xtype': 'textfield',
-            'name': 'lastname',
-            'fieldLabel': '{s name="field/lastName"}Last name{/s}',
-            'readOnly': true,
-            'anchor': '100%'
+            xtype: 'textfield',
+            name: 'first_name',
+            fieldLabel: '{s name="field/firstName"}First name{/s}',
+            readOnly: true,
+            anchor: '100%'
         }, {
-            'xtype': 'textfield',
-            'name': 'email',
-            'fieldLabel': '{s name="field/email"}E-mail{/s}',
-            'readOnly': true,
-            'anchor': '100%'
+            xtype: 'textfield',
+            name: 'last_name',
+            fieldLabel: '{s name="field/lastName"}Last name{/s}',
+            readOnly: true,
+            anchor: '100%'
         }, {
-            'xtype': 'textfield',
-            'name': 'customerId',
-            'fieldLabel': '{s name="field/customerId"}Customer ID{/s}',
-            'readOnly': true,
-            'anchor': '100%'
-        }]
+            xtype: 'textfield',
+            name: 'phone',
+            fieldLabel: '{s name="field/phone"}Phone number{/s}',
+            readOnly: true,
+            anchor: '100%'
+        }, {
+            xtype: 'textfield',
+            name: 'country_code',
+            fieldLabel: '{s name="field/country"}Country code{/s}',
+            readOnly: true,
+            anchor: '100%'
+        }];
     }
 });
 //{/block}
