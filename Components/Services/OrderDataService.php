@@ -67,6 +67,11 @@ class OrderDataService
     {
         /** @var Order $orderModel */
         $orderModel = $this->modelManager->getRepository(Order::class)->findOneBy(['number' => $orderNumber]);
+
+        if (!$orderModel) {
+            return false;
+        }
+
         /** @var Status $orderStatusModel */
         $orderStatusModel = $this->modelManager->getRepository(Status::class)->find($paymentStatusId);
 
@@ -74,21 +79,30 @@ class OrderDataService
 
         $this->modelManager->persist($orderModel);
         $this->modelManager->flush($orderModel);
+
+        return true;
     }
 
     /**
      * @param int $orderNumber
      * @param string $transactionId
+     * @return bool
      */
     public function applyTransactionId($orderNumber, $transactionId)
     {
         /** @var Order $orderModel */
         $orderModel = $this->modelManager->getRepository(Order::class)->findOneBy(['number' => $orderNumber]);
 
+        if (!$orderModel) {
+            return false;
+        }
+
         $orderModel->setTransactionId($transactionId);
 
         $this->modelManager->persist($orderModel);
         $this->modelManager->flush($orderModel);
+
+        return true;
     }
 
     /**

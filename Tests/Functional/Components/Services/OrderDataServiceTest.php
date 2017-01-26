@@ -44,6 +44,13 @@ class OrderDataServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertNotNull($orderDataService);
     }
 
+    public function test_apply_order_status_without_existing_order_returns_false()
+    {
+        $orderDataService = $this->getOrderDataService();
+
+        $this->assertFalse($orderDataService->applyPaymentStatus('WRONG_ORDER_NUMBER', self::PAYMENT_STATUS_APPROVED));
+    }
+
     public function test_should_update_order_status()
     {
         $orderDataService = $this->getOrderDataService();
@@ -55,6 +62,13 @@ class OrderDataServiceTest extends \PHPUnit_Framework_TestCase
         $updatedOrder = $dbalConnection->executeQuery('SELECT * FROM s_order WHERE ordernumber="' . self::ORDER_NUMBER .'"')->fetchAll();
 
         $this->assertEquals(self::PAYMENT_STATUS_APPROVED, $updatedOrder[0]['cleared']);
+    }
+
+    public function test_apply_transaction_id_without_existing_order_returns_false()
+    {
+        $orderDataService = $this->getOrderDataService();
+
+        $this->assertFalse($orderDataService->applyPaymentStatus('WRONG_ORDER_NUMBER', self::PAYMENT_STATUS_APPROVED));
     }
 
     public function test_should_update_transaction_id()

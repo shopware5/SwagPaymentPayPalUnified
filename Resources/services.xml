@@ -16,6 +16,7 @@
 
         <service id="paypal_unified.token_service" class="SwagPaymentPayPalUnified\SDK\Services\TokenService">
             <argument type="service" id="shopware.cache_manager" />
+            <argument type="service" id="pluginlogger" />
         </service>
 
         <service id="paypal_unified.order_data_service" class="SwagPaymentPayPalUnified\Components\Services\OrderDataService">
@@ -38,6 +39,7 @@
 
         <service id="paypal_unified.webhook_guard_service" class="SwagPaymentPayPalUnified\SDK\Services\WebhookGuardService">
             <argument type="service" id="paypal_unified.client_service" />
+            <argument type="service" id="pluginlogger" />
         </service>
 
         <service id="paypal_unified.basket_service" class="SwagPaymentPayPalUnified\Components\Services\BasketService">

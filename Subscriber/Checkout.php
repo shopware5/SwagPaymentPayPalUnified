@@ -25,6 +25,8 @@
 namespace SwagPaymentPayPalUnified\Subscriber;
 
 use Enlight\Event\SubscriberInterface;
+use Shopware\Components\HttpClient\RequestException;
+use Shopware\Components\Logger;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\Services\PaymentInstructionService;
 use SwagPaymentPayPalUnified\SDK\Resources\PaymentResource;
@@ -49,6 +51,9 @@ class Checkout implements SubscriberInterface
     /** @var \Shopware_Components_Config $config */
     protected $config;
 
+    /** @var Logger $logger */
+    protected $logger;
+
     /**
      * Checkout constructor.
      * @param ContainerInterface $container
@@ -60,6 +65,7 @@ class Checkout implements SubscriberInterface
         $this->config = $config;
         $this->paymentMethodProvider = new PaymentMethodProvider($container->get('models'));
         $this->profileService = $container->get('paypal_unified.web_profile_service');
+        $this->logger = $container->get('pluginlogger');
     }
 
     /**
@@ -166,6 +172,10 @@ class Checkout implements SubscriberInterface
 
         $paymentStruct = $this->createPayment($view->getAssign('sBasket'), $view->getAssign('sUserData'));
 
+        if (!$paymentStruct) {
+            return;
+        }
+
         $view->assign('paypalUnifiedModeSandbox', $this->config->getByNamespace('SwagPaymentPayPalUnified', 'enableSandbox'));
         $view->assign('paypalUnifiedRemotePaymentId', $paymentStruct->getId());
         $view->assign('paypalUnifiedApprovalUrl', $paymentStruct->getLinks()->getApprovalUrl());
@@ -180,6 +190,10 @@ class Checkout implements SubscriberInterface
         $session->offsetSet('PayPalUnifiedCameFromPaymentSelection', true);
         $paymentStruct = $this->createPayment($view->getAssign('sBasket'), $view->getAssign('sUserData'));
 
+        if (!$paymentStruct) {
+            return;
+        }
+
         $view->assign('paypalUnifiedModeSandbox', $this->config->getByNamespace('SwagPaymentPayPalUnified', 'enableSandbox'));
         $view->assign('paypalUnifiedPaymentId', $this->paymentMethodProvider->getPaymentId($this->container->get('dbal_connection')));
         $view->assign('paypalUnifiedRemotePaymentId', $paymentStruct->getId());
@@ -193,20 +207,25 @@ class Checkout implements SubscriberInterface
     /**
      * @param array $basketData
      * @param array $userData
-     * @return Payment
+     * @return Payment|null
      */
     private function createPayment(array $basketData, array $userData)
     {
         /** @var PaymentResource $paymentResource */
         $paymentResource = $this->container->get('paypal_unified.payment_resource');
 
-        $payment = $paymentResource->create(
-            [
-                'sBasket' => $basketData,
-                'sUserData' => $userData
-            ]
-        );
+        try {
+            $payment = $paymentResource->create(
+                [
+                    'sBasket' => $basketData,
+                    'sUserData' => $userData
+                ]
+            );
 
-        return Payment::fromArray($payment);
+            return Payment::fromArray($payment);
+        } catch (RequestException $ex) {
+            $this->logger->log('PayPal Unified: Could not create payment', [$ex->getMessage(), $ex->getBody()]);
+            return null;
+        }
     }
 }
