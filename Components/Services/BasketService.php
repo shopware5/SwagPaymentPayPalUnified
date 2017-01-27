@@ -29,7 +29,7 @@ use SwagPaymentPayPalUnified\SDK\Structs\Payment\RedirectUrls;
 use SwagPaymentPayPalUnified\SDK\Structs\Payment;
 use SwagPaymentPayPalUnified\SDK\Structs\Payment\Transactions;
 use SwagPaymentPayPalUnified\SDK\Structs\Payment\Transactions\Amount;
-use SwagPaymentPayPalUnified\SDK\Structs\Payment\Transactions\Amount\AmountDetails;
+use SwagPaymentPayPalUnified\SDK\Structs\Payment\Transactions\Amount\Details;
 use SwagPaymentPayPalUnified\SDK\Structs\Payment\Transactions\ItemList;
 use SwagPaymentPayPalUnified\SDK\Structs\Payment\Transactions\ItemList\Item;
 use SwagPaymentPayPalUnified\SDK\Structs\WebProfile;
@@ -193,11 +193,11 @@ class BasketService implements BasketServiceInterface
     }
 
     /**
-     * @return AmountDetails
+     * @return Details
      */
     private function getAmountDetails()
     {
-        $amountDetails = new AmountDetails();
+        $amountDetails = new Details();
 
         if ($this->showGrossPrices() && !$this->useNetPriceCalculation()) {
             $amountDetails->setShipping($this->basketData['sShippingcostsWithTax']);

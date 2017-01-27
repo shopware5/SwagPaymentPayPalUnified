@@ -46,11 +46,21 @@
             <argument type="service" id="config" />
         </service>
 
+        <service id="paypal_unified.sales_history_builder_service" class="SwagPaymentPayPalUnified\Components\Services\SalesHistoryBuilderService"/>
+
         <!-- Resources -->
         <service id="paypal_unified.payment_resource" class="SwagPaymentPayPalUnified\SDK\Resources\PaymentResource">
             <argument type="service" id="paypal_unified.client_service" />
             <argument type="service" id="paypal_unified.web_profile_service" />
             <argument type="service" id="paypal_unified.basket_service" />
+        </service>
+
+        <service id="paypal_unified.sale_resource" class="SwagPaymentPayPalUnified\SDK\Resources\SaleResource">
+            <argument type="service" id="paypal_unified.client_service" />
+        </service>
+
+        <service id="paypal_unified.refund_resource" class="SwagPaymentPayPalUnified\SDK\Resources\RefundResource">
+            <argument type="service" id="paypal_unified.client_service" />
         </service>
 
         <!-- Subscribers -->

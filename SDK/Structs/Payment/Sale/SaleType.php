@@ -22,14 +22,10 @@
  * our trademarks remain entirely with us.
  */
 
-namespace SwagPaymentPayPalUnified\SDK;
+namespace SwagPaymentPayPalUnified\SDK\Structs\Payment\Sale;
 
-class RequestUri
+class SaleType
 {
-    const PAYMENT_RESOURCE = 'payments/payment';
-    const PROFILE_RESOURCE = 'payment-experience/web-profiles';
-    const WEBHOOK_RESOURCE = 'notifications/webhooks';
-    const TOKEN_RESOURCE = 'oauth2/token';
-    const SALE_RESOURCE = 'payments/sale';
-    const REFUND_RESOURCE = 'payments/refund';
+    const SALE = 'sale';
+    const REFUND = 'refund';
 }

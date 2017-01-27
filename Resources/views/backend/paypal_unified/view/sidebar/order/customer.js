@@ -8,6 +8,10 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebar.order.Customer', {
     anchor: '100%',
     bodyPadding: 5,
     margin: 5,
+    fieldDefaults: {
+        anchor: '100%',
+        readOnly: true
+    },
 
     initComponent: function () {
         var me = this;
@@ -25,37 +29,27 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebar.order.Customer', {
             xtype: 'textfield',
             name: 'salutation',
             itemId: 'salutation',
-            fieldLabel: '{s name="field/salutation"}Salutation{/s}',
-            readOnly: true,
-            anchor: '100%'
+            fieldLabel: '{s name="field/salutation"}Salutation{/s}'
         }, {
             xtype: 'textfield',
             name: 'firstname',
             itemId: 'firstname',
-            fieldLabel: '{s name="field/firstName"}First name{/s}',
-            readOnly: true,
-            anchor: '100%'
+            fieldLabel: '{s name="field/firstName"}First name{/s}'
         }, {
             xtype: 'textfield',
             name: 'lastname',
             itemId: 'lastname',
-            fieldLabel: '{s name="field/lastname"}Last name{/s}',
-            readOnly: true,
-            anchor: '100%'
+            fieldLabel: '{s name="field/lastname"}Last name{/s}'
         }, {
             xtype: 'textfield',
             name: 'email',
             itemId: 'email',
-            fieldLabel: '{s name="field/email"}E-mail{/s}',
-            readOnly: true,
-            anchor: '100%'
+            fieldLabel: '{s name="field/email"}E-mail{/s}'
         }, {
             xtype: 'textfield',
             name: 'groupKey',
             itemId: 'groupKey',
-            fieldLabel: '{s name="field/groupKey"}Group key{/s}',
-            readOnly: true,
-            anchor: '100%'
+            fieldLabel: '{s name="field/groupKey"}Group key{/s}'
         }];
     }
 });

@@ -24,7 +24,7 @@
 
 namespace SwagPaymentPayPalUnified\SDK\Structs\Payment\Transactions\Amount;
 
-class AmountDetails
+class Details
 {
     /**
      * @var float $shipping
@@ -91,11 +91,11 @@ class AmountDetails
 
     /**
      * @param array $data
-     * @return AmountDetails
+     * @return Details
      */
     public static function fromArray(array $data = [])
     {
-        $result = new AmountDetails();
+        $result = new Details();
 
         $result->setShipping($data['shipping']);
         $result->setTax($data['tax']);

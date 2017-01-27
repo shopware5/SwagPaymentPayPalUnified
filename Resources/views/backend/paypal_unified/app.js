@@ -32,9 +32,11 @@ Ext.define('Shopware.apps.PaypalUnified', {
         'Payment',
         'PaymentCustomer',
         'PaymentCartItem',
-        'PaymentInvoice',
-        'PaymentInvoiceDetails',
-        'PaymentCustomerShipping'
+        'PaymentAmount',
+        'PaymentAmountDetails',
+        'PaymentCustomerShipping',
+        'Sale',
+        'SaleTransactionFee'
     ],
 
     /**
@@ -49,18 +51,23 @@ Ext.define('Shopware.apps.PaypalUnified', {
      * @type { Array }
      */
     views: [
+        'refund.Window',
         'overview.Window',
         'overview.Grid',
         'overview.Sidebar',
         'sidebar.Order',
         'sidebar.Payment',
+        'sidebar.Refund',
         'sidebar.order.Details',
         'sidebar.order.Customer',
         'sidebar.payment.Details',
         'sidebar.payment.Customer',
         'sidebar.payment.Address',
         'sidebar.payment.Invoice',
-        'sidebar.payment.Cart'
+        'sidebar.payment.Cart',
+        'sidebar.refund.Sales',
+        'sidebar.refund.Details',
+        'sidebar.refund.RefundButton'
     ],
 
     /**

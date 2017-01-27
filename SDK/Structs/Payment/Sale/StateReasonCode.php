@@ -22,14 +22,21 @@
  * our trademarks remain entirely with us.
  */
 
-namespace SwagPaymentPayPalUnified\SDK;
+namespace SwagPaymentPayPalUnified\SDK\Structs\Payment\Sale;
 
-class RequestUri
+class StateReasonCode
 {
-    const PAYMENT_RESOURCE = 'payments/payment';
-    const PROFILE_RESOURCE = 'payment-experience/web-profiles';
-    const WEBHOOK_RESOURCE = 'notifications/webhooks';
-    const TOKEN_RESOURCE = 'oauth2/token';
-    const SALE_RESOURCE = 'payments/sale';
-    const REFUND_RESOURCE = 'payments/refund';
+    const CHARGEBACK = 'CHARGEBACK';
+    const GUARANTEE = 'GUARANTEE';
+    const BUYER_COMPLAINT = 'BUYER_COMPLAINT';
+    const REFUND = 'REFUND';
+    const UNCONFIRMED_SHIPPING_ADDRESS = 'UNCONFIRMED_SHIPPING_ADDRESS';
+    const ECHECK = 'ECHECK';
+    const INTERNATIONAL_WITHDRAWAL = 'INTERNATIONAL_WITHDRAWAL';
+    const RECEIVING_PREFERENCE_MANDATES_MANUAL_ACTION = 'RECEIVING_PREFERENCE_MANDATES_MANUAL_ACTION';
+    const PAYMENT_REVIEW = 'PAYMENT_REVIEW';
+    const REGULATORY_REVIEW = 'REGULATORY_REVIEW';
+    const UNILATERAL = 'UNILATERAL';
+    const VERIFICATION_REQUIRED = 'VERIFICATION_REQUIRED';
+    const TRANSACTION_APPROVED_AWAITING_FUNDING = 'TRANSACTION_APPROVED_AWAITING_FUNDING';
 }

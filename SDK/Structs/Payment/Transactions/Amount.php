@@ -24,7 +24,7 @@
 
 namespace SwagPaymentPayPalUnified\SDK\Structs\Payment\Transactions;
 
-use SwagPaymentPayPalUnified\SDK\Structs\Payment\Transactions\Amount\AmountDetails;
+use SwagPaymentPayPalUnified\SDK\Structs\Payment\Transactions\Amount\Details;
 
 class Amount
 {
@@ -39,7 +39,7 @@ class Amount
     private $total;
 
     /**
-     * @var AmountDetails $details
+     * @var Details $details
      */
     private $details;
 
@@ -76,7 +76,7 @@ class Amount
     }
 
     /**
-     * @return AmountDetails
+     * @return Details
      */
     public function getDetails()
     {
@@ -84,9 +84,9 @@ class Amount
     }
 
     /**
-     * @param AmountDetails $details
+     * @param Details $details
      */
-    public function setDetails(AmountDetails $details)
+    public function setDetails(Details $details)
     {
         $this->details = $details;
     }
@@ -101,7 +101,10 @@ class Amount
 
         $result->setCurrency($data['currency']);
         $result->setTotal($data['total']);
-        $result->setDetails(AmountDetails::fromArray($data['details']));
+
+        if ($data['details'] !== null) {
+            $result->setDetails(Details::fromArray($data['details']));
+        }
 
         return $result;
     }
@@ -111,10 +114,15 @@ class Amount
      */
     public function toArray()
     {
-        return [
+        $result = [
             'currency' => $this->getCurrency(),
             'total' => $this->getTotal(),
-            'details' => $this->getDetails()->toArray()
         ];
+
+        if ($this->getDetails() !== null) {
+            $result['details'] = $this->getDetails()->toArray();
+        }
+
+        return $result;
     }
 }
