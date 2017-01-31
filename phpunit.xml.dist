@@ -4,4 +4,19 @@
     <testsuite name="PayPal Unified Test Suite">
         <directory>Tests</directory>
     </testsuite>
+
+    <filter>
+        <whitelist>
+            <directory suffix=".php">./</directory>
+            <exclude>
+                <directory suffix=".php">./Tests</directory>
+                <directory suffix=".php">./SDK/Resources</directory>
+                <directory suffix=".php">./SDK/Components</directory>
+
+                <!-- Bootstrap -->
+                <file>SwagPaymentPayPalUnified.php</file>
+                <file>./Setup/InstallationException.php</file>
+            </exclude>
+        </whitelist>
+    </filter>
 </phpunit>
