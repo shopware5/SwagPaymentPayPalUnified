@@ -141,9 +141,12 @@ class InstallerTest extends \PHPUnit_Framework_TestCase
 
     public function test_order_attribute_available()
     {
-        $query = 'INSERT INTO s_order_attributes(orderID, paypal_payment_type) VALUES (15, 1)';
+        $query = "SELECT * 
+                    FROM information_schema.COLUMNS 
+                    WHERE TABLE_NAME = 's_order_attributes' 
+                    AND COLUMN_NAME = 'paypal_payment_type'";
 
-        $this->assertEquals(1, Shopware()->Db()->executeUpdate($query));
+        $this->assertCount(2, Shopware()->Db()->fetchCol($query));
     }
 
     public function test_instructions_table_exists()

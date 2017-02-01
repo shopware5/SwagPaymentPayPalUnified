@@ -56,6 +56,10 @@ class PaymentMethodProviderTest extends \PHPUnit_Framework_TestCase
     public function test_get_payment_id()
     {
         $provider = new PaymentMethodProvider(Shopware()->Models());
-        $this->assertEquals(7, $provider->getPaymentId(Shopware()->Container()->get('dbal_connection')));
+        $paymentIdQuery = "SELECT pm.id FROM s_core_paymentmeans pm WHERE pm.name='SwagPaymentPayPalUnified'";
+
+        $paymentId = Shopware()->Db()->fetchCol($paymentIdQuery)[0];
+
+        $this->assertEquals($paymentId, $provider->getPaymentId(Shopware()->Container()->get('dbal_connection')));
     }
 }
