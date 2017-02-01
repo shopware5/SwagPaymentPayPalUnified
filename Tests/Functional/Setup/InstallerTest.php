@@ -139,6 +139,34 @@ class InstallerTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($result);
     }
 
+    public function test_order_attribute_available()
+    {
+        $query = 'INSERT INTO s_order_attributes(orderID, paypal_payment_type) VALUES (15, 1)';
+
+        $this->assertEquals(1, Shopware()->Db()->executeUpdate($query));
+    }
+
+    public function test_instructions_table_exists()
+    {
+        $query = "SHOW TABLES LIKE 'swag_payment_paypal_unified_payment_instruction'";
+
+        $this->assertCount(1, Shopware()->Db()->fetchAll($query));
+    }
+
+    public function test_document_footer_template_exists()
+    {
+        $query = "SELECT id FROM s_core_documents_box WHERE `name` = 'PayPal_Unified_Instructions_Footer'";
+
+        $this->assertCount(1, Shopware()->Db()->fetchRow($query));
+    }
+
+    public function test_document_content_template_exists()
+    {
+        $query = "SELECT id FROM s_core_documents_box WHERE `name` = 'PayPal_Unified_Instructions_Content'";
+
+        $this->assertCount(1, Shopware()->Db()->fetchRow($query));
+    }
+
     private function getPluginModel()
     {
         /** @var ModelManager $em */

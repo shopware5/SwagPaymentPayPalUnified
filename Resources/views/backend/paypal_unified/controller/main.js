@@ -397,7 +397,6 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
         detailsContainer.down('#transactionFee').setVisible(!isRefund);
         detailsContainer.down('#paymentMode').setVisible(!isRefund);
 
-        detailsContainer.down('#paymentMode').show();
         detailsContainer.down('#totalAmount').setValue(Ext.util.Format.currency(detailsAmountModel.get('total')) + ' ' + detailsAmountModel.get('currency'));
         detailsContainer.down('#createTime').setValue(Ext.util.Format.date(detailsModel.get('create_time'), 'd.m.Y H:i:s'));
         detailsContainer.down('#updateTime').setValue(Ext.util.Format.date(detailsModel.get('update_time'), 'd.m.Y H:i:s'));
