@@ -83,6 +83,7 @@ Ext.define('Shopware.apps.PaypalUnified.view.refund.Window', {
                 xtype: 'base-element-button',
                 text: '{s name=field/button}Execute{/s}',
                 region: 'right',
+                anchor: '100%',
                 margin: 10,
                 cls: 'primary',
                 handler: Ext.bind(me.onRefundButtonClick, me)

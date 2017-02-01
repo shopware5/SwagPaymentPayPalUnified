@@ -111,26 +111,20 @@ class PaymentResource
 
     /**
      * @param $paymentId
-     * @param PatchInterface[] $patches
+     * @param PatchInterface $patch
      */
-    public function patch($paymentId, array $patches)
+    public function patch($paymentId, $patch)
     {
-        $requestData = [];
-
-        /** @var PatchInterface $patch */
-        foreach ($patches as $patch) {
-            $requestData[] = [
-                'op' => $patch->getOperation(),
-                'path' => $patch->getPath(),
-                'value' => $patch->getValue()
-            ];
-        }
+        $requestData[] = [
+            'op' => $patch->getOperation(),
+            'path' => $patch->getPath(),
+            'value' => $patch->getValue()
+        ];
 
         $this->clientService->sendRequest(
             RequestType::PATCH,
             RequestUri::PAYMENT_RESOURCE . '/' . $paymentId,
-            $requestData,
-            true
+            $requestData
         );
     }
 }

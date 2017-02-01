@@ -48,6 +48,6 @@
     });
 
     $(function() {
-        StateManager.addPlugin('*[data-paypal-unified-confirm-payment="true"]', 'PayPalUnifiedConfirmPayment');
+        StateManager.addPlugin('*[data-paypalUnifiedConfirmPayment="true"]', 'PayPalUnifiedConfirmPayment');
     });
 })(jQuery, window);

@@ -12,11 +12,15 @@
             /** @string default action of the iFrame */
             userAction: 'commit',
             /** @string default approval url */
-            'paypal-unified-approval-url': '',
+            paypalUnifiedApprovalUrl: '',
             /** @string default country iso */
-            'paypal-unified-country-iso': '',
+            paypalUnifiedCountryIso: '',
             /** @string default sandbox usage */
-            'paypal-unified-sandbox': '',
+            paypalUnifiedSandbox: '',
+            /** @string default URL for the ajax patch call */
+            paypalUnifiedAddressPatchUrl: '',
+            /** @string default paypal payment id */
+            paypalUnifiedRemotePaymentId: '',
             /** @string default selector for confirm page */
             confirmPageSelector: '#confirm--form',
             /** @string default selector for basket button */
@@ -42,8 +46,8 @@
          */
         init: function () {
             var me = this,
-                paymentId = me.$el.data('paypal-unified-payment-id'),
-                userPaymentId = me.$el.data('paypal-unified-user-payment-id');
+                paymentId = me.$el.data('paypalUnifiedPaymentId'),
+                userPaymentId = me.$el.data('paypalUnifiedUserPaymentId');
 
             me.applyDataAttributes();
             me.deselectPayPalMethod(me.$el);
@@ -60,7 +64,7 @@
                 $confirmPage = $(me.opts.confirmPageSelector),
                 bbFunction = 'val',
                 preSelection = 'none',
-                paypalSandbox = me.opts['paypal-unified-sandbox'],
+                paypalSandbox = me.opts.paypalUnifiedSandbox,
                 mode = (paypalSandbox === 1 ? 'sandbox' : 'live'),
                 $payPalCheckBox = $(me.opts.paymentMeanSelector + paymentId),
                 isConfirmAction = $(me.opts.confirmCheckSelector).length > 0,
@@ -85,12 +89,12 @@
             }
 
             ppp = PAYPAL.apps.PPP({
-                approvalUrl: me.opts['paypal-unified-approval-url'],
+                approvalUrl: me.opts.paypalUnifiedApprovalUrl,
                 placeholder: me.opts.placeHolder,
                 mode: mode,
                 buttonLocation: me.opts.buttonLocation,
                 useraction: me.opts.userAction,
-                country: me.opts['paypal-unified-country-iso'],
+                country: me.opts.paypalUnifiedCountryIso,
                 language: me.opts.language,
                 preselection: preSelection,
                 showPuiOnSandbox: true,
@@ -111,8 +115,26 @@
             event.preventDefault();
 
             if (window.hasOwnProperty('PAYPAL')) {
-                me._ppp.doCheckout();
+                me.patchPaymentAddress();
             }
+        },
+
+        patchPaymentAddress: function () {
+            var me = this,
+                remotePaymentId = me.opts.paypalUnifiedRemotePaymentId;
+
+            $.ajax({
+                url: me.opts.paypalUnifiedAddressPatchUrl,
+                data: { paymentId: remotePaymentId },
+                method: 'GET',
+                success: $.proxy(me.addressPatchAjaxCallbackSuccess, me)
+            });
+        },
+
+        addressPatchAjaxCallbackSuccess: function () {
+            var me = this;
+
+            me._ppp.doCheckout();
         },
 
         deselectPayPalMethod: function() {
@@ -123,7 +145,7 @@
 
         callback: function(event) {
             var me = this,
-                paypalSandbox = me.opts['paypal-unified-sandbox'],
+                paypalSandbox = me.opts.paypalUnifiedSandbox,
                 originUrl = (paypalSandbox === 1 ? 'https://www.sandbox.paypal.com' : 'https://www.paypal.com'),
                 data;
 
@@ -146,6 +168,6 @@
     });
 
     $(function() {
-        StateManager.addPlugin('*[data-paypal-unified-payment-wall="true"]', 'PayPalUnifiedPaymentWall');
+        StateManager.addPlugin('*[data-paypalUnifiedPaymentWall="true"]', 'PayPalUnifiedPaymentWall');
     });
 })(jQuery, window);

@@ -17,15 +17,15 @@
             form = me.$el.find(me.opts.formSelector),
             data = form.serializeArray(),
             $paypalPlusContainer = $('#ppplus'),
-            paypalPaymentId = window.parseInt($paypalPlusContainer.attr('data-paypal-unified-payment-id'), 10),
+            paypalPaymentId = window.parseInt($paypalPlusContainer.attr('data-paypalUnifiedPaymentId'), 10),
             ppPlugin, pppInstance;
 
         // reset the default
         $.loadingIndicator.defaults.closeOnClick = initialSetting;
 
         // get instance of the payment wall plugin
-        $('*[data-paypal-unified-payment-wall="true"]').PayPalUnifiedPaymentWall();
-        ppPlugin = $('*[data-paypal-unified-payment-wall="true"]').data('plugin_PayPalUnifiedPaymentWall');
+        $('*[data-paypalUnifiedPaymentWall="true"]').PayPalUnifiedPaymentWall();
+        ppPlugin = $('*[data-paypalUnifiedPaymentWall="true"]').data('plugin_PayPalUnifiedPaymentWall');
 
         pppInstance = ppPlugin.createPaymentWall(paypalPaymentId);
 
@@ -56,7 +56,7 @@
             /** @string default selector for the PayPal Plus container */
             containerSelector: '#ppplus',
             /** @string default sandbox usage */
-            'paypal-unified-sandbox': '',
+            paypalUnifiedSandbox: '',
             /** @string default selector for the payment mean */
             paymentMeanSelector: '#payment_mean'
         },
@@ -85,7 +85,7 @@
                 timeOut;
 
             window.addEventListener('message', function (event) {
-                var paypalSandbox = me.opts['paypal-unified-sandbox'],
+                var paypalSandbox = me.opts.paypalUnifiedSandbox,
                     originUrl = (paypalSandbox === 1 ? 'https://www.sandbox.paypal.com' : 'https://www.paypal.com'),
                     isConfirmAction = $(me.opts.confirmCheckSelector).length > 0;
 
@@ -114,7 +114,7 @@
         handleEvents: function () {
             var me = this,
                 $paypalPlusContainer = $(me.opts.containerSelector),
-                paypalPaymentId = $paypalPlusContainer.attr('data-paypal-unified-payment-id'),
+                paypalPaymentId = $paypalPlusContainer.attr('data-paypalUnifiedPaymentId'),
                 payPalCheckBox = $(me.opts.paymentMeanSelector + paypalPaymentId);
 
             if (me.isClick()) {
@@ -128,6 +128,6 @@
     });
 
     $(function() {
-        StateManager.addPlugin('*[data-paypal-unified-payment-wall="true"]', 'PayPalUnifiedPaymentListener');
+        StateManager.addPlugin('*[data-paypalUnifiedPaymentWall="true"]', 'PayPalUnifiedPaymentListener');
     });
 })(jQuery, window);

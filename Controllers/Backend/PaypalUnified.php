@@ -197,7 +197,7 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
             'sOrder.payment',
             'payment',
             \Doctrine\ORM\Query\Expr\Join::WITH,
-            'payment.id = ' . $paymentMethodProvider->getPaymentMethodModel()->getId()
+            'payment.id = ' . $paymentMethodProvider->getPaymentId($this->get('dbal_connection'))
         )
             ->leftJoin('sOrder.shop', 'shop')
             ->leftJoin('sOrder.customer', 'customer')

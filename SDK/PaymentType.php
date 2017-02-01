@@ -28,4 +28,5 @@ class PaymentType
 {
     const PAYPAL_CLASSIC = 1;
     const PAYPAL_PLUS = 2;
+    const PAYPAL_INVOICE = 3;
 }

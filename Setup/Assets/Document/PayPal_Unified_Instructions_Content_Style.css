@@ -1,0 +1,13 @@
+.unified_payment_instruction, .unified_payment_instruction td, .unified_payment_instruction tr {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font: inherit;
+    font-size:8px;
+    vertical-align: baseline;
+}
+
+.unified_payment_note {
+    font-size: 10px;
+    color: #333;
+}

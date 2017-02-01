@@ -27,6 +27,7 @@ namespace SwagPaymentPayPalUnified\Subscriber;
 use Doctrine\Common\Collections\ArrayCollection;
 use Enlight\Event\SubscriberInterface;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
+use SwagPaymentPayPalUnified\Components\Services\PaymentInstructionService;
 use SwagPaymentPayPalUnified\SDK\Resources\PaymentResource;
 use SwagPaymentPayPalUnified\SDK\Structs\Payment;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -36,7 +37,7 @@ use SwagPaymentPayPalUnified\SDK\Services\ClientService;
 class Checkout implements SubscriberInterface
 {
     /** @var array $allowedActions */
-    private $allowedActions = ['shippingPayment', 'confirm'];
+    private $allowedActions = ['shippingPayment', 'confirm', 'finish'];
 
     /** @var ContainerInterface $container */
     protected $container;
@@ -114,18 +115,28 @@ class Checkout implements SubscriberInterface
         /** @var \Enlight_Components_Session_Namespace $session */
         $session = $controller->get('session');
 
+        /** @var \Enlight_View_Default $view */
+        $view = $controller->View();
+
         $usePayPalPlus = (bool) $this->config->getByNamespace('SwagPaymentPayPalUnified', 'usePayPalPlus');
 
         if ($controller->Response()->isRedirect()) {
             return;
         }
 
-        if (!in_array($request->getActionName(), $this->allowedActions)) {
+        $action = $request->getActionName();
+
+        if (!in_array($action, $this->allowedActions)) {
             $session->offsetUnset('PayPalUnifiedCameFromPaymentSelection');
             return;
         }
 
         if (!$usePayPalPlus) {
+            return;
+        }
+
+        if ($action === 'finish') {
+            $this->handleFinishDispatch($view);
             return;
         }
 
@@ -139,9 +150,6 @@ class Checkout implements SubscriberInterface
         if ($request->getActionName() === 'shippingPayment') {
             $session->offsetSet('PayPalUnifiedCameFromPaymentSelection', true);
         }
-
-        /** @var \Enlight_Controller_Action $controller */
-        $view = $controller->View();
 
         /** @var PaymentResource $paymentResource */
         $paymentResource = $this->container->get('paypal_unified.payment_resource');
@@ -159,8 +167,34 @@ class Checkout implements SubscriberInterface
         }
 
         $view->assign('paypalUnifiedModeSandbox', $this->config->getByNamespace('SwagPaymentPayPalUnified', 'enableSandbox'));
-        $view->assign('paypalUnifiedPaymentId', $this->paymentMethodProvider->getPaymentMethodModel()->getId());
+        $view->assign('paypalUnifiedPaymentId', $this->paymentMethodProvider->getPaymentId($this->container->get('dbal_connection')));
+        $view->assign('paypalUnifiedRemotePaymentId', $paymentStruct->getId());
         $view->assign('usePayPalPlus', $usePayPalPlus);
         $view->assign('cameFromPaymentSelection', $cameFromPaymentSelection);
+    }
+
+    /**
+     * Handles the finish dispatch and assigns the payment instructions to the template.
+     *
+     * @param \Enlight_View_Default $view
+     */
+    private function handleFinishDispatch(\Enlight_View_Default $view)
+    {
+        /** @var PaymentInstructionService $instructionService */
+        $instructionService = $this->container->get('paypal_unified.payment_instruction_service');
+
+        $selectedPaymentMethod = $view->getAssign('sPayment');
+        if ((int) $selectedPaymentMethod['id'] !== $this->paymentMethodProvider->getPaymentId($this->container->get('dbal_connection'))) {
+            return;
+        }
+
+        $orderNumber = $view->getAssign('sOrderNumber');
+        $paymentInstructions = $instructionService->getInstructions($orderNumber);
+
+        if ($paymentInstructions) {
+            $paymementInstructionsArray = $paymentInstructions->toArray();
+            $view->assign('sTransactionumber', $paymementInstructionsArray['transactionId']);
+            $view->assign('paypalUnifiedPaymentInstructions', $paymementInstructionsArray);
+        }
     }
 }

@@ -24,7 +24,7 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Setup;
 
-use Doctrine\ORM\EntityManager;
+use Shopware\Components\Model\ModelManager;
 use Shopware\Components\Plugin\Context\InstallContext;
 use Shopware\Kernel;
 use Shopware\Models\Plugin\Plugin;
@@ -46,13 +46,18 @@ class InstallerTest extends \PHPUnit_Framework_TestCase
         $entity->setSource('Community');
         $entity->setVersion('1.0.0');
 
-        /** @var EntityManager $em */
+        /** @var ModelManager $em */
         $em = Shopware()->Container()->get('models');
 
         $em->persist($entity);
         $em->flush($entity);
 
-        $installer = new Installer($em);
+        $installer = new Installer(
+            $em,
+            Shopware()->Container()->get('dbal_connection'),
+            Shopware()->Container()->get('shopware_attribute.crud_service'),
+            Shopware()->Container()->getParameter('paypal_unified.plugin_dir')
+        );
         $this->expectException(InstallationException::class);
         $installer->install(new InstallContext($this->getPluginModel(), Kernel::VERSION, '1.0.0'));
     }
@@ -67,13 +72,18 @@ class InstallerTest extends \PHPUnit_Framework_TestCase
         $entity->setSource('Community');
         $entity->setVersion('1.0.0');
 
-        /** @var EntityManager $em */
+        /** @var ModelManager $em */
         $em = Shopware()->Container()->get('models');
 
         $em->persist($entity);
         $em->flush($entity);
 
-        $installer = new Installer($em);
+        $installer = new Installer(
+            $em,
+            Shopware()->Container()->get('dbal_connection'),
+            Shopware()->Container()->get('shopware_attribute.crud_service'),
+            Shopware()->Container()->getParameter('paypal_unified.plugin_dir')
+        );
         $this->expectException(InstallationException::class);
         $installer->install(new InstallContext($this->getPluginModel(), Kernel::VERSION, '1.0.0'));
     }
@@ -88,7 +98,7 @@ class InstallerTest extends \PHPUnit_Framework_TestCase
         $entity->setSource('Community');
         $entity->setVersion('1.0.0');
 
-        /** @var EntityManager $em */
+        /** @var ModelManager $em */
         $em = Shopware()->Container()->get('models');
 
         $em->persist($entity);
@@ -104,24 +114,62 @@ class InstallerTest extends \PHPUnit_Framework_TestCase
         $em->persist($entity);
         $em->flush($entity);
 
-        $installer = new Installer($em);
+        $installer = new Installer(
+            $em,
+            Shopware()->Container()->get('dbal_connection'),
+            Shopware()->Container()->get('shopware_attribute.crud_service'),
+            Shopware()->Container()->getParameter('paypal_unified.plugin_dir')
+        );
         $this->expectException(InstallationException::class);
         $installer->install(new InstallContext($this->getPluginModel(), Kernel::VERSION, '1.0.0'));
     }
 
     public function test_installer_without_classic_installed()
     {
-        /** @var EntityManager $em */
+        /** @var ModelManager $em */
         $em = Shopware()->Container()->get('models');
-        $installer = new Installer($em);
+        $installer = new Installer(
+            $em,
+            Shopware()->Container()->get('dbal_connection'),
+            Shopware()->Container()->get('shopware_attribute.crud_service'),
+            Shopware()->Container()->getParameter('paypal_unified.plugin_dir')
+        );
 
         $result = $installer->install(new InstallContext($this->getPluginModel(), Kernel::VERSION, '1.0.0'));
         $this->assertTrue($result);
     }
 
+    public function test_order_attribute_available()
+    {
+        $query = 'INSERT INTO s_order_attributes(orderID, paypal_payment_type) VALUES (15, 1)';
+
+        $this->assertEquals(1, Shopware()->Db()->executeUpdate($query));
+    }
+
+    public function test_instructions_table_exists()
+    {
+        $query = "SHOW TABLES LIKE 'swag_payment_paypal_unified_payment_instruction'";
+
+        $this->assertCount(1, Shopware()->Db()->fetchAll($query));
+    }
+
+    public function test_document_footer_template_exists()
+    {
+        $query = "SELECT id FROM s_core_documents_box WHERE `name` = 'PayPal_Unified_Instructions_Footer'";
+
+        $this->assertCount(1, Shopware()->Db()->fetchRow($query));
+    }
+
+    public function test_document_content_template_exists()
+    {
+        $query = "SELECT id FROM s_core_documents_box WHERE `name` = 'PayPal_Unified_Instructions_Content'";
+
+        $this->assertCount(1, Shopware()->Db()->fetchRow($query));
+    }
+
     private function getPluginModel()
     {
-        /** @var EntityManager $em */
+        /** @var ModelManager $em */
         $em = Shopware()->Container()->get('models');
 
         return $em->getRepository(Plugin::class)->findOneBy(['name' => 'SwagPaymentPayPalUnified']);
