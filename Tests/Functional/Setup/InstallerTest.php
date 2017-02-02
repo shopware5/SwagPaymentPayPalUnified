@@ -24,6 +24,7 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Setup;
 
+use Doctrine\DBAL\Connection;
 use Shopware\Components\Model\ModelManager;
 use Shopware\Components\Plugin\Context\InstallContext;
 use Shopware\Kernel;
@@ -141,12 +142,16 @@ class InstallerTest extends \PHPUnit_Framework_TestCase
 
     public function test_order_attribute_available()
     {
-        $query = "SELECT * 
+        $query = "SELECT 1 
                     FROM information_schema.COLUMNS 
                     WHERE TABLE_NAME = 's_order_attributes' 
                     AND COLUMN_NAME = 'paypal_payment_type'";
 
-        $this->assertCount(2, Shopware()->Db()->fetchCol($query));
+        /** @var Connection $connection */
+        $connection = Shopware()->Container()->get('dbal_connection');
+        $columnAvailable = (bool) $connection->executeQuery($query)->fetch(\PDO::FETCH_COLUMN);
+
+        $this->assertTrue($columnAvailable);
     }
 
     public function test_instructions_table_exists()
