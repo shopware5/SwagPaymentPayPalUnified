@@ -24,7 +24,6 @@
 
 namespace SwagPaymentPayPalUnified\Subscriber;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Enlight\Event\SubscriberInterface;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\Services\PaymentInstructionService;
@@ -32,7 +31,6 @@ use SwagPaymentPayPalUnified\SDK\Resources\PaymentResource;
 use SwagPaymentPayPalUnified\SDK\Structs\Payment;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use SwagPaymentPayPalUnified\SDK\Services\WebProfileService;
-use SwagPaymentPayPalUnified\SDK\Services\ClientService;
 
 class Checkout implements SubscriberInterface
 {
@@ -48,14 +46,8 @@ class Checkout implements SubscriberInterface
     /** @var WebProfileService $profileService */
     protected $profileService;
 
-    /** @var ClientService $clientService */
-    protected $clientService;
-
     /** @var \Shopware_Components_Config $config */
     protected $config;
-
-    /** @var string $pluginDir */
-    protected $pluginDir;
 
     /**
      * Checkout constructor.
@@ -68,8 +60,6 @@ class Checkout implements SubscriberInterface
         $this->config = $config;
         $this->paymentMethodProvider = new PaymentMethodProvider($container->get('models'));
         $this->profileService = $container->get('paypal_unified.web_profile_service');
-        $this->clientService = $container->get('paypal_unified.client_service');
-        $this->pluginDir = $container->getParameter('paypal_unified.plugin_dir');
     }
 
     /**
@@ -80,23 +70,8 @@ class Checkout implements SubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            'Theme_Compiler_Collect_Plugin_Javascript' => 'onCollectJavascript',
             'Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout' => 'onPostDispatchCheckout'
         ];
-    }
-
-    /**
-     * @return ArrayCollection
-     */
-    public function onCollectJavascript()
-    {
-        $jsPath = [
-            $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.payment-wall-shipping-payment.js',
-            $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.payment-wall.js',
-            $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.payment-confirm.js'
-        ];
-
-        return new ArrayCollection($jsPath);
     }
 
     /**
@@ -118,59 +93,27 @@ class Checkout implements SubscriberInterface
         /** @var \Enlight_View_Default $view */
         $view = $controller->View();
 
+        $action = $request->getActionName();
         $usePayPalPlus = (bool) $this->config->getByNamespace('SwagPaymentPayPalUnified', 'usePayPalPlus');
 
-        if ($controller->Response()->isRedirect()) {
+        if ($controller->Response()->isRedirect() || !$usePayPalPlus) {
             return;
         }
-
-        $action = $request->getActionName();
 
         if (!in_array($action, $this->allowedActions)) {
             $session->offsetUnset('PayPalUnifiedCameFromPaymentSelection');
             return;
         }
 
-        if (!$usePayPalPlus) {
-            return;
-        }
+        $view->assign('usePayPalPlus', $usePayPalPlus);
 
         if ($action === 'finish') {
             $this->handleFinishDispatch($view);
-            return;
+        } elseif ($action === 'confirm') {
+            $this->handleConfirmDispatch($view, $session);
+        } else {
+            $this->handleShippingPaymentDispatch($view, $session);
         }
-
-        // Check if the user is coming from checkout step 2 (payment & shipping)
-        $cameFromPaymentSelection = $session->get('PayPalUnifiedCameFromPaymentSelection', false);
-
-        if (!$cameFromPaymentSelection) {
-            $session->offsetUnset('paypalUnifiedPayment');
-        }
-
-        if ($request->getActionName() === 'shippingPayment') {
-            $session->offsetSet('PayPalUnifiedCameFromPaymentSelection', true);
-        }
-
-        /** @var PaymentResource $paymentResource */
-        $paymentResource = $this->container->get('paypal_unified.payment_resource');
-
-        $payment = $paymentResource->create([
-            'sBasket' => $view->getAssign('sBasket'),
-            'sUserData' => $view->getAssign('sUserData')
-        ]);
-
-        /** @var Payment $paymentStruct */
-        $paymentStruct = Payment::fromArray($payment);
-
-        if (!empty($paymentStruct->getLinks()->getApprovalUrl())) {
-            $view->assign('paypalUnifiedApprovalUrl', $paymentStruct->getLinks()->getApprovalUrl());
-        }
-
-        $view->assign('paypalUnifiedModeSandbox', $this->config->getByNamespace('SwagPaymentPayPalUnified', 'enableSandbox'));
-        $view->assign('paypalUnifiedPaymentId', $this->paymentMethodProvider->getPaymentId($this->container->get('dbal_connection')));
-        $view->assign('paypalUnifiedRemotePaymentId', $paymentStruct->getId());
-        $view->assign('usePayPalPlus', $usePayPalPlus);
-        $view->assign('cameFromPaymentSelection', $cameFromPaymentSelection);
     }
 
     /**
@@ -196,5 +139,74 @@ class Checkout implements SubscriberInterface
             $view->assign('sTransactionumber', $paymementInstructionsArray['transactionId']);
             $view->assign('paypalUnifiedPaymentInstructions', $paymementInstructionsArray);
         }
+    }
+
+    /**
+     * @param \Enlight_View_Default $view
+     * @param \Enlight_Components_Session_Namespace $session
+     */
+    private function handleConfirmDispatch(\Enlight_View_Default $view, \Enlight_Components_Session_Namespace $session)
+    {
+        // Check if the user is coming from checkout step 2 (payment & shipping)
+        $cameFromPaymentSelection = $session->get('PayPalUnifiedCameFromPaymentSelection', false);
+
+        //This value could be set in the shippingPayment action.
+        //If so, the payment does not need to be created again.
+        $remotePaymentId = $session->get('PayPalUnifiedRemotePaymentId');
+
+        $view->assign('cameFromPaymentSelection', $cameFromPaymentSelection);
+        $view->assign('paypalUnifiedPaymentId', $this->paymentMethodProvider->getPaymentId($this->container->get('dbal_connection')));
+
+        //If the payment has already been created in the payment selection,
+        //we don't have to do anything else.
+        if ($cameFromPaymentSelection && $remotePaymentId) {
+            $view->assign('paypalUnifiedRemotePaymentId', $remotePaymentId) ;
+            return;
+        }
+
+        $paymentStruct = $this->createPayment($view->getAssign('sBasket'), $view->getAssign('sUserData'));
+
+        $view->assign('paypalUnifiedModeSandbox', $this->config->getByNamespace('SwagPaymentPayPalUnified', 'enableSandbox'));
+        $view->assign('paypalUnifiedRemotePaymentId', $paymentStruct->getId());
+        $view->assign('paypalUnifiedApprovalUrl', $paymentStruct->getLinks()->getApprovalUrl());
+    }
+
+    /**
+     * @param \Enlight_View_Default $view
+     * @param \Enlight_Components_Session_Namespace $session
+     */
+    private function handleShippingPaymentDispatch(\Enlight_View_Default $view, \Enlight_Components_Session_Namespace $session)
+    {
+        $session->offsetSet('PayPalUnifiedCameFromPaymentSelection', true);
+        $paymentStruct = $this->createPayment($view->getAssign('sBasket'), $view->getAssign('sUserData'));
+
+        $view->assign('paypalUnifiedModeSandbox', $this->config->getByNamespace('SwagPaymentPayPalUnified', 'enableSandbox'));
+        $view->assign('paypalUnifiedPaymentId', $this->paymentMethodProvider->getPaymentId($this->container->get('dbal_connection')));
+        $view->assign('paypalUnifiedRemotePaymentId', $paymentStruct->getId());
+        $view->assign('paypalUnifiedApprovalUrl', $paymentStruct->getLinks()->getApprovalUrl());
+
+        //Store the paymentID in the session to indicate that
+        //the payment has already been created.
+        $session->offsetSet('PayPalUnifiedRemotePaymentId', $paymentStruct->getId());
+    }
+
+    /**
+     * @param array $basketData
+     * @param array $userData
+     * @return Payment
+     */
+    private function createPayment(array $basketData, array $userData)
+    {
+        /** @var PaymentResource $paymentResource */
+        $paymentResource = $this->container->get('paypal_unified.payment_resource');
+
+        $payment = $paymentResource->create(
+            [
+                'sBasket' => $basketData,
+                'sUserData' => $userData
+            ]
+        );
+
+        return Payment::fromArray($payment);
     }
 }
