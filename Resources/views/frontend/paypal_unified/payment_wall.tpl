@@ -1,8 +1,5 @@
 {block name="frontend_checkout_paypal_unified_paymentwall"}
     <div id="ppplus" class="method--description"
-        {if $paypalConfirmPayment}
-            data-paypalUnifiedConfirmPayment="true"
-        {/if}
         {if $paypalPaymentWall}
             data-paypalUnifiedPaymentWall="true"
         {/if}

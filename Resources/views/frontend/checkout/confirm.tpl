@@ -6,8 +6,17 @@
 {/block}
 
 {block name='frontend_checkout_confirm_premiums'}
+    {if $usePayPalPlus && $cameFromPaymentSelection && $sUserData.additional.payment.id == $paypalUnifiedPaymentId }
+        <div class="is--hidden"
+             data-paypalUnifiedRemotePaymentId="{$paypalUnifiedRemotePaymentId}"
+             data-paypalUnifiedAddressPatchUrl="{url controller=PaypalUnified action=patchAddress forceSecure=true}"
+             data-paypalUnifiedConfirmPayment="true">
+        </div>
+    {/if}
+
     {if $usePayPalPlus && !$cameFromPaymentSelection && $sUserData.additional.payment.id == $paypalUnifiedPaymentId && $paypalUnifiedApprovalUrl}
         {include file="frontend/paypal_unified/payment_wall.tpl" paypalPaymentWall=true}
     {/if}
+
     {$smarty.block.parent}
 {/block}

@@ -24,6 +24,7 @@
 
 namespace SwagPaymentPayPalUnified\Subscriber;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Enlight\Event\SubscriberInterface;
 use Enlight_View_Default;
 
@@ -41,6 +42,7 @@ class Frontend implements SubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
+            'Theme_Compiler_Collect_Plugin_Javascript' => 'onCollectJavascript',
             'Enlight_Controller_Action_PostDispatchSecure_Frontend' => 'onPostDispatchSecure'
         ];
     }
@@ -53,6 +55,20 @@ class Frontend implements SubscriberInterface
     {
         $this->pluginDir = $pluginDir;
         $this->config = $config;
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function onCollectJavascript()
+    {
+        $jsPath = [
+            $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.payment-wall-shipping-payment.js',
+            $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.payment-wall.js',
+            $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.payment-confirm.js'
+        ];
+
+        return new ArrayCollection($jsPath);
     }
 
     /**

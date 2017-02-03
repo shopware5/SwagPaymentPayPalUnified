@@ -8,7 +8,11 @@
             /** @string default selector for confirm page */
             confirmPageSelector: '#confirm--form',
             /** @string default selector agb checkbox */
-            agbSelector: '#sAGB'
+            agbSelector: '#sAGB',
+            /** @string default address patch url */
+            paypalUnifiedAddressPatchUrl: '',
+            /** @string default remote paypal payment id */
+            paypalUnifiedRemotePaymentId: ''
         },
 
         /**
@@ -42,8 +46,24 @@
             event.preventDefault();
 
             if (window.hasOwnProperty('PAYPAL')) {
-                PAYPAL.apps.PPP.doCheckout();
+                me.patchPaymentAddress();
             }
+        },
+
+        patchPaymentAddress: function () {
+            var me = this,
+                remotePaymentId = me.opts.paypalUnifiedRemotePaymentId;
+
+            $.ajax({
+                url: me.opts.paypalUnifiedAddressPatchUrl,
+                data: { paymentId: remotePaymentId },
+                method: 'GET',
+                success: $.proxy(me.addressPatchAjaxCallbackSuccess, me)
+            });
+        },
+
+        addressPatchAjaxCallbackSuccess: function () {
+            PAYPAL.apps.PPP.doCheckout();
         }
     });
 
