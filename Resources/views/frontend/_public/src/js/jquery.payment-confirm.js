@@ -12,7 +12,9 @@
             /** @string default address patch url */
             paypalUnifiedAddressPatchUrl: '',
             /** @string default remote paypal payment id */
-            paypalUnifiedRemotePaymentId: ''
+            paypalUnifiedRemotePaymentId: '',
+            /** @string default paypal error page used for redirection */
+            paypalUnifiedErrorPage: ''
         },
 
         /**
@@ -58,12 +60,19 @@
                 url: me.opts.paypalUnifiedAddressPatchUrl,
                 data: { paymentId: remotePaymentId },
                 method: 'GET',
-                success: $.proxy(me.addressPatchAjaxCallbackSuccess, me)
+                success: $.proxy(me.addressPatchAjaxCallbackSuccess, me),
+                error: $.proxy(me.addressPatchAjaxCallbackError, me)
             });
         },
 
         addressPatchAjaxCallbackSuccess: function () {
             PAYPAL.apps.PPP.doCheckout();
+        },
+
+        addressPatchAjaxCallbackError: function ()  {
+            var me = this;
+
+            $(location).attr("href", me.opts.paypalUnifiedErrorPage);
         }
     });
 

@@ -120,6 +120,11 @@ class Checkout implements SubscriberInterface
         } else {
             $this->handleShippingPaymentDispatch($view, $session);
         }
+
+        $errorCode = $request->getParam('paypal_unified_error_code');
+        if ($errorCode) {
+            $view->assign('paypal_unified_error_code', $errorCode);
+        }
     }
 
     /**

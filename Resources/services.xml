@@ -33,6 +33,7 @@
             <argument type="service" id="paypal_unified.client_service" />
             <argument type="service" id="config" />
             <argument type="service" id="paypal_unified.dependency_provider" />
+            <argument type="service" id="pluginlogger" />
         </service>
 
         <service id="paypal_unified.webhook_service" class="SwagPaymentPayPalUnified\SDK\Services\WebhookService" />

@@ -21,6 +21,8 @@
             paypalUnifiedAddressPatchUrl: '',
             /** @string default paypal payment id */
             paypalUnifiedRemotePaymentId: '',
+            /** @string default paypal error page used for redirection */
+            paypalUnifiedErrorPage: '',
             /** @string default selector for confirm page */
             confirmPageSelector: '#confirm--form',
             /** @string default selector for basket button */
@@ -127,7 +129,8 @@
                 url: me.opts.paypalUnifiedAddressPatchUrl,
                 data: { paymentId: remotePaymentId },
                 method: 'GET',
-                success: $.proxy(me.addressPatchAjaxCallbackSuccess, me)
+                success: $.proxy(me.addressPatchAjaxCallbackSuccess, me),
+                error: $.proxy(me.addressPatchAjaxCallbackError, me)
             });
         },
 
@@ -135,6 +138,12 @@
             var me = this;
 
             me._ppp.doCheckout();
+        },
+
+        addressPatchAjaxCallbackError: function ()  {
+            var me = this;
+
+            $(location).attr("href", me.opts.paypalUnifiedErrorPage);
         },
 
         deselectPayPalMethod: function() {
