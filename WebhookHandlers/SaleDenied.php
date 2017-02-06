@@ -64,19 +64,23 @@ class SaleDenied implements WebhookHandler
      */
     public function invoke(Webhook $webhook)
     {
-        /** @var Order $orderModel */
-        $orderModel = $this->modelManager->getRepository(Order::class)->findOneBy(['transactionId' => $webhook->getSummary()['parent_payment']]);
-        /** @var Status $orderStatusModel */
-        $orderStatusModel = $this->modelManager->getRepository(Status::class)->find(PaymentStatus::PAYMENT_STATUS_OPEN);
+        try {
+            /** @var Order $orderModel */
+            $orderModel = $this->modelManager->getRepository(Order::class)->findOneBy(['transactionId' => $webhook->getSummary()['parent_payment']]);
+            /** @var Status $orderStatusModel */
+            $orderStatusModel = $this->modelManager->getRepository(Status::class)->find(PaymentStatus::PAYMENT_STATUS_OPEN);
 
-        if ($orderModel === null) {
-            $this->pluginLogger->error('PayPal Unified: Could not find associated order with the transactionId ' . $webhook->getSummary()['parent_payment']);
-            return;
+            if ($orderModel === null) {
+                $this->pluginLogger->error('PayPal Unified: Could not find associated order with the transactionId ' . $webhook->getSummary()['parent_payment']);
+                return;
+            }
+
+            //Set the payment status to "open"
+            $orderModel->setPaymentStatus($orderStatusModel);
+
+            $this->modelManager->flush($orderModel);
+        } catch (\Exception $ex) {
+            $this->pluginLogger->error('PayPal Unified: (Webhook:SaleDenied) Could not write entity to database', [$ex->getMessage()]);
         }
-
-        //Set the payment status to "open"
-        $orderModel->setPaymentStatus($orderStatusModel);
-
-        $this->modelManager->flush($orderModel);
     }
 }

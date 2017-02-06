@@ -9,6 +9,7 @@
         data-paypalUnifiedUserPaymentId="{$sUserData.additional.payment.id}"
         data-paypalUnifiedAddressPatchUrl="{url controller=PaypalUnified action=patchAddress forceSecure=true}"
         data-paypalUnifiedRemotePaymentId="{$paypalUnifiedRemotePaymentId}"
-        data-paypalUnifiedCountryIso="{$sUserData.additional.country.countryiso}">
+        data-paypalUnifiedCountryIso="{$sUserData.additional.country.countryiso}"
+        data-paypalUnifiedErrorPage="{url controller=checkout action=shippingPayment paypal_unified_error_code=2 forceSecure=true}">
     </div>
 {/block}

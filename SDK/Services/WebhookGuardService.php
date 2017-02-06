@@ -24,6 +24,8 @@
 
 namespace SwagPaymentPayPalUnified\SDK\Services;
 
+use Shopware\Components\HttpClient\RequestException;
+use Shopware\Components\Logger;
 use SwagPaymentPayPalUnified\SDK\Resources\WebhookResource;
 use SwagPaymentPayPalUnified\SDK\Structs\Webhook;
 
@@ -35,14 +37,19 @@ class WebhookGuardService
     /** @var string[] $remoteWebhookIds */
     private $remoteWebhookIds;
 
+    /** @var Logger $logger */
+    private $logger;
+
     /**
      * @param ClientService $client
+     * @param Logger $pluginLogger
      */
-    public function __construct(ClientService $client)
+    public function __construct(ClientService $client, Logger $pluginLogger)
     {
         $this->client = $client;
 
         $this->remoteWebhookIds = $this->getWebhookList();
+        $this->logger = $pluginLogger;
     }
 
     /**
@@ -51,15 +58,21 @@ class WebhookGuardService
      */
     public function isValid(Webhook $webhookHeader)
     {
-        if (count($this->remoteWebhookIds) === 0) {
-            $this->remoteWebhookIds = $this->getWebhookList();
+        try {
+            if (count($this->remoteWebhookIds) === 0) {
+                $this->remoteWebhookIds = $this->getWebhookList();
+            }
+
+            if ($webhookHeader->getId() === null) {
+                return false;
+            }
+
+            return $this->remoteWebhookIds[$webhookHeader->getId()] !== null;
+        } catch (RequestException $ex) {
+            $this->logger->error('PayPal Unified: The webhook could not be verified.', [$ex->getMessage(), $ex->getBody()]);
         }
 
-        if ($webhookHeader->getId() === null) {
-            return false;
-        }
-
-        return $this->remoteWebhookIds[$webhookHeader->getId()] !== null;
+        return false;
     }
 
     /**

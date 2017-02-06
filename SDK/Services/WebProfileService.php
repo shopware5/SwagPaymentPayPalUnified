@@ -24,6 +24,8 @@
 
 namespace SwagPaymentPayPalUnified\SDK\Services;
 
+use Shopware\Components\HttpClient\RequestException;
+use Shopware\Components\Logger;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\SDK\Resources\WebProfileResource;
 use SwagPaymentPayPalUnified\SDK\Structs\WebProfile;
@@ -42,19 +44,25 @@ class WebProfileService
     /** @var \Shopware_Components_Config $config */
     private $config;
 
+    /** @var Logger $logger */
+    private $logger;
+
     /**
      * @param ClientService $client
      * @param \Shopware_Components_Config $config
      * @param DependencyProvider $dependencyProvider
+     * @param Logger $pluginLogger
      */
     public function __construct(
         ClientService $client,
         \Shopware_Components_Config $config,
-        DependencyProvider $dependencyProvider
+        DependencyProvider $dependencyProvider,
+        Logger $pluginLogger
     ) {
         $this->client = $client;
         $this->config = $config;
         $this->dependencyProvider = $dependencyProvider;
+        $this->logger = $pluginLogger;
     }
 
     /**
@@ -68,32 +76,41 @@ class WebProfileService
     {
         $webProfileResource = new WebProfileResource($this->client);
         $currentWebProfile = $this->getCurrentWebProfile();
-        $profileList = $webProfileResource->getList();
 
-        /** @var WebProfile $selectedRemoteProfile */
-        $selectedRemoteProfile = null;
+        try {
+            $profileList = $webProfileResource->getList();
 
-        foreach ($profileList as $remoteProfile) {
-            $profileStruct = WebProfile::fromArray($remoteProfile);
-            if ($profileStruct->getName() === $currentWebProfile->getName()) {
-                $selectedRemoteProfile = $profileStruct;
-                break;
+            /** @var WebProfile $selectedRemoteProfile */
+            $selectedRemoteProfile = null;
+
+            foreach ($profileList as $remoteProfile) {
+                $profileStruct = WebProfile::fromArray($remoteProfile);
+                if ($profileStruct->getName() === $currentWebProfile->getName()) {
+                    $selectedRemoteProfile = $profileStruct;
+                    break;
+                }
             }
+
+            if ($selectedRemoteProfile === null) {
+                //If we don't have a profile for the shop (yet) we have to create one.
+                $selectedRemoteProfile = $webProfileResource->create($currentWebProfile);
+            } elseif (!$currentWebProfile->equals($selectedRemoteProfile)) {
+                //The web profile is not the same as the current profile, therefore we need to patch it.
+                $webProfileResource->update($selectedRemoteProfile->getId(), $currentWebProfile);
+
+                //Store the id in the current web-profile
+                $currentWebProfile->setId($selectedRemoteProfile->getId());
+                $selectedRemoteProfile = $currentWebProfile;
+            }
+
+            return $selectedRemoteProfile;
+        } catch (RequestException $rex) {
+            $this->logger->error('PayPal Unified: Could not request the web profiles.', [$rex->getMessage(), $rex->getBody()]);
+        } catch (\Exception $ex) {
+            $this->logger->error('PayPal Unified: An unknown error occurred while setting the web profile.', [$ex->getMessage()]);
         }
 
-        if ($selectedRemoteProfile === null) {
-            //If we don't have a profile for the shop (yet) we have to create one.
-            $selectedRemoteProfile = $webProfileResource->create($currentWebProfile);
-        } elseif (!$currentWebProfile->equals($selectedRemoteProfile)) {
-            //The web profile is not the same as the current profile, therefore we need to patch it.
-            $webProfileResource->update($selectedRemoteProfile->getId(), $currentWebProfile);
-
-            //Store the id in the current web-profile
-            $currentWebProfile->setId($selectedRemoteProfile->getId());
-            $selectedRemoteProfile = $currentWebProfile;
-        }
-
-        return $selectedRemoteProfile;
+        return null;
     }
 
     /**

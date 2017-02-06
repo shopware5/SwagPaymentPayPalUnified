@@ -22,12 +22,14 @@
  * our trademarks remain entirely with us.
  */
 
+use Shopware\Components\Logger;
 use SwagPaymentPayPalUnified\Components\Services\PaymentAddressPatchService;
 use SwagPaymentPayPalUnified\Components\Services\PaymentInstructionService;
 use SwagPaymentPayPalUnified\SDK\Resources\PaymentResource;
 use SwagPaymentPayPalUnified\Components\PaymentStatus;
 use Shopware\Components\HttpClient\RequestException;
 use SwagPaymentPayPalUnified\Components\Services\OrderDataService;
+use SwagPaymentPayPalUnified\SDK\Structs\ErrorResponse;
 use SwagPaymentPayPalUnified\SDK\Structs\Payment\Sale;
 use SwagPaymentPayPalUnified\SDK\Components\Patches\PaymentOrderNumberPatch;
 use SwagPaymentPayPalUnified\SDK\Structs\Payment;
@@ -51,13 +53,31 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
         $orderData = $this->get('session')->get('sOrderVariables');
         $shippingAddress = $orderData['sUserData']['shippingaddress'];
 
-        /** @var PaymentResource $paymentResource */
-        $paymentResource = $this->container->get('paypal_unified.payment_resource');
+        if ($orderData === null) {
+            //No order to be processed
+            $this->handleError(0);
 
-        $response = $paymentResource->create($orderData);
+            return;
+        }
 
-        /** @var Payment $responseStruct */
-        $responseStruct = Payment::fromArray($response);
+        try {
+            /** @var PaymentResource $paymentResource */
+            $paymentResource = $this->container->get('paypal_unified.payment_resource');
+
+            $response = $paymentResource->create($orderData);
+            /** @var Payment $responseStruct */
+            $responseStruct = Payment::fromArray($response);
+        } catch (RequestException $requestEx) {
+            //Communication failure
+            $this->handleError(2, $requestEx);
+
+            return;
+        } catch (\Exception $exception) {
+            //Unknown error
+            $this->handleError(4);
+
+            return;
+        }
 
         //Patch the address data into the payment.
         //This function is only being called for PayPal classic, therefore,
@@ -104,8 +124,14 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
 
             // execute the payment to the PayPal API
             $executionResponse = $paymentResource->execute($payerId, $paymentId);
+            if ($executionResponse === null) {
+                //Communication failure
+                $this->handleError(2);
+                return;
+            }
 
             // convert the response into a struct
+            /** @var Payment $response */
             $response = Payment::fromArray($executionResponse);
 
             // if the order number is not sent to PayPal do it here to avoid broken orders
@@ -119,15 +145,20 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
             // apply the payment status if its completed by PayPal
             $paymentState = $responseSale->getState();
             if ($paymentState === PaymentStatus::PAYMENT_COMPLETED) {
-                $orderDataService->applyPaymentStatus($orderNumber, PaymentStatus::PAYMENT_STATUS_APPROVED);
+                if (!$orderDataService->applyPaymentStatus($orderNumber, PaymentStatus::PAYMENT_STATUS_APPROVED)) {
+                    // Order not found failure
+                    $this->handleError(3);
+                    return;
+                }
             }
 
             //Use TXN-ID instead of the PaymentId
             $saleId = $responseSale->getId();
-            $orderDataService->applyTransactionId(
-                $orderNumber,
-                $saleId
-            );
+            if (!$orderDataService->applyTransactionId($orderNumber, $saleId)) {
+                // Order not found failure
+                $this->handleError(3);
+                return;
+            }
 
             // if we get payment instructions from PayPal save them to database
             if ($response->getPaymentInstruction()) {
@@ -145,6 +176,11 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
                 'action' => 'finish'
             ]);
         } catch (RequestException $exception) {
+            //Communication failure
+            $this->handleError(2, $exception);
+        } catch (\Exception $exception) {
+            //Unknown error
+            $this->handleError(4);
         }
     }
 
@@ -170,15 +206,47 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
     }
 
     /**
-     * This action is being called by the PayPal frontend if the user
-     * wants to cancel the process or the payment has been declined by PayPal.
+     * This action will be executed if the user cancels the payment on the PayPal page.
+     * It will redirect to the payment selection.
      */
     public function cancelAction()
     {
+        $this->handleError(1);
+    }
+
+    /**
+     * This method handles the redirection to the shippingPayment action if an
+     * error has occurred during the payment process.
+     *
+     * It takes the following parameters from the URL:
+     * - code (int): The code of the error that occurred. Depending on the code,
+     *               another message will be displayed in the frontend.
+     *      0 = No order to be processed
+     *      1 = User has canceled the process
+     *      2 = Communication failure
+     *      3 = System order failure
+     *      Any other = Unknown error
+     *
+     * @param int $code
+     * @param RequestException $exception
+     */
+    private function handleError($code, RequestException $exception = null)
+    {
+        if ($exception) {
+            //Parse the received error
+            $error = ErrorResponse::fromArray(json_decode($exception->getBody(), true));
+
+            if ($error !== null) {
+                /** @var Logger $logger */
+                $logger = $this->get('pluginlogger');
+                $logger->warning('PayPal Unified: Received an error: ' . $error->getMessage(), $error->toArray());
+            }
+        }
+
         $this->redirect([
-            'module' => 'frontend',
             'controller' => 'checkout',
-            'action' => 'shippingPayment'
+            'action' => 'shippingPayment',
+            'paypal_unified_error_code' => $code
         ]);
     }
 }

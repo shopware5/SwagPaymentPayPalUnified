@@ -12,3 +12,11 @@
         {$smarty.block.parent}
     {/if}
 {/block}
+
+{block name='frontend_account_payment_error_messages'}
+    {if $paypal_unified_error_code}
+        {include file="frontend/paypal_unified/checkout/shipping_payment.tpl"}
+    {/if}
+
+    {$smarty.block.parent}
+{/block}

@@ -22,6 +22,8 @@
  * our trademarks remain entirely with us.
  */
 
+use Shopware\Components\HttpClient\RequestException;
+use Shopware\Components\Logger;
 use Shopware\Components\Model\QueryBuilder;
 use Shopware\Models\Order\Order;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
@@ -39,6 +41,9 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
     /** @var string $alias */
     protected $alias = 'sOrder';
 
+    /** @var Logger $logger */
+    protected $logger;
+
     /** @var array $filterFields */
     protected $filterFields = [
         'number',
@@ -50,10 +55,22 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
     ];
 
     /**
+     * {@inheritdoc}
+     */
+    public function preDispatch()
+    {
+        $this->logger = $this->container->get('pluginlogger');
+        parent::preDispatch();
+    }
+
+    /**
      * Handles the payment detail action.
      * It first requests the payment details from the PayPal API and assigns the whole object
      * to the response. Afterwards, it uses the paypal_unified.sales_history_builder_service service to
      * parse the sales history. The sales history is also being assigned to the response.
+     *
+     * @throws RequestException
+     *
      */
     public function paymentDetailsAction()
     {
@@ -61,33 +78,60 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
 
         /** @var PaymentResource $paymentResource */
         $paymentResource = $this->container->get('paypal_unified.payment_resource');
-        $paymentDetails = $paymentResource->get($paymentId);
 
-        /** @var SalesHistoryBuilderService $salesBuilder */
-        $salesBuilder = $this->container->get('paypal_unified.sales_history_builder_service');
+        try {
+            $paymentDetails = $paymentResource->get($paymentId);
 
-        $this->View()->assign('payment', $paymentDetails);
-        $this->View()->assign('sales', $salesBuilder->getSalesHistory($paymentDetails));
+            /** @var SalesHistoryBuilderService $salesBuilder */
+            $salesBuilder = $this->container->get('paypal_unified.sales_history_builder_service');
+
+            $this->View()->assign('payment', $paymentDetails);
+            $this->View()->assign('sales', $salesBuilder->getSalesHistory($paymentDetails));
+        } catch (RequestException $ex) {
+            $this->logger->error('PayPal Unified: Could not obtain payment details due to a communication failure', [$ex->getMessage(), $ex->getBody()]);
+            throw $ex;
+        }
     }
 
+    /**
+     * @throws RequestException
+     */
     public function saleDetailsAction()
     {
         $saleId = $this->Request()->get('saleId');
 
         /** @var SaleResource $saleResource */
         $saleResource = $this->container->get('paypal_unified.sale_resource');
-        $this->View()->assign('sale', $saleResource->get($saleId));
+
+        try {
+            $this->View()->assign('sale', $saleResource->get($saleId));
+        } catch (RequestException $ex) {
+            $this->logger->error('PayPal Unified: Could not obtain sale details due to a communication failure', [$ex->getMessage(), $ex->getBody()]);
+            throw $ex;
+        }
     }
 
+    /**
+     * @throws RequestException
+     */
     public function refundDetailsAction()
     {
         $saleId = $this->Request()->get('refundId');
 
         /** @var RefundResource $refundResource */
         $refundResource = $this->container->get('paypal_unified.refund_resource');
-        $this->View()->assign('refund', $refundResource->get($saleId));
+
+        try {
+            $this->View()->assign('refund', $refundResource->get($saleId));
+        } catch (RequestException $ex) {
+            $this->logger->error('PayPal Unified: Could not obtain refund details due to a communication failure', [$ex->getMessage(), $ex->getBody()]);
+            throw $ex;
+        }
     }
 
+    /**
+     * @throws RequestException
+     */
     public function refundSaleAction()
     {
         $saleId = $this->Request()->get('saleId');
@@ -98,14 +142,19 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
         /** @var SaleResource $saleResource */
         $saleResource = $this->container->get('paypal_unified.sale_resource');
 
-        if (!$refundCompletely) {
-            $amountStruct = new Amount();
-            $amountStruct->setTotal($totalAmount);
-            $amountStruct->setCurrency('EUR');
+        try {
+            if (!$refundCompletely) {
+                $amountStruct = new Amount();
+                $amountStruct->setTotal($totalAmount);
+                $amountStruct->setCurrency('EUR');
 
-            $this->View()->assign('refund', $saleResource->refund($saleId, $amountStruct, $invoiceNumber));
-        } else {
-            $this->View()->assign('refund', $saleResource->refund($saleId, null, $invoiceNumber));
+                $this->View()->assign('refund', $saleResource->refund($saleId, $amountStruct, $invoiceNumber));
+            } else {
+                $this->View()->assign('refund', $saleResource->refund($saleId, null, $invoiceNumber));
+            }
+        } catch (RequestException $ex) {
+            $this->logger->error('PayPal Unified: Could not refund sale due to a communication failure', [$ex->getMessage(), $ex->getBody()]);
+            throw $ex;
         }
     }
 

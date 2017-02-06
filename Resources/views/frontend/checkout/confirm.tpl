@@ -10,7 +10,8 @@
         <div class="is--hidden"
              data-paypalUnifiedRemotePaymentId="{$paypalUnifiedRemotePaymentId}"
              data-paypalUnifiedAddressPatchUrl="{url controller=PaypalUnified action=patchAddress forceSecure=true}"
-             data-paypalUnifiedConfirmPayment="true">
+             data-paypalUnifiedConfirmPayment="true"
+             data-paypalUnifiedErrorPage="{url controller=checkout action=shippingPayment paypal_unified_error_code=2 forceSecure=true}">
         </div>
     {/if}
 
