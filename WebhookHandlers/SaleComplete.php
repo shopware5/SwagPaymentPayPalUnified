@@ -64,19 +64,23 @@ class SaleComplete implements WebhookHandler
      */
     public function invoke(Webhook $webhook)
     {
-        /** @var Order $orderRepository */
-        $orderRepository = $this->modelManager->getRepository(Order::class)->findOneBy(['transactionId' => $webhook->getSummary()['parent_payment']]);
-        /** @var Status $orderStatusModel */
-        $orderStatusModel = $this->modelManager->getRepository(Status::class)->find(PaymentStatus::PAYMENT_STATUS_APPROVED);
+        try {
+            /** @var Order $orderRepository */
+            $orderRepository = $this->modelManager->getRepository(Order::class)->findOneBy(['transactionId' => $webhook->getSummary()['parent_payment']]);
+            /** @var Status $orderStatusModel */
+            $orderStatusModel = $this->modelManager->getRepository(Status::class)->find(PaymentStatus::PAYMENT_STATUS_APPROVED);
 
-        if ($orderRepository === null) {
-            $this->pluginLogger->error('PayPal Unified: Could not find associated order with the transactionId ' . $webhook->getSummary()['parent_payment']);
-            return;
+            if ($orderRepository === null) {
+                $this->pluginLogger->error('PayPal Unified: Could not find associated order with the transactionId ' . $webhook->getSummary()['parent_payment']);
+                return;
+            }
+
+            //Set the payment status to "completely payed"
+            $orderRepository->setPaymentStatus($orderStatusModel);
+
+            $this->modelManager->flush($orderRepository);
+        } catch (\Exception $ex) {
+            $this->pluginLogger->error('PayPal Unified: (Webhook: SaleComplete) Could not write entity to database', [$ex->getMessage()]);
         }
-
-        //Set the payment status to "completely payed"
-        $orderRepository->setPaymentStatus($orderStatusModel);
-
-        $this->modelManager->flush($orderRepository);
     }
 }

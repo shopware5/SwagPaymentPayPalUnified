@@ -62,6 +62,7 @@ class OrderDataService
     /**
      * @param string $orderNumber
      * @param int $paymentStatusId
+     * @return bool
      */
     public function applyPaymentStatus($orderNumber, $paymentStatusId)
     {

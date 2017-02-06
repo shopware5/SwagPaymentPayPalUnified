@@ -105,9 +105,9 @@ class WebProfileService
 
             return $selectedRemoteProfile;
         } catch (RequestException $rex) {
-            $this->logger->log('PayPal Unified: Could not request the web profiles.', [$rex->getMessage(), $rex->getBody()]);
+            $this->logger->error('PayPal Unified: Could not request the web profiles.', [$rex->getMessage(), $rex->getBody()]);
         } catch (\Exception $ex) {
-            $this->logger->log('PayPal Unified: An unknown error occurred while setting the web profile.', [$ex->getMessage()]);
+            $this->logger->error('PayPal Unified: An unknown error occurred while setting the web profile.', [$ex->getMessage()]);
         }
 
         return null;

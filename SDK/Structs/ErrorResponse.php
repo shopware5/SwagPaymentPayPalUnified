@@ -39,25 +39,6 @@ class ErrorResponse
     private $debugId;
 
     /**
-     * @param array $data
-     * @return null|ErrorResponse
-     */
-    public static function fromArray(array $data)
-    {
-        if (!$data) {
-            return null;
-        }
-
-        $result = new ErrorResponse();
-        $result->setName($data['name']);
-        $result->setMessage($data['message']);
-        $result->setInformationLink($data['information_link']);
-        $result->setDebugId($data['debug_id']);
-
-        return $result;
-    }
-
-    /**
      * @return string
      */
     public function getName()
@@ -119,6 +100,25 @@ class ErrorResponse
     public function setDebugId($debugId)
     {
         $this->debugId = $debugId;
+    }
+
+    /**
+     * @param array $data
+     * @return null|ErrorResponse
+     */
+    public static function fromArray(array $data)
+    {
+        if (!$data) {
+            return null;
+        }
+
+        $result = new ErrorResponse();
+        $result->setName($data['name']);
+        $result->setMessage($data['message']);
+        $result->setInformationLink($data['information_link']);
+        $result->setDebugId($data['debug_id']);
+
+        return $result;
     }
 
     /**

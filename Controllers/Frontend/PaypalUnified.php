@@ -215,7 +215,9 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
     }
 
     /**
-     * This action should only be called within this plugin and not from external services.
+     * This method handles the redirection to the shippingPayment action if an
+     * error has occurred during the payment process.
+     *
      * It takes the following parameters from the URL:
      * - code (int): The code of the error that occurred. Depending on the code,
      *               another message will be displayed in the frontend.

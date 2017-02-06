@@ -66,7 +66,7 @@ class TokenService
                 $token = Token::fromArray($tokenResource->get($credentials));
                 $this->setToken($token);
             } catch (RequestException $ex) {
-                $this->logger->log('PayPal Unified: API Authorization failed', [$ex->getMessage(), $ex->getBody()]);
+                $this->logger->error('PayPal Unified: API Authorization failed', [$ex->getMessage(), $ex->getBody()]);
             }
         }
 

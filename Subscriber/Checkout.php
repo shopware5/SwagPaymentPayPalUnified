@@ -229,7 +229,7 @@ class Checkout implements SubscriberInterface
 
             return Payment::fromArray($payment);
         } catch (RequestException $ex) {
-            $this->logger->log('PayPal Unified: Could not create payment', [$ex->getMessage(), $ex->getBody()]);
+            $this->logger->error('PayPal Unified: Could not create payment', [$ex->getMessage(), $ex->getBody()]);
             return null;
         }
     }

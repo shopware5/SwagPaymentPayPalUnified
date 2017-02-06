@@ -126,6 +126,8 @@ class Installer
 
     private function createDocumentTemplates()
     {
+        $this->removeDocumentTemplates();
+
         $sql = "
 			INSERT INTO `s_core_documents_box` (`documentID`, `name`, `style`, `value`) VALUES
 			(1, 'PayPal_Unified_Instructions_Footer', 'width: 170mm;\r\nposition:fixed;\r\nbottom:-20mm;\r\nheight: 15mm;', :footerValue),
@@ -164,6 +166,12 @@ class Installer
 
         $this->modelManager->persist($entity);
         $this->modelManager->flush($entity);
+    }
+
+    private function removeDocumentTemplates()
+    {
+        $sql = "DELETE FROM s_core_documents_box WHERE `name` LIKE 'PayPal_Unified%'";
+        $this->connection->exec($sql);
     }
 
     private function getPaymentLogo()

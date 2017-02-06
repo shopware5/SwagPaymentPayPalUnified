@@ -69,7 +69,7 @@ class WebhookGuardService
 
             return $this->remoteWebhookIds[$webhookHeader->getId()] !== null;
         } catch (RequestException $ex) {
-            $this->logger->log('PayPal Unified: The webhook could not be verified.', [$ex->getMessage(), $ex->getBody()]);
+            $this->logger->error('PayPal Unified: The webhook could not be verified.', [$ex->getMessage(), $ex->getBody()]);
         }
 
         return false;

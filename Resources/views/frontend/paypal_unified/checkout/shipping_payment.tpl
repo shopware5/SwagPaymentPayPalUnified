@@ -1,6 +1,6 @@
 {namespace name="frontend/paypal_unified/checkout/shipping_payment"}
 {block name="frontend_checkout_shipping_payment_paypal_unified_error"}
-    <div class="paypal-unified--wrapper">
+    <div class="paypal-unified--error">
         {if $paypal_unified_error_code == 0}
             {* Order could not be processed *}
             {include file="frontend/_includes/messages.tpl" type="error" content="{s name="error/order"}Could not process this order at the moment.{/s}"}
