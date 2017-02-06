@@ -51,7 +51,7 @@ class WebhookGuardServiceTest extends \PHPUnit_Framework_TestCase
 
         ];
 
-        $webhookGuard = new WebhookGuardService($this->getMockedClient($sendRequestReturnData));
+        $webhookGuard = new WebhookGuardService($this->getMockedClient($sendRequestReturnData), Shopware()->Container()->get('pluginlogger'));
 
         $this->assertEquals(WebhookGuardService::class, get_class($webhookGuard));
     }
@@ -64,7 +64,7 @@ class WebhookGuardServiceTest extends \PHPUnit_Framework_TestCase
             ]
         ];
 
-        $webhookGuard = new WebhookGuardService($this->getMockedClient($sendRequestReturnData));
+        $webhookGuard = new WebhookGuardService($this->getMockedClient($sendRequestReturnData), Shopware()->Container()->get('pluginlogger'));
 
         $hookThatShouldBeVerified = Webhook::fromArray([
             'id' => 'YOU_SHOULD_NOT_PASS'
@@ -88,7 +88,7 @@ class WebhookGuardServiceTest extends \PHPUnit_Framework_TestCase
             ]
         ];
 
-        $webhookGuard = new WebhookGuardService($this->getMockedClient($sendRequestReturnData));
+        $webhookGuard = new WebhookGuardService($this->getMockedClient($sendRequestReturnData), Shopware()->Container()->get('pluginlogger'));
 
         $hookHeaderThatShouldBeVerified = Webhook::fromArray([
             'id' => 'YOU_SHOULD_PASS'
