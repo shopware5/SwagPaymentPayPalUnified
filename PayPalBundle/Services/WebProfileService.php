@@ -35,16 +35,24 @@ use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile\WebProfilePresentat
 
 class WebProfileService
 {
-    /** @var ClientService $client */
+    /**
+     * @var ClientService
+     */
     private $client;
 
-    /** @var DependencyProvider $dependencyProvider */
+    /**
+     * @var DependencyProvider
+     */
     private $dependencyProvider;
 
-    /** @var \Shopware_Components_Config $config */
+    /**
+     * @var \Shopware_Components_Config
+     */
     private $config;
 
-    /** @var Logger $logger */
+    /**
+     * @var Logger
+     */
     private $logger;
 
     /**

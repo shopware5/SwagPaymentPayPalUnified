@@ -28,13 +28,19 @@ use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 
 class PartnerAttributionService
 {
-    /** The Partner-Attribution-Id for the PayPal Plus integration */
+    /**
+     * The Partner-Attribution-Id for the PayPal Plus integration
+     */
     const PARTNER_ID_PAYPAL_PLUS = 'Shopware_Cart_Plus_2';
 
-    /** The Partner-Attribution-Id for the PayPal Classic integration */
+    /**
+     * The Partner-Attribution-Id for the PayPal Classic integration
+     */
     const PARTNER_ID_PAYPAL_CLASSIC = 'Shopware_Cart_EC_2';
 
-    /** @var \Shopware_Components_Config $config */
+    /**
+     * @var \Shopware_Components_Config
+     */
     private $config;
 
     /**

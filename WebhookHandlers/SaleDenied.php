@@ -35,10 +35,14 @@ use SwagPaymentPayPalUnified\PayPalBundle\Structs\Webhook;
 
 class SaleDenied implements WebhookHandler
 {
-    /** @var Logger $pluginLogger */
+    /**
+     * @var Logger
+     */
     private $pluginLogger;
 
-    /** @var ModelManager */
+    /**
+     * @var ModelManager
+     */
     private $modelManager;
 
     /**

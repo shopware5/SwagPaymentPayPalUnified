@@ -33,18 +33,22 @@ use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
 
 class OrderDataService
 {
-    /** @var ModelManager $em */
+    /**
+     * @var ModelManager
+     */
     private $modelManager;
 
-    /** @var Connection $dbalConnection */
+    /*
+     * @var Connection
+     */
     private $dbalConnection;
 
-    /** @var \Shopware_Components_Config $config */
+    /**
+     * @var \Shopware_Components_Config
+     */
     private $config;
 
     /**
-     * OrderDataService constructor.
-     *
      * @param ModelManager                $modelManager
      * @param Connection                  $dbalConnection
      * @param \Shopware_Components_Config $config

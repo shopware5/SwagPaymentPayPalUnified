@@ -33,16 +33,24 @@ use Shopware\Models\Plugin\Plugin;
 
 class Installer
 {
-    /** @var ModelManager $modelManager */
+    /**
+     * @var ModelManager
+     */
     private $modelManager;
 
-    /** @var Connection $connection */
+    /**
+     * @var Connection
+     */
     private $connection;
 
-    /** @var CrudService $attributeCrudService */
+    /**
+     * @var CrudService
+     */
     private $attributeCrudService;
 
-    /** @var string $bootstrapPath */
+    /**
+     * @var string
+     */
     private $bootstrapPath;
 
     /**

@@ -26,19 +26,29 @@ namespace SwagPaymentPayPalUnified\PayPalBundle\Structs;
 
 class Webhook
 {
-    /** @var string $id */
+    /**
+     * @var string
+     */
     private $id;
 
-    /** @var string $creationTime */
+    /**
+     * @var string
+     */
     private $creationTime;
 
-    /** @var string $resourceType */
+    /**
+     * @var string
+     */
     private $resourceType;
 
-    /** @var string $eventType */
+    /**
+     * @var string
+     */
     private $eventType;
 
-    /** @var string $summary */
+    /**
+     * @var string
+     */
     private $summary;
 
     /**

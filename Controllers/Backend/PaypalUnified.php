@@ -35,16 +35,24 @@ use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Transactions\Amount;
 
 class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Backend_Application
 {
-    /** @var string $model */
+    /**
+     * @var string
+     */
     protected $model = Order::class;
 
-    /** @var string $alias */
+    /**
+     * @var string
+     */
     protected $alias = 'sOrder';
 
-    /** @var Logger $logger */
+    /**
+     * @var Logger
+     */
     protected $logger;
 
-    /** @var array $filterFields */
+    /**
+     * @var array
+     */
     protected $filterFields = [
         'number',
         'orderTime',

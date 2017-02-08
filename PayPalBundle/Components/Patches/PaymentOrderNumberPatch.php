@@ -28,12 +28,12 @@ class PaymentOrderNumberPatch implements PatchInterface
 {
     const PATH = '/transactions/0/invoice_number';
 
-    /** @var string $orderNumber */
+    /**
+     * @var string
+     */
     private $orderNumber;
 
     /**
-     * PaymentPatch constructor.
-     *
      * @param string $orderNumber
      */
     public function __construct($orderNumber)

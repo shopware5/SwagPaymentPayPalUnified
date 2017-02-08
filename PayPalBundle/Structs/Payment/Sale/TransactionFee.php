@@ -26,10 +26,14 @@ namespace SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Sale;
 
 class TransactionFee
 {
-    /** @var float $value */
+    /**
+     * @var float
+     */
     private $value;
 
-    /** @var string $currency */
+    /**
+     * @var string
+     */
     private $currency;
 
     /**

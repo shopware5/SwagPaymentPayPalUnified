@@ -29,7 +29,9 @@ use Doctrine\DBAL\Connection;
 
 class DocumentTemplateService
 {
-    /** @var Connection $dbalConnection */
+    /**
+     * @var Connection
+     */
     private $dbalConnection;
 
     /**

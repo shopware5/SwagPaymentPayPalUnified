@@ -30,7 +30,9 @@ use Shopware\Models\Payment\Payment;
 
 class PaymentMethodProvider
 {
-    /** @var ModelManager $modelManager */
+    /**
+     * @var ModelManager
+     */
     private $modelManager;
 
     /**

@@ -30,22 +30,34 @@ use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile\WebProfilePresentat
 
 class WebProfile
 {
-    /** @var string $id */
+    /**
+     * @var string
+     */
     private $id;
 
-    /** @var string $name */
+    /**
+     * @var string
+     */
     private $name;
 
-    /** @var bool $temporary */
+    /**
+     * @var bool
+     */
     private $temporary;
 
-    /** @var WebProfilePresentation $presentation */
+    /**
+     * @var WebProfilePresentation
+     */
     private $presentation;
 
-    /** @var WebProfileFlowConfig $flowConfig */
+    /**
+     * @var WebProfileFlowConfig
+     */
     private $flowConfig;
 
-    /** @var WebProfileInputFields $inputFields */
+    /**
+     * @var WebProfileInputFields
+     */
     private $inputFields;
 
     /**

@@ -26,22 +26,34 @@ namespace SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Payer\PayerInfo;
 
 class ShippingAddress
 {
-    /** @var string $recipientName */
+    /**
+     * @var string
+     */
     private $recipientName;
 
-    /** @var string $line1 */
+    /**
+     * @var string
+     */
     private $line1;
 
-    /** @var string $city */
+    /**
+     * @var string
+     */
     private $city;
 
-    /** @var string $state */
+    /**
+     * @var string
+     */
     private $state;
 
-    /** @var string $postalCode */
+    /**
+     * @var string
+     */
     private $postalCode;
 
-    /** @var string $countryCode */
+    /**
+     * @var string
+     */
     private $countryCode;
 
     /**

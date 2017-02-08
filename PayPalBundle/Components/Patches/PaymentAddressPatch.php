@@ -30,7 +30,9 @@ class PaymentAddressPatch implements PatchInterface
 {
     const PATH = '/transactions/0/item_list/shipping_address';
 
-    /** @var ShippingAddress $address */
+    /**
+     * @var ShippingAddress
+     */
     private $address;
 
     /**
@@ -48,10 +50,7 @@ class PaymentAddressPatch implements PatchInterface
         $this->address->setPostalCode($address['zipcode']);
         $this->address->setRecipientName($address['firstname'] . ' ' . $address['lastname']);
         $this->address->setCountryCode($address['countryiso']);
-
-        if ($address['stateiso']) {
-            $this->address->setState($address['stateiso']);
-        }
+        $this->address->setState($address['stateiso']);
     }
 
     /**

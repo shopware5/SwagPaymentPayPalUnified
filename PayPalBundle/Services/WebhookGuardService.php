@@ -31,13 +31,19 @@ use SwagPaymentPayPalUnified\PayPalBundle\Structs\Webhook;
 
 class WebhookGuardService
 {
-    /** @var ClientService $client */
+    /**
+     * @var ClientService
+     */
     private $client;
 
-    /** @var string[] $remoteWebhookIds */
+    /**
+     * @var string[]
+     */
     private $remoteWebhookIds;
 
-    /** @var Logger $logger */
+    /**
+     * @var Logger
+     */
     private $logger;
 
     /**

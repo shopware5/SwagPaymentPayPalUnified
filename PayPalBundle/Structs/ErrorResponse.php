@@ -26,16 +26,24 @@ namespace SwagPaymentPayPalUnified\PayPalBundle\Structs;
 
 class ErrorResponse
 {
-    /** @var string $name */
+    /**
+     * @var string
+     */
     private $name;
 
-    /** @var string $message */
+    /**
+     * @var string
+     */
     private $message;
 
-    /** @var string $informationLink */
+    /**
+     * @var string
+     */
     private $informationLink;
 
-    /** @var string $debugId */
+    /**
+     * @var string
+     */
     private $debugId;
 
     /**

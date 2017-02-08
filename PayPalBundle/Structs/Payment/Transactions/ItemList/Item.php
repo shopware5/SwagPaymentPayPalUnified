@@ -26,22 +26,34 @@ namespace SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Transactions\Ite
 
 class Item
 {
-    /** @var string $name */
+    /**
+     * @var string
+     */
     private $name;
 
-    /** @var string $sku */
+    /**
+     * @var string
+     */
     private $sku;
 
-    /** @var float $price */
+    /**
+     * @var float
+     */
     private $price;
 
-    /** @var string $currency */
+    /**
+     * @var string
+     */
     private $currency;
 
-    /** @var int $quantity */
+    /**
+     * @var int
+     */
     private $quantity;
 
-    /** @var string $tax */
+    /**
+     * @var string
+     */
     private $tax;
 
     /**

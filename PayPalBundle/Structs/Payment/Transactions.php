@@ -30,13 +30,19 @@ use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Transactions\RelatedRe
 
 class Transactions
 {
-    /** @var Amount $amount */
+    /**
+     * @var Amount
+     */
     private $amount;
 
-    /** @var ItemList $itemList */
+    /**
+     * @var ItemList
+     */
     private $itemList;
 
-    /** @var RelatedResources $relatedResources */
+    /**
+     * @var RelatedResources
+     */
     private $relatedResources;
 
     /**

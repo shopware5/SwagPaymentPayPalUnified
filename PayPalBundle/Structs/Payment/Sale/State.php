@@ -26,14 +26,28 @@ namespace SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Sale;
 
 class State
 {
-    /** The transaction has completed. */
+    /**
+     * The transaction has completed.
+     */
     const COMPLETED = 'completed';
-    /** The transaction was partially refunded. */
+
+    /**
+     * The transaction was partially refunded.
+     */
     const PARTIALLY_REFUNDED = 'partially_refunded';
-    /** The transaction is pending. */
+
+    /**
+     * The transaction is pending.
+     */
     const PENDING = 'pending';
-    /** The transaction was fully refunded. */
+
+    /**
+     * The transaction was fully refunded.
+     */
     const REFUNDED = 'refunded';
-    /** The transaction was denied. */
+
+    /**
+     * The transaction was denied.
+     */
     const DENIED = 'denied';
 }

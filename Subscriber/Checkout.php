@@ -38,24 +38,39 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class Checkout implements SubscriberInterface
 {
-    /** @var ContainerInterface $container */
-    protected $container;
+    /**
+     * @var ContainerInterface
+     */
+    private $container;
 
-    /** @var PaymentMethodProvider $paymentMethodProvider */
-    protected $paymentMethodProvider;
+    /**
+     * @var PaymentMethodProvider
+     */
+    private $paymentMethodProvider;
 
-    /** @var WebProfileService $profileService */
-    protected $profileService;
+    /**
+     * @var WebProfileService
+     */
+    private $profileService;
 
-    /** @var \Shopware_Components_Config $config */
-    protected $config;
+    /**
+     * @var \Shopware_Components_Config
+     */
+    private $config;
 
-    /** @var Logger $logger */
-    protected $logger;
+    /**
+     * @var Logger
+     */
+    private $logger;
 
-    /** @var DetachedShop $shop */
-    protected $shop;
-    /** @var array $allowedActions */
+    /**
+     * @var DetachedShop
+     */
+    private $shop;
+
+    /**
+     * @var array
+     */
     private $allowedActions = ['shippingPayment', 'confirm', 'finish'];
 
     /**

@@ -33,10 +33,14 @@ use SwagPaymentPayPalUnified\WebhookHandlers\SaleRefunded;
 
 class Shopware_Controllers_Frontend_PaypalUnifiedWebhook extends Enlight_Controller_Action implements CSRFWhitelistAware
 {
-    /** @var WebhookService $webhookService */
+    /**
+     * @var WebhookService
+     */
     private $webhookService;
 
-    /** @var WebhookGuardService $webhookGuardService */
+    /**
+     * @var WebhookGuardService
+     */
     private $webhookGuardService;
 
     /**

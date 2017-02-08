@@ -35,18 +35,29 @@ use SwagPaymentPayPalUnified\PayPalBundle\Structs\Token;
 
 class ClientService
 {
-    /** @var array $headers */
-    protected $headers;
+    /**
+     * @var array
+     */
+    private $headers;
 
-    /** @var string $baseUrl */
-    protected $baseUrl;
+    /**
+     * @var string
+     */
+    private $baseUrl;
 
-    /** @var TokenService $tokenService */
-    protected $tokenService;
+    /**
+     * @var TokenService
+     */
+    private $tokenService;
 
-    /** @var Logger $logger */
-    protected $logger;
-    /** @var GuzzleClient $client */
+    /**
+     * @var Logger
+     */
+    private $logger;
+
+    /**
+     * @var GuzzleClient
+     */
     private $client;
 
     /**

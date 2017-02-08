@@ -32,22 +32,34 @@ use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Transactions\Amount;
 
 class Sale
 {
-    /** @var string $id */
+    /**
+     * @var string
+     */
     private $id;
 
-    /** @var string $invoiceNumber */
+    /**
+     * @var string
+     */
     private $invoiceNumber;
 
-    /** @var string $createTime */
+    /**
+     * @var string
+     */
     private $createTime;
 
-    /** @var string $updateTime */
+    /**
+     * @var string
+     */
     private $updateTime;
 
-    /** @var Amount $amount */
+    /**
+     * @var Amount
+     */
     private $amount;
 
-    /** @var string $parentPayment */
+    /**
+     * @var string
+     */
     private $parentPayment;
 
     /**
@@ -71,7 +83,9 @@ class Sale
      */
     private $type;
 
-    /** @var TransactionFee $transactionFee */
+    /**
+     * @var TransactionFee
+     */
     private $transactionFee;
 
     /**

@@ -31,7 +31,9 @@ use SwagPaymentPayPalUnified\PayPalBundle\Structs\OAuthCredentials;
 
 class TokenResource
 {
-    /** @var ClientService $client */
+    /**
+     * @var ClientService
+     */
     private $client;
 
     /**

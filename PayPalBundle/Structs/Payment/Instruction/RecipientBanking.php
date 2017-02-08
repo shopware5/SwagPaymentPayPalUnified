@@ -26,19 +26,29 @@ namespace SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Instruction;
 
 class RecipientBanking
 {
-    /** @var string $bankName */
+    /**
+     * @var string
+     */
     private $bankName;
 
-    /** @var string $accountHolderName */
+    /**
+     * @var string
+     */
     private $accountHolderName;
 
-    /** @var string $accountNumber */
+    /**
+     * @var string
+     */
     private $accountNumber;
 
-    /** @var string $iban */
+    /**
+     * @var string
+     */
     private $iban;
 
-    /** @var string $bic */
+    /**
+     * @var string
+     */
     private $bic;
 
     /**

@@ -51,7 +51,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
     public function gatewayAction()
     {
         $orderData = $this->get('session')->get('sOrderVariables');
-        $shippingAddress = $orderData['sUserData']['shippingaddress'];
+        $userData = $orderData['sUserData'];
 
         if ($orderData === null) {
             //No order to be processed
@@ -84,7 +84,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
         //there is an additional action (patchAddressAction()) for the PayPal plus integration.
         /** @var PaymentAddressPatchService $patchService */
         $patchService = $this->get('paypal_unified.payment_address_patch_service');
-        $paymentResource->patch($responseStruct->getId(), $patchService->getPatch($shippingAddress));
+        $paymentResource->patch($responseStruct->getId(), $patchService->getPatch($userData));
 
         $this->redirect($responseStruct->getLinks()->getApprovalUrl());
     }
@@ -197,7 +197,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
         $this->Front()->Plugins()->ViewRenderer()->setNoRender();
 
         $paymentId = $this->Request()->get('paymentId');
-        $shippingAddress = $this->get('session')->get('sOrderVariables')['sUserData']['shippingaddress'];
+        $userData = $this->get('session')->get('sOrderVariables')['sUserData'];
 
         /** @var PaymentResource $paymentResource */
         $paymentResource = $this->container->get('paypal_unified.payment_resource');
@@ -205,7 +205,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
         /** @var PaymentAddressPatchService $patchService */
         $patchService = $this->get('paypal_unified.payment_address_patch_service');
 
-        $paymentResource->patch($paymentId, $patchService->getPatch($shippingAddress));
+        $paymentResource->patch($paymentId, $patchService->getPatch($userData));
     }
 
     /**

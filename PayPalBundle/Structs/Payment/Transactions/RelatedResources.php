@@ -28,7 +28,9 @@ use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Sale;
 
 class RelatedResources
 {
-    /** @var Sale[] $sales */
+    /**
+     * @var Sale[]
+     */
     private $sales;
 
     /**

@@ -29,19 +29,29 @@ use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Instruction\RecipientB
 
 class PaymentInstruction
 {
-    /** @var string $paymentMethod */
+    /**
+     * @var string
+     */
     private $referenceNumber;
 
-    /** @var RecipientBanking $recipientBanking */
+    /**
+     * @var RecipientBanking
+     */
     private $recipientBanking;
 
-    /** @var Amount */
+    /**
+     * @var Amount
+     */
     private $amount;
 
-    /** @var string $type */
+    /**
+     * @var string
+     */
     private $type;
 
-    /** @var string $dueDate */
+    /**
+     * @var string
+     */
     private $dueDate;
 
     /**

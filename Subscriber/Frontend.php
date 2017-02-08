@@ -30,10 +30,14 @@ use Enlight_View_Default;
 
 class Frontend implements SubscriberInterface
 {
-    /** @var string $pluginDir */
+    /**
+     * @var string
+     */
     private $pluginDir;
 
-    /** @var \Shopware_Components_Config $config */
+    /**
+     * @var \Shopware_Components_Config
+     */
     private $config;
 
     /**

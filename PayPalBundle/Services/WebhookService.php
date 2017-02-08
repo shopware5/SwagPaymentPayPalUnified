@@ -29,7 +29,9 @@ use SwagPaymentPayPalUnified\PayPalBundle\Components\Webhook\WebhookHandler;
 
 class WebhookService
 {
-    /** @var WebhookHandler[] $registeredWebhooks */
+    /**
+     * @var WebhookHandler[]
+     */
     private $registeredWebhooks;
 
     /**

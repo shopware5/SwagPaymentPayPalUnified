@@ -26,7 +26,9 @@ namespace SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Instruction;
 
 class Amount
 {
-    /** @var float $value */
+    /**
+     * @var float
+     */
     private $value;
 
     /**

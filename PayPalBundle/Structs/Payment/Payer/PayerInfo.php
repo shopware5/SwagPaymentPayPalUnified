@@ -28,25 +28,39 @@ use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Payer\PayerInfo\Shippi
 
 class PayerInfo
 {
-    /** @var string $email */
+    /**
+     * @var string
+     */
     private $email;
 
-    /** @var string $firstName */
+    /**
+     * @var string
+     */
     private $firstName;
 
-    /** @var string $lastName */
+    /**
+     * @var string
+     */
     private $lastName;
 
-    /** @var string $payerId */
+    /**
+     * @var string
+     */
     private $payerId;
 
-    /** @var string $phone */
+    /**
+     * @var string
+     */
     private $phone;
 
-    /** @var string $countryCode */
+    /**
+     * @var string
+     */
     private $countryCode;
 
-    /** @var ShippingAddress $shippingAddress */
+    /**
+     * @var ShippingAddress
+     */
     private $shippingAddress;
 
     /**

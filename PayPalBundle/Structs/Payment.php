@@ -32,40 +32,64 @@ use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Transactions;
 
 class Payment
 {
-    /** @var string $intent */
+    /**
+     * @var string
+     */
     private $intent;
 
-    /** @var string $experienceProfileId */
+    /**
+     * @var string
+     */
     private $experienceProfileId;
 
-    /** @var Payer $payer */
+    /**
+     * @var Payer
+     */
     private $payer;
 
-    /** @var Transactions $transactions */
+    /**
+     * @var Transactions
+     */
     private $transactions;
 
-    /** @var RedirectUrls $redirectUrls */
+    /**
+     * @var RedirectUrls
+     */
     private $redirectUrls;
 
-    /** @var Links $links */
+    /**
+     * @var Links
+     */
     private $links;
 
-    /** @var PaymentInstruction $paymentInstruction */
+    /**
+     * @var PaymentInstruction
+     */
     private $paymentInstruction;
 
-    /** @var string $state */
+    /**
+     * @var string
+     */
     private $state;
 
-    /** @var string $id */
+    /**
+     * @var string
+     */
     private $id;
 
-    /** @var string $cart */
+    /**
+     * @var string
+     */
     private $cart;
 
-    /** @var string $createTime */
+    /**
+     * @var string
+     */
     private $createTime;
 
-    /** @var string $updateTime */
+    /**
+     * @var string
+     */
     private $updateTime;
 
     /**

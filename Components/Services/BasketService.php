@@ -38,13 +38,19 @@ use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile;
 
 class BasketService implements BasketServiceInterface
 {
-    /** @var Router $router */
-    protected $router;
+    /**
+     * @var Router
+     */
+    private $router;
 
-    /** @var array $basketData */
+    /**
+     * @var array
+     */
     private $basketData;
 
-    /** @var array $userData */
+    /*
+     * @var array
+     */
     private $userData;
 
     /**

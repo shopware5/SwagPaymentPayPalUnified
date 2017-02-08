@@ -35,10 +35,14 @@ class Payer
      */
     private $paymentMethod = 'paypal';
 
-    /** @var string $status */
+    /**
+     * @var string
+     */
     private $status;
 
-    /** @var PayerInfo $payerInfo */
+    /**
+     * @var PayerInfo
+     */
     private $payerInfo;
 
     /**

@@ -34,13 +34,19 @@ use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 
 class Document implements SubscriberInterface
 {
-    /** @var Payment $paymentMethodProvider */
+    /**
+     * @var Payment
+     */
     private $paymentMethodModel;
 
-    /** @var PaymentInstructionService */
+    /**
+     * @var PaymentInstructionService
+     */
     private $paymentInstructionsService;
 
-    /** @var DocumentTemplateService $templateService */
+    /**
+     * @var DocumentTemplateService
+     */
     private $templateService;
 
     /**

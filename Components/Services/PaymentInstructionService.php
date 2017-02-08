@@ -30,7 +30,9 @@ use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\PaymentInstruction;
 
 class PaymentInstructionService
 {
-    /** @var ModelManager $modelManager */
+    /**
+     * @var ModelManager
+     */
     private $modelManager;
 
     /**

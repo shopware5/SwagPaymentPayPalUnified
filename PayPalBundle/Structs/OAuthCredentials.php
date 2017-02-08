@@ -26,10 +26,14 @@ namespace SwagPaymentPayPalUnified\PayPalBundle\Structs;
 
 class OAuthCredentials
 {
-    /** @var string $restId */
+    /**
+     * @var string
+     */
     private $restId;
 
-    /** @var string $restSecret */
+    /**
+     * @var string
+     */
     private $restSecret;
 
     /**

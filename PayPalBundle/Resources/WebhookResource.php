@@ -30,7 +30,9 @@ use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService;
 
 class WebhookResource
 {
-    /** @var ClientService $client */
+    /**
+     * @var ClientService
+     */
     private $client;
 
     /**

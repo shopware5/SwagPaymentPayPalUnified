@@ -29,7 +29,9 @@ use Enlight_View_Default;
 
 class Backend implements SubscriberInterface
 {
-    /** @var string $pluginPath */
+    /**
+     * @var string
+     */
     private $pluginDir;
 
     /**

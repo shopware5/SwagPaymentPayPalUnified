@@ -35,10 +35,14 @@ class TokenService
 {
     const CACHE_ID = 'paypal_unified_auth';
 
-    /** @var CacheManager $cacheManager */
+    /**
+     * @var CacheManager
+     */
     private $cacheManager;
 
-    /** @var Logger $logger */
+    /**
+     * @var Logger
+     */
     private $logger;
 
     /**

@@ -31,7 +31,9 @@ use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile;
 
 class WebProfileResource
 {
-    /** @var ClientService $client */
+    /**
+     * @var ClientService
+     */
     private $client;
 
     /**
