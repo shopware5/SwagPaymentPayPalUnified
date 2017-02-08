@@ -24,9 +24,9 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services;
 
+use Doctrine\DBAL\Connection;
 use SwagPaymentPayPalUnified\Tests\FixtureImportTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
-use Doctrine\DBAL\Connection;
 
 class OrderDataServiceTest extends \PHPUnit_Framework_TestCase
 {
@@ -59,7 +59,7 @@ class OrderDataServiceTest extends \PHPUnit_Framework_TestCase
 
         /** @var Connection $dbalConnection */
         $dbalConnection = Shopware()->Container()->get('dbal_connection');
-        $updatedOrder = $dbalConnection->executeQuery('SELECT * FROM s_order WHERE ordernumber="' . self::ORDER_NUMBER .'"')->fetchAll();
+        $updatedOrder = $dbalConnection->executeQuery('SELECT * FROM s_order WHERE ordernumber="' . self::ORDER_NUMBER . '"')->fetchAll();
 
         $this->assertEquals(self::PAYMENT_STATUS_APPROVED, $updatedOrder[0]['cleared']);
     }
@@ -79,7 +79,7 @@ class OrderDataServiceTest extends \PHPUnit_Framework_TestCase
 
         /** @var Connection $dbalConnection */
         $dbalConnection = Shopware()->Container()->get('dbal_connection');
-        $updatedOrder = $dbalConnection->executeQuery('SELECT transactionID FROM s_order WHERE ordernumber="' . self::ORDER_NUMBER .'"')->fetchAll();
+        $updatedOrder = $dbalConnection->executeQuery('SELECT transactionID FROM s_order WHERE ordernumber="' . self::ORDER_NUMBER . '"')->fetchAll();
 
         $this->assertEquals(self::TEST_TRANSACTION_ID, $updatedOrder[0]['transactionID']);
     }

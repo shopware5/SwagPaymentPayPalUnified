@@ -27,7 +27,7 @@ namespace SwagPaymentPayPalUnified\Components\Services;
 use Shopware\Components\Model\ModelManager;
 use Shopware\Models\Country\Country;
 use Shopware\Models\Country\State;
-use SwagPaymentPayPalUnified\SDK\Components\Patches\PaymentAddressPatch;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PaymentAddressPatch;
 
 class PaymentAddressPatchService
 {
@@ -44,8 +44,10 @@ class PaymentAddressPatchService
 
     /**
      * @param array $addressData
-     * @return PaymentAddressPatch
+     *
      * @throws \Exception
+     *
+     * @return PaymentAddressPatch
      */
     public function getPatch(array $addressData)
     {
@@ -70,6 +72,7 @@ class PaymentAddressPatchService
 
     /**
      * @param int $countryId
+     *
      * @return null|Country
      */
     private function getBillingCountry($countryId)
@@ -79,6 +82,7 @@ class PaymentAddressPatchService
 
     /**
      * @param int $stateId
+     *
      * @return null|State
      */
     private function getBillingState($stateId)

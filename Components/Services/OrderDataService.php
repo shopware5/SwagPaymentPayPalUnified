@@ -25,11 +25,11 @@
 namespace SwagPaymentPayPalUnified\Components\Services;
 
 use Doctrine\DBAL\Connection;
+use Shopware\Components\Model\ModelManager;
 use Shopware\Models\Order\Order;
 use Shopware\Models\Order\Status;
-use Shopware\Components\Model\ModelManager;
-use SwagPaymentPayPalUnified\SDK\PaymentType;
-use SwagPaymentPayPalUnified\SDK\Structs\Payment;
+use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
 
 class OrderDataService
 {
@@ -45,8 +45,8 @@ class OrderDataService
     /**
      * OrderDataService constructor.
      *
-     * @param ModelManager $modelManager
-     * @param Connection $dbalConnection
+     * @param ModelManager                $modelManager
+     * @param Connection                  $dbalConnection
      * @param \Shopware_Components_Config $config
      */
     public function __construct(
@@ -61,7 +61,8 @@ class OrderDataService
 
     /**
      * @param string $orderNumber
-     * @param int $paymentStatusId
+     * @param int    $paymentStatusId
+     *
      * @return bool
      */
     public function applyPaymentStatus($orderNumber, $paymentStatusId)
@@ -85,8 +86,9 @@ class OrderDataService
     }
 
     /**
-     * @param int $orderNumber
+     * @param int    $orderNumber
      * @param string $transactionId
+     *
      * @return bool
      */
     public function applyTransactionId($orderNumber, $transactionId)
@@ -107,8 +109,9 @@ class OrderDataService
     }
 
     /**
-     * @param int $orderNumber
+     * @param int     $orderNumber
      * @param Payment $payment
+     *
      * @see PaymentType
      */
     public function applyPaymentTypeAttribute($orderNumber, $payment)
@@ -124,7 +127,7 @@ class OrderDataService
         $builder = $this->dbalConnection->createQueryBuilder();
 
         //Since joins are being stripped out, we have to select the correct orderId by a sub query.
-        $subQuery =  $this->dbalConnection->createQueryBuilder()
+        $subQuery = $this->dbalConnection->createQueryBuilder()
             ->select('o.id')
             ->from('s_order', 'o')
             ->where('o.ordernumber = :orderNumber')
@@ -135,7 +138,7 @@ class OrderDataService
             ->where('oa.orderID = (' . $subQuery . ')')
             ->setParameters([
                 ':orderNumber' => $orderNumber,
-                ':paymentType' => $paymentType
+                ':paymentType' => $paymentType,
             ])->execute();
     }
 }

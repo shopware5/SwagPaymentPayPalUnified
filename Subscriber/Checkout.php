@@ -31,16 +31,13 @@ use Shopware\Models\Shop\DetachedShop;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\Services\PaymentInstructionService;
-use SwagPaymentPayPalUnified\SDK\Resources\PaymentResource;
-use SwagPaymentPayPalUnified\SDK\Structs\Payment;
+use SwagPaymentPayPalUnified\PayPalBundle\Resources\PaymentResource;
+use SwagPaymentPayPalUnified\PayPalBundle\Services\WebProfileService;
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use SwagPaymentPayPalUnified\SDK\Services\WebProfileService;
 
 class Checkout implements SubscriberInterface
 {
-    /** @var array $allowedActions */
-    private $allowedActions = ['shippingPayment', 'confirm', 'finish'];
-
     /** @var ContainerInterface $container */
     protected $container;
 
@@ -58,13 +55,15 @@ class Checkout implements SubscriberInterface
 
     /** @var DetachedShop $shop */
     protected $shop;
+    /** @var array $allowedActions */
+    private $allowedActions = ['shippingPayment', 'confirm', 'finish'];
 
     /**
      * Checkout constructor.
      *
-     * @param ContainerInterface $container
+     * @param ContainerInterface          $container
      * @param \Shopware_Components_Config $config
-     * @param DependencyProvider $dependencyProvider
+     * @param DependencyProvider          $dependencyProvider
      */
     public function __construct(ContainerInterface $container, \Shopware_Components_Config $config, DependencyProvider $dependencyProvider)
     {
@@ -84,7 +83,7 @@ class Checkout implements SubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            'Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout' => 'onPostDispatchCheckout'
+            'Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout' => 'onPostDispatchCheckout',
         ];
     }
 
@@ -116,6 +115,7 @@ class Checkout implements SubscriberInterface
 
         if (!in_array($action, $this->allowedActions)) {
             $session->offsetUnset('PayPalUnifiedCameFromPaymentSelection');
+
             return;
         }
 
@@ -161,7 +161,7 @@ class Checkout implements SubscriberInterface
     }
 
     /**
-     * @param \Enlight_View_Default $view
+     * @param \Enlight_View_Default                 $view
      * @param \Enlight_Components_Session_Namespace $session
      */
     private function handleConfirmDispatch(\Enlight_View_Default $view, \Enlight_Components_Session_Namespace $session)
@@ -179,7 +179,8 @@ class Checkout implements SubscriberInterface
         //If the payment has already been created in the payment selection,
         //we don't have to do anything else.
         if ($cameFromPaymentSelection && $remotePaymentId) {
-            $view->assign('paypalUnifiedRemotePaymentId', $remotePaymentId) ;
+            $view->assign('paypalUnifiedRemotePaymentId', $remotePaymentId);
+
             return;
         }
 
@@ -196,7 +197,7 @@ class Checkout implements SubscriberInterface
     }
 
     /**
-     * @param \Enlight_View_Default $view
+     * @param \Enlight_View_Default                 $view
      * @param \Enlight_Components_Session_Namespace $session
      */
     private function handleShippingPaymentDispatch(\Enlight_View_Default $view, \Enlight_Components_Session_Namespace $session)
@@ -222,6 +223,7 @@ class Checkout implements SubscriberInterface
     /**
      * @param array $basketData
      * @param array $userData
+     *
      * @return Payment|null
      */
     private function createPayment(array $basketData, array $userData)
@@ -233,13 +235,14 @@ class Checkout implements SubscriberInterface
             $payment = $paymentResource->create(
                 [
                     'sBasket' => $basketData,
-                    'sUserData' => $userData
+                    'sUserData' => $userData,
                 ]
             );
 
             return Payment::fromArray($payment);
         } catch (RequestException $ex) {
             $this->logger->error('PayPal Unified: Could not create payment', [$ex->getMessage(), $ex->getBody()]);
+
             return null;
         }
     }

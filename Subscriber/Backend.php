@@ -46,7 +46,7 @@ class Backend implements SubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            'Enlight_Controller_Action_PostDispatchSecure_Backend_Index' => 'onLoadBackendIndex'
+            'Enlight_Controller_Action_PostDispatchSecure_Backend_Index' => 'onLoadBackendIndex',
         ];
     }
 

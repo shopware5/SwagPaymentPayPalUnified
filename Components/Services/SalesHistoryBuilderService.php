@@ -24,9 +24,9 @@
 
 namespace SwagPaymentPayPalUnified\Components\Services;
 
-use SwagPaymentPayPalUnified\SDK\Structs\Payment;
-use SwagPaymentPayPalUnified\SDK\Structs\Payment\Sale;
-use SwagPaymentPayPalUnified\SDK\Structs\Payment\Sale\SaleType;
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Sale;
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Sale\SaleType;
 
 class SalesHistoryBuilderService
 {
@@ -36,6 +36,7 @@ class SalesHistoryBuilderService
      * the result, which can be used as a limit for any refund in the future.
      *
      * @param array $paymentDetails
+     *
      * @return array
      */
     public function getSalesHistory(array $paymentDetails)
@@ -52,7 +53,7 @@ class SalesHistoryBuilderService
                 'amount' => $sale->getType() === SaleType::SALE ? $sale->getAmount()->getTotal() : ($sale->getAmount()->getTotal() * -1),
                 'create_time' => $sale->getCreateTime(),
                 'update_time' => $sale->getUpdateTime(),
-                'currency' => $sale->getAmount()->getCurrency()
+                'currency' => $sale->getAmount()->getCurrency(),
             ];
 
             if ($sale->getType() === SaleType::REFUND) {

@@ -43,6 +43,7 @@ class DocumentTemplateService
     /**
      * @param array $containers
      * @param array $orderData
+     *
      * @return array
      */
     public function getInvoiceContainer($containers, $orderData)

@@ -45,7 +45,7 @@ class SwagPaymentPayPalUnified extends Plugin
         return [
             'Enlight_Controller_Dispatcher_ControllerPath_Frontend_PaypalUnifiedWebhook' => 'onGetWebhookControllerPath',
             'Enlight_Controller_Dispatcher_ControllerPath_Backend_PaypalUnified' => 'onGetBackendControllerPath',
-            'Theme_Compiler_Collect_Plugin_Less' => 'onCollectLessFiles'
+            'Theme_Compiler_Collect_Plugin_Less' => 'onCollectLessFiles',
         ];
     }
 
@@ -136,6 +136,7 @@ class SwagPaymentPayPalUnified extends Plugin
         $this->container->get('template')->addTemplateDir(
             $this->getPath() . '/Resources/views/'
         );
+
         return $this->getPath() . '/Controllers/Backend/PaypalUnified.php';
     }
 
@@ -151,11 +152,11 @@ class SwagPaymentPayPalUnified extends Plugin
             //configuration
             [],
             //less files to compile
-            [ $this->getPath() . '/Resources/views/frontend/_public/src/less/all.less' ],
+            [$this->getPath() . '/Resources/views/frontend/_public/src/less/all.less'],
             //import directory
             $this->getPath()
         );
 
-        return new ArrayCollection([ $less ]);
+        return new ArrayCollection([$less]);
     }
 }

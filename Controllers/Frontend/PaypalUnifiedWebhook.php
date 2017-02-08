@@ -23,10 +23,10 @@
  */
 
 use Shopware\Components\CSRFWhitelistAware;
-use SwagPaymentPayPalUnified\SDK\Components\Webhook\WebhookException;
-use SwagPaymentPayPalUnified\SDK\Services\WebhookGuardService;
-use SwagPaymentPayPalUnified\SDK\Services\WebhookService;
-use SwagPaymentPayPalUnified\SDK\Structs\Webhook;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\Webhook\WebhookException;
+use SwagPaymentPayPalUnified\PayPalBundle\Services\WebhookGuardService;
+use SwagPaymentPayPalUnified\PayPalBundle\Services\WebhookService;
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\Webhook;
 use SwagPaymentPayPalUnified\WebhookHandlers\SaleComplete;
 use SwagPaymentPayPalUnified\WebhookHandlers\SaleDenied;
 use SwagPaymentPayPalUnified\WebhookHandlers\SaleRefunded;
@@ -45,7 +45,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedWebhook extends Enlight_Control
     public function getWhitelistedCSRFActions()
     {
         return [
-            'execute'
+            'execute',
         ];
     }
 
@@ -60,7 +60,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedWebhook extends Enlight_Control
         $this->webhookService->registerWebhooks([
             new SaleComplete($this->get('pluginlogger'), $this->get('models')),
             new SaleDenied($this->get('pluginlogger'), $this->get('models')),
-            new SaleRefunded($this->get('pluginlogger'), $this->get('models'))
+            new SaleRefunded($this->get('pluginlogger'), $this->get('models')),
         ]);
     }
 
@@ -84,7 +84,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedWebhook extends Enlight_Control
             if (!$this->webhookService->handlerExists($webhook->getEventType())) {
                 $this->get('pluginlogger')->error(
                     'Webhook: Could not process the request, because no handler has been referenced to this type of event.',
-                    [ $postData ]
+                    [$postData]
                 );
 
                 return;
@@ -94,7 +94,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedWebhook extends Enlight_Control
             if (!$sandboxEnabled && !$this->webhookGuardService->isValid($webhook)) {
                 $this->get('pluginlogger')->error(
                     'WebhookGuard: Blocked webhook request, because it could not be verified.',
-                    [ $postData ]
+                    [$postData]
                 );
 
                 return;
@@ -103,7 +103,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedWebhook extends Enlight_Control
             //Delegate the request to the referenced webhook-handler.
             $this->webhookService->getWebhookHandler($webhook->getEventType())->invoke($webhook);
         } catch (WebhookException $webhookException) {
-            $this->get('pluginlogger')->error($webhookException->getMessage(), [ $webhookException->getEventType() ]);
+            $this->get('pluginlogger')->error($webhookException->getMessage(), [$webhookException->getEventType()]);
         }
     }
 }

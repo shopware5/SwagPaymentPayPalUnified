@@ -24,10 +24,10 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services;
 
-use SwagPaymentPayPalUnified\SDK\Structs\WebProfile\WebProfilePresentation;
-use SwagPaymentPayPalUnified\SDK\Structs\WebProfile;
-use SwagPaymentPayPalUnified\SDK\Structs\WebProfile\WebProfileFlowConfig;
-use SwagPaymentPayPalUnified\SDK\Structs\WebProfile\WebProfileInputFields;
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile;
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile\WebProfileFlowConfig;
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile\WebProfileInputFields;
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile\WebProfilePresentation;
 
 class BasketServiceTest extends \PHPUnit_Framework_TestCase
 {
@@ -176,7 +176,7 @@ class BasketServiceTest extends \PHPUnit_Framework_TestCase
                 'price' => '59,99',
                 'netprice' => '50.411764705882',
                 'sCurrencyName' => 'EUR',
-            ]
+            ],
         ];
     }
 
@@ -186,9 +186,9 @@ class BasketServiceTest extends \PHPUnit_Framework_TestCase
             'additional' => [
                 'show_net' => true,
                 'country' => [
-                    'taxfree' => '0'
-                ]
-            ]
+                    'taxfree' => '0',
+                ],
+            ],
         ];
     }
 }

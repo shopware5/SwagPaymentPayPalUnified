@@ -38,7 +38,7 @@ use Shopware\Models\Order\Order;
 class PaymentInstruction extends ModelEntity
 {
     /**
-     * @var integer $id
+     * @var int
      *
      * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
@@ -47,56 +47,56 @@ class PaymentInstruction extends ModelEntity
     private $id;
 
     /**
-     * @var string $orderNumber
+     * @var string
      * @ORM\Column(name="order_number", type="string", nullable=false)
      */
     private $orderNumber;
 
     /**
-     * @var Order $order
+     * @var Order
      * @ORM\OneToOne(targetEntity="Shopware\Models\Order\Order")
      * @ORM\JoinColumn(name="order_number", referencedColumnName="ordernumber")
      */
     private $order;
 
     /**
-     * @var string $bankName
+     * @var string
      * @ORM\Column(name="bank_name", type="string", nullable=false)
      */
     private $bankName;
 
     /**
-     * @var string $accountHolderName
+     * @var string
      * @ORM\Column(name="account_holder", type="string", nullable=false);
      */
     private $accountHolder;
 
     /**
-     * @var string $iban
+     * @var string
      * @ORM\Column(name="iban", type="string", nullable=false)
      */
     private $iban;
 
     /**
-     * @var string $bic
+     * @var string
      * @ORM\Column(name="bic", type="string", nullable=false)
      */
     private $bic;
 
     /**
-     * @var string $amount
+     * @var string
      * @ORM\Column(name="amount", type="string", nullable=false)
      */
     private $amount;
 
     /**
-     * @var string $dueDate
+     * @var string
      * @ORM\Column(name="due_date", type="string", nullable=false)
      */
     private $dueDate;
 
     /**
-     * @var string $reference
+     * @var string
      * @ORM\Column(name="reference", type="string", nullable=false)
      */
     private $reference;

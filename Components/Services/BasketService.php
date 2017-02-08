@@ -24,17 +24,17 @@
 
 namespace SwagPaymentPayPalUnified\Components\Services;
 
-use SwagPaymentPayPalUnified\SDK\Structs\Payment\Payer;
-use SwagPaymentPayPalUnified\SDK\Structs\Payment\RedirectUrls;
-use SwagPaymentPayPalUnified\SDK\Structs\Payment;
-use SwagPaymentPayPalUnified\SDK\Structs\Payment\Transactions;
-use SwagPaymentPayPalUnified\SDK\Structs\Payment\Transactions\Amount;
-use SwagPaymentPayPalUnified\SDK\Structs\Payment\Transactions\Amount\Details;
-use SwagPaymentPayPalUnified\SDK\Structs\Payment\Transactions\ItemList;
-use SwagPaymentPayPalUnified\SDK\Structs\Payment\Transactions\ItemList\Item;
-use SwagPaymentPayPalUnified\SDK\Structs\WebProfile;
-use SwagPaymentPayPalUnified\SDK\Components\BasketServiceInterface;
 use Shopware\Components\Routing\Router;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\BasketServiceInterface;
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Payer;
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\RedirectUrls;
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Transactions;
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Transactions\Amount;
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Transactions\Amount\Details;
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Transactions\ItemList;
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Transactions\ItemList\Item;
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile;
 
 class BasketService implements BasketServiceInterface
 {
@@ -49,6 +49,7 @@ class BasketService implements BasketServiceInterface
 
     /**
      * Checkout constructor.
+     *
      * @param Router $router
      */
     public function __construct(Router $router)
@@ -57,7 +58,7 @@ class BasketService implements BasketServiceInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getRequestParameters(WebProfile $profile, array $basketData, array $userData)
     {
@@ -122,9 +123,9 @@ class BasketService implements BasketServiceInterface
         foreach ($this->basketData['content'] as $basketItem) {
             $sku = $basketItem['ordernumber'];
             $name = $basketItem['articlename'];
-            $quantity = (int)$basketItem['quantity'];
+            $quantity = (int) $basketItem['quantity'];
 
-            $price =  $this->showGrossPrices() === true
+            $price = $this->showGrossPrices() === true
                 ? str_replace(',', '.', $basketItem['price'])
                 : $basketItem['netprice'];
 
@@ -179,6 +180,7 @@ class BasketService implements BasketServiceInterface
 
     /**
      * @param string $action
+     *
      * @return false|string
      */
     private function getRedirectUrl($action)
@@ -187,7 +189,7 @@ class BasketService implements BasketServiceInterface
             [
                 'controller' => 'PaypalUnified',
                 'action' => $action,
-                'forceSecure' => true
+                'forceSecure' => true,
             ]
         );
     }

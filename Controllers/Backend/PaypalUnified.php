@@ -28,10 +28,10 @@ use Shopware\Components\Model\QueryBuilder;
 use Shopware\Models\Order\Order;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\Services\SalesHistoryBuilderService;
-use SwagPaymentPayPalUnified\SDK\Resources\PaymentResource;
-use SwagPaymentPayPalUnified\SDK\Resources\RefundResource;
-use SwagPaymentPayPalUnified\SDK\Resources\SaleResource;
-use SwagPaymentPayPalUnified\SDK\Structs\Payment\Transactions\Amount;
+use SwagPaymentPayPalUnified\PayPalBundle\Resources\PaymentResource;
+use SwagPaymentPayPalUnified\PayPalBundle\Resources\RefundResource;
+use SwagPaymentPayPalUnified\PayPalBundle\Resources\SaleResource;
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Transactions\Amount;
 
 class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Backend_Application
 {
@@ -51,7 +51,7 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
         'invoiceAmount',
         'customer.email',
         'orderStatus.description',
-        'paymentStatus.description'
+        'paymentStatus.description',
     ];
 
     /**
@@ -70,7 +70,6 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
      * parse the sales history. The sales history is also being assigned to the response.
      *
      * @throws RequestException
-     *
      */
     public function paymentDetailsAction()
     {
@@ -183,7 +182,7 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
         if (!$sort) {
             $defaultSort = [
                 'property' => 'orderTime',
-                'direction' => 'DESC'
+                'direction' => 'DESC',
             ];
             $sort[] = $defaultSort;
         }
@@ -207,7 +206,7 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
         $conditions[] = [
             'property' => 'sOrder.number',
             'expression' => '!=',
-            'value' => 0
+            'value' => 0,
         ];
 
         return $conditions;
@@ -224,9 +223,9 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
             $fields = array_merge(
                 $fields,
                 [
-                    'customer.email' => [ 'alias' => 'customer.email', 'type' => 'string' ],
+                    'customer.email' => ['alias' => 'customer.email', 'type' => 'string'],
                     'orderStatus.description' => ['alias' => 'orderStatus.description', 'type' => 'string'],
-                    'paymentStatus.description' => ['alias' => 'paymentStatus.description', 'type' => 'string']
+                    'paymentStatus.description' => ['alias' => 'paymentStatus.description', 'type' => 'string'],
                 ]
             );
         }
@@ -236,6 +235,7 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
 
     /**
      * @param QueryBuilder $builder
+     *
      * @return QueryBuilder
      */
     private function prepareOrderQueryBuilder(QueryBuilder $builder)

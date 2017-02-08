@@ -10,8 +10,8 @@
             <directory suffix=".php">./</directory>
             <exclude>
                 <directory suffix=".php">./Tests</directory>
-                <directory suffix=".php">./SDK/Resources</directory>
-                <directory suffix=".php">./SDK/Components</directory>
+                <directory suffix=".php">./PayPalBundle/Resources</directory>
+                <directory suffix=".php">./PayPalBundle/Components</directory>
 
                 <!-- Bootstrap -->
                 <file>SwagPaymentPayPalUnified.php</file>

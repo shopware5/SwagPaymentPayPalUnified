@@ -25,9 +25,9 @@
 namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services;
 
 use SwagPaymentPayPalUnified\Components\Services\PaymentInstructionService;
-use SwagPaymentPayPalUnified\SDK\Structs\Payment\Instruction\Amount;
-use SwagPaymentPayPalUnified\SDK\Structs\Payment\Instruction\RecipientBanking;
-use SwagPaymentPayPalUnified\SDK\Structs\Payment\PaymentInstruction;
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Instruction\Amount;
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Instruction\RecipientBanking;
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\PaymentInstruction;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 
 class PaymentInstructionServiceTest extends \PHPUnit_Framework_TestCase
@@ -75,7 +75,7 @@ class PaymentInstructionServiceTest extends \PHPUnit_Framework_TestCase
         $instructions->setDueDate(self::TEST_DUE_DATE);
         $instructions->setReferenceNumber(self::TEST_REFERENCE);
 
-        $testAmount =  new Amount();
+        $testAmount = new Amount();
         $testAmount->setValue(self::TEST_AMOUNT_VALUE);
         $instructions->setAmount($testAmount);
 

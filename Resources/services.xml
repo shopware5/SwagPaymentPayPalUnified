@@ -6,7 +6,7 @@
 
     <services>
         <!-- Services -->
-        <service id="paypal_unified.client_service" class="SwagPaymentPayPalUnified\SDK\Services\ClientService">
+        <service id="paypal_unified.client_service" class="SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService">
             <argument type="service" id="config" />
             <argument type="service" id="paypal_unified.token_service" />
             <argument type="service" id="pluginlogger" />
@@ -14,7 +14,7 @@
             <argument type="service" id="paypal_unified.partner_attribution_service" />
         </service>
 
-        <service id="paypal_unified.token_service" class="SwagPaymentPayPalUnified\SDK\Services\TokenService">
+        <service id="paypal_unified.token_service" class="SwagPaymentPayPalUnified\PayPalBundle\Services\TokenService">
             <argument type="service" id="shopware.cache_manager" />
             <argument type="service" id="pluginlogger" />
         </service>
@@ -29,16 +29,16 @@
             <argument type="service" id="service_container" />
         </service>
 
-        <service id="paypal_unified.web_profile_service" class="SwagPaymentPayPalUnified\SDK\Services\WebProfileService">
+        <service id="paypal_unified.web_profile_service" class="SwagPaymentPayPalUnified\PayPalBundle\Services\WebProfileService">
             <argument type="service" id="paypal_unified.client_service" />
             <argument type="service" id="config" />
             <argument type="service" id="paypal_unified.dependency_provider" />
             <argument type="service" id="pluginlogger" />
         </service>
 
-        <service id="paypal_unified.webhook_service" class="SwagPaymentPayPalUnified\SDK\Services\WebhookService" />
+        <service id="paypal_unified.webhook_service" class="SwagPaymentPayPalUnified\PayPalBundle\Services\WebhookService" />
 
-        <service id="paypal_unified.webhook_guard_service" class="SwagPaymentPayPalUnified\SDK\Services\WebhookGuardService">
+        <service id="paypal_unified.webhook_guard_service" class="SwagPaymentPayPalUnified\PayPalBundle\Services\WebhookGuardService">
             <argument type="service" id="paypal_unified.client_service" />
             <argument type="service" id="pluginlogger" />
         </service>
@@ -47,7 +47,7 @@
             <argument type="service" id="router" />
         </service>
 
-        <service id="paypal_unified.partner_attribution_service" class="SwagPaymentPayPalUnified\SDK\Services\PartnerAttributionService">
+        <service id="paypal_unified.partner_attribution_service" class="SwagPaymentPayPalUnified\PayPalBundle\Services\PartnerAttributionService">
             <argument type="service" id="config" />
         </service>
 
@@ -66,17 +66,17 @@
         </service>
 
         <!-- Resources -->
-        <service id="paypal_unified.payment_resource" class="SwagPaymentPayPalUnified\SDK\Resources\PaymentResource">
+        <service id="paypal_unified.payment_resource" class="SwagPaymentPayPalUnified\PayPalBundle\Resources\PaymentResource">
             <argument type="service" id="paypal_unified.client_service" />
             <argument type="service" id="paypal_unified.web_profile_service" />
             <argument type="service" id="paypal_unified.basket_service" />
         </service>
 
-        <service id="paypal_unified.sale_resource" class="SwagPaymentPayPalUnified\SDK\Resources\SaleResource">
+        <service id="paypal_unified.sale_resource" class="SwagPaymentPayPalUnified\PayPalBundle\Resources\SaleResource">
             <argument type="service" id="paypal_unified.client_service" />
         </service>
 
-        <service id="paypal_unified.refund_resource" class="SwagPaymentPayPalUnified\SDK\Resources\RefundResource">
+        <service id="paypal_unified.refund_resource" class="SwagPaymentPayPalUnified\PayPalBundle\Resources\RefundResource">
             <argument type="service" id="paypal_unified.client_service" />
         </service>
 

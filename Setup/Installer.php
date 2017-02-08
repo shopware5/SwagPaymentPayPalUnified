@@ -49,9 +49,9 @@ class Installer
      * Installer constructor.
      *
      * @param ModelManager $modelManager
-     * @param Connection $connection
-     * @param CrudService $attributeCrudService
-     * @param string $bootstrapPath
+     * @param Connection   $connection
+     * @param CrudService  $attributeCrudService
+     * @param string       $bootstrapPath
      */
     public function __construct(
         ModelManager $modelManager,
@@ -67,8 +67,10 @@ class Installer
 
     /**
      * @param InstallContext $installContext
-     * @return bool
+     *
      * @throws InstallationException
+     *
+     * @return bool
      */
     public function install(InstallContext $installContext)
     {
@@ -91,11 +93,11 @@ class Installer
     {
         $classicPlugin = $this->modelManager->getRepository(Plugin::class)->findOneBy([
             'name' => 'SwagPaymentPaypal',
-            'active' => 1
+            'active' => 1,
         ]);
         $classicPlusPlugin = $this->modelManager->getRepository(Plugin::class)->findOneBy([
             'name' => 'SwagPaymentPaypalPlus',
-            'active' => 1
+            'active' => 1,
         ]);
 
         return $classicPlugin != null || $classicPlusPlugin != null;
@@ -103,7 +105,7 @@ class Installer
 
     private function createDatabaseTables()
     {
-        $sql = "CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_payment_instruction (
+        $sql = 'CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_payment_instruction (
                 `id` INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
                 `order_number` VARCHAR(255),
                 `bank_name` VARCHAR(255),
@@ -113,7 +115,7 @@ class Installer
                 `amount` VARCHAR(255),
                 `reference` VARCHAR(255),
                 `due_date` DATETIME) 
-                 ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;";
+                 ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;';
 
         $this->connection->query($sql);
     }
@@ -142,14 +144,14 @@ class Installer
         $this->connection->executeQuery($sql, [
             'footerValue' => $instructionsFooter,
             'contentStyle' => $instructionsContentStyle,
-            'contentValue' => $instructionsContent
+            'contentValue' => $instructionsContent,
         ]);
     }
 
     private function createPaymentMethod()
     {
         $existingPayment = $this->modelManager->getRepository(Payment::class)->findOneBy([
-            'name' => 'SwagPaymentPayPalUnified'
+            'name' => 'SwagPaymentPayPalUnified',
         ]);
 
         if ($existingPayment !== null) {

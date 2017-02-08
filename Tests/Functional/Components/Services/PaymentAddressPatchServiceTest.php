@@ -51,7 +51,7 @@ class PaymentAddressPatchServiceTest extends \PHPUnit_Framework_TestCase
             'zipcode' => self::TEST_ADDRESS_ZIPCODE,
             'firstname' => self::TEST_ADDRESS_FIRSTNAME,
             'lastname' => self::TEST_ADDRESS_LASTNAME,
-            'countryId' => self::TEST_ADDRESS_COUNTRYID
+            'countryId' => self::TEST_ADDRESS_COUNTRYID,
         ];
 
         /** @var PaymentAddressPatchService $patchService */
@@ -70,7 +70,7 @@ class PaymentAddressPatchServiceTest extends \PHPUnit_Framework_TestCase
     public function test_getPatch_exception()
     {
         $testAddressData = [
-            'countryId' => 1000
+            'countryId' => 1000,
         ];
 
         /** @var PaymentAddressPatchService $patchService */
@@ -88,7 +88,7 @@ class PaymentAddressPatchServiceTest extends \PHPUnit_Framework_TestCase
             'firstname' => self::TEST_ADDRESS_FIRSTNAME,
             'lastname' => self::TEST_ADDRESS_LASTNAME,
             'countryId' => self::TEST_ADDRESS_COUNTRYID,
-            'stateId' => self::TEST_ADDRESS_STATEID
+            'stateId' => self::TEST_ADDRESS_STATEID,
         ];
 
         /** @var PaymentAddressPatchService $patchService */

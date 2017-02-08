@@ -37,24 +37,24 @@ class Frontend implements SubscriberInterface
     private $config;
 
     /**
-     * {@inheritdoc}
-     */
-    public static function getSubscribedEvents()
-    {
-        return [
-            'Theme_Compiler_Collect_Plugin_Javascript' => 'onCollectJavascript',
-            'Enlight_Controller_Action_PostDispatchSecure_Frontend' => 'onPostDispatchSecure'
-        ];
-    }
-
-    /**
-     * @param string $pluginDir
+     * @param string                      $pluginDir
      * @param \Shopware_Components_Config $config
      */
     public function __construct($pluginDir, \Shopware_Components_Config $config)
     {
         $this->pluginDir = $pluginDir;
         $this->config = $config;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedEvents()
+    {
+        return [
+            'Theme_Compiler_Collect_Plugin_Javascript' => 'onCollectJavascript',
+            'Enlight_Controller_Action_PostDispatchSecure_Frontend' => 'onPostDispatchSecure',
+        ];
     }
 
     /**
@@ -65,7 +65,7 @@ class Frontend implements SubscriberInterface
         $jsPath = [
             $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.payment-wall-shipping-payment.js',
             $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.payment-wall.js',
-            $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.payment-confirm.js'
+            $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.payment-confirm.js',
         ];
 
         return new ArrayCollection($jsPath);

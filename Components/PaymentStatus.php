@@ -26,7 +26,6 @@ namespace SwagPaymentPayPalUnified\Components;
 
 /**
  * Class PaymentStatus
- * @package SwagPaymentPayPalUnified\Components\Structs\Payment
  */
 class PaymentStatus
 {

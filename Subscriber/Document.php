@@ -30,7 +30,7 @@ use Shopware\Models\Payment\Payment;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\Services\DocumentTemplateService;
 use SwagPaymentPayPalUnified\Components\Services\PaymentInstructionService;
-use SwagPaymentPayPalUnified\SDK\PaymentType;
+use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 
 class Document implements SubscriberInterface
 {
@@ -44,19 +44,9 @@ class Document implements SubscriberInterface
     private $templateService;
 
     /**
-     * {@inheritdoc}
-     */
-    public static function getSubscribedEvents()
-    {
-        return [
-            'Shopware_Components_Document::assignValues::after' => 'onBeforeRenderDocument'
-        ];
-    }
-
-    /**
      * @param PaymentInstructionService $paymentInstructionService
-     * @param DocumentTemplateService $templateService
-     * @param ModelManager $modelManager
+     * @param DocumentTemplateService   $templateService
+     * @param ModelManager              $modelManager
      */
     public function __construct(
         PaymentInstructionService $paymentInstructionService,
@@ -68,6 +58,16 @@ class Document implements SubscriberInterface
         $this->paymentMethodModel = $paymentMethodProvider->getPaymentMethodModel();
         $this->paymentInstructionsService = $paymentInstructionService;
         $this->templateService = $templateService;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedEvents()
+    {
+        return [
+            'Shopware_Components_Document::assignValues::after' => 'onBeforeRenderDocument',
+        ];
     }
 
     /**
@@ -102,7 +102,7 @@ class Document implements SubscriberInterface
     }
 
     /**
-     * @param int $orderNumber
+     * @param int                           $orderNumber
      * @param \Shopware_Components_Document $document
      */
     private function handleInvoiceInstructions($orderNumber, $document)
