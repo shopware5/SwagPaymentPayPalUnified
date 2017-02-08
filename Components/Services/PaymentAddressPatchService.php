@@ -26,6 +26,7 @@ namespace SwagPaymentPayPalUnified\Components\Services;
 
 use Shopware\Components\Model\ModelManager;
 use Shopware\Models\Country\Country;
+use Shopware\Models\Country\State;
 use SwagPaymentPayPalUnified\SDK\Components\Patches\PaymentAddressPatch;
 
 class PaymentAddressPatchService
@@ -48,13 +49,21 @@ class PaymentAddressPatchService
      */
     public function getPatch(array $addressData)
     {
-        $country = $this->getBillingCountry($addressData['country']['id']);
+        $country = $this->getBillingCountry($addressData['countryId']);
 
         if ($country === null) {
             throw new \Exception('The provided address data does not contain a valid country');
         }
 
         $addressData['countryiso'] = $country->getIso();
+
+        //Since it is not required to provide a state in shopware,
+        //this check indicates if the patch should add it to the call.
+        $stateId = $addressData['stateId'];
+        if ($stateId !== null) {
+            $state = $this->getBillingState($stateId);
+            $addressData['stateiso'] = $state->getShortCode();
+        }
 
         return new PaymentAddressPatch($addressData);
     }
@@ -66,5 +75,14 @@ class PaymentAddressPatchService
     private function getBillingCountry($countryId)
     {
         return $this->modelManager->getRepository(Country::class)->find($countryId);
+    }
+
+    /**
+     * @param int $stateId
+     * @return null|State
+     */
+    private function getBillingState($stateId)
+    {
+        return $this->modelManager->getRepository(State::class)->find($stateId);
     }
 }
