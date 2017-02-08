@@ -3,6 +3,7 @@
         {if $paypalPaymentWall}
             data-paypalUnifiedPaymentWall="true"
         {/if}
+        data-language="{$paypalPlusLanguageIso}"
         data-paypalUnifiedPaymentId="{$paypalUnifiedPaymentId}"
         data-paypalUnifiedApprovalUrl="{$paypalUnifiedApprovalUrl}"
         data-paypalUnifiedSandbox="{$paypalUnifiedModeSandbox}"
