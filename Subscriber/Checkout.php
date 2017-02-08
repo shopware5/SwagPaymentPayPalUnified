@@ -27,6 +27,8 @@ namespace SwagPaymentPayPalUnified\Subscriber;
 use Enlight\Event\SubscriberInterface;
 use Shopware\Components\HttpClient\RequestException;
 use Shopware\Components\Logger;
+use Shopware\Models\Shop\DetachedShop;
+use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\Services\PaymentInstructionService;
 use SwagPaymentPayPalUnified\SDK\Resources\PaymentResource;
@@ -54,18 +56,24 @@ class Checkout implements SubscriberInterface
     /** @var Logger $logger */
     protected $logger;
 
+    /** @var DetachedShop $shop */
+    protected $shop;
+
     /**
      * Checkout constructor.
+     *
      * @param ContainerInterface $container
      * @param \Shopware_Components_Config $config
+     * @param DependencyProvider $dependencyProvider
      */
-    public function __construct(ContainerInterface $container, \Shopware_Components_Config $config)
+    public function __construct(ContainerInterface $container, \Shopware_Components_Config $config, DependencyProvider $dependencyProvider)
     {
         $this->container = $container;
         $this->config = $config;
         $this->paymentMethodProvider = new PaymentMethodProvider($container->get('models'));
         $this->profileService = $container->get('paypal_unified.web_profile_service');
         $this->logger = $container->get('pluginlogger');
+        $this->shop = $dependencyProvider->getShop();
     }
 
     /**
@@ -184,6 +192,7 @@ class Checkout implements SubscriberInterface
         $view->assign('paypalUnifiedModeSandbox', $this->config->getByNamespace('SwagPaymentPayPalUnified', 'enableSandbox'));
         $view->assign('paypalUnifiedRemotePaymentId', $paymentStruct->getId());
         $view->assign('paypalUnifiedApprovalUrl', $paymentStruct->getLinks()->getApprovalUrl());
+        $view->assign('paypalPlusLanguageIso', $this->getPaymentWallLanguage());
     }
 
     /**
@@ -203,9 +212,10 @@ class Checkout implements SubscriberInterface
         $view->assign('paypalUnifiedPaymentId', $this->paymentMethodProvider->getPaymentId($this->container->get('dbal_connection')));
         $view->assign('paypalUnifiedRemotePaymentId', $paymentStruct->getId());
         $view->assign('paypalUnifiedApprovalUrl', $paymentStruct->getLinks()->getApprovalUrl());
+        $view->assign('paypalPlusLanguageIso', $this->getPaymentWallLanguage());
 
         //Store the paymentID in the session to indicate that
-        //the payment has already been created.
+        //the payment has already been created and can be used on the confirm page.
         $session->offsetSet('PayPalUnifiedRemotePaymentId', $paymentStruct->getId());
     }
 
@@ -232,5 +242,21 @@ class Checkout implements SubscriberInterface
             $this->logger->error('PayPal Unified: Could not create payment', [$ex->getMessage(), $ex->getBody()]);
             return null;
         }
+    }
+
+    /**
+     * @return string
+     */
+    private function getPaymentWallLanguage()
+    {
+        $languageIso = $this->config->getByNamespace('SwagPaymentPayPalUnified', 'paypalPlusLanguageIso');
+
+        //If no locale ISO was set up specifically,
+        //we can use the current shop's locale ISO
+        if ($languageIso === null) {
+            $languageIso = $this->shop->getLocale()->getLocale();
+        }
+
+        return $languageIso;
     }
 }

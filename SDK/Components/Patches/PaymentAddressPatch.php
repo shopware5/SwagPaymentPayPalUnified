@@ -35,7 +35,7 @@ class PaymentAddressPatch implements PatchInterface
 
     /**
      * The provided array should contain values for the following keys:
-     * [ 'city', 'street', 'zipcode', 'firstname', 'lastname', 'countryiso' ]
+     * [ 'city', 'street', 'zipcode', 'firstname', 'lastname', 'countryiso', 'stateiso' ]
      * in order to create the address patch.
      *
      * @param array $address
@@ -48,6 +48,10 @@ class PaymentAddressPatch implements PatchInterface
         $this->address->setPostalCode($address['zipcode']);
         $this->address->setRecipientName($address['firstname'] . ' ' . $address['lastname']);
         $this->address->setCountryCode($address['countryiso']);
+
+        if ($address['stateiso']) {
+            $this->address->setState($address['stateiso']);
+        }
     }
 
     /**
