@@ -22,17 +22,17 @@
  * our trademarks remain entirely with us.
  */
 
+use Shopware\Components\HttpClient\RequestException;
 use Shopware\Components\Logger;
+use SwagPaymentPayPalUnified\Components\PaymentStatus;
+use SwagPaymentPayPalUnified\Components\Services\OrderDataService;
 use SwagPaymentPayPalUnified\Components\Services\PaymentAddressPatchService;
 use SwagPaymentPayPalUnified\Components\Services\PaymentInstructionService;
-use SwagPaymentPayPalUnified\SDK\Resources\PaymentResource;
-use SwagPaymentPayPalUnified\Components\PaymentStatus;
-use Shopware\Components\HttpClient\RequestException;
-use SwagPaymentPayPalUnified\Components\Services\OrderDataService;
-use SwagPaymentPayPalUnified\SDK\Structs\ErrorResponse;
-use SwagPaymentPayPalUnified\SDK\Structs\Payment\Sale;
-use SwagPaymentPayPalUnified\SDK\Components\Patches\PaymentOrderNumberPatch;
-use SwagPaymentPayPalUnified\SDK\Structs\Payment;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PaymentOrderNumberPatch;
+use SwagPaymentPayPalUnified\PayPalBundle\Resources\PaymentResource;
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\ErrorResponse;
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Sale;
 
 class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_Frontend_Payment
 {
@@ -51,7 +51,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
     public function gatewayAction()
     {
         $orderData = $this->get('session')->get('sOrderVariables');
-        $shippingAddress = $orderData['sUserData']['shippingaddress'];
+        $userData = $orderData['sUserData'];
 
         if ($orderData === null) {
             //No order to be processed
@@ -84,7 +84,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
         //there is an additional action (patchAddressAction()) for the PayPal plus integration.
         /** @var PaymentAddressPatchService $patchService */
         $patchService = $this->get('paypal_unified.payment_address_patch_service');
-        $paymentResource->patch($responseStruct->getId(), $patchService->getPatch($shippingAddress));
+        $paymentResource->patch($responseStruct->getId(), $patchService->getPatch($userData));
 
         $this->redirect($responseStruct->getLinks()->getApprovalUrl());
     }
@@ -127,6 +127,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
             if ($executionResponse === null) {
                 //Communication failure
                 $this->handleError(2);
+
                 return;
             }
 
@@ -148,6 +149,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
                 if (!$orderDataService->applyPaymentStatus($orderNumber, PaymentStatus::PAYMENT_STATUS_APPROVED)) {
                     // Order not found failure
                     $this->handleError(3);
+
                     return;
                 }
             }
@@ -157,6 +159,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
             if (!$orderDataService->applyTransactionId($orderNumber, $saleId)) {
                 // Order not found failure
                 $this->handleError(3);
+
                 return;
             }
 
@@ -173,7 +176,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
             $this->redirect([
                 'module' => 'frontend',
                 'controller' => 'checkout',
-                'action' => 'finish'
+                'action' => 'finish',
             ]);
         } catch (RequestException $exception) {
             //Communication failure
@@ -194,7 +197,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
         $this->Front()->Plugins()->ViewRenderer()->setNoRender();
 
         $paymentId = $this->Request()->get('paymentId');
-        $shippingAddress = $this->get('session')->get('sOrderVariables')['sUserData']['shippingaddress'];
+        $userData = $this->get('session')->get('sOrderVariables')['sUserData'];
 
         /** @var PaymentResource $paymentResource */
         $paymentResource = $this->container->get('paypal_unified.payment_resource');
@@ -202,7 +205,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
         /** @var PaymentAddressPatchService $patchService */
         $patchService = $this->get('paypal_unified.payment_address_patch_service');
 
-        $paymentResource->patch($paymentId, $patchService->getPatch($shippingAddress));
+        $paymentResource->patch($paymentId, $patchService->getPatch($userData));
     }
 
     /**
@@ -227,7 +230,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
      *      3 = System order failure
      *      Any other = Unknown error
      *
-     * @param int $code
+     * @param int              $code
      * @param RequestException $exception
      */
     private function handleError($code, RequestException $exception = null)
@@ -246,7 +249,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
         $this->redirect([
             'controller' => 'checkout',
             'action' => 'shippingPayment',
-            'paypal_unified_error_code' => $code
+            'paypal_unified_error_code' => $code,
         ]);
     }
 }

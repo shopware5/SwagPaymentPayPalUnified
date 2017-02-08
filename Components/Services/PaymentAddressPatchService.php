@@ -25,13 +25,13 @@
 namespace SwagPaymentPayPalUnified\Components\Services;
 
 use Shopware\Components\Model\ModelManager;
-use Shopware\Models\Country\Country;
-use Shopware\Models\Country\State;
-use SwagPaymentPayPalUnified\SDK\Components\Patches\PaymentAddressPatch;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PaymentAddressPatch;
 
 class PaymentAddressPatchService
 {
-    /** @var ModelManager $modelManager */
+    /*
+     * @var ModelManager
+     */
     private $modelManager;
 
     /**
@@ -43,46 +43,16 @@ class PaymentAddressPatchService
     }
 
     /**
-     * @param array $addressData
+     * @param array $userData
+     *
      * @return PaymentAddressPatch
-     * @throws \Exception
      */
-    public function getPatch(array $addressData)
+    public function getPatch(array $userData)
     {
-        $country = $this->getBillingCountry($addressData['countryId']);
+        $shippingAddress = $userData['shippingaddress'];
+        $shippingAddress['countryiso'] = $userData['additional']['countryShipping']['countryiso'];
+        $shippingAddress['stateiso'] = $userData['additional']['stateShipping']['shortcode'];
 
-        if ($country === null) {
-            throw new \Exception('The provided address data does not contain a valid country');
-        }
-
-        $addressData['countryiso'] = $country->getIso();
-
-        //Since it is not required to provide a state in shopware,
-        //this check indicates if the patch should add it to the call.
-        $stateId = $addressData['stateId'];
-        if ($stateId !== null) {
-            $state = $this->getBillingState($stateId);
-            $addressData['stateiso'] = $state->getShortCode();
-        }
-
-        return new PaymentAddressPatch($addressData);
-    }
-
-    /**
-     * @param int $countryId
-     * @return null|Country
-     */
-    private function getBillingCountry($countryId)
-    {
-        return $this->modelManager->getRepository(Country::class)->find($countryId);
-    }
-
-    /**
-     * @param int $stateId
-     * @return null|State
-     */
-    private function getBillingState($stateId)
-    {
-        return $this->modelManager->getRepository(State::class)->find($stateId);
+        return new PaymentAddressPatch($shippingAddress);
     }
 }

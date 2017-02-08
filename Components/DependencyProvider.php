@@ -28,7 +28,9 @@ use Shopware\Components\DependencyInjection\Container as DIContainer;
 
 class DependencyProvider
 {
-    /** @var DIContainer $container */
+    /**
+     * @var DIContainer
+     */
     private $container;
 
     /**

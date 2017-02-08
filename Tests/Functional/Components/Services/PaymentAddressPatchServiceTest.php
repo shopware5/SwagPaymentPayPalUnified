@@ -33,10 +33,8 @@ class PaymentAddressPatchServiceTest extends \PHPUnit_Framework_TestCase
     const TEST_ADDRESS_ZIPCODE = 'TEST_ZIPCODE';
     const TEST_ADDRESS_FIRSTNAME = 'TEST_FIRST_NAME';
     const TEST_ADDRESS_LASTNAME = 'TEST_LAST_NAME';
-    const TEST_ADDRESS_COUNTRYID = 2;
-    const TEST_ADDRESS_STATEID = 3;
-    const TEST_PATCH_COUNTRYCODE = 'DE';
-    const TEST_PATCH_STATECODE = 'NW';
+    const TEST_ADDRESS_COUNTRY = 'DE';
+    const TEST_ADDRESS_STATE = 'NW';
 
     public function test_service_available()
     {
@@ -46,12 +44,18 @@ class PaymentAddressPatchServiceTest extends \PHPUnit_Framework_TestCase
     public function test_getPatch_success()
     {
         $testAddressData = [
-            'city' => self::TEST_ADDRESS_CITY,
-            'street' => self::TEST_ADDRESS_STREET,
-            'zipcode' => self::TEST_ADDRESS_ZIPCODE,
-            'firstname' => self::TEST_ADDRESS_FIRSTNAME,
-            'lastname' => self::TEST_ADDRESS_LASTNAME,
-            'countryId' => self::TEST_ADDRESS_COUNTRYID
+            'shippingaddress' => [
+                'city' => self::TEST_ADDRESS_CITY,
+                'street' => self::TEST_ADDRESS_STREET,
+                'zipcode' => self::TEST_ADDRESS_ZIPCODE,
+                'firstname' => self::TEST_ADDRESS_FIRSTNAME,
+                'lastname' => self::TEST_ADDRESS_LASTNAME,
+            ],
+            'additional' => [
+                'countryShipping' => [
+                    'countryiso' => self::TEST_ADDRESS_COUNTRY,
+                ],
+            ],
         ];
 
         /** @var PaymentAddressPatchService $patchService */
@@ -60,41 +64,37 @@ class PaymentAddressPatchServiceTest extends \PHPUnit_Framework_TestCase
 
         $this->assertNotNull($testAddressPatch);
         $this->assertEquals(self::TEST_ADDRESS_CITY, $testAddressPatch['city']);
-        $this->assertEquals(self::TEST_PATCH_COUNTRYCODE, $testAddressPatch['country_code']);
+        $this->assertEquals(self::TEST_ADDRESS_COUNTRY, $testAddressPatch['country_code']);
         $this->assertEquals(self::TEST_ADDRESS_FIRSTNAME . ' ' . self::TEST_ADDRESS_LASTNAME, $testAddressPatch['recipient_name']);
         $this->assertEquals(self::TEST_ADDRESS_ZIPCODE, $testAddressPatch['postal_code']);
         $this->assertEquals(self::TEST_ADDRESS_STREET, $testAddressPatch['line1']);
         $this->assertNull($testAddressPatch['state']);
     }
 
-    public function test_getPatch_exception()
-    {
-        $testAddressData = [
-            'countryId' => 1000
-        ];
-
-        /** @var PaymentAddressPatchService $patchService */
-        $patchService = Shopware()->Container()->get('paypal_unified.payment_address_patch_service');
-        $this->expectException(\Exception::class);
-        $patchService->getPatch($testAddressData)->getValue();
-    }
-
     public function test_getPatch_attach_state()
     {
         $testAddressData = [
-            'city' => self::TEST_ADDRESS_CITY,
-            'street' => self::TEST_ADDRESS_STREET,
-            'zipcode' => self::TEST_ADDRESS_ZIPCODE,
-            'firstname' => self::TEST_ADDRESS_FIRSTNAME,
-            'lastname' => self::TEST_ADDRESS_LASTNAME,
-            'countryId' => self::TEST_ADDRESS_COUNTRYID,
-            'stateId' => self::TEST_ADDRESS_STATEID
+            'shippingaddress' => [
+                'city' => self::TEST_ADDRESS_CITY,
+                'street' => self::TEST_ADDRESS_STREET,
+                'zipcode' => self::TEST_ADDRESS_ZIPCODE,
+                'firstname' => self::TEST_ADDRESS_FIRSTNAME,
+                'lastname' => self::TEST_ADDRESS_LASTNAME,
+            ],
+            'additional' => [
+                'countryShipping' => [
+                    'countryiso' => self::TEST_ADDRESS_COUNTRY,
+                ],
+                'stateShipping' => [
+                    'shortcode' => self::TEST_ADDRESS_STATE,
+                ],
+            ],
         ];
 
         /** @var PaymentAddressPatchService $patchService */
         $patchService = Shopware()->Container()->get('paypal_unified.payment_address_patch_service');
         $testAddressPatch = $patchService->getPatch($testAddressData)->getValue();
 
-        $this->assertEquals(self::TEST_PATCH_STATECODE, $testAddressPatch['state']);
+        $this->assertEquals(self::TEST_ADDRESS_STATE, $testAddressPatch['state']);
     }
 }

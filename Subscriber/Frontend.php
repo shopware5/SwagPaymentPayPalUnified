@@ -30,11 +30,25 @@ use Enlight_View_Default;
 
 class Frontend implements SubscriberInterface
 {
-    /** @var string $pluginDir */
+    /**
+     * @var string
+     */
     private $pluginDir;
 
-    /** @var \Shopware_Components_Config $config */
+    /**
+     * @var \Shopware_Components_Config
+     */
     private $config;
+
+    /**
+     * @param string                      $pluginDir
+     * @param \Shopware_Components_Config $config
+     */
+    public function __construct($pluginDir, \Shopware_Components_Config $config)
+    {
+        $this->pluginDir = $pluginDir;
+        $this->config = $config;
+    }
 
     /**
      * {@inheritdoc}
@@ -43,18 +57,8 @@ class Frontend implements SubscriberInterface
     {
         return [
             'Theme_Compiler_Collect_Plugin_Javascript' => 'onCollectJavascript',
-            'Enlight_Controller_Action_PostDispatchSecure_Frontend' => 'onPostDispatchSecure'
+            'Enlight_Controller_Action_PostDispatchSecure_Frontend' => 'onPostDispatchSecure',
         ];
-    }
-
-    /**
-     * @param string $pluginDir
-     * @param \Shopware_Components_Config $config
-     */
-    public function __construct($pluginDir, \Shopware_Components_Config $config)
-    {
-        $this->pluginDir = $pluginDir;
-        $this->config = $config;
     }
 
     /**
@@ -65,7 +69,7 @@ class Frontend implements SubscriberInterface
         $jsPath = [
             $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.payment-wall-shipping-payment.js',
             $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.payment-wall.js',
-            $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.payment-confirm.js'
+            $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.payment-confirm.js',
         ];
 
         return new ArrayCollection($jsPath);

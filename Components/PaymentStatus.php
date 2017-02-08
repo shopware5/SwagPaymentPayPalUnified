@@ -26,17 +26,23 @@ namespace SwagPaymentPayPalUnified\Components;
 
 /**
  * Class PaymentStatus
- * @package SwagPaymentPayPalUnified\Components\Structs\Payment
  */
 class PaymentStatus
 {
-    /** default status for approved orders */
+    /**
+     * The default status for approved orders
+     */
     const PAYMENT_STATUS_APPROVED = 12;
-    /** default status for open orders */
+    /**
+     * The default status for open orders
+     */
     const PAYMENT_STATUS_OPEN = 17;
-    /** default status for refunded orders */
+    /**
+     * The default status for refunded orders
+     */
     const PAYMENT_STATUS_REFUNDED = 20;
-
-    /** default status from PayPal to identify completed transactions */
+    /**
+     * The default status from PayPal to identify completed transactions
+     */
     const PAYMENT_COMPLETED = 'completed';
 }

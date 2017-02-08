@@ -29,7 +29,9 @@ use Doctrine\DBAL\Connection;
 
 class DocumentTemplateService
 {
-    /** @var Connection $dbalConnection */
+    /**
+     * @var Connection
+     */
     private $dbalConnection;
 
     /**
@@ -43,6 +45,7 @@ class DocumentTemplateService
     /**
      * @param array $containers
      * @param array $orderData
+     *
      * @return array
      */
     public function getInvoiceContainer($containers, $orderData)

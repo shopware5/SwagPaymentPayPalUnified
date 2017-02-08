@@ -30,7 +30,9 @@ use Shopware\Models\Payment\Payment;
 
 class PaymentMethodProvider
 {
-    /** @var ModelManager $modelManager */
+    /**
+     * @var ModelManager
+     */
     private $modelManager;
 
     /**
@@ -47,7 +49,7 @@ class PaymentMethodProvider
     public function getPaymentMethodModel()
     {
         return $this->modelManager->getRepository(Payment::class)->findOneBy([
-            'name' => 'SwagPaymentPayPalUnified'
+            'name' => 'SwagPaymentPayPalUnified',
         ]);
     }
 
@@ -65,11 +67,13 @@ class PaymentMethodProvider
 
     /**
      * @param Connection $connection
+     *
      * @return int
      */
     public function getPaymentId(Connection $connection)
     {
         $sql = 'SELECT `id` FROM s_core_paymentmeans WHERE `name`=:paymentName';
+
         return (int) $connection->fetchColumn($sql, [':paymentName' => 'SwagPaymentPayPalUnified']);
     }
 }

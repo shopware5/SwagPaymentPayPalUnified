@@ -29,20 +29,24 @@ use Shopware\Components\Model\ModelManager;
 use Shopware\Models\Order\Order;
 use Shopware\Models\Order\Status;
 use SwagPaymentPayPalUnified\Components\PaymentStatus;
-use SwagPaymentPayPalUnified\SDK\Components\Webhook\WebhookEventTypes;
-use SwagPaymentPayPalUnified\SDK\Components\Webhook\WebhookHandler;
-use SwagPaymentPayPalUnified\SDK\Structs\Webhook;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\Webhook\WebhookEventTypes;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\Webhook\WebhookHandler;
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\Webhook;
 
 class SaleComplete implements WebhookHandler
 {
-    /** @var Logger $pluginLogger*/
+    /**
+     * @var Logger
+     */
     private $pluginLogger;
 
-    /** @var ModelManager $emmodelManager */
+    /**
+     * @var ModelManager
+     */
     private $modelManager;
 
     /**
-     * @param Logger $pluginLogger
+     * @param Logger       $pluginLogger
      * @param ModelManager $modelManager
      */
     public function __construct(Logger $pluginLogger, ModelManager $modelManager)
@@ -72,6 +76,7 @@ class SaleComplete implements WebhookHandler
 
             if ($orderRepository === null) {
                 $this->pluginLogger->error('PayPal Unified: Could not find associated order with the transactionId ' . $webhook->getSummary()['parent_payment']);
+
                 return;
             }
 

@@ -26,15 +26,18 @@ namespace SwagPaymentPayPalUnified\Components\Services;
 
 use Shopware\Components\Model\ModelManager;
 use SwagPaymentPayPalUnified\Models\PaymentInstruction as PaymentInstructionModel;
-use SwagPaymentPayPalUnified\SDK\Structs\Payment\PaymentInstruction;
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\PaymentInstruction;
 
 class PaymentInstructionService
 {
-    /** @var ModelManager $modelManager */
+    /**
+     * @var ModelManager
+     */
     private $modelManager;
 
     /**
      * PaymentInstructionService constructor.
+     *
      * @param ModelManager $modelManager
      */
     public function __construct(ModelManager $modelManager)
@@ -44,17 +47,19 @@ class PaymentInstructionService
 
     /**
      * @param string $orderNumber
+     *
      * @return null|PaymentInstructionModel
      */
     public function getInstructions($orderNumber)
     {
         /** @var PaymentInstructionModel $instructionModel */
         $instructionModel = $this->modelManager->getRepository(PaymentInstructionModel::class)->findOneBy(['orderNumber' => $orderNumber]);
+
         return $instructionModel;
     }
 
     /**
-     * @param string $orderNumber
+     * @param string             $orderNumber
      * @param PaymentInstruction $paymentInstruction
      */
     public function createInstructions($orderNumber, PaymentInstruction $paymentInstruction)
