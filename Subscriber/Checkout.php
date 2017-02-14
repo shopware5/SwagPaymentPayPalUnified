@@ -31,7 +31,7 @@ use Shopware\Models\Shop\DetachedShop;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\Services\PaymentInstructionService;
-use SwagPaymentPayPalUnified\Components\Services\SettingsService;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\PaymentResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Services\WebProfileService;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
@@ -55,7 +55,7 @@ class Checkout implements SubscriberInterface
     private $profileService;
 
     /**
-     * @var SettingsService
+     * @var SettingsServiceInterface
      */
     private $config;
 
@@ -78,10 +78,10 @@ class Checkout implements SubscriberInterface
      * Checkout constructor.
      *
      * @param ContainerInterface $container
-     * @param SettingsService    $config
+     * @param SettingsServiceInterface    $config
      * @param DependencyProvider $dependencyProvider
      */
-    public function __construct(ContainerInterface $container, SettingsService $config, DependencyProvider $dependencyProvider)
+    public function __construct(ContainerInterface $container, SettingsServiceInterface $config, DependencyProvider $dependencyProvider)
     {
         $this->container = $container;
         $this->config = $config;

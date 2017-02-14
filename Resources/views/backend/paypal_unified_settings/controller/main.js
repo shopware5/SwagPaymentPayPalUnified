@@ -24,6 +24,11 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
     saveUrl: '{url controller=PaypalUnifiedSettings action=update}',
 
     /**
+     * @type { String }
+     */
+    registerWebhookUrl: '{url controller=PaypalUnifiedSettings action=registerWebhook}',
+
+    /**
      * @type { Shopware.apps.PaypalUnifiedSettings.model.Settings }
      */
     record: null,
@@ -51,6 +56,9 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
             },
             'paypal-unified-settings-toolbar': {
                 'saveSettings': me.onSaveSettings
+            },
+            'paypal-unified-settings-tabs-general': {
+                'registerWebhook': me.onRegisterWebhook
             }
         })
     },
@@ -97,13 +105,47 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
         Shopware.Notification.createGrowlMessage('{s name=growl/saveSettings}The settings have been saved!{/s}');
     },
 
+    onRegisterWebhook: function () {
+        var me = this,
+            generalSettings = me.getGeneralTab().getForm().getValues();
+
+        me.window.setLoading('{s name="loading/registeringWebhook"}Registering webhook...{/s}');
+
+        Ext.Ajax.request({
+            url: me.registerWebhookUrl,
+            params: {
+                shopId: me.record.get('shopId'),
+                clientId: generalSettings['clientId'],
+                clientSecret: generalSettings['clientSecret']
+            },
+            callback: Ext.bind(me.onRegisterWebhookAjaxCallback, me)
+        });
+    },
+
     /**
      * @param { Object } options
      * @param { Boolean } success
      * @param { Object } response
      */
-    onDetailAjaxCallback: function (options, success, response)
-    {
+    onRegisterWebhookAjaxCallback: function (options, success, response) {
+        var me = this;
+
+        me.window.setLoading(false);
+
+        if (success) {
+            var responseObject = Ext.JSON.decode(response.responseText);
+            Shopware.Notification.createGrowlMessage('{s name=growl/registerWebhookSuccess}The webhook has been successfully registered to:{/s} ' +  responseObject['url'])
+        } else {
+            Shopware.Notification.createGrowlMessage('{s name=growl/registerWebhookError}Could not register webhook due to an unknown error.{/s}')
+        }
+    },
+
+    /**
+     * @param { Object } options
+     * @param { Boolean } success
+     * @param { Object } response
+     */
+    onDetailAjaxCallback: function (options, success, response) {
         if (!success) {
             Shopware.Notification.createGrowlMessage('{s name=growl/loadSettingsError}Could not load settings due to an unknown error{/s}')
         }

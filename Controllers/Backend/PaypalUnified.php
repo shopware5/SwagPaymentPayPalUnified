@@ -270,12 +270,12 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
             \Doctrine\ORM\Query\Expr\Join::WITH,
             'payment.id = ' . $paymentMethodProvider->getPaymentId($this->get('dbal_connection'))
         )
-            ->leftJoin('sOrder.shop', 'shop')
+            ->leftJoin('sOrder.languageSubShop', 'languageSubShop')
             ->leftJoin('sOrder.customer', 'customer')
             ->leftJoin('sOrder.orderStatus', 'orderStatus')
             ->leftJoin('sOrder.paymentStatus', 'paymentStatus')
 
-            ->addSelect('shop')
+            ->addSelect('languageSubShop')
             ->addSelect('payment')
             ->addSelect('customer')
             ->addSelect('orderStatus')

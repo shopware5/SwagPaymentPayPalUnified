@@ -38,7 +38,7 @@ class OrderDataService
      */
     private $modelManager;
 
-    /*
+    /**
      * @var Connection
      */
     private $dbalConnection;

@@ -36,9 +36,18 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
         me.callParent(arguments);
 
         //Manually set the background color of the toolbar.
-        me.down('*[name=toolbarContainer]').setBodyStyle({
-            background: '#EBEDEF'
-        });
+        me.down('*[name=toolbarContainer]').setBodyStyle(me.style);
+    },
+
+    registerEvents: function () {
+        var me = this;
+
+        me.addEvents(
+            /**
+             * Will be fired when the user clicks on the register webhook button
+             */
+            'registerWebhook'
+        );
     },
 
     /**
@@ -117,6 +126,8 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
      * @returns { Ext.form.Panel }
      */
     createToolbar: function () {
+        var me = this;
+
         return Ext.create('Ext.form.Panel', {
             dock: 'bottom',
             border: false,
@@ -136,7 +147,8 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
                 text: '{s name="fieldset/rest/webhookButton"}Register Webhook{/s}',
                 style: {
                     float: 'right'
-                }
+                },
+                handler: Ext.bind(me.onRegisterWebhookButtonClick, me)
             }]
         });
     },
@@ -149,6 +161,12 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
         var me = this;
 
         me.down('*[name=orderNumberPrefix]').setDisabled(!checked);
+    },
+
+    onRegisterWebhookButtonClick: function() {
+        var me = this;
+
+        me.fireEvent('registerWebhook');
     }
 });
 //{/block}

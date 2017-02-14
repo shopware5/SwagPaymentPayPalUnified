@@ -28,6 +28,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Enlight\Event\SubscriberInterface;
 use Enlight_View_Default;
 use SwagPaymentPayPalUnified\Components\Services\SettingsService;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 
 class Frontend implements SubscriberInterface
 {
@@ -37,15 +38,15 @@ class Frontend implements SubscriberInterface
     private $pluginDir;
 
     /**
-     * @var SettingsService
+     * @var SettingsServiceInterface
      */
     private $config;
 
     /**
-     * @param string          $pluginDir
-     * @param SettingsService $config
+     * @param string                   $pluginDir
+     * @param SettingsServiceInterface $config
      */
-    public function __construct($pluginDir, SettingsService $config)
+    public function __construct($pluginDir, SettingsServiceInterface $config)
     {
         $this->pluginDir = $pluginDir;
         $this->config = $config;

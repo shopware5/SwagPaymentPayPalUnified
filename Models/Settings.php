@@ -26,7 +26,7 @@ namespace SwagPaymentPayPalUnified\Models;
 
 use Doctrine\ORM\Mapping as ORM;
 use Shopware\Components\Model\ModelEntity;
-use Shopware\Models\Order\Order;
+use Shopware\Models\Shop\Shop;
 
 /**
  * @ORM\Entity()
@@ -50,7 +50,7 @@ class Settings extends ModelEntity
     private $shopId;
 
     /**
-     * @var Order
+     * @var Shop
      * @ORM\OneToOne(targetEntity="Shopware\Models\Shop\Shop")
      * @ORM\JoinColumn(name="shop_id", referencedColumnName="id")
      */
@@ -141,7 +141,7 @@ class Settings extends ModelEntity
     }
 
     /**
-     * @return Order
+     * @return Shop
      */
     public function getShop()
     {
@@ -149,9 +149,9 @@ class Settings extends ModelEntity
     }
 
     /**
-     * @param Order $shop
+     * @param Shop $shop
      */
-    public function setShop($shop)
+    public function setShop(Shop $shop)
     {
         $this->shop = $shop;
     }

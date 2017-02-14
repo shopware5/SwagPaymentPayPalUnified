@@ -74,8 +74,6 @@ class ClientService
      * @param GuzzleFactory             $factory
      * @param PartnerAttributionService $partnerAttributionService
      * @param DependencyProvider        $dependencyProvider
-     *
-     * @internal param int $shopId
      */
     public function __construct(
         SettingsServiceInterface $config,

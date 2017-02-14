@@ -9,7 +9,6 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.ShopSelection', {
     width: '100%',
     dock: 'top',
 
-
     initComponent: function () {
         var me = this;
 
@@ -70,6 +69,10 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.ShopSelection', {
             editable: false,
             displayField: 'name',
 
+            style: {
+                marginRight: '12px'
+            },
+
             listeners: {
                 select: Ext.bind(me.onSelectShop, me)
             }
@@ -80,7 +83,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.ShopSelection', {
 
     /**
      * @param { Ext.form.field.ComboBox } element
-     * @param { Shopware.apps.Base.model.Shop } record
+     * @param { Shopware.apps.Base.model.Shop[] } record
      */
     onSelectShop: function (element, record) {
         var me = this;

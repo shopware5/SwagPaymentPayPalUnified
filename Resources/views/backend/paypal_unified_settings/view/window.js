@@ -78,6 +78,9 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.Window', {
         return me.toolbar;
     },
 
+    /**
+     * @returns { Ext.tab.Panel }
+     */
     createTabElement: function () {
         var me = this;
 

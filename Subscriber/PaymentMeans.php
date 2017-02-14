@@ -28,6 +28,7 @@ use Doctrine\DBAL\Connection;
 use Enlight\Event\SubscriberInterface;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\Services\SettingsService;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 
 class PaymentMeans implements SubscriberInterface
 {
@@ -42,10 +43,10 @@ class PaymentMeans implements SubscriberInterface
     private $settingsService;
 
     /**
-     * @param Connection      $connection
-     * @param SettingsService $settingsService
+     * @param Connection               $connection
+     * @param SettingsServiceInterface $settingsService
      */
-    public function __construct(Connection $connection, SettingsService $settingsService)
+    public function __construct(Connection $connection, SettingsServiceInterface $settingsService)
     {
         $paymentMethodProvider = new PaymentMethodProvider(null);
         $this->paymentId = $paymentMethodProvider->getPaymentId($connection);
