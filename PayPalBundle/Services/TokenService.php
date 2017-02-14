@@ -33,7 +33,7 @@ use SwagPaymentPayPalUnified\PayPalBundle\Structs\Token;
 
 class TokenService
 {
-    const CACHE_ID = 'paypal_unified_auth';
+    const CACHE_ID = 'paypal_unified_auth_';
 
     /**
      * @var CacheManager
@@ -58,18 +58,18 @@ class TokenService
     /**
      * @param ClientService    $client
      * @param OAuthCredentials $credentials
+     * @param int              $shopId
      *
      * @return Token
      */
-    public function getToken(ClientService $client, OAuthCredentials $credentials)
+    public function getToken(ClientService $client, OAuthCredentials $credentials, $shopId)
     {
-        $token = $this->getTokenFromCache();
-
+        $token = $this->getTokenFromCache($shopId);
         if ($token === false || !$this->isTokenValid($token)) {
             $tokenResource = new TokenResource($client);
             try {
                 $token = Token::fromArray($tokenResource->get($credentials));
-                $this->setToken($token);
+                $this->setToken($token, $shopId);
             } catch (RequestException $ex) {
                 $this->logger->error('PayPal Unified: API Authorization failed', [$ex->getMessage(), $ex->getBody()]);
             }
@@ -79,19 +79,22 @@ class TokenService
     }
 
     /**
+     * @param int $shopId
+     *
      * @return Token
      */
-    private function getTokenFromCache()
+    private function getTokenFromCache($shopId)
     {
-        return unserialize($this->cacheManager->getCoreCache()->load(self::CACHE_ID));
+        return unserialize($this->cacheManager->getCoreCache()->load(self::CACHE_ID . $shopId));
     }
 
     /**
      * @param Token $token
+     * @param int   $shopId
      */
-    private function setToken(Token $token)
+    private function setToken(Token $token, $shopId)
     {
-        $this->cacheManager->getCoreCache()->save(serialize($token), self::CACHE_ID);
+        $this->cacheManager->getCoreCache()->save(serialize($token), self::CACHE_ID . $shopId);
     }
 
     /**

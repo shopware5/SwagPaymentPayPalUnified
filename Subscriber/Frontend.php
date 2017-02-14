@@ -27,6 +27,7 @@ namespace SwagPaymentPayPalUnified\Subscriber;
 use Doctrine\Common\Collections\ArrayCollection;
 use Enlight\Event\SubscriberInterface;
 use Enlight_View_Default;
+use SwagPaymentPayPalUnified\Components\Services\SettingsService;
 
 class Frontend implements SubscriberInterface
 {
@@ -36,15 +37,15 @@ class Frontend implements SubscriberInterface
     private $pluginDir;
 
     /**
-     * @var \Shopware_Components_Config
+     * @var SettingsService
      */
     private $config;
 
     /**
-     * @param string                      $pluginDir
-     * @param \Shopware_Components_Config $config
+     * @param string          $pluginDir
+     * @param SettingsService $config
      */
-    public function __construct($pluginDir, \Shopware_Components_Config $config)
+    public function __construct($pluginDir, SettingsService $config)
     {
         $this->pluginDir = $pluginDir;
         $this->config = $config;
@@ -88,6 +89,6 @@ class Frontend implements SubscriberInterface
         $view->addTemplateDir($this->pluginDir . '/Resources/views');
 
         //Assign shop specific and configurable values to the view.
-        $view->assign('showPaypalLogo', $this->config->getByNamespace('SwagPaymentPayPalUnified', 'showSidebarLogo'));
+        $view->assign('showPaypalLogo', $this->config->get('show_sidebar_logo'));
     }
 }

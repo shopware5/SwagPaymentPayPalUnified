@@ -38,7 +38,7 @@ class PaymentMethodProvider
     /**
      * @param ModelManager $modelManager
      */
-    public function __construct(ModelManager $modelManager)
+    public function __construct(ModelManager $modelManager = null)
     {
         $this->modelManager = $modelManager;
     }

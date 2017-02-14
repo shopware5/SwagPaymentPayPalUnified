@@ -28,7 +28,9 @@ use Shopware\Components\HttpClient\GuzzleFactory;
 use Shopware\Components\HttpClient\GuzzleHttpClient as GuzzleClient;
 use Shopware\Components\HttpClient\RequestException;
 use Shopware\Components\Logger;
+use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\PayPalBundle\BaseURL;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\RequestType;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\OAuthCredentials;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Token;
@@ -61,36 +63,70 @@ class ClientService
     private $client;
 
     /**
-     * @param \Shopware_Components_Config $config
-     * @param TokenService                $tokenService
-     * @param Logger                      $logger
-     * @param GuzzleFactory               $factory
-     * @param PartnerAttributionService   $partnerAttributionService
+     * @var int
+     */
+    private $shopId;
+
+    /**
+     * @param SettingsServiceInterface  $config
+     * @param TokenService              $tokenService
+     * @param Logger                    $logger
+     * @param GuzzleFactory             $factory
+     * @param PartnerAttributionService $partnerAttributionService
+     * @param DependencyProvider        $dependencyProvider
+     *
+     * @internal param int $shopId
      */
     public function __construct(
-        \Shopware_Components_Config $config,
+        SettingsServiceInterface $config,
         TokenService $tokenService,
         Logger $logger,
         GuzzleFactory $factory,
-        PartnerAttributionService $partnerAttributionService
+        PartnerAttributionService $partnerAttributionService,
+        DependencyProvider $dependencyProvider
     ) {
         $this->tokenService = $tokenService;
         $this->logger = $logger;
-
-        $environment = (bool) $config->getByNamespace('SwagPaymentPayPalUnified', 'enableSandbox');
-        $environment === true ? $this->baseUrl = BaseURL::SANDBOX : $this->baseUrl = BaseURL::LIVE;
-
         $this->client = new GuzzleClient($factory);
+
+        $shop = $dependencyProvider->getShop();
+
+        //Backend does not have any active shop. In order to authenticate there, please use
+        //the "configure()"-function instead.
+        if ($shop === null || !$config->hasSettings()) {
+            return;
+        }
+
+        $this->shopId = $shop->getId();
+
+        $environment = (bool) $config->get('sandbox');
+        $environment === true ? $this->baseUrl = BaseURL::SANDBOX : $this->baseUrl = BaseURL::LIVE;
 
         //Set Partner-Attribution-Id
         $this->setPartnerAttributionId($partnerAttributionService->getPartnerAttributionId());
 
         //Create authentication
-        $restId = $config->getByNamespace('SwagPaymentPayPalUnified', 'restId');
-        $restSecret = $config->getByNamespace('SwagPaymentPayPalUnified', 'restSecret');
+        $restId = $config->get('client_id');
+        $restSecret = $config->get('client_secret');
         $credentials = new OAuthCredentials();
         $credentials->setRestId($restId);
         $credentials->setRestSecret($restSecret);
+        $this->createAuthentication($credentials);
+    }
+
+    /**
+     * @param array $settings
+     */
+    public function configure(array $settings)
+    {
+        $this->shopId = $settings['shopId'];
+        $environment = (bool) $settings['sandbox'];
+        $environment === true ? $this->baseUrl = BaseURL::SANDBOX : $this->baseUrl = BaseURL::LIVE;
+
+        //Create authentication
+        $credentials = new OAuthCredentials();
+        $credentials->setRestId($settings['clientId']);
+        $credentials->setRestSecret($settings['clientSecret']);
         $this->createAuthentication($credentials);
     }
 
@@ -179,7 +215,7 @@ class ClientService
     {
         try {
             /** @var Token $cachedToken */
-            $token = $this->tokenService->getToken($this, $credentials);
+            $token = $this->tokenService->getToken($this, $credentials, $this->shopId);
             $this->setHeader('Authorization', $token->getTokenType() . ' ' . $token->getAccessToken());
         } catch (RequestException $requestException) {
             $this->logger->error('PayPal: Could not create authentication - request exception', [

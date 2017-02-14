@@ -24,6 +24,7 @@
 
 namespace SwagPaymentPayPalUnified\PayPalBundle\Services;
 
+use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 
 class PartnerAttributionService
@@ -39,14 +40,14 @@ class PartnerAttributionService
     const PARTNER_ID_PAYPAL_CLASSIC = 'Shopware_Cart_EC_2';
 
     /**
-     * @var \Shopware_Components_Config
+     * @var SettingsServiceInterface
      */
     private $config;
 
     /**
-     * @param \Shopware_Components_Config $config
+     * @param SettingsServiceInterface $config
      */
-    public function __construct(\Shopware_Components_Config $config)
+    public function __construct(SettingsServiceInterface $config)
     {
         $this->config = $config;
     }
@@ -66,7 +67,7 @@ class PartnerAttributionService
      */
     private function getCurrentPaymentType()
     {
-        $usePayPalPlus = (bool) $this->config->getByNamespace('SwagPaymentPayPalUnified', 'usePayPalPlus');
+        $usePayPalPlus = (bool) $this->config->get('plus_active');
 
         return $usePayPalPlus === true ? PaymentType::PAYPAL_PLUS : PaymentType::PAYPAL_CLASSIC;
     }
