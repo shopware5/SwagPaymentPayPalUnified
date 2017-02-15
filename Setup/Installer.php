@@ -113,17 +113,7 @@ class Installer
 
     private function createDatabaseTables()
     {
-        $sql = 'CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_payment_instruction (
-                `id` INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-                `order_number` VARCHAR(255),
-                `bank_name` VARCHAR(255),
-                `account_holder` VARCHAR(255),
-                `iban` VARCHAR(255),
-                `bic` VARCHAR(255),
-                `amount` VARCHAR(255),
-                `reference` VARCHAR(255),
-                `due_date` DATETIME) 
-                 ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;';
+        $sql = file_get_contents($this->bootstrapPath . '/Setup/Assets/tables.sql');
 
         $this->connection->query($sql);
     }

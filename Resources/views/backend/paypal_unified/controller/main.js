@@ -26,6 +26,11 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
     details: null,
 
     /**
+     * @type { Ext.data.Model }
+     */
+    record: null,
+
+    /**
      * @type { String }
      */
     paymentDetailsUrl: '{url module=backend controller=PaypalUnified action=paymentDetails}',
@@ -84,14 +89,17 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
     loadDetails: function (record) {
         var me = this,
             paymentId = record.get('temporaryId'), //The plugin stores the PayPal-PaymentId as temporaryId.
+            shopId = record.get('languageIso'),
             sidebar = me.getSidebar();
 
         sidebar.setLoading('{s name="sidebar/loading/details"}Requesting details from PayPal...{/s}');
 
+        me.record = record;
         me.updateOrderDetails(record);
         me.updateCustomerDetails(record);
 
-        me.requestPaymentDetails(paymentId);
+
+        me.requestPaymentDetails(paymentId, shopId);
     },
 
     /**
@@ -139,14 +147,16 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
 
     /**
      * @param { String } paymentId
+     * @param { Number } shopId
      */
-    requestPaymentDetails: function (paymentId) {
+    requestPaymentDetails: function (paymentId, shopId) {
         var me = this;
 
         Ext.Ajax.request({
             url: me.paymentDetailsUrl,
             params: {
-                paymentId: paymentId
+                paymentId: paymentId,
+                shopId: shopId
             },
             callback: Ext.bind(me.paymentDetailsAjaxCallback, me)
         });
@@ -158,7 +168,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
      */
     requestSaleDetails: function (saleId, isRefund) {
         var me = this,
-            ajaxParams = isRefund ? { refundId: saleId } : { saleId: saleId },
+            ajaxParams = isRefund ? { refundId: saleId, shopId: me.record.get('languageIso') } : { saleId: saleId, shopId: me.record.get('languageIso') },
             ajaxUrl = isRefund ? me.refundDetailsUrl : me.saleDetailsUrl,
             detailsContainer = me.getSidebar().refundTab.detailsContainer;
 
@@ -186,7 +196,8 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
             params: {
                 saleId: saleId,
                 amount: amount,
-                invoiceNumber: invoiceNumber
+                invoiceNumber: invoiceNumber,
+                shopId: me.record.get('languageIso')
             },
             callback: Ext.bind(me.saleRefundAjaxCallback, me)
         });
@@ -261,7 +272,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
 
         if (success) {
             details = Ext.JSON.decode(response.responseText);
-            me.requestPaymentDetails(me.details.payment.id);
+            me.requestPaymentDetails(me.details.payment.id, me.record.get('languageIso'));
         } else {
             Shopware.Notification.createGrowlMessage('{s name="sidebar/loading/errorRefund"}An error occurred while requesting the PayPal payment details{/s}')
         }

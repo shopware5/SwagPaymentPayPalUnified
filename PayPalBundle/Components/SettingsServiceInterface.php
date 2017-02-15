@@ -22,30 +22,23 @@
  * our trademarks remain entirely with us.
  */
 
-namespace SwagPaymentPayPalUnified\Components;
+namespace SwagPaymentPayPalUnified\PayPalBundle\Components;
 
-use Shopware\Components\DependencyInjection\Container as DIContainer;
-
-class DependencyProvider
+interface SettingsServiceInterface
 {
     /**
-     * @var DIContainer
+     * Returns a setting value by the provided column name.
+     *
+     * @param $column
+     *
+     * @return mixed
      */
-    private $container;
+    public function get($column);
 
     /**
-     * @param DIContainer $container
+     * Returns a boolean indicating if the shop has any stored settings for the current shop.
+     *
+     * @return bool
      */
-    public function __construct(DIContainer $container)
-    {
-        $this->container = $container;
-    }
-
-    /**
-     * @return \Shopware\Models\Shop\DetachedShop
-     */
-    public function getShop()
-    {
-        return $this->container->get('shop');
-    }
+    public function hasSettings();
 }

@@ -45,6 +45,7 @@ class SwagPaymentPayPalUnified extends Plugin
         return [
             'Enlight_Controller_Dispatcher_ControllerPath_Frontend_PaypalUnifiedWebhook' => 'onGetWebhookControllerPath',
             'Enlight_Controller_Dispatcher_ControllerPath_Backend_PaypalUnified' => 'onGetBackendControllerPath',
+            'Enlight_Controller_Dispatcher_ControllerPath_Backend_PaypalUnifiedSettings' => 'onGetBackendSettingsControllerPath',
             'Theme_Compiler_Collect_Plugin_Less' => 'onCollectLessFiles',
         ];
     }
@@ -138,6 +139,21 @@ class SwagPaymentPayPalUnified extends Plugin
         );
 
         return $this->getPath() . '/Controllers/Backend/PaypalUnified.php';
+    }
+
+    /**
+     * Handles the Enlight_Controller_Dispatcher_ControllerPath_Backend_PaypalUnifiedSettings event.
+     * Returns the path to the backend application controller.
+     *
+     * @return string
+     */
+    public function onGetBackendSettingsControllerPath()
+    {
+        $this->container->get('template')->addTemplateDir(
+            $this->getPath() . '/Resources/views/'
+        );
+
+        return $this->getPath() . '/Controllers/Backend/PaypalUnifiedSettings.php';
     }
 
     /**

@@ -26,13 +26,17 @@ namespace SwagPaymentPayPalUnified\Tests\Functional\PayPalBundle\Services;
 
 use Shopware\Components\HttpClient\GuzzleFactory;
 use Shopware\Components\Logger;
+use SwagPaymentPayPalUnified\Components\Services\SettingsService;
 use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService;
 use SwagPaymentPayPalUnified\PayPalBundle\Services\PartnerAttributionService;
 use SwagPaymentPayPalUnified\PayPalBundle\Services\TokenService;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Token;
+use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 
 class ClientServiceTest extends \PHPUnit_Framework_TestCase
 {
+    use DatabaseTestCaseTrait;
+
     public function test_partner_attribution_id_is_for_classic()
     {
         $clientService = $this->getClientService(false);
@@ -53,17 +57,33 @@ class ClientServiceTest extends \PHPUnit_Framework_TestCase
 
     private function getClientService($usePayPalPlus)
     {
-        /** @var \Shopware_Components_Config $config */
-        $config = Shopware()->Container()->get('config');
-        $config->offsetSet('SwagPaymentPayPalUnified::usePayPalPlus', $usePayPalPlus);
+        $this->createTestSettings($usePayPalPlus);
+
+        /** @var SettingsService $config */
+        $config = Shopware()->Container()->get('paypal_unified.settings_service');
 
         return new ClientService(
             $config,
             $this->getMockedTokenService(),
             new Logger('testLogger'),
             new GuzzleFactory(),
-            Shopware()->Container()->get('paypal_unified.partner_attribution_service')
+            Shopware()->Container()->get('paypal_unified.partner_attribution_service'),
+            Shopware()->Container()->get('paypal_unified.dependency_provider')
         );
+    }
+
+    private function createTestSettings($usePayPalPlus)
+    {
+        $settingsParams = [
+            ':shopId' => 1,
+            ':plusActive' => $usePayPalPlus,
+        ];
+
+        $sql = 'INSERT INTO swag_payment_paypal_unified_settings
+                (shop_id, plus_active)
+                VALUES (:shopId, :plusActive)';
+
+        Shopware()->Db()->executeUpdate($sql, $settingsParams);
     }
 
     private function getMockedTokenService()

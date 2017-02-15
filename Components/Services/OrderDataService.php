@@ -38,25 +38,25 @@ class OrderDataService
      */
     private $modelManager;
 
-    /*
+    /**
      * @var Connection
      */
     private $dbalConnection;
 
     /**
-     * @var \Shopware_Components_Config
+     * @var SettingsService
      */
     private $config;
 
     /**
-     * @param ModelManager                $modelManager
-     * @param Connection                  $dbalConnection
-     * @param \Shopware_Components_Config $config
+     * @param ModelManager    $modelManager
+     * @param Connection      $dbalConnection
+     * @param SettingsService $config
      */
     public function __construct(
         ModelManager $modelManager,
         Connection $dbalConnection,
-        \Shopware_Components_Config $config
+        SettingsService $config
     ) {
         $this->modelManager = $modelManager;
         $this->dbalConnection = $dbalConnection;
@@ -122,7 +122,7 @@ class OrderDataService
     {
         if ($payment->getPaymentInstruction() !== null) {
             $paymentType = PaymentType::PAYPAL_INVOICE;
-        } elseif ($this->config->get('usePayPalPlus') === true) {
+        } elseif ($this->config->get('plus_active') === true) {
             $paymentType = PaymentType::PAYPAL_PLUS;
         } else {
             $paymentType = PaymentType::PAYPAL_CLASSIC;

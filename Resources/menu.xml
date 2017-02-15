@@ -10,5 +10,14 @@
             <class>sprite--paypal-unified</class>
             <parent identifiedBy="controller">Payments</parent>
         </entry>
+        <entry>
+            <name>SwagPaymentPayPalUnifiedSettings</name>
+            <label lang="en">PayPal Unified Settings</label>
+            <label lang="de">PayPal Unified Einstellungen</label>
+            <controller>PaypalUnifiedSettings</controller>
+            <action>index</action>
+            <class>settings--basic-settings</class>
+            <parent identifiedBy="controller">Payments</parent>
+        </entry>
     </entries>
 </menu>

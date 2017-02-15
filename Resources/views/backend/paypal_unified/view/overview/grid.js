@@ -30,7 +30,7 @@ Ext.define('Shopware.apps.PaypalUnified.view.overview.Grid', {
         var me = this;
 
         return {
-            shopId: {
+            languageIso: {
                 header: '{s name="column/shopName"}Shop name{/s}',
                 renderer: me.shopColumnRenderer,
                 draggable: false
@@ -129,7 +129,7 @@ Ext.define('Shopware.apps.PaypalUnified.view.overview.Grid', {
      * @returns { string }
      */
     shopColumnRenderer: function (value, metaData, record) {
-        var shop = record.getShop().first();
+        var shop = record.getLanguageSubShop().first();
 
         if (shop instanceof Ext.data.Model) {
             return shop.get('name');

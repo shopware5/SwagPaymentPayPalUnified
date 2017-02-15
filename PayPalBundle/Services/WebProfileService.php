@@ -27,6 +27,7 @@ namespace SwagPaymentPayPalUnified\PayPalBundle\Services;
 use Shopware\Components\HttpClient\RequestException;
 use Shopware\Components\Logger;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\WebProfileResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile\WebProfileFlowConfig;
@@ -46,7 +47,7 @@ class WebProfileService
     private $dependencyProvider;
 
     /**
-     * @var \Shopware_Components_Config
+     * @var SettingsServiceInterface
      */
     private $config;
 
@@ -56,14 +57,14 @@ class WebProfileService
     private $logger;
 
     /**
-     * @param ClientService               $client
-     * @param \Shopware_Components_Config $config
-     * @param DependencyProvider          $dependencyProvider
-     * @param Logger                      $pluginLogger
+     * @param ClientService            $client
+     * @param SettingsServiceInterface $config
+     * @param DependencyProvider       $dependencyProvider
+     * @param Logger                   $pluginLogger
      */
     public function __construct(
         ClientService $client,
-        \Shopware_Components_Config $config,
+        SettingsServiceInterface $config,
         DependencyProvider $dependencyProvider,
         Logger $pluginLogger
     ) {
@@ -127,8 +128,8 @@ class WebProfileService
     private function getCurrentWebProfile()
     {
         $shop = $this->dependencyProvider->getShop();
-        $logoImage = $this->config->getByNamespace('SwagPaymentPayPalUnified', 'logoImage');
-        $brandName = $this->config->getByNamespace('SwagPaymentPayPalUnified', 'brandName');
+        $logoImage = $this->config->get('logo_image');
+        $brandName = $this->config->get('brand_name');
 
         //Prevent too long brand names
         $brandName = strlen($brandName) > 127 ? substr($brandName, 0, 124) . '...' : $brandName;

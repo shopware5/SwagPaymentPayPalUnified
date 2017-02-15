@@ -31,6 +31,7 @@ use Shopware\Models\Shop\DetachedShop;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\Services\PaymentInstructionService;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\PaymentResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Services\WebProfileService;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
@@ -54,7 +55,7 @@ class Checkout implements SubscriberInterface
     private $profileService;
 
     /**
-     * @var \Shopware_Components_Config
+     * @var SettingsServiceInterface
      */
     private $config;
 
@@ -76,11 +77,11 @@ class Checkout implements SubscriberInterface
     /**
      * Checkout constructor.
      *
-     * @param ContainerInterface          $container
-     * @param \Shopware_Components_Config $config
-     * @param DependencyProvider          $dependencyProvider
+     * @param ContainerInterface $container
+     * @param SettingsServiceInterface    $config
+     * @param DependencyProvider $dependencyProvider
      */
-    public function __construct(ContainerInterface $container, \Shopware_Components_Config $config, DependencyProvider $dependencyProvider)
+    public function __construct(ContainerInterface $container, SettingsServiceInterface $config, DependencyProvider $dependencyProvider)
     {
         $this->container = $container;
         $this->config = $config;
@@ -122,7 +123,7 @@ class Checkout implements SubscriberInterface
         $view = $controller->View();
 
         $action = $request->getActionName();
-        $usePayPalPlus = (bool) $this->config->getByNamespace('SwagPaymentPayPalUnified', 'usePayPalPlus');
+        $usePayPalPlus = (bool) $this->config->get('plus_active');
 
         if ($controller->Response()->isRedirect() || !$usePayPalPlus) {
             return;
@@ -205,7 +206,7 @@ class Checkout implements SubscriberInterface
             return;
         }
 
-        $view->assign('paypalUnifiedModeSandbox', $this->config->getByNamespace('SwagPaymentPayPalUnified', 'enableSandbox'));
+        $view->assign('paypalUnifiedModeSandbox', $this->config->get('sandbox'));
         $view->assign('paypalUnifiedRemotePaymentId', $paymentStruct->getId());
         $view->assign('paypalUnifiedApprovalUrl', $paymentStruct->getLinks()->getApprovalUrl());
         $view->assign('paypalPlusLanguageIso', $this->getPaymentWallLanguage());
@@ -224,7 +225,7 @@ class Checkout implements SubscriberInterface
             return;
         }
 
-        $view->assign('paypalUnifiedModeSandbox', $this->config->getByNamespace('SwagPaymentPayPalUnified', 'enableSandbox'));
+        $view->assign('paypalUnifiedModeSandbox', $this->config->get('sandbox'));
         $view->assign('paypalUnifiedPaymentId', $this->paymentMethodProvider->getPaymentId($this->container->get('dbal_connection')));
         $view->assign('paypalUnifiedRemotePaymentId', $paymentStruct->getId());
         $view->assign('paypalUnifiedApprovalUrl', $paymentStruct->getLinks()->getApprovalUrl());
@@ -267,11 +268,11 @@ class Checkout implements SubscriberInterface
      */
     private function getPaymentWallLanguage()
     {
-        $languageIso = $this->config->getByNamespace('SwagPaymentPayPalUnified', 'paypalPlusLanguageIso');
+        $languageIso = $this->config->get('plus_language');
 
         //If no locale ISO was set up specifically,
         //we can use the current shop's locale ISO
-        if ($languageIso === null) {
+        if ($languageIso === null || $languageIso === '') {
             $languageIso = $this->shop->getLocale()->getLocale();
         }
 

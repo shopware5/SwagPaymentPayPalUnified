@@ -28,9 +28,11 @@ use Shopware\Components\Model\QueryBuilder;
 use Shopware\Models\Order\Order;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\Services\SalesHistoryBuilderService;
+use SwagPaymentPayPalUnified\Components\Services\SettingsService;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\PaymentResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\RefundResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\SaleResource;
+use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Transactions\Amount;
 
 class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Backend_Application
@@ -82,6 +84,9 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
     public function paymentDetailsAction()
     {
         $paymentId = $this->Request()->get('paymentId');
+        $shopId = $this->Request()->get('shopId');
+
+        $this->configureClient($shopId);
 
         /** @var PaymentResource $paymentResource */
         $paymentResource = $this->container->get('paypal_unified.payment_resource');
@@ -106,6 +111,9 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
     public function saleDetailsAction()
     {
         $saleId = $this->Request()->get('saleId');
+        $shopId = $this->Request()->get('shopId');
+
+        $this->configureClient($shopId);
 
         /** @var SaleResource $saleResource */
         $saleResource = $this->container->get('paypal_unified.sale_resource');
@@ -124,6 +132,9 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
     public function refundDetailsAction()
     {
         $saleId = $this->Request()->get('refundId');
+        $shopId = $this->Request()->get('shopId');
+
+        $this->configureClient($shopId);
 
         /** @var RefundResource $refundResource */
         $refundResource = $this->container->get('paypal_unified.refund_resource');
@@ -145,6 +156,9 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
         $totalAmount = $this->Request()->get('amount');
         $invoiceNumber = $this->Request()->get('invoiceNumber');
         $refundCompletely = $this->Request()->get('refundCompletely');
+        $shopId = $this->Request()->get('shopId');
+
+        $this->configureClient($shopId);
 
         /** @var SaleResource $saleResource */
         $saleResource = $this->container->get('paypal_unified.sale_resource');
@@ -256,17 +270,30 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
             \Doctrine\ORM\Query\Expr\Join::WITH,
             'payment.id = ' . $paymentMethodProvider->getPaymentId($this->get('dbal_connection'))
         )
-            ->leftJoin('sOrder.shop', 'shop')
+            ->leftJoin('sOrder.languageSubShop', 'languageSubShop')
             ->leftJoin('sOrder.customer', 'customer')
             ->leftJoin('sOrder.orderStatus', 'orderStatus')
             ->leftJoin('sOrder.paymentStatus', 'paymentStatus')
 
-            ->addSelect('shop')
+            ->addSelect('languageSubShop')
             ->addSelect('payment')
             ->addSelect('customer')
             ->addSelect('orderStatus')
             ->addSelect('paymentStatus');
 
         return $builder;
+    }
+
+    /**
+     * @param int $shopId
+     */
+    private function configureClient($shopId)
+    {
+        /** @var SettingsService $settingsService */
+        $settingsService = $this->container->get('paypal_unified.settings_service');
+
+        /** @var ClientService $client */
+        $client = $this->container->get('paypal_unified.client_service');
+        $client->configure($settingsService->getSettings($shopId)->toArray());
     }
 }
