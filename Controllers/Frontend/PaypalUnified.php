@@ -111,13 +111,15 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
 
             /** @var PaymentResource $paymentResource */
             $paymentResource = $this->container->get('paypal_unified.payment_resource');
-            $sendOrderNumber = (bool) $this->get('config')->get('sendOrderNumberToPayPal');
+            $sendOrderNumber = (bool) $this->get('paypal_unified.settings_service')->get('send_order_number');
 
             // if the order number should be send to PayPal do it before the execute
             if ($sendOrderNumber) {
                 $orderNumber = $this->saveOrder($paymentId, $paymentId, PaymentStatus::PAYMENT_STATUS_OPEN);
+                $patchOrderNumber = $this->container->get('paypal_unified.settings_service')->get('order_number_prefix') . $orderNumber;
+
                 /** @var PaymentOrderNumberPatch $paymentPatch */
-                $paymentPatch = new PaymentOrderNumberPatch($orderNumber);
+                $paymentPatch = new PaymentOrderNumberPatch($patchOrderNumber);
 
                 $paymentResource->patch($paymentId, $paymentPatch);
             }
