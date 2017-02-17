@@ -1,0 +1,14 @@
+templates:
+    - source: vendor/shopware/plugin-dev-tools/testing/templates/config_testing.php.tpl
+      destination: ../../../config_testing.php
+paths:
+    - vendor/shopware/plugin-dev-tools/testing
+const:
+    PLUGIN: SwagPaymentPayPalUnified
+    SHOPWARE_ROOT: ../../../
+    ENV: "testing"
+    DB_USER: "root"
+    DB_PASSWORD: "root"
+    DB_HOST: "localhost"
+    DB_DATABASE: "test_swag_payment_paypal_unified"
+    DB_PORT: "3306"
