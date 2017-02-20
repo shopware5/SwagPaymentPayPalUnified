@@ -70,22 +70,26 @@ class SaleRefunded implements WebhookHandler
     {
         try {
             /** @var Order $orderModel */
-        $orderModel = $this->modelManager->getRepository(Order::class)->findOneBy(['transactionId' => $webhook->getSummary()['parent_payment']]);
-        /** @var Status $orderStatusModel */
-        $orderStatusModel = $this->modelManager->getRepository(Status::class)->find(PaymentStatus::PAYMENT_STATUS_REFUNDED);
+            $orderModel = $this->modelManager->getRepository(Order::class)->findOneBy(['transactionId' => $webhook->getSummary()['parent_payment']]);
+            /** @var Status $orderStatusModel */
+            $orderStatusModel = $this->modelManager->getRepository(Status::class)->find(PaymentStatus::PAYMENT_STATUS_REFUNDED);
 
             if ($orderModel === null) {
                 $this->pluginLogger->error('PayPal Unified: Could not find associated order with the transactionId ' . $webhook->getSummary()['parent_payment']);
 
-                return;
+                return false;
             }
 
-        //Set the payment status to "Refunded"
-        $orderModel->setPaymentStatus($orderStatusModel);
+            //Set the payment status to "Refunded"
+            $orderModel->setPaymentStatus($orderStatusModel);
 
             $this->modelManager->flush($orderModel);
+
+            return true;
         } catch (\Exception $ex) {
             $this->pluginLogger->error('PayPal Unified: (Webhook: SaleRefunded) Could not write entity to database', [$ex->getMessage()]);
         }
+
+        return false;
     }
 }

@@ -29,6 +29,11 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
     registerWebhookUrl: '{url controller=PaypalUnifiedSettings action=registerWebhook}',
 
     /**
+     * @type { String }
+     */
+    validateAPIUrl: '{url controller=PaypalUnifiedSettings action=validateAPI}',
+
+    /**
      * @type { Shopware.apps.PaypalUnifiedSettings.model.Settings }
      */
     record: null,
@@ -58,7 +63,8 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
                 'saveSettings': me.onSaveSettings
             },
             'paypal-unified-settings-tabs-general': {
-                'registerWebhook': me.onRegisterWebhook
+                'registerWebhook': me.onRegisterWebhook,
+                'validateAPI': me.onValidateAPISettings
             }
         })
     },
@@ -97,6 +103,11 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
             generalSettings = me.getGeneralTab().getForm().getValues(),
             plusSettings = me.getPlusTab().getForm().getValues();
 
+        if (!me.getGeneralTab().getForm().isValid()) {
+            Shopware.Notification.createGrowlMessage('{s name=growl/formValidationError}Please fill out all fields marked in red.{/s}');
+            return;
+        }
+
         me.record.set(generalSettings);
         me.record.set(plusSettings);
 
@@ -116,9 +127,28 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
             params: {
                 shopId: me.record.get('shopId'),
                 clientId: generalSettings['clientId'],
-                clientSecret: generalSettings['clientSecret']
+                clientSecret: generalSettings['clientSecret'],
+                sandbox: generalSettings['sandbox']
             },
             callback: Ext.bind(me.onRegisterWebhookAjaxCallback, me)
+        });
+    },
+
+    onValidateAPISettings: function () {
+        var me = this,
+            generalSettings = me.getGeneralTab().getForm().getValues();
+
+        me.window.setLoading('{s name=loading/validatingAPI}Validating API settings...{/s}');
+
+        Ext.Ajax.request({
+            url: me.validateAPIUrl,
+            params: {
+                shopId: me.record.get('shopId'),
+                clientId: generalSettings['clientId'],
+                clientSecret: generalSettings['clientSecret'],
+                sandbox: generalSettings['sandbox']
+            },
+            callback: Ext.bind(me.onValidateAPIAjaxCallback, me)
         });
     },
 
@@ -138,6 +168,25 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
         } else {
             Shopware.Notification.createGrowlMessage('{s name=growl/registerWebhookError}Could not register webhook due to an unknown error.{/s}')
         }
+    },
+
+    /**
+     * @param { Object } options
+     * @param { Boolean } success
+     * @param { Object } response
+     */
+    onValidateAPIAjaxCallback: function (options, success, response) {
+        var me = this,
+            responseObject = Ext.JSON.decode(response.responseText),
+            successFlag = responseObject.success;
+
+        if (successFlag) {
+            Shopware.Notification.createGrowlMessage('{s name=growl/validateAPISuccess}The API settings are valid.{/s}')
+        } else {
+            Shopware.Notification.createGrowlMessage('{s name=growl/validateAPIError}The API settings are invalid:{/s} ' + '<u>' + responseObject.message + '</u>');
+        }
+
+        me.window.setLoading(false);
     },
 
     /**

@@ -77,15 +77,19 @@ class SaleComplete implements WebhookHandler
             if ($orderRepository === null) {
                 $this->pluginLogger->error('PayPal Unified: Could not find associated order with the transactionId ' . $webhook->getSummary()['parent_payment']);
 
-                return;
+                return false;
             }
 
             //Set the payment status to "completely payed"
             $orderRepository->setPaymentStatus($orderStatusModel);
 
             $this->modelManager->flush($orderRepository);
+
+            return true;
         } catch (\Exception $ex) {
             $this->pluginLogger->error('PayPal Unified: (Webhook: SaleComplete) Could not write entity to database', [$ex->getMessage()]);
         }
+
+        return false;
     }
 }

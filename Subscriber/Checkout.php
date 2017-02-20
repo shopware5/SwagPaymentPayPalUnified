@@ -77,9 +77,9 @@ class Checkout implements SubscriberInterface
     /**
      * Checkout constructor.
      *
-     * @param ContainerInterface $container
-     * @param SettingsServiceInterface    $config
-     * @param DependencyProvider $dependencyProvider
+     * @param ContainerInterface       $container
+     * @param SettingsServiceInterface $config
+     * @param DependencyProvider       $dependencyProvider
      */
     public function __construct(ContainerInterface $container, SettingsServiceInterface $config, DependencyProvider $dependencyProvider)
     {

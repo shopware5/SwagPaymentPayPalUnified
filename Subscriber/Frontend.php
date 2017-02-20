@@ -27,7 +27,6 @@ namespace SwagPaymentPayPalUnified\Subscriber;
 use Doctrine\Common\Collections\ArrayCollection;
 use Enlight\Event\SubscriberInterface;
 use Enlight_View_Default;
-use SwagPaymentPayPalUnified\Components\Services\SettingsService;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 
 class Frontend implements SubscriberInterface

@@ -24,7 +24,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
     restContainer: null,
 
     /**
-     * @type { Ext.form.Panel }
+     * @type { Ext.form.FieldSet }
      */
     behaviorContainer: null,
 
@@ -46,7 +46,12 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
             /**
              * Will be fired when the user clicks on the register webhook button
              */
-            'registerWebhook'
+            'registerWebhook',
+
+            /**
+             * Will be fired when the user clicks on the Test API settings button
+             */
+            'validateAPI'
         );
     },
 
@@ -71,15 +76,17 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
             items: [{
                 xtype: 'base-element-boolean',
                 name: 'sandbox',
-                fieldLabel: '{s name="fieldset/rest/enableSandbox"}Client-Secret{/s}'
+                fieldLabel: '{s name="fieldset/rest/enableSandbox"}Enable sandbox{/s}'
             }, {
                 xtype: 'textfield',
                 name: 'clientId',
-                fieldLabel: '{s name="fieldset/rest/clientId"}Client-ID{/s}'
+                fieldLabel: '{s name="fieldset/rest/clientId"}Client-ID{/s}',
+                validator: me.emptyFieldValidator
             }, {
                 xtype: 'textfield',
                 name: 'clientSecret',
-                fieldLabel: '{s name="fieldset/rest/clientSecret"}Client-Secret{/s}'
+                fieldLabel: '{s name="fieldset/rest/clientSecret"}Client-Secret{/s}',
+                validator: me.emptyFieldValidator
             }, me.createToolbar()]
         });
 
@@ -105,7 +112,8 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
             }, {
                 xtype: 'base-element-media',
                 name: 'logoImage',
-                fieldLabel: '{s name="fieldset/behavior/logoImage"}Logo{/s}'
+                fieldLabel: '{s name="fieldset/behavior/logoImage"}Logo{/s}',
+                validator: me.emptyFieldValidator
             }, {
                 xtype: 'base-element-boolean',
                 name: 'sendOrderNumber',
@@ -140,7 +148,8 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
                 text: '{s name="fieldset/rest/testButton"}Test API settings{/s}',
                 style: {
                     float: 'right'
-                }
+                },
+                handler: Ext.bind(me.onValidateAPIButtonClick, me)
             }, {
                 xtype: 'button',
                 cls: 'secondary',
@@ -154,6 +163,16 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
     },
 
     /**
+     * @param { Object } value
+     * @returns { String | Boolean }
+     */
+    emptyFieldValidator: function (value) {
+        return value == ''
+            ? '{s name=validation/logoImageEmpty}This field can not be empty.{/s}'
+            : true;
+    },
+
+    /**
      * @param { Shopware.apps.Base.view.element.Boolean } element
      * @param { Boolean } checked
      */
@@ -163,7 +182,13 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
         me.down('*[name=orderNumberPrefix]').setDisabled(!checked);
     },
 
-    onRegisterWebhookButtonClick: function() {
+    onValidateAPIButtonClick: function () {
+        var me = this;
+
+        me.fireEvent('validateAPI');
+    },
+
+    onRegisterWebhookButtonClick: function () {
         var me = this;
 
         me.fireEvent('registerWebhook');
