@@ -81,12 +81,12 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
                 xtype: 'textfield',
                 name: 'clientId',
                 fieldLabel: '{s name="fieldset/rest/clientId"}Client-ID{/s}',
-                validator: me.emptyFieldValidator
+                allowBlank: false
             }, {
                 xtype: 'textfield',
                 name: 'clientSecret',
                 fieldLabel: '{s name="fieldset/rest/clientSecret"}Client-Secret{/s}',
-                validator: me.emptyFieldValidator
+                allowBlank: false
             }, me.createToolbar()]
         });
 
@@ -108,12 +108,12 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
             }, {
                 xtype: 'textfield',
                 name: 'brandName',
-                fieldLabel: '{s name="fieldset/behavior/brandName"}Brand name{/s}'
+                fieldLabel: '{s name="fieldset/behavior/brandName"}Brand name{/s}',
             }, {
                 xtype: 'base-element-media',
                 name: 'logoImage',
                 fieldLabel: '{s name="fieldset/behavior/logoImage"}Logo{/s}',
-                validator: me.emptyFieldValidator
+                allowBlank: false
             }, {
                 xtype: 'base-element-boolean',
                 name: 'sendOrderNumber',
@@ -160,16 +160,6 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
                 handler: Ext.bind(me.onRegisterWebhookButtonClick, me)
             }]
         });
-    },
-
-    /**
-     * @param { Object } value
-     * @returns { String | Boolean }
-     */
-    emptyFieldValidator: function (value) {
-        return value == ''
-            ? '{s name=validation/logoImageEmpty}This field can not be empty.{/s}'
-            : true;
     },
 
     /**
