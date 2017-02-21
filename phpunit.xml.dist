@@ -12,6 +12,7 @@
                 <directory suffix=".php">./Tests</directory>
                 <directory suffix=".php">./PayPalBundle/Resources</directory>
                 <directory suffix=".php">./PayPalBundle/Components</directory>
+                <directory suffix=".php">./vendor</directory>
 
                 <!-- Bootstrap -->
                 <file>SwagPaymentPayPalUnified.php</file>

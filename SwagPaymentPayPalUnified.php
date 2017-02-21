@@ -24,32 +24,17 @@
 
 namespace SwagPaymentPayPalUnified;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Shopware\Components\Plugin;
 use Shopware\Components\Plugin\Context\ActivateContext;
 use Shopware\Components\Plugin\Context\DeactivateContext;
 use Shopware\Components\Plugin\Context\InstallContext;
 use Shopware\Components\Plugin\Context\UninstallContext;
-use Shopware\Components\Theme\LessDefinition;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Setup\Installer;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class SwagPaymentPayPalUnified extends Plugin
 {
-    /**
-     * {@inheritdoc}
-     */
-    public static function getSubscribedEvents()
-    {
-        return [
-            'Enlight_Controller_Dispatcher_ControllerPath_Frontend_PaypalUnifiedWebhook' => 'onGetWebhookControllerPath',
-            'Enlight_Controller_Dispatcher_ControllerPath_Backend_PaypalUnified' => 'onGetBackendControllerPath',
-            'Enlight_Controller_Dispatcher_ControllerPath_Backend_PaypalUnifiedSettings' => 'onGetBackendSettingsControllerPath',
-            'Theme_Compiler_Collect_Plugin_Less' => 'onCollectLessFiles',
-        ];
-    }
-
     /**
      * @param ContainerBuilder $container
      */
@@ -113,66 +98,5 @@ class SwagPaymentPayPalUnified extends Plugin
         $context->scheduleClearCache(['theme']);
 
         parent::deactivate($context);
-    }
-
-    /**
-     * Handles the Enlight_Controller_Dispatcher_ControllerPath_Frontend_PaypalUnifiedWebhook event.
-     * Returns the path to the webhook controller.
-     *
-     * @return string
-     */
-    public function onGetWebhookControllerPath()
-    {
-        return $this->getPath() . '/Controllers/Frontend/PaypalUnifiedWebhook.php';
-    }
-
-    /**
-     * Handles the Enlight_Controller_Dispatcher_ControllerPath_Backend_PaypalUnified event.
-     * Returns the path to the backend application controller.
-     *
-     * @return string
-     */
-    public function onGetBackendControllerPath()
-    {
-        $this->container->get('template')->addTemplateDir(
-            $this->getPath() . '/Resources/views/'
-        );
-
-        return $this->getPath() . '/Controllers/Backend/PaypalUnified.php';
-    }
-
-    /**
-     * Handles the Enlight_Controller_Dispatcher_ControllerPath_Backend_PaypalUnifiedSettings event.
-     * Returns the path to the backend application controller.
-     *
-     * @return string
-     */
-    public function onGetBackendSettingsControllerPath()
-    {
-        $this->container->get('template')->addTemplateDir(
-            $this->getPath() . '/Resources/views/'
-        );
-
-        return $this->getPath() . '/Controllers/Backend/PaypalUnifiedSettings.php';
-    }
-
-    /**
-     * Handles the Theme_Compiler_Collect_Plugin_Less event.
-     * Will return an ArrayCollection object of all less files that the plugin provides.
-     *
-     * @return ArrayCollection
-     */
-    public function onCollectLessFiles()
-    {
-        $less = new LessDefinition(
-            //configuration
-            [],
-            //less files to compile
-            [$this->getPath() . '/Resources/views/frontend/_public/src/less/all.less'],
-            //import directory
-            $this->getPath()
-        );
-
-        return new ArrayCollection([$less]);
     }
 }

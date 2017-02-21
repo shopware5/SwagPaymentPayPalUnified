@@ -208,6 +208,8 @@ class ClientService
      * If there is no cached token yet, it will be generated on the fly.
      *
      * @param OAuthCredentials $credentials
+     *
+     * @throws RequestException
      */
     private function createAuthentication(OAuthCredentials $credentials)
     {
@@ -220,6 +222,8 @@ class ClientService
                 $requestException->getBody(),
                 $requestException->getMessage(),
             ]);
+
+            throw $requestException;
         } catch (\Exception $e) {
             $this->logger->error('PayPal: Could not create authentication - unknown exception', [
                 $e->getMessage(),

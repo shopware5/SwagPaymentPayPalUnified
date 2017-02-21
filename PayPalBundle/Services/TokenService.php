@@ -25,7 +25,6 @@
 namespace SwagPaymentPayPalUnified\PayPalBundle\Services;
 
 use Shopware\Components\CacheManager;
-use Shopware\Components\HttpClient\RequestException;
 use Shopware\Components\Logger;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\TokenResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\OAuthCredentials;
@@ -67,12 +66,9 @@ class TokenService
         $token = $this->getTokenFromCache($shopId);
         if ($token === false || !$this->isTokenValid($token)) {
             $tokenResource = new TokenResource($client);
-            try {
-                $token = Token::fromArray($tokenResource->get($credentials));
-                $this->setToken($token, $shopId);
-            } catch (RequestException $ex) {
-                $this->logger->error('PayPal Unified: API Authorization failed', [$ex->getMessage(), $ex->getBody()]);
-            }
+
+            $token = Token::fromArray($tokenResource->get($credentials));
+            $this->setToken($token, $shopId);
         }
 
         return $token;

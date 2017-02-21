@@ -22,6 +22,7 @@
  * our trademarks remain entirely with us.
  */
 
+use Shopware\Components\HttpClient\RequestException;
 use SwagPaymentPayPalUnified\Components\Services\SettingsService;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\WebhookResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService;
@@ -72,14 +73,15 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
         $shopId = (int) $this->Request()->get('shopId');
         $restId = $this->Request()->get('clientId');
         $restSecret = $this->Request()->get('clientSecret');
+        $sandbox = $this->Request()->get('sandbox') === 'true' ? true : false;
 
         /** @var ClientService $clientService */
         $clientService = $this->container->get('paypal_unified.client_service');
         $clientService->configure([
             'clientId' => $restId,
             'clientSecret' => $restSecret,
-            'sandbox' => true,
-            'shopId' => $shopId
+            'sandbox' => $sandbox,
+            'shopId' => $shopId,
         ]);
 
         //Generate URL
@@ -89,12 +91,36 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
             'module' => 'frontend',
             'controller' => 'PaypalUnifiedWebhook',
             'action' => 'execute',
-            'forceSecure' => 1
+            'forceSecure' => 1,
         ]);
         $url = str_replace('http://', 'https://', $url);
 
         $webhookResource = new WebhookResource($clientService);
         $webhookResource->create($url, ['*']);
         $this->View()->assign('url', $url);
+    }
+
+    public function validateAPIAction()
+    {
+        $shopId = (int) $this->Request()->get('shopId');
+        $restId = $this->Request()->get('clientId');
+        $sandbox = $this->Request()->get('sandbox') === 'true' ? true : false;
+        $restSecret = $this->Request()->get('clientSecret');
+
+        try {
+            /** @var ClientService $clientService */
+            $clientService = $this->container->get('paypal_unified.client_service');
+            $clientService->configure([
+                'clientId' => $restId,
+                'clientSecret' => $restSecret,
+                'sandbox' => $sandbox,
+                'shopId' => $shopId,
+            ]);
+
+            $this->View()->assign('success', true);
+        } catch (RequestException $ex) {
+            $this->View()->assign('success', false);
+            $this->View()->assign('message', json_decode($ex->getBody(), true)['error_description']);
+        }
     }
 }

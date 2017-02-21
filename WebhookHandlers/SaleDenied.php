@@ -77,15 +77,19 @@ class SaleDenied implements WebhookHandler
             if ($orderModel === null) {
                 $this->pluginLogger->error('PayPal Unified: Could not find associated order with the transactionId ' . $webhook->getSummary()['parent_payment']);
 
-                return;
+                return false;
             }
 
             //Set the payment status to "open"
             $orderModel->setPaymentStatus($orderStatusModel);
 
             $this->modelManager->flush($orderModel);
+
+            return true;
         } catch (\Exception $ex) {
             $this->pluginLogger->error('PayPal Unified: (Webhook:SaleDenied) Could not write entity to database', [$ex->getMessage()]);
         }
+
+        return false;
     }
 }

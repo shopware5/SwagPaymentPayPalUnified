@@ -7,7 +7,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.Window', {
 
     maximizable: false,
     resizable: false,
-    height: '60%',
+    height: '65%',
     width: '40%',
     layout: 'anchor',
 
