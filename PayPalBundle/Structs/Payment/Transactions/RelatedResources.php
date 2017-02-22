@@ -24,29 +24,35 @@
 
 namespace SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Transactions;
 
-use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Sale;
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\RelatedResources\Authorization;
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\RelatedResources\Capture;
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\RelatedResources\Order;
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\RelatedResources\Refund;
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\RelatedResources\RelatedResource;
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\RelatedResources\ResourceType;
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\RelatedResources\Sale;
 
 class RelatedResources
 {
     /**
-     * @var Sale[]
+     * @var RelatedResource[]
      */
-    private $sales;
+    private $resources;
 
     /**
-     * @return Sale[]
+     * @return RelatedResource[]
      */
-    public function getSales()
+    public function getResources()
     {
-        return $this->sales;
+        return $this->resources;
     }
 
     /**
-     * @param Sale[] $sales
+     * @param RelatedResource[] $resources
      */
-    public function setSales($sales)
+    public function setResources($resources)
     {
-        $this->sales = $sales;
+        $this->resources = $resources;
     }
 
     /**
@@ -58,16 +64,35 @@ class RelatedResources
     {
         $result = new self();
 
-        /** @var Sale[] $sales */
-        $sales = [];
+        /** @var RelatedResource[] $relatedResources */
+        $relatedResources = [];
 
         foreach ($data as $resource) {
             foreach ($resource as $key => $sale) {
-                $sales[] = Sale::fromArray($sale, $key);
+                switch ($key) {
+                    case ResourceType::SALE:
+                        $relatedResources[] = Sale::fromArray($sale);
+                        break;
+                    case ResourceType::AUTHORIZATION:
+                        $relatedResources[] = Authorization::fromArray($sale);
+                        break;
+
+                    case ResourceType::REFUND:
+                        $relatedResources[] = Refund::fromArray($sale);
+                        break;
+
+                    case ResourceType::CAPTURE:
+                        $relatedResources[] = Capture::fromArray($sale);
+                        break;
+
+                    case ResourceType::ORDER:
+                        $relatedResources[] = Order::fromArray($sale);
+                        break;
+                }
             }
         }
 
-        $result->setSales($sales);
+        $result->setResources($relatedResources);
 
         return $result;
     }

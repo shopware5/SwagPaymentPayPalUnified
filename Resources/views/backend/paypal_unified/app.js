@@ -21,14 +21,16 @@ Ext.define('Shopware.apps.PaypalUnified', {
      * @type { Array }
      */
     controllers: [
-        'Main'
+        'Main',
+        'Api',
+        'History'
     ],
 
     /**
      * @type { Array }
      */
     models: [
-        'Order',
+        'ShopwareOrder',
         'Payment',
         'PaymentCustomer',
         'PaymentCartItem',
@@ -36,7 +38,11 @@ Ext.define('Shopware.apps.PaypalUnified', {
         'PaymentAmountDetails',
         'PaymentCustomerShipping',
         'Sale',
-        'SaleTransactionFee'
+        'Refund',
+        'Capture',
+        'Order',
+        'Authorization',
+        'TransactionFee'
     ],
 
     /**
@@ -51,13 +57,16 @@ Ext.define('Shopware.apps.PaypalUnified', {
      * @type { Array }
      */
     views: [
-        'refund.Window',
+        'refund.SaleWindow',
+        'refund.CaptureWindow',
         'overview.Window',
         'overview.Grid',
         'overview.Sidebar',
+        'capture.Authorize',
         'sidebar.Order',
         'sidebar.Payment',
-        'sidebar.Refund',
+        'sidebar.History',
+        'sidebar.Toolbar',
         'sidebar.order.Details',
         'sidebar.order.Customer',
         'sidebar.payment.Details',
@@ -65,9 +74,9 @@ Ext.define('Shopware.apps.PaypalUnified', {
         'sidebar.payment.Address',
         'sidebar.payment.Invoice',
         'sidebar.payment.Cart',
-        'sidebar.refund.Sales',
-        'sidebar.refund.Details',
-        'sidebar.refund.RefundButton'
+        'sidebar.history.Grid',
+        'sidebar.history.Details',
+        'sidebar.history.RefundButton'
     ],
 
     /**

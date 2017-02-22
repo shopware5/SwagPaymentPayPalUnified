@@ -21,14 +21,21 @@ Ext.define('Shopware.apps.PaypalUnified.view.overview.Sidebar', {
     paymentTab: null,
 
     /**
-     * @type { Shopware.apps.PaypalUnified.view.sidebar.Refund }
+     * @type { Shopware.apps.PaypalUnified.view.sidebar.History }
      */
-    refundTab: null,
+    historyTab: null,
+
+    /**
+     * @type { Shopware.apps.PaypalUnified.view.sidebar.Toolbar }
+     */
+    toolbar: null,
 
     initComponent: function () {
         var me = this;
 
         me.items = me.createItems();
+        me.dockedItems = me.createToolbar();
+
         me.callParent(arguments);
     },
 
@@ -41,13 +48,24 @@ Ext.define('Shopware.apps.PaypalUnified.view.overview.Sidebar', {
 
         me.orderTab = Ext.create('Shopware.apps.PaypalUnified.view.sidebar.Order');
         me.paymentTab = Ext.create('Shopware.apps.PaypalUnified.view.sidebar.Payment');
-        me.refundTab = Ext.create('Shopware.apps.PaypalUnified.view.sidebar.Refund');
+        me.historyTab = Ext.create('Shopware.apps.PaypalUnified.view.sidebar.History');
 
         items.push(me.orderTab);
         items.push(me.paymentTab);
-        items.push(me.refundTab);
+        items.push(me.historyTab);
 
         return items;
+    },
+
+    /**
+     * @returns { Shopware.apps.PaypalUnified.view.sidebar.Toolbar }
+     */
+    createToolbar: function () {
+        var me = this;
+
+        me.toolbar = Ext.create('Shopware.apps.PaypalUnified.view.sidebar.Toolbar');
+
+        return me.toolbar;
     }
 });
 //{/block}

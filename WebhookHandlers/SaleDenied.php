@@ -70,12 +70,12 @@ class SaleDenied implements WebhookHandler
     {
         try {
             /** @var Order $orderModel */
-            $orderModel = $this->modelManager->getRepository(Order::class)->findOneBy(['transactionId' => $webhook->getSummary()['parent_payment']]);
+            $orderModel = $this->modelManager->getRepository(Order::class)->findOneBy(['temporaryId' => $webhook->getResource()['parent_payment']]);
             /** @var Status $orderStatusModel */
             $orderStatusModel = $this->modelManager->getRepository(Status::class)->find(PaymentStatus::PAYMENT_STATUS_OPEN);
 
             if ($orderModel === null) {
-                $this->pluginLogger->error('PayPal Unified: Could not find associated order with the transactionId ' . $webhook->getSummary()['parent_payment']);
+                $this->pluginLogger->error('PayPal Unified: Could not find associated order with the temporaryId ' . $webhook->getResource()['parent_payment']);
 
                 return false;
             }

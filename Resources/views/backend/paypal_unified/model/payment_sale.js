@@ -2,7 +2,6 @@
 Ext.define('Shopware.apps.PaypalUnified.model.PaymentSale', {
 
     /**
-     * Extends the standard Ext Model
      * @type { String }
      */
     extend: 'Shopware.data.Model',
@@ -18,7 +17,8 @@ Ext.define('Shopware.apps.PaypalUnified.model.PaymentSale', {
         { name: 'create_time', type: 'string' },
         { name: 'update_time', type: 'string' },
         { name: 'state', type: 'string' },
-        { name: 'currency', type: 'string' }
+        { name: 'currency', type: 'string' },
+        { name: 'type', type: 'string' }
     ]
 });
 //{/block}

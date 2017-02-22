@@ -119,7 +119,7 @@ Ext.define('Shopware.apps.PaypalUnified.view.overview.Grid', {
             return value;
         }
 
-        return Ext.util.Format.date(value) + ' ' + Ext.util.Format.date(value, timeFormat);
+        return Ext.util.Format.date(value) + ' ' + Ext.util.Format.date(value);
     },
 
     /**

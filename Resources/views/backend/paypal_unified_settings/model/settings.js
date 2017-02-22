@@ -20,6 +20,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.model.Settings', {
         { name: 'logoImage' },
         { name: 'sendOrderNumber', type: 'bool' },
         { name: 'orderNumberPrefix' },
+        { name: 'paypalPaymentIntent', type: 'int' },
         { name: 'plusActive', type: 'bool' },
         { name: 'plusLanguage' }
     ]

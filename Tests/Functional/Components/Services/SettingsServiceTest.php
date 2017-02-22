@@ -24,6 +24,7 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services;
 
+use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\Services\SettingsService;
 use SwagPaymentPayPalUnified\Models\Settings;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
@@ -70,10 +71,25 @@ class SettingsServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(self::CLIENT_SECRET, $settingsService->get('client_secret'));
     }
 
+    public function test_get_without_shop_throws_exception()
+    {
+        $settingsService = new SettingsService(Shopware()->Container()->get('models'), Shopware()->Container()->get('dbal_connection'), new DependencyMock());
+
+        $this->expectExceptionMessage('Could not retrieve a single setting without a shop instance.');
+        $settingsService->get('paypal_active');
+    }
+
     public function test_hasSettings_false()
     {
         /** @var SettingsService $settingsService */
         $settingsService = Shopware()->Container()->get('paypal_unified.settings_service');
+
+        $this->assertFalse($settingsService->hasSettings());
+    }
+
+    public function test_hasSettings_false_because_no_shop_is_available()
+    {
+        $settingsService = new SettingsService(Shopware()->Container()->get('models'), Shopware()->Container()->get('dbal_connection'), new DependencyMock());
 
         $this->assertFalse($settingsService->hasSettings());
     }
@@ -105,5 +121,17 @@ class SettingsServiceTest extends \PHPUnit_Framework_TestCase
                 VALUES (:shopId, :clientId, :clientSecret, :sandbox, :showSidebarLogo, :logoImage, :plusActive)';
 
         Shopware()->Db()->executeUpdate($sql, $settingsParams);
+    }
+}
+
+class DependencyMock extends DependencyProvider
+{
+    public function __construct()
+    {
+    }
+
+    public function getShop()
+    {
+        return null;
     }
 }

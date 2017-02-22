@@ -2,7 +2,6 @@
 Ext.define('Shopware.apps.PaypalUnified.model.PaymentCartItem', {
 
     /**
-     * Extends the standard Ext Model
      * @type { String }
      */
     extend: 'Shopware.data.Model',

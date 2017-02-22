@@ -1,4 +1,4 @@
-//{namespace name="backend/paypal_unified/main"}
+//{namespace name="backend/paypal_unified/controller/main"}
 //{block name="backend/paypal_unified/controller/main"}
 Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
     extend: 'Enlight.app.Controller',
@@ -31,48 +31,42 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
     record: null,
 
     /**
-     * @type { String }
+     * @type { Shopware.apps.PaypalUnified.controller.Api }
      */
-    paymentDetailsUrl: '{url module=backend controller=PaypalUnified action=paymentDetails}',
-
-    /**
-     * @type { String }
-     */
-    saleDetailsUrl: '{url module=backend controller=PaypalUnified action=saleDetails}',
-
-    /**
-     * @type { String }
-     */
-    refundDetailsUrl: '{url module=backend controller=PaypalUnified action=refundDetails}',
-
-    /**
-     * @type { String }
-     */
-    refundSaleUrl: '{url module=backend controller=PaypalUnified action=refundSale}',
+    apiController: null,
 
     init: function () {
         var me = this;
 
+        me.apiController = me.getController('Api');
+
         me.createWindow();
         me.createComponentControl();
-
         me.callParent(arguments);
     },
 
     createComponentControl: function () {
         var me = this;
+
         me.control({
             'paypal-unified-overview-grid': {
                 'select': me.onSelectGridRecord
             },
-            'paypal-unified-sidebar-refund-sales': {
-                'select': me.onSelectSaleGridRecord
-            },
-            'paypal-unified-sidebar-refund-refund-button': {
+            'paypal-unified-sidebar-history-refund-button': {
                 'click': me.onRefundButtonClick
             },
-            'paypal-unified-refund-window': {
+            'paypal-unified-refund-sale-window': {
                 'refundSale': me.onRefundSale
+            },
+            'paypal-unified-capture-authorize': {
+                'authorizePayment': me.onAuthorizePayment
+            },
+            'paypal-unified-refund-capture-window': {
+                'refundCapture': me.onRefundCapture
+            },
+            'paypal-unified-sidebar-order-actions': {
+                'voidAuthorization': me.onVoidAuthorization,
+                'voidOrder': me.onVoidOrder
             }
         });
     },
@@ -81,25 +75,6 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
         var me = this;
 
         me.window = me.getView('overview.Window').create().show();
-    },
-
-    /**
-     * @param { Ext.data.Model } record
-     */
-    loadDetails: function (record) {
-        var me = this,
-            paymentId = record.get('temporaryId'), //The plugin stores the PayPal-PaymentId as temporaryId.
-            shopId = record.get('languageIso'),
-            sidebar = me.getSidebar();
-
-        sidebar.setLoading('{s name="sidebar/loading/details"}Requesting details from PayPal...{/s}');
-
-        me.record = record;
-        me.updateOrderDetails(record);
-        me.updateCustomerDetails(record);
-
-
-        me.requestPaymentDetails(paymentId, shopId);
     },
 
     /**
@@ -112,25 +87,32 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
         me.loadDetails(record);
     },
 
-    /**
-     * @param { Ext.selection.RowModel } element
-     * @param { Ext.data.Model } record
-     * @param { Number } index
-     */
-    onSelectSaleGridRecord: function (element, record, index) {
-        var me = this,
-            saleId = record.get('id'),
-            isRefund = index !== 0;
-
-        me.requestSaleDetails(saleId, isRefund);
-    },
-
     onRefundButtonClick: function () {
         var me = this;
-        me.refundWindow = Ext.create('Shopware.apps.PaypalUnified.view.refund.Window');
-        me.refundWindow.show();
 
-        me.updateRefundWindow();
+        if (me.details.authorization || me.details.order) {
+            me.refundWindow = Ext.create('Shopware.apps.PaypalUnified.view.refund.CaptureWindow');
+            me.refundWindow.show();
+            me.updateCaptureRefundWindow();
+        } else {
+            me.refundWindow = Ext.create('Shopware.apps.PaypalUnified.view.refund.SaleWindow');
+            me.refundWindow.show();
+            me.updateSaleRefundWindow();
+        }
+    },
+
+    onVoidAuthorization: function () {
+        var me = this;
+
+        me.getSidebar().setLoading('{s name=sidebar/loading/voiding}Voiding payment...{/s}');
+        me.apiController.voidAuthorization(Ext.bind(me.voidCallback, me));
+    },
+
+    onVoidOrder: function () {
+        var me = this;
+
+        me.getSidebar().setLoading('{s name=sidebar/loading/voiding}Voiding payment...{/s}');
+        me.apiController.voidOrder(Ext.bind(me.voidCallback, me));
     },
 
     /**
@@ -138,69 +120,70 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
      */
     onRefundSale: function (data) {
         var me = this,
-            saleId = data.saleId,
             amount = data.amount,
             invoiceNumber = data.invoiceNumber;
 
-        me.requestSaleRefund(saleId, amount, invoiceNumber);
+        me.getSidebar().setLoading('{s name=sidebar/loading/refunding}Refunding payment...{/s}');
+        me.apiController.refundSale(amount, invoiceNumber, Ext.bind(me.refundCallback, me));
     },
 
     /**
-     * @param { String } paymentId
-     * @param { Number } shopId
+     * @param { Object } data
      */
-    requestPaymentDetails: function (paymentId, shopId) {
-        var me = this;
-
-        Ext.Ajax.request({
-            url: me.paymentDetailsUrl,
-            params: {
-                paymentId: paymentId,
-                shopId: shopId
-            },
-            callback: Ext.bind(me.paymentDetailsAjaxCallback, me)
-        });
-    },
-
-    /**
-     * @param { String } saleId
-     * @param { Boolean } isRefund
-     */
-    requestSaleDetails: function (saleId, isRefund) {
+    onRefundCapture: function (data) {
         var me = this,
-            ajaxParams = isRefund ? { refundId: saleId, shopId: me.record.get('languageIso') } : { saleId: saleId, shopId: me.record.get('languageIso') },
-            ajaxUrl = isRefund ? me.refundDetailsUrl : me.saleDetailsUrl,
-            detailsContainer = me.getSidebar().refundTab.detailsContainer;
+            captureId = data.id,
+            amount = data.amount,
+            note = data.note;
 
-        detailsContainer.setLoading('{s name="sidebar/loading/details"}Requesting details from PayPal...{/s}');
-
-        Ext.Ajax.request({
-            url: ajaxUrl,
-            params: ajaxParams,
-            callback: Ext.bind(me.refundDetailsAjaxCallback, me)
-        });
+        me.getSidebar().setLoading('{s name=sidebar/loading/refunding}Refunding payment...{/s}');
+        me.apiController.refundCapture(captureId, amount, note, Ext.bind(me.refundCallback, me));
     },
 
     /**
-     * @param { String } saleId
      * @param { Numeric } amount
-     * @param { String } invoiceNumber
+     * @param { Boolean } isFinal
      */
-    requestSaleRefund: function (saleId, amount, invoiceNumber) {
+    onAuthorizePayment: function (amount, isFinal) {
         var me = this;
 
-        me.getSidebar().setLoading('{s name="sidebar/loading/sale"}Refunding sale...{/s}');
+        me.getSidebar().setLoading('{s name=sidebar/loading/authorizing}Authorizing payment...{/s}');
 
-        Ext.Ajax.request({
-            url: me.refundSaleUrl,
-            params: {
-                saleId: saleId,
-                amount: amount,
-                invoiceNumber: invoiceNumber,
-                shopId: me.record.get('languageIso')
-            },
-            callback: Ext.bind(me.saleRefundAjaxCallback, me)
-        });
+        if (me.details.payment.intent === 'authorize') {
+            me.apiController.captureAuthorization(amount, isFinal, Ext.bind(me.captureCallback, me));
+        } else {
+            me.apiController.captureOrder(amount, isFinal, Ext.bind(me.captureCallback, me));
+        }
+    },
+
+    captureCallback: function (options, success, response) {
+        var me = this,
+            responseObject = Ext.JSON.decode(response.responseText);
+
+        if (responseObject.success) {
+            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Unified{/s}', '{s name=growl/authorizeSuccess}The payment has been authorized successfully{/s}', me.window.title);
+
+            me.loadDetails(me.record);
+        } else {
+            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Unified{/s}', responseObject.message, me.window.title);
+        }
+
+        me.getSidebar().setLoading(false);
+    },
+
+    voidCallback: function (options, success, response) {
+        var me = this,
+            responseObject = Ext.JSON.decode(response.responseText);
+
+        if (responseObject.success) {
+            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Unified{/s}', '{s name=growl/voidSuccess}The payment has been voided successfully.{/s}', me.window.title);
+
+            me.loadDetails(me.record);
+        } else {
+            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Unified{/s}', responseObject.message, me.window.title);
+        }
+
+        me.getSidebar().setLoading(false);
     },
 
     /**
@@ -208,13 +191,14 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
      * @param { Boolean } success
      * @param { Object } response
      */
-    paymentDetailsAjaxCallback: function (options, success, response) {
+    paymentDetailsCallback: function (options, success, response) {
         var me = this,
             sidebar = me.getSidebar(),
-            saleDetailsContainer = sidebar.refundTab.detailsContainer;
+            details = Ext.JSON.decode(response.responseText),
+            saleDetailsContainer = sidebar.historyTab;
 
-        if (success) {
-            me.details = Ext.JSON.decode(response.responseText);
+        if (details.success) {
+            me.details = details;
 
             //Populate the sidebar tab "Payment" with the received data.
             me.updatePaymentDetails();
@@ -223,11 +207,11 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
             me.updatePaymentCart();
             me.updatePaymentInvoice();
             me.updateRefundSales();
+            me.updateWindowOptions();
 
-            saleDetailsContainer.disable();
-            saleDetailsContainer.loadRecord(null);
+            saleDetailsContainer.detailsContainer.disable();
         } else {
-            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Unified{/s}', '{s name="sidebar/loading/error"}An error occurred while requesting the PayPal payment details{/s}', me.window.title);
+            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Unified{/s}', details.message, me.window.title);
         }
 
         sidebar.setLoading(false);
@@ -239,46 +223,36 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
      * @param { Boolean } success
      * @param { Object } response
      */
-    refundDetailsAjaxCallback: function (options, success, response) {
+    refundCallback: function (options, success, response) {
         var me = this,
-            details,
-            isRefund,
-            detailsContainer = me.getSidebar().refundTab.detailsContainer;
-
-        if (success === true) {
-             details = Ext.JSON.decode(response.responseText);
-             isRefund = Ext.isDefined(details.refund);
-
-            //Populate the sidebar tab "Refund" with the received data.
-            me.updateRefundDetails(details, isRefund);
-
-            detailsContainer.enable();
-        } else {
-            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Unified{/s}', '{s name="sidebar/loading/error"}An error occurred while requesting the PayPal payment details{/s}', me.window.title);
-            detailsContainer.disable();
-        }
-
-        detailsContainer.setLoading(false);
-    },
-
-    /**
-     * @param { Object } options
-     * @param { Boolean } success
-     * @param { Object } response
-     */
-    saleRefundAjaxCallback: function (options, success, response) {
-        var me = this,
-            details;
-
-        if (success) {
             details = Ext.JSON.decode(response.responseText);
-            me.requestPaymentDetails(me.details.payment.id, me.record.get('languageIso'));
-            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Unified{/s}', '{s name="sidebar/loading/saleSuccess"}The refund was successful{/s}', me.window.title);
+
+        if (details.success) {
+            me.loadDetails(me.record);
+
+            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Unified{/s}', '{s name=growl/refundSuccess}The refund was successful{/s}', me.window.title);
         } else {
-            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Unified{/s}', '{s name="sidebar/loading/errorRefund"}An error occurred while requesting the PayPal payment details{/s}', me.window.title)
+            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Unified{/s}', details.message, me.window.title)
         }
 
         me.getSidebar().setLoading(false);
+    },
+
+    /**
+     * @param { Ext.data.Model } record
+     */
+    loadDetails: function (record) {
+        var me = this,
+            paymentId = record.get('temporaryId'), //The plugin stores the PayPal-PaymentId as temporaryId.
+            sidebar = me.getSidebar();
+
+        sidebar.setLoading('{s name=sidebar/loading/details}Requesting details from PayPal...{/s}');
+
+        me.record = record;
+        me.updateOrderDetails(record);
+        me.updateCustomerDetails(record);
+
+        me.apiController.getPaymentById(paymentId, Ext.bind(me.paymentDetailsCallback, me));
     },
 
     /**
@@ -288,7 +262,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
         var me = this,
             sidebar = me.getSidebar();
 
-        sidebar.orderTab.detailsContainer.loadRecord(record);
+        sidebar.orderTab.loadRecord(record);
 
         //Manually update the following fields.
         sidebar.down('#orderStatus').setValue(record.getOrderStatus().first().get('description'));
@@ -313,7 +287,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
 
     updatePaymentDetails: function () {
         var me = this,
-            detailsContainer = me.getSidebar().paymentTab.detailsContainer,
+            detailsContainer = me.getSidebar().paymentTab,
             detailsModel = Ext.create('Shopware.apps.PaypalUnified.model.Payment', me.details.payment);
 
         detailsContainer.loadRecord(detailsModel);
@@ -323,7 +297,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
 
     updatePaymentCustomer: function () {
         var me = this,
-            customerContainer = me.getSidebar().paymentTab.customerContainer,
+            customerContainer = me.getSidebar().paymentTab,
             customerModel = Ext.create('Shopware.apps.PaypalUnified.model.PaymentCustomer', me.details.payment.payer.payer_info);
 
         customerContainer.loadRecord(customerModel);
@@ -331,7 +305,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
 
     updatePaymentShipping: function () {
         var me = this,
-            addressContainer = me.getSidebar().paymentTab.addressContainer,
+            addressContainer = me.getSidebar().paymentTab,
             shippingModel = Ext.create('Shopware.apps.PaypalUnified.model.PaymentCustomerShipping', me.details.payment.payer.payer_info.shipping_address);
 
         addressContainer.loadRecord(shippingModel);
@@ -347,7 +321,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
 
     updatePaymentInvoice: function () {
         var me = this,
-            invoiceContainer = me.getSidebar().paymentTab.invoiceContainer,
+            invoiceContainer = me.getSidebar().paymentTab,
             amountModel = Ext.create('Shopware.apps.PaypalUnified.model.PaymentAmount', me.details.payment.transactions[0].amount),
             amountDetailsModel = Ext.create('Shopware.apps.PaypalUnified.model.PaymentAmountDetails', me.details.payment.transactions[0].amount.details),
             currency = amountModel.get('currency');
@@ -359,83 +333,160 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
         invoiceContainer.down('#shipping').setValue(Ext.util.Format.currency(amountDetailsModel.get('shipping')) + ' ' + currency);
     },
 
-    updateRefundSales: function ()
-    {
-       var me = this,
-           saleGrid = me.getSidebar().refundTab.salesGrid,
-           sales = me.details.sales;
-
-        saleGrid.reconfigure(me.createPaymentSaleStore(sales));
-        me.getSidebar().refundTab.refundButton.setDisabled(me.details.sales.maxRefundableAmount === 0);
-    },
-
-    /**
-     * @param { Object } sale
-     * @param { Boolean } isRefund
-     */
-    updateRefundDetails: function (sale, isRefund)
-    {
-        /*
-           Depending on the isRefund flag,
-           the object has different keys for child objects (even though the data is
-           almost exactly the same.)
-           There are two different types: "sale" and "refund".
-           Both are Sale structures but the sale has a transaction_fee object inside which
-           we handle separately here.
-         */
+    updateRefundSales: function () {
         var me = this,
-            detailsContainer = me.getSidebar().refundTab.detailsContainer,
-            detailsModel = isRefund
-                ? Ext.create('Shopware.apps.PaypalUnified.model.Sale', sale.refund) //If the object is of type "refund"
-                : Ext.create('Shopware.apps.PaypalUnified.model.Sale', sale.sale), //If the object is of type "sale"
-            detailsAmountModel = isRefund
-                ? Ext.create('Shopware.apps.PaypalUnified.model.PaymentAmount', sale.refund.amount)
-                : Ext.create('Shopware.apps.PaypalUnified.model.PaymentAmount', sale.sale.amount),
-            detailsTransactionFeeModel = isRefund
-                ? null
-                : Ext.create('Shopware.apps.PaypalUnified.model.SaleTransactionFee', sale.sale.transaction_fee);
+            saleGrid = me.getSidebar().historyTab.salesGrid,
+            history = me.details.history;
 
-        detailsContainer.loadRecord(detailsModel);
-        detailsContainer.loadRecord(detailsAmountModel);
-
-
-        //Only the object of type "sale" has this object.
-        //Since we handle both types in this function, this check is required to avoid exceptions.
-        if (detailsTransactionFeeModel !== null) {
-            detailsContainer.loadRecord(detailsTransactionFeeModel);
-            detailsContainer.down('#transactionFee').setValue(Ext.util.Format.currency(detailsTransactionFeeModel.get('value')) + ' ' + detailsTransactionFeeModel.get('currency'));
-        }
-
-        detailsContainer.down('#transactionFee').setVisible(!isRefund);
-        detailsContainer.down('#paymentMode').setVisible(!isRefund);
-
-        detailsContainer.down('#totalAmount').setValue(Ext.util.Format.currency(detailsAmountModel.get('total')) + ' ' + detailsAmountModel.get('currency'));
-        detailsContainer.down('#createTime').setValue(Ext.util.Format.date(detailsModel.get('create_time'), 'd.m.Y H:i:s'));
-        detailsContainer.down('#updateTime').setValue(Ext.util.Format.date(detailsModel.get('update_time'), 'd.m.Y H:i:s'));
+        saleGrid.reconfigure(me.createPaymentHistoryStore(history));
+        me.getSidebar().historyTab.refundButton.setDisabled(me.details.history.maxRefundableAmount === 0);
     },
 
-    updateRefundWindow: function ()
-    {
+    updateSaleRefundWindow: function () {
         var me = this,
             refundPanel = me.refundWindow.contentContainer,
-            sales = me.details.sales,
-            maxRefundableAmount = me.details.sales.maxRefundableAmount,
-            initialSale = sales[0],
+            history = me.details.history,
+            maxRefundableAmount = me.details.history.maxRefundableAmount,
+            initialSale = me.details.sale,
             saleModel = Ext.create('Shopware.apps.PaypalUnified.model.PaymentSale', initialSale);
-
-        //The payment has been partially or completely (does not matter here) refunded already,
-        //therefore it does not allow another complete refund.
-        refundPanel.down('#refundCompletely').setDisabled(Ext.isDefined(sales[1]));
 
         refundPanel.loadRecord(saleModel);
         refundPanel.down('#maxAmount').setValue(maxRefundableAmount);
         refundPanel.down('#currentAmount').setMaxValue(maxRefundableAmount);
 
-
-        ////Reset the value of the amount field.
+        //Reset the value of the amount field.
         refundPanel.down('#currentAmount').setValue();
         refundPanel.down('#invoiceNumber').setValue();
         refundPanel.down('#refundCompletely').setValue(false);
+
+        refundPanel.down('#refundCompletely').setDisabled(Ext.isDefined(history[1]));
+    },
+
+    /**
+     * A helper function that parses all available captures for the selected payment
+     * and hands them to the capture refund window.
+     */
+    updateCaptureRefundWindow: function () {
+        var me = this,
+            captures = [];
+
+        Ext.iterate(me.details.history, function(key, value) {
+            if (value.type === 'capture') {
+                value.description = Ext.util.Format.date(value.create_time) + ' (' + Ext.util.Format.currency(value.amount) + ' ' + value.currency + ') - ' + value.id;
+                captures.push(value);
+            }
+        });
+
+        me.refundWindow.setCaptures(captures);
+    },
+
+    /**
+     * A helper function that updates the window options.
+     */
+    updateWindowOptions: function () {
+        var me = this,
+            isAuthorization = typeof(me.details.authorization) !== 'undefined',
+            isSale = typeof(me.details.sale) !== 'undefined',
+            isOrder = typeof(me.details.order) !== 'undefined';
+
+        if (isOrder) {
+            me.updateWindowByOrder();
+        } else if (isAuthorization) {
+            me.updateWindowByAuthorization();
+        } else if (isSale) {
+            me.updateWindowBySale();
+        }
+    },
+
+    /**
+     * A helper method that updates the window corresponding to the payment intent.
+     *
+     * For sale:
+     *      - Enable the refund option
+     *      - Disable all toolbar options
+     */
+    updateWindowBySale: function () {
+        var me = this,
+            refundButton = me.getSidebar().historyTab.down('#refundButton'),
+            toolbar = me.getSidebar().toolbar,
+            payment = me.details.payment;
+
+        refundButton.enable();
+        toolbar.updateToolbar(payment.intent, me.details.history.maxRefundableAmount, false);
+    },
+
+    /**
+     * A helper method that updates the window corresponding to the payment intent.
+     *
+     * For authorization:
+     *      state "authorized":
+     *          - Disable the refund option
+     *          - Enable all toolbar options
+     *      state "partially_captured"
+     *          - Enable the refund option
+     *          - Enable the capture toolbar option
+     *          - Disable the void toolbar option
+     *      state "captured"
+     *          - Enable the refund option
+     *          - Disable all toolbar options
+     *      state "voided"
+     *          - Disable the refund option
+     *          - Disable the toolbar
+     */
+    updateWindowByAuthorization: function () {
+        var me = this,
+            refundButton = me.getSidebar().historyTab.down('#refundButton'),
+            toolbar = me.getSidebar().toolbar,
+            payment = me.details.payment,
+            authorization = me.details.authorization;
+
+        if (authorization.state === 'authorized') {
+            refundButton.disable();
+            toolbar.updateToolbar(payment.intent, me.details.history.maxAuthorizableAmount, true);
+        } else if (authorization.state === 'partially_captured') {
+            refundButton.enable();
+            toolbar.updateToolbar(payment.intent, me.details.history.maxAuthorizableAmount, false);
+        } else if (authorization.state === 'captured') {
+            refundButton.enable();
+            toolbar.updateToolbar(payment.intent, 0, false);
+        } else if (authorization.state === 'voided') {
+            refundButton.disable();
+            toolbar.updateToolbar(payment.intent, 0, false);
+        }
+    },
+
+    /**
+     * A helper method that updates the window corresponding to the payment intent.
+     *
+     * For order:
+     *      state "PENDING":
+     *          - Disable the refund option
+     *          - Enable all toolbar options
+     *      state "CAPTURE":
+     *          - Enable the refund option
+     *          - Enable the capture toolbar option
+     *          - Disable the void toolbar option
+     *      state "VOIDED":
+     *          - Disable the refund option
+     *          - Disable all toolbar options
+     */
+    updateWindowByOrder: function () {
+        var me = this,
+            refundButton = me.getSidebar().historyTab.down('#refundButton'),
+            toolbar = me.getSidebar().toolbar,
+            payment = me.details.payment,
+            order = me.details.order;
+
+        if (order.state === 'PENDING') {
+            refundButton.disable();
+            toolbar.updateToolbar(payment.intent, me.details.history.maxAuthorizableAmount, true);
+        } else if (order.state === 'CAPTURE') {
+            refundButton.enable();
+            toolbar.updateToolbar(payment.intent, me.details.history.maxAuthorizableAmount, false);
+        } else if (order.state === 'VOIDED') {
+            refundButton.disable();
+            toolbar.updateToolbar(payment.intent, 0, false);
+        }
     },
 
     /**
@@ -461,17 +512,37 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
      * @param { Array } sales
      * @returns { Shopware.apps.PaypalUnified.store.PaymentSale }
      */
-    createPaymentSaleStore: function (sales) {
+    createPaymentHistoryStore: function (sales) {
         var saleStore = Ext.create('Shopware.apps.PaypalUnified.store.PaymentSale');
 
         Ext.iterate(sales, function(key, value) {
-            if (key !== 'maxRefundableAmount') {
+            if (key !== 'maxRefundableAmount' && key !== 'maxAuthorizableAmount') {
                 var model = Ext.create('Shopware.apps.PaypalUnified.model.PaymentSale', value);
                 saleStore.add(model);
             }
         });
 
         return saleStore;
+    },
+
+    /**
+     * A helper method used by the mixin.
+     *
+     * @returns { Ext.data.Model }
+     */
+    getRecord: function () {
+        var me = this;
+        return me.record;
+    },
+
+    /**
+     * A helper method used by the mixin.
+     *
+     * @returns { Object }
+     */
+    getDetails: function () {
+        var me = this;
+        return me.details;
     }
 });
 //{/block}

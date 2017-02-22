@@ -1,16 +1,22 @@
 //{namespace name="backend/paypal_unified/sidebar/payment/address"}
 //{block name="backend/paypal_unified/sidebar/payment/address"}
 Ext.define('Shopware.apps.PaypalUnified.view.sidebar.payment.Address', {
-    extend: 'Ext.form.Panel',
+    extend: 'Ext.form.FieldSet',
     alias: 'widget.paypal-unified-sidebar-payment-address',
     title: '{s name=title}Shipping address{/s}',
 
     anchor: '100%',
     bodyPadding: 5,
     margin: 5,
-    fieldDefaults: {
+
+    defaults: {
         anchor: '100%',
+        labelWidth: '130px',
         readOnly: true
+    },
+
+    style: {
+        background: '#EBEDEF'
     },
 
     initComponent: function () {

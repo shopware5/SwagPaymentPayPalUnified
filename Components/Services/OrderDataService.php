@@ -104,7 +104,7 @@ class OrderDataService
     {
         if ($payment->getPaymentInstruction() !== null) {
             $paymentType = PaymentType::PAYPAL_INVOICE;
-        } elseif ($this->config->get('plus_active') === true) {
+        } elseif ($this->config->get('plus_active')) {
             $paymentType = PaymentType::PAYPAL_PLUS;
         } else {
             $paymentType = PaymentType::PAYPAL_CLASSIC;

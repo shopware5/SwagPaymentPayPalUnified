@@ -52,6 +52,11 @@ class Webhook
     private $summary;
 
     /**
+     * @var array
+     */
+    private $resource;
+
+    /**
      * @return string
      */
     public function getId()
@@ -92,6 +97,22 @@ class Webhook
     }
 
     /**
+     * @return array
+     */
+    public function getResource()
+    {
+        return $this->resource;
+    }
+
+    /**
+     * @param array $resource
+     */
+    public function setResource($resource)
+    {
+        $this->resource = $resource;
+    }
+
+    /**
      * @param array $data
      *
      * @return Webhook
@@ -104,6 +125,7 @@ class Webhook
         $result->setId($data['id']);
         $result->setResourceType($data['resource_type']);
         $result->setSummary($data['summary']);
+        $result->setResource($data['resource']);
 
         return $result;
     }

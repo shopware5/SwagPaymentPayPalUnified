@@ -5,6 +5,11 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebar.Order', {
     alias: 'widget.paypal-unified-sidebar-order',
     title: '{s name="title"}Order{/s}',
     autoScroll: true,
+    bodyPadding: 5,
+
+    style: {
+        background: '#EBEDEF'
+    },
 
     /**
      * @type { Shopware.apps.PaypalUnified.view.sidebar.order.Details }

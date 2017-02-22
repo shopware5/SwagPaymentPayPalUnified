@@ -63,11 +63,11 @@ class WebhookEventTypes
     /* A payment authorization is created, approved, executed, or a future payment authorization is created. */
     const PAYMENT_AUTHORIZATION_CREATED = 'PAYMENT.AUTHORIZATION.CREATED';
     /* A payment authorization is voided. */
-    const PAYMENT_AUTHORIZATION_VOIDED = 'PAYMENT.AUTHORIZATION.CREATED';
+    const PAYMENT_AUTHORIZATION_VOIDED = 'PAYMENT.AUTHORIZATION.VOIDED';
     /* A payment capture is completed. */
     const PAYMENT_CAPTURE_COMPLETED = 'PAYMENT.CAPTURE.COMPLETED';
     /* A payment capture is denied. */
-    const PAYMENT_CAPTURE_DENIED = 'PAYMENT.CAPTURE.COMPLETED';
+    const PAYMENT_CAPTURE_DENIED = 'PAYMENT.CAPTURE.DENIED';
     /* The state of a payment capture changes to pending. */
     const PAYMENT_CAPTURE_PENDING = 'PAYMENT.CAPTURE.PENDING';
     /* Merchant refunds a payment capture. */

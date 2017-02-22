@@ -24,9 +24,9 @@
 
 use Shopware\Components\CSRFWhitelistAware;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\Webhook\WebhookException;
-use SwagPaymentPayPalUnified\PayPalBundle\Services\WebhookGuardService;
 use SwagPaymentPayPalUnified\PayPalBundle\Services\WebhookService;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Webhook;
+use SwagPaymentPayPalUnified\WebhookHandlers\AuthorizationVoided;
 use SwagPaymentPayPalUnified\WebhookHandlers\SaleComplete;
 use SwagPaymentPayPalUnified\WebhookHandlers\SaleDenied;
 use SwagPaymentPayPalUnified\WebhookHandlers\SaleRefunded;
@@ -37,11 +37,6 @@ class Shopware_Controllers_Frontend_PaypalUnifiedWebhook extends Enlight_Control
      * @var WebhookService
      */
     private $webhookService;
-
-    /**
-     * @var WebhookGuardService
-     */
-    private $webhookGuardService;
 
     /**
      * {@inheritdoc}
@@ -59,12 +54,12 @@ class Shopware_Controllers_Frontend_PaypalUnifiedWebhook extends Enlight_Control
     public function preDispatch()
     {
         $this->webhookService = $this->get('paypal_unified.webhook_service');
-        $this->webhookGuardService = $this->get('paypal_unified.webhook_guard_service');
 
         $this->webhookService->registerWebhooks([
             new SaleComplete($this->get('pluginlogger'), $this->get('models')),
             new SaleDenied($this->get('pluginlogger'), $this->get('models')),
             new SaleRefunded($this->get('pluginlogger'), $this->get('models')),
+            new AuthorizationVoided($this->get('pluginlogger'), $this->get('models')),
         ]);
     }
 
@@ -76,28 +71,19 @@ class Shopware_Controllers_Frontend_PaypalUnifiedWebhook extends Enlight_Control
         $postData = $this->request->getRawBody();
         $postData = json_decode($postData, true);
 
+        $this->container->get('pluginlogger')->info(var_export($postData));
+
         if ($postData === null) {
             return;
         }
 
         try {
-            $sandboxEnabled = (bool) $this->get('config')->getByNamespace('SwagPaymentPayPalUnified', 'enableSandbox');
             $webhook = Webhook::fromArray($postData);
 
             //Webhook handler exists?
             if (!$this->webhookService->handlerExists($webhook->getEventType())) {
-                $this->get('pluginlogger')->error(
-                    'Webhook: Could not process the request, because no handler has been referenced to this type of event.',
-                    [$postData]
-                );
-
-                return;
-            }
-
-            //Webhook is allowed?
-            if (!$sandboxEnabled && !$this->webhookGuardService->isValid($webhook)) {
-                $this->get('pluginlogger')->error(
-                    'WebhookGuard: Blocked webhook request, because it could not be verified.',
+                $this->get('pluginlogger')->info(
+                    'PayPal Unified [Webhook]: Could not process the request, because no handler has been referenced to this type of event.',
                     [$postData]
                 );
 

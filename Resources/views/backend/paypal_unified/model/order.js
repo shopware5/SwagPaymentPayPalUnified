@@ -2,7 +2,6 @@
 Ext.define('Shopware.apps.PaypalUnified.model.Order', {
 
     /**
-     * Extends the standard Ext Model
      * @type { String }
      */
     extend: 'Shopware.data.Model',
@@ -13,28 +12,11 @@ Ext.define('Shopware.apps.PaypalUnified.model.Order', {
      */
     fields: [
         //{block name="backend/paypal_unified/model/order/fields"}{/block}
-        { name: 'number', type: 'string' },
-        { name: 'invoiceAmount', type: 'float' },
-        { name: 'languageIso', type: 'string' },
-        { name: 'customerId', type: 'string' },
-        { name: 'orderTime', type: 'datetime' },
-        { name: 'status', type: 'string' },
-        { name: 'cleared', type: 'string' },
-        { name: 'paymentId', type: 'string' },
-        { name: 'currency', type: 'string' },
-        { name: 'transactionId', type: 'string' },
-        { name: 'temporaryId', type: 'string' }
-    ],
-
-    /**
-     * @type { Array }
-     */
-    associations: [
-        { type:'hasMany', model:'Shopware.apps.Base.model.Customer', name:'getCustomer', associationKey:'customer' },
-        { type:'hasMany', model:'Shopware.apps.Base.model.Shop', name:'getLanguageSubShop', associationKey:'languageSubShop' },
-        { type:'hasMany', model:'Shopware.apps.Base.model.OrderStatus', name:'getOrderStatus', associationKey:'orderStatus' },
-        { type:'hasMany', model:'Shopware.apps.Order.model.Payment', name:'getPayment', associationKey:'payment' },
-        { type:'hasMany', model:'Shopware.apps.Base.model.PaymentStatus', name:'getPaymentStatus', associationKey:'paymentStatus' }
+        { name: 'id', type: 'string' },
+        { name: 'create_time', type: 'string' },
+        { name: 'update_time', type: 'string' },
+        { name: 'state', type: 'string' },
+        { name: 'payment_mode', type: 'string' }
     ]
 });
 //{/block}

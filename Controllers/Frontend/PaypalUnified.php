@@ -32,7 +32,7 @@ use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PaymentOrderNumberP
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\PaymentResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\ErrorResponse;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
-use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Sale;
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\RelatedResources\RelatedResource;
 
 class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_Frontend_Payment
 {
@@ -86,7 +86,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
         $patchService = $this->get('paypal_unified.payment_address_patch_service');
         $paymentResource->patch($responseStruct->getId(), $patchService->getPatch($userData));
 
-        $this->redirect($responseStruct->getLinks()->getApprovalUrl());
+        $this->redirect($responseStruct->getLinks()[1]->getHref());
     }
 
     /**
@@ -142,8 +142,8 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
                 $orderNumber = $this->saveOrder($paymentId, $paymentId, PaymentStatus::PAYMENT_STATUS_OPEN);
             }
 
-            /** @var Sale $responseSale */
-            $responseSale = $response->getTransactions()->getRelatedResources()->getSales()[0];
+            /** @var RelatedResource $responseSale */
+            $responseSale = $response->getTransactions()->getRelatedResources()->getResources()[0];
 
             // apply the payment status if its completed by PayPal
             $paymentState = $responseSale->getState();

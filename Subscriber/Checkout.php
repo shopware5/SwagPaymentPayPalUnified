@@ -214,7 +214,7 @@ class Checkout implements SubscriberInterface
 
         $view->assign('paypalUnifiedModeSandbox', $this->config->get('sandbox'));
         $view->assign('paypalUnifiedRemotePaymentId', $paymentStruct->getId());
-        $view->assign('paypalUnifiedApprovalUrl', $paymentStruct->getLinks()->getApprovalUrl());
+        $view->assign('paypalUnifiedApprovalUrl', $paymentStruct->getLinks()[1]->getHref());
         $view->assign('paypalPlusLanguageIso', $this->getPaymentWallLanguage());
     }
 
@@ -234,7 +234,7 @@ class Checkout implements SubscriberInterface
         $view->assign('paypalUnifiedModeSandbox', $this->config->get('sandbox'));
         $view->assign('paypalUnifiedPaymentId', $this->paymentMethodProvider->getPaymentId($this->container->get('dbal_connection')));
         $view->assign('paypalUnifiedRemotePaymentId', $paymentStruct->getId());
-        $view->assign('paypalUnifiedApprovalUrl', $paymentStruct->getLinks()->getApprovalUrl());
+        $view->assign('paypalUnifiedApprovalUrl', $paymentStruct->getLinks()[1]->getHref());
         $view->assign('paypalPlusLanguageIso', $this->getPaymentWallLanguage());
 
         //Store the paymentID in the session to indicate that

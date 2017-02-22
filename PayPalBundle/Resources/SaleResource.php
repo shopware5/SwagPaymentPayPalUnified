@@ -27,7 +27,7 @@ namespace SwagPaymentPayPalUnified\PayPalBundle\Resources;
 use SwagPaymentPayPalUnified\PayPalBundle\RequestType;
 use SwagPaymentPayPalUnified\PayPalBundle\RequestUri;
 use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService;
-use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Transactions\Amount;
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\SaleRefund;
 
 class SaleResource
 {
@@ -55,21 +55,14 @@ class SaleResource
     }
 
     /**
-     * @param string $saleId
-     * @param Amount $amount
-     * @param string $invoiceNumber
+     * @param string     $saleId
+     * @param SaleRefund $refund
      *
      * @return array
      */
-    public function refund($saleId, Amount $amount = null, $invoiceNumber = '')
+    public function refund($saleId, SaleRefund $refund = null)
     {
-        $requestData = [];
-
-        if ($amount !== null) {
-            $requestData['amount'] = $amount->toArray();
-        }
-
-        $requestData['invoice_number'] = $invoiceNumber;
+        $requestData = $refund->toArray();
 
         return $this->clientService->sendRequest(RequestType::POST, RequestUri::SALE_RESOURCE . '/' . $saleId . '/refund', $requestData);
     }

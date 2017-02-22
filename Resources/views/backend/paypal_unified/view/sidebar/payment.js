@@ -4,6 +4,12 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebar.Payment', {
     extend: 'Ext.form.Panel',
     alias: 'widget.paypal-unified-sidebar-payment',
     title: '{s name="title"}Payment{/s}',
+    bodyPadding: 5,
+
+    style: {
+        background: '#EBEDEF'
+    },
+
     autoScroll: true,
 
     /**
