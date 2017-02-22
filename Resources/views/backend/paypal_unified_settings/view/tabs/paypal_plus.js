@@ -33,20 +33,16 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.PaypalPlus', {
         var me = this;
 
         return [{
-            xtype: 'base-element-boolean',
+            xtype: 'checkbox',
             name: 'plusActive',
             fieldLabel: '{s name=field/activate}Activate PayPal Plus integration{/s}',
+            boxLabel: '{s name=field/activate/help}Activate to enable the PayPal Plus integration for the selected shop.{/s}',
+            inputValue: true,
+            uncheckedValue:false,
             handler: Ext.bind(me.onActivatePayPalPlus, me)
         },
-        me.createLocaleSelection(),
-        {
-            xtype: 'button',
-            cls: 'primary',
-            text: '{s name=field/button}Check PayPal Plus{/s}',
-            style: {
-                float: 'right'
-            }
-        }];
+            me.createLocaleSelection()
+        ];
     },
 
     /**
@@ -62,6 +58,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.PaypalPlus', {
             name: 'plusLanguage',
             store:  store,
             fieldLabel: '{s name=field/language}Payment Wall language{/s}',
+            helpText: '{s name=field/language/help}You can define another language for the Payment Wall for the selected shop. Leave the selection empty to use the shop locale.{/s}',
             disabled: true,
             queryMode: 'local',
             displayField: 'locale',

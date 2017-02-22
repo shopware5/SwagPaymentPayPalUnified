@@ -227,7 +227,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
             saleDetailsContainer.disable();
             saleDetailsContainer.loadRecord(null);
         } else {
-            Shopware.Notification.createGrowlMessage('{s name="sidebar/loading/error"}An error occurred while requesting the PayPal payment details{/s}');
+            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Unified{/s}', '{s name="sidebar/loading/error"}An error occurred while requesting the PayPal payment details{/s}', me.window.title);
         }
 
         sidebar.setLoading(false);
@@ -252,9 +252,9 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
             //Populate the sidebar tab "Refund" with the received data.
             me.updateRefundDetails(details, isRefund);
 
-            detailsContainer.enable()
+            detailsContainer.enable();
         } else {
-            Shopware.Notification.createGrowlMessage('{s name="sidebar/loading/error"}An error occurred while requesting the PayPal payment details{/s}');
+            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Unified{/s}', '{s name="sidebar/loading/error"}An error occurred while requesting the PayPal payment details{/s}', me.window.title);
             detailsContainer.disable();
         }
 
@@ -273,8 +273,9 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
         if (success) {
             details = Ext.JSON.decode(response.responseText);
             me.requestPaymentDetails(me.details.payment.id, me.record.get('languageIso'));
+            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Unified{/s}', '{s name="sidebar/loading/saleSuccess"}The refund was successful{/s}', me.window.title);
         } else {
-            Shopware.Notification.createGrowlMessage('{s name="sidebar/loading/errorRefund"}An error occurred while requesting the PayPal payment details{/s}')
+            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Unified{/s}', '{s name="sidebar/loading/errorRefund"}An error occurred while requesting the PayPal payment details{/s}', me.window.title)
         }
 
         me.getSidebar().setLoading(false);
