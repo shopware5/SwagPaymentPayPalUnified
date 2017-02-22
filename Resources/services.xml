@@ -21,7 +21,6 @@
         </service>
 
         <service id="paypal_unified.order_data_service" class="SwagPaymentPayPalUnified\Components\Services\OrderDataService">
-            <argument type="service" id="models" />
             <argument type="service" id="dbal_connection" />
             <argument type="service" id="paypal_unified.settings_service" />
         </service>
