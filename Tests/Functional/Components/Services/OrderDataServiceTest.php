@@ -25,6 +25,7 @@
 namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services;
 
 use Doctrine\DBAL\Connection;
+use SwagPaymentPayPalUnified\Components\Services\OrderDataService;
 use SwagPaymentPayPalUnified\Tests\FixtureImportTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 
@@ -33,7 +34,7 @@ class OrderDataServiceTest extends \PHPUnit_Framework_TestCase
     use DatabaseTestCaseTrait;
     use FixtureImportTestCaseTrait;
 
-    const ORDER_NUMBER = '99999';
+    const ORDER_NUMBER = 99999;
     const PAYMENT_STATUS_APPROVED = 12;
     const TEST_TRANSACTION_ID = 'FAKE-PAYPAL-TRANSACTION-ID';
 
@@ -41,7 +42,7 @@ class OrderDataServiceTest extends \PHPUnit_Framework_TestCase
     {
         $orderDataService = $this->getOrderDataService();
 
-        $this->assertNotNull($orderDataService);
+        $this->assertInstanceOf(OrderDataService::class, $orderDataService);
     }
 
     public function test_apply_order_status_without_existing_order_returns_false()
@@ -84,6 +85,18 @@ class OrderDataServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(self::TEST_TRANSACTION_ID, $updatedOrder[0]['transactionID']);
     }
 
+    public function test_getTransactionId_returns_correct_id()
+    {
+        $orderDataService = $this->getOrderDataService();
+
+        $orderDataService->applyTransactionId(self::ORDER_NUMBER, self::TEST_TRANSACTION_ID);
+
+        $this->assertEquals(self::TEST_TRANSACTION_ID, $orderDataService->getTransactionId(self::ORDER_NUMBER));
+    }
+
+    /**
+     * @return OrderDataService
+     */
     private function getOrderDataService()
     {
         return Shopware()->Container()->get('paypal_unified.order_data_service');

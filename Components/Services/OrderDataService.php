@@ -25,19 +25,11 @@
 namespace SwagPaymentPayPalUnified\Components\Services;
 
 use Doctrine\DBAL\Connection;
-use Shopware\Components\Model\ModelManager;
-use Shopware\Models\Order\Order;
-use Shopware\Models\Order\Status;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
 
 class OrderDataService
 {
-    /**
-     * @var ModelManager
-     */
-    private $modelManager;
-
     /**
      * @var Connection
      */
@@ -49,16 +41,13 @@ class OrderDataService
     private $config;
 
     /**
-     * @param ModelManager    $modelManager
      * @param Connection      $dbalConnection
      * @param SettingsService $config
      */
     public function __construct(
-        ModelManager $modelManager,
         Connection $dbalConnection,
         SettingsService $config
     ) {
-        $this->modelManager = $modelManager;
         $this->dbalConnection = $dbalConnection;
         $this->config = $config;
     }
@@ -71,22 +60,17 @@ class OrderDataService
      */
     public function applyPaymentStatus($orderNumber, $paymentStatusId)
     {
-        /** @var Order $orderModel */
-        $orderModel = $this->modelManager->getRepository(Order::class)->findOneBy(['number' => $orderNumber]);
+        $builder = $this->dbalConnection->createQueryBuilder();
+        $result = $builder->update('s_order', 'o')
+            ->set('o.cleared', ':paymentStatus')
+            ->where('o.ordernumber = :orderNumber')
+            ->setParameters([
+                ':orderNumber' => $orderNumber,
+                ':paymentStatus' => $paymentStatusId,
+            ])
+            ->execute();
 
-        if (!$orderModel) {
-            return false;
-        }
-
-        /** @var Status $orderStatusModel */
-        $orderStatusModel = $this->modelManager->getRepository(Status::class)->find($paymentStatusId);
-
-        $orderModel->setPaymentStatus($orderStatusModel);
-
-        $this->modelManager->persist($orderModel);
-        $this->modelManager->flush($orderModel);
-
-        return true;
+        return $result === 1;
     }
 
     /**
@@ -97,19 +81,17 @@ class OrderDataService
      */
     public function applyTransactionId($orderNumber, $transactionId)
     {
-        /** @var Order $orderModel */
-        $orderModel = $this->modelManager->getRepository(Order::class)->findOneBy(['number' => $orderNumber]);
+        $builder = $this->dbalConnection->createQueryBuilder();
+        $result = $builder->update('s_order', 'o')
+            ->set('o.transactionID', ':transactionId')
+            ->where('o.ordernumber = :orderNumber')
+            ->setParameters([
+                ':orderNumber' => $orderNumber,
+                ':transactionId' => $transactionId,
+            ])
+            ->execute();
 
-        if (!$orderModel) {
-            return false;
-        }
-
-        $orderModel->setTransactionId($transactionId);
-
-        $this->modelManager->persist($orderModel);
-        $this->modelManager->flush($orderModel);
-
-        return true;
+        return $result === 1;
     }
 
     /**
@@ -144,5 +126,21 @@ class OrderDataService
                 ':orderNumber' => $orderNumber,
                 ':paymentType' => $paymentType,
             ])->execute();
+    }
+
+    /**
+     * @param int $orderNumber
+     *
+     * @return string
+     */
+    public function getTransactionId($orderNumber)
+    {
+        $builder = $this->dbalConnection->createQueryBuilder();
+        $builder->select('o.transactionId')
+            ->from('s_order', 'o')
+            ->where('o.ordernumber = :orderNumber')
+            ->setParameter(':orderNumber', $orderNumber);
+
+        return $builder->execute()->fetchColumn();
     }
 }

@@ -30,6 +30,7 @@ use Shopware\Components\Logger;
 use Shopware\Models\Shop\DetachedShop;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
+use SwagPaymentPayPalUnified\Components\Services\OrderDataService;
 use SwagPaymentPayPalUnified\Components\Services\PaymentInstructionService;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\PaymentResource;
@@ -171,8 +172,13 @@ class Checkout implements SubscriberInterface
 
         if ($paymentInstructions) {
             $paymementInstructionsArray = $paymentInstructions->toArray();
-            $view->assign('sTransactionumber', $paymementInstructionsArray['transactionId']);
+            $view->assign('sTransactionumber', $paymementInstructionsArray['reference']);
             $view->assign('paypalUnifiedPaymentInstructions', $paymementInstructionsArray);
+        } else {
+            /** @var OrderDataService $orderDataService */
+            $orderDataService = $this->container->get('paypal_unified.order_data_service');
+            $transactionId = $orderDataService->getTransactionId($orderNumber);
+            $view->assign('sTransactionumber', $transactionId);
         }
     }
 
