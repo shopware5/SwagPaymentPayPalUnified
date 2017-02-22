@@ -104,7 +104,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
             plusSettings = me.getPlusTab().getForm().getValues();
 
         if (!me.getGeneralTab().getForm().isValid()) {
-            Shopware.Notification.createGrowlMessage('{s name=growl/formValidationError}Please fill out all fields marked in red.{/s}');
+            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Unified{/s}', '{s name=growl/formValidationError}Please fill out all fields marked in red.{/s}', me.window.title);
             return;
         }
 
@@ -113,7 +113,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
 
         me.record.save();
 
-        Shopware.Notification.createGrowlMessage('{s name=growl/saveSettings}The settings have been saved!{/s}');
+        Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Unified{/s}', '{s name=growl/saveSettings}The settings have been saved!{/s}', me.window.title);
     },
 
     onRegisterWebhook: function () {
@@ -164,9 +164,9 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
 
         if (success) {
             var responseObject = Ext.JSON.decode(response.responseText);
-            Shopware.Notification.createGrowlMessage('{s name=growl/registerWebhookSuccess}The webhook has been successfully registered to:{/s} ' +  responseObject['url'])
+            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Unified{/s}', '{s name=growl/registerWebhookSuccess}The webhook has been successfully registered to:{/s} ' +  responseObject['url'], me.window.title)
         } else {
-            Shopware.Notification.createGrowlMessage('{s name=growl/registerWebhookError}Could not register webhook due to an unknown error.{/s}')
+            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Unified{/s}', '{s name=growl/registerWebhookError}Could not register webhook due to an unknown error.{/s}', me.window.title)
         }
     },
 
@@ -181,9 +181,9 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
             successFlag = responseObject.success;
 
         if (successFlag) {
-            Shopware.Notification.createGrowlMessage('{s name=growl/validateAPISuccess}The API settings are valid.{/s}')
+            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Unified{/s}', '{s name=growl/validateAPISuccess}The API settings are valid.{/s}', me.window.title)
         } else {
-            Shopware.Notification.createGrowlMessage('{s name=growl/validateAPIError}The API settings are invalid:{/s} ' + '<u>' + responseObject.message + '</u>');
+            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Unified{/s}', '{s name=growl/validateAPIError}The API settings are invalid:{/s} ' + '<u>' + responseObject.message + '</u>', me.window.title);
         }
 
         me.window.setLoading(false);
@@ -195,12 +195,13 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
      * @param { Object } response
      */
     onDetailAjaxCallback: function (options, success, response) {
+        var me = this;
+
         if (!success) {
-            Shopware.Notification.createGrowlMessage('{s name=growl/loadSettingsError}Could not load settings due to an unknown error{/s}')
+            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Unified{/s}', '{s name=growl/loadSettingsError}Could not load settings due to an unknown error{/s}', me.window.title)
         }
 
-        var me = this,
-            generalTab = me.getGeneralTab(),
+        var generalTab = me.getGeneralTab(),
             plusTab = me.getPlusTab(),
             settings = Ext.JSON.decode(response.responseText)['settings'];
 
