@@ -31,6 +31,10 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings', {
         'Settings'
     ],
 
+    stores: [
+        'PaymentIntent'
+    ],
+
     /**
      * @type { Array }
      */
@@ -39,6 +43,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings', {
         'Toolbar',
         'ShopSelection',
         'tabs.General',
+        'tabs.Paypal',
         'tabs.PaypalPlus'
     ],
 

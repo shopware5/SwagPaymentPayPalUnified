@@ -38,20 +38,16 @@
 
         <service id="paypal_unified.webhook_service" class="SwagPaymentPayPalUnified\PayPalBundle\Services\WebhookService" />
 
-        <service id="paypal_unified.webhook_guard_service" class="SwagPaymentPayPalUnified\PayPalBundle\Services\WebhookGuardService">
-            <argument type="service" id="paypal_unified.client_service" />
-            <argument type="service" id="pluginlogger" />
-        </service>
-
         <service id="paypal_unified.basket_service" class="SwagPaymentPayPalUnified\Components\Services\BasketService">
             <argument type="service" id="router" />
+            <argument type="service" id="paypal_unified.settings_service" />
         </service>
 
         <service id="paypal_unified.partner_attribution_service" class="SwagPaymentPayPalUnified\PayPalBundle\Services\PartnerAttributionService">
             <argument type="service" id="paypal_unified.settings_service" />
         </service>
 
-        <service id="paypal_unified.sales_history_builder_service" class="SwagPaymentPayPalUnified\Components\Services\SalesHistoryBuilderService"/>
+        <service id="paypal_unified.transaction_history_builder_service" class="SwagPaymentPayPalUnified\Components\Services\TransactionHistoryBuilderService"/>
 
         <service id="paypal_unified.payment_instruction_service" class="SwagPaymentPayPalUnified\Components\Services\PaymentInstructionService">
             <argument type="service" id="models" />
@@ -83,6 +79,18 @@
         </service>
 
         <service id="paypal_unified.refund_resource" class="SwagPaymentPayPalUnified\PayPalBundle\Resources\RefundResource">
+            <argument type="service" id="paypal_unified.client_service" />
+        </service>
+
+        <service id="paypal_unified.authorization_resource" class="SwagPaymentPayPalUnified\PayPalBundle\Resources\AuthorizationResource">
+            <argument type="service" id="paypal_unified.client_service" />
+        </service>
+
+        <service id="paypal_unified.capture_resource" class="SwagPaymentPayPalUnified\PayPalBundle\Resources\CaptureResource">
+            <argument type="service" id="paypal_unified.client_service" />
+        </service>
+
+        <service id="paypal_unified.order_resource" class="SwagPaymentPayPalUnified\PayPalBundle\Resources\OrderResource">
             <argument type="service" id="paypal_unified.client_service" />
         </service>
 

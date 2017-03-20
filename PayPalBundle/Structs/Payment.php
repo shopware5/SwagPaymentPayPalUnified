@@ -24,6 +24,7 @@
 
 namespace SwagPaymentPayPalUnified\PayPalBundle\Structs;
 
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Link;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Links;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Payer;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\PaymentInstruction;
@@ -58,7 +59,7 @@ class Payment
     private $redirectUrls;
 
     /**
-     * @var Links
+     * @var Link[]
      */
     private $links;
 
@@ -173,7 +174,7 @@ class Payment
     }
 
     /**
-     * @return Links
+     * @return Link[]
      */
     public function getLinks()
     {
@@ -181,9 +182,9 @@ class Payment
     }
 
     /**
-     * @param Links $links
+     * @param Link[] $links
      */
-    public function setLinks(Links $links)
+    public function setLinks(array $links)
     {
         $this->links = $links;
     }
@@ -328,7 +329,13 @@ class Payment
         }
 
         $result->setPayer(Payer::fromArray($data['payer']));
-        $result->setLinks(Links::fromArray($data['links']));
+
+        $links = [];
+        foreach ($data['links'] as $link) {
+            $links[] = Link::fromArray($link);
+        }
+        $result->setLinks($links);
+
         $result->setRedirectUrls(RedirectUrls::fromArray($data['redirect_urls']));
 
         return $result;

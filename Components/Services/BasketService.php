@@ -26,6 +26,7 @@ namespace SwagPaymentPayPalUnified\Components\Services;
 
 use Shopware\Components\Routing\Router;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\BasketServiceInterface;
+use SwagPaymentPayPalUnified\PayPalBundle\PaymentIntent;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Payer;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\RedirectUrls;
@@ -54,13 +55,20 @@ class BasketService implements BasketServiceInterface
     private $userData;
 
     /**
+     * @var SettingsService
+     */
+    private $settings;
+
+    /**
      * Checkout constructor.
      *
-     * @param Router $router
+     * @param Router          $router
+     * @param SettingsService $settingsService
      */
-    public function __construct(Router $router)
+    public function __construct(Router $router, SettingsService $settingsService)
     {
         $this->router = $router;
+        $this->settings = $settingsService;
     }
 
     /**
@@ -72,7 +80,26 @@ class BasketService implements BasketServiceInterface
         $this->userData = $userData;
 
         $requestParameters = new Payment();
-        $requestParameters->setIntent('sale');
+
+        if ($this->settings->get('plus_active')) {
+            $requestParameters->setIntent('sale');
+        } else {
+            //For the "classic" integration it's possible to use further intents.
+            $intent = (int) $this->settings->get('paypal_payment_intent');
+
+            switch ($intent) {
+                case 0:
+                    $requestParameters->setIntent(PaymentIntent::SALE);
+                    break;
+                case 1:
+                    $requestParameters->setIntent(PaymentIntent::AUTHORIZE);
+                    break;
+                case 2:
+                    $requestParameters->setIntent(PaymentIntent::ORDER);
+                    break;
+            }
+        }
+
         $requestParameters->setProfile($profile->getId());
 
         $payer = new Payer();
@@ -212,7 +239,7 @@ class BasketService implements BasketServiceInterface
             $amountDetails->setSubTotal(str_replace(',', '.', $this->basketData['Amount']));
             $amountDetails->setTax(number_format(0, 2, '.', ','));
 
-        //Case 2: Show net prices in shopware and don't exclude country tax
+            //Case 2: Show net prices in shopware and don't exclude country tax
         } elseif (!$this->showGrossPrices() && !$this->useNetPriceCalculation()) {
             $amountDetails->setShipping($this->basketData['sShippingcostsNet']);
             $amountDetails->setSubTotal(str_replace(',', '.', $this->basketData['AmountNet']));

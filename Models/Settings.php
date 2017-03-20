@@ -105,6 +105,12 @@ class Settings extends ModelEntity
     private $orderNumberPrefix;
 
     /**
+     * @var int
+     * @ORM\Column(name="paypal_payment_intent", type="integer")
+     */
+    private $paypalPaymentIntent;
+
+    /**
      * @var bool
      * @ORM\Column(name="plus_active", type="boolean", nullable=false)
      */
@@ -282,6 +288,22 @@ class Settings extends ModelEntity
     public function setOrderNumberPrefix($orderNumberPrefix)
     {
         $this->orderNumberPrefix = $orderNumberPrefix;
+    }
+
+    /**
+     * @return int
+     */
+    public function getPaypalPaymentIntent()
+    {
+        return $this->paypalPaymentIntent;
+    }
+
+    /**
+     * @param int $paypalPaymentIntent
+     */
+    public function setPaypalPaymentIntent($paypalPaymentIntent)
+    {
+        $this->paypalPaymentIntent = $paypalPaymentIntent;
     }
 
     /**

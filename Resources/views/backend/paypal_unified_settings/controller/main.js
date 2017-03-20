@@ -40,6 +40,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
 
     refs: [
         { ref: 'generalTab', selector: 'paypal-unified-settings-tabs-general' },
+        { ref: 'paypalTab', selector: 'paypal-unified-settings-tabs-paypal' },
         { ref: 'plusTab', selector: 'paypal-unified-settings-tabs-paypal-plus' }
     ],
 
@@ -101,6 +102,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
     onSaveSettings: function () {
         var me = this,
             generalSettings = me.getGeneralTab().getForm().getValues(),
+            paypalSettings = me.getPaypalTab().getForm().getValues(),
             plusSettings = me.getPlusTab().getForm().getValues();
 
         if (!me.getGeneralTab().getForm().isValid()) {
@@ -109,6 +111,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
         }
 
         me.record.set(generalSettings);
+        me.record.set(paypalSettings);
         me.record.set(plusSettings);
 
         me.record.save();
@@ -202,6 +205,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
         }
 
         var generalTab = me.getGeneralTab(),
+            paypalTab = me.getPaypalTab(),
             plusTab = me.getPlusTab(),
             settings = Ext.JSON.decode(response.responseText)['settings'];
 
@@ -209,6 +213,9 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
 
         //Update general tab
         generalTab.loadRecord(me.record);
+
+        //Update the paypal tab
+        paypalTab.loadRecord(me.record);
 
         //Update plus tab
         plusTab.loadRecord(me.record);

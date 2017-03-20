@@ -1,17 +1,23 @@
 //{namespace name="backend/paypal_unified/sidebar/order/customer"}
 //{block name="backend/paypal_unified/sidebar/order/customer"}
 Ext.define('Shopware.apps.PaypalUnified.view.sidebar.order.Customer', {
-    extend: 'Ext.form.Panel',
+    extend: 'Ext.form.FieldSet',
     alias: 'widget.paypal-unified-sidebar-order-customer',
     title: '{s name=title}Customer details{/s}',
+
+    defaults: {
+        anchor: '100%',
+        labelWidth: '130px',
+        readOnly: true
+    },
+
+    style: {
+        background: '#EBEDEF'
+    },
 
     anchor: '100%',
     bodyPadding: 5,
     margin: 5,
-    fieldDefaults: {
-        anchor: '100%',
-        readOnly: true
-    },
 
     initComponent: function () {
         var me = this;

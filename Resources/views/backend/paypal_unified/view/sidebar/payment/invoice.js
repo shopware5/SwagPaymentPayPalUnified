@@ -1,16 +1,22 @@
 //{namespace name="backend/paypal_unified/sidebar/payment/invoice"}
 //{block name="backend/paypal_unified/sidebar/payment/invoice"}
 Ext.define('Shopware.apps.PaypalUnified.view.sidebar.payment.Invoice', {
-    extend: 'Ext.form.Panel',
+    extend: 'Ext.form.FieldSet',
     alias: 'widget.paypal-unified-sidebar-payment-invoice',
     title: '{s name=title}Invoice amount{/s}',
 
     anchor: '100%',
     bodyPadding: 5,
     margin: 5,
-    fieldDefaults: {
+
+    defaults: {
         anchor: '100%',
+        labelWidth: '130px',
         readOnly: true
+    },
+
+    style: {
+        background: '#EBEDEF'
     },
 
     initComponent: function () {

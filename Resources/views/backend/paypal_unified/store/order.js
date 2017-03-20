@@ -10,7 +10,7 @@ Ext.define('Shopware.apps.PaypalUnified.store.Order', {
      * the model which belongs to the store
      * @type { String }
      */
-    model: 'Shopware.apps.PaypalUnified.model.Order',
+    model: 'Shopware.apps.PaypalUnified.model.ShopwareOrder',
 
     /**
      * @return { Object }

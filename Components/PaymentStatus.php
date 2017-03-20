@@ -42,6 +42,10 @@ class PaymentStatus
      */
     const PAYMENT_STATUS_REFUNDED = 20;
     /**
+     * The default status for voided orders
+     */
+    const PAYMENT_STATUS_CANCELLED = 35;
+    /**
      * The default status from PayPal to identify completed transactions
      */
     const PAYMENT_COMPLETED = 'completed';

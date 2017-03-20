@@ -41,7 +41,7 @@ class SaleDeniedTest extends \PHPUnit_Framework_TestCase
      */
     public function setOrderTransacactionId()
     {
-        $sql = "UPDATE s_order SET transactionId = 'TEST_ID' WHERE id=" . self::TEST_ORDER_ID;
+        $sql = "UPDATE s_order SET temporaryID = 'TEST_ID' WHERE id=" . self::TEST_ORDER_ID;
 
         Shopware()->Db()->executeUpdate($sql);
     }
@@ -89,7 +89,7 @@ class SaleDeniedTest extends \PHPUnit_Framework_TestCase
             'event_type' => WebhookEventTypes::PAYMENT_SALE_DENIED,
             'id' => 1,
             'create_time' => '',
-            'summary' => [
+            'resource' => [
                 'parent_payment' => $id,
             ],
         ]);

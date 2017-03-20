@@ -1,16 +1,21 @@
 //{namespace name="backend/paypal_unified/sidebar/order/details"}
 //{block name="backend/paypal_unified/sidebar/order/details"}
 Ext.define('Shopware.apps.PaypalUnified.view.sidebar.order.Details', {
-    extend: 'Ext.form.Panel',
+    extend: 'Ext.form.FieldSet',
     alias: 'widget.paypal-unified-sidebar-order-details',
     title: '{s name=title}Order details{/s}',
 
     anchor: '100%',
-    bodyPadding: 5,
     margin: 5,
-    fieldDefaults: {
+
+    defaults: {
         anchor: '100%',
+        labelWidth: '130px',
         readOnly: true
+    },
+
+    style: {
+        background: '#EBEDEF'
     },
 
     initComponent: function () {
