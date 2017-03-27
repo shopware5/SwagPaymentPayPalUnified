@@ -29,8 +29,8 @@ use SwagPaymentPayPalUnified\Components\Services\OrderDataService;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\PaymentInstruction;
-use SwagPaymentPayPalUnified\Tests\FixtureImportTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
+use SwagPaymentPayPalUnified\Tests\Functional\FixtureImportTestCaseTrait;
 
 class OrderDataServiceTest extends \PHPUnit_Framework_TestCase
 {

@@ -22,7 +22,7 @@
  * our trademarks remain entirely with us.
  */
 
-namespace SwagPaymentPayPalUnified\Tests;
+namespace SwagPaymentPayPalUnified\Tests\Functional;
 
 use Doctrine\DBAL\Driver\DrizzlePDOMySql\Connection;
 
@@ -35,6 +35,6 @@ trait FixtureImportTestCaseTrait
     {
         /** @var Connection $connection */
         $connection = Shopware()->Container()->get('dbal_connection');
-        $connection->exec(file_get_contents(__DIR__ . '/Functional/order_fixtures.sql'));
+        $connection->exec(file_get_contents(__DIR__ . '/order_fixtures.sql'));
     }
 }

@@ -27,12 +27,12 @@ namespace SwagPaymentPayPalUnified\Tests\Functional\WebhookHandler;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\Subscriber\PaymentMeans;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
+use SwagPaymentPayPalUnified\Tests\Functional\PayPalUnifiedPaymentIdTrait;
 
 class PaymentMeansSubscriberTest extends \PHPUnit_Framework_TestCase
 {
     use DatabaseTestCaseTrait;
-
-    const UNIFIED_PAYMENT_ID = 7;
+    use PayPalUnifiedPaymentIdTrait;
 
     public function test_can_be_created()
     {
@@ -77,7 +77,7 @@ class PaymentMeansSubscriberTest extends \PHPUnit_Framework_TestCase
         $result = $args->result;
 
         $this->assertCount(5, $result);
-        $this->assertEquals(self::UNIFIED_PAYMENT_ID, $result[4]['id']);
+        $this->assertEquals($this->getUnifiedPaymentId(), $result[4]['id']);
     }
 
     public function test_onFilterPaymentMeans_has_no_unified_method_because_the_settings_dont_exist()
@@ -170,6 +170,8 @@ class EventArgsMockWithoutUnifiedReturn extends \Enlight_Event_EventArgs
 }
 class EventArgsMockWithUnifiedReturn extends \Enlight_Event_EventArgs
 {
+    use PayPalUnifiedPaymentIdTrait;
+
     public $result;
 
     public function getReturn()
@@ -179,7 +181,7 @@ class EventArgsMockWithUnifiedReturn extends \Enlight_Event_EventArgs
             ['id' => 1],
             ['id' => 2],
             ['id' => 3],
-            ['id' => PaymentMeansSubscriberTest::UNIFIED_PAYMENT_ID],
+            ['id' => $this->getUnifiedPaymentId()],
         ];
     }
 
