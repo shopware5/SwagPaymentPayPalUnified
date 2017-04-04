@@ -5,7 +5,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.ShopSelection', {
     alias: 'widget.paypal-unified-settings-shop-selection',
 
     ui: 'shopware-ui',
-    padding: '5 0 5',
+    padding: '5',
     width: '100%',
     dock: 'top',
 
@@ -68,11 +68,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.ShopSelection', {
             valueField: 'id',
             editable: false,
             displayField: 'name',
-
-            style: {
-                marginRight: '12px'
-            },
-
+            labelStyle: 'line-height: 8px',
             listeners: {
                 select: Ext.bind(me.onSelectShop, me)
             }
