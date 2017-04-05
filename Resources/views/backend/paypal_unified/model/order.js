@@ -1,4 +1,4 @@
-//{block name="backend/paypal_unified/model/order"}
+// {block name="backend/paypal_unified/model/order"}
 Ext.define('Shopware.apps.PaypalUnified.model.Order', {
 
     /**
@@ -11,7 +11,7 @@ Ext.define('Shopware.apps.PaypalUnified.model.Order', {
      * @type { Array }
      */
     fields: [
-        //{block name="backend/paypal_unified/model/order/fields"}{/block}
+        // {block name="backend/paypal_unified/model/order/fields"}{/block}
         { name: 'id', type: 'string' },
         { name: 'create_time', type: 'string' },
         { name: 'update_time', type: 'string' },
@@ -19,4 +19,4 @@ Ext.define('Shopware.apps.PaypalUnified.model.Order', {
         { name: 'payment_mode', type: 'string' }
     ]
 });
-//{/block}
+// {/block}

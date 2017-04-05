@@ -1,5 +1,5 @@
-//{namespace name="backend/paypal_unified/sidebar/payment/invoice"}
-//{block name="backend/paypal_unified/sidebar/payment/invoice"}
+// {namespace name="backend/paypal_unified/sidebar/payment/invoice"}
+// {block name="backend/paypal_unified/sidebar/payment/invoice"}
 Ext.define('Shopware.apps.PaypalUnified.view.sidebar.payment.Invoice', {
     extend: 'Ext.form.FieldSet',
     alias: 'widget.paypal-unified-sidebar-payment-invoice',
@@ -11,7 +11,7 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebar.payment.Invoice', {
 
     defaults: {
         anchor: '100%',
-        labelWidth: '130px',
+        labelWidth: 130,
         readOnly: true
     },
 
@@ -49,4 +49,4 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebar.payment.Invoice', {
         }];
     }
 });
-//{/block}
+// {/block}

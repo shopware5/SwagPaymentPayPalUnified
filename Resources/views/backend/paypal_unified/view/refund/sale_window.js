@@ -1,5 +1,5 @@
-//{namespace name="backend/paypal_unified/refund/sale_window"}
-//{block name="backend/paypal_unified/refund/sale_window"}
+// {namespace name="backend/paypal_unified/refund/sale_window"}
+// {block name="backend/paypal_unified/refund/sale_window"}
 Ext.define('Shopware.apps.PaypalUnified.view.refund.SaleWindow', {
     extend: 'Enlight.app.Window',
     title: '{s name=title}New Refund{/s}',
@@ -42,7 +42,7 @@ Ext.define('Shopware.apps.PaypalUnified.view.refund.SaleWindow', {
     /**
      * @returns { Ext.form.Panel }
      */
-    getItems: function () {
+    getItems: function() {
         var me = this;
 
         me.contentContainer = Ext.create('Ext.form.Panel', {
@@ -59,7 +59,7 @@ Ext.define('Shopware.apps.PaypalUnified.view.refund.SaleWindow', {
                 itemId: 'maxAmount',
                 disabled: true,
                 fieldLabel: '{s name=field/max}Maximum amount{/s}',
-                helpText: '{s name=field/max/help}The maximum amount that can be refunded.{/s}',
+                helpText: '{s name=field/max/help}The maximum amount that can be refunded.{/s}'
             }, {
                 xtype: 'base-element-number',
                 itemId: 'currentAmount',
@@ -78,7 +78,7 @@ Ext.define('Shopware.apps.PaypalUnified.view.refund.SaleWindow', {
                 itemId: 'invoiceNumber',
                 fieldLabel: '{s name=field/bookingNumber}Booking number{/s}',
                 helpText: '{s name=field/bookingNumber/help}You can enter a booking number if would like to identify this refund later.{/s}',
-                emptyText: '{s name=field/bookingNumber/empty}No booking number{/s}',
+                emptyText: '{s name=field/bookingNumber/empty}No booking number{/s}'
             }, {
                 xtype: 'base-element-button',
                 text: '{s name=field/button}Execute{/s}',
@@ -98,7 +98,7 @@ Ext.define('Shopware.apps.PaypalUnified.view.refund.SaleWindow', {
      * Barely validates the input and then displays a confirmation
      * message box. If the user clicks "yes" it will continue the refund process.
      */
-    onRefundButtonClick: function () {
+    onRefundButtonClick: function() {
         var me = this,
             amount = me.down('#currentAmount').value,
             amountFormatted = Ext.util.Format.number(amount, '0,000.00 EUR'),
@@ -160,7 +160,7 @@ Ext.define('Shopware.apps.PaypalUnified.view.refund.SaleWindow', {
      * @param { Ext.form.field.Checkbox } element
      * @param { Boolean } checked
      */
-    onCheckRefundCompletely: function (element, checked) {
+    onCheckRefundCompletely: function(element, checked) {
         var me = this,
             currentAmountElement = me.down('#currentAmount'),
             maxAmountElement = me.down('#maxAmount'),
@@ -170,4 +170,4 @@ Ext.define('Shopware.apps.PaypalUnified.view.refund.SaleWindow', {
         currentAmountElement.setValue(value);
     }
 });
-//{/block}
+// {/block}

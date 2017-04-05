@@ -1,4 +1,4 @@
-//{namespace name="backend/paypal_unified_settings/store/payment_intent"}
+// {namespace name="backend/paypal_unified_settings/store/payment_intent"}
 Ext.define('Shopware.apps.PaypalUnifiedSettings.store.PaymentIntent', {
     extend: 'Ext.data.Store',
 
@@ -6,7 +6,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.store.PaymentIntent', {
 
     fields: [
         { name: 'id', type: 'int' },
-        { name: 'text' }
+        { name: 'text', type: 'string' }
     ],
 
     data: [

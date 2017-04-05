@@ -1,4 +1,4 @@
-//{block name="backend/paypal_unified/model/payment_amount_details"}
+// {block name="backend/paypal_unified/model/payment_amount_details"}
 Ext.define('Shopware.apps.PaypalUnified.model.PaymentAmountDetails', {
 
     /**
@@ -11,9 +11,9 @@ Ext.define('Shopware.apps.PaypalUnified.model.PaymentAmountDetails', {
      * @type { Array }
      */
     fields: [
-        //{block name="backend/paypal_unified/model/payment_amount_details/fields"}{/block}
+        // {block name="backend/paypal_unified/model/payment_amount_details/fields"}{/block}
         { name: 'subtotal', type: 'float' },
         { name: 'shipping', type: 'float' }
     ]
 });
-//{/block}
+// {/block}

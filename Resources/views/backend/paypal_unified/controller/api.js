@@ -1,4 +1,4 @@
-//{block name="backend/paypal_unified/controller/api"}
+// {block name="backend/paypal_unified/controller/api"}
 Ext.define('Shopware.apps.PaypalUnified.controller.Api', {
     extend: 'Enlight.app.Controller',
 
@@ -29,8 +29,8 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Api', {
      * We need a window controller in order to receive required information like "shopId".
      */
     init: function () {
-        //The window controller is required to gather information about the
-        //selected order.
+        // The window controller is required to gather information about the
+        // selected order.
         this.windowController = this.getController('Main');
         this.callParent(arguments);
     },
@@ -284,7 +284,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Api', {
      * @returns { Numeric } - The shop id
      */
     getCurrentShopId: function () {
-        return this.getRecord().get('languageIso')
+        return this.getRecord().get('languageIso');
     },
 
     /**
@@ -297,4 +297,4 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Api', {
         return this.getDetails().payment.transactions[0].amount.currency;
     }
 });
-//{/block}
+// {/block}

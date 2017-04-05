@@ -1,5 +1,5 @@
-//{namespace name="backend/paypal_unified/sidebar/history/details"}
-//{block name="backend/paypal_unified/sidebar/history/details"}
+// {namespace name="backend/paypal_unified/sidebar/history/details"}
+// {block name="backend/paypal_unified/sidebar/history/details"}
 Ext.define('Shopware.apps.PaypalUnified.view.sidebar.history.Details', {
     extend: 'Ext.form.FieldSet',
     alias: 'widget.paypal-unified-sidebar-history-details',
@@ -12,7 +12,7 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebar.history.Details', {
 
     defaults: {
         anchor: '100%',
-        labelWidth: '130px',
+        labelWidth: 130,
         readOnly: true
     },
 
@@ -86,4 +86,4 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebar.history.Details', {
         }];
     }
 });
-//{/block}
+// {/block}

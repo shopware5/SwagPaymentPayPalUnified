@@ -1,5 +1,5 @@
-//{namespace name="backend/paypal_unified/sidebar/payment"}
-//{block name="backend/paypal_unified/sidebar/payment"}
+// {namespace name="backend/paypal_unified/sidebar/payment"}
+// {block name="backend/paypal_unified/sidebar/payment"}
 Ext.define('Shopware.apps.PaypalUnified.view.sidebar.Payment', {
     extend: 'Ext.form.Panel',
     alias: 'widget.paypal-unified-sidebar-payment',
@@ -67,4 +67,4 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebar.Payment', {
         return items;
     }
 });
-//{/block}
+// {/block}

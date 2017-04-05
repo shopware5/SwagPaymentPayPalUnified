@@ -1,4 +1,4 @@
-//{block name="backend/paypal_unified/model/payment"}
+// {block name="backend/paypal_unified/model/payment"}
 Ext.define('Shopware.apps.PaypalUnified.model.Payment', {
 
     /**
@@ -11,7 +11,7 @@ Ext.define('Shopware.apps.PaypalUnified.model.Payment', {
      * @type { Array }
      */
     fields: [
-        //{block name="backend/paypal_unified/model/payment/fields"}{/block}
+        // {block name="backend/paypal_unified/model/payment/fields"}{/block}
         { name: 'intent', type: 'string' },
         { name: 'id', type: 'string' },
         { name: 'state', type: 'string' },
@@ -20,4 +20,4 @@ Ext.define('Shopware.apps.PaypalUnified.model.Payment', {
         { name: 'update_time', type: 'string' }
     ]
 });
-//{/block}
+// {/block}

@@ -1,4 +1,4 @@
-//{block name="backend/paypal_unified/store/payment_cart"}
+// {block name="backend/paypal_unified/store/payment_cart"}
 Ext.define('Shopware.apps.PaypalUnified.store.PaymentCart', {
     /**
      * @type { String }
@@ -10,4 +10,4 @@ Ext.define('Shopware.apps.PaypalUnified.store.PaymentCart', {
      */
     model: 'Shopware.apps.PaypalUnified.model.PaymentCartItem'
 });
-//{/block}
+// {/block}

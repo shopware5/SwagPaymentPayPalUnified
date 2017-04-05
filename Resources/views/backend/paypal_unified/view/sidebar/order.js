@@ -1,5 +1,5 @@
-//{namespace name="backend/paypal_unified/sidebar/order"}
-//{block name="backend/paypal_unified/sidebar/order"}
+// {namespace name="backend/paypal_unified/sidebar/order"}
+// {block name="backend/paypal_unified/sidebar/order"}
 Ext.define('Shopware.apps.PaypalUnified.view.sidebar.Order', {
     extend: 'Ext.form.Panel',
     alias: 'widget.paypal-unified-sidebar-order',
@@ -45,4 +45,4 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebar.Order', {
         return items;
     }
 });
-//{/block}
+// {/block}

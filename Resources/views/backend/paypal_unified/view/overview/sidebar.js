@@ -1,5 +1,5 @@
-//{namespace name="backend/paypal_unified/overview/sidebar"}
-//{block name="backend/paypal_unified/overview/sidebar"}
+// {namespace name="backend/paypal_unified/overview/sidebar"}
+// {block name="backend/paypal_unified/overview/sidebar"}
 Ext.define('Shopware.apps.PaypalUnified.view.overview.Sidebar', {
     extend: 'Ext.tab.Panel',
     alias: 'widget.paypal-unified-overview-sidebar',
@@ -68,4 +68,4 @@ Ext.define('Shopware.apps.PaypalUnified.view.overview.Sidebar', {
         return me.toolbar;
     }
 });
-//{/block}
+// {/block}

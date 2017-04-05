@@ -1,5 +1,5 @@
-//{namespace name="backend/paypal_unified/sidebar/history/grid"}
-//{block name="backend/paypal_unified/sidebar/history/grid"}
+// {namespace name="backend/paypal_unified/sidebar/history/grid"}
+// {block name="backend/paypal_unified/sidebar/history/grid"}
 Ext.define('Shopware.apps.PaypalUnified.view.sidebar.history.Grid', {
     extend: 'Ext.grid.Panel',
     alias: 'widget.paypal-unified-sidebar-history-grid',
@@ -69,4 +69,4 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebar.history.Grid', {
         }
     }
 });
-//{/block}
+// {/block}

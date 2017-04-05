@@ -1,5 +1,5 @@
-//{namespace name="backend/paypal_unified/controller/main"}
-//{block name="backend/paypal_unified/controller/main"}
+// {namespace name="backend/paypal_unified/controller/main"}
+// {block name="backend/paypal_unified/controller/main"}
 Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
     extend: 'Enlight.app.Controller',
 
@@ -200,7 +200,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
         if (details.success) {
             me.details = details;
 
-            //Populate the sidebar tab "Payment" with the received data.
+            // Populate the sidebar tab "Payment" with the received data.
             me.updatePaymentDetails();
             me.updatePaymentCustomer();
             me.updatePaymentShipping();
@@ -232,7 +232,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
 
             Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Unified{/s}', '{s name=growl/refundSuccess}The refund was successful{/s}', me.window.title);
         } else {
-            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Unified{/s}', details.message, me.window.title)
+            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Unified{/s}', details.message, me.window.title);
         }
 
         me.getSidebar().setLoading(false);
@@ -243,7 +243,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
      */
     loadDetails: function (record) {
         var me = this,
-            paymentId = record.get('temporaryId'), //The plugin stores the PayPal-PaymentId as temporaryId.
+            paymentId = record.get('temporaryId'), // The plugin stores the PayPal-PaymentId as temporaryId.
             sidebar = me.getSidebar();
 
         sidebar.setLoading('{s name=sidebar/loading/details}Requesting details from PayPal...{/s}');
@@ -264,7 +264,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
 
         sidebar.orderTab.loadRecord(record);
 
-        //Manually update the following fields.
+        // Manually update the following fields.
         sidebar.down('#orderStatus').setValue(record.getOrderStatus().first().get('description'));
         sidebar.down('#paymentStatus').setValue(record.getPaymentStatus().first().get('description'));
         sidebar.down('#invoiceAmount').setValue(Ext.util.Format.currency(record.get('invoiceAmount')));
@@ -275,7 +275,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
      */
     updateCustomerDetails: function (record) {
         var me = this,
-            customer = record.getCustomer().first().raw, //we use the "raw" property, since the base customer model does not include firstname or lastname.
+            customer = record.getCustomer().first().raw, // we use the "raw" property, since the base customer model does not include firstname or lastname.
             customerContainer = me.getSidebar().orderTab.customerContainer;
 
         customerContainer.down('#salutation').setValue(customer.salutation);
@@ -354,7 +354,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
         refundPanel.down('#maxAmount').setValue(maxRefundableAmount);
         refundPanel.down('#currentAmount').setMaxValue(maxRefundableAmount);
 
-        //Reset the value of the amount field.
+        // Reset the value of the amount field.
         refundPanel.down('#currentAmount').setValue();
         refundPanel.down('#invoiceNumber').setValue();
         refundPanel.down('#refundCompletely').setValue(false);
@@ -385,9 +385,9 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
      */
     updateWindowOptions: function () {
         var me = this,
-            isAuthorization = typeof(me.details.authorization) !== 'undefined',
-            isSale = typeof(me.details.sale) !== 'undefined',
-            isOrder = typeof(me.details.order) !== 'undefined';
+            isAuthorization = typeof (me.details.authorization) !== 'undefined',
+            isSale = typeof (me.details.sale) !== 'undefined',
+            isOrder = typeof (me.details.order) !== 'undefined';
 
         if (isOrder) {
             me.updateWindowByOrder();
@@ -545,4 +545,4 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
         return me.details;
     }
 });
-//{/block}
+// {/block}

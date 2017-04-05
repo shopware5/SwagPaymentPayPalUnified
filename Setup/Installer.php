@@ -27,7 +27,6 @@ namespace SwagPaymentPayPalUnified\Setup;
 use Doctrine\DBAL\Connection;
 use Shopware\Bundle\AttributeBundle\Service\CrudService;
 use Shopware\Components\Model\ModelManager;
-use Shopware\Components\Plugin\Context\InstallContext;
 use Shopware\Models\Payment\Payment;
 use Shopware\Models\Plugin\Plugin;
 
@@ -74,13 +73,11 @@ class Installer
     }
 
     /**
-     * @param InstallContext $installContext
-     *
      * @throws InstallationException
      *
      * @return bool
      */
-    public function install(InstallContext $installContext)
+    public function install()
     {
         if ($this->hasPayPalClassicInstalled()) {
             throw new InstallationException('This plugin can not be used while PayPal Classic or PayPal Plus are installed and active.');
@@ -108,7 +105,7 @@ class Installer
             'active' => 1,
         ]);
 
-        return $classicPlugin != null || $classicPlusPlugin != null;
+        return $classicPlugin !== null || $classicPlusPlugin !== null;
     }
 
     private function createDatabaseTables()
@@ -174,6 +171,9 @@ class Installer
         $this->connection->exec($sql);
     }
 
+    /**
+     * @return string
+     */
     private function getPaymentLogo()
     {
         return '<!-- PayPal Logo -->'
