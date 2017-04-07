@@ -91,7 +91,7 @@ class ClientService
 
         //Backend does not have any active shop. In order to authenticate there, please use
         //the "configure()"-function instead.
-        if ($shop === null || !$config->hasSettings()) {
+        if ($shop === null || !$config->hasSettings() || !$config->get('active')) {
             return;
         }
 

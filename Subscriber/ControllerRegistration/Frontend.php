@@ -25,7 +25,6 @@
 namespace SwagPaymentPayPalUnified\Subscriber\ControllerRegistration;
 
 use Enlight\Event\SubscriberInterface;
-use Enlight_Template_Manager;
 
 class Frontend implements SubscriberInterface
 {
@@ -33,11 +32,6 @@ class Frontend implements SubscriberInterface
      * @var string
      */
     private $pluginDirectory;
-
-    /**
-     * @var Enlight_Template_Manager
-     */
-    private $template;
 
     /**
      * @param string $pluginDirectory

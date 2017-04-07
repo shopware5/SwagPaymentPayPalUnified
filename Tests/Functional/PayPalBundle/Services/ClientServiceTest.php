@@ -76,12 +76,13 @@ class ClientServiceTest extends \PHPUnit_Framework_TestCase
     {
         $settingsParams = [
             ':shopId' => 1,
+            ':active' => 1,
             ':plusActive' => $usePayPalPlus,
         ];
 
         $sql = 'INSERT INTO swag_payment_paypal_unified_settings
-                (shop_id, plus_active)
-                VALUES (:shopId, :plusActive)';
+                (shop_id, active, plus_active)
+                VALUES (:shopId, :active, :plusActive)';
 
         Shopware()->Db()->executeUpdate($sql, $settingsParams);
     }

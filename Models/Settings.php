@@ -50,6 +50,12 @@ class Settings extends ModelEntity
     private $shopId;
 
     /**
+     * @var bool
+     * @ORM\Column(name="active", type="boolean", nullable=false)
+     */
+    private $active;
+
+    /**
      * @var Shop
      * @ORM\OneToOne(targetEntity="Shopware\Models\Shop\Shop")
      * @ORM\JoinColumn(name="shop_id", referencedColumnName="id")
@@ -184,6 +190,22 @@ class Settings extends ModelEntity
     public function setShop(Shop $shop)
     {
         $this->shop = $shop;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getActive()
+    {
+        return $this->active;
+    }
+
+    /**
+     * @param bool $active
+     */
+    public function setActive($active)
+    {
+        $this->active = $active;
     }
 
     /**

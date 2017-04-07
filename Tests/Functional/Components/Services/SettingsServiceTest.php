@@ -40,6 +40,7 @@ class SettingsServiceTest extends \PHPUnit_Framework_TestCase
     const SHOW_SIDEBAR_LOGO = false;
     const LOGO_IMAGE = '/test/image/test.png';
     const PLUS_ACTIVE = true;
+    const ACTIVE = true;
 
     public function test_service_available()
     {
@@ -53,6 +54,7 @@ class SettingsServiceTest extends \PHPUnit_Framework_TestCase
         /** @var Settings $settingsModel */
         $settingsModel = Shopware()->Container()->get('paypal_unified.settings_service')->getSettings(1);
 
+        $this->assertEquals(self::ACTIVE, $settingsModel->getActive());
         $this->assertEquals(self::CLIENT_ID, $settingsModel->getClientId());
         $this->assertEquals(self::CLIENT_SECRET, $settingsModel->getClientSecret());
         $this->assertEquals(self::SANDBOX, $settingsModel->getSandbox());
@@ -114,11 +116,12 @@ class SettingsServiceTest extends \PHPUnit_Framework_TestCase
             ':showSidebarLogo' => self::SHOW_SIDEBAR_LOGO,
             ':logoImage' => self::LOGO_IMAGE,
             ':plusActive' => self::PLUS_ACTIVE,
+            ':active' => self::ACTIVE,
         ];
 
         $sql = 'INSERT INTO swag_payment_paypal_unified_settings
-                (shop_id, client_id, client_secret, sandbox, show_sidebar_logo, logo_image, plus_active)
-                VALUES (:shopId, :clientId, :clientSecret, :sandbox, :showSidebarLogo, :logoImage, :plusActive)';
+                (shop_id, active, client_id, client_secret, sandbox, show_sidebar_logo, logo_image, plus_active)
+                VALUES (:shopId, :active, :clientId, :clientSecret, :sandbox, :showSidebarLogo, :logoImage, :plusActive)';
 
         Shopware()->Db()->executeUpdate($sql, $settingsParams);
     }

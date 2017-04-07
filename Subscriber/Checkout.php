@@ -124,9 +124,10 @@ class Checkout implements SubscriberInterface
         $view = $controller->View();
 
         $action = $request->getActionName();
+        $unifiedActive = (bool) $this->config->get('active');
         $usePayPalPlus = (bool) $this->config->get('plus_active');
 
-        if ($controller->Response()->isRedirect() || !$usePayPalPlus) {
+        if ($controller->Response()->isRedirect() || !$usePayPalPlus || !$unifiedActive) {
             return;
         }
 
