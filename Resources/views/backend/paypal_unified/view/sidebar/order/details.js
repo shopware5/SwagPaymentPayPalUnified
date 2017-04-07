@@ -1,5 +1,5 @@
-//{namespace name="backend/paypal_unified/sidebar/order/details"}
-//{block name="backend/paypal_unified/sidebar/order/details"}
+// {namespace name="backend/paypal_unified/sidebar/order/details"}
+// {block name="backend/paypal_unified/sidebar/order/details"}
 Ext.define('Shopware.apps.PaypalUnified.view.sidebar.order.Details', {
     extend: 'Ext.form.FieldSet',
     alias: 'widget.paypal-unified-sidebar-order-details',
@@ -10,7 +10,7 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebar.order.Details', {
 
     defaults: {
         anchor: '100%',
-        labelWidth: '130px',
+        labelWidth: 130,
         readOnly: true
     },
 
@@ -67,7 +67,7 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebar.order.Details', {
             name: 'paymentStatus',
             itemId: 'paymentStatus',
             fieldLabel: '{s name=field/paymentStatus}Payment status{/s}'
-        }]
+        }];
     }
 });
-//{/block}
+// {/block}

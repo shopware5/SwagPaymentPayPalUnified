@@ -1,4 +1,4 @@
-//{block name="backend/paypal_unified/model/transaction_fee"}
+// {block name="backend/paypal_unified/model/transaction_fee"}
 Ext.define('Shopware.apps.PaypalUnified.model.TransactionFee', {
 
     /**
@@ -11,9 +11,9 @@ Ext.define('Shopware.apps.PaypalUnified.model.TransactionFee', {
      * @type { Array }
      */
     fields: [
-        //{block name="backend/paypal_unified/model/transaction_fee/fields"}{/block}
+        // {block name="backend/paypal_unified/model/transaction_fee/fields"}{/block}
         { name: 'value', type: 'float' },
         { name: 'currency', type: 'string' }
     ]
 });
-//{/block}
+// {/block}

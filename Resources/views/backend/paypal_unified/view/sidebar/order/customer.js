@@ -1,5 +1,5 @@
-//{namespace name="backend/paypal_unified/sidebar/order/customer"}
-//{block name="backend/paypal_unified/sidebar/order/customer"}
+// {namespace name="backend/paypal_unified/sidebar/order/customer"}
+// {block name="backend/paypal_unified/sidebar/order/customer"}
 Ext.define('Shopware.apps.PaypalUnified.view.sidebar.order.Customer', {
     extend: 'Ext.form.FieldSet',
     alias: 'widget.paypal-unified-sidebar-order-customer',
@@ -7,7 +7,7 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebar.order.Customer', {
 
     defaults: {
         anchor: '100%',
-        labelWidth: '130px',
+        labelWidth: 130,
         readOnly: true
     },
 
@@ -59,4 +59,4 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebar.order.Customer', {
         }];
     }
 });
-//{/block}
+// {/block}

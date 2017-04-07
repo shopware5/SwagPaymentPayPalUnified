@@ -1,4 +1,4 @@
-//{block name="backend/paypal_unified/model/refund"}
+// {block name="backend/paypal_unified/model/refund"}
 Ext.define('Shopware.apps.PaypalUnified.model.Refund', {
 
     /**
@@ -11,7 +11,7 @@ Ext.define('Shopware.apps.PaypalUnified.model.Refund', {
      * @type { Array }
      */
     fields: [
-        //{block name="backend/paypal_unified/model/refund/fields"}{/block}
+        // {block name="backend/paypal_unified/model/refund/fields"}{/block}
         { name: 'id', type: 'string' },
         { name: 'create_time', type: 'string' },
         { name: 'update_time', type: 'string' },
@@ -20,4 +20,4 @@ Ext.define('Shopware.apps.PaypalUnified.model.Refund', {
         { name: 'invoice_number', type: 'string' }
     ]
 });
-//{/block}
+// {/block}

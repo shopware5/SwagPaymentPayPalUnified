@@ -1,5 +1,5 @@
-//{namespace name="backend/paypal_unified/refund/capture_window"}
-//{block name="backend/paypal_unified/refund/capture_window"}
+// {namespace name="backend/paypal_unified/refund/capture_window"}
+// {block name="backend/paypal_unified/refund/capture_window"}
 Ext.define('Shopware.apps.PaypalUnified.view.refund.CaptureWindow', {
     extend: 'Enlight.app.Window',
     title: '{s name=title}New Refund{/s}',
@@ -25,7 +25,7 @@ Ext.define('Shopware.apps.PaypalUnified.view.refund.CaptureWindow', {
 
         me.callParent(arguments);
 
-        //For some reason the configuration in me.getItems() is being ignored...
+        // For some reason the configuration in me.getItems() is being ignored...
         me.down('#executeButton').disable();
     },
 
@@ -185,4 +185,4 @@ Ext.define('Shopware.apps.PaypalUnified.view.refund.CaptureWindow', {
         }
     }
 });
-//{/block}
+// {/block}

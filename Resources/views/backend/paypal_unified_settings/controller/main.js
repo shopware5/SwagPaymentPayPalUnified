@@ -1,5 +1,5 @@
-//{namespace name="backend/paypal_unified_settings/main"}
-//{block name="backend/paypal_unified_settings/controller/main"}
+// {namespace name="backend/paypal_unified_settings/main"}
+// {block name="backend/paypal_unified_settings/controller/main"}
 Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
     extend: 'Enlight.app.Controller',
 
@@ -41,10 +41,11 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
     refs: [
         { ref: 'generalTab', selector: 'paypal-unified-settings-tabs-general' },
         { ref: 'paypalTab', selector: 'paypal-unified-settings-tabs-paypal' },
-        { ref: 'plusTab', selector: 'paypal-unified-settings-tabs-paypal-plus' }
+        { ref: 'plusTab', selector: 'paypal-unified-settings-tabs-paypal-plus' },
+        { ref: 'installmentsTab', selector: 'paypal-unified-settings-tabs-installments' }
     ],
 
-    init: function () {
+    init: function() {
         var me = this;
 
         me.createMainWindow();
@@ -53,11 +54,11 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
         me.callParent(arguments);
     },
 
-    createComponentControl: function () {
+    createComponentControl: function() {
         var me = this;
 
         me.control({
-            'paypal-unified-settings-shop-selection': {
+            'paypal-unified-settings-top-toolbar': {
                 'changeShop': me.onChangeShop
             },
             'paypal-unified-settings-toolbar': {
@@ -67,10 +68,10 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
                 'registerWebhook': me.onRegisterWebhook,
                 'validateAPI': me.onValidateAPISettings
             }
-        })
+        });
     },
 
-    createMainWindow: function () {
+    createMainWindow: function() {
         var me = this;
         me.window = me.getView('Window').create().show();
     },
@@ -78,7 +79,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
     /**
      * @param { Number } shopId
      */
-    loadDetails: function (shopId) {
+    loadDetails: function(shopId) {
         var me = this;
         Ext.Ajax.request({
             url: me.detailUrl,
@@ -92,18 +93,19 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
     /**
      * @param { Shopware.data.Model } record
      */
-    onChangeShop: function (record) {
+    onChangeShop: function(record) {
         var me = this,
             shopId = record.get('id');
 
         me.loadDetails(shopId);
     },
 
-    onSaveSettings: function () {
+    onSaveSettings: function() {
         var me = this,
             generalSettings = me.getGeneralTab().getForm().getValues(),
             paypalSettings = me.getPaypalTab().getForm().getValues(),
-            plusSettings = me.getPlusTab().getForm().getValues();
+            plusSettings = me.getPlusTab().getForm().getValues(),
+            installmentsSettings = me.getInstallmentsTab().getForm().getValues();
 
         if (!me.getGeneralTab().getForm().isValid()) {
             Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Unified{/s}', '{s name=growl/formValidationError}Please fill out all fields marked in red.{/s}', me.window.title);
@@ -113,13 +115,14 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
         me.record.set(generalSettings);
         me.record.set(paypalSettings);
         me.record.set(plusSettings);
+        me.record.set(installmentsSettings);
 
         me.record.save();
 
         Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Unified{/s}', '{s name=growl/saveSettings}The settings have been saved!{/s}', me.window.title);
     },
 
-    onRegisterWebhook: function () {
+    onRegisterWebhook: function() {
         var me = this,
             generalSettings = me.getGeneralTab().getForm().getValues();
 
@@ -137,7 +140,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
         });
     },
 
-    onValidateAPISettings: function () {
+    onValidateAPISettings: function() {
         var me = this,
             generalSettings = me.getGeneralTab().getForm().getValues();
 
@@ -160,16 +163,16 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
      * @param { Boolean } success
      * @param { Object } response
      */
-    onRegisterWebhookAjaxCallback: function (options, success, response) {
+    onRegisterWebhookAjaxCallback: function(options, success, response) {
         var me = this;
 
         me.window.setLoading(false);
 
         if (success) {
             var responseObject = Ext.JSON.decode(response.responseText);
-            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Unified{/s}', '{s name=growl/registerWebhookSuccess}The webhook has been successfully registered to:{/s} ' +  responseObject['url'], me.window.title)
+            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Unified{/s}', '{s name=growl/registerWebhookSuccess}The webhook has been successfully registered to:{/s} ' + responseObject['url'], me.window.title);
         } else {
-            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Unified{/s}', '{s name=growl/registerWebhookError}Could not register webhook due to an unknown error.{/s}', me.window.title)
+            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Unified{/s}', '{s name=growl/registerWebhookError}Could not register webhook due to an unknown error.{/s}', me.window.title);
         }
     },
 
@@ -178,13 +181,13 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
      * @param { Boolean } success
      * @param { Object } response
      */
-    onValidateAPIAjaxCallback: function (options, success, response) {
+    onValidateAPIAjaxCallback: function(options, success, response) {
         var me = this,
             responseObject = Ext.JSON.decode(response.responseText),
             successFlag = responseObject.success;
 
         if (successFlag) {
-            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Unified{/s}', '{s name=growl/validateAPISuccess}The API settings are valid.{/s}', me.window.title)
+            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Unified{/s}', '{s name=growl/validateAPISuccess}The API settings are valid.{/s}', me.window.title);
         } else {
             Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Unified{/s}', '{s name=growl/validateAPIError}The API settings are invalid:{/s} ' + '<u>' + responseObject.message + '</u>', me.window.title);
         }
@@ -197,30 +200,34 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
      * @param { Boolean } success
      * @param { Object } response
      */
-    onDetailAjaxCallback: function (options, success, response) {
+    onDetailAjaxCallback: function(options, success, response) {
         var me = this;
 
         if (!success) {
-            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Unified{/s}', '{s name=growl/loadSettingsError}Could not load settings due to an unknown error{/s}', me.window.title)
+            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Unified{/s}', '{s name=growl/loadSettingsError}Could not load settings due to an unknown error{/s}', me.window.title);
         }
 
         var generalTab = me.getGeneralTab(),
             paypalTab = me.getPaypalTab(),
             plusTab = me.getPlusTab(),
+            installmentsTabs = me.getInstallmentsTab(),
             settings = Ext.JSON.decode(response.responseText)['settings'];
 
-        me.record  = Ext.create('Shopware.apps.PaypalUnifiedSettings.model.Settings', settings);
+        me.record = Ext.create('Shopware.apps.PaypalUnifiedSettings.model.Settings', settings);
 
-        //Update general tab
+        // Update general tab
         generalTab.loadRecord(me.record);
 
-        //Update the paypal tab
+        // Update the paypal tab
         paypalTab.loadRecord(me.record);
 
-        //Update plus tab
+        // Update plus tab
         plusTab.loadRecord(me.record);
+
+        // Update installments tab
+        installmentsTabs.loadRecord(me.record);
 
         me.settingsSaved = false;
     }
 });
-//{/block}
+// {/block}

@@ -1,15 +1,15 @@
-//{namespace name="backend/paypal_unified_settings/shop_selection"}
-//{block name="backend/paypal_unified_settings/shop_selection"}
-Ext.define('Shopware.apps.PaypalUnifiedSettings.view.ShopSelection', {
+// {namespace name="backend/paypal_unified_settings/top_toolbar"}
+// {block name="backend/paypal_unified_settings/top_toolbar"}
+Ext.define('Shopware.apps.PaypalUnifiedSettings.view.TopToolbar', {
     extend: 'Ext.toolbar.Toolbar',
-    alias: 'widget.paypal-unified-settings-shop-selection',
+    alias: 'widget.paypal-unified-settings-top-toolbar',
 
     ui: 'shopware-ui',
     padding: '5',
     width: '100%',
     dock: 'top',
 
-    initComponent: function () {
+    initComponent: function() {
         var me = this;
 
         me.items = me.createItems();
@@ -33,11 +33,11 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.ShopSelection', {
     /**
      * @returns { Array }
      */
-    createItems: function () {
+    createItems: function() {
         var me = this,
             items = [];
 
-        items.push('->'); //Right align the selection.
+        items.push('->'); // Right align the selection.
         items.push(me.createShopSelection());
 
         return items;
@@ -46,47 +46,47 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.ShopSelection', {
     /**
      * @returns { Shopware.apps.Base.view.element.Select }
      */
-    createShopSelection: function () {
+    createShopSelection: function() {
         var me = this,
-            store = Ext.create('Shopware.apps.Base.store.Shop'),
-            shopCombobox;
-
-        store.filters.clear();
+            attribute = {
+                get: function() {
+                    return 'Shopware\\Models\\Shop\\Shop';
+                }
+            },
+            factory = Ext.create('Shopware.attribute.SelectionFactory'),
+            store = factory.createDynamicSearchStore(attribute),
+            selection;
 
         store.load({
-            callback: function (records) {
-                shopCombobox.setValue(records[0].get('id')); //Set the default selection to the first entry
-                me.fireEvent('changeShop', records[0])
+            callback: function(records) {
+                selection.setValue(records[0].get('id')); // Set the default selection to the first entry
+                me.fireEvent('changeShop', records[0]);
             }
         });
 
-        shopCombobox = Ext.create('Ext.form.field.ComboBox', {
+        selection = Ext.create('Shopware.form.field.SingleSelection', {
+            store: store,
+            name: 'shopId',
             fieldLabel: '{s name=label/shop}Select shop{/s}',
             labelWidth: 80,
-            store: store,
-            queryMode: 'local',
-            valueField: 'id',
-            editable: false,
-            displayField: 'name',
-            labelStyle: 'line-height: 8px',
             listeners: {
                 select: Ext.bind(me.onSelectShop, me)
             }
         });
 
-        return shopCombobox;
+        return selection;
     },
 
     /**
      * @param { Ext.form.field.ComboBox } element
      * @param { Shopware.apps.Base.model.Shop[] } record
      */
-    onSelectShop: function (element, record) {
+    onSelectShop: function(element, record) {
         var me = this;
 
         if (record[0]) {
-            me.fireEvent('changeShop', record[0])
+            me.fireEvent('changeShop', record[0]);
         }
     }
 });
-//{/block}
+// {/block}

@@ -1,4 +1,4 @@
-//{block name="backend/paypal_unified/model/payment_cart_item"}
+// {block name="backend/paypal_unified/model/payment_cart_item"}
 Ext.define('Shopware.apps.PaypalUnified.model.PaymentCartItem', {
 
     /**
@@ -11,7 +11,7 @@ Ext.define('Shopware.apps.PaypalUnified.model.PaymentCartItem', {
      * @type { Array }
      */
     fields: [
-        //{block name="backend/paypal_unified/model/payment_cart_item/fields"}{/block}
+        // {block name="backend/paypal_unified/model/payment_cart_item/fields"}{/block}
         { name: 'name', type: 'string' },
         { name: 'sku', type: 'string' },
         { name: 'price', type: 'float' },
@@ -19,4 +19,4 @@ Ext.define('Shopware.apps.PaypalUnified.model.PaymentCartItem', {
         { name: 'quantity', type: 'int' }
     ]
 });
-//{/block}
+// {/block}

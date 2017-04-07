@@ -1,4 +1,4 @@
-//{block name="backend/paypal_unified/model/shopware_order"}
+// {block name="backend/paypal_unified/model/shopware_order"}
 Ext.define('Shopware.apps.PaypalUnified.model.ShopwareOrder', {
 
     /**
@@ -11,7 +11,7 @@ Ext.define('Shopware.apps.PaypalUnified.model.ShopwareOrder', {
      * @type { Array }
      */
     fields: [
-        //{block name="backend/paypal_unified/model/shopware_order/fields"}{/block}
+        // {block name="backend/paypal_unified/model/shopware_order/fields"}{/block}
         { name: 'number', type: 'string' },
         { name: 'invoiceAmount', type: 'float' },
         { name: 'languageIso', type: 'string' },
@@ -29,11 +29,11 @@ Ext.define('Shopware.apps.PaypalUnified.model.ShopwareOrder', {
      * @type { Array }
      */
     associations: [
-        { type:'hasMany', model:'Shopware.apps.Base.model.Customer', name:'getCustomer', associationKey:'customer' },
-        { type:'hasMany', model:'Shopware.apps.Base.model.Shop', name:'getLanguageSubShop', associationKey:'languageSubShop' },
-        { type:'hasMany', model:'Shopware.apps.Base.model.OrderStatus', name:'getOrderStatus', associationKey:'orderStatus' },
-        { type:'hasMany', model:'Shopware.apps.Order.model.Payment', name:'getPayment', associationKey:'payment' },
-        { type:'hasMany', model:'Shopware.apps.Base.model.PaymentStatus', name:'getPaymentStatus', associationKey:'paymentStatus' }
+        { type: 'hasMany', model: 'Shopware.apps.Base.model.Customer', name: 'getCustomer', associationKey: 'customer' },
+        { type: 'hasMany', model: 'Shopware.apps.Base.model.Shop', name: 'getLanguageSubShop', associationKey: 'languageSubShop' },
+        { type: 'hasMany', model: 'Shopware.apps.Base.model.OrderStatus', name: 'getOrderStatus', associationKey: 'orderStatus' },
+        { type: 'hasMany', model: 'Shopware.apps.Order.model.Payment', name: 'getPayment', associationKey: 'payment' },
+        { type: 'hasMany', model: 'Shopware.apps.Base.model.PaymentStatus', name: 'getPaymentStatus', associationKey: 'paymentStatus' }
     ]
 });
-//{/block}
+// {/block}

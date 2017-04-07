@@ -1,4 +1,4 @@
-//{block name="backend/paypal_unified/store/order"}
+// {block name="backend/paypal_unified/store/order"}
 Ext.define('Shopware.apps.PaypalUnified.store.Order', {
     /**
      * extends from the standard ExtJs store class
@@ -21,4 +21,4 @@ Ext.define('Shopware.apps.PaypalUnified.store.Order', {
         };
     }
 });
-//{/block}
+// {/block}

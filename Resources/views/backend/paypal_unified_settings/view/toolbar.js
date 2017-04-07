@@ -1,5 +1,5 @@
-//{namespace name="backend/paypal_unified_settings/toolbar"}
-//{block name="backend/paypal_unified_settings/toolbar"}
+// {namespace name="backend/paypal_unified_settings/toolbar"}
+// {block name="backend/paypal_unified_settings/toolbar"}
 Ext.define('Shopware.apps.PaypalUnifiedSettings.view.Toolbar', {
     extend: 'Ext.toolbar.Toolbar',
     alias: 'widget.paypal-unified-settings-toolbar',
@@ -26,7 +26,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.Toolbar', {
              * This event will be triggered when the user clicks on the save button.
              */
             'saveSettings'
-        )
+        );
     },
 
     /**
@@ -36,7 +36,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.Toolbar', {
         var me = this,
             items = [];
 
-        items.push('->'); //Right align the button.
+        items.push('->'); // Right align the button.
         items.push(me.createSaveButton());
 
         return items;
@@ -61,4 +61,4 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.Toolbar', {
         me.fireEvent('saveSettings');
     }
 });
-//{/block}
+// {/block}

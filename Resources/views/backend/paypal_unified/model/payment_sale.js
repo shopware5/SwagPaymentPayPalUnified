@@ -1,4 +1,4 @@
-//{block name="backend/paypal_unified/model/payment_sale"}
+// {block name="backend/paypal_unified/model/payment_sale"}
 Ext.define('Shopware.apps.PaypalUnified.model.PaymentSale', {
 
     /**
@@ -11,7 +11,7 @@ Ext.define('Shopware.apps.PaypalUnified.model.PaymentSale', {
      * @type { Array }
      */
     fields: [
-        //{block name="backend/paypal_unified/model/payment_sale/fields"}{/block}
+        // {block name="backend/paypal_unified/model/payment_sale/fields"}{/block}
         { name: 'id', type: 'string' },
         { name: 'amount', type: 'float' },
         { name: 'create_time', type: 'string' },
@@ -21,4 +21,4 @@ Ext.define('Shopware.apps.PaypalUnified.model.PaymentSale', {
         { name: 'type', type: 'string' }
     ]
 });
-//{/block}
+// {/block}

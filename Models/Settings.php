@@ -76,7 +76,7 @@ class Settings extends ModelEntity
 
     /**
      * @var bool
-     * @ORM\Column(name="show_sidebar_logo", type="boolean")
+     * @ORM\Column(name="show_sidebar_logo", type="boolean", nullable=false)
      */
     private $showSidebarLogo;
 
@@ -121,6 +121,30 @@ class Settings extends ModelEntity
      * @ORM\Column(name="plus_language", type="string")
      */
     private $plusLanguage;
+
+    /**
+     * @var bool
+     * @ORM\Column(name="installments_active", type="boolean", nullable=false)
+     */
+    private $installmentsActive;
+
+    /**
+     * @var int
+     * @ORM\Column(name="installments_presentment_detail", type="integer")
+     */
+    private $installmentsPresentmentDetail;
+
+    /**
+     * @var int
+     * @ORM\Column(name="installments_presentment_cart", type="integer")
+     */
+    private $installmentsPresentmentCart;
+
+    /**
+     * @var bool
+     * @ORM\Column(name="installments_show_logo", type="boolean", nullable=false)
+     */
+    private $installmentsShowLogo;
 
     /**
      * @return int
@@ -344,5 +368,69 @@ class Settings extends ModelEntity
     public function toArray()
     {
         return get_object_vars($this);
+    }
+
+    /**
+     * @return bool
+     */
+    public function getInstallmentsActive()
+    {
+        return $this->installmentsActive;
+    }
+
+    /**
+     * @param bool $installmentsActive
+     */
+    public function setInstallmentsActive($installmentsActive)
+    {
+        $this->installmentsActive = $installmentsActive;
+    }
+
+    /**
+     * @return int
+     */
+    public function getInstallmentsPresentmentDetail()
+    {
+        return $this->installmentsPresentmentDetail;
+    }
+
+    /**
+     * @param int $installmentsPresentmentDetail
+     */
+    public function setInstallmentsPresentmentDetail($installmentsPresentmentDetail)
+    {
+        $this->installmentsPresentmentDetail = $installmentsPresentmentDetail;
+    }
+
+    /**
+     * @return int
+     */
+    public function getInstallmentsPresentmentCart()
+    {
+        return $this->installmentsPresentmentCart;
+    }
+
+    /**
+     * @param int $installmentsPresentmentCart
+     */
+    public function setInstallmentsPresentmentCart($installmentsPresentmentCart)
+    {
+        $this->installmentsPresentmentCart = $installmentsPresentmentCart;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getInstallmentsShowLogo()
+    {
+        return $this->installmentsShowLogo;
+    }
+
+    /**
+     * @param bool $installmentsShowLogo
+     */
+    public function setInstallmentsShowLogo($installmentsShowLogo)
+    {
+        $this->installmentsShowLogo = $installmentsShowLogo;
     }
 }

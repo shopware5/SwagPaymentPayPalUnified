@@ -1,5 +1,5 @@
-//{namespace name="backend/paypal_unified/sidebar/history"}
-//{block name="backend/paypal_unified/sidebar/history"}
+// {namespace name="backend/paypal_unified/sidebar/history"}
+// {block name="backend/paypal_unified/sidebar/history"}
 Ext.define('Shopware.apps.PaypalUnified.view.sidebar.History', {
     extend: 'Ext.form.Panel',
     alias: 'widget.paypal-unified-sidebar-refund',
@@ -53,4 +53,4 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebar.History', {
         return items;
     }
 });
-//{/block}
+// {/block}

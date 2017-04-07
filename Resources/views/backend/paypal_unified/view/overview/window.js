@@ -1,5 +1,5 @@
-//{namespace name="backend/paypal_unified/overview/window"}
-//{block name="backend/paypal_unified/overview/window"}
+// {namespace name="backend/paypal_unified/overview/window"}
+// {block name="backend/paypal_unified/overview/window"}
 Ext.define('Shopware.apps.PaypalUnified.view.overview.Window', {
     extend: 'Shopware.window.Listing',
     alias: 'widget.paypal-unified-overview-window',
@@ -39,4 +39,4 @@ Ext.define('Shopware.apps.PaypalUnified.view.overview.Window', {
         return items;
     }
 });
-//{/block}
+// {/block}

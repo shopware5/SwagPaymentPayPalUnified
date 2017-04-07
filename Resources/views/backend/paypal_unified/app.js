@@ -1,4 +1,4 @@
-//{block name="backend/paypal_unified/app"}
+// {block name="backend/paypal_unified/app"}
 Ext.define('Shopware.apps.PaypalUnified', {
     extend: 'Enlight.app.SubApplication',
     name: 'Shopware.apps.PaypalUnified',
@@ -89,4 +89,4 @@ Ext.define('Shopware.apps.PaypalUnified', {
         return mainController.mainWindow;
     }
 });
-//{/block}
+// {/block}

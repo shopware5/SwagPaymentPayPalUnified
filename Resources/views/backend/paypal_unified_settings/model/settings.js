@@ -1,28 +1,32 @@
-//{block name="backend/paypal_unified_settings/model/settings"}
+// {block name="backend/paypal_unified_settings/model/settings"}
 Ext.define('Shopware.apps.PaypalUnifiedSettings.model.Settings', {
     extend: 'Shopware.data.Model',
 
-    configure: function () {
+    configure: function() {
         return {
             controller: 'PaypalUnifiedSettings'
-        }
+        };
     },
 
     fields: [
-        //{block name="backend/paypal_unified_settings/model/settings/fields"}{/block}
+        // {block name="backend/paypal_unified_settings/model/settings/fields"}{/block}
         { name: 'id', type: 'int' },
         { name: 'shopId', type: 'int' },
-        { name: 'clientId' },
-        { name: 'clientSecret' },
+        { name: 'clientId', type: 'string' },
+        { name: 'clientSecret', type: 'string' },
         { name: 'sandbox', type: 'bool' },
         { name: 'showSidebarLogo', type: 'bool' },
-        { name: 'brandName' },
-        { name: 'logoImage' },
+        { name: 'brandName', type: 'string' },
+        { name: 'logoImage', type: 'string' },
         { name: 'sendOrderNumber', type: 'bool' },
-        { name: 'orderNumberPrefix' },
+        { name: 'orderNumberPrefix', type: 'string' },
         { name: 'paypalPaymentIntent', type: 'int' },
         { name: 'plusActive', type: 'bool' },
-        { name: 'plusLanguage' }
+        { name: 'plusLanguage', type: 'string' },
+        { name: 'installmentsActive', type: 'bool' },
+        { name: 'installmentsPresentmentDetail', type: 'int' },
+        { name: 'installmentsPresentmentCart', type: 'int' },
+        { name: 'installmentsShowLogo', type: 'bool' }
     ]
 });
-//{/block}
+// {/block}

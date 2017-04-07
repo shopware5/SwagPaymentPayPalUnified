@@ -1,5 +1,5 @@
-//{namespace name="backend/paypal_unified/sidebar/payment/customer"}
-//{block name="backend/paypal_unified/sidebar/payment/customer"}
+// {namespace name="backend/paypal_unified/sidebar/payment/customer"}
+// {block name="backend/paypal_unified/sidebar/payment/customer"}
 Ext.define('Shopware.apps.PaypalUnified.view.sidebar.payment.Customer', {
     extend: 'Ext.form.FieldSet',
     alias: 'widget.paypal-unified-sidebar-payment-customer',
@@ -11,7 +11,7 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebar.payment.Customer', {
 
     defaults: {
         anchor: '100%',
-        labelWidth: '130px',
+        labelWidth: 130,
         readOnly: true
     },
 
@@ -58,4 +58,4 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebar.payment.Customer', {
         }];
     }
 });
-//{/block}
+// {/block}

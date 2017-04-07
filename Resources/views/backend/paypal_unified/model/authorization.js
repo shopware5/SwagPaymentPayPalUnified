@@ -1,4 +1,4 @@
-//{block name="backend/paypal_unified/model/authorization"}
+// {block name="backend/paypal_unified/model/authorization"}
 Ext.define('Shopware.apps.PaypalUnified.model.Authorization', {
 
     /**
@@ -11,7 +11,7 @@ Ext.define('Shopware.apps.PaypalUnified.model.Authorization', {
      * @type { Array }
      */
     fields: [
-        //{block name="backend/paypal_unified/model/capture/fields"}{/block}
+        // {block name="backend/paypal_unified/model/capture/fields"}{/block}
         { name: 'id', type: 'string' },
         { name: 'create_time', type: 'string' },
         { name: 'update_time', type: 'string' },
@@ -20,4 +20,4 @@ Ext.define('Shopware.apps.PaypalUnified.model.Authorization', {
         { name: 'payment_mode', type: 'string' }
     ]
 });
-//{/block}
+// {/block}

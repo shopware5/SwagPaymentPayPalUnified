@@ -1,4 +1,4 @@
-//{block name="backend/paypal_unified_settings/app"}
+// {block name="backend/paypal_unified_settings/app"}
 Ext.define('Shopware.apps.PaypalUnifiedSettings', {
     extend: 'Enlight.app.SubApplication',
     name: 'Shopware.apps.PaypalUnifiedSettings',
@@ -31,8 +31,12 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings', {
         'Settings'
     ],
 
+    /**
+     * @type { Array }
+     */
     stores: [
-        'PaymentIntent'
+        'PaymentIntent',
+        'InstallmentsPresentment'
     ],
 
     /**
@@ -41,20 +45,21 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings', {
     views: [
         'Window',
         'Toolbar',
-        'ShopSelection',
+        'TopToolbar',
         'tabs.General',
         'tabs.Paypal',
-        'tabs.PaypalPlus'
+        'tabs.PaypalPlus',
+        'tabs.Installments'
     ],
 
     /**
      * @returns { Shopware.apps.PaypalUnifiedSettings.view.Window }
      */
-    launch: function () {
+    launch: function() {
         var me = this,
             settingsController = me.getController('Main');
 
         return settingsController.mainWindow;
     }
 });
-//{/block}
+// {/block}

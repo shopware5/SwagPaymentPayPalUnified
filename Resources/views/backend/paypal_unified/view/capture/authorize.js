@@ -1,5 +1,5 @@
-//{namespace name="backend/paypal_unified/capture/authorize"}
-//{block name="backend/paypal_unified/capture/authorize"}
+// {namespace name="backend/paypal_unified/capture/authorize"}
+// {block name="backend/paypal_unified/capture/authorize"}
 Ext.define('Shopware.apps.PaypalUnified.view.capture.Authorize', {
     extend: 'Enlight.app.Window',
     title: '{s name=title}Capture Payment{/s}',
@@ -61,7 +61,7 @@ Ext.define('Shopware.apps.PaypalUnified.view.capture.Authorize', {
 
         me.contentContainer = Ext.create('Ext.form.Panel', {
             fieldDefaults: {
-                labelWidth: '180px',
+                labelWidth: 180,
                 anchor: '100%'
             },
 
@@ -88,7 +88,7 @@ Ext.define('Shopware.apps.PaypalUnified.view.capture.Authorize', {
                 xtype: 'checkbox',
                 itemId: 'finalCapture',
                 inputValue: true,
-                uncheckedValue:false,
+                uncheckedValue: false,
                 checked: true,
                 fieldLabel: '{s name=field/isFinal}This is the final capture{/s}'
             }]
@@ -123,11 +123,11 @@ Ext.define('Shopware.apps.PaypalUnified.view.capture.Authorize', {
     },
 
     captureButtonClick: function () {
-          var amount = this.down('#currentAmount').value,
-              isFinal = this.down('#finalCapture').checked;
+        var amount = this.down('#currentAmount').value,
+            isFinal = this.down('#finalCapture').checked;
 
         this.fireEvent('authorizePayment', amount, isFinal);
         this.close();
     }
 });
-//{/block}
+// {/block}

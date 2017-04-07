@@ -1,4 +1,4 @@
-//{block name="backend/paypal_unified/model/payment_customer_shipping"}
+// {block name="backend/paypal_unified/model/payment_customer_shipping"}
 Ext.define('Shopware.apps.PaypalUnified.model.PaymentCustomerShipping', {
 
     /**
@@ -11,7 +11,7 @@ Ext.define('Shopware.apps.PaypalUnified.model.PaymentCustomerShipping', {
      * @type { Array }
      */
     fields: [
-        //{block name="backend/paypal_unified/model/payment_customer_shipping/fields"}{/block}
+        // {block name="backend/paypal_unified/model/payment_customer_shipping/fields"}{/block}
         { name: 'recipient_name', type: 'string' },
         { name: 'line1', type: 'string' },
         { name: 'city', type: 'string' },
@@ -20,4 +20,4 @@ Ext.define('Shopware.apps.PaypalUnified.model.PaymentCustomerShipping', {
         { name: 'country_code', type: 'string' }
     ]
 });
-//{/block}
+// {/block}

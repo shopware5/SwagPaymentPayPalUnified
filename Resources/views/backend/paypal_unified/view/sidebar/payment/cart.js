@@ -1,5 +1,5 @@
-//{namespace name="backend/paypal_unified/sidebar/payment/cart"}
-//{block name="backend/paypal_unified/sidebar/payment/cart"}
+// {namespace name="backend/paypal_unified/sidebar/payment/cart"}
+// {block name="backend/paypal_unified/sidebar/payment/cart"}
 Ext.define('Shopware.apps.PaypalUnified.view.sidebar.payment.Cart', {
     extend: 'Ext.grid.Panel',
     alias: 'widget.paypal-unified-sidebar-payment-cart',
@@ -41,4 +41,4 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebar.payment.Cart', {
         return Ext.util.Format.currency(value) + ' ' + record.get('currency');
     }
 });
-//{/block}
+// {/block}

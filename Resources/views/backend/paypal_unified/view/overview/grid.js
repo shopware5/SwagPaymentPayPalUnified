@@ -1,5 +1,5 @@
-//{namespace name="backend/paypal_unified/overview/grid"}
-//{block name="backend/paypal_unified/overview/list"}
+// {namespace name="backend/paypal_unified/overview/grid"}
+// {block name="backend/paypal_unified/overview/list"}
 Ext.define('Shopware.apps.PaypalUnified.view.overview.Grid', {
     extend: 'Shopware.grid.Panel',
     alias: 'widget.paypal-unified-overview-grid',
@@ -75,7 +75,7 @@ Ext.define('Shopware.apps.PaypalUnified.view.overview.Grid', {
         var me = this,
             items = me.callParent(arguments);
 
-        //Customer details button
+        // Customer details button
         items.push({
             iconCls: 'sprite-user',
             tooltip: '{s name="tooltip/customer"}Open customer details{/s}',
@@ -91,7 +91,7 @@ Ext.define('Shopware.apps.PaypalUnified.view.overview.Grid', {
             }
         });
 
-        //Order details button
+        // Order details button
         items.push({
             iconCls: 'sprite-shopping-basket',
             tooltip: '{s name="tooltip/order"}Open order details{/s}',
@@ -198,4 +198,4 @@ Ext.define('Shopware.apps.PaypalUnified.view.overview.Grid', {
         return Ext.util.Format.currency(value);
     }
 });
-//{/block}
+// {/block}

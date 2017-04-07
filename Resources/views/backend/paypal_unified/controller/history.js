@@ -1,5 +1,5 @@
-//{namespace name="backend/paypal_unified/controller/main}
-//{block name="backend/paypal_unified/controller/history"}
+// {namespace name="backend/paypal_unified/controller/main}
+// {block name="backend/paypal_unified/controller/history"}
 Ext.define('Shopware.apps.PaypalUnified.controller.History', {
     extend: 'Enlight.app.Controller',
 
@@ -24,7 +24,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.History', {
             'paypal-unified-sidebar-history-grid': {
                 'select': this.onSelectHistoryGridRecord
             }
-        })
+        });
     },
 
     /**
@@ -219,7 +219,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.History', {
     updateFields: function (details) {
         var historyTab = this.getSidebar().historyTab;
 
-        //Update time
+        // Update time
         historyTab.down('#totalAmount').setValue(Ext.util.Format.currency(details.amount.total) + ' ' + details.amount.currency);
         historyTab.down('#updateTime').setValue(Ext.util.Format.date(details.update_time, 'd.m.Y H:i:s'));
         historyTab.down('#createTime').setValue(Ext.util.Format.date(details.create_time, 'd.m.Y H:i:s'));
@@ -233,4 +233,4 @@ Ext.define('Shopware.apps.PaypalUnified.controller.History', {
         }
     }
 });
-//{/block}
+// {/block}

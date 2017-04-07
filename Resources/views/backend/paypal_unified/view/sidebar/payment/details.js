@@ -1,5 +1,5 @@
-//{namespace name="backend/paypal_unified/sidebar/payment/details"}
-//{block name="backend/paypal_unified/sidebar/payment/details"}
+// {namespace name="backend/paypal_unified/sidebar/payment/details"}
+// {block name="backend/paypal_unified/sidebar/payment/details"}
 Ext.define('Shopware.apps.PaypalUnified.view.sidebar.payment.Details', {
     extend: 'Ext.form.FieldSet',
     alias: 'widget.paypal-unified-sidebar-payment-details',
@@ -11,7 +11,7 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebar.payment.Details', {
 
     defaults: {
         anchor: '100%',
-        labelWidth: '130px',
+        labelWidth: 130,
         readOnly: true
     },
 
@@ -56,7 +56,7 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebar.payment.Details', {
             xtype: 'textfield',
             itemId: 'updateTime',
             fieldLabel: '{s name=field/updateTime}Update time{/s}'
-        }]
+        }];
     }
 });
-//{/block}
+// {/block}

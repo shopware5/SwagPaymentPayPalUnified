@@ -1,5 +1,5 @@
-//{namespace name="backend/paypal_unified/sidebar/payment/address"}
-//{block name="backend/paypal_unified/sidebar/payment/address"}
+// {namespace name="backend/paypal_unified/sidebar/payment/address"}
+// {block name="backend/paypal_unified/sidebar/payment/address"}
 Ext.define('Shopware.apps.PaypalUnified.view.sidebar.payment.Address', {
     extend: 'Ext.form.FieldSet',
     alias: 'widget.paypal-unified-sidebar-payment-address',
@@ -11,7 +11,7 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebar.payment.Address', {
 
     defaults: {
         anchor: '100%',
-        labelWidth: '130px',
+        labelWidth: 130,
         readOnly: true
     },
 
@@ -58,4 +58,4 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebar.payment.Address', {
         }];
     }
 });
-//{/block}
+// {/block}

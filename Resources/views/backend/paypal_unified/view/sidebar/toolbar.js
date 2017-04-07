@@ -1,5 +1,5 @@
-//{namespace name="backend/paypal_unified/sidebar/toolbar"}
-//{block name="backend/paypal_unified/sidebar/sidebar/toolbar"}
+// {namespace name="backend/paypal_unified/sidebar/toolbar"}
+// {block name="backend/paypal_unified/sidebar/sidebar/toolbar"}
 Ext.define('Shopware.apps.PaypalUnified.view.sidebar.Toolbar', {
     extend: 'Ext.toolbar.Toolbar',
     alias: 'widget.paypal-unified-sidebar-order-actions',
@@ -112,4 +112,4 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebar.Toolbar', {
         );
     }
 });
-//{/block}
+// {/block}

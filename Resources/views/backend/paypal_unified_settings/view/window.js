@@ -1,5 +1,5 @@
-//{namespace name="backend/paypal_unified_settings/window"}
-//{block name="backend/paypal_unified_settings/window"}
+// {namespace name="backend/paypal_unified_settings/window"}
+// {block name="backend/paypal_unified_settings/window"}
 Ext.define('Shopware.apps.PaypalUnifiedSettings.view.Window', {
     extend: 'Enlight.app.Window',
     title: '{s name=title}PayPal Unified - Settings{/s}',
@@ -17,9 +17,9 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.Window', {
     toolbar: null,
 
     /**
-     * @type { Shopware.apps.PaypalUnifiedSettings.view.ShopSelection }
+     * @type { Shopware.apps.PaypalUnifiedSettings.view.TopToolbar }
      */
-    shopSelection: null,
+    topToolbar: null,
 
     /**
      * @type { Ext.tab.Panel }
@@ -30,7 +30,6 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.Window', {
      * @type { Shopware.apps.PaypalUnifiedSettings.view.tabs.General }
      */
     generalTab: null,
-
 
     /**
      * @type { Shopware.apps.PaypalUnifiedSettings.view.tabs.Paypal }
@@ -43,19 +42,24 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.Window', {
     paypalPlusTab: null,
 
     /**
+     * @type { Shopware.apps.PaypalUnifiedSettings.view.tabs.Installments }
+     */
+    paypalInstallmentsTab: null,
+
+    /**
      * @type { Shopware.data.Model }
      */
     record: null,
 
-    initComponent: function () {
+    initComponent: function() {
         var me = this;
 
-        me.dockedItems = [ me.createToolbar(), me.createShopSelection() ];
+        me.dockedItems = [me.createToolbar(), me.createTopToolbar()];
         me.items = me.createItems();
 
         me.callParent(arguments);
 
-        //Manually set the background color of the window body.
+        // Manually set the background color of the window body.
         me.setBodyStyle({
             background: '#EBEDEF'
         });
@@ -76,7 +80,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.Window', {
     /**
      * @returns { Shopware.apps.PaypalUnifiedSettings.view.Toolbar }
      */
-    createToolbar: function () {
+    createToolbar: function() {
         var me = this;
 
         me.toolbar = Ext.create('Shopware.apps.PaypalUnifiedSettings.view.Toolbar');
@@ -87,12 +91,13 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.Window', {
     /**
      * @returns { Ext.tab.Panel }
      */
-    createTabElement: function () {
+    createTabElement: function() {
         var me = this;
 
         me.generalTab = Ext.create('Shopware.apps.PaypalUnifiedSettings.view.tabs.General');
         me.paypalTab = Ext.create('Shopware.apps.PaypalUnifiedSettings.view.tabs.Paypal');
         me.paypalPlusTab = Ext.create('Shopware.apps.PaypalUnifiedSettings.view.tabs.PaypalPlus');
+        me.paypalInstallmentsTab = Ext.create('Shopware.apps.PaypalUnifiedSettings.view.tabs.Installments');
 
         me.tabContainer = Ext.create('Ext.tab.Panel', {
             border: false,
@@ -100,21 +105,26 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.Window', {
                 background: '#EBEDEF'
             },
 
-            items: [ me.generalTab, me.paypalTab, me.paypalPlusTab ]
+            items: [
+                me.generalTab,
+                me.paypalTab,
+                me.paypalPlusTab,
+                me.paypalInstallmentsTab
+            ]
         });
 
         return me.tabContainer;
     },
 
     /**
-     * @returns { Shopware.apps.PaypalUnifiedSettings.view.ShopSelection }
+     * @returns { Shopware.apps.PaypalUnifiedSettings.view.TopToolbar }
      */
-    createShopSelection: function () {
+    createTopToolbar: function() {
         var me = this;
 
-        me.shopSelection = Ext.create('Shopware.apps.PaypalUnifiedSettings.view.ShopSelection');
+        me.topToolbar = Ext.create('Shopware.apps.PaypalUnifiedSettings.view.TopToolbar');
 
-        return me.shopSelection;
+        return me.topToolbar;
     }
 });
-//{/block}
+// {/block}

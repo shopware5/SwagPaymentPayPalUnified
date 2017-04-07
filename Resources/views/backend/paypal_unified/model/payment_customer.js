@@ -1,4 +1,4 @@
-//{block name="backend/paypal_unified/model/payment_customer"}
+// {block name="backend/paypal_unified/model/payment_customer"}
 Ext.define('Shopware.apps.PaypalUnified.model.PaymentCustomer', {
 
     /**
@@ -11,7 +11,7 @@ Ext.define('Shopware.apps.PaypalUnified.model.PaymentCustomer', {
      * @type { Array }
      */
     fields: [
-        //{block name="backend/paypal_unified/model/payment_customer/fields"}{/block}
+        // {block name="backend/paypal_unified/model/payment_customer/fields"}{/block}
         { name: 'email', type: 'string' },
         { name: 'first_name', type: 'string' },
         { name: 'last_name', type: 'string' },
@@ -20,4 +20,4 @@ Ext.define('Shopware.apps.PaypalUnified.model.PaymentCustomer', {
         { name: 'country_code', type: 'string' }
     ]
 });
-//{/block}
+// {/block}

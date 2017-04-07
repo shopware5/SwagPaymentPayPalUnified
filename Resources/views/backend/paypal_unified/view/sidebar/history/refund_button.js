@@ -1,5 +1,5 @@
-//{namespace name="backend/paypal_unified/sidebar/history/refund_button"}
-//{block name="backend/paypal_unified/sidebar/history/refund_button"}
+// {namespace name="backend/paypal_unified/sidebar/history/refund_button"}
+// {block name="backend/paypal_unified/sidebar/history/refund_button"}
 Ext.define('Shopware.apps.PaypalUnified.view.sidebar.history.RefundButton', {
     extend: 'Shopware.apps.Base.view.element.Button',
     alias: 'widget.paypal-unified-sidebar-history-refund-button',
@@ -17,4 +17,4 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebar.history.RefundButton', {
         me.callParent(arguments);
     }
 });
-//{/block}
+// {/block}
