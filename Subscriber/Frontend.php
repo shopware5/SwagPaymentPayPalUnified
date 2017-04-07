@@ -87,8 +87,11 @@ class Frontend implements SubscriberInterface
         /** @var Enlight_View_Default $view */
         $view = $args->getSubject()->View();
         $view->addTemplateDir($this->pluginDir . '/Resources/views');
+        $active = (bool) $this->config->get('active');
 
-        //Assign shop specific and configurable values to the view.
-        $view->assign('showPaypalLogo', $this->config->get('show_sidebar_logo'));
+        if ($active) {
+            //Assign shop specific and configurable values to the view.
+            $view->assign('showPaypalLogo', $this->config->get('show_sidebar_logo'));
+        }
     }
 }

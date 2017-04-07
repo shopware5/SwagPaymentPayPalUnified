@@ -66,7 +66,8 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
             },
             'paypal-unified-settings-tabs-general': {
                 'registerWebhook': me.onRegisterWebhook,
-                'validateAPI': me.onValidateAPISettings
+                'validateAPI': me.onValidateAPISettings,
+                'onChangeShopActivation': me.applyActivationState
             }
         });
     },
@@ -227,7 +228,25 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
         // Update installments tab
         installmentsTabs.loadRecord(me.record);
 
+        me.applyActivationState(me.record.get('active'));
+
         me.settingsSaved = false;
+    },
+
+    /**
+     * A helper function that updates the UI depending on the activation state.
+     *
+     * @param { Boolean } active
+     */
+    applyActivationState: function(active) {
+        var me = this;
+
+        me.getGeneralTab().restContainer.setDisabled(!active);
+        me.getGeneralTab().behaviorContainer.setDisabled(!active);
+
+        me.getPaypalTab().setDisabled(!active);
+        me.getPlusTab().setDisabled(!active);
+        me.getInstallmentsTab().setDisabled(!active);
     }
 });
 // {/block}

@@ -102,11 +102,12 @@ class PaymentMeansSubscriberTest extends \PHPUnit_Framework_TestCase
             ':showSidebarLogo' => true,
             ':logoImage' => 'None',
             ':plusActive' => true,
+            ':active' => true,
         ];
 
         $sql = 'INSERT INTO swag_payment_paypal_unified_settings
-                (shop_id, client_id, client_secret, sandbox, show_sidebar_logo, logo_image, plus_active)
-                VALUES (:shopId, :clientId, :clientSecret, :sandbox, :showSidebarLogo, :logoImage, :plusActive)';
+                (shop_id, active, client_id, client_secret, sandbox, show_sidebar_logo, logo_image, plus_active)
+                VALUES (:shopId, :active, :clientId, :clientSecret, :sandbox, :showSidebarLogo, :logoImage, :plusActive)';
 
         Shopware()->Db()->executeUpdate($sql, $settingsParams);
     }

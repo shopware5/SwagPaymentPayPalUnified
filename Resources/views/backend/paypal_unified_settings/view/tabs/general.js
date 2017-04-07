@@ -28,6 +28,11 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
      */
     behaviorContainer: null,
 
+    /**
+     * @type { Ext.form.FieldSet }
+     */
+    activationContainer: null,
+
     initComponent: function () {
         var me = this;
 
@@ -51,7 +56,14 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
             /**
              * Will be fired when the user clicks on the Test API settings button
              */
-            'validateAPI'
+            'validateAPI',
+
+            /**
+             * Will be fired when the user enables/disables the activation for the selected shop
+             *
+             * @param { Boolean }
+             */
+            'onChangeShopActivation'
         );
     },
 
@@ -61,7 +73,32 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
     createItems: function () {
         var me = this;
 
-        return [ me.createRestContainer(), me.createBehaviorContainer() ];
+        return [ me.createActivationContainer(), me.createRestContainer(), me.createBehaviorContainer() ];
+    },
+
+    /**
+     * @returns { Ext.form.FieldSet }
+     */
+    createActivationContainer: function () {
+        var me = this;
+
+        me.activationContainer =  Ext.create('Ext.form.FieldSet', {
+            items: [
+                {
+                    xtype: 'checkbox',
+                    name: 'active',
+                    fieldLabel: '{s name="fieldset/activation/activate"}Enable PayPal Unified for this shop{/s}',
+                    boxLabel: '{s name="fieldset/activation/activate/help"}Enable this option to activate PayPal Unified for this shop{/s}',
+                    inputValue: true,
+                    uncheckedValue: false,
+                    handler: function(element, checked) {
+                        me.fireEvent('onChangeShopActivation', checked);
+                    }
+                }
+            ]
+        });
+
+        return me.activationContainer;
     },
 
     /**

@@ -12,6 +12,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.model.Settings', {
         // {block name="backend/paypal_unified_settings/model/settings/fields"}{/block}
         { name: 'id', type: 'int' },
         { name: 'shopId', type: 'int' },
+        { name: 'active', type: 'bool' },
         { name: 'clientId', type: 'string' },
         { name: 'clientSecret', type: 'string' },
         { name: 'sandbox', type: 'bool' },

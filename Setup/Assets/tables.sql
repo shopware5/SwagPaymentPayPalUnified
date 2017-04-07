@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_payment_instruction (
 CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_settings (
     `id`                                INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     `shop_id`                           INT(11) NOT NULL,
+    `active`                            TINYINT(1),
     `client_id`                         VARCHAR(255),
     `client_secret`                     VARCHAR(255),
     `sandbox`                           TINYINT(1),
