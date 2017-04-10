@@ -24,6 +24,7 @@ CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_settings (
     `order_number_prefix`               VARCHAR(255),
     `paypal_payment_intent`             INT(11),
     `plus_active`                       TINYINT(1) NOT NULL,
+    `plus_restyle`                      TINYINT(1) NOT NULL,
     `plus_language`                     VARCHAR(5),
     `installments_active`               TINYINT(1) NOT NULL,
     `installments_presentment_detail`   INT(11),

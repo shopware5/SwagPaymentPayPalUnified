@@ -23,6 +23,10 @@
             paypalUnifiedRemotePaymentId: '',
             /** @string default paypal error page used for redirection */
             paypalUnifiedErrorPage: '',
+            /** @string the id of the currently selected payment */
+            paypalUnifiedUserPaymentId: '',
+            /** @string the paypal unified payment method id */
+            paypalUnifiedPaymentId: '',
             /** @string default selector for confirm page */
             confirmPageSelector: '#confirm--form',
             /** @string default selector for basket button */
@@ -47,15 +51,13 @@
          * @returns void
          */
         init: function () {
-            var me = this,
-                paymentId = me.$el.data('paypalUnifiedPaymentId'),
-                userPaymentId = me.$el.data('paypalUnifiedUserPaymentId');
+            var me = this;
 
             me.applyDataAttributes();
             me.deselectPayPalMethod(me.$el);
 
-            me.paypalIsCurrentPaymentMethodPaypal = (paymentId === userPaymentId);
-            me._ppp = me.createPaymentWall(paymentId);
+            me.paypalIsCurrentPaymentMethodPaypal = (me.opts.paypalUnifiedPaymentId === me.opts.paypalUnifiedUserPaymentId);
+            me._ppp = me.createPaymentWall(me.opts.paypalUnifiedPaymentId);
 
             $.publish('plugin/PayPalUnifiedPaymentWall/init', [me, me.$parent]);
         },

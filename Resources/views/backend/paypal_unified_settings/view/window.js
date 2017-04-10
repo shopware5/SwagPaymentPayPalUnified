@@ -5,8 +5,6 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.Window', {
     title: '{s name=title}PayPal Unified - Settings{/s}',
     alias: 'widget.paypal-unified-settings-window',
 
-    maximizable: false,
-    resizable: false,
     height: '65%',
     width: '40%',
     layout: 'anchor',

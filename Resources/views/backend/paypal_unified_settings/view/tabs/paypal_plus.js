@@ -18,6 +18,16 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.PaypalPlus', {
         labelWidth: 180
     },
 
+    /**
+     * @type { Ext.form.Checkbox }
+     */
+    restyleCheckbox: null,
+
+    /**
+     * @type { Ext.form.field.ComboBox }
+     */
+    localeSelection: null,
+
     initComponent: function() {
         var me = this;
 
@@ -33,6 +43,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.PaypalPlus', {
         var me = this;
 
         me.localeSelection = me.createLocaleSelection();
+        me.restyleCheckbox = me.createRestyleCheckbox();
 
         return [
             {
@@ -44,8 +55,23 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.PaypalPlus', {
                 uncheckedValue: false,
                 handler: Ext.bind(me.onActivatePayPalPlus, me)
             },
+            me.restyleCheckbox,
             me.localeSelection
         ];
+    },
+
+    /**
+     * @returns { Ext.form.Checkbox }
+     */
+    createRestyleCheckbox: function() {
+        return Ext.create('Ext.form.Checkbox', {
+            name: 'plusRestyle',
+            fieldLabel: '{s name=field/restyle}Restyle payment selection{/s}',
+            helpText: '{s name=field/restyle/help}Activate this option to automatically apply the payment wall theme to the payment selection.{/s}',
+            boxLabel: '{s name=field/restyle/boxLabel}Activate this option to restyle the payment selection.{/s}',
+            inputValue: true,
+            uncheckedValue: false
+        });
     },
 
     /**
@@ -85,7 +111,15 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.PaypalPlus', {
     onActivatePayPalPlus: function(element, checked) {
         var me = this;
 
+        //A little trick to set the „default“ value of this field.
+        //Otherwise a default value would not be possible, since the data of the record
+        //would be applied.
+        if (checked) {
+            me.restyleCheckbox.setValue(true);
+        }
+
         me.localeSelection.setDisabled(!checked);
+        me.restyleCheckbox.setDisabled(!checked);
     }
 });
 // {/block}

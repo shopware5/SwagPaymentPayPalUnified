@@ -123,6 +123,12 @@ class Settings extends ModelEntity
     private $plusActive;
 
     /**
+     * @var bool
+     * @ORM\Column(name="plus_restyle", type="boolean", nullable=false)
+     */
+    private $plusRestyle;
+
+    /**
      * @var string
      * @ORM\Column(name="plus_language", type="string")
      */
@@ -366,6 +372,22 @@ class Settings extends ModelEntity
     public function setPlusActive($plusActive)
     {
         $this->plusActive = $plusActive;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getPlusRestyle()
+    {
+        return $this->plusRestyle;
+    }
+
+    /**
+     * @param bool $plusRestyle
+     */
+    public function setPlusRestyle($plusRestyle)
+    {
+        $this->plusRestyle = $plusRestyle;
     }
 
     /**

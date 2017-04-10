@@ -22,7 +22,7 @@
  * our trademarks remain entirely with us.
  */
 
-namespace SwagPaymentPayPalUnified\Tests\Functional\WebhookHandler;
+namespace SwagPaymentPayPalUnified\Tests\Functional\Subscriber\ControllerRegistration;
 
 use SwagPaymentPayPalUnified\Subscriber\ControllerRegistration\Frontend;
 
