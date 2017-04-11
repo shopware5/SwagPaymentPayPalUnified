@@ -1,5 +1,4 @@
-(function ($, window, undefined) {
-
+(function ($, window) {
     /**
      * prevent closing of the indicator on click by overwriting the default value
      */
@@ -18,14 +17,17 @@
             data = form.serializeArray(),
             $paypalPlusContainer = $('#ppplus'),
             paypalPaymentId = window.parseInt($paypalPlusContainer.attr('data-paypalUnifiedPaymentId'), 10),
-            ppPlugin, pppInstance;
+            ppPluginSelector = '*[data-paypalUnifiedPaymentWall="true"]',
+            $ppPluginContainer = $(ppPluginSelector),
+            ppPlugin,
+            pppInstance;
 
         // reset the default
         $.loadingIndicator.defaults.closeOnClick = initialSetting;
 
         // get instance of the payment wall plugin
-        $('*[data-paypalUnifiedPaymentWall="true"]').PayPalUnifiedPaymentWall();
-        ppPlugin = $('*[data-paypalUnifiedPaymentWall="true"]').data('plugin_PayPalUnifiedPaymentWall');
+        $ppPluginContainer.PayPalUnifiedPaymentWall();
+        ppPlugin = $ppPluginContainer.data('plugin_PayPalUnifiedPaymentWall');
 
         pppInstance = ppPlugin.createPaymentWall(paypalPaymentId);
 
@@ -104,7 +106,7 @@
                 var data = $.parseJSON(event.data);
 
                 me.events.push(data.action);
-                //wait until all events are fired
+                // wait until all events are fired
                 timeOut = setTimeout(function () {
                     me.handleEvents();
                 }, 500);

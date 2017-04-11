@@ -1,3 +1,5 @@
+/* global PAYPAL */
+
 ;(function($, window) {
     'use strict';
 
@@ -69,10 +71,10 @@
             PAYPAL.apps.PPP.doCheckout();
         },
 
-        addressPatchAjaxCallbackError: function ()  {
+        addressPatchAjaxCallbackError: function () {
             var me = this;
 
-            $(location).attr("href", me.opts.paypalUnifiedErrorPage);
+            $(location).attr('href', me.opts.paypalUnifiedErrorPage);
         }
     });
 

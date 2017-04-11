@@ -26,6 +26,7 @@ namespace SwagPaymentPayPalUnified\Components\Services;
 
 use Shopware\Components\Routing\Router;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\BasketServiceInterface;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentIntent;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Payer;
@@ -62,10 +63,10 @@ class BasketService implements BasketServiceInterface
     /**
      * Checkout constructor.
      *
-     * @param Router          $router
-     * @param SettingsService $settingsService
+     * @param Router                   $router
+     * @param SettingsServiceInterface $settingsService
      */
-    public function __construct(Router $router, SettingsService $settingsService)
+    public function __construct(Router $router, SettingsServiceInterface $settingsService)
     {
         $this->router = $router;
         $this->settings = $settingsService;
@@ -125,7 +126,7 @@ class BasketService implements BasketServiceInterface
         $requestParameters->setRedirectUrls($redirectUrls);
         $requestParameters->setTransactions($transactions);
 
-        return $requestParameters->toArray();
+        return $requestParameters;
     }
 
     /**
@@ -136,8 +137,10 @@ class BasketService implements BasketServiceInterface
         //Case 1: Show gross prices in shopware and don't exclude country tax
         if ($this->showGrossPrices() && !$this->useNetPriceCalculation()) {
             return $this->basketData['AmountNumeric'];
+        }
+
         //Case 2: Show net prices in shopware and don't exclude country tax
-        } elseif (!$this->showGrossPrices() && !$this->useNetPriceCalculation()) {
+        if (!$this->showGrossPrices() && !$this->useNetPriceCalculation()) {
             return $this->basketData['sAmountWithTax'];
         }
 

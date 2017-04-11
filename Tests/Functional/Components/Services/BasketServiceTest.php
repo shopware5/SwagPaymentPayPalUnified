@@ -24,6 +24,8 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services;
 
+use SwagPaymentPayPalUnified\Components\Services\BasketService;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile\WebProfileFlowConfig;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile\WebProfileInputFields;
@@ -33,16 +35,39 @@ class BasketServiceTest extends \PHPUnit_Framework_TestCase
 {
     public function test_is_basket_service_available()
     {
-        $basketService = $this->getBasketService();
+        $settingService = new SettingsServiceBasketServiceMock(false, 0);
+
+        $basketService = $this->getBasketService($settingService);
 
         $this->assertNotNull($basketService);
     }
 
-    public function test_get_request_parameters_return_valid_intent()
+    public function test_get_request_parameters_return_plus_intent()
+    {
+        $requestParameters = $this->getRequestData(true, 1);
+
+        $this->assertEquals('sale', $requestParameters['intent']);
+    }
+
+    public function test_get_request_parameters_return_sale_intent_without_plus()
     {
         $requestParameters = $this->getRequestData();
 
         $this->assertEquals('sale', $requestParameters['intent']);
+    }
+
+    public function test_get_request_parameters_return_authorize_intent_without_plus()
+    {
+        $requestParameters = $this->getRequestData(false, 1);
+
+        $this->assertEquals('authorize', $requestParameters['intent']);
+    }
+
+    public function test_get_request_parameters_return_order_intent_without_plus()
+    {
+        $requestParameters = $this->getRequestData(false, 2);
+
+        $this->assertEquals('order', $requestParameters['intent']);
     }
 
     public function test_get_request_parameters_return_valid_payer()
@@ -67,7 +92,8 @@ class BasketServiceTest extends \PHPUnit_Framework_TestCase
 
     public function test_get_request_parameters_with_show_gross()
     {
-        $basketService = $this->getBasketService();
+        $settingService = new SettingsServiceBasketServiceMock(false, 0);
+        $basketService = $this->getBasketService($settingService);
 
         $profile = $this->getWebProfile();
         $basketData = $this->getBasketDataArray();
@@ -76,6 +102,7 @@ class BasketServiceTest extends \PHPUnit_Framework_TestCase
         $userData['additional']['show_net'] = false;
 
         $requestParameters = $basketService->getRequestParameters($profile, $basketData, $userData);
+        $requestParameters = $requestParameters->toArray();
 
         $this->assertEquals('136.84', $requestParameters['transactions'][0]['amount']['total']);
         $this->assertEquals(46.22, $requestParameters['transactions'][0]['amount']['details']['shipping']);
@@ -85,7 +112,8 @@ class BasketServiceTest extends \PHPUnit_Framework_TestCase
 
     public function test_get_parameters_with_tax_tree_country()
     {
-        $basketService = $this->getBasketService();
+        $settingService = new SettingsServiceBasketServiceMock(false, 0);
+        $basketService = $this->getBasketService($settingService);
 
         $profile = $this->getWebProfile();
         $basketData = $this->getBasketDataArray();
@@ -94,6 +122,7 @@ class BasketServiceTest extends \PHPUnit_Framework_TestCase
         $userData['additional']['country']['taxfree'] = '1';
 
         $requestParameters = $basketService->getRequestParameters($profile, $basketData, $userData);
+        $requestParameters = $requestParameters->toArray();
 
         $this->assertEquals('96.63', $requestParameters['transactions'][0]['amount']['total']);
         $this->assertEquals(46.22, $requestParameters['transactions'][0]['amount']['details']['shipping']);
@@ -109,17 +138,27 @@ class BasketServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertNotFalse(stristr($requestParameters['redirect_urls']['cancel_url'], 'cancel'));
     }
 
-    private function getRequestData()
+    /**
+     * @param $plusActive
+     * @param $intent
+     *
+     * @return array
+     */
+    private function getRequestData($plusActive = false, $intent = 0)
     {
-        $basketService = $this->getBasketService();
+        $settingService = new SettingsServiceBasketServiceMock($plusActive, $intent);
+        $basketService = $this->getBasketService($settingService);
 
         $profile = $this->getWebProfile();
         $basketData = $this->getBasketDataArray();
         $userData = $this->getUserDataAsArray();
 
-        return $basketService->getRequestParameters($profile, $basketData, $userData);
+        return $basketService->getRequestParameters($profile, $basketData, $userData)->toArray();
     }
 
+    /**
+     * @return WebProfile
+     */
     private function getWebProfile()
     {
         $shop = Shopware()->Shop();
@@ -149,11 +188,21 @@ class BasketServiceTest extends \PHPUnit_Framework_TestCase
         return $webProfile;
     }
 
-    private function getBasketService()
+    /**
+     * @param SettingsServiceInterface $settingService
+     *
+     * @return BasketService
+     */
+    private function getBasketService(SettingsServiceInterface $settingService)
     {
-        return Shopware()->Container()->get('paypal_unified.basket_service');
+        $router = Shopware()->Container()->get('router');
+
+        return new BasketService($router, $settingService);
     }
 
+    /**
+     * @return array
+     */
     private function getBasketDataArray()
     {
         return [
@@ -180,6 +229,9 @@ class BasketServiceTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
+    /**
+     * @return array
+     */
     private function getUserDataAsArray()
     {
         return [
@@ -190,5 +242,37 @@ class BasketServiceTest extends \PHPUnit_Framework_TestCase
                 ],
             ],
         ];
+    }
+}
+
+class SettingsServiceBasketServiceMock implements SettingsServiceInterface
+{
+    /**
+     * @var
+     */
+    private $plus_active;
+
+    /**
+     * @var
+     */
+    private $paypal_payment_intent;
+
+    public function __construct($plusActive, $paypalPaymentIntent)
+    {
+        $this->plus_active = $plusActive;
+        $this->paypal_payment_intent = $paypalPaymentIntent;
+    }
+
+    public function getSettings($shopId = null)
+    {
+    }
+
+    public function get($column)
+    {
+        return $this->$column;
+    }
+
+    public function hasSettings()
+    {
     }
 }

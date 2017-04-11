@@ -58,8 +58,11 @@ class PaymentResource
      *
      * @internal param ContainerInterface $container
      */
-    public function __construct(ClientService $clientService, WebProfileService $webProfileService, BasketServiceInterface $basketService)
-    {
+    public function __construct(
+        ClientService $clientService,
+        WebProfileService $webProfileService,
+        BasketServiceInterface $basketService
+    ) {
         $this->basketService = $basketService;
         $this->profileService = $webProfileService;
         $this->clientService = $clientService;
@@ -82,7 +85,7 @@ class PaymentResource
             $userData
         );
 
-        return $this->clientService->sendRequest(RequestType::POST, RequestUri::PAYMENT_RESOURCE, $params, true);
+        return $this->clientService->sendRequest(RequestType::POST, RequestUri::PAYMENT_RESOURCE, $params->toArray(), true);
     }
 
     /**

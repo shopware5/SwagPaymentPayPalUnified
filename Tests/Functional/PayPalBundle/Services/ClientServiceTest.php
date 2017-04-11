@@ -55,6 +55,11 @@ class ClientServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(PartnerAttributionService::PARTNER_ID_PAYPAL_PLUS, $idToBeChecked);
     }
 
+    /**
+     * @param bool $usePayPalPlus
+     *
+     * @return ClientService
+     */
     private function getClientService($usePayPalPlus)
     {
         $this->createTestSettings($usePayPalPlus);
@@ -72,6 +77,9 @@ class ClientServiceTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * @param bool $usePayPalPlus
+     */
     private function createTestSettings($usePayPalPlus)
     {
         $settingsParams = [
@@ -87,6 +95,9 @@ class ClientServiceTest extends \PHPUnit_Framework_TestCase
         Shopware()->Db()->executeUpdate($sql, $settingsParams);
     }
 
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
     private function getMockedTokenService()
     {
         $tokenServiceMock = self::createMock(TokenService::class);

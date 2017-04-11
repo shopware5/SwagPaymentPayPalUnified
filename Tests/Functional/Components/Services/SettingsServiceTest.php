@@ -52,7 +52,7 @@ class SettingsServiceTest extends \PHPUnit_Framework_TestCase
         $this->createTestSettings();
 
         /** @var Settings $settingsModel */
-        $settingsModel = Shopware()->Container()->get('paypal_unified.settings_service')->getSettings(1);
+        $settingsModel = Shopware()->Container()->get('paypal_unified.settings_service')->getSettings(self::SHOP_ID);
 
         $this->assertEquals(self::ACTIVE, $settingsModel->getActive());
         $this->assertEquals(self::CLIENT_ID, $settingsModel->getClientId());
@@ -77,6 +77,7 @@ class SettingsServiceTest extends \PHPUnit_Framework_TestCase
     {
         $settingsService = new SettingsService(Shopware()->Container()->get('models'), Shopware()->Container()->get('dbal_connection'), new DependencyMock());
 
+        $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Could not retrieve a single setting without a shop instance.');
         $settingsService->get('paypal_active');
     }

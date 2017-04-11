@@ -64,9 +64,7 @@ class SettingsService implements SettingsServiceInterface
     }
 
     /**
-     * @param int $shopId
-     *
-     * @return null|Settings
+     * {@inheritdoc}
      */
     public function getSettings($shopId = null)
     {
@@ -79,11 +77,13 @@ class SettingsService implements SettingsServiceInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @throws \RuntimeException
      */
     public function get($column)
     {
         if ($this->shop === null) {
-            throw new \Exception('Could not retrieve a single setting without a shop instance.');
+            throw new \RuntimeException('Could not retrieve a single setting without a shop instance.');
         }
 
         $sql = 'SELECT * FROM `swag_payment_paypal_unified_settings` WHERE `shop_id`=:shopId';

@@ -75,7 +75,7 @@ class TransactionsHistoryBuilderServiceTest extends \PHPUnit_Framework_TestCase
         $testPaymentData = $this->getTestAuthenticationPaymentDetails();
 
         $history = $historyBuilderService->getTransactionHistory($testPaymentData);
-        $this->assertEquals(11, count($history));
+        $this->assertCount(11, $history);
     }
 
     public function test_getOrderHistory_count()
@@ -85,7 +85,7 @@ class TransactionsHistoryBuilderServiceTest extends \PHPUnit_Framework_TestCase
         $testPaymentData = $this->getTestOrderPaymentDetails();
 
         $history = $historyBuilderService->getTransactionHistory($testPaymentData);
-        $this->assertEquals(5, count($history));
+        $this->assertCount(5, $history);
     }
 
     public function test_getTransactionHistory_exception()
@@ -95,6 +95,7 @@ class TransactionsHistoryBuilderServiceTest extends \PHPUnit_Framework_TestCase
         $testPaymentData = $this->getTestSalePaymentDetails();
         $testPaymentData['intent'] = 'ERROR';
 
+        $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Could not parse history from an unknown payment type');
         $historyBuilderService->getTransactionHistory($testPaymentData);
     }
