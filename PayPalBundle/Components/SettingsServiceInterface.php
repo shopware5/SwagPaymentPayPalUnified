@@ -27,6 +27,15 @@ namespace SwagPaymentPayPalUnified\PayPalBundle\Components;
 interface SettingsServiceInterface
 {
     /**
+     * Returns the whole settings model
+     *
+     * @param int $shopId
+     *
+     * @return null|\SwagPaymentPayPalUnified\Models\Settings
+     */
+    public function getSettings($shopId = null);
+
+    /**
      * Returns a setting value by the provided column name.
      *
      * @param $column

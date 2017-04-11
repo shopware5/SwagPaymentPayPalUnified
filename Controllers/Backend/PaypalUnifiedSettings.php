@@ -24,6 +24,7 @@
 
 use Shopware\Components\HttpClient\RequestException;
 use SwagPaymentPayPalUnified\Components\Services\SettingsService;
+use SwagPaymentPayPalUnified\Models\Settings;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\WebhookResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService;
 
@@ -32,7 +33,7 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
     /**
      * {@inheritdoc}
      */
-    protected $model = 'SwagPaymentPayPalUnified\Models\Settings';
+    protected $model = Settings::class;
 
     /**
      * {@inheritdoc}
@@ -58,7 +59,7 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
         $shopId = (int) $this->Request()->get('shopId');
 
         $settingsModel = $this->settingsService->getSettings($shopId);
-        $settings = $settingsModel == null ? ['shopId' => $shopId] : $settingsModel->toArray();
+        $settings = $settingsModel === null ? ['shopId' => $shopId] : $settingsModel->toArray();
 
         $this->view->assign('settings', $settings);
     }
@@ -73,7 +74,7 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
         $shopId = (int) $this->Request()->get('shopId');
         $restId = $this->Request()->get('clientId');
         $restSecret = $this->Request()->get('clientSecret');
-        $sandbox = $this->Request()->get('sandbox') === 'true' ? true : false;
+        $sandbox = $this->Request()->get('sandbox') === 'true';
 
         /** @var ClientService $clientService */
         $clientService = $this->container->get('paypal_unified.client_service');
@@ -86,7 +87,7 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
 
         //Generate URL
         /** @var Enlight_Controller_Router $router */
-        $router = $this->container->get('front')->router();
+        $router = $this->container->get('front')->Router();
         $url = $router->assemble([
             'module' => 'frontend',
             'controller' => 'PaypalUnifiedWebhook',
@@ -104,7 +105,7 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
     {
         $shopId = (int) $this->Request()->get('shopId');
         $restId = $this->Request()->get('clientId');
-        $sandbox = $this->Request()->get('sandbox') === 'true' ? true : false;
+        $sandbox = $this->Request()->get('sandbox') === 'true';
         $restSecret = $this->Request()->get('clientSecret');
 
         try {

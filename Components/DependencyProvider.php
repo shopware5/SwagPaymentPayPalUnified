@@ -25,6 +25,7 @@
 namespace SwagPaymentPayPalUnified\Components;
 
 use Shopware\Components\DependencyInjection\Container as DIContainer;
+use Shopware\Models\Shop\DetachedShop;
 
 class DependencyProvider
 {
@@ -42,10 +43,14 @@ class DependencyProvider
     }
 
     /**
-     * @return \Shopware\Models\Shop\DetachedShop
+     * @return null|DetachedShop
      */
     public function getShop()
     {
-        return $this->container->get('shop');
+        if ($this->container->has('shop')) {
+            return $this->container->get('shop');
+        }
+
+        return null;
     }
 }

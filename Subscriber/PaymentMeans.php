@@ -68,14 +68,15 @@ class PaymentMeans implements SubscriberInterface
      */
     public function onFilterPaymentMeans(\Enlight_Event_EventArgs $args)
     {
+        /** @var array $availableMethods */
         $availableMethods = $args->getReturn();
 
-        for ($i = 0; $i < count($availableMethods); ++$i) {
-            $paymentMethod = $availableMethods[$i];
-
-            if ((int) $paymentMethod['id'] === $this->paymentId && (!$this->settingsService->hasSettings() || !$this->settingsService->get('active'))) {
+        foreach ($availableMethods as $index => $paymentMethod) {
+            if ((int) $paymentMethod['id'] === $this->paymentId
+                && (!$this->settingsService->hasSettings() || !$this->settingsService->get('active'))
+            ) {
                 //Force unset the payment method, because it's not available without any settings.
-                unset($availableMethods[$i]);
+                unset($availableMethods[$index]);
                 break;
             }
         }

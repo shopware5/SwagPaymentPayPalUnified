@@ -24,6 +24,7 @@
 
 namespace SwagPaymentPayPalUnified\PayPalBundle\Components;
 
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile;
 
 interface BasketServiceInterface
@@ -35,7 +36,7 @@ interface BasketServiceInterface
      * @param array      $basketData
      * @param array      $userData
      *
-     * @return array
+     * @return Payment
      */
     public function getRequestParameters(WebProfile $profile, array $basketData, array $userData);
 }

@@ -13,6 +13,7 @@
                 <directory suffix=".php">./PayPalBundle/Resources</directory>
                 <directory suffix=".php">./PayPalBundle/Components</directory>
                 <directory suffix=".php">./vendor</directory>
+                <directory suffix=".php">./Models</directory>
 
                 <!-- Bootstrap -->
                 <file>SwagPaymentPayPalUnified.php</file>

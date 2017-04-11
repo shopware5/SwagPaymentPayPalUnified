@@ -25,7 +25,6 @@
 namespace SwagPaymentPayPalUnified\PayPalBundle\Services;
 
 use Shopware\Components\CacheManager;
-use Shopware\Components\Logger;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\TokenResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\OAuthCredentials;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Token;
@@ -40,18 +39,11 @@ class TokenService
     private $cacheManager;
 
     /**
-     * @var Logger
-     */
-    private $logger;
-
-    /**
      * @param CacheManager $cacheManager
-     * @param Logger       $pluginLogger
      */
-    public function __construct(CacheManager $cacheManager, Logger $pluginLogger)
+    public function __construct(CacheManager $cacheManager)
     {
         $this->cacheManager = $cacheManager;
-        $this->logger = $pluginLogger;
     }
 
     /**

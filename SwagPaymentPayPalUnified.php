@@ -56,7 +56,7 @@ class SwagPaymentPayPalUnified extends Plugin
             $this->getPath()
         );
 
-        $installer->install($context);
+        $installer->install();
     }
 
     /**

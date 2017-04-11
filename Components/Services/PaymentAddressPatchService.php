@@ -24,24 +24,10 @@
 
 namespace SwagPaymentPayPalUnified\Components\Services;
 
-use Shopware\Components\Model\ModelManager;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PaymentAddressPatch;
 
 class PaymentAddressPatchService
 {
-    /*
-     * @var ModelManager
-     */
-    private $modelManager;
-
-    /**
-     * @param ModelManager $modelManager
-     */
-    public function __construct(ModelManager $modelManager)
-    {
-        $this->modelManager = $modelManager;
-    }
-
     /**
      * @param array $userData
      *

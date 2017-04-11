@@ -26,8 +26,6 @@ namespace SwagPaymentPayPalUnified\Tests\Functional\Setup;
 
 use Doctrine\DBAL\Connection;
 use Shopware\Components\Model\ModelManager;
-use Shopware\Components\Plugin\Context\InstallContext;
-use Shopware\Kernel;
 use Shopware\Models\Plugin\Plugin;
 use SwagPaymentPayPalUnified\Setup\InstallationException;
 use SwagPaymentPayPalUnified\Setup\Installer;
@@ -60,7 +58,7 @@ class InstallerTest extends \PHPUnit_Framework_TestCase
             Shopware()->Container()->getParameter('paypal_unified.plugin_dir')
         );
         $this->expectException(InstallationException::class);
-        $installer->install(new InstallContext($this->getPluginModel(), Kernel::VERSION, '1.0.0'));
+        $installer->install();
     }
 
     public function test_installer_with_plus_installed()
@@ -86,7 +84,7 @@ class InstallerTest extends \PHPUnit_Framework_TestCase
             Shopware()->Container()->getParameter('paypal_unified.plugin_dir')
         );
         $this->expectException(InstallationException::class);
-        $installer->install(new InstallContext($this->getPluginModel(), Kernel::VERSION, '1.0.0'));
+        $installer->install();
     }
 
     public function test_installer_with_both_installed()
@@ -122,7 +120,7 @@ class InstallerTest extends \PHPUnit_Framework_TestCase
             Shopware()->Container()->getParameter('paypal_unified.plugin_dir')
         );
         $this->expectException(InstallationException::class);
-        $installer->install(new InstallContext($this->getPluginModel(), Kernel::VERSION, '1.0.0'));
+        $installer->install();
     }
 
     public function test_installer_without_classic_installed()
@@ -136,7 +134,7 @@ class InstallerTest extends \PHPUnit_Framework_TestCase
             Shopware()->Container()->getParameter('paypal_unified.plugin_dir')
         );
 
-        $result = $installer->install(new InstallContext($this->getPluginModel(), Kernel::VERSION, '1.0.0'));
+        $result = $installer->install();
         $this->assertTrue($result);
     }
 
@@ -182,6 +180,9 @@ class InstallerTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(1, Shopware()->Db()->fetchAll($query));
     }
 
+    /**
+     * @return Plugin
+     */
     private function getPluginModel()
     {
         /** @var ModelManager $em */

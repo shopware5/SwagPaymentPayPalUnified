@@ -1,3 +1,5 @@
+/* global PAYPAL */
+
 ;(function($, window) {
     'use strict';
 
@@ -88,7 +90,7 @@
                 return;
             }
 
-            if ($payPalCheckBox.length > 0 && $payPalCheckBox.prop('checked') || isConfirmAction && me.paypalIsCurrentPaymentMethodPaypal) {
+            if (($payPalCheckBox.length > 0 && $payPalCheckBox.prop('checked')) || (isConfirmAction && me.paypalIsCurrentPaymentMethodPaypal)) {
                 preSelection = 'paypal';
             }
 
@@ -142,10 +144,10 @@
             me._ppp.doCheckout();
         },
 
-        addressPatchAjaxCallbackError: function ()  {
+        addressPatchAjaxCallbackError: function () {
             var me = this;
 
-            $(location).attr("href", me.opts.paypalUnifiedErrorPage);
+            $(location).attr('href', me.opts.paypalUnifiedErrorPage);
         },
 
         deselectPayPalMethod: function() {
@@ -171,7 +173,7 @@
             }
 
             if (!me.paypalIsCurrentPaymentMethodPaypal) {
-               me._ppp.deselectPaymentMethod();
+                me._ppp.deselectPaymentMethod();
             }
 
             window.removeEventListener('message', me.callback, false);

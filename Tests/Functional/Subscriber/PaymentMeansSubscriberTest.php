@@ -115,23 +115,15 @@ class PaymentMeansSubscriberTest extends \PHPUnit_Framework_TestCase
 
 class SettingsServiceMock implements SettingsServiceInterface
 {
-    /**
-     * Returns a setting value by the provided column name.
-     *
-     * @param $column
-     *
-     * @return mixed
-     */
     public function get($column)
     {
     }
 
-    /**
-     * Returns a boolean indicating if the shop has any stored settings for the current shop.
-     *
-     * @return bool
-     */
     public function hasSettings()
+    {
+    }
+
+    public function getSettings($shopId = null)
     {
     }
 }

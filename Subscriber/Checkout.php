@@ -34,7 +34,6 @@ use SwagPaymentPayPalUnified\Components\Services\OrderDataService;
 use SwagPaymentPayPalUnified\Components\Services\PaymentInstructionService;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\PaymentResource;
-use SwagPaymentPayPalUnified\PayPalBundle\Services\WebProfileService;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -49,11 +48,6 @@ class Checkout implements SubscriberInterface
      * @var PaymentMethodProvider
      */
     private $paymentMethodProvider;
-
-    /**
-     * @var WebProfileService
-     */
-    private $profileService;
 
     /**
      * @var SettingsServiceInterface
@@ -73,7 +67,7 @@ class Checkout implements SubscriberInterface
     /**
      * @var array
      */
-    private $allowedActions = ['shippingPayment', 'confirm', 'finish'];
+    private static $allowedActions = ['shippingPayment', 'confirm', 'finish'];
 
     /**
      * Checkout constructor.
@@ -82,12 +76,14 @@ class Checkout implements SubscriberInterface
      * @param SettingsServiceInterface $config
      * @param DependencyProvider       $dependencyProvider
      */
-    public function __construct(ContainerInterface $container, SettingsServiceInterface $config, DependencyProvider $dependencyProvider)
-    {
+    public function __construct(
+        ContainerInterface $container,
+        SettingsServiceInterface $config,
+        DependencyProvider $dependencyProvider
+    ) {
         $this->container = $container;
         $this->config = $config;
         $this->paymentMethodProvider = new PaymentMethodProvider($container->get('models'));
-        $this->profileService = $container->get('paypal_unified.web_profile_service');
         $this->logger = $container->get('pluginlogger');
         $this->shop = $dependencyProvider->getShop();
     }
@@ -127,11 +123,11 @@ class Checkout implements SubscriberInterface
         $unifiedActive = (bool) $this->config->get('active');
         $usePayPalPlus = (bool) $this->config->get('plus_active');
 
-        if ($controller->Response()->isRedirect() || !$usePayPalPlus || !$unifiedActive) {
+        if (!$unifiedActive || !$usePayPalPlus || $controller->Response()->isRedirect()) {
             return;
         }
 
-        if (!in_array($action, $this->allowedActions)) {
+        if (!in_array($action, $this::$allowedActions, true)) {
             $session->offsetUnset('PayPalUnifiedCameFromPaymentSelection');
 
             return;

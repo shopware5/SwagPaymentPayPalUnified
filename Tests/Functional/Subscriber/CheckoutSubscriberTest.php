@@ -34,6 +34,23 @@ class CheckoutSubscriberTest extends \Enlight_Components_Test_Controller_TestCas
 {
     use DatabaseTestCaseTrait;
 
+    /**
+     * @before
+     */
+    public function setSessionSetting()
+    {
+        /* prevent this error: Zend_Session_Exception: You must call Zend_Session::setId() before any output has been sent to the browser; */
+        \Zend_Session::$_unitTestEnabled = true;
+    }
+
+    /**
+     * @after
+     */
+    public function disableSessionSetting()
+    {
+        \Zend_Session::$_unitTestEnabled = false;
+    }
+
     public function test_can_be_created()
     {
         $subscriber = new Checkout(Shopware()->Container(), Shopware()->Container()->get('paypal_unified.settings_service'), Shopware()->Container()->get('paypal_unified.dependency_provider'));

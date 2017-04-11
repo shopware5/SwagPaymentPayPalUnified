@@ -54,7 +54,7 @@ class TransactionHistoryBuilderService
                 return $this->getAuthorizationHistory($payment);
 
             default:
-                throw new \Exception('Could not parse history from an unknown payment type');
+                throw new \RuntimeException('Could not parse history from an unknown payment type');
         }
     }
 
