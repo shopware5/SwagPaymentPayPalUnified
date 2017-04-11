@@ -12,3 +12,17 @@
         {$smarty.block.parent}
     {/if}
 {/block}
+
+{block name="frontend_checkout_payment_content"}
+    {if $restylePaymentSelection}
+        <div class="paypal--payment-selection" data-restylePaymentSelection="true">
+            <div class="panel--body is--wide block-group">
+                {foreach $sPayments as $payment_mean}
+                    {include file="frontend/paypal_unified/checkout/payment_method.tpl" payment_mean=$payment_mean}
+                {/foreach}
+            </div>
+        </div>
+    {else}
+        {$smarty.block.parent}
+    {/if}
+{/block}

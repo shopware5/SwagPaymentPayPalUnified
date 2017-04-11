@@ -71,6 +71,7 @@ class Frontend implements SubscriberInterface
             $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.payment-wall-shipping-payment.js',
             $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.payment-wall.js',
             $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.payment-confirm.js',
+            $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.custom-shipping-payment.js',
         ];
 
         return new ArrayCollection($jsPath);
@@ -88,10 +89,12 @@ class Frontend implements SubscriberInterface
         $view = $args->getSubject()->View();
         $view->addTemplateDir($this->pluginDir . '/Resources/views');
         $active = (bool) $this->config->get('active');
+        $restylePaymentSelection = ((bool) $this->config->get('plus_active') && (bool) $this->config->get('plus_restyle'));
 
         if ($active) {
             //Assign shop specific and configurable values to the view.
             $view->assign('showPaypalLogo', $this->config->get('show_sidebar_logo'));
+            $view->assign('restylePaymentSelection', $restylePaymentSelection);
         }
     }
 }

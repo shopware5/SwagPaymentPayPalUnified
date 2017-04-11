@@ -7,7 +7,7 @@
         data-paypalUnifiedPaymentId="{$paypalUnifiedPaymentId}"
         data-paypalUnifiedApprovalUrl="{$paypalUnifiedApprovalUrl}"
         data-paypalUnifiedSandbox="{$paypalUnifiedModeSandbox}"
-        data-paypalUnifiedUserPaymentId="{$sUserData.additional.payment.id}"
+        data-paypalUnifiedUserPaymentId="{$sUserData.additional.user.paymentID}"
         data-paypalUnifiedAddressPatchUrl="{url controller=PaypalUnified action=patchAddress forceSecure=true}"
         data-paypalUnifiedRemotePaymentId="{$paypalUnifiedRemotePaymentId}"
         data-paypalUnifiedCountryIso="{$sUserData.additional.country.countryiso}"

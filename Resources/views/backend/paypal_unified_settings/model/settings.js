@@ -23,6 +23,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.model.Settings', {
         { name: 'orderNumberPrefix', type: 'string' },
         { name: 'paypalPaymentIntent', type: 'int' },
         { name: 'plusActive', type: 'bool' },
+        { name: 'plusRestyle', type: 'bool' },
         { name: 'plusLanguage', type: 'string' },
         { name: 'installmentsActive', type: 'bool' },
         { name: 'installmentsPresentmentDetail', type: 'int' },

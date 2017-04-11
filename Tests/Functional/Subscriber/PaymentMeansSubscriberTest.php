@@ -22,7 +22,7 @@
  * our trademarks remain entirely with us.
  */
 
-namespace SwagPaymentPayPalUnified\Tests\Functional\WebhookHandler;
+namespace SwagPaymentPayPalUnified\Tests\Functional\Subscriber;
 
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\Subscriber\PaymentMeans;

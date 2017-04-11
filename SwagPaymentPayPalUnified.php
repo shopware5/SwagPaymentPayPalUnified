@@ -57,7 +57,6 @@ class SwagPaymentPayPalUnified extends Plugin
         );
 
         $installer->install($context);
-        parent::install($context);
     }
 
     /**

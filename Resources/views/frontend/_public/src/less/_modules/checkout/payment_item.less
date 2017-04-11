@@ -1,0 +1,124 @@
+.paypal--payment-selection {
+
+    .is--plus-container {
+
+        .method--label {
+            display: none;
+        }
+
+        #ppplus {
+            padding: 0;
+        }
+
+        .method--description {
+            width: 100%;
+            display: block;
+        }
+
+        &.payment--method {
+            &.js--is-active, &.is--active {
+                &:after {
+                    display: none;
+                }
+            }
+        }
+    }
+
+    .method--input {
+        display: none;
+    }
+
+    .payment--method {
+        .unitize(font-size, 11);
+        .clearfix();
+        .unitize-padding(15, 0);
+        color: @paypal-text-color;
+        margin-bottom: 0;
+        font-family: Arial, sans-serif;
+        position: relative;
+        cursor: pointer;
+
+        &:hover {
+            background-color: @paypal-hover-color;
+        }
+
+        &.js--is-active, &.is--active {
+            cursor: default;
+            background-color: @paypal-hover-color;
+
+            .method--name {
+                font-weight: bold;
+            }
+
+            .method--label {
+                width: 100%;
+            }
+
+            .method--description {
+                .unitize(padding-left, 8);
+                .unitize(margin-top, 10);
+                display: block;
+            }
+
+            &:after {
+                .unitize(height, 18);
+                .unitize(width, 23);
+                .unitize(right, 8);
+                .unitize(top, 15);
+                content: '';
+                position: absolute;
+                background: url('https://www.paypalobjects.com/webstatic/ppplus/icons/checkmark.png') no-repeat;
+            }
+        }
+    }
+
+    .method--label,
+    .method--description {
+        padding-left: 0;
+        float: left;
+    }
+
+    .method--label {
+        width: 17%;
+    }
+
+    .method--name {
+        .unitize(font-size, 12);
+        .unitize(padding-left, 8);
+        color: @paypal-text-color;
+        font-weight: normal;
+        cursor: pointer;
+    }
+
+    .method--description {
+        display: none;
+        width: 65%;
+    }
+
+    .method--bankdata {
+        text-align: center;
+    }
+}
+
+@media screen and (min-width: @tabletViewportWidth) {
+    .paypal--payment-selection {
+
+        .is--plus-container {
+            #ppplus {
+                width: 100%;
+            }
+        }
+
+        .payment--method {
+            &.js--is-active, &.is--active {
+                .method--label {
+                    width: 17%;
+                }
+
+                .method--description {
+                    width: 66%
+                }
+            }
+        }
+    }
+}
