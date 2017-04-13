@@ -38,14 +38,22 @@ class FrontendRegistrationSubscriberTest extends \PHPUnit_Framework_TestCase
     {
         $events = Frontend::getSubscribedEvents();
         $this->assertCount(2, $events);
-        $this->assertEquals('onGetFrontendControllerPath', $events['Enlight_Controller_Dispatcher_ControllerPath_Frontend_PaypalUnified']);
         $this->assertEquals('onGetWebhookControllerPath', $events['Enlight_Controller_Dispatcher_ControllerPath_Frontend_PaypalUnifiedWebhook']);
+        $this->assertEquals('onGetInstallmentsControllerPath', $events['Enlight_Controller_Dispatcher_ControllerPath_Widgets_PaypalUnifiedInstallments']);
     }
 
     public function test_onGetWebhookControllerPath()
     {
         $subscriber = new Frontend(Shopware()->Container()->getParameter('paypal_unified.plugin_dir'));
         $path = $subscriber->onGetWebhookControllerPath();
+
+        $this->assertFileExists($path);
+    }
+
+    public function test_onGetInstallmentsControllerPath()
+    {
+        $subscriber = new Frontend(Shopware()->Container()->getParameter('paypal_unified.plugin_dir'));
+        $path = $subscriber->onGetInstallmentsControllerPath();
 
         $this->assertFileExists($path);
     }

@@ -43,9 +43,10 @@ class FrontendSubscriberTest extends \PHPUnit_Framework_TestCase
     public function test_getSubscribedEvents_has_correct_events()
     {
         $events = Frontend::getSubscribedEvents();
-        $this->assertCount(2, $events);
+        $this->assertCount(3, $events);
         $this->assertEquals('onCollectJavascript', $events['Theme_Compiler_Collect_Plugin_Javascript']);
         $this->assertEquals('onPostDispatchSecure', $events['Enlight_Controller_Action_PostDispatchSecure_Frontend']);
+        $this->assertEquals('onPostDispatchSecure', $events['Enlight_Controller_Action_PostDispatchSecure_Widgets']);
     }
 
     public function test_onCollectJavascript()
@@ -57,7 +58,7 @@ class FrontendSubscriberTest extends \PHPUnit_Framework_TestCase
             $this->assertFileExists($script);
         }
 
-        $this->assertCount(4, $javascripts);
+        $this->assertCount(5, $javascripts);
     }
 
     public function test_onPostDispatchSecure_assigns_variables_to_view()

@@ -29,4 +29,5 @@ class PaymentType
     const PAYPAL_CLASSIC = 'PayPalClassic';
     const PAYPAL_PLUS = 'PayPalPlus';
     const PAYPAL_INVOICE = 'PayPalPlusInvoice';
+    const PAYPAL_INSTALLMENTS = 'PayPalInstallments';
 }

@@ -1,0 +1,68 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service id="paypal_unified.client_service" class="SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService">
+            <argument type="service" id="paypal_unified.settings_service"/>
+            <argument type="service" id="paypal_unified.token_service"/>
+            <argument type="service" id="pluginlogger"/>
+            <argument type="service" id="guzzle_http_client_factory"/>
+            <argument type="service" id="paypal_unified.partner_attribution_service"/>
+            <argument type="service" id="paypal_unified.dependency_provider"/>
+        </service>
+
+        <service id="paypal_unified.token_service" class="SwagPaymentPayPalUnified\PayPalBundle\Services\TokenService">
+            <argument type="service" id="shopware.cache_manager"/>
+        </service>
+
+        <service id="paypal_unified.order_data_service" class="SwagPaymentPayPalUnified\Components\Services\OrderDataService">
+            <argument type="service" id="dbal_connection"/>
+            <argument type="service" id="paypal_unified.settings_service"/>
+        </service>
+
+        <service id="paypal_unified.dependency_provider" class="SwagPaymentPayPalUnified\Components\DependencyProvider">
+            <argument type="service" id="service_container"/>
+        </service>
+
+        <service id="paypal_unified.web_profile_service" class="SwagPaymentPayPalUnified\PayPalBundle\Services\WebProfileService">
+            <argument type="service" id="paypal_unified.client_service"/>
+            <argument type="service" id="paypal_unified.settings_service"/>
+            <argument type="service" id="paypal_unified.dependency_provider"/>
+            <argument type="service" id="pluginlogger"/>
+        </service>
+
+        <service id="paypal_unified.webhook_service" class="SwagPaymentPayPalUnified\PayPalBundle\Services\WebhookService"/>
+
+        <service id="paypal_unified.basket_service" class="SwagPaymentPayPalUnified\Components\Services\BasketService">
+            <argument type="service" id="router"/>
+            <argument type="service" id="paypal_unified.settings_service"/>
+        </service>
+
+        <service id="paypal_unified.partner_attribution_service" class="SwagPaymentPayPalUnified\PayPalBundle\Services\PartnerAttributionService">
+            <argument type="service" id="paypal_unified.settings_service"/>
+        </service>
+
+        <service id="paypal_unified.transaction_history_builder_service" class="SwagPaymentPayPalUnified\Components\Services\TransactionHistoryBuilderService"/>
+
+        <service id="paypal_unified.payment_instruction_service" class="SwagPaymentPayPalUnified\Components\Services\PaymentInstructionService">
+            <argument type="service" id="models"/>
+        </service>
+
+        <service id="paypal_unified.payment_address_patch_service" class="SwagPaymentPayPalUnified\Components\Services\PaymentAddressPatchService"/>
+
+        <service id="paypal_unified.document_template_service" class="SwagPaymentPayPalUnified\Components\Services\DocumentTemplateService">
+            <argument type="service" id="dbal_connection"/>
+        </service>
+
+        <service id="paypal_unified.settings_service" class="SwagPaymentPayPalUnified\Components\Services\SettingsService">
+            <argument type="service" id="models"/>
+            <argument type="service" id="dbal_connection"/>
+            <argument type="service" id="paypal_unified.dependency_provider"/>
+        </service>
+
+        <service id="paypal_unified.installments.validation_service" class="SwagPaymentPayPalUnified\Components\Services\Installments\ValidationService"/>
+    </services>
+</container>

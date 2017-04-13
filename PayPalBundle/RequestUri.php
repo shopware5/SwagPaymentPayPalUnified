@@ -35,4 +35,5 @@ class RequestUri
     const AUTHORIZATION_RESOURCE = 'payments/authorization';
     const CAPTURE_RESOURCE = 'payments/capture';
     const ORDER_RESOURCE = 'payments/orders';
+    const FINANCING_RESOURCE = 'credit/calculated-financing-options';
 }

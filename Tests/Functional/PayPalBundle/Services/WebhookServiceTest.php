@@ -43,7 +43,7 @@ class WebhookServiceTest extends \PHPUnit_Framework_TestCase
         $service = new WebhookService();
         $webhook = new SaleComplete(new Logger('testlogger'), Shopware()->Container()->get('models'));
 
-        $service->registerWebhook($webhook);
+        $service->registerWebhooks([$webhook]);
 
         $this->assertEquals($webhook->getEventType(), $service->getWebhookHandler($webhook->getEventType())->getEventType());
     }
@@ -85,5 +85,15 @@ class WebhookServiceTest extends \PHPUnit_Framework_TestCase
 
         $this->expectException(WebhookException::class);
         $service->getWebhookHandler(null);
+    }
+
+    public function test_get_webhook_handlers()
+    {
+        $service = new WebhookService();
+        $webhook = new SaleComplete(new Logger('testlogger'), Shopware()->Container()->get('models'));
+
+        $service->registerWebhook($webhook);
+
+        $this->assertCount(1, $service->getWebhookHandlers());
     }
 }

@@ -57,29 +57,8 @@ class DummyController extends \Enlight_Controller_Action
     }
 
     /**
-     * @return \Enlight_Controller_Request_RequestTestCase
+     * {@inheritdoc}
      */
-    public function Request()
-    {
-        return $this->request;
-    }
-
-    /**
-     * @return \Enlight_View_Default
-     */
-    public function View()
-    {
-        return $this->view;
-    }
-
-    /**
-     * @return \Enlight_Controller_Response_ResponseTestCase
-     */
-    public function Response()
-    {
-        return $this->response;
-    }
-
     public function get($key)
     {
         return Shopware()->Container()->get($key);

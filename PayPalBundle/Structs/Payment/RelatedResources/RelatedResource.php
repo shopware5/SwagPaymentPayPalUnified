@@ -24,7 +24,7 @@
 
 namespace SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\RelatedResources;
 
-use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Link;
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\Common\Link;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Transactions\Amount;
 
 abstract class RelatedResource

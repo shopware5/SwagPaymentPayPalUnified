@@ -59,6 +59,7 @@ class Frontend implements SubscriberInterface
         return [
             'Theme_Compiler_Collect_Plugin_Javascript' => 'onCollectJavascript',
             'Enlight_Controller_Action_PostDispatchSecure_Frontend' => 'onPostDispatchSecure',
+            'Enlight_Controller_Action_PostDispatchSecure_Widgets' => 'onPostDispatchSecure',
         ];
     }
 
@@ -72,6 +73,7 @@ class Frontend implements SubscriberInterface
             $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.payment-wall-shipping-payment.js',
             $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.payment-wall.js',
             $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.custom-shipping-payment.js',
+            $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.installments-modal.js',
         ];
 
         return new ArrayCollection($jsPath);
@@ -85,16 +87,20 @@ class Frontend implements SubscriberInterface
      */
     public function onPostDispatchSecure(\Enlight_Controller_ActionEventArgs $args)
     {
+        $active = (bool) $this->config->get('active');
+        if (!$active) {
+            return;
+        }
+
         /** @var Enlight_View_Default $view */
         $view = $args->getSubject()->View();
         $view->addTemplateDir($this->pluginDir . '/Resources/views');
-        $active = (bool) $this->config->get('active');
+
         $restylePaymentSelection = ((bool) $this->config->get('plus_active') && (bool) $this->config->get('plus_restyle'));
 
-        if ($active) {
-            //Assign shop specific and configurable values to the view.
-            $view->assign('showPaypalLogo', $this->config->get('show_sidebar_logo'));
-            $view->assign('restylePaymentSelection', $restylePaymentSelection);
-        }
+        //Assign shop specific and configurable values to the view.
+        $view->assign('showPaypalLogo', (bool) $this->config->get('show_sidebar_logo'));
+        $view->assign('restylePaymentSelection', $restylePaymentSelection);
+        $view->assign('showPaypalInstallmentsLogo', (bool) $this->config->get('installments_show_logo'));
     }
 }

@@ -24,8 +24,7 @@
 
 namespace SwagPaymentPayPalUnified\PayPalBundle\Structs;
 
-use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Link;
-use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Links;
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\Common\Link;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Payer;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\PaymentInstruction;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\RedirectUrls;
