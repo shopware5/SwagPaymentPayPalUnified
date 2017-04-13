@@ -1,6 +1,7 @@
 .paypal--payment-selection {
 
     .is--plus-container {
+        border-bottom: 0;
 
         .method--label {
             display: none;
@@ -16,7 +17,17 @@
         }
 
         &.payment--method {
+            .unitize(margin-bottom, -28);
+            padding: 0;
+            height: inherit;
+
+            &:hover {
+                background-color: white;
+            }
+
             &.js--is-active, &.is--active {
+                background-color: white;
+
                 &:after {
                     display: none;
                 }
@@ -31,13 +42,13 @@
     .payment--method {
         .unitize(font-size, 11);
         .clearfix();
-        .unitize-padding(15, 0);
+        .unitize-padding(20, 0);
         color: @paypal-text-color;
         margin-bottom: 0;
         font-family: Arial, sans-serif;
         position: relative;
         cursor: pointer;
-
+        height: inherit;
         &:hover {
             background-color: @paypal-hover-color;
         }
@@ -56,7 +67,6 @@
 
             .method--description {
                 .unitize(padding-left, 8);
-                .unitize(margin-top, 10);
                 display: block;
             }
 
