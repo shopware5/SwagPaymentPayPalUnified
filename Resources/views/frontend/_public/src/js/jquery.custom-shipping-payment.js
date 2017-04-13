@@ -1,13 +1,12 @@
 ;(function($) {
-
     var defaults = {
-        activeCls: 'js--is-active',
-        staticActiveCls: 'is--active',
-        paymentSelectionSelector: '.paypal--payment-selection',
-        paymentMethodSelector: '.unified--payment',
-        restylePaymentSelectionAttribute: 'data-restylePaymentSelection'
-    },
-    restylePaymentSelection = $(defaults.paymentSelectionSelector).attr(defaults.restylePaymentSelectionAttribute);
+            activeCls: 'js--is-active',
+            staticActiveCls: 'is--active',
+            paymentSelectionSelector: '.paypal--payment-selection',
+            paymentMethodSelector: '.unified--payment',
+            restylePaymentSelectionAttribute: 'data-restylePaymentSelection'
+        },
+        restylePaymentSelection = $(defaults.paymentSelectionSelector).attr(defaults.restylePaymentSelectionAttribute);
 
     if (restylePaymentSelection === 'true') {
         $.overridePlugin('swShippingPayment', {
@@ -33,6 +32,6 @@
                 $target.addClass(defaults.activeCls);
                 $radio.prop('checked', true).trigger('change');
             }
-        })
+        });
     }
 })(jQuery);

@@ -82,7 +82,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
     createActivationContainer: function () {
         var me = this;
 
-        me.activationContainer =  Ext.create('Ext.form.FieldSet', {
+        me.activationContainer = Ext.create('Ext.form.FieldSet', {
             items: [
                 {
                     xtype: 'checkbox',

@@ -111,9 +111,9 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.PaypalPlus', {
     onActivatePayPalPlus: function(element, checked) {
         var me = this;
 
-        //A little trick to set the „default“ value of this field.
-        //Otherwise a default value would not be possible, since the data of the record
-        //would be applied.
+        // A little trick to set the „default“ value of this field.
+        // Otherwise a default value would not be possible, since the data of the record
+        // would be applied.
         if (checked) {
             me.restyleCheckbox.setValue(true);
         }
