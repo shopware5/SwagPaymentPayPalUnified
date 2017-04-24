@@ -166,7 +166,9 @@ class WebProfile
         $webProfile = new self();
         $webProfile->setName($data['name']);
         $webProfile->setTemporary($data['temporary']);
-        $webProfile->setFlowConfig(WebProfileFlowConfig::fromArray($data['flow_config']));
+        if (isset($data['flow_config'])) {
+            $webProfile->setFlowConfig(WebProfileFlowConfig::fromArray($data['flow_config']));
+        }
         $webProfile->setInputFields(WebProfileInputFields::fromArray($data['input_fields']));
         $webProfile->setPresentation(WebProfilePresentation::fromArray($data['presentation']));
         $webProfile->setId($data['id']);
