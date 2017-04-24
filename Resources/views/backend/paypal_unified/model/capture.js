@@ -12,7 +12,7 @@ Ext.define('Shopware.apps.PaypalUnified.model.Capture', {
      */
     fields: [
         // {block name="backend/paypal_unified/model/capture/fields"}{/block}
-        { name: 'id', type: 'string'},
+        { name: 'id', type: 'string' },
         { name: 'create_time', type: 'string' },
         { name: 'update_time', type: 'string' },
         { name: 'state', type: 'string' },
