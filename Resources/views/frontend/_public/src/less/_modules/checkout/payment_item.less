@@ -88,6 +88,10 @@
         }
     }
 
+    .payment--method:last-child {
+        border-bottom: 0;
+    }
+
     .method--label,
     .method--description {
         padding-left: 0;
@@ -113,6 +117,7 @@
 
     .method--bankdata {
         text-align: center;
+        clear: both;
     }
 }
 
@@ -141,6 +146,10 @@
                     width: 66%
                 }
             }
+        }
+
+        .payment--method:last-child {
+            border-bottom: 1px solid @panel-border;
         }
     }
 }

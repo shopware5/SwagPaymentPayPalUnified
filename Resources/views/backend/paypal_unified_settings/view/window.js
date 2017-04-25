@@ -5,9 +5,10 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.Window', {
     title: '{s name=title}PayPal Unified - Settings{/s}',
     alias: 'widget.paypal-unified-settings-window',
 
-    height: '71%',
-    width: '40%',
+    height: '70%',
+    width: '45%',
     layout: 'anchor',
+    autoScroll: true,
 
     /**
      * @type { Shopware.apps.PaypalUnifiedSettings.view.Toolbar }
