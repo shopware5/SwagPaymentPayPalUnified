@@ -1,4 +1,4 @@
-{namespace name="frontend/paypal_unified/checkout/shipping_payment"}
+{namespace name="frontend/paypal_unified/checkout/error_message"}
 {block name="frontend_checkout_shipping_payment_paypal_unified_error"}
     <div class="paypal-unified--error">
         {if $paypal_unified_error_code == 0}

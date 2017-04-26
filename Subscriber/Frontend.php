@@ -68,10 +68,10 @@ class Frontend implements SubscriberInterface
     public function onCollectJavascript()
     {
         $jsPath = [
-            $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.payment-wall-shipping-payment.js',
-            $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.payment-wall.js',
-            $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.payment-confirm.js',
-            $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.custom-shipping-payment.js',
+            $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.payment-wall-confirm.js',
+            $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.payment-wall-shipping-payment.js',
+            $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.payment-wall.js',
+            $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.custom-shipping-payment.js',
         ];
 
         return new ArrayCollection($jsPath);

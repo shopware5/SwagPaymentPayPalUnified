@@ -4,8 +4,8 @@
   "version": "1.0.0",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "./node_modules/eslint/bin/eslint.js -c ../../../themes/.eslintrc.js Resources/views/ --global Ext,Shopware",
-    "lint-fix": "./node_modules/eslint/bin/eslint.js -c ../../../themes/.eslintrc.js Resources/views/ --global Ext,Shopware --fix"
+    "lint": "./node_modules/eslint/bin/eslint.js -c ../../../themes/.eslintrc.js Resources/views/ --global Ext,Shopware,PAYPAL",
+    "lint-fix": "./node_modules/eslint/bin/eslint.js -c ../../../themes/.eslintrc.js Resources/views/ --global Ext,Shopware,PAYPAL --fix"
   },
   "devDependencies": {
     "eslint": "^3.19.0",

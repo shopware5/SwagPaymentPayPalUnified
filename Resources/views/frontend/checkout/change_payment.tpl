@@ -6,8 +6,9 @@
 {/block}
 
 {block name='frontend_checkout_payment_fieldset_description'}
-    {if $paypalUnifiedApprovalUrl && $payment_mean.id == $paypalUnifiedPaymentId && $usePayPalPlus}
-        {include file="frontend/paypal_unified/payment_wall.tpl" paypalPaymentWall=true}
+    {if $payment_mean.id == $paypalUnifiedPaymentId && $usePayPalPlus}
+        <div id="ppplus" class="method--description">
+        </div>
     {else}
         {$smarty.block.parent}
     {/if}
