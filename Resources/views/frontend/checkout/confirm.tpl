@@ -11,5 +11,7 @@
         {include file="frontend/paypal_unified/plus/checkout/payment_wall_premiums.tpl"}
     {/if}
 
+    {* PayPal Installments integration *}
+    {include file="frontend/paypal_unified/installments/upstream_presentment.tpl"}
     {$smarty.block.parent}
 {/block}
