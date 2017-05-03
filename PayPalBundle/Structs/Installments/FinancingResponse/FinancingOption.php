@@ -166,7 +166,7 @@ class FinancingOption
             'monthlyPercentageRate' => $this->getMonthlyPercentageRate(),
             'monthlyPayment' => $this->getMonthlyPayment()->toArray(),
             'totalInterest' => $this->getTotalInterest()->toArray(),
-            'totalCost' => $this->getTo()->toArray(),
+            'totalCost' => $this->getTotalCost()->toArray(),
         ];
     }
 

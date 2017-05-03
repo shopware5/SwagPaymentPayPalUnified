@@ -1,0 +1,46 @@
+.paypal-unified-installments--loading-indicator {
+    //.unitize-padding(50,50);
+    padding: 50px;
+    position: relative;
+    text-align: center;
+}
+
+.paypal-unified-installments--loading-indicator:before {
+    .unitize(height, 20);
+    .unitize(width, 20);
+    content: "";
+    margin: -15px auto auto -15px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    border: 6px solid;
+    border-color: #2180c0 #ccc #ccc;
+    border-radius: 100%;
+    animation: rotation .7s infinite linear;
+}
+
+.paypal-unified-installments--modal-link {
+    &.is--white {
+        color: white;
+        text-decoration: underline;
+    }
+
+    &.is--centered {
+        .unitize(margin-top, 10);
+        width: 100%;
+        text-align: center;
+        display: inline-block;
+
+        .icon--arrow-right {
+            .unitize(font-size, 10);
+        }
+    }
+}
+
+@keyframes rotation {
+    from {
+        transform: rotate(0deg);
+    } to {
+        transform: rotate(359deg);
+    }
+}

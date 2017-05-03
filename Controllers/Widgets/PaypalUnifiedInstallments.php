@@ -24,6 +24,7 @@
 
 use Shopware\Components\HttpClient\RequestException;
 use Shopware\Components\Logger;
+use SwagPaymentPayPalUnified\Components\Services\Installments\CompanyInfoService;
 use SwagPaymentPayPalUnified\Components\Services\Installments\FinancingOptionsHandler;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\InstallmentsResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Installments\FinancingRequest;
@@ -45,6 +46,53 @@ class Shopware_Controllers_Widgets_PaypalUnifiedInstallments extends Enlight_Con
     {
         $this->pluginLogger = $this->get('pluginlogger');
         $this->installmentsResource = $this->get('paypal_unified.installments_resource');
+    }
+
+    public function cheapestRateAction()
+    {
+        $productPrice = $this->Request()->get('productPrice');
+
+        //Prepare the request
+        $financingRequest = new FinancingRequest();
+        $financingRequest->setFinancingCountryCode('DE');
+        $transactionAmount = new FinancingRequest\TransactionAmount();
+        $transactionAmount->setValue($productPrice);
+        $transactionAmount->setCurrencyCode('EUR');
+        $financingRequest->setTransactionAmount($transactionAmount);
+
+        try {
+            $response = $this->installmentsResource->getFinancingOptions($financingRequest);
+        } catch (RequestException $e) {
+            $this->pluginLogger->error(
+                'PayPal Unified: Could not get installments financing options due to a communication failure',
+                [
+                    $e->getMessage(),
+                    $e->getBody(),
+                ]
+            );
+
+            return;
+        }
+
+        if (!isset($response['financing_options'][0])) {
+            $this->pluginLogger->error('PayPal Unified: Could not find financing options in response', ['product price' => $productPrice]);
+
+            return;
+        }
+
+        //We have to sort the result to get the cheapest rate, since it's being delivered unsorted from paypal
+        $financingResponseStruct = FinancingResponse::fromArray($response['financing_options'][0]);
+        $optionsHandler = new FinancingOptionsHandler($financingResponseStruct);
+        $financingResponseStruct = $optionsHandler->sortOptionsBy(FinancingOptionsHandler::SORT_BY_MONTHLY_PAYMENT);
+        $qualifyingFinancingOptions = $financingResponseStruct->toArray()['qualifyingFinancingOptions'];
+
+        /** @var CompanyInfoService $companyInfoService */
+        $companyInfoService = $this->container->get('paypal_unified.installments.company_info_service');
+
+        //The cheapest rate is now the first entry in the struct.
+        $this->View()->assign('paypalInstallmentsOption', $qualifyingFinancingOptions[0]);
+        $this->View()->assign('paypalInstallmentsProductPrice', $productPrice);
+        $this->View()->assign('paypalInstallmentsCompanyInfo', $companyInfoService->getCompanyInfo());
     }
 
     public function modalContentAction()
@@ -86,10 +134,6 @@ class Shopware_Controllers_Widgets_PaypalUnifiedInstallments extends Enlight_Con
         $optionsHandler = new FinancingOptionsHandler($financingResponseStruct);
 
         $financingResponseStruct = $optionsHandler->sortOptionsBy(FinancingOptionsHandler::SORT_BY_TERM);
-        echo '<pre>';
-        print_r($financingResponseStruct);
-        echo '</pre>';
-        exit();
 
         $qualifyingFinancingOptions = $financingResponseStruct->toArray()['qualifyingFinancingOptions'];
 

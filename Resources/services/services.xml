@@ -64,5 +64,10 @@
         </service>
 
         <service id="paypal_unified.installments.validation_service" class="SwagPaymentPayPalUnified\Components\Services\Installments\ValidationService"/>
+
+        <service id="paypal_unified.installments.company_info_service" class="SwagPaymentPayPalUnified\Components\Services\Installments\CompanyInfoService">
+            <argument type="service" id="config"/>
+        </service>
+
     </services>
 </container>

@@ -30,7 +30,6 @@ use SwagPaymentPayPalUnified\Components\Services\Installments\ValidationService;
 use SwagPaymentPayPalUnified\Models\Settings;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\InstallmentsResource;
-use SwagPaymentPayPalUnified\PayPalBundle\Structs\Installments\FinancingResponse;
 
 class Installments implements SubscriberInterface
 {
@@ -110,14 +109,14 @@ class Installments implements SubscriberInterface
 
         switch ($installmentsDisplayKind) {
             case 1: //simple
-                $view->assign('payPalUnifiedInstallmentsDisplayKind', 'simple');
-                $view->assign('payPalUnifiedInstallmentsProductPrice', $productPrice);
+                $view->assign('paypalInstallmentsMode', 'simple');
+                $view->assign('paypalProductPrice', $productPrice);
 
                 break;
 
             case 2: //cheapest rate
-//                $financingResponse = FinancingResponse::fromArray($response['financing_options'][0]);
-                $view->assign('payPalUnifiedInstallmentsDisplayKind', 'cheapest');
+                $view->assign('paypalInstallmentsMode', 'cheapest');
+                $view->assign('paypalProductPrice', $productPrice);
 
                 break;
         }

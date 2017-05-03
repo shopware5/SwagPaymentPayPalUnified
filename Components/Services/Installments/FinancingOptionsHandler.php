@@ -64,6 +64,21 @@ class FinancingOptionsHandler
      */
     private function sortOptionsByMonthlyPayment()
     {
+        /** @var FinancingOption[] $options */
+        $options = $this->financingResponse->getQualifyingFinancingOptions();
+
+        usort($options, function (&$option1, &$option2) {
+            /** @var FinancingOption $option1 */
+            /** @var FinancingOption $option2 */
+            if ($option1->getMonthlyPayment()->getValue() === $option2->getMonthlyPayment()->getValue()) {
+                return 0;
+            }
+
+            return $option1->getMonthlyPayment()->getValue() < $option2->getMonthlyPayment()->getValue() ? -1 : 1;
+        });
+
+        $this->financingResponse->setQualifyingFinancingOptions($options);
+
         return $this->financingResponse;
     }
 
