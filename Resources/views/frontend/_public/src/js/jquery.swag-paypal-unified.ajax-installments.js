@@ -30,7 +30,15 @@
              *
              * @type string
              */
-            paypalInstallmentsContainerSelector: '.paypal--installments'
+            paypalInstallmentsContainerSelector: '.paypal--installments',
+
+            /**
+             * The type of the target page.
+             * This value is required for the template to load correctly.
+             *
+             * @type string
+             */
+            paypalInstallmentsPageType: ''
         },
 
         /**
@@ -59,7 +67,8 @@
             $.ajax({
                 url: me.opts.paypalInstallmentsRequestUrl,
                 data: {
-                    productPrice: me.opts.paypalInstallmentsProductPrice
+                    productPrice: me.opts.paypalInstallmentsProductPrice,
+                    pageType: me.opts.paypalInstallmentsPageType
                 },
                 method: 'GET',
                 success: $.proxy(me.detailsAjaxCallbackSuccess, me),
@@ -67,6 +76,13 @@
             });
         },
 
+        /**
+         * Will be triggered when the ajax callback succeeds.
+         *
+         * @private
+         * @method detailsAjaxCallbackSuccess
+         * @param { Object } response
+         */
         detailsAjaxCallbackSuccess: function (response) {
             var me = this,
                 $loadingIndicator = $(me.opts.paypalLoadingIndicatorSelector),
@@ -76,7 +92,7 @@
 
             $loadingIndicator.prop('hidden', true);
 
-            $.publish('plugin/swagPayPalUnifiedAjaxInstallments/ajaxSuccess')
+            $.publish('plugin/swagPayPalUnifiedAjaxInstallments/ajaxSuccess', me);
         },
 
         /**
@@ -91,7 +107,7 @@
 
             $loadingIndicator.prop('hidden', true);
 
-            $.publish('plugin/swagPayPalUnifiedAjaxInstallments/ajaxError')
+            $.publish('plugin/swagPayPalUnifiedAjaxInstallments/ajaxError', me);
         }
     });
 

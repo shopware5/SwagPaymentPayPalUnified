@@ -108,8 +108,8 @@
                 selectedPaymentId = me.getSelectedPaymentMethodId();
 
             if (parseInt(selectedPaymentId) !== parseInt(me.opts.paypalPaymentId) && !$paypalUnifiedRadio.prop('checked')) {
-                    $paypalUnifiedRadio.prop('checked', true);
-                    $('*[data-ajax-shipping-payment="true"]').data('plugin_swShippingPayment').onInputChanged();
+                $paypalUnifiedRadio.prop('checked', true);
+                $('*[data-ajax-shipping-payment="true"]').data('plugin_swShippingPayment').onInputChanged();
             }
         },
 

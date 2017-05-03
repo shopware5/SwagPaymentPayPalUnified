@@ -55,7 +55,6 @@
         <service id="paypal_unified.subscriber.installments" class="SwagPaymentPayPalUnified\Subscriber\Installments">
             <argument type="service" id="paypal_unified.settings_service"/>
             <argument type="service" id="paypal_unified.installments.validation_service"/>
-            <argument type="service" id="paypal_unified.installments_resource"/>
             <tag name="shopware.event_subscriber"/>
         </service>
     </services>

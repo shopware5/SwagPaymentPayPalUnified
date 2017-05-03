@@ -9,12 +9,11 @@
 *}
 
 {namespace name="frontend/paypal_unified/installments/upstream_presentment/cheapest"}
-
-{block name="frontend_paypal_unified_installments_cheapest"}
+{block name="frontend_paypal_unified_installments_cheapest_detail"}
     {* If the APR is higher than 0% it is requiered to display further details such as fee or tax about the cheapest rate *}
     {$hasDetails = $paypalInstallmentsOption.creditFinancing.apr > 0}
     {if !$hasDetails}
-        {block name="frontend_paypal_unified_installments_cheapest_simple"}
+        {block name="frontend_paypal_unified_installments_cheapest_detail_simple"}
             {* Use the simple message and styling, because that is the final price without any additions *}
             <div class="paypal-unified-installments-notification--simple">
                 {block name="frontend_paypal_unified_installments_cheapest_simple_content"}
@@ -30,16 +29,16 @@
             </div>
         {/block}
     {else}
-        {block name="frontend_paypal_unified_installments_cheapest_details"}
+        {block name="frontend_paypal_unified_installments_cheapest_detail_details"}
             <div class="paypal-unified-installments-notification--cheapest">
                 <div class="panel has--border is--rounded">
-                    {block name="frontend_paypal_unified_installments_cheapest_details_title"}
+                    {block name="frontend_paypal_unified_installments_cheapest_detail_details_title"}
                         <div class="panel--title is--underline">
                             {* example: Financing from 18.78 € in 24 monthly rates with Installments Powered by PayPal *}
                             {s name="textBeforePrice"}Financing from{/s} {$paypalInstallmentsOption.monthlyPayment.value|currency} {s name="textBeforeMonths"}in{/s} {$paypalInstallmentsOption.creditFinancing.term} {s name="textAfterMonths"}monthly rates with Installments Powered by PayPal{/s}
                         </div>
                     {/block}
-                    {block name="frontend_paypal_unified_installments_cheapest_details_content"}
+                    {block name="frontend_paypal_unified_installments_cheapest_detail_details_content"}
                         <div class="panel--body is--wide">
                             {block name="frontend_paypal_unified_installments_cheapest_details_legal_message"}
                                 <span class="notification--legal-message is--block">

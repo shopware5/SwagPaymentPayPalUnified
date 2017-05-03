@@ -29,7 +29,6 @@ use Enlight_Controller_ActionEventArgs as ActionEventArgs;
 use SwagPaymentPayPalUnified\Components\Services\Installments\ValidationService;
 use SwagPaymentPayPalUnified\Models\Settings;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
-use SwagPaymentPayPalUnified\PayPalBundle\Resources\InstallmentsResource;
 
 class Installments implements SubscriberInterface
 {
@@ -44,23 +43,15 @@ class Installments implements SubscriberInterface
     private $validationService;
 
     /**
-     * @var InstallmentsResource
-     */
-    private $installmentsResource;
-
-    /**
      * @param SettingsServiceInterface $settingsService
      * @param ValidationService        $validationService
-     * @param InstallmentsResource     $installmentsResource
      */
     public function __construct(
         SettingsServiceInterface $settingsService,
-        ValidationService $validationService,
-        InstallmentsResource $installmentsResource
+        ValidationService $validationService
     ) {
         $this->settings = $settingsService->getSettings();
         $this->validationService = $validationService;
-        $this->installmentsResource = $installmentsResource;
     }
 
     /**
@@ -70,6 +61,7 @@ class Installments implements SubscriberInterface
     {
         return [
             'Enlight_Controller_Action_PostDispatchSecure_Frontend_Detail' => 'onPostDispatchDetail',
+            'Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout' => 'onPostDispatchCheckout',
         ];
     }
 
@@ -78,15 +70,7 @@ class Installments implements SubscriberInterface
      */
     public function onPostDispatchDetail(ActionEventArgs $args)
     {
-        if (!$this->settings) {
-            return;
-        }
-
-        if (!$this->settings->getActive()) {
-            return;
-        }
-
-        if (!$this->settings->getInstallmentsActive()) {
+        if (!$this->settings || !$this->settings->getActive() || !$this->settings->getInstallmentsActive()) {
             return;
         }
 
@@ -98,27 +82,49 @@ class Installments implements SubscriberInterface
 
         $view = $args->getSubject()->View();
 
-        $product = $view->getAssign('sArticle');
-        $productPrice = $product['price_numeric'];
+        $productPrice = $view->getAssign('sArticle')['price_numeric'];
 
         if (!$this->validationService->validatePrice($productPrice)) {
-            $view->assign('payPalUnifiedInstallmentsNotAvailable', true);
+            $view->assign('paypalInstallmentsNotAvailable', true);
 
             return;
         }
 
-        switch ($installmentsDisplayKind) {
-            case 1: //simple
-                $view->assign('paypalInstallmentsMode', 'simple');
-                $view->assign('paypalProductPrice', $productPrice);
+        $installmentsDisplayKind === 1 ? $view->assign('paypalInstallmentsMode', 'simple') : $view->assign('paypalInstallmentsMode', 'cheapest');
+        $view->assign('paypalProductPrice', $productPrice);
+        $view->assign('paypalInstallmentsPageType', 'detail');
+    }
 
-                break;
+    /**
+     * @param ActionEventArgs $args
+     */
+    public function onPostDispatchCheckout(ActionEventArgs $args)
+    {
+        $action = $args->getRequest()->getActionName();
 
-            case 2: //cheapest rate
-                $view->assign('paypalInstallmentsMode', 'cheapest');
-                $view->assign('paypalProductPrice', $productPrice);
-
-                break;
+        if ($action !== 'cart' && $action !== 'confirm') {
+            return;
         }
+
+        if (!$this->settings || !$this->settings->getActive() || !$this->settings->getInstallmentsActive()) {
+            return;
+        }
+
+        $installmentsDisplayKind = $this->settings->getInstallmentsPresentmentCart();
+
+        if ($installmentsDisplayKind === 0) {
+            return;
+        }
+
+        $view = $args->getSubject()->View();
+        $productPrice = $view->getAssign('sBasket')['AmountNumeric'];
+
+        if (!$this->validationService->validatePrice($productPrice)) {
+            return;
+        }
+
+        $installmentsDisplayKind === 1 ? $view->assign('paypalInstallmentsMode', 'simple') : $view->assign('paypalInstallmentsMode', 'cheapest');
+        $view->assign('paypalProductPrice', $productPrice);
+        $view->assign('paypalInstallmentsPageType', 'cart');
     }
 }

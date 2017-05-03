@@ -51,6 +51,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedInstallments extends Enlight_Con
     public function cheapestRateAction()
     {
         $productPrice = $this->Request()->get('productPrice');
+        $pageType = $this->Request()->get('pageType');
 
         //Prepare the request
         $financingRequest = new FinancingRequest();
@@ -93,6 +94,9 @@ class Shopware_Controllers_Widgets_PaypalUnifiedInstallments extends Enlight_Con
         $this->View()->assign('paypalInstallmentsOption', $qualifyingFinancingOptions[0]);
         $this->View()->assign('paypalInstallmentsProductPrice', $productPrice);
         $this->View()->assign('paypalInstallmentsCompanyInfo', $companyInfoService->getCompanyInfo());
+
+        //Depending on this value either the detail or the cart upstream presentment will be loaded
+        $this->View()->assign('paypalInstallmentsPageType', $pageType);
     }
 
     public function modalContentAction()

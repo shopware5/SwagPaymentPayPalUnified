@@ -1,6 +1,5 @@
 (function($, window) {
-
-    $.plugin("PayPalUnifiedInstallmentsModal", {
+    $.plugin('PayPalUnifiedInstallmentsModal', {
 
         defaults: {
             title: '',

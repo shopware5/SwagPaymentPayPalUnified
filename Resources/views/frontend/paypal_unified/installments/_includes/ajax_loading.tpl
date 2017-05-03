@@ -1,6 +1,7 @@
 {block name="frontend_detail_paypal_unified_installments_ajax_loading"}
     <div class="paypal--installments-ajax-loading"
          data-paypalAjaxInstallments="true"
+         data-paypalInstallmentsPageType="{$paypalInstallmentsPageType}"
          data-paypalInstallmentsRequestUrl="{url controller=PaypalUnifiedInstallments module=widgets action=cheapestRate}"
          data-paypalInstallmentsProductPrice="{$paypalProductPrice}">
 
