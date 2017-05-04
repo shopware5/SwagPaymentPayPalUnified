@@ -139,5 +139,9 @@
             <tag name="shopware.event_subscriber" />
         </service>
 
+        <service id="paypal_unified.subscriber.backend_order" class="SwagPaymentPayPalUnified\Subscriber\BackendOrder">
+            <tag name="shopware.event_subscriber"/>
+        </service>
+
     </services>
 </container>

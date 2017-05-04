@@ -22,7 +22,8 @@ Ext.define('Shopware.apps.PaypalUnified.model.ShopwareOrder', {
         { name: 'paymentId', type: 'string' },
         { name: 'currency', type: 'string' },
         { name: 'transactionId', type: 'string' },
-        { name: 'temporaryId', type: 'string' }
+        { name: 'temporaryId', type: 'string' },
+        { name: 'paymentType', mapping: 'attribute.paypalPaymentType' }
     ],
 
     /**

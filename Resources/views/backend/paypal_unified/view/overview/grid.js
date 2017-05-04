@@ -30,6 +30,10 @@ Ext.define('Shopware.apps.PaypalUnified.view.overview.Grid', {
         var me = this;
 
         return {
+            paymentType: {
+                header: '{s name="column/paymentType"}PayPal type{/s}',
+                draggable: false
+            },
             languageIso: {
                 header: '{s name="column/shopName"}Shop name{/s}',
                 renderer: me.shopColumnRenderer,

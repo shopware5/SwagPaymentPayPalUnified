@@ -117,7 +117,7 @@ class Installer
 
     private function createAttributes()
     {
-        $this->attributeCrudService->update('s_order_attributes', 'paypal_payment_type', 'integer');
+        $this->attributeCrudService->update('s_order_attributes', 'paypal_payment_type', 'string');
         $this->modelManager->generateAttributeModels(['s_order_attributes']);
     }
 
