@@ -19,7 +19,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.PaypalPlus', {
     },
 
     /**
-     * @type { Ext.form.Checkbox }
+     * @type { Ext.form.field.Checkbox }
      */
     restyleCheckbox: null,
 
@@ -61,16 +61,17 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.PaypalPlus', {
     },
 
     /**
-     * @returns { Ext.form.Checkbox }
+     * @returns { Ext.form.field.Checkbox }
      */
     createRestyleCheckbox: function() {
-        return Ext.create('Ext.form.Checkbox', {
+        return Ext.create('Ext.form.field.Checkbox', {
             name: 'plusRestyle',
             fieldLabel: '{s name=field/restyle}Restyle payment selection{/s}',
             helpText: '{s name=field/restyle/help}Activate this option to automatically apply the payment wall theme to the payment selection.{/s}',
             boxLabel: '{s name=field/restyle/boxLabel}Activate this option to restyle the payment selection.{/s}',
             inputValue: true,
-            uncheckedValue: false
+            uncheckedValue: false,
+            disabled: true
         });
     },
 
