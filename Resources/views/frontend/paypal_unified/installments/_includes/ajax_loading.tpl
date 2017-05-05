@@ -3,7 +3,9 @@
          data-paypalAjaxInstallments="true"
          data-paypalInstallmentsPageType="{$paypalInstallmentsPageType}"
          data-paypalInstallmentsRequestUrl="{url controller=PaypalUnifiedInstallments module=widgets action=cheapestRate}"
-         data-paypalInstallmentsProductPrice="{$paypalProductPrice}">
+         data-paypalInstallmentsProductPrice="{$paypalProductPrice}"
+         data-paypalInstallmentsRequestCompleteList="{$paypalInstallmentsRequestCompleteList}"
+         data-paypalInstallmentsRequestCompleteListUrl="{url controller=PaypalUnifiedInstallments module=widgets action=list}"> {* Only if paypal installments is selected and we are on the confirm page *}
 
         <div class="paypal-unified-installments--loading-indicator"></div>
 

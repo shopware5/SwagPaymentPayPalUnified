@@ -35,12 +35,28 @@ class PaymentMethodProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertNotNull($provider->getPaymentMethodModel(), 'The payment method should not be null');
     }
 
+    public function test_get_payment_method_model_installments()
+    {
+        $provider = new PaymentMethodProvider(Shopware()->Models());
+
+        $this->assertNotNull($provider->getPaymentMethodModel(PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME));
+    }
+
     public function test_set_payment_inactive()
     {
         $provider = new PaymentMethodProvider(Shopware()->Models());
         $provider->setPaymentMethodActiveFlag(false);
 
         $payment = $provider->getPaymentMethodModel();
+        $this->assertFalse($payment->getActive());
+    }
+
+    public function test_set_payment_inactive_installments()
+    {
+        $provider = new PaymentMethodProvider(Shopware()->Models());
+        $provider->setPaymentMethodActiveFlag(false, PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME);
+
+        $payment = $provider->getPaymentMethodModel(PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME);
         $this->assertFalse($payment->getActive());
     }
 
@@ -53,6 +69,15 @@ class PaymentMethodProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($payment->getActive());
     }
 
+    public function test_set_payment_active_installments()
+    {
+        $provider = new PaymentMethodProvider(Shopware()->Models());
+        $provider->setPaymentMethodActiveFlag(true, PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME);
+
+        $payment = $provider->getPaymentMethodModel(PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME);
+        $this->assertTrue($payment->getActive());
+    }
+
     public function test_get_payment_id()
     {
         $provider = new PaymentMethodProvider(Shopware()->Models());
@@ -61,5 +86,15 @@ class PaymentMethodProviderTest extends \PHPUnit_Framework_TestCase
         $paymentId = Shopware()->Db()->fetchCol($paymentIdQuery)[0];
 
         $this->assertEquals($paymentId, $provider->getPaymentId(Shopware()->Container()->get('dbal_connection')));
+    }
+
+    public function test_get_payment_id_installments()
+    {
+        $provider = new PaymentMethodProvider(Shopware()->Models());
+        $paymentIdQuery = "SELECT pm.id FROM s_core_paymentmeans pm WHERE pm.name='SwagPaymentPayPalUnifiedInstallments'";
+
+        $paymentId = Shopware()->Db()->fetchCol($paymentIdQuery)[0];
+
+        $this->assertEquals($paymentId, $provider->getPaymentId(Shopware()->Container()->get('dbal_connection'), PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME));
     }
 }

@@ -22,12 +22,11 @@
  * our trademarks remain entirely with us.
  */
 
-use Shopware\Components\HttpClient\RequestException;
 use Shopware\Components\Logger;
+use SwagPaymentPayPalUnified\Components\Installments\FinancingOptionsHandler;
 use SwagPaymentPayPalUnified\Components\Services\Installments\CompanyInfoService;
-use SwagPaymentPayPalUnified\Components\Services\Installments\FinancingOptionsHandler;
+use SwagPaymentPayPalUnified\Components\Services\Installments\InstallmentsRequestService;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\InstallmentsResource;
-use SwagPaymentPayPalUnified\PayPalBundle\Structs\Installments\FinancingRequest;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Installments\FinancingResponse;
 
 class Shopware_Controllers_Widgets_PaypalUnifiedInstallments extends Enlight_Controller_Action
@@ -53,27 +52,9 @@ class Shopware_Controllers_Widgets_PaypalUnifiedInstallments extends Enlight_Con
         $productPrice = $this->Request()->get('productPrice');
         $pageType = $this->Request()->get('pageType');
 
-        //Prepare the request
-        $financingRequest = new FinancingRequest();
-        $financingRequest->setFinancingCountryCode('DE');
-        $transactionAmount = new FinancingRequest\TransactionAmount();
-        $transactionAmount->setValue($productPrice);
-        $transactionAmount->setCurrencyCode('EUR');
-        $financingRequest->setTransactionAmount($transactionAmount);
-
-        try {
-            $response = $this->installmentsResource->getFinancingOptions($financingRequest);
-        } catch (RequestException $e) {
-            $this->pluginLogger->error(
-                'PayPal Unified: Could not get installments financing options due to a communication failure',
-                [
-                    $e->getMessage(),
-                    $e->getBody(),
-                ]
-            );
-
-            return;
-        }
+        /** @var InstallmentsRequestService $requestService */
+        $requestService = $this->container->get('paypal_unified.installments.installments_request_service');
+        $response = $requestService->getList($productPrice);
 
         if (!isset($response['financing_options'][0])) {
             $this->pluginLogger->error('PayPal Unified: Could not find financing options in response', ['product price' => $productPrice]);
@@ -99,32 +80,40 @@ class Shopware_Controllers_Widgets_PaypalUnifiedInstallments extends Enlight_Con
         $this->View()->assign('paypalInstallmentsPageType', $pageType);
     }
 
+    public function listAction()
+    {
+        $productPrice = $this->Request()->get('productPrice');
+
+        /** @var InstallmentsRequestService $requestService */
+        $requestService = $this->container->get('paypal_unified.installments.installments_request_service');
+        $response = $requestService->getList($productPrice);
+
+        if (!isset($response['financing_options'][0])) {
+            $this->pluginLogger->error('PayPal Unified: Could not find financing options in response', ['product price' => $productPrice]);
+
+            return;
+        }
+
+        $financingResponseStruct = FinancingResponse::fromArray($response['financing_options'][0]);
+        $optionsHandler = new FinancingOptionsHandler($financingResponseStruct);
+        $financingResponseStruct = $optionsHandler->sortOptionsBy(FinancingOptionsHandler::SORT_BY_TERM);
+        $qualifyingFinancingOptions = $financingResponseStruct->toArray()['qualifyingFinancingOptions'];
+
+        /** @var CompanyInfoService $companyInfoService */
+        $companyInfoService = $this->container->get('paypal_unified.installments.company_info_service');
+
+        $this->View()->assign('paypalInstallmentsOptions', $qualifyingFinancingOptions);
+        $this->View()->assign('paypalInstallmentsProductPrice', $productPrice);
+        $this->View()->assign('paypalInstallmentsCompanyInfo', $companyInfoService->getCompanyInfo());
+    }
+
     public function modalContentAction()
     {
         $productPrice = $this->Request()->getParam('productPrice');
 
-        $financingRequest = new FinancingRequest();
-        $financingRequest->setFinancingCountryCode('DE');
-        $transactionAmount = new FinancingRequest\TransactionAmount();
-        $transactionAmount->setValue($productPrice);
-        $transactionAmount->setCurrencyCode('EUR');
-        $financingRequest->setTransactionAmount($transactionAmount);
-
-        try {
-            $response = $this->installmentsResource->getFinancingOptions($financingRequest);
-        } catch (RequestException $e) {
-            $this->pluginLogger->error(
-                'PayPal Unified: Could not get installments financing options due to a communication failure',
-                [
-                    $e->getMessage(),
-                    $e->getBody(),
-                ]
-            );
-
-            // TODO: error ins modal
-
-            return;
-        }
+        /** @var InstallmentsRequestService $requestService */
+        $requestService = $this->container->get('paypal_unified.installments.installments_request_service');
+        $response = $requestService->getList($productPrice);
 
         if (!isset($response['financing_options'][0])) {
             $this->pluginLogger->error('PayPal Unified: Could not find financing options in response');

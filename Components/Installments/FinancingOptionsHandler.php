@@ -22,7 +22,7 @@
  * our trademarks remain entirely with us.
  */
 
-namespace SwagPaymentPayPalUnified\Components\Services\Installments;
+namespace SwagPaymentPayPalUnified\Components\Installments;
 
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Installments\FinancingResponse;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Installments\FinancingResponse\FinancingOption;

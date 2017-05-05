@@ -31,6 +31,16 @@ use Shopware\Models\Payment\Payment;
 class PaymentMethodProvider
 {
     /**
+     * The technical name of the unified payment method.
+     */
+    const PAYPAL_UNIFIED_PAYMENT_METHOD_NAME = 'SwagPaymentPayPalUnified';
+
+    /**
+     * The technical name of the installments payment method.
+     */
+    const PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME = 'SwagPaymentPayPalUnifiedInstallments';
+
+    /**
      * @var ModelManager
      */
     private $modelManager;
@@ -44,21 +54,36 @@ class PaymentMethodProvider
     }
 
     /**
-     * @return null|Payment
+     * @see PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME
+     * @see PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME
+     *
+     * @param string $name
+     *
+     * @return null|Payment|object
      */
-    public function getPaymentMethodModel()
+    public function getPaymentMethodModel($name = self::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME)
     {
+        if ($name === self::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME) {
+            return $this->modelManager->getRepository(Payment::class)->findOneBy([
+                'name' => self::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME,
+            ]);
+        }
+
         return $this->modelManager->getRepository(Payment::class)->findOneBy([
-            'name' => 'SwagPaymentPayPalUnified',
+            'name' => self::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME,
         ]);
     }
 
     /**
-     * @param bool $active
+     * @see PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME
+     * @see PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME
+     *
+     * @param string $name
+     * @param bool   $active
      */
-    public function setPaymentMethodActiveFlag($active)
+    public function setPaymentMethodActiveFlag($active, $name = self::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME)
     {
-        $paymentMethod = $this->getPaymentMethodModel();
+        $paymentMethod = $this->getPaymentMethodModel($name);
         $paymentMethod->setActive($active);
 
         $this->modelManager->persist($paymentMethod);
@@ -66,14 +91,22 @@ class PaymentMethodProvider
     }
 
     /**
+     * @see PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME
+     * @see PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME
+     *
      * @param Connection $connection
+     * @param string     $name
      *
      * @return int
      */
-    public function getPaymentId(Connection $connection)
+    public function getPaymentId(Connection $connection, $name = self::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME)
     {
         $sql = 'SELECT `id` FROM s_core_paymentmeans WHERE `name`=:paymentName';
 
-        return (int) $connection->fetchColumn($sql, [':paymentName' => 'SwagPaymentPayPalUnified']);
+        return (int) $connection->fetchColumn($sql, [
+            ':paymentName' => $name === self::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME
+                ? self::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME
+                : self::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME,
+        ]);
     }
 }

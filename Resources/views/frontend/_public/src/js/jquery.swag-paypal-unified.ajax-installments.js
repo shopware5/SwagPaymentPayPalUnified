@@ -38,7 +38,22 @@
              *
              * @type string
              */
-            paypalInstallmentsPageType: ''
+            paypalInstallmentsPageType: '',
+
+            /**
+             * A value indicating if a complete list of all options or just the cheapest one
+             * should be received.
+             *
+             * @type boolean
+             */
+            paypalInstallmentsRequestCompleteList: false,
+
+            /**
+             * The URL for the complete list ajax request.
+             *
+             * @type string
+             */
+            paypalInstallmentsRequestCompleteListUrl: ''
         },
 
         /**
@@ -62,13 +77,52 @@
         requestDetails: function () {
             var me = this;
 
-            $.publish('plugin/swagPayPalUnifiedAjaxInstallments/requestDetails', me);
+            $.publish('plugin/swagPayPalUnifiedAjaxInstallments/beforeRequest', me);
+
+            if (me.opts.paypalInstallmentsRequestCompleteList) {
+                me.requestCompleteList();
+            } else {
+                me.requestCheapestRate();
+            }
+
+            $.publish('plugin/swagPayPalUnifiedAjaxInstallments/afterRequest', me);
+        },
+
+        /**
+         * Requests only the cheapest rate from the API.
+         *
+         * @private
+         * @method requestCheapestRate
+         */
+        requestCheapestRate: function () {
+            var me = this;
+
+            $.publish('plugin/swagPayPalUnifiedAjaxInstallments/requestCheapestRate', me);
 
             $.ajax({
                 url: me.opts.paypalInstallmentsRequestUrl,
                 data: {
                     productPrice: me.opts.paypalInstallmentsProductPrice,
                     pageType: me.opts.paypalInstallmentsPageType
+                },
+                method: 'GET',
+                success: $.proxy(me.detailsAjaxCallbackSuccess, me),
+                error: $.proxy(me.detailsAjaxCallbackError, me)
+            });
+        },
+
+        /**
+         * Requests all rates for the provided price from the API.
+         */
+        requestCompleteList: function () {
+            var me = this;
+
+            $.publish('plugin/swagPayPalUnifiedAjaxInstallments/requestCompleteList', me);
+
+            $.ajax({
+                url: me.opts.paypalInstallmentsRequestCompleteListUrl,
+                data: {
+                    productPrice: me.opts.paypalInstallmentsProductPrice
                 },
                 method: 'GET',
                 success: $.proxy(me.detailsAjaxCallbackSuccess, me),

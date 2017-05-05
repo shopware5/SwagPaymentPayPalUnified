@@ -25,16 +25,18 @@
 namespace SwagPaymentPayPalUnified\Tests\Functional\Subscriber;
 
 use Shopware\Components\HttpClient\RequestException;
+use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\Services\Installments\ValidationService;
 use SwagPaymentPayPalUnified\Models\Settings;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\InstallmentsResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Installments\FinancingRequest;
 use SwagPaymentPayPalUnified\Subscriber\Installments;
+use SwagPaymentPayPalUnified\Tests\Functional\UnifiedControllerTestCase;
 use SwagPaymentPayPalUnified\Tests\Mocks\DummyController;
 use SwagPaymentPayPalUnified\Tests\Mocks\ViewMock;
 
-class InstallmentsTest extends \PHPUnit_Framework_TestCase
+class InstallmentsTest extends UnifiedControllerTestCase
 {
     public function test_can_be_created()
     {
@@ -42,7 +44,7 @@ class InstallmentsTest extends \PHPUnit_Framework_TestCase
         $subscriber = new Installments(
             new SettingsServiceInstallmentsMock(),
             new ValidationService(),
-            new InstallmentsResourceMock(),
+            Shopware()->Container()->get('dbal_connection'),
             $pluginLogger
         );
 
@@ -52,8 +54,9 @@ class InstallmentsTest extends \PHPUnit_Framework_TestCase
     public function test_getSubscribedEvents()
     {
         $events = Installments::getSubscribedEvents();
-        $this->assertCount(1, $events);
+        $this->assertCount(2, $events);
         $this->assertEquals('onPostDispatchDetail', $events['Enlight_Controller_Action_PostDispatchSecure_Frontend_Detail']);
+        $this->assertEquals('onPostDispatchCheckout', $events['Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout']);
     }
 
     public function test_post_dispatch_detail_no_settings()
@@ -113,7 +116,7 @@ class InstallmentsTest extends \PHPUnit_Framework_TestCase
 
         $this->getInstallmentsSubscriber($settingService)->onPostDispatchDetail($actionEventArgs);
 
-        $this->assertTrue($actionEventArgs->getSubject()->View()->getAssign('payPalUnifiedInstallmentsNotAvailable'));
+        $this->assertTrue($actionEventArgs->getSubject()->View()->getAssign('paypalInstallmentsNotAvailable'));
     }
 
     public function test_post_dispatch_detail_installments_missing_finance_response()
@@ -167,7 +170,7 @@ class InstallmentsTest extends \PHPUnit_Framework_TestCase
 
         $this->getInstallmentsSubscriber($settingService)->onPostDispatchDetail($actionEventArgs);
 
-        $displayKind = $actionEventArgs->getSubject()->View()->getAssign('payPalUnifiedInstallmentsDisplayKind');
+        $displayKind = $actionEventArgs->getSubject()->View()->getAssign('paypalInstallmentsMode');
 
         $this->assertEquals('simple', $displayKind);
     }
@@ -187,9 +190,221 @@ class InstallmentsTest extends \PHPUnit_Framework_TestCase
 
         $this->getInstallmentsSubscriber($settingService)->onPostDispatchDetail($actionEventArgs);
 
-        $displayKind = $actionEventArgs->getSubject()->View()->getAssign('payPalUnifiedInstallmentsDisplayKind');
+        $displayKind = $actionEventArgs->getSubject()->View()->getAssign('paypalInstallmentsMode');
 
         $this->assertEquals('cheapest', $displayKind);
+    }
+
+    public function test_OnPostDispatchCheckout_with_wrong_action()
+    {
+        $this->Request()->setActionName('test');
+
+        $actionEventArgs = $this->getActionEventArgs();
+
+        $settings = new Settings();
+        $settingService = new SettingsServiceInstallmentsMock($settings);
+        $result = $this->getInstallmentsSubscriber($settingService)->onPostDispatchCheckout($actionEventArgs);
+
+        $this->assertNull($result);
+    }
+
+    public function test_OnPostDispatchCheckout_without_active_installments_settings()
+    {
+        $this->Request()->setActionName('cart');
+
+        $actionEventArgs = $this->getActionEventArgs();
+
+        $settings = new Settings();
+
+        $settings->setInstallmentsActive(0);
+        $settingService = new SettingsServiceInstallmentsMock($settings);
+
+        $result = $this->getInstallmentsSubscriber($settingService)->onPostDispatchCheckout($actionEventArgs);
+
+        $this->assertNull($result);
+    }
+
+    public function test_OnPostDispatchCheckout_without_active_global_settings()
+    {
+        $this->Request()->setActionName('cart');
+
+        $actionEventArgs = $this->getActionEventArgs();
+
+        $settings = new Settings();
+        $settings->setActive(0);
+        $settings->setInstallmentsActive(1);
+        $settingService = new SettingsServiceInstallmentsMock($settings);
+
+        $result = $this->getInstallmentsSubscriber($settingService)->onPostDispatchCheckout($actionEventArgs);
+
+        $this->assertNull($result);
+    }
+
+    public function test_OnPostDispatchCheckout_without_display_kind()
+    {
+        $this->Request()->setActionName('cart');
+
+        $actionEventArgs = $this->getActionEventArgs();
+
+        $settings = new Settings();
+        $settings->setActive(1);
+        $settings->setInstallmentsActive(1);
+        $settings->setInstallmentsPresentmentCart(0);
+        $settingService = new SettingsServiceInstallmentsMock($settings);
+
+        $result = $this->getInstallmentsSubscriber($settingService)->onPostDispatchCheckout($actionEventArgs);
+
+        $this->assertNull($result);
+    }
+
+    public function test_OnPostDispatchCheckout_without_valid_price()
+    {
+        $this->Request()->setActionName('cart');
+
+        $actionEventArgs = $this->getActionEventArgs();
+        $actionEventArgs->getSubject()->View()->assign('sBasket', [
+            'AmountNumeric' => 9.99,
+        ]);
+
+        $settings = new Settings();
+        $settings->setActive(1);
+        $settings->setInstallmentsActive(1);
+        $settings->setInstallmentsPresentmentCart(1);
+        $settingService = new SettingsServiceInstallmentsMock($settings);
+
+        $result = $this->getInstallmentsSubscriber($settingService)->onPostDispatchCheckout($actionEventArgs);
+
+        $this->assertNull($result);
+    }
+
+    public function test_OnPostDispatchCheckout_display_kind_is_simple()
+    {
+        $this->Request()->setActionName('cart');
+
+        $actionEventArgs = $this->getActionEventArgs();
+        $actionEventArgs->getSubject()->View()->assign('sBasket', [
+            'AmountNumeric' => 399.99,
+        ]);
+
+        $settings = new Settings();
+        $settings->setActive(1);
+        $settings->setInstallmentsActive(1);
+        $settings->setInstallmentsPresentmentCart(1);
+        $settingService = new SettingsServiceInstallmentsMock($settings);
+
+        $this->getInstallmentsSubscriber($settingService)->onPostDispatchCheckout($actionEventArgs);
+        $displayKind = $actionEventArgs->getSubject()->View()->getAssign('paypalInstallmentsMode');
+
+        $this->assertEquals('simple', $displayKind);
+    }
+
+    public function test_OnPostDispatchCheckout_display_kind_is_cheapest()
+    {
+        $this->Request()->setActionName('cart');
+
+        $actionEventArgs = $this->getActionEventArgs();
+        $actionEventArgs->getSubject()->View()->assign('sBasket', [
+            'AmountNumeric' => 399.99,
+        ]);
+
+        $settings = new Settings();
+        $settings->setActive(1);
+        $settings->setInstallmentsActive(1);
+        $settings->setInstallmentsPresentmentCart(2);
+        $settingService = new SettingsServiceInstallmentsMock($settings);
+
+        $this->getInstallmentsSubscriber($settingService)->onPostDispatchCheckout($actionEventArgs);
+        $displayKind = $actionEventArgs->getSubject()->View()->getAssign('paypalInstallmentsMode');
+
+        $this->assertEquals('cheapest', $displayKind);
+    }
+
+    public function test_OnPostDispatchCheckout_has_correct_product_price()
+    {
+        $this->Request()->setActionName('cart');
+
+        $actionEventArgs = $this->getActionEventArgs();
+        $actionEventArgs->getSubject()->View()->assign('sBasket', [
+            'AmountNumeric' => 399.99,
+        ]);
+
+        $settings = new Settings();
+        $settings->setActive(1);
+        $settings->setInstallmentsActive(1);
+        $settings->setInstallmentsPresentmentCart(2);
+        $settingService = new SettingsServiceInstallmentsMock($settings);
+
+        $this->getInstallmentsSubscriber($settingService)->onPostDispatchCheckout($actionEventArgs);
+        $price = $actionEventArgs->getSubject()->View()->getAssign('paypalProductPrice');
+
+        $this->assertEquals(399.99, $price);
+    }
+
+    public function test_OnPostDispatchCheckout_has_correct_page_type()
+    {
+        $this->Request()->setActionName('cart');
+
+        $actionEventArgs = $this->getActionEventArgs();
+        $actionEventArgs->getSubject()->View()->assign('sBasket', [
+            'AmountNumeric' => 399.99,
+        ]);
+
+        $settings = new Settings();
+        $settings->setActive(1);
+        $settings->setInstallmentsActive(1);
+        $settings->setInstallmentsPresentmentCart(2);
+        $settingService = new SettingsServiceInstallmentsMock($settings);
+
+        $this->getInstallmentsSubscriber($settingService)->onPostDispatchCheckout($actionEventArgs);
+        $pageType = $actionEventArgs->getSubject()->View()->getAssign('paypalInstallmentsPageType');
+
+        $this->assertEquals('cart', $pageType);
+    }
+
+    public function test_OnPostDispatchCheckout_confirm_action_with_selected_payment_method_installments()
+    {
+        $this->Request()->setActionName('confirm');
+        $paymentMethodProvider = new PaymentMethodProvider();
+        $installmentsPaymentId = $paymentMethodProvider->getPaymentId(Shopware()->Container()->get('dbal_connection'), PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME);
+
+        $actionEventArgs = $this->getActionEventArgs();
+        $actionEventArgs->getSubject()->View()->assign('sBasket', [
+            'AmountNumeric' => 399.99,
+        ]);
+        $actionEventArgs->getSubject()->View()->assign('sPayment', ['id' => $installmentsPaymentId]);
+
+        $settings = new Settings();
+        $settings->setActive(1);
+        $settings->setInstallmentsActive(1);
+        $settings->setInstallmentsPresentmentCart(1);
+        $settingService = new SettingsServiceInstallmentsMock($settings);
+
+        $this->getInstallmentsSubscriber($settingService)->onPostDispatchCheckout($actionEventArgs);
+        $requestCompleteList = $actionEventArgs->getSubject()->View()->getAssign('paypalInstallmentsRequestCompleteList');
+
+        $this->assertTrue($requestCompleteList);
+    }
+
+    public function test_OnPostDispatchCheckout_confirm_action_with_selected_payment_method_not_installments()
+    {
+        $this->Request()->setActionName('confirm');
+
+        $actionEventArgs = $this->getActionEventArgs();
+        $actionEventArgs->getSubject()->View()->assign('sBasket', [
+            'AmountNumeric' => 399.99,
+        ]);
+        $actionEventArgs->getSubject()->View()->assign('sPayment', ['id' => 1]);
+
+        $settings = new Settings();
+        $settings->setActive(1);
+        $settings->setInstallmentsActive(1);
+        $settings->setInstallmentsPresentmentCart(1);
+        $settingService = new SettingsServiceInstallmentsMock($settings);
+
+        $this->getInstallmentsSubscriber($settingService)->onPostDispatchCheckout($actionEventArgs);
+        $requestCompleteList = $actionEventArgs->getSubject()->View()->getAssign('paypalInstallmentsRequestCompleteList');
+
+        $this->assertNull($requestCompleteList);
     }
 
     /**
@@ -204,6 +419,8 @@ class InstallmentsTest extends \PHPUnit_Framework_TestCase
 
         return new \Enlight_Controller_ActionEventArgs([
             'subject' => $controllerMock,
+            'request' => $this->Request(),
+            'response' => $this->Response(),
         ]);
     }
 
@@ -217,15 +434,7 @@ class InstallmentsTest extends \PHPUnit_Framework_TestCase
     {
         $validationService = Shopware()->Container()->get('paypal_unified.installments.validation_service');
 
-        if ($financingMode === 1) {
-            $installmentsResource = new InstallmentsResourceMock(require __DIR__ . '/_fixtures/installments_response.php');
-        } elseif ($financingMode === 2) {
-            $installmentsResource = new InstallmentsResourceMock(null, 2);
-        } else {
-            $installmentsResource = new InstallmentsResourceMock(null, 3);
-        }
-
-        return new Installments($settingService, $validationService, $installmentsResource);
+        return new Installments($settingService, $validationService, Shopware()->Container()->get('dbal_connection'));
     }
 }
 

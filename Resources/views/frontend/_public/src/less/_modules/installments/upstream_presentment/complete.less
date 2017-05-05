@@ -1,0 +1,77 @@
+.paypal-unified-installments-notification--full {
+    .border-radius();
+    .unitize-padding(16, 16);
+    border: 1px solid @paypalUnifiedInstallmentsPanelBorderColor;
+
+    .installment--wrapper {
+        .unitize(padding, 10);
+
+        table {
+            width: 100%;
+
+            .table--row {
+                .unitize(line-height, 16);
+            }
+
+            .table--label {
+                .unitize(font-size, 12);
+                font-weight: bold;
+            }
+
+            .table--value {
+                .unitize(font-size, 12);
+                text-align: right;
+            }
+        }
+
+        .wrapper--total-cost {
+            .unitize-margin(8, 0, 8, 0);
+            width: 100%;
+            text-align: center;
+        }
+    }
+
+    .notification--text {
+        .unitize(margin-top, 16);
+        .unitize(margin-left, 10);
+        .unitize(margin-bottom, 8);
+    }
+
+    .panel {
+        border: 1px solid @paypalUnifiedInstallmentsPanelBorderColor;
+    }
+
+    .installment--item {
+        margin: 0;
+    }
+
+    .panel--body {
+        .unitize(padding, 20);
+        border: 0 none;
+    }
+
+    .notification--lender {
+        .unitize(font-size, 10);
+        width: 100%;
+
+        &.is--centered {
+            text-align: center;
+        }
+    }
+}
+
+@media screen and (min-width: @tabletLandscapeViewportWidth) {
+    .paypal-unified-installments-notification--full .installment--wrapper {
+        width: 50%;
+    }
+}
+
+@media screen and (min-width: @desktopViewportWidth) {
+    .paypal-unified-installments-notification--full .installment--wrapper {
+        width: 50%;
+
+        .wrapper--total-cost {
+            margin-top: 0;
+        }
+    }
+}

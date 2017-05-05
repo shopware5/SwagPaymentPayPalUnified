@@ -1,3 +1,3 @@
-{block name="frontend_detail_buy_paypal_unified_installments"}
+{block name="frontend_paypal_unified_installments_upstream_presentment"}
         {include file="frontend/paypal_unified/installments/upstream_presentment/cheapest.tpl"}
 {/block}

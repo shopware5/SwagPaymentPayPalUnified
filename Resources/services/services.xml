@@ -69,5 +69,10 @@
             <argument type="service" id="config"/>
         </service>
 
+        <service id="paypal_unified.installments.installments_request_service" class="SwagPaymentPayPalUnified\Components\Services\Installments\InstallmentsRequestService">
+            <argument type="service" id="paypal_unified.installments_resource"/>
+            <argument type="service" id="pluginlogger"/>
+        </service>
+
     </services>
 </container>

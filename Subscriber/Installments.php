@@ -24,8 +24,10 @@
 
 namespace SwagPaymentPayPalUnified\Subscriber;
 
+use Doctrine\DBAL\Connection;
 use Enlight\Event\SubscriberInterface;
 use Enlight_Controller_ActionEventArgs as ActionEventArgs;
+use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\Services\Installments\ValidationService;
 use SwagPaymentPayPalUnified\Models\Settings;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
@@ -43,15 +45,23 @@ class Installments implements SubscriberInterface
     private $validationService;
 
     /**
+     * @var Connection
+     */
+    private $connection;
+
+    /**
      * @param SettingsServiceInterface $settingsService
      * @param ValidationService        $validationService
+     * @param Connection               $connection
      */
     public function __construct(
         SettingsServiceInterface $settingsService,
-        ValidationService $validationService
+        ValidationService $validationService,
+        Connection $connection
     ) {
         $this->settings = $settingsService->getSettings();
         $this->validationService = $validationService;
+        $this->connection = $connection;
     }
 
     /**
@@ -126,5 +136,19 @@ class Installments implements SubscriberInterface
         $installmentsDisplayKind === 1 ? $view->assign('paypalInstallmentsMode', 'simple') : $view->assign('paypalInstallmentsMode', 'cheapest');
         $view->assign('paypalProductPrice', $productPrice);
         $view->assign('paypalInstallmentsPageType', 'cart');
+
+        if ($action === 'confirm') {
+            /**
+             * If paypal installments is currently selected, we can request all financing information from the api.
+             * A complete new template will then be loaded.
+             */
+            $selectedPaymentMethodId = (int) $view->getAssign('sPayment')['id'];
+            $paymentMethodProvider = new PaymentMethodProvider();
+            $installmentsPaymentId = $paymentMethodProvider->getPaymentId($this->connection, PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME);
+
+            if ($selectedPaymentMethodId === $installmentsPaymentId) {
+                $view->assign('paypalInstallmentsRequestCompleteList', true);
+            }
+        }
     }
 }
