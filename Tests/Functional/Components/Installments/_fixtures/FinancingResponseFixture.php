@@ -31,7 +31,7 @@ return [
                             0 => [
                                     'credit_financing' => [
                                             'financing_code' => 'KBDJWP7U6B',
-                                            'apr' => '0.00',
+                                            'apr' => '15', //Item with highest APR. This should be marked with a star in the tests.
                                             'nominal_rate' => '0.0000',
                                             'term' => 6,
                                             'country_code' => 'DE',

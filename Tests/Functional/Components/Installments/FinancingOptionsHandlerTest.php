@@ -60,6 +60,28 @@ class FinancingOptionsHandlerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(106.98, $sorted[3]['monthlyPayment']['value']);
     }
 
+    public function test_build_by_term()
+    {
+        $service = new FinancingOptionsHandler(FinancingResponse::fromArray($this->getFinancingFixture()['financing_options'][0]));
+        $data = $service->finalizeList(FinancingOptionsHandler::SORT_BY_TERM);
+
+        $this->assertTrue($data[0]['hasStar']);
+        $this->assertNull($data[1]['hasStar']);
+        $this->assertNull($data[2]['hasStar']);
+        $this->assertTrue($data[3]['hasStar']);
+    }
+
+    public function test_build_by_monthly_payment()
+    {
+        $service = new FinancingOptionsHandler(FinancingResponse::fromArray($this->getFinancingFixture()['financing_options'][0]));
+        $data = $service->finalizeList(FinancingOptionsHandler::SORT_BY_MONTHLY_PAYMENT);
+
+        $this->assertTrue($data[0]['hasStar']);
+        $this->assertNull($data[1]['hasStar']);
+        $this->assertNull($data[2]['hasStar']);
+        $this->assertTrue($data[3]['hasStar']);
+    }
+
     private function getFinancingFixture()
     {
         return require __DIR__ . '/_fixtures/FinancingResponseFixture.php';

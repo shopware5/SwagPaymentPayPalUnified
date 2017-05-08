@@ -1,4 +1,37 @@
-;(function($, window) {
+/**
+ *  Loads the details using an ajax call.
+ *
+ *  Methods:
+ *      requestDetails()
+ *          - Requests the details using the configuration object.
+ *
+ *
+ *  Events:
+ *      plugin/swagPayPalUnifiedAjaxInstallments/init
+ *          - Will be fired when this plugin was initialized.
+ *
+ *      plugin/swagPayPalUnifiedAjaxInstallments/beforeRequest
+ *          - Will be fired before the actual ajax request was triggered
+ *
+ *      plugin/swagPayPalUnifiedAjaxInstallments/afterRequest
+ *          - Will be fired after the actual ajax request was triggered.
+ *              NOTE: Don't expect any ajax result yet.
+ *
+ *      plugin/swagPayPalUnifiedAjaxInstallments/requestCheapestRate
+ *          - Will be fired when the cheapest rate was requested
+ *              NOTE: Don't expect any ajax result yet.
+ *
+ *      plugin/swagPayPalUnifiedAjaxInstallments/requestCompleteList
+ *          - Will be fired when all rates were requested
+ *              NOTE: Don't expect any ajax result yet.
+ *
+ *      plugin/swagPayPalUnifiedAjaxInstallments/ajaxSuccess
+ *          - Will be fired when the ajax request was successfully
+ *
+ *      plugin/swagPayPalUnifiedAjaxInstallments/ajaxError
+ *          - Will be fired when the ajax request failed
+ */
+;(function($) {
     'use strict';
 
     $.plugin('swagPayPalUnifiedAjaxInstallments', {
@@ -57,7 +90,8 @@
         },
 
         /**
-         *
+         * @public
+         * @method init
          */
         init: function () {
             var me = this;
@@ -71,7 +105,7 @@
         /**
          * Requests the financing details from the installments controller.
          *
-         * @private
+         * @public
          * @method requestDetails
          */
         requestDetails: function () {
@@ -113,6 +147,9 @@
 
         /**
          * Requests all rates for the provided price from the API.
+         *
+         * @private
+         * @requestCompleteList
          */
         requestCompleteList: function () {
             var me = this;
@@ -168,4 +205,4 @@
     $(function() {
         StateManager.addPlugin('*[data-paypalAjaxInstallments="true"]', 'swagPayPalUnifiedAjaxInstallments');
     });
-})(jQuery, window);
+})(jQuery);

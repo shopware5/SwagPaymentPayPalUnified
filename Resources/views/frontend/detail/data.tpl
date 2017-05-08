@@ -5,6 +5,6 @@
     {$smarty.block.parent}
 
     {if $paypalInstallmentsNotAvailable}
-        {include file='frontend/paypal_unified/installments/upstream_presentment/not_available.tpl'}
+        {include file='frontend/paypal_unified/installments/upstream_presentment/detail/not_available.tpl'}
     {/if}
 {/block}

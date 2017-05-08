@@ -54,18 +54,18 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebar.history.Grid', {
      */
     renderType: function (value) {
         switch (value) {
-        case 'authorization':
-            return '{s name="type/authorization"}Authorization{/s}';
-        case 'sale':
-            return '{s name="type/sale"}Sale{/s}';
-        case 'refund':
-            return '{s name="type/refund"}Refund{/s}';
-        case 'capture':
-            return '{s name="type/capture"}Capture{/s}';
-        case 'order':
-            return '{s name="type/order"}Order{/s}';
-        default:
-            return value;
+            case 'authorization':
+                return '{s name="type/authorization"}Authorization{/s}';
+            case 'sale':
+                return '{s name="type/sale"}Sale{/s}';
+            case 'refund':
+                return '{s name="type/refund"}Refund{/s}';
+            case 'capture':
+                return '{s name="type/capture"}Capture{/s}';
+            case 'order':
+                return '{s name="type/order"}Order{/s}';
+            default:
+                return value;
         }
     }
 });

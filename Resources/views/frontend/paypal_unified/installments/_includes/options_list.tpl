@@ -11,7 +11,7 @@
 {block name="frontend_paypal_unified_installments_complete_cart_option_list"}
     <div class="panel--group block-group">
         {block name="frontend_paypal_unified_installments_complete_cart_option_list_org_price"}
-            <span class="is--block is--strong is--align-center">
+            <span class="is--block is--strong is--align-center installments--net-loan-value">
                 {s name="list/orgPrice"}Net loan value:{/s} {$paypalInstallmentsProductPrice|currency}
             </span>
         {/block}

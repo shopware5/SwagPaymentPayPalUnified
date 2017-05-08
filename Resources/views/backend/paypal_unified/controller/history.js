@@ -39,21 +39,21 @@ Ext.define('Shopware.apps.PaypalUnified.controller.History', {
         this.getSidebar().historyTab.loadRecord(null);
 
         switch (type) {
-        case 'sale':
-            this.apiController.getSaleDetails(id, Ext.bind(this.saleDetailsCallback, this));
-            break;
-        case 'refund':
-            this.apiController.getRefundDetails(id, Ext.bind(this.refundDetailsCallback, this));
-            break;
-        case 'capture':
-            this.apiController.getCaptureDetails(id, Ext.bind(this.captureDetailsCallback, this));
-            break;
-        case 'order':
-            this.apiController.getOrderDetails(id, Ext.bind(this.orderDetailsCallback, this));
-            break;
-        case 'authorization':
-            this.apiController.getAuthorizationDetails(id, Ext.bind(this.authorizationDetailsCallback, this));
-            break;
+            case 'sale':
+                this.apiController.getSaleDetails(id, Ext.bind(this.saleDetailsCallback, this));
+                break;
+            case 'refund':
+                this.apiController.getRefundDetails(id, Ext.bind(this.refundDetailsCallback, this));
+                break;
+            case 'capture':
+                this.apiController.getCaptureDetails(id, Ext.bind(this.captureDetailsCallback, this));
+                break;
+            case 'order':
+                this.apiController.getOrderDetails(id, Ext.bind(this.orderDetailsCallback, this));
+                break;
+            case 'authorization':
+                this.apiController.getAuthorizationDetails(id, Ext.bind(this.authorizationDetailsCallback, this));
+                break;
         }
     },
 

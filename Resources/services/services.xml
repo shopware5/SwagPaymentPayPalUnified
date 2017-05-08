@@ -59,7 +59,6 @@
 
         <service id="paypal_unified.settings_service" class="SwagPaymentPayPalUnified\Components\Services\SettingsService">
             <argument type="service" id="models"/>
-            <argument type="service" id="dbal_connection"/>
             <argument type="service" id="paypal_unified.dependency_provider"/>
         </service>
 

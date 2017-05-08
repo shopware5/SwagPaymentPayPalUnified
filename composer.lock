@@ -14,12 +14,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/shopwareLabs/plugin-dev-tools.git",
-                "reference": "72b2209e962af686ecb1f82ca7a22f1fa4937690"
+                "reference": "859192eae9d6fd71272985f84f3cf6114bc9246b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shopwareLabs/plugin-dev-tools/zipball/72b2209e962af686ecb1f82ca7a22f1fa4937690",
-                "reference": "72b2209e962af686ecb1f82ca7a22f1fa4937690",
+                "url": "https://api.github.com/repos/shopwareLabs/plugin-dev-tools/zipball/859192eae9d6fd71272985f84f3cf6114bc9246b",
+                "reference": "859192eae9d6fd71272985f84f3cf6114bc9246b",
                 "shasum": ""
             },
             "type": "application",
@@ -34,7 +34,7 @@
                 "source": "https://github.com/shopwareLabs/plugin-dev-tools/tree/master",
                 "issues": "https://github.com/shopwareLabs/plugin-dev-tools/issues"
             },
-            "time": "2017-04-20 09:12:31"
+            "time": "2017-04-26 09:31:32"
         }
     ],
     "aliases": [],

@@ -100,8 +100,8 @@ class Installments implements SubscriberInterface
             return;
         }
 
-        $installmentsDisplayKind === 1 ? $view->assign('paypalInstallmentsMode', 'simple') : $view->assign('paypalInstallmentsMode', 'cheapest');
-        $view->assign('paypalProductPrice', $productPrice);
+        $view->assign('paypalInstallmentsMode', $installmentsDisplayKind === 1 ? 'simple' : 'cheapest');
+        $view->assign('paypalInstallmentsProductPrice', $productPrice);
         $view->assign('paypalInstallmentsPageType', 'detail');
     }
 
@@ -120,32 +120,33 @@ class Installments implements SubscriberInterface
             return;
         }
 
+        $view = $args->getSubject()->View();
+        $selectedPaymentMethodId = (int) $view->getAssign('sPayment')['id'];
+        $paymentMethodProvider = new PaymentMethodProvider();
+        $installmentsPaymentId = $paymentMethodProvider->getPaymentId($this->connection, PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME);
+
         $installmentsDisplayKind = $this->settings->getInstallmentsPresentmentCart();
 
-        if ($installmentsDisplayKind === 0) {
+        //If the selected payment method is Installments, we can not return here, because in any case, the complete financing list should be displayed.
+        if ($installmentsDisplayKind === 0 && $selectedPaymentMethodId !== $installmentsPaymentId) {
             return;
         }
 
-        $view = $args->getSubject()->View();
         $productPrice = $view->getAssign('sBasket')['AmountNumeric'];
 
         if (!$this->validationService->validatePrice($productPrice)) {
             return;
         }
 
-        $installmentsDisplayKind === 1 ? $view->assign('paypalInstallmentsMode', 'simple') : $view->assign('paypalInstallmentsMode', 'cheapest');
-        $view->assign('paypalProductPrice', $productPrice);
+        $view->assign('paypalInstallmentsMode', $installmentsDisplayKind === 1 ? 'simple' : 'cheapest');
+        $view->assign('paypalInstallmentsProductPrice', $productPrice);
         $view->assign('paypalInstallmentsPageType', 'cart');
 
         if ($action === 'confirm') {
-            /**
+            /*
              * If paypal installments is currently selected, we can request all financing information from the api.
              * A complete new template will then be loaded.
              */
-            $selectedPaymentMethodId = (int) $view->getAssign('sPayment')['id'];
-            $paymentMethodProvider = new PaymentMethodProvider();
-            $installmentsPaymentId = $paymentMethodProvider->getPaymentId($this->connection, PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME);
-
             if ($selectedPaymentMethodId === $installmentsPaymentId) {
                 $view->assign('paypalInstallmentsRequestCompleteList', true);
             }

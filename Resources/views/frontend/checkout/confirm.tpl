@@ -16,7 +16,13 @@
 
 {* PayPal Installments integration *}
 {block name='frontend_checkout_confirm_confirm_table_actions'}
-    {include file="frontend/paypal_unified/installments/upstream_presentment.tpl"}
+    {if $paypalInstallmentsMode === 'cheapest'}
+        {include file='frontend/paypal_unified/installments/upstream_presentment.tpl'}
+    {/if}
+
+    {if $paypalInstallmentsMode === 'simple'}
+        {include file="frontend/paypal_unified/installments/upstream_presentment/cart/simple.tpl"}
+    {/if}
 
     {$smarty.block.parent}
 {/block}

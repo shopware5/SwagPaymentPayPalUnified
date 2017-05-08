@@ -5,8 +5,8 @@
        class="paypal-unified-installments--modal-link{if $displayStyle == 'simple'} is--white{/if}{if $displayStyle == 'cheapest'} is--centered{/if}"
        title="{s name="link/text"}Information about possible rates{/s}"
        data-title="{s name="title"}Information about Installments Powered by PayPal{/s}"
-       data-modalURL="{url module='widgets' controller='PaypalUnifiedInstallments' action='modalContent'}"
-       data-productPrice="{$paypalProductPrice}">
+       data-paypalInstallmentsModalURL="{url module='widgets' controller='PaypalUnifiedInstallments' action='modalContent'}"
+       data-paypalInstallmentsProductPrice="{$paypalInstallmentsProductPrice}">
         {s name="link/text"}Information about possible rates{/s}
 
         {if $displayStyle == 'cheapest'}

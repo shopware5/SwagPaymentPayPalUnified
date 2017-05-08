@@ -50,17 +50,15 @@ class SettingsService implements SettingsServiceInterface
 
     /**
      * @param ModelManager       $modelManager
-     * @param Connection         $dbalConnection
      * @param DependencyProvider $dependencyProvider
      */
     public function __construct(
         ModelManager $modelManager,
-        Connection $dbalConnection,
         DependencyProvider $dependencyProvider
     ) {
         $this->modelManager = $modelManager;
         $this->shop = $dependencyProvider->getShop();
-        $this->dbalConnection = $dbalConnection;
+        $this->dbalConnection = $modelManager->getConnection();
     }
 
     /**

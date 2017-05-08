@@ -3,15 +3,17 @@
 
     .modal-content--logo {
         margin: auto;
-    }
 
-    .modal-content--introduction-text {
-        .unitize-margin(16, 0);
-        text-align: center;
+        .unitize(margin-top, 20);
+        .unitize(margin-bottom, 20);
     }
+}
 
-    .modal-content--legal-message {
-        .unitize(font-size, 12);
-        text-align: center;
+@media screen and(min-width: @tabletViewportWidth) {
+    .paypal-unified-installments--modal-content {
+        .close--off-canvas {
+            display: none;
+        }
+
     }
 }

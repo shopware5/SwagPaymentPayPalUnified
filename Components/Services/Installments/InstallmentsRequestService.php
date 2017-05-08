@@ -28,7 +28,6 @@ use Shopware\Components\HttpClient\RequestException;
 use Shopware\Components\Logger;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\InstallmentsResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Installments\FinancingRequest;
-use SwagPaymentPayPalUnified\PayPalBundle\Structs\Installments\FinancingResponse;
 
 class InstallmentsRequestService
 {
@@ -54,11 +53,10 @@ class InstallmentsRequestService
 
     /**
      * @param float $productPrice
-     * @param bool  $serialize
      *
-     * @return array|null|FinancingResponse
+     * @return array
      */
-    public function getList($productPrice, $serialize = false)
+    public function getList($productPrice)
     {
         //Prepare the request
         $financingRequest = new FinancingRequest();
@@ -69,9 +67,7 @@ class InstallmentsRequestService
         $financingRequest->setTransactionAmount($transactionAmount);
 
         try {
-            $response = $this->resource->getFinancingOptions($financingRequest);
-
-            return $serialize ? FinancingResponse::fromArray($response) : $response;
+            return $this->resource->getFinancingOptions($financingRequest);
         } catch (RequestException $e) {
             $this->pluginLogger->error(
                 'PayPal Unified: Could not get installments financing options due to a communication failure',

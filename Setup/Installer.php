@@ -206,12 +206,4 @@ class Installer
         . '<img src="{link file=\'frontend/_public/src/img/sidebar-paypal-generic.png\' fullPath}" alt="Logo \'PayPal empfohlen\'">'
         . '</a><br>' . '<!-- PayPal Logo -->';
     }
-
-    /**
-     * @return string
-     */
-    private function getInstallmentsPaymentLogo()
-    {
-        return '<img style="width: 25%" src="{link file=\'frontend/_public/src/img/sidebar-paypal-installments.png\'}"></a><br>';
-    }
 }

@@ -335,7 +335,7 @@ class InstallmentsTest extends UnifiedControllerTestCase
         $settingService = new SettingsServiceInstallmentsMock($settings);
 
         $this->getInstallmentsSubscriber($settingService)->onPostDispatchCheckout($actionEventArgs);
-        $price = $actionEventArgs->getSubject()->View()->getAssign('paypalProductPrice');
+        $price = $actionEventArgs->getSubject()->View()->getAssign('paypalInstallmentsProductPrice');
 
         $this->assertEquals(399.99, $price);
     }
@@ -425,12 +425,11 @@ class InstallmentsTest extends UnifiedControllerTestCase
     }
 
     /**
-     * @param     $settingService
-     * @param int $financingMode
+     * @param SettingsServiceInterface $settingService
      *
      * @return Installments
      */
-    private function getInstallmentsSubscriber($settingService, $financingMode = 1)
+    private function getInstallmentsSubscriber(SettingsServiceInterface $settingService)
     {
         $validationService = Shopware()->Container()->get('paypal_unified.installments.validation_service');
 

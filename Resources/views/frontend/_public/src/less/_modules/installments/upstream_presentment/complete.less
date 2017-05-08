@@ -1,7 +1,19 @@
 .paypal-unified-installments-notification--full {
     .border-radius();
-    .unitize-padding(16, 16);
+    .unitize(padding, 16);
     border: 1px solid @paypalUnifiedInstallmentsPanelBorderColor;
+
+    .notification--legal-message {
+        .unitize(font-size, 10);
+        .unitize-margin(10, 0);
+
+        text-align: center;
+    }
+
+    .installments--net-loan-value {
+        .unitize(margin-top, 16);
+        .unitize(margin-bottom, 16);
+    }
 
     .installment--wrapper {
         .unitize(padding, 10);
@@ -25,7 +37,7 @@
         }
 
         .wrapper--total-cost {
-            .unitize-margin(8, 0, 8, 0);
+            .unitize-margin(8, 0);
             width: 100%;
             text-align: center;
         }
