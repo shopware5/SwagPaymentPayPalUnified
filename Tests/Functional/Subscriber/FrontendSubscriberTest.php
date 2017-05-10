@@ -30,7 +30,7 @@ use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Mocks\DummyController;
 use SwagPaymentPayPalUnified\Tests\Mocks\ViewMock;
 
-class FrontendSubscriberTest extends \Enlight_Components_Test_Controller_TestCase
+class FrontendSubscriberTest extends \PHPUnit_Framework_TestCase
 {
     use DatabaseTestCaseTrait;
 
@@ -66,8 +66,9 @@ class FrontendSubscriberTest extends \Enlight_Components_Test_Controller_TestCas
         $this->createTestSettings(true, true, true);
 
         $view = new ViewMock(new Enlight_Template_Manager());
+        $request = new \Enlight_Controller_Request_RequestTestCase();
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($this->Request(), $view),
+            'subject' => new DummyController($request, $view),
         ]);
 
         $subscriber->onPostDispatchSecure($enlightEventArgs);
@@ -82,8 +83,9 @@ class FrontendSubscriberTest extends \Enlight_Components_Test_Controller_TestCas
         $this->createTestSettings(false, true, true);
 
         $view = new ViewMock(new Enlight_Template_Manager());
+        $request = new \Enlight_Controller_Request_RequestTestCase();
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($this->Request(), $view),
+            'subject' => new DummyController($request, $view),
         ]);
 
         $subscriber->onPostDispatchSecure($enlightEventArgs);
@@ -97,8 +99,9 @@ class FrontendSubscriberTest extends \Enlight_Components_Test_Controller_TestCas
         $this->createTestSettings(true, false, true);
 
         $view = new ViewMock(new Enlight_Template_Manager());
+        $request = new \Enlight_Controller_Request_RequestTestCase();
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($this->Request(), $view),
+            'subject' => new DummyController($request, $view),
         ]);
 
         $subscriber->onPostDispatchSecure($enlightEventArgs);
@@ -112,8 +115,9 @@ class FrontendSubscriberTest extends \Enlight_Components_Test_Controller_TestCas
         $this->createTestSettings(true, false, false);
 
         $view = new ViewMock(new Enlight_Template_Manager());
+        $request = new \Enlight_Controller_Request_RequestTestCase();
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($this->Request(), $view),
+            'subject' => new DummyController($request, $view),
         ]);
 
         $subscriber->onPostDispatchSecure($enlightEventArgs);
@@ -121,6 +125,11 @@ class FrontendSubscriberTest extends \Enlight_Components_Test_Controller_TestCas
         $this->assertFalse((bool) $view->getAssign('restylePaymentSelection'));
     }
 
+    /**
+     * @param bool $active
+     * @param bool $plusActive
+     * @param bool $restylePaymentSelection
+     */
     private function createTestSettings($active, $plusActive, $restylePaymentSelection)
     {
         $settingsParams = [

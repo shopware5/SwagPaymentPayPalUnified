@@ -30,26 +30,9 @@ use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Mocks\DummyController;
 use SwagPaymentPayPalUnified\Tests\Mocks\ViewMock;
 
-class CheckoutSubscriberTest extends \Enlight_Components_Test_Controller_TestCase
+class CheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
 {
     use DatabaseTestCaseTrait;
-
-    /**
-     * @before
-     */
-    public function setSessionSetting()
-    {
-        /* prevent this error: Zend_Session_Exception: You must call Zend_Session::setId() before any output has been sent to the browser; */
-        \Zend_Session::$_unitTestEnabled = true;
-    }
-
-    /**
-     * @after
-     */
-    public function disableSessionSetting()
-    {
-        \Zend_Session::$_unitTestEnabled = false;
-    }
 
     public function test_can_be_created()
     {
@@ -75,10 +58,11 @@ class CheckoutSubscriberTest extends \Enlight_Components_Test_Controller_TestCas
             new Enlight_Template_Manager()
         );
 
-        $this->Request()->setActionName('finish');
+        $request = new \Enlight_Controller_Request_RequestTestCase();
+        $request->setActionName('finish');
 
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($this->Request(), $view, $this->Response()),
+            'subject' => new DummyController($request, $view),
         ]);
 
         $subscriber->onPostDispatchCheckout($enlightEventArgs);
@@ -94,16 +78,19 @@ class CheckoutSubscriberTest extends \Enlight_Components_Test_Controller_TestCas
             Shopware()->Container()->get('paypal_unified.dependency_provider')
         );
 
+        $request = new \Enlight_Controller_Request_RequestTestCase();
+        $request->setActionName('invalidSuperAction');
+
         $view = new ViewMock(
             new Enlight_Template_Manager()
         );
 
-        $this->Request()->setActionName('invalidSuperAction');
+        $response = new \Enlight_Controller_Response_ResponseTestCase();
 
         $this->createTestSettings();
 
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($this->Request(), $view, $this->Response()),
+            'subject' => new DummyController($request, $view, $response),
         ]);
 
         $subscriber->onPostDispatchCheckout($enlightEventArgs);
@@ -123,12 +110,15 @@ class CheckoutSubscriberTest extends \Enlight_Components_Test_Controller_TestCas
             new Enlight_Template_Manager()
         );
 
-        $this->Request()->setActionName('finish');
+        $request = new \Enlight_Controller_Request_RequestTestCase();
+        $request->setActionName('finish');
+
+        $response = new \Enlight_Controller_Response_ResponseTestCase();
 
         $this->createTestSettings();
 
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($this->Request(), $view, $this->Response()),
+            'subject' => new DummyController($request, $view, $response),
         ]);
 
         $subscriber->onPostDispatchCheckout($enlightEventArgs);
@@ -147,14 +137,16 @@ class CheckoutSubscriberTest extends \Enlight_Components_Test_Controller_TestCas
         $view = new ViewMock(
             new Enlight_Template_Manager()
         );
+        $request = new \Enlight_Controller_Request_RequestTestCase();
+        $request->setActionName('finish');
+        $request->setParam('paypal_unified_error_code', 5);
 
-        $this->Request()->setActionName('finish');
-        $this->Request()->setParam('paypal_unified_error_code', 5);
+        $response = new \Enlight_Controller_Response_ResponseTestCase();
 
         $this->createTestSettings();
 
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($this->Request(), $view, $this->Response()),
+            'subject' => new DummyController($request, $view, $response),
         ]);
 
         $subscriber->onPostDispatchCheckout($enlightEventArgs);

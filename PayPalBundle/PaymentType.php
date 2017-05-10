@@ -26,7 +26,7 @@ namespace SwagPaymentPayPalUnified\PayPalBundle;
 
 class PaymentType
 {
-    const PAYPAL_CLASSIC = 1;
-    const PAYPAL_PLUS = 2;
-    const PAYPAL_INVOICE = 3;
+    const PAYPAL_CLASSIC = 'PayPalClassic';
+    const PAYPAL_PLUS = 'PayPalPlus';
+    const PAYPAL_INVOICE = 'PayPalPlusInvoice';
 }

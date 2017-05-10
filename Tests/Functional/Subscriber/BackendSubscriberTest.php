@@ -29,7 +29,7 @@ use SwagPaymentPayPalUnified\Subscriber\Backend;
 use SwagPaymentPayPalUnified\Tests\Mocks\DummyController;
 use SwagPaymentPayPalUnified\Tests\Mocks\ViewMock;
 
-class BackendSubscriberTest extends \Enlight_Components_Test_Controller_TestCase
+class BackendSubscriberTest extends \PHPUnit_Framework_TestCase
 {
     public function test_can_be_created()
     {
@@ -51,10 +51,11 @@ class BackendSubscriberTest extends \Enlight_Components_Test_Controller_TestCase
             new Enlight_Template_Manager()
         );
 
-        $this->Request()->setActionName('index');
+        $request = new \Enlight_Controller_Request_RequestTestCase();
+        $request->setActionName('index');
 
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($this->Request(), $view),
+            'subject' => new DummyController($request, $view),
         ]);
 
         $subscriber->onLoadBackendIndex($enlightEventArgs);

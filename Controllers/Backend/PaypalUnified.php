@@ -493,12 +493,14 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
             ->leftJoin('sOrder.customer', 'customer')
             ->leftJoin('sOrder.orderStatus', 'orderStatus')
             ->leftJoin('sOrder.paymentStatus', 'paymentStatus')
+            ->leftJoin('sOrder.attribute', 'attribute')
 
             ->addSelect('languageSubShop')
             ->addSelect('payment')
             ->addSelect('customer')
             ->addSelect('orderStatus')
-            ->addSelect('paymentStatus');
+            ->addSelect('paymentStatus')
+            ->addSelect('attribute');
 
         return $builder;
     }
