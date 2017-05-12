@@ -72,19 +72,18 @@ class Checkout implements SubscriberInterface
     /**
      * Checkout constructor.
      *
-     * @param ContainerInterface       $container
-     * @param SettingsServiceInterface $config
-     * @param DependencyProvider       $dependencyProvider
+     * @param ContainerInterface $container
      */
     public function __construct(
-        ContainerInterface $container,
-        SettingsServiceInterface $config,
-        DependencyProvider $dependencyProvider
+        ContainerInterface $container
     ) {
         $this->container = $container;
-        $this->config = $config;
-        $this->paymentMethodProvider = new PaymentMethodProvider($container->get('models'));
+        $this->config = $container->get('paypal_unified.settings_service');
         $this->logger = $container->get('pluginlogger');
+        $this->paymentMethodProvider = new PaymentMethodProvider($container->get('models'));
+
+        /** @var DependencyProvider $dependencyProvider */
+        $dependencyProvider = $container->get('paypal_unified.dependency_provider');
         $this->shop = $dependencyProvider->getShop();
     }
 

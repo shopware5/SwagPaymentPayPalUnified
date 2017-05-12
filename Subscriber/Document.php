@@ -102,6 +102,7 @@ class Document implements SubscriberInterface
             case PaymentType::PAYPAL_INVOICE:
                 $this->handleInvoiceInstructions($document->_order->order['ordernumber'], $document);
                 break;
+            case PaymentType::PAYPAL_INSTALLMENTS:
             default:
                 break;
         }

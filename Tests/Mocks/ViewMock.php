@@ -87,7 +87,7 @@ class ViewMock extends Enlight_View_Default
     /**
      * @param string $spec
      *
-     * @return object
+     * @return mixed
      */
     public function getAssign($spec = '')
     {

@@ -29,13 +29,19 @@ use Enlight\Event\SubscriberInterface;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\Services\SettingsService;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
 
 class PaymentMeans implements SubscriberInterface
 {
     /**
      * @var int
      */
-    private $paymentId;
+    private $unifiedPaymentId;
+
+    /**
+     * @var int
+     */
+    private $installmentsPaymentId;
 
     /**
      * @var SettingsService
@@ -49,7 +55,8 @@ class PaymentMeans implements SubscriberInterface
     public function __construct(Connection $connection, SettingsServiceInterface $settingsService)
     {
         $paymentMethodProvider = new PaymentMethodProvider(null);
-        $this->paymentId = $paymentMethodProvider->getPaymentId($connection);
+        $this->unifiedPaymentId = $paymentMethodProvider->getPaymentId($connection);
+        $this->installmentsPaymentId = $paymentMethodProvider->getPaymentId($connection, PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME);
         $this->settingsService = $settingsService;
     }
 
@@ -72,10 +79,17 @@ class PaymentMeans implements SubscriberInterface
         $availableMethods = $args->getReturn();
 
         foreach ($availableMethods as $index => $paymentMethod) {
-            if ((int) $paymentMethod['id'] === $this->paymentId
+            if ((int) $paymentMethod['id'] === $this->unifiedPaymentId
                 && (!$this->settingsService->hasSettings() || !$this->settingsService->get('active'))
             ) {
                 //Force unset the payment method, because it's not available without any settings.
+                unset($availableMethods[$index]);
+                break;
+            }
+
+            if ((int) $paymentMethod['id'] === $this->installmentsPaymentId
+                && !$this->settingsService->get('installments_active')
+            ) {
                 unset($availableMethods[$index]);
                 break;
             }

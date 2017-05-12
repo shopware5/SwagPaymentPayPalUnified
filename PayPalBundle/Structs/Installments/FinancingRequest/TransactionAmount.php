@@ -22,84 +22,61 @@
  * our trademarks remain entirely with us.
  */
 
-namespace SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
+namespace SwagPaymentPayPalUnified\PayPalBundle\Structs\Installments\FinancingRequest;
 
-class Link
+class TransactionAmount
 {
     /**
-     * @var string
+     * @var float
      */
-    private $href;
+    private $value;
 
     /**
      * @var string
      */
-    private $rel;
+    private $currencyCode;
 
     /**
-     * @var string
+     * @return float
      */
-    private $method;
-
-    /**
-     * @return string
-     */
-    public function getHref()
+    public function getValue()
     {
-        return $this->href;
+        return $this->value;
     }
 
     /**
-     * @param string $href
+     * @param float $value
      */
-    public function setHref($href)
+    public function setValue($value)
     {
-        $this->href = $href;
+        $this->value = $value;
     }
 
     /**
      * @return string
      */
-    public function getRel()
+    public function getCurrencyCode()
     {
-        return $this->rel;
+        return $this->currencyCode;
     }
 
     /**
-     * @param string $rel
+     * @param string $currencyCode
      */
-    public function setRel($rel)
+    public function setCurrencyCode($currencyCode)
     {
-        $this->rel = $rel;
+        $this->currencyCode = $currencyCode;
     }
 
     /**
-     * @return string
+     * @return array
      */
-    public function getMethod()
+    public function toArray()
     {
-        return $this->method;
-    }
-
-    /**
-     * @param string $method
-     */
-    public function setMethod($method)
-    {
-        $this->method = $method;
-    }
-
-    /**
-     * @param array $data
-     *
-     * @return Link
-     */
-    public static function fromArray(array $data)
-    {
-        $result = new self();
-        $result->setHref($data['href']);
-        $result->setRel($data['rel']);
-        $result->setMethod($data['method']);
+        $result = [
+            'value' => $this->getValue(),
+            'currency_code' => $this->getCurrencyCode(),
+        ];
 
         return $result;
     }

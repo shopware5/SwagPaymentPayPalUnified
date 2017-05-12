@@ -24,6 +24,8 @@
 
 require __DIR__ . '/../../../../autoload.php';
 
+use Shopware\Models\Shop\Shop;
+
 class PayPalUnifiedTestKernel extends \Shopware\Kernel
 {
     public static function start()
@@ -35,7 +37,7 @@ class PayPalUnifiedTestKernel extends \Shopware\Kernel
         $container->get('plugins')->Core()->ErrorHandler()->registerErrorHandler(E_ALL | E_STRICT);
 
         /** @var $repository \Shopware\Models\Shop\Repository */
-        $repository = $container->get('models')->getRepository('Shopware\Models\Shop\Shop');
+        $repository = $container->get('models')->getRepository(Shop::class);
 
         $shop = $repository->getActiveDefault();
         $shop->registerResources();

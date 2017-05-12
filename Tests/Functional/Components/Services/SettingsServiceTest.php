@@ -75,7 +75,7 @@ class SettingsServiceTest extends \PHPUnit_Framework_TestCase
 
     public function test_get_without_shop_throws_exception()
     {
-        $settingsService = new SettingsService(Shopware()->Container()->get('models'), Shopware()->Container()->get('dbal_connection'), new DependencyMock());
+        $settingsService = new SettingsService(Shopware()->Container()->get('models'), new DependencyMock());
 
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Could not retrieve a single setting without a shop instance.');
@@ -92,7 +92,7 @@ class SettingsServiceTest extends \PHPUnit_Framework_TestCase
 
     public function test_hasSettings_false_because_no_shop_is_available()
     {
-        $settingsService = new SettingsService(Shopware()->Container()->get('models'), Shopware()->Container()->get('dbal_connection'), new DependencyMock());
+        $settingsService = new SettingsService(Shopware()->Container()->get('models'), new DependencyMock());
 
         $this->assertFalse($settingsService->hasSettings());
     }

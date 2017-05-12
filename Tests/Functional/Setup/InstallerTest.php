@@ -179,15 +179,4 @@ class InstallerTest extends \PHPUnit_Framework_TestCase
 
         $this->assertCount(1, Shopware()->Db()->fetchAll($query));
     }
-
-    /**
-     * @return Plugin
-     */
-    private function getPluginModel()
-    {
-        /** @var ModelManager $em */
-        $em = Shopware()->Container()->get('models');
-
-        return $em->getRepository(Plugin::class)->findOneBy(['name' => 'SwagPaymentPayPalUnified']);
-    }
 }

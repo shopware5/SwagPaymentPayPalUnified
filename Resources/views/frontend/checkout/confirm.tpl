@@ -5,37 +5,23 @@
     <script src="https://www.paypalobjects.com/webstatic/ppplus/ppplus.min.js"></script>
 {/block}
 
+{* PayPal Plus integration *}
 {block name='frontend_checkout_confirm_premiums'}
     {if $usePayPalPlus && $sUserData.additional.payment.id == $paypalUnifiedPaymentId }
+        {include file="frontend/paypal_unified/plus/checkout/payment_wall_premiums.tpl"}
+    {/if}
 
-        {block name='frontend_checkout_confirm_paypal_unified_payment_wall_plugin'}
-            {* Unified payment wall plugin *}
-            <div class="is--hidden"
-                 data-paypalPaymentWall="true"
-                 data-paypalLanguage="{$paypalPlusLanguageIso}"
-                 data-paypalApprovalUrl="{$paypalUnifiedApprovalUrl}"
-                 data-paypalCountryIso="{$sUserData.additional.country.countryiso}"
-                 data-paypalMode="{if $paypalUnifiedModeSandbox}sandbox{else}live{/if}">
-            </div>
-        {/block}
+    {$smarty.block.parent}
+{/block}
 
-        {block name='frontend_checkout_confirm_paypal_unified_payment_wall_confirm_plugin'}
-            {* Unified confirm page plugin *}
-            <div class="is--hidden"
-                 data-paypalPaymentWallConfirm="true"
-                 data-paypalAddressPatchUrl="{url controller=PaypalUnified action=patchAddress forceSecure=true}"
-                 data-paypalCameFromPaymentSelection="{$cameFromPaymentSelection}"
-                 data-paypalRemotePaymentId="{$paypalUnifiedRemotePaymentId}"
-                 data-paypalErrorPage="{url controller=checkout action=shippingPayment paypal_unified_error_code=2}">
-            </div>
-        {/block}
+{* PayPal Installments integration *}
+{block name='frontend_checkout_confirm_confirm_table_actions'}
+    {if $paypalInstallmentsMode === 'cheapest'}
+        {include file='frontend/paypal_unified/installments/upstream_presentment.tpl'}
+    {/if}
 
-        {block name='frontend_checkout_confirm_paypal_unified_payment_wall'}
-            {* Placeholder for the payment wall iframe *}
-            <div id="ppplus">
-            </div>
-        {/block}
-
+    {if $paypalInstallmentsMode === 'simple'}
+        {include file="frontend/paypal_unified/installments/upstream_presentment/cart/simple.tpl"}
     {/if}
 
     {$smarty.block.parent}

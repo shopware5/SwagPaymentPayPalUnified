@@ -1,0 +1,65 @@
+.paypal-unified-installments-notification--cheapest {
+    .unitize(margin-bottom, 16);
+    width: 100%;
+
+    &.is--cart {
+        .unitize(margin-top, 16);
+        .unitize(padding, 16);
+        .border-radius();
+        border: 1px solid @paypalUnifiedInstallmentsPanelBorderColor;
+        width: 100%;
+
+        .paypal-unified-installments--modal-link {
+            .unitize(margin-bottom, 20);
+            margin-top: 0;
+        }
+
+        .cheapest--title {
+            .unitize(margin-right, 60);
+            .unitize(margin-bottom, 16);
+        }
+    }
+
+    .notification--table {
+        width: 100%;
+
+        .table--label,
+        .table--value {
+            .unitize(font-size, 12);
+        }
+    }
+
+    .notification--lender {
+        .unitize(font-size, 10);
+        width: 100%;
+
+        &.is--centered {
+            text-align: center;
+        }
+    }
+
+    .notification--legal-message {
+        .unitize(font-size, 12);
+    }
+}
+
+@media screen and (min-width: @desktopViewportWidth) {
+    /* Side by side view */
+    .paypal-unified-installments-notification--cheapest {
+        &.is--cart {
+            .unitize(padding, 8);
+
+            .panel--left {
+                .unitize(padding, 8);
+                width: 50%;
+                float: left;
+                display: inline-block;
+            }
+
+            .panel--right {
+                width: 50%;
+                display: inline-block;
+            }
+        }
+    }
+}

@@ -29,6 +29,7 @@ use Shopware\Bundle\AttributeBundle\Service\CrudService;
 use Shopware\Components\Model\ModelManager;
 use Shopware\Models\Payment\Payment;
 use Shopware\Models\Plugin\Plugin;
+use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 
 class Installer
 {
@@ -84,7 +85,8 @@ class Installer
         }
 
         $this->createDatabaseTables();
-        $this->createPaymentMethod();
+        $this->createUnifiedPaymentMethod();
+        $this->createInstallmentsPaymentMethod();
         $this->createAttributes();
         $this->createDocumentTemplates();
 
@@ -143,10 +145,10 @@ class Installer
         ]);
     }
 
-    private function createPaymentMethod()
+    private function createUnifiedPaymentMethod()
     {
         $existingPayment = $this->modelManager->getRepository(Payment::class)->findOneBy([
-            'name' => 'SwagPaymentPayPalUnified',
+            'name' => PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME,
         ]);
 
         if ($existingPayment !== null) {
@@ -156,10 +158,32 @@ class Installer
 
         $entity = new Payment();
         $entity->setActive(false);
-        $entity->setName('SwagPaymentPayPalUnified');
+        $entity->setName(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
         $entity->setDescription('PayPal');
-        $entity->setAdditionalDescription($this->getPaymentLogo() . 'Bezahlung per PayPal - einfach, schnell und sicher.');
+        $entity->setAdditionalDescription($this->getUnifiedPaymentLogo() . 'Bezahlung per PayPal - einfach, schnell und sicher.');
         $entity->setAction('PaypalUnified');
+
+        $this->modelManager->persist($entity);
+        $this->modelManager->flush($entity);
+    }
+
+    private function createInstallmentsPaymentMethod()
+    {
+        $existingPayment = $this->modelManager->getRepository(Payment::class)->findOneBy([
+            'name' => PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME,
+        ]);
+
+        if ($existingPayment !== null) {
+            //If the payment does already exist, we don't need to add it again.
+            return;
+        }
+
+        $entity = new Payment();
+        $entity->setActive(false);
+        $entity->setName(PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME);
+        $entity->setDescription('Ratenzahlung');
+        $entity->setAdditionalDescription('Wir ermöglichen Ihnen die Finanzierung Ihres Einkaufs mithilfe der Ratenzahlung Powered by PayPal. In Sekundenschnelle, vollständig online, vorbehaltlich Bonitätsprüfung.');
+        $entity->setAction('PaypalUnifiedInstallments');
 
         $this->modelManager->persist($entity);
         $this->modelManager->flush($entity);
@@ -174,7 +198,7 @@ class Installer
     /**
      * @return string
      */
-    private function getPaymentLogo()
+    private function getUnifiedPaymentLogo()
     {
         return '<!-- PayPal Logo -->'
         . '<a onclick="window.open(this.href, \'olcwhatispaypal\',\'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=400, height=500\'); return false;"'
