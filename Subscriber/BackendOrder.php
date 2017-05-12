@@ -49,8 +49,37 @@ class BackendOrder implements SubscriberInterface
         /** @var \Shopware\Components\Model\QueryBuilder $queryBuilder */
         $queryBuilder = $args->getReturn();
 
-        $queryBuilder->leftJoin('orders.attribute', 'attribute')
-            ->addSelect('attribute');
+        $joinParts = $queryBuilder->getDQLPart('join')['orders'];
+        $joinAttributePartMissing = true;
+        $joinAttributeAlias = 'attribute';
+
+        /** @var \Doctrine\ORM\Query\Expr\Join $joinPart */
+        foreach ($joinParts as $joinPart) {
+            if ($joinPart->getJoin() === 'orders.attribute') {
+                $joinAttributePartMissing = false;
+                $joinAttributeAlias = $joinPart->getAlias();
+            }
+        }
+
+        if ($joinAttributePartMissing) {
+            $queryBuilder->leftJoin('orders.attribute', $joinAttributeAlias);
+        }
+
+        $selectParts = $queryBuilder->getDQLPart('select');
+        $selectAttributePartIsMissing = true;
+
+        /** @var \Doctrine\ORM\Query\Expr\Select $selectPart */
+        foreach ($selectParts as $selectPart) {
+            foreach ($selectPart->getParts() as $part) {
+                if ($part === $joinAttributeAlias) {
+                    $selectAttributePartIsMissing = false;
+                }
+            }
+        }
+
+        if ($selectAttributePartIsMissing) {
+            $queryBuilder->addSelect($joinAttributeAlias);
+        }
 
         $args->setReturn($queryBuilder);
     }

@@ -46,15 +46,58 @@ class BackendOrderSubscriberTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('onPostDispatchOrder', $events['Enlight_Controller_Action_PostDispatchSecure_Backend_Order']);
     }
 
-    public function test_addAttributesToOrders()
+    public function test_addAttributesToOrders_without_attribute_parts()
     {
-        /** @var QueryBuilder $queryBuilderMock */
-        $queryBuilderMock = Shopware()->Container()->get('models')->createQueryBuilder();
-        $queryBuilderMock->addSelect('orders')
+        /** @var QueryBuilder $initialQueryBuilder */
+        $initialQueryBuilder = Shopware()->Container()->get('models')->createQueryBuilder();
+        $initialQueryBuilder->addSelect('orders')
             ->from(Order::class, 'orders');
         $hookArgs = new \Enlight_Hook_HookArgs();
 
-        $hookArgs->setReturn($queryBuilderMock);
+        $hookArgs->setReturn($initialQueryBuilder);
+
+        $this->getBackendOrderSubscriber()->addAttributesToOrders($hookArgs);
+
+        $queryBuilder = $hookArgs->getReturn();
+
+        $this->assertCount(2, $queryBuilder->getDQLPart('select'));
+        $this->assertCount(1, $queryBuilder->getDQLPart('join')['orders']);
+
+        $this->assertSame($queryBuilder->getDQLPart('select')[1]->getParts()[0], 'attribute');
+    }
+
+    public function test_addAttributesToOrders_with_join_attribute_part()
+    {
+        /** @var QueryBuilder $initialQueryBuilder */
+        $initialQueryBuilder = Shopware()->Container()->get('models')->createQueryBuilder();
+        $initialQueryBuilder->addSelect('orders')
+            ->from(Order::class, 'orders')
+            ->leftJoin('orders.attribute', 'attribute');
+        $hookArgs = new \Enlight_Hook_HookArgs();
+
+        $hookArgs->setReturn($initialQueryBuilder);
+
+        $this->getBackendOrderSubscriber()->addAttributesToOrders($hookArgs);
+
+        $queryBuilder = $hookArgs->getReturn();
+
+        $this->assertCount(2, $queryBuilder->getDQLPart('select'));
+        $this->assertCount(1, $queryBuilder->getDQLPart('join')['orders']);
+
+        $this->assertSame($queryBuilder->getDQLPart('select')[1]->getParts()[0], 'attribute');
+    }
+
+    public function test_addAttributesToOrders_with_join_and_select_attribute_parts()
+    {
+        /** @var QueryBuilder $initialQueryBuilder */
+        $initialQueryBuilder = Shopware()->Container()->get('models')->createQueryBuilder();
+        $initialQueryBuilder->addSelect('orders')
+            ->from(Order::class, 'orders')
+            ->leftJoin('orders.attribute', 'attribute')
+            ->addSelect('attribute');
+        $hookArgs = new \Enlight_Hook_HookArgs();
+
+        $hookArgs->setReturn($initialQueryBuilder);
 
         $this->getBackendOrderSubscriber()->addAttributesToOrders($hookArgs);
 
