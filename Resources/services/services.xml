@@ -36,7 +36,12 @@
 
         <service id="paypal_unified.webhook_service" class="SwagPaymentPayPalUnified\PayPalBundle\Services\WebhookService"/>
 
-        <service id="paypal_unified.basket_service" class="SwagPaymentPayPalUnified\Components\Services\BasketService">
+        <service id="paypal_unified.payment_request_service" class="SwagPaymentPayPalUnified\Components\Services\PaymentRequestService">
+            <argument type="service" id="router"/>
+            <argument type="service" id="paypal_unified.settings_service"/>
+        </service>
+
+        <service id="paypal_unified.installments_payment_request_service" class="SwagPaymentPayPalUnified\Components\Services\Installments\InstallmentsPaymentRequestService">
             <argument type="service" id="router"/>
             <argument type="service" id="paypal_unified.settings_service"/>
         </service>

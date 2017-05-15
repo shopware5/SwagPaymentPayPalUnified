@@ -24,7 +24,7 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services;
 
-use SwagPaymentPayPalUnified\Components\Services\BasketService;
+use SwagPaymentPayPalUnified\Components\Services\PaymentRequestService;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile\WebProfileFlowConfig;
@@ -191,13 +191,13 @@ class BasketServiceTest extends \PHPUnit_Framework_TestCase
     /**
      * @param SettingsServiceInterface $settingService
      *
-     * @return BasketService
+     * @return PaymentRequestService
      */
     private function getBasketService(SettingsServiceInterface $settingService)
     {
         $router = Shopware()->Container()->get('router');
 
-        return new BasketService($router, $settingService);
+        return new PaymentRequestService($router, $settingService);
     }
 
     /**

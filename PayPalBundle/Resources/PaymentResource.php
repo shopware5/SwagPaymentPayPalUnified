@@ -24,68 +24,35 @@
 
 namespace SwagPaymentPayPalUnified\PayPalBundle\Resources;
 
-use SwagPaymentPayPalUnified\Components\Services\BasketService;
-use SwagPaymentPayPalUnified\PayPalBundle\Components\BasketServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PatchInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\RequestType;
 use SwagPaymentPayPalUnified\PayPalBundle\RequestUri;
 use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService;
-use SwagPaymentPayPalUnified\PayPalBundle\Services\WebProfileService;
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
 
 class PaymentResource
 {
-    /**
-     * @var BasketService
-     */
-    private $basketService;
-
-    /**
-     * @var WebProfileService
-     */
-    private $profileService;
-
     /**
      * @var ClientService
      */
     private $clientService;
 
     /**
-     * PaymentResource constructor.
-     *
-     * @param ClientService          $clientService
-     * @param WebProfileService      $webProfileService
-     * @param BasketServiceInterface $basketService
-     *
-     * @internal param ContainerInterface $container
+     * @param ClientService $clientService
      */
-    public function __construct(
-        ClientService $clientService,
-        WebProfileService $webProfileService,
-        BasketServiceInterface $basketService
-    ) {
-        $this->basketService = $basketService;
-        $this->profileService = $webProfileService;
+    public function __construct(ClientService $clientService)
+    {
         $this->clientService = $clientService;
     }
 
     /**
-     * @param $orderData
+     * @param Payment $payment
      *
      * @return array
      */
-    public function create($orderData)
+    public function create(Payment $payment)
     {
-        $basketData = $orderData['sBasket'];
-        $userData = $orderData['sUserData'];
-
-        $profile = $this->profileService->getWebProfile();
-        $params = $this->basketService->getRequestParameters(
-            $profile,
-            $basketData,
-            $userData
-        );
-
-        return $this->clientService->sendRequest(RequestType::POST, RequestUri::PAYMENT_RESOURCE, $params->toArray(), true);
+        return $this->clientService->sendRequest(RequestType::POST, RequestUri::PAYMENT_RESOURCE, $payment->toArray(), true);
     }
 
     /**

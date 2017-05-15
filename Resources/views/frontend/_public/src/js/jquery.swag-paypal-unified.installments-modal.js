@@ -316,4 +316,18 @@
             ['s', 'xs']
         );
     });
+
+    window.StateManager.addPlugin(
+        '.paypal-unified-installments--modal-link',
+        'swagPayPalUnifiedInstallmentsModal',
+        { mode: 'modal' },
+        ['xl', 'l', 'm']
+    );
+
+    window.StateManager.addPlugin(
+        '.paypal-unified-installments--modal-link',
+        'swagPayPalUnifiedInstallmentsModal',
+        { mode: 'offcanvas' },
+        ['s', 'xs']
+    );
 })(jQuery, window);

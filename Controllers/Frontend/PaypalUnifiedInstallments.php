@@ -22,21 +22,17 @@
  * our trademarks remain entirely with us.
  */
 
-namespace SwagPaymentPayPalUnified\PayPalBundle\Components;
-
-use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
-use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile;
-
-interface BasketServiceInterface
+class Shopware_Controllers_Frontend_PaypalUnifiedInstallments extends \Shopware_Controllers_Frontend_Payment
 {
     /**
-     * The function returns an array with all parameters that are expected by the PayPal API.
-     *
-     * @param WebProfile $profile
-     * @param array      $basketData
-     * @param array      $userData
-     *
-     * @return Payment
+     * To avoid duplicate code, we can simply trigger the unified controller here.
      */
-    public function getRequestParameters(WebProfile $profile, array $basketData, array $userData);
+    public function indexAction()
+    {
+        $this->redirect([
+            'module' => 'frontend',
+            'controller' => 'PaypalUnified',
+            'forceSecure' => true,
+        ]);
+    }
 }

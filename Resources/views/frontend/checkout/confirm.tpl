@@ -16,11 +16,11 @@
 
 {* PayPal Installments integration *}
 {block name='frontend_checkout_confirm_confirm_table_actions'}
-    {if $paypalInstallmentsMode === 'cheapest'}
+    {if $paypalInstallmentsMode === 'cheapest' || $paypalInstallmentsRequestCompleteList}
         {include file='frontend/paypal_unified/installments/upstream_presentment.tpl'}
     {/if}
 
-    {if $paypalInstallmentsMode === 'simple'}
+    {if $paypalInstallmentsMode === 'simple' && !$paypalInstallmentsRequestCompleteList}
         {include file="frontend/paypal_unified/installments/upstream_presentment/cart/simple.tpl"}
     {/if}
 

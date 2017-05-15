@@ -24,6 +24,7 @@
 
 use Shopware\Components\HttpClient\RequestException;
 use Shopware\Components\Logger;
+use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\PaymentStatus;
 use SwagPaymentPayPalUnified\Components\Services\OrderDataService;
 use SwagPaymentPayPalUnified\Components\Services\PaymentAddressPatchService;
@@ -64,8 +65,33 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
             /** @var PaymentResource $paymentResource */
             $paymentResource = $this->container->get('paypal_unified.payment_resource');
 
-            $response = $paymentResource->create($orderData);
-            /** @var Payment $responseStruct */
+            //Query all information
+            $basketData = $orderData['sBasket'];
+            $profile = $this->get('paypal_unified.web_profile_service')->getWebProfile();
+
+            $selectedPaymentName = $orderData['sPayment']['name'];
+
+            /** @var Payment $params */
+            $params = null;
+
+            //For generic paypal payments like PayPal or PayPal Plus ones,
+            //we need a different parameter for the payment creation than in installments
+            if ($selectedPaymentName === PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME) {
+                $params = $this->get('paypal_unified.payment_request_service')->getRequestParameters(
+                    $profile,
+                    $basketData,
+                    $userData
+                );
+            } elseif ($selectedPaymentName === PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME) {
+                $params = $this->get('paypal_unified.installments_payment_request_service')->getRequestParameters(
+                    $profile,
+                    $basketData,
+                    $userData
+                );
+            }
+
+            $response = $paymentResource->create($params);
+
             $responseStruct = Payment::fromArray($response);
         } catch (RequestException $requestEx) {
             //Communication failure
@@ -87,6 +113,14 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
         $paymentResource->patch($responseStruct->getId(), $patchService->getPatch($userData));
 
         $this->redirect($responseStruct->getLinks()[1]->getHref());
+    }
+
+    public function installmentsReturnAction()
+    {
+        echo '<pre>';
+        print_r(\Doctrine\Common\Util\Debug::dump('yay'));
+        echo '</pre>';
+        exit();
     }
 
     /**

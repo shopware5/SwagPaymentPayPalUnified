@@ -24,37 +24,14 @@
 
 namespace SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Payer\PayerInfo;
 
-class ShippingAddress
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\Common\Address;
+
+class ShippingAddress extends Address
 {
     /**
      * @var string
      */
     private $recipientName;
-
-    /**
-     * @var string
-     */
-    private $line1;
-
-    /**
-     * @var string
-     */
-    private $city;
-
-    /**
-     * @var string
-     */
-    private $state;
-
-    /**
-     * @var string
-     */
-    private $postalCode;
-
-    /**
-     * @var string
-     */
-    private $countryCode;
 
     /**
      * @return string
@@ -73,89 +50,18 @@ class ShippingAddress
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
-    public function getLine1()
+    public function toArray()
     {
-        return $this->line1;
+        $result = parent::toArray();
+        $result['recipient_name'] = $this->getRecipientName();
+
+        return $result;
     }
 
     /**
-     * @param string $line1
-     */
-    public function setLine1($line1)
-    {
-        $this->line1 = $line1;
-    }
-
-    /**
-     * @return string
-     */
-    public function getCity()
-    {
-        return $this->city;
-    }
-
-    /**
-     * @param string $city
-     */
-    public function setCity($city)
-    {
-        $this->city = $city;
-    }
-
-    /**
-     * @return string
-     */
-    public function getState()
-    {
-        return $this->state;
-    }
-
-    /**
-     * @param string $state
-     */
-    public function setState($state)
-    {
-        $this->state = $state;
-    }
-
-    /**
-     * @return string
-     */
-    public function getPostalCode()
-    {
-        return $this->postalCode;
-    }
-
-    /**
-     * @param string $postalCode
-     */
-    public function setPostalCode($postalCode)
-    {
-        $this->postalCode = $postalCode;
-    }
-
-    /**
-     * @return string
-     */
-    public function getCountryCode()
-    {
-        return $this->countryCode;
-    }
-
-    /**
-     * @param string $countryCode
-     */
-    public function setCountryCode($countryCode)
-    {
-        $this->countryCode = $countryCode;
-    }
-
-    /**
-     * @param array|null $data
-     *
-     * @return ShippingAddress
+     * {@inheritdoc}
      */
     public static function fromArray(array $data = null)
     {
@@ -168,25 +74,12 @@ class ShippingAddress
         $result->setCity($data['city']);
         $result->setCountryCode($data['country_code']);
         $result->setLine1($data['line1']);
+        $result->setLine2($data['line2']);
         $result->setPostalCode($data['postal_code']);
-        $result->setRecipientName($data['recipient_name']);
         $result->setState($data['state']);
+        $result->setPhone($data['phone']);
+        $result->setRecipientName($data['recipient_name']);
 
         return $result;
-    }
-
-    /**
-     * @return array
-     */
-    public function toArray()
-    {
-        return [
-            'city' => $this->getCity(),
-            'country_code' => $this->getCountryCode(),
-            'line1' => $this->getLine1(),
-            'postal_code' => $this->getPostalCode(),
-            'recipient_name' => $this->getRecipientName(),
-            'state' => $this->getState(),
-        ];
     }
 }

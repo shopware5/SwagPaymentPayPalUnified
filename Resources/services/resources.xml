@@ -7,8 +7,6 @@
     <services>
         <service id="paypal_unified.payment_resource" class="SwagPaymentPayPalUnified\PayPalBundle\Resources\PaymentResource">
             <argument type="service" id="paypal_unified.client_service"/>
-            <argument type="service" id="paypal_unified.web_profile_service"/>
-            <argument type="service" id="paypal_unified.basket_service"/>
         </service>
 
         <service id="paypal_unified.sale_resource" class="SwagPaymentPayPalUnified\PayPalBundle\Resources\SaleResource">
