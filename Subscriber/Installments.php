@@ -71,7 +71,7 @@ class Installments implements SubscriberInterface
     {
         return [
             'Enlight_Controller_Action_PostDispatchSecure_Frontend_Detail' => 'onPostDispatchDetail',
-            'Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout' => 'onPostDispatchCheckout',
+            'Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout' => [['onPostDispatchCheckout'], ['confirmInstallments']],
         ];
     }
 
@@ -151,5 +151,31 @@ class Installments implements SubscriberInterface
                 $view->assign('paypalInstallmentsRequestCompleteList', true);
             }
         }
+    }
+
+    /**
+     * Fetches data for the installments finishing process.
+     *
+     * @param \Enlight_Controller_ActionEventArgs $args
+     */
+    public function confirmInstallments(\Enlight_Controller_ActionEventArgs $args)
+    {
+        /** @var \Enlight_Controller_Action $controller */
+        $controller = $args->getSubject();
+
+        /** @var \Enlight_Controller_Request_Request $request */
+        $request = $controller->Request();
+
+        if ($request->getActionName() !== 'confirm' || (int) $request->getParam('executePayment') !== 1) {
+            return;
+        }
+
+        /** @var \Enlight_View_Default $view */
+        $view = $controller->View();
+
+        $view->assign('paypalInstallmentsMode', 'selected');
+        $view->assign('paypalSelectedInstallment', [
+            'foo' => 'bar',
+        ]);
     }
 }

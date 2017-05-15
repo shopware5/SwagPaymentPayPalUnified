@@ -56,7 +56,7 @@ class InstallmentsTest extends UnifiedControllerTestCase
         $events = Installments::getSubscribedEvents();
         $this->assertCount(2, $events);
         $this->assertEquals('onPostDispatchDetail', $events['Enlight_Controller_Action_PostDispatchSecure_Frontend_Detail']);
-        $this->assertEquals('onPostDispatchCheckout', $events['Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout']);
+        $this->assertEquals([['onPostDispatchCheckout'], ['confirmInstallments']], $events['Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout']);
     }
 
     public function test_post_dispatch_detail_no_settings()
