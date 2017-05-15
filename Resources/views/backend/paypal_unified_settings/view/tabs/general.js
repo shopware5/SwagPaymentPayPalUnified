@@ -87,8 +87,8 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
                 {
                     xtype: 'checkbox',
                     name: 'active',
-                    fieldLabel: '{s name="fieldset/activation/activate"}Enable PayPal Unified for this shop{/s}',
-                    boxLabel: '{s name="fieldset/activation/activate/help"}Enable this option to activate PayPal Unified for this shop{/s}',
+                    fieldLabel: '{s name="fieldset/activation/activate"}Enable for this shop{/s}',
+                    boxLabel: '{s name="fieldset/activation/activate/help"}Enable this option to activate PayPal Unified for this shop.{/s}',
                     inputValue: true,
                     uncheckedValue: false,
                     handler: function(element, checked) {
@@ -166,13 +166,13 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
                 }, {
                     xtype: 'textfield',
                     name: 'brandName',
-                    fieldLabel: '{s name="fieldset/behavior/brandName"}Brand name{/s}',
-                    helpText: '{s name="fieldset/behavior/brandName/help"}The text you enter here will be displayed as the brand name on the PayPal payment page.{/s}'
+                    fieldLabel: '{s name="fieldset/behavior/brandName"}Brand name on the PayPal page{/s}',
+                    helpText: '{s name="fieldset/behavior/brandName/help"}This text will be displayed as the brand name on the PayPal payment page.{/s}'
                 }, {
                     xtype: 'base-element-media',
                     name: 'logoImage',
-                    fieldLabel: '{s name="fieldset/behavior/logoImage"}Logo{/s}',
-                    helpText: '{s name="fieldset/behavior/logoImage/help"}The image you select here will be displayed as the brand logo on the PayPal payment page.{/s}',
+                    fieldLabel: '{s name="fieldset/behavior/logoImage"}Logo on the PayPal pag{/s}',
+                    helpText: '{s name="fieldset/behavior/logoImage/help"}The image you have selected here will be displayed as the brand logo on the PayPal payment page.{/s}',
                     allowBlank: false
                 }, {
                     xtype: 'checkbox',
@@ -180,7 +180,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
                     inputValue: true,
                     uncheckedValue: false,
                     fieldLabel: '{s name="fieldset/behavior/sendOrderNumber"}Send order number to PayPal{/s}',
-                    boxLabel: '{s name="fieldset/behavior/sendOrderNumber/help"}Enable this option to send the order number to PayPal after an order has been complete.{/s}',
+                    boxLabel: '{s name="fieldset/behavior/sendOrderNumber/help"}Enable this option to send the order number to PayPal after an order has been completed.{/s}',
                     handler: Ext.bind(me.onSendOrderNumberChecked, me)
                 },
                 me.orderNumberPrefix

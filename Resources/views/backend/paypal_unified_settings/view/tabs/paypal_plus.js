@@ -49,8 +49,8 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.PaypalPlus', {
             {
                 xtype: 'checkbox',
                 name: 'plusActive',
-                fieldLabel: '{s name=field/activate}Activate PayPal Plus integration{/s}',
-                boxLabel: '{s name=field/activate/help}Activate to enable the PayPal Plus integration for the selected shop.{/s}',
+                fieldLabel: '{s name=field/activate}Activate PayPal Plus{/s}',
+                boxLabel: '{s name=field/activate/help}Activate in order to enable the PayPal Plus integration for the selected shop.{/s}',
                 inputValue: true,
                 uncheckedValue: false,
                 handler: Ext.bind(me.onActivatePayPalPlus, me)
@@ -67,7 +67,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.PaypalPlus', {
         return Ext.create('Ext.form.field.Checkbox', {
             name: 'plusRestyle',
             fieldLabel: '{s name=field/restyle}Restyle payment selection{/s}',
-            helpText: '{s name=field/restyle/help}Activate this option to automatically apply the payment wall theme to the payment selection.{/s}',
+            helpText: '{s name=field/restyle/help}Activate this option to apply the payment wall style to the whole payment selection.{/s}',
             boxLabel: '{s name=field/restyle/boxLabel}Activate this option to restyle the payment selection.{/s}',
             inputValue: true,
             uncheckedValue: false,
@@ -89,7 +89,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.PaypalPlus', {
             name: 'plusLanguage',
             store: store,
             fieldLabel: '{s name=field/language}Payment Wall language{/s}',
-            helpText: '{s name=field/language/help}You can define another language for the Payment Wall for the selected shop. Leave the selection empty to use the shop locale.{/s}',
+            helpText: '{s name=field/language/help}You can define another language for the Payment Wall for the selected shop. Leave the selection empty in order to use the shop locale.{/s}',
             disabled: true,
             queryMode: 'local',
             displayField: 'locale',
