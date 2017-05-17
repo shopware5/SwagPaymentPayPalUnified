@@ -32,7 +32,28 @@ class Shopware_Controllers_Frontend_PaypalUnifiedInstallments extends \Shopware_
         $this->redirect([
             'module' => 'frontend',
             'controller' => 'PaypalUnified',
+            'action' => 'gateway',
             'forceSecure' => true,
+        ]);
+    }
+
+    /**
+     * Will be triggered when the user returns from the paypal payment page.
+     * To avoid duplicate code, we can simply trigger the checkout controller here.
+     */
+    public function returnAction()
+    {
+        $request = $this->Request();
+        $paymentId = $request->get('paymentId');
+        $payerID = $request->get('PayerID');
+
+        $this->redirect([
+            'controller' => 'checkout',
+            'action' => 'confirm',
+            'module' => 'frontend',
+            'paymentId' => $paymentId,
+            'PayerID' => $payerID,
+            'forceSecure' => 1,
         ]);
     }
 }

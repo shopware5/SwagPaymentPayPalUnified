@@ -115,14 +115,6 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
         $this->redirect($responseStruct->getLinks()[1]->getHref());
     }
 
-    public function installmentsReturnAction()
-    {
-        echo '<pre>';
-        print_r(\Doctrine\Common\Util\Debug::dump('yay'));
-        echo '</pre>';
-        exit();
-    }
-
     /**
      * This action is called when the user is being redirected back from PayPal after a successful payment process. Here we save the order in the system
      * and handle the data exchange with PayPal.

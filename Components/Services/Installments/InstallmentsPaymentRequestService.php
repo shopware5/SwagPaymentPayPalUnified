@@ -39,6 +39,16 @@ class InstallmentsPaymentRequestService extends PaymentRequestService
         $result->getPayer()->setExternalSelectedFundingInstrumentType('CREDIT');
         $result->getRedirectUrls()->setReturnUrl($this->getReturnUrl());
 
+        switch ($this->settings->get('paypal_payment_intent')) {
+            case 0:
+                $result->setIntent('sale');
+                break;
+            case 1: //Overwrite "authentication"
+            case 2:
+                $result->setIntent('order');
+                break;
+        }
+
         return $result;
     }
 
@@ -49,8 +59,8 @@ class InstallmentsPaymentRequestService extends PaymentRequestService
     {
         return $this->router->assemble(
             [
-                'controller' => 'PaypalUnified',
-                'action' => 'installmentsReturn',
+                'controller' => 'PaypalUnifiedInstallments',
+                'action' => 'return',
                 'forceSecure' => true,
             ]
         );

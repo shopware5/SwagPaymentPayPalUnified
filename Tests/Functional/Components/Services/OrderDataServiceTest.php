@@ -28,6 +28,7 @@ use Doctrine\DBAL\Connection;
 use SwagPaymentPayPalUnified\Components\Services\OrderDataService;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Credit;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\PaymentInstruction;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\FixtureImportTestCaseTrait;
@@ -127,6 +128,24 @@ class OrderDataServiceTest extends \PHPUnit_Framework_TestCase
         $updatedAttribute = $dbalConnection->executeQuery('SELECT paypal_payment_type FROM s_order_attributes WHERE orderID=9999')->fetchColumn(0);
 
         $this->assertEquals(PaymentType::PAYPAL_PLUS, $updatedAttribute);
+    }
+
+    public function test_applyPaymentTypeAttribute_installments()
+    {
+        $orderDataService = $this->getOrderDataService();
+
+        $payment = new Payment();
+        $payer = new Payment\Payer();
+        $payer->setExternalSelectedFundingInstrumentType('CREDIT');
+        $payment->setPayer($payer);
+
+        $orderDataService->applyPaymentTypeAttribute(self::ORDER_NUMBER, $payment);
+
+        /** @var Connection $dbalConnection */
+        $dbalConnection = Shopware()->Container()->get('dbal_connection');
+        $updatedAttribute = $dbalConnection->executeQuery('SELECT paypal_payment_type FROM s_order_attributes WHERE orderID=9999')->fetchColumn(0);
+
+        $this->assertEquals(PaymentType::PAYPAL_INSTALLMENTS, $updatedAttribute);
     }
 
     public function test_applyPaymentAttribute_classic()

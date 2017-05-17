@@ -46,6 +46,11 @@ class PaymentRequestService implements PaymentRequestServiceInterface
     protected $router;
 
     /**
+     * @var SettingsService
+     */
+    protected $settings;
+
+    /**
      * @var array
      */
     private $basketData;
@@ -54,11 +59,6 @@ class PaymentRequestService implements PaymentRequestServiceInterface
      * @var array
      */
     private $userData;
-
-    /**
-     * @var SettingsService
-     */
-    private $settings;
 
     /**
      * @param Router                   $router

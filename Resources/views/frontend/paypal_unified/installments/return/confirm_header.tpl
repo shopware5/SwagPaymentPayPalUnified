@@ -1,12 +1,7 @@
 {namespace name='frontend/paypal_unified/checkout/confirm'}
 
-<div class="tos--panel panel has--border">
-    {block name="frontend_paypal_unified_installments_financing_header"}
-        {block name="frontend_paypal_unified_installments_financing_header_title"}
-            <div class="panel--title primary is--underline">
-                {s name="InstallmentsConfirmFinancingTitle"}{/s}
-            </div>
-        {/block}
+{block name="frontend_paypal_unified_installments_financing_header"}
+    <div class="tos--panel panel has--border">
         {block name="frontend_paypal_unified_installments_financing_header_body"}
             <div class="panel--body is--wide installments--header">
                 {block name="frontend_paypal_unified_installments_financing_header_body_img"}
@@ -20,5 +15,5 @@
                 {/block}
             </div>
         {/block}
-    {/block}
-</div>
+    </div>
+{/block}

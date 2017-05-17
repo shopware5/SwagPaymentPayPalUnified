@@ -25,6 +25,7 @@
 namespace SwagPaymentPayPalUnified\PayPalBundle\Structs;
 
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Common\Link;
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Credit;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Payer;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\PaymentInstruction;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\RedirectUrls;
@@ -91,6 +92,11 @@ class Payment
      * @var string
      */
     private $updateTime;
+
+    /**
+     * @var Credit
+     */
+    private $creditFinancingOffered;
 
     /**
      * @return string
@@ -301,6 +307,22 @@ class Payment
     }
 
     /**
+     * @return Credit
+     */
+    public function getCreditFinancingOffered()
+    {
+        return $this->creditFinancingOffered;
+    }
+
+    /**
+     * @param Credit $creditFinancingOffered
+     */
+    public function setCreditFinancingOffered($creditFinancingOffered)
+    {
+        $this->creditFinancingOffered = $creditFinancingOffered;
+    }
+
+    /**
      * @param array $data
      *
      * @return Payment
@@ -336,6 +358,10 @@ class Payment
         $result->setLinks($links);
 
         $result->setRedirectUrls(RedirectUrls::fromArray($data['redirect_urls']));
+
+        if ($data['credit_financing_offered']) {
+            $result->setCreditFinancingOffered(Credit::fromArray($data['credit_financing_offered']));
+        }
 
         return $result;
     }

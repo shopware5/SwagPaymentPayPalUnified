@@ -31,7 +31,7 @@ use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile\WebProfileFlowConfi
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile\WebProfileInputFields;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile\WebProfilePresentation;
 
-class BasketServiceTest extends \PHPUnit_Framework_TestCase
+class PaymentRequestServiceTest extends \PHPUnit_Framework_TestCase
 {
     public function test_is_basket_service_available()
     {

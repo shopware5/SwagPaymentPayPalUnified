@@ -18,6 +18,9 @@
                 <!-- Bootstrap -->
                 <file>SwagPaymentPayPalUnified.php</file>
                 <file>./Setup/InstallationException.php</file>
+
+                <!-- Classes that communicate with the PayPal API -->
+                <file>./Components/Services/Installments/InstallmentsRequestService.php</file>
             </exclude>
         </whitelist>
     </filter>
