@@ -22,48 +22,31 @@
  * our trademarks remain entirely with us.
  */
 
-namespace SwagPaymentPayPalUnified\PayPalBundle\Components\Patches;
+namespace SwagPaymentPayPalUnified\Components\Services;
 
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Payer\PayerInfo\ShippingAddress;
 
-class PaymentAddressPatch implements PatchInterface
+class ShippingAddressRequestService
 {
-    const PATH = '/transactions/0/item_list/shipping_address';
-
     /**
-     * @var ShippingAddress
+     * @param array $userData
+     *
+     * @return ShippingAddress
      */
-    private $address;
-
-    /**
-     * @param ShippingAddress $address
-     */
-    public function __construct(ShippingAddress $address)
+    public function getAddress(array $userData)
     {
-        $this->address = $address;
-    }
+        $shippingAddress = $userData['shippingaddress'];
+        $shippingAddress['countryiso'] = $userData['additional']['countryShipping']['countryiso'];
+        $shippingAddress['stateiso'] = $userData['additional']['stateShipping']['shortcode'];
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getOperation()
-    {
-        return self::OPERATION_ADD;
-    }
+        $address = new ShippingAddress();
+        $address->setCity($shippingAddress['city']);
+        $address->setLine1($shippingAddress['street']);
+        $address->setPostalCode($shippingAddress['zipcode']);
+        $address->setRecipientName($shippingAddress['firstname'] . ' ' . $shippingAddress['lastname']);
+        $address->setCountryCode($shippingAddress['countryiso']);
+        $address->setState($shippingAddress['stateiso']);
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getPath()
-    {
-        return self::PATH;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getValue()
-    {
-        return $this->address->toArray();
+        return $address;
     }
 }

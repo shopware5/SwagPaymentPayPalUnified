@@ -240,17 +240,21 @@ class PaymentRequestService implements PaymentRequestServiceInterface
             $amountDetails->setSubTotal(str_replace(',', '.', $this->basketData['Amount']));
             $amountDetails->setTax(number_format(0, 2, '.', ','));
 
-            //Case 2: Show net prices in shopware and don't exclude country tax
-        } elseif (!$this->showGrossPrices() && !$this->useNetPriceCalculation()) {
+            return $amountDetails;
+        }
+
+        //Case 2: Show net prices in shopware and don't exclude country tax
+        if (!$this->showGrossPrices() && !$this->useNetPriceCalculation()) {
             $amountDetails->setShipping($this->basketData['sShippingcostsNet']);
             $amountDetails->setSubTotal(str_replace(',', '.', $this->basketData['AmountNet']));
             $amountDetails->setTax($this->basketData['sAmountTax']);
 
-            //Case 3: No tax handling at all, just use the net amounts.
-        } else {
-            $amountDetails->setShipping($this->basketData['sShippingcostsNet']);
-            $amountDetails->setSubTotal(str_replace(',', '.', $this->basketData['AmountNet']));
+            return $amountDetails;
         }
+
+        //Case 3: No tax handling at all, just use the net amounts.
+        $amountDetails->setShipping($this->basketData['sShippingcostsNet']);
+        $amountDetails->setSubTotal(str_replace(',', '.', $this->basketData['AmountNet']));
 
         return $amountDetails;
     }

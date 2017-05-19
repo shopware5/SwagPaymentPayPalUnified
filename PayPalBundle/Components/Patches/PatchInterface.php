@@ -31,13 +31,6 @@ interface PatchInterface
     const OPERATION_REPLACE = 'replace';
 
     /**
-     * Returns the value that should be transferred to PayPal
-     *
-     * @return mixed
-     */
-    public function getValue();
-
-    /**
      * Returns the operation that should be triggered.
      *
      * @return string
@@ -50,4 +43,11 @@ interface PatchInterface
      * @return string
      */
     public function getPath();
+
+    /**
+     * Returns the value that should be transferred to PayPal
+     *
+     * @return mixed
+     */
+    public function getValue();
 }

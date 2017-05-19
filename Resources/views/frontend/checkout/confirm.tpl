@@ -1,14 +1,15 @@
-{extends file="parent:frontend/checkout/confirm.tpl"}
+{extends file='parent:frontend/checkout/confirm.tpl'}
 
-{block name="frontend_index_header_javascript_jquery_lib"}
-    {$smarty.block.parent}
+{* PayPal Plus integration *}
+{block name='frontend_index_header_javascript_jquery_lib'}
     <script src="https://www.paypalobjects.com/webstatic/ppplus/ppplus.min.js"></script>
+    {$smarty.block.parent}
 {/block}
 
 {* PayPal Plus integration *}
 {block name='frontend_checkout_confirm_premiums'}
-    {if $usePayPalPlus && $sUserData.additional.payment.id == $paypalUnifiedPaymentId }
-        {include file="frontend/paypal_unified/plus/checkout/payment_wall_premiums.tpl"}
+    {if $usePayPalPlus && !$paypalUnifiedExpressCheckout && $sUserData.additional.payment.id == $paypalUnifiedPaymentId }
+        {include file='frontend/paypal_unified/plus/checkout/payment_wall_premiums.tpl'}
     {/if}
 
     {$smarty.block.parent}
@@ -21,7 +22,7 @@
     {/if}
 
     {if $paypalInstallmentsMode === 'simple' && !$paypalInstallmentsRequestCompleteList}
-        {include file="frontend/paypal_unified/installments/upstream_presentment/cart/simple.tpl"}
+        {include file='frontend/paypal_unified/installments/upstream_presentment/cart/simple.tpl'}
     {/if}
 
     {$smarty.block.parent}
@@ -38,4 +39,13 @@
     {else}
         {$smarty.block.parent}
     {/if}
+{/block}
+
+{* PayPal Express Checkout integration *}
+{block name='frontend_checkout_confirm_tos_panel'}
+    {if $paypalUnifiedExpressCheckout}
+        {include file='frontend/paypal_unified/express_checkout/confirm_inputs.tpl'}
+    {/if}
+
+    {$smarty.block.parent}
 {/block}

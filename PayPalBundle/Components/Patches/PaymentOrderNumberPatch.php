@@ -42,7 +42,7 @@ class PaymentOrderNumberPatch implements PatchInterface
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getOperation()
     {
@@ -50,7 +50,7 @@ class PaymentOrderNumberPatch implements PatchInterface
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getPath()
     {
@@ -58,7 +58,7 @@ class PaymentOrderNumberPatch implements PatchInterface
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getValue()
     {

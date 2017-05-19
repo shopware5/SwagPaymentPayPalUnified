@@ -59,7 +59,7 @@ class PaymentMethodProvider
      *
      * @param string $name
      *
-     * @return null|Payment|object
+     * @return null|Payment
      */
     public function getPaymentMethodModel($name = self::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME)
     {

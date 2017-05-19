@@ -24,9 +24,9 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services;
 
-use SwagPaymentPayPalUnified\Components\Services\PaymentAddressPatchService;
+use SwagPaymentPayPalUnified\Components\Services\ShippingAddressRequestService;
 
-class PaymentAddressPatchServiceTest extends \PHPUnit_Framework_TestCase
+class ShippingAddressRequestServiceTest extends \PHPUnit_Framework_TestCase
 {
     const TEST_ADDRESS_CITY = 'TEST_CITY';
     const TEST_ADDRESS_STREET = 'TEST_STREET';
@@ -38,10 +38,10 @@ class PaymentAddressPatchServiceTest extends \PHPUnit_Framework_TestCase
 
     public function test_service_available()
     {
-        $this->assertNotNull(Shopware()->Container()->get('paypal_unified.payment_address_patch_service'));
+        $this->assertNotNull(Shopware()->Container()->get('paypal_unified.shipping_address_request_service'));
     }
 
-    public function test_getPatch_success()
+    public function test_getAddress_success()
     {
         $testAddressData = [
             'shippingaddress' => [
@@ -58,17 +58,17 @@ class PaymentAddressPatchServiceTest extends \PHPUnit_Framework_TestCase
             ],
         ];
 
-        /** @var PaymentAddressPatchService $patchService */
-        $patchService = Shopware()->Container()->get('paypal_unified.payment_address_patch_service');
-        $testAddressPatch = $patchService->getPatch($testAddressData)->getValue();
+        /** @var ShippingAddressRequestService $addressService */
+        $addressService = Shopware()->Container()->get('paypal_unified.shipping_address_request_service');
+        $testAddress = $addressService->getAddress($testAddressData);
 
-        $this->assertNotNull($testAddressPatch);
-        $this->assertEquals(self::TEST_ADDRESS_CITY, $testAddressPatch['city']);
-        $this->assertEquals(self::TEST_ADDRESS_COUNTRY, $testAddressPatch['country_code']);
-        $this->assertEquals(self::TEST_ADDRESS_FIRSTNAME . ' ' . self::TEST_ADDRESS_LASTNAME, $testAddressPatch['recipient_name']);
-        $this->assertEquals(self::TEST_ADDRESS_ZIPCODE, $testAddressPatch['postal_code']);
-        $this->assertEquals(self::TEST_ADDRESS_STREET, $testAddressPatch['line1']);
-        $this->assertNull($testAddressPatch['state']);
+        $this->assertNotNull($testAddress);
+        $this->assertEquals(self::TEST_ADDRESS_CITY, $testAddress->getCity());
+        $this->assertEquals(self::TEST_ADDRESS_COUNTRY, $testAddress->getCountryCode());
+        $this->assertEquals(self::TEST_ADDRESS_FIRSTNAME . ' ' . self::TEST_ADDRESS_LASTNAME, $testAddress->getRecipientName());
+        $this->assertEquals(self::TEST_ADDRESS_ZIPCODE, $testAddress->getPostalCode());
+        $this->assertEquals(self::TEST_ADDRESS_STREET, $testAddress->getLine1());
+        $this->assertNull($testAddress->getState());
     }
 
     public function test_getPatch_attach_state()
@@ -91,10 +91,10 @@ class PaymentAddressPatchServiceTest extends \PHPUnit_Framework_TestCase
             ],
         ];
 
-        /** @var PaymentAddressPatchService $patchService */
-        $patchService = Shopware()->Container()->get('paypal_unified.payment_address_patch_service');
-        $testAddressPatch = $patchService->getPatch($testAddressData)->getValue();
+        /** @var ShippingAddressRequestService $addressService */
+        $addressService = Shopware()->Container()->get('paypal_unified.shipping_address_request_service');
+        $testAddress = $addressService->getAddress($testAddressData);
 
-        $this->assertEquals(self::TEST_ADDRESS_STATE, $testAddressPatch['state']);
+        $this->assertEquals(self::TEST_ADDRESS_STATE, $testAddress->getState());
     }
 }

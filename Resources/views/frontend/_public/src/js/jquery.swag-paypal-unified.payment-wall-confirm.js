@@ -152,7 +152,5 @@
 
     });
 
-    $(function() {
-        StateManager.addPlugin('*[data-paypalPaymentWallConfirm="true"]', 'swagPayPalUnifiedPaymentWallConfirm');
-    });
+    window.StateManager.addPlugin('*[data-paypalPaymentWallConfirm="true"]', 'swagPayPalUnifiedPaymentWallConfirm');
 })(jQuery, window);

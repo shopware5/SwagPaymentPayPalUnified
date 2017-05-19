@@ -27,8 +27,9 @@ use Shopware\Components\Logger;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\PaymentStatus;
 use SwagPaymentPayPalUnified\Components\Services\OrderDataService;
-use SwagPaymentPayPalUnified\Components\Services\PaymentAddressPatchService;
 use SwagPaymentPayPalUnified\Components\Services\PaymentInstructionService;
+use SwagPaymentPayPalUnified\Components\Services\ShippingAddressRequestService;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PaymentAddressPatch;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PaymentOrderNumberPatch;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\PaymentResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\ErrorResponse;
@@ -37,6 +38,19 @@ use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\RelatedResources\Relat
 
 class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_Frontend_Payment
 {
+    /**
+     * @var PaymentResource
+     */
+    private $paymentResource;
+
+    /**
+     * initialize payment resource
+     */
+    public function preDispatch()
+    {
+        $this->paymentResource = $this->get('paypal_unified.payment_resource');
+    }
+
     /**
      * Index action of the payment. The only thing to do here is to forward to the gateway action.
      */
@@ -62,9 +76,6 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
         }
 
         try {
-            /** @var PaymentResource $paymentResource */
-            $paymentResource = $this->container->get('paypal_unified.payment_resource');
-
             //Query all information
             $basketData = $orderData['sBasket'];
             $profile = $this->get('paypal_unified.web_profile_service')->getWebProfile();
@@ -83,14 +94,14 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
                     $userData
                 );
             } elseif ($selectedPaymentName === PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME) {
-                $params = $this->get('paypal_unified.installments_payment_request_service')->getRequestParameters(
+                $params = $this->get('paypal_unified.installments.payment_request_service')->getRequestParameters(
                     $profile,
                     $basketData,
                     $userData
                 );
             }
 
-            $response = $paymentResource->create($params);
+            $response = $this->paymentResource->create($params);
 
             $responseStruct = Payment::fromArray($response);
         } catch (RequestException $requestEx) {
@@ -108,9 +119,11 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
         //Patch the address data into the payment.
         //This function is only being called for PayPal classic, therefore,
         //there is an additional action (patchAddressAction()) for the PayPal plus integration.
-        /** @var PaymentAddressPatchService $patchService */
-        $patchService = $this->get('paypal_unified.payment_address_patch_service');
-        $paymentResource->patch($responseStruct->getId(), $patchService->getPatch($userData));
+        /** @var ShippingAddressRequestService $addressService */
+        $addressService = $this->get('paypal_unified.shipping_address_request_service');
+        $addressPatch = new PaymentAddressPatch($addressService->getAddress($userData));
+
+        $this->paymentResource->patch($responseStruct->getId(), $addressPatch);
 
         $this->redirect($responseStruct->getLinks()[1]->getHref());
     }
@@ -126,17 +139,15 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
     {
         $this->Front()->Plugins()->ViewRenderer()->setNoRender();
         $request = $this->Request();
-        $paymentId = $request->get('paymentId');
-        $payerId = $request->get('PayerID');
+        $paymentId = $request->getParam('paymentId');
+        $payerId = $request->getParam('PayerID');
 
         try {
             $orderNumber = '';
 
             /** @var OrderDataService $orderDataService */
-            $orderDataService = $this->container->get('paypal_unified.order_data_service');
+            $orderDataService = $this->get('paypal_unified.order_data_service');
 
-            /** @var PaymentResource $paymentResource */
-            $paymentResource = $this->container->get('paypal_unified.payment_resource');
             $sendOrderNumber = (bool) $this->get('paypal_unified.settings_service')->get('send_order_number');
 
             // if the order number should be send to PayPal do it before the execute
@@ -147,11 +158,11 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
                 /** @var PaymentOrderNumberPatch $paymentPatch */
                 $paymentPatch = new PaymentOrderNumberPatch($patchOrderNumber);
 
-                $paymentResource->patch($paymentId, $paymentPatch);
+                $this->paymentResource->patch($paymentId, $paymentPatch);
             }
 
             // execute the payment to the PayPal API
-            $executionResponse = $paymentResource->execute($payerId, $paymentId);
+            $executionResponse = $this->paymentResource->execute($payerId, $paymentId);
             if ($executionResponse === null) {
                 //Communication failure
                 $this->handleError(2);
@@ -194,11 +205,12 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
             // if we get payment instructions from PayPal save them to database
             if ($response->getPaymentInstruction()) {
                 /** @var PaymentInstructionService $instructionService */
-                $instructionService = $this->container->get('paypal_unified.payment_instruction_service');
+                $instructionService = $this->get('paypal_unified.payment_instruction_service');
                 $instructionService->createInstructions($orderNumber, $response->getPaymentInstruction());
             }
 
-            $orderDataService->applyPaymentTypeAttribute($orderNumber, $response);
+            $isExpressCheckout = (bool) $request->getParam('expressCheckout', false);
+            $orderDataService->applyPaymentTypeAttribute($orderNumber, $response, $isExpressCheckout);
 
             // Done, redirect to the finish page
             $this->redirect([
@@ -224,16 +236,14 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
     {
         $this->Front()->Plugins()->ViewRenderer()->setNoRender();
 
-        $paymentId = $this->Request()->get('paymentId');
+        $paymentId = $this->Request()->getParam('paymentId');
         $userData = $this->get('session')->get('sOrderVariables')['sUserData'];
 
-        /** @var PaymentResource $paymentResource */
-        $paymentResource = $this->container->get('paypal_unified.payment_resource');
+        /** @var ShippingAddressRequestService $patchService */
+        $addressService = $this->get('paypal_unified.shipping_address_request_service');
+        $addressPatch = new PaymentAddressPatch($addressService->getAddress($userData));
 
-        /** @var PaymentAddressPatchService $patchService */
-        $patchService = $this->get('paypal_unified.payment_address_patch_service');
-
-        $paymentResource->patch($paymentId, $patchService->getPatch($userData));
+        $this->paymentResource->patch($paymentId, $addressPatch);
     }
 
     /**

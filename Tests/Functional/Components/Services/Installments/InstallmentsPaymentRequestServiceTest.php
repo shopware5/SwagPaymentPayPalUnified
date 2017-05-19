@@ -31,13 +31,13 @@ use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile\WebProfileFlowConfig;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile\WebProfileInputFields;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile\WebProfilePresentation;
-use SwagPaymentPayPalUnified\Tests\Functional\Components\Services\SettingsServiceBasketServiceMock;
+use SwagPaymentPayPalUnified\Tests\Functional\Components\Services\SettingsServicePaymentRequestServiceMock;
 
 class InstallmentsPaymentRequestServiceTest extends \PHPUnit_Framework_TestCase
 {
     public function test_serviceIsAvailable()
     {
-        $service = Shopware()->Container()->get('paypal_unified.installments_payment_request_service');
+        $service = Shopware()->Container()->get('paypal_unified.installments.payment_request_service');
         $this->assertEquals(InstallmentsPaymentRequestService::class, get_class($service));
     }
 
@@ -67,7 +67,7 @@ class InstallmentsPaymentRequestServiceTest extends \PHPUnit_Framework_TestCase
      */
     private function getRequestData($plusActive = false, $intent = 0)
     {
-        $settingService = new SettingsServiceBasketServiceMock($plusActive, $intent);
+        $settingService = new SettingsServicePaymentRequestServiceMock($plusActive, $intent);
 
         $installmentsPaymentRequestService = $this->getInstallmentsPaymentRequestService($settingService);
 

@@ -35,11 +35,11 @@ class PaymentRequestServiceTest extends \PHPUnit_Framework_TestCase
 {
     public function test_is_basket_service_available()
     {
-        $settingService = new SettingsServiceBasketServiceMock(false, 0);
+        $settingService = new SettingsServicePaymentRequestServiceMock(false, 0);
 
-        $basketService = $this->getBasketService($settingService);
+        $requestService = $this->getRequestService($settingService);
 
-        $this->assertNotNull($basketService);
+        $this->assertNotNull($requestService);
     }
 
     public function test_get_request_parameters_return_plus_intent()
@@ -92,8 +92,8 @@ class PaymentRequestServiceTest extends \PHPUnit_Framework_TestCase
 
     public function test_get_request_parameters_with_show_gross()
     {
-        $settingService = new SettingsServiceBasketServiceMock(false, 0);
-        $basketService = $this->getBasketService($settingService);
+        $settingService = new SettingsServicePaymentRequestServiceMock(false, 0);
+        $requestService = $this->getRequestService($settingService);
 
         $profile = $this->getWebProfile();
         $basketData = $this->getBasketDataArray();
@@ -101,7 +101,7 @@ class PaymentRequestServiceTest extends \PHPUnit_Framework_TestCase
 
         $userData['additional']['show_net'] = false;
 
-        $requestParameters = $basketService->getRequestParameters($profile, $basketData, $userData);
+        $requestParameters = $requestService->getRequestParameters($profile, $basketData, $userData);
         $requestParameters = $requestParameters->toArray();
 
         $this->assertEquals('136.84', $requestParameters['transactions'][0]['amount']['total']);
@@ -112,8 +112,8 @@ class PaymentRequestServiceTest extends \PHPUnit_Framework_TestCase
 
     public function test_get_parameters_with_tax_tree_country()
     {
-        $settingService = new SettingsServiceBasketServiceMock(false, 0);
-        $basketService = $this->getBasketService($settingService);
+        $settingService = new SettingsServicePaymentRequestServiceMock(false, 0);
+        $requestService = $this->getRequestService($settingService);
 
         $profile = $this->getWebProfile();
         $basketData = $this->getBasketDataArray();
@@ -121,7 +121,7 @@ class PaymentRequestServiceTest extends \PHPUnit_Framework_TestCase
 
         $userData['additional']['country']['taxfree'] = '1';
 
-        $requestParameters = $basketService->getRequestParameters($profile, $basketData, $userData);
+        $requestParameters = $requestService->getRequestParameters($profile, $basketData, $userData);
         $requestParameters = $requestParameters->toArray();
 
         $this->assertEquals('96.63', $requestParameters['transactions'][0]['amount']['total']);
@@ -146,14 +146,14 @@ class PaymentRequestServiceTest extends \PHPUnit_Framework_TestCase
      */
     private function getRequestData($plusActive = false, $intent = 0)
     {
-        $settingService = new SettingsServiceBasketServiceMock($plusActive, $intent);
-        $basketService = $this->getBasketService($settingService);
+        $settingService = new SettingsServicePaymentRequestServiceMock($plusActive, $intent);
+        $requestService = $this->getRequestService($settingService);
 
         $profile = $this->getWebProfile();
         $basketData = $this->getBasketDataArray();
         $userData = $this->getUserDataAsArray();
 
-        return $basketService->getRequestParameters($profile, $basketData, $userData)->toArray();
+        return $requestService->getRequestParameters($profile, $basketData, $userData)->toArray();
     }
 
     /**
@@ -193,7 +193,7 @@ class PaymentRequestServiceTest extends \PHPUnit_Framework_TestCase
      *
      * @return PaymentRequestService
      */
-    private function getBasketService(SettingsServiceInterface $settingService)
+    private function getRequestService(SettingsServiceInterface $settingService)
     {
         $router = Shopware()->Container()->get('router');
 
@@ -245,7 +245,7 @@ class PaymentRequestServiceTest extends \PHPUnit_Framework_TestCase
     }
 }
 
-class SettingsServiceBasketServiceMock implements SettingsServiceInterface
+class SettingsServicePaymentRequestServiceMock implements SettingsServiceInterface
 {
     /**
      * @var
@@ -259,6 +259,8 @@ class SettingsServiceBasketServiceMock implements SettingsServiceInterface
 
     public function __construct($plusActive, $paypalPaymentIntent)
     {
+        // do not delete, even if PHPStorm says they are unused
+        // used in the get() method
         $this->plus_active = $plusActive;
         $this->paypal_payment_intent = $paypalPaymentIntent;
     }

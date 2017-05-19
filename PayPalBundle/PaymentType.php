@@ -30,4 +30,5 @@ class PaymentType
     const PAYPAL_PLUS = 'PayPalPlus';
     const PAYPAL_INVOICE = 'PayPalPlusInvoice';
     const PAYPAL_INSTALLMENTS = 'PayPalInstallments';
+    const PAYPAL_EXPRESS = 'PayPalExpress';
 }

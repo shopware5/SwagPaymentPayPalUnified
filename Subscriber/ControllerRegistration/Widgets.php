@@ -26,7 +26,7 @@ namespace SwagPaymentPayPalUnified\Subscriber\ControllerRegistration;
 
 use Enlight\Event\SubscriberInterface;
 
-class Frontend implements SubscriberInterface
+class Widgets implements SubscriberInterface
 {
     /**
      * @var string
@@ -47,42 +47,30 @@ class Frontend implements SubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            'Enlight_Controller_Dispatcher_ControllerPath_Frontend_PaypalUnified' => 'onGetUnifiedControllerPath',
-            'Enlight_Controller_Dispatcher_ControllerPath_Frontend_PaypalUnifiedInstallments' => 'onGetInstallmentsPaymentControllerPath',
-            'Enlight_Controller_Dispatcher_ControllerPath_Frontend_PaypalUnifiedWebhook' => 'onGetWebhookControllerPath',
+            'Enlight_Controller_Dispatcher_ControllerPath_Widgets_PaypalUnifiedInstallments' => 'onGetInstallmentsControllerPath',
+            'Enlight_Controller_Dispatcher_ControllerPath_Widgets_PaypalUnifiedExpressCheckout' => 'onGetEcControllerPath',
         ];
     }
 
     /**
-     * Handles the Enlight_Controller_Dispatcher_ControllerPath_Frontend_PaypalUnified event.
-     * Returns the path to the frontend controller.
-     *
-     * @return string
-     */
-    public function onGetUnifiedControllerPath()
-    {
-        return $this->pluginDirectory . '/Controllers/Frontend/PaypalUnified.php';
-    }
-
-    /**
-     * Handles the Enlight_Controller_Dispatcher_ControllerPath_Frontend_PaypalUnifiedInstallments event.
+     * Handles the Enlight_Controller_Dispatcher_ControllerPath_Widgets_PaypalUnifiedInstallments event.
      * Returns the path to the installments controller.
      *
      * @return string
      */
-    public function onGetInstallmentsPaymentControllerPath()
+    public function onGetInstallmentsControllerPath()
     {
-        return $this->pluginDirectory . '/Controllers/Frontend/PaypalUnifiedInstallments.php';
+        return $this->pluginDirectory . '/Controllers/Widgets/PaypalUnifiedInstallments.php';
     }
 
     /**
-     * Handles the Enlight_Controller_Dispatcher_ControllerPath_Frontend_PaypalUnifiedWebhook event.
-     * Returns the path to the webhook controller.
+     * Handles the Enlight_Controller_Dispatcher_ControllerPath_Widgets_PaypalUnifiedExpressCheckout event.
+     * Returns the path to the express checkout controller.
      *
      * @return string
      */
-    public function onGetWebhookControllerPath()
+    public function onGetEcControllerPath()
     {
-        return $this->pluginDirectory . '/Controllers/Frontend/PaypalUnifiedWebhook.php';
+        return $this->pluginDirectory . '/Controllers/Widgets/PaypalUnifiedExpressCheckout.php';
     }
 }

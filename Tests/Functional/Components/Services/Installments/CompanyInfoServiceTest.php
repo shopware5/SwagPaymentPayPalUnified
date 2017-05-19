@@ -63,7 +63,9 @@ class ShopwareAddressConfigMock extends \Shopware_Components_Config
     {
         if ($name === 'address') {
             return 'Test address';
-        } elseif ($name === 'company') {
+        }
+
+        if ($name === 'company') {
             return 'Test company';
         }
 

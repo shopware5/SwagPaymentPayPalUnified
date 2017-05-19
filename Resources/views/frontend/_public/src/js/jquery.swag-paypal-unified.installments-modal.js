@@ -42,7 +42,7 @@
             /**
              * The requested product price
              *
-             * @type Numeric
+             * @type number
              */
             paypalInstallmentsProductPrice: 0.0,
 

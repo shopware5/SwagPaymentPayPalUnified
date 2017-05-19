@@ -194,7 +194,7 @@ class PreCommitChecks
             './../../../themes/node_modules/eslint/bin/eslint.js ' .
             '--ignore-path .eslintignore ' .
             '-c ./../../../themes/.eslintrc.js ' .
-            '--global "Ext,Shopware,PAYPAL" ' .
+            '--global "Ext,Shopware,PAYPAL,paypal,CSRF" ' .
             implode(' ', $fileList),
             $output,
             $return
@@ -213,7 +213,7 @@ class PreCommitChecks
                 './../../../themes/node_modules/eslint/bin/eslint.js ' .
                 '--fix --ignore-path .eslintignore ' .
                 '-c ./../../../themes/.eslintrc.js ' .
-                '--global "Ext,Shopware,PAYPAL" ' .
+                '--global "Ext,Shopware,PAYPAL,paypal,CSRF" ' .
                 implode(' ', $fileList),
                 3
             );

@@ -13,5 +13,8 @@
 
         <!-- Subscribers -->
         <import resource="services/subscribers.xml"/>
+
+        <!-- Decorators -->
+        <import resource="services/decorators.xml"/>
     </imports>
 </container>

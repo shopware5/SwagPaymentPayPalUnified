@@ -12,3 +12,13 @@
 
     {$smarty.block.parent}
 {/block}
+
+{block name="frontend_detail_buy_button"}
+    {$smarty.block.parent}
+
+    {if $sArticle.sConfigurator && !$activeConfiguratorSelection}
+        {*todo disable express button*}
+    {else}
+        {*todo enable express button*}
+    {/if}
+{/block}

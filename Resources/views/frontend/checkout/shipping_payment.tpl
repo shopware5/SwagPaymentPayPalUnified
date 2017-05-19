@@ -2,8 +2,8 @@
 
 {* PayPal Plus integration *}
 {block name="frontend_index_header_javascript_jquery_lib"}
-    {$smarty.block.parent}
     <script src="https://www.paypalobjects.com/webstatic/ppplus/ppplus.min.js"></script>
+    {$smarty.block.parent}
 {/block}
 
 {*

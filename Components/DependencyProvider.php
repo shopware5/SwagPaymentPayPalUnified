@@ -53,4 +53,23 @@ class DependencyProvider
 
         return null;
     }
+
+    /**
+     * Returns the module with the given name, if any exists.
+     *
+     * @param string $moduleName
+     *
+     * @return mixed
+     */
+    public function getModule($moduleName)
+    {
+        /** @var \Shopware_Components_Modules $modules */
+        $modules = $this->container->get('modules');
+
+        if (!$modules->offsetExists($moduleName)) {
+            return null;
+        }
+
+        return $modules->offsetGet($moduleName);
+    }
 }
