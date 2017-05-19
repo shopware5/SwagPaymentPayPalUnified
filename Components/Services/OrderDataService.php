@@ -102,12 +102,15 @@ class OrderDataService
      */
     public function applyPaymentTypeAttribute($orderNumber, $payment)
     {
-        if ($payment->getPaymentInstruction() !== null) {
+        $paymentType = PaymentType::PAYPAL_CLASSIC;
+        $payer = $payment->getPayer();
+
+        if ($payer && $payment->getPayer()->getExternalSelectedFundingInstrumentType() === 'CREDIT') {
+            $paymentType = PaymentType::PAYPAL_INSTALLMENTS;
+        } elseif ($payment->getPaymentInstruction() !== null) {
             $paymentType = PaymentType::PAYPAL_INVOICE;
-        } elseif ($this->config->get('plus_active')) {
+        } elseif ((bool) $this->config->get('plus_active')) {
             $paymentType = PaymentType::PAYPAL_PLUS;
-        } else {
-            $paymentType = PaymentType::PAYPAL_CLASSIC;
         }
 
         $builder = $this->dbalConnection->createQueryBuilder();

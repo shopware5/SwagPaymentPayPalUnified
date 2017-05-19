@@ -27,7 +27,7 @@ namespace SwagPaymentPayPalUnified\PayPalBundle\Components;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile;
 
-interface BasketServiceInterface
+interface PaymentRequestServiceInterface
 {
     /**
      * The function returns an array with all parameters that are expected by the PayPal API.

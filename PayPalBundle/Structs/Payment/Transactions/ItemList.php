@@ -24,6 +24,7 @@
 
 namespace SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Transactions;
 
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\Common\Address;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Transactions\ItemList\Item;
 
 class ItemList
@@ -32,6 +33,11 @@ class ItemList
      * @var Item[]
      */
     private $items;
+
+    /**
+     * @var Address
+     */
+    private $shippingAddress;
 
     /**
      * @return Item[]
@@ -50,6 +56,22 @@ class ItemList
     }
 
     /**
+     * @return Address
+     */
+    public function getShippingAddress()
+    {
+        return $this->shippingAddress;
+    }
+
+    /**
+     * @param Address $shippingAddress
+     */
+    public function setShippingAddress($shippingAddress)
+    {
+        $this->shippingAddress = $shippingAddress;
+    }
+
+    /**
      * @param array $data
      *
      * @return ItemList
@@ -65,6 +87,7 @@ class ItemList
         }
 
         $result->setItems($items);
+        $result->setShippingAddress(Address::fromArray($data['shipping_address']));
 
         return $result;
     }
@@ -79,6 +102,10 @@ class ItemList
         /** @var Item $item */
         foreach ($this->getItems() as $item) {
             $result['items'][] = $item->toArray();
+        }
+
+        if ($this->getShippingAddress() !== null) {
+            $result['shipping_address'] = $this->getShippingAddress()->toArray();
         }
 
         return $result;

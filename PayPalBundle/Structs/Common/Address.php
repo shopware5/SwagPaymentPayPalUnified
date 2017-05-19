@@ -22,37 +22,34 @@
  * our trademarks remain entirely with us.
  */
 
-namespace SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Payer;
+namespace SwagPaymentPayPalUnified\PayPalBundle\Structs\Common;
 
-use SwagPaymentPayPalUnified\PayPalBundle\Structs\Common\Address;
-use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Payer\PayerInfo\ShippingAddress;
-
-class PayerInfo
+class Address
 {
     /**
      * @var string
      */
-    private $email;
+    private $line1;
 
     /**
      * @var string
      */
-    private $firstName;
+    private $line2;
 
     /**
      * @var string
      */
-    private $lastName;
+    private $city;
 
     /**
      * @var string
      */
-    private $payerId;
+    private $state;
 
     /**
      * @var string
      */
-    private $phone;
+    private $postalCode;
 
     /**
      * @var string
@@ -60,88 +57,88 @@ class PayerInfo
     private $countryCode;
 
     /**
-     * @var ShippingAddress
+     * @var string
      */
-    private $billingAddress;
+    private $phone;
 
     /**
      * @return string
      */
-    public function getEmail()
+    public function getLine1()
     {
-        return $this->email;
+        return $this->line1;
     }
 
     /**
-     * @param string $email
+     * @param string $line1
      */
-    public function setEmail($email)
+    public function setLine1($line1)
     {
-        $this->email = $email;
-    }
-
-    /**
-     * @return string
-     */
-    public function getFirstName()
-    {
-        return $this->firstName;
-    }
-
-    /**
-     * @param string $firstName
-     */
-    public function setFirstName($firstName)
-    {
-        $this->firstName = $firstName;
+        $this->line1 = $line1;
     }
 
     /**
      * @return string
      */
-    public function getLastName()
+    public function getLine2()
     {
-        return $this->lastName;
+        return $this->line2;
     }
 
     /**
-     * @param string $lastName
+     * @param string $line2
      */
-    public function setLastName($lastName)
+    public function setLine2($line2)
     {
-        $this->lastName = $lastName;
-    }
-
-    /**
-     * @return string
-     */
-    public function getPayerId()
-    {
-        return $this->payerId;
-    }
-
-    /**
-     * @param string $payerId
-     */
-    public function setPayerId($payerId)
-    {
-        $this->payerId = $payerId;
+        $this->line2 = $line2;
     }
 
     /**
      * @return string
      */
-    public function getPhone()
+    public function getCity()
     {
-        return $this->phone;
+        return $this->city;
     }
 
     /**
-     * @param string $phone
+     * @param string $city
      */
-    public function setPhone($phone)
+    public function setCity($city)
     {
-        $this->phone = $phone;
+        $this->city = $city;
+    }
+
+    /**
+     * @return string
+     */
+    public function getState()
+    {
+        return $this->state;
+    }
+
+    /**
+     * @param string $state
+     */
+    public function setState($state)
+    {
+        $this->state = $state;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPostalCode()
+    {
+        return $this->postalCode;
+    }
+
+    /**
+     * @param string $postalCode
+     */
+    public function setPostalCode($postalCode)
+    {
+        $this->postalCode = $postalCode;
     }
 
     /**
@@ -161,25 +158,25 @@ class PayerInfo
     }
 
     /**
-     * @return Address
+     * @return string
      */
-    public function getBillingAddress()
+    public function getPhone()
     {
-        return $this->billingAddress;
+        return $this->phone;
     }
 
     /**
-     * @param Address $billingAddress
+     * @param string $phone
      */
-    public function setBillingAddress($billingAddress)
+    public function setPhone($phone)
     {
-        $this->billingAddress = $billingAddress;
+        $this->phone = $phone;
     }
 
     /**
      * @param array|null $data
      *
-     * @return PayerInfo
+     * @return Address
      */
     public static function fromArray(array $data = null)
     {
@@ -189,13 +186,13 @@ class PayerInfo
             return $result;
         }
 
+        $result->setCity($data['city']);
         $result->setCountryCode($data['country_code']);
-        $result->setEmail($data['email']);
-        $result->setFirstName($data['first_name']);
-        $result->setLastName($data['last_name']);
-        $result->setPayerId($data['payer_id']);
+        $result->setLine1($data['line1']);
+        $result->setLine2($data['line2']);
+        $result->setPostalCode($data['postal_code']);
+        $result->setState($data['state']);
         $result->setPhone($data['phone']);
-        $result->setBillingAddress(Address::fromArray($data['shipping_address']));
 
         return $result;
     }
@@ -205,19 +202,14 @@ class PayerInfo
      */
     public function toArray()
     {
-        $result = [
+        return [
+            'city' => $this->getCity(),
             'country_code' => $this->getCountryCode(),
-            'email' => $this->getEmail(),
-            'first_name' => $this->getFirstName(),
-            'last_name' => $this->getLastName(),
-            'payer_id' => $this->getPayerId(),
+            'line1' => $this->getLine1(),
+            'line2' => $this->getLine2(),
+            'postal_code' => $this->getPostalCode(),
+            'state' => $this->getState(),
             'phone' => $this->getPhone(),
         ];
-
-        if ($this->billingAddress !== null) {
-            $result['billing_address'] = $this->billingAddress->toArray();
-        }
-
-        return $result;
     }
 }

@@ -46,6 +46,11 @@ class Payer
     private $payerInfo;
 
     /**
+     * @var string
+     */
+    private $externalSelectedFundingInstrumentType;
+
+    /**
      * @return string
      */
     public function getPaymentMethod()
@@ -94,6 +99,22 @@ class Payer
     }
 
     /**
+     * @return string
+     */
+    public function getExternalSelectedFundingInstrumentType()
+    {
+        return $this->externalSelectedFundingInstrumentType;
+    }
+
+    /**
+     * @param string $externalSelectedFundingInstrumentType
+     */
+    public function setExternalSelectedFundingInstrumentType($externalSelectedFundingInstrumentType)
+    {
+        $this->externalSelectedFundingInstrumentType = $externalSelectedFundingInstrumentType;
+    }
+
+    /**
      * @param array $data
      *
      * @return Payer
@@ -105,6 +126,7 @@ class Payer
         $result->setPaymentMethod($data['payment_method']);
         $result->setPayerInfo(PayerInfo::fromArray($data['payer_info']));
         $result->setStatus($data['status']);
+        $result->setExternalSelectedFundingInstrumentType($data['external_selected_funding_instrument_type']);
 
         return $result;
     }
@@ -117,6 +139,7 @@ class Payer
         $result = [
             'payment_method' => $this->getPaymentMethod(),
             'status' => $this->getStatus(),
+            'external_selected_funding_instrument_type' => $this->getExternalSelectedFundingInstrumentType(),
         ];
 
         if ($this->payerInfo !== null) {

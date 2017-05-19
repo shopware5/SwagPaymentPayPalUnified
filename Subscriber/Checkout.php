@@ -121,6 +121,11 @@ class Checkout implements SubscriberInterface
         $action = $request->getActionName();
         $unifiedActive = (bool) $this->config->get('active');
         $usePayPalPlus = (bool) $this->config->get('plus_active');
+        $errorCode = $request->getParam('paypal_unified_error_code');
+
+        if ($unifiedActive && $errorCode) {
+            $view->assign('paypalUnifiedErrorCode', $errorCode);
+        }
 
         if (!$unifiedActive || !$usePayPalPlus || $controller->Response()->isRedirect()) {
             return;
@@ -140,11 +145,6 @@ class Checkout implements SubscriberInterface
             $this->handleConfirmDispatch($view, $session);
         } else {
             $this->handleShippingPaymentDispatch($view, $session);
-        }
-
-        $errorCode = $request->getParam('paypal_unified_error_code');
-        if ($errorCode) {
-            $view->assign('paypal_unified_error_code', $errorCode);
         }
     }
 
@@ -248,14 +248,16 @@ class Checkout implements SubscriberInterface
     {
         /** @var PaymentResource $paymentResource */
         $paymentResource = $this->container->get('paypal_unified.payment_resource');
+        $profile = $this->container->get('paypal_unified.web_profile_service')->getWebProfile();
+
+        $params = $this->container->get('paypal_unified.payment_request_service')->getRequestParameters(
+            $profile,
+            $basketData,
+            $userData
+        );
 
         try {
-            $payment = $paymentResource->create(
-                [
-                    'sBasket' => $basketData,
-                    'sUserData' => $userData,
-                ]
-            );
+            $payment = $paymentResource->create($params);
 
             return Payment::fromArray($payment);
         } catch (RequestException $ex) {

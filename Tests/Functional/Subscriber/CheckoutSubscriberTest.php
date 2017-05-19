@@ -152,7 +152,7 @@ class CheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
         $subscriber->onPostDispatchCheckout($enlightEventArgs);
 
         $this->assertTrue((bool) $view->getAssign('usePayPalPlus'));
-        $this->assertEquals('5', $view->getAssign('paypal_unified_error_code'));
+        $this->assertEquals('5', $view->getAssign('paypalUnifiedErrorCode'));
     }
 
     private function createTestSettings()

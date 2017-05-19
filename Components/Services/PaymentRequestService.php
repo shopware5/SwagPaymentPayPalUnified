@@ -25,7 +25,7 @@
 namespace SwagPaymentPayPalUnified\Components\Services;
 
 use Shopware\Components\Routing\Router;
-use SwagPaymentPayPalUnified\PayPalBundle\Components\BasketServiceInterface;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\PaymentRequestServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentIntent;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
@@ -38,12 +38,17 @@ use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Transactions\ItemList;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Transactions\ItemList\Item;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile;
 
-class BasketService implements BasketServiceInterface
+class PaymentRequestService implements PaymentRequestServiceInterface
 {
     /**
      * @var Router
      */
-    private $router;
+    protected $router;
+
+    /**
+     * @var SettingsService
+     */
+    protected $settings;
 
     /**
      * @var array
@@ -56,13 +61,6 @@ class BasketService implements BasketServiceInterface
     private $userData;
 
     /**
-     * @var SettingsService
-     */
-    private $settings;
-
-    /**
-     * Checkout constructor.
-     *
      * @param Router                   $router
      * @param SettingsServiceInterface $settingsService
      */

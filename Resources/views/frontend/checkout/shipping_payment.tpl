@@ -33,7 +33,7 @@
 
 {* All integrations *}
 {block name='frontend_account_payment_error_messages'}
-    {if $paypal_unified_error_code}
+    {if $paypalUnifiedErrorCode}
         {include file="frontend/paypal_unified/checkout/error_message.tpl"}
     {/if}
 

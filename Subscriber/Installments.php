@@ -27,10 +27,12 @@ namespace SwagPaymentPayPalUnified\Subscriber;
 use Doctrine\DBAL\Connection;
 use Enlight\Event\SubscriberInterface;
 use Enlight_Controller_ActionEventArgs as ActionEventArgs;
+use Shopware\Components\HttpClient\RequestException;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\Services\Installments\ValidationService;
 use SwagPaymentPayPalUnified\Models\Settings;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
+use SwagPaymentPayPalUnified\PayPalBundle\Resources\PaymentResource;
 
 class Installments implements SubscriberInterface
 {
@@ -71,7 +73,7 @@ class Installments implements SubscriberInterface
     {
         return [
             'Enlight_Controller_Action_PostDispatchSecure_Frontend_Detail' => 'onPostDispatchDetail',
-            'Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout' => 'onPostDispatchCheckout',
+            'Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout' => [['onPostDispatchCheckout'], ['onConfirmInstallments']],
         ];
     }
 
@@ -150,6 +152,49 @@ class Installments implements SubscriberInterface
             if ($selectedPaymentMethodId === $installmentsPaymentId) {
                 $view->assign('paypalInstallmentsRequestCompleteList', true);
             }
+        }
+    }
+
+    /**
+     * Fetches data for the installments finishing process.
+     *
+     * @param \Enlight_Controller_ActionEventArgs $args
+     */
+    public function onConfirmInstallments(\Enlight_Controller_ActionEventArgs $args)
+    {
+        /** @var \Enlight_Controller_Action $controller */
+        $controller = $args->getSubject();
+
+        /** @var \Enlight_Controller_Request_Request $request */
+        $request = $controller->Request();
+        $paymentId = $request->get('paymentId');
+        $payerId = $request->get('PayerID');
+
+        if ($paymentId === null || $payerId === null || $request->getActionName() !== 'confirm') {
+            return;
+        }
+
+        /** @var \Enlight_View_Default $view */
+        $view = $controller->View();
+
+        /** @var PaymentResource $paymentResource */
+        $paymentResource = $args->getSubject()->get('paypal_unified.payment_resource');
+
+        try {
+            $payment = $paymentResource->get($paymentId);
+            $view->assign('paypalInstallmentsCredit', $payment['credit_financing_offered']);
+            $view->assign('paypalInstallmentsPaymentId', $paymentId);
+            $view->assign('paypalInstallmentsPayerId', $payerId);
+
+            //Load the custom confirm page
+            $view->loadTemplate('frontend/paypal_unified/installments/return/confirm.tpl');
+        } catch (RequestException $requestException) {
+            $controller->redirect([
+               'module' => 'frontend',
+               'controller' => 'checkout',
+               'action' => 'shippingPayment',
+               'paypal_unified_error_code' => '5', //Installments error
+            ]);
         }
     }
 }
