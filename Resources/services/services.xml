@@ -58,10 +58,6 @@
 
         <service id="paypal_unified.payment_address_patch_service" class="SwagPaymentPayPalUnified\Components\Services\PaymentAddressPatchService"/>
 
-        <service id="paypal_unified.document_template_service" class="SwagPaymentPayPalUnified\Components\Services\DocumentTemplateService">
-            <argument type="service" id="dbal_connection"/>
-        </service>
-
         <service id="paypal_unified.settings_service" class="SwagPaymentPayPalUnified\Components\Services\SettingsService">
             <argument type="service" id="models"/>
             <argument type="service" id="paypal_unified.dependency_provider"/>
@@ -78,5 +74,8 @@
             <argument type="service" id="pluginlogger"/>
         </service>
 
+        <service id="paypal_unified.installments.order_credit_info_service" class="SwagPaymentPayPalUnified\Components\Services\Installments\OrderCreditInfoService">
+            <argument type="service" id="models"/>
+        </service>
     </services>
 </container>

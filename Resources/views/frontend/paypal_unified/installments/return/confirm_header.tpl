@@ -1,4 +1,4 @@
-{namespace name='frontend/paypal_unified/checkout/confirm'}
+{namespace name='frontend/paypal_unified/installments/return/confirm'}
 
 {block name="frontend_paypal_unified_installments_financing_header"}
     <div class="tos--panel panel has--border">

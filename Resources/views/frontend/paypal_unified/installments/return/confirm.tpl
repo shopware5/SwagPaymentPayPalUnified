@@ -52,7 +52,7 @@
         <li class="list--entry block-group entry--installments-rate">
             {block name="frontend_paypal_unified_installments_cart_price_financing_value_label"}
                 <div class="entry--label block entry--total">
-                    {s namespace='frontend/paypal_unified/checkout/confirm' name="FinancingValueLabel"}{/s}
+                    {s namespace='frontend/paypal_unified/installments/return/confirm' name="FinancingValueLabel"}{/s}
                 </div>
             {/block}
 
@@ -68,7 +68,7 @@
         <li class="list--entry block-group entry--installments-sum">
             {block name="frontend_paypal_unified_installments_cart_price_total_value_label"}
                 <div class="entry--label block entry--total">
-                    {s namespace='frontend/paypal_unified/checkout/confirm' name="FinancingValueTotalLabel"}{/s}
+                    {s namespace='frontend/paypal_unified/installments/return/confirm' name="FinancingValueTotalLabel"}{/s}
                 </div>
             {/block}
 

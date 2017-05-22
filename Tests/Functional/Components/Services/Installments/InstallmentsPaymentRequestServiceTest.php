@@ -41,9 +41,21 @@ class InstallmentsPaymentRequestServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(InstallmentsPaymentRequestService::class, get_class($service));
     }
 
-    public function test_getRequestParameters_has_correct_intent()
+    public function test_getRequestParameters_has_correct_intent_order_fallback()
     {
         $requestParameters = $this->getRequestData(true, 1);
+        $this->assertEquals('order', $requestParameters['intent']);
+    }
+
+    public function test_getRequestParameters_has_correct_intent_sale()
+    {
+        $requestParameters = $this->getRequestData(true, 0);
+        $this->assertEquals('sale', $requestParameters['intent']);
+    }
+
+    public function test_getRequestParameters_has_correct_intent_order()
+    {
+        $requestParameters = $this->getRequestData(true, 2);
         $this->assertEquals('order', $requestParameters['intent']);
     }
 

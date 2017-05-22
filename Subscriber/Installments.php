@@ -29,10 +29,12 @@ use Enlight\Event\SubscriberInterface;
 use Enlight_Controller_ActionEventArgs as ActionEventArgs;
 use Shopware\Components\HttpClient\RequestException;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
+use SwagPaymentPayPalUnified\Components\Services\Installments\OrderCreditInfoService;
 use SwagPaymentPayPalUnified\Components\Services\Installments\ValidationService;
 use SwagPaymentPayPalUnified\Models\Settings;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\PaymentResource;
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Credit;
 
 class Installments implements SubscriberInterface
 {
@@ -144,14 +146,12 @@ class Installments implements SubscriberInterface
         $view->assign('paypalInstallmentsProductPrice', $productPrice);
         $view->assign('paypalInstallmentsPageType', 'cart');
 
-        if ($action === 'confirm') {
-            /*
-             * If paypal installments is currently selected, we can request all financing information from the api.
-             * A complete new template will then be loaded.
-             */
-            if ($selectedPaymentMethodId === $installmentsPaymentId) {
-                $view->assign('paypalInstallmentsRequestCompleteList', true);
-            }
+        /*
+        * If paypal installments is currently selected, we can request all financing information from the api.
+        * A complete new template will then be loaded.
+        */
+        if ($action === 'confirm' && $selectedPaymentMethodId === $installmentsPaymentId) {
+            $view->assign('paypalInstallmentsRequestCompleteList', true);
         }
     }
 
@@ -186,14 +186,20 @@ class Installments implements SubscriberInterface
             $view->assign('paypalInstallmentsPaymentId', $paymentId);
             $view->assign('paypalInstallmentsPayerId', $payerId);
 
+            $creditStruct = Credit::fromArray($payment['credit_financing_offered']);
+
+            /** @var OrderCreditInfoService $creditInfoService */
+            $creditInfoService = $controller->get('paypal_unified.installments.order_credit_info_service');
+            $creditInfoService->saveCreditInfo($creditStruct, $payment['id']);
+
             //Load the custom confirm page
             $view->loadTemplate('frontend/paypal_unified/installments/return/confirm.tpl');
         } catch (RequestException $requestException) {
             $controller->redirect([
-               'module' => 'frontend',
-               'controller' => 'checkout',
-               'action' => 'shippingPayment',
-               'paypal_unified_error_code' => '5', //Installments error
+                'module' => 'frontend',
+                'controller' => 'checkout',
+                'action' => 'shippingPayment',
+                'paypal_unified_error_code' => '5', //Installments error
             ]);
         }
     }
