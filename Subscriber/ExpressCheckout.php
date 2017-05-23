@@ -27,6 +27,8 @@ namespace SwagPaymentPayPalUnified\Subscriber;
 use Enlight\Event\SubscriberInterface;
 use Enlight_Components_Session_Namespace as Session;
 use Enlight_Controller_ActionEventArgs as ActionEventArgs;
+use GuzzleHttp\Exception\RequestException;
+use Shopware\Components\Logger;
 use SwagPaymentPayPalUnified\Components\Services\ShippingAddressRequestService;
 use SwagPaymentPayPalUnified\Models\Settings;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PaymentAddressPatch;
@@ -64,24 +66,32 @@ class ExpressCheckout implements SubscriberInterface
     private $paymentRequestService;
 
     /**
-     * @param SettingsServiceInterface       $settingsService       ,
+     * @var Logger
+     */
+    private $logger;
+
+    /**
+     * @param SettingsServiceInterface       $settingsService
      * @param Session                        $session
      * @param PaymentResource                $paymentResource
      * @param ShippingAddressRequestService  $addressRequestService
      * @param PaymentRequestServiceInterface $paymentRequestService
+     * @param Logger                         $pluginLogger
      */
     public function __construct(
         SettingsServiceInterface $settingsService,
         Session $session,
         PaymentResource $paymentResource,
         ShippingAddressRequestService $addressRequestService,
-        PaymentRequestServiceInterface $paymentRequestService
+        PaymentRequestServiceInterface $paymentRequestService,
+        Logger $pluginLogger
     ) {
         $this->settings = $settingsService->getSettings();
         $this->session = $session;
         $this->paymentResource = $paymentResource;
         $this->addressRequestService = $addressRequestService;
         $this->paymentRequestService = $paymentRequestService;
+        $this->logger = $pluginLogger;
     }
 
     /**
@@ -160,6 +170,7 @@ class ExpressCheckout implements SubscriberInterface
             $args->getResponse()->isRedirect()
         ) {
             $paymentId = $request->getParam('paymentId');
+
             $this->patchAddressAndAmount($paymentId);
 
             $args->getSubject()->redirect([
@@ -198,18 +209,28 @@ class ExpressCheckout implements SubscriberInterface
      */
     private function patchAddressAndAmount($paymentId)
     {
-        $orderVariables = $this->session->get('sOrderVariables');
-        $userData = $orderVariables['sUserData'];
-        $basketData = $orderVariables['sBasket'];
+        try {
+            $orderVariables = $this->session->get('sOrderVariables');
+            $userData = $orderVariables['sUserData'];
+            $basketData = $orderVariables['sBasket'];
 
-        $shippingAddress = $this->addressRequestService->getAddress($userData);
-        $patch = new PaymentAddressPatch($shippingAddress);
-        $this->paymentResource->patch($paymentId, $patch);
+            $shippingAddress = $this->addressRequestService->getAddress($userData);
+            $patch = new PaymentAddressPatch($shippingAddress);
+            $this->paymentResource->patch($paymentId, $patch);
 
-        $profile = new WebProfile();
-        $profile->setId('fake');
-        $paymentStruct = $this->paymentRequestService->getRequestParameters($profile, $basketData, $userData);
-        $amountPatch = new PaymentAmountPatch($paymentStruct->getTransactions()->getAmount());
-        $this->paymentResource->patch($paymentId, $amountPatch);
+            $profile = new WebProfile();
+            $profile->setId('temporary');
+
+            $paymentStruct = $this->paymentRequestService->getRequestParameters($profile, $basketData, $userData);
+            $amountPatch = new PaymentAmountPatch($paymentStruct->getTransactions()->getAmount());
+
+            $this->paymentResource->patch($paymentId, $amountPatch);
+        } catch (\Shopware\Components\HttpClient\RequestException $requestException) {
+            $this->logger->error('PayPal Unified ExpressCheckout: Unable to patch the payment (RequestException)', [$requestException->getMessage(), $requestException->getBody()]);
+            throw $requestException;
+        } catch (\Exception $exception) {
+            $this->logger->error('PayPal Unified ExpressCheckout: Unable to patch the payment (Exception)', [$exception->getMessage(), $exception->getTraceAsString()]);
+            throw $exception;
+        }
     }
 }

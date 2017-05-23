@@ -41,6 +41,9 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.ExpressCheckout', {
         ];
     },
 
+    /**
+     * @returns { Ext.form.field.Checkbox }
+     */
     createEcActivate: function() {
         var me = this;
 
@@ -54,6 +57,9 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.ExpressCheckout', {
         });
     },
 
+    /**
+     * @returns { Ext.form.field.Checkbox }
+     */
     createEcDetailActivate: function() {
         return Ext.create('Ext.form.field.Checkbox', {
             name: 'ecDetailActive',

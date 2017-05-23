@@ -23,16 +23,14 @@
             createPaymentUrl: '',
 
             /**
-             * selector of the dom element which contains the json encoded cart data
-             */
-            cartDataSelector: '.paypal-unified-ec--cart-data',
-
-            /**
              * size of the button
              * possible values:
              *  - tiny
              *  - small
              *  - medium
+             *  - large
+             *
+             *  @type string
              */
             size: 'medium',
 
@@ -41,6 +39,8 @@
              * possible values:
              *  - pill
              *  - rect
+             *
+             *  @type string
              */
             shape: 'rect',
 
@@ -50,9 +50,37 @@
              *  - gold
              *  - blue
              *  - silver
+             *
+             *  @type string
              */
-            color: 'gold'
+            color: 'gold',
+
+
+            /**
+             * A boolean indicating if the current page is an article detail page.
+             *
+             * @type string
+             */
+            detailPage: false,
+
+            /**
+             * The selector for the quantity selection on the detail page.
+             *
+             * @type string
+             */
+            productQuantitySelector: '#sQuantity',
+
+            /**
+             * The selector for the article number on the detail page.
+             * @type string
+             */
+            productNumberSelector: 'input[name="sAdd"]'
         },
+
+        /**
+         * @type { Object }
+         */
+        expressCheckoutButton: null,
 
         init: function() {
             var me = this;
@@ -60,26 +88,43 @@
             me.applyDataAttributes();
 
             me.createButton();
+
+            $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonCart/init', me);
+
+            if (me.opts.detailPage) {
+                $.subscribe('plugin/swAjaxVariant/onRequestData', $.proxy(me.onChangeVariant, me));
+            }
         },
 
         /**
-         * creates the paypal express checkout over the provided paypal javascript
+         * Will be triggered when the selected variant was changed.
+         * Re-initializes this plugin.
+         */
+        onChangeVariant: function () {
+            window.StateManager.addPlugin('.paypal-unified-ec--button-container', 'swagPayPalUnifiedExpressCheckoutButton');
+        },
+
+        /**
+         * Creates the paypal express checkout over the provided paypal javascript
          */
         createButton: function() {
             var me = this;
 
             me.expressCheckoutButton = paypal.Button.render(me.createPayPalButtonConfiguration(), me.$el.get(0));
+
+            $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonCart/createButton', me);
         },
 
         /**
-         * creates the configuration for the button
+         * Creates the configuration for the button
          *
          * @return {Object}
          */
         createPayPalButtonConfiguration: function() {
-            var me = this;
+            var me = this,
+                config;
 
-            return {
+            config = {
                 /**
                  * environment property of the button
                  */
@@ -105,26 +150,30 @@
                  */
                 onAuthorize: $.noop
             };
+
+            $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonCart/createConfig', [ me, config ]);
+
+            return config;
         },
 
         /**
-         * callback method for the "payment" function of the button
-         * calls an action which creates the payment and redirects to the paypal page
+         * Callback method for the "payment" function of the button.
+         * Calls an action which creates the payment and redirects to the paypal page.
          *
          * @return {boolean}
          */
         onPayPalPayment: function() {
             var me = this,
                 token,
-                cartData,
                 form;
+
+            $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonCart/beforeCreatePayment', me);
 
             if (CSRF.checkToken()) {
                 token = CSRF.getToken();
             }
 
-            cartData = $(me.opts.cartDataSelector).html();
-            form = me.createCreatePaymentForm(cartData, token);
+            form = me.createCreatePaymentForm(token);
 
             $.loadingIndicator.open({
                 openOverlay: true,
@@ -135,17 +184,20 @@
                 form.submit();
             }, 100);
 
+            $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonCart/createPayment', me);
+
             return true;
         },
 
         /**
-         * creates the form which calls the action
+         * Creates the form which calls the action.
+         * Appends a new form which stores further required information that are being
+         * used in the action later on.
          *
-         * @param {String} cartData
          * @param {String} token
          * @return {Object}
          */
-        createCreatePaymentForm: function(cartData, token) {
+        createCreatePaymentForm: function(token) {
             var me = this,
                 $form,
                 createField = function(name, val) {
@@ -161,8 +213,15 @@
                 method: 'POST'
             });
 
-            createField('cartData', cartData).appendTo($form);
             createField('__csrf_token', token).appendTo($form);
+
+            if (me.opts.detailPage) {
+                createField('addArticle', true).appendTo($form);
+                createField('articleNumber', me.getArticleNumber()).appendTo($form);
+                createField('articleQuantity', me.getArticleQuantity()).appendTo($form);
+            }
+
+            $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonCart/createRequestForm', [me, $form]);
 
             $form.appendTo($('body'));
 
@@ -170,8 +229,32 @@
         },
 
         /**
-         * buffer for submitting the form
-         * if we don't delay the call, the loading indicator will not show up on mobile
+         * Helper function that returns the current article number.
+         * Will only be used on the article detail page
+         *
+         * @returns { String }
+         */
+        getArticleNumber: function () {
+            var me = this;
+
+            return $(me.opts.productNumberSelector).val();
+        },
+
+        /**
+         * Helper function that returns the current article quantity.
+         * Will only be used on the article detail page.
+         *
+         * @returns { Number }
+         */
+        getArticleQuantity: function () {
+            var me = this;
+
+            return $(me.opts.productQuantitySelector).val();
+        },
+
+        /**
+         * Buffer for submitting the form
+         * If we don't delay the call, the loading indicator will not show up on mobile
          *
          * @param {function} fn
          * @param {number} timeout

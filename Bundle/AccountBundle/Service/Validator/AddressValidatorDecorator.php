@@ -31,7 +31,9 @@ use Symfony\Component\Validator\ConstraintViolationInterface;
 
 class AddressValidatorDecorator implements AddressValidatorInterface
 {
-    /** @var AddressValidatorInterface */
+    /**
+     * @var AddressValidatorInterface
+     */
     private $innerValidator;
 
     /**
@@ -79,8 +81,6 @@ class AddressValidatorDecorator implements AddressValidatorInterface
                     throw $exception;
                 }
             }
-
-            return;
         }
     }
 

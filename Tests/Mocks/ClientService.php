@@ -22,50 +22,29 @@
  * our trademarks remain entirely with us.
  */
 
-namespace SwagPaymentPayPalUnified\Components;
+namespace SwagPaymentPayPalUnified\Tests\Mocks;
 
-use Shopware\Components\DependencyInjection\Container as DIContainer;
-use Shopware\Models\Shop\DetachedShop;
-
-class DependencyProvider
+class ClientService extends \SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService
 {
     /**
-     * @var DIContainer
+     * @var array
      */
-    private $container;
+    private $expectedResult;
 
-    /**
-     * @param DIContainer $container
-     */
-    public function __construct(DIContainer $container)
+    public function __construct()
     {
-        $this->container = $container;
+    }
+
+    public function sendRequest($type, $resourceUri, array $data = [], $jsonPayload = true)
+    {
+        return $this->expectedResult;
     }
 
     /**
-     * @return null|DetachedShop
+     * @param array $data
      */
-    public function getShop()
+    public function setExpectedResult(array $data)
     {
-        if ($this->container->has('shop')) {
-            return $this->container->get('shop');
-        }
-
-        return null;
-    }
-
-    /**
-     * Returns the module with the given name, if any exists.
-     *
-     * @param string $moduleName
-     *
-     * @return mixed
-     */
-    public function getModule($moduleName)
-    {
-        /** @var \Shopware_Components_Modules $modules */
-        $modules = $this->container->get('modules');
-
-        return $modules->offsetGet($moduleName);
+        $this->expectedResult = $data;
     }
 }

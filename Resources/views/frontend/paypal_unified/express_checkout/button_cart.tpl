@@ -7,12 +7,6 @@
     </div>
 {/block}
 
-{block name='paypal_unified_ec_cart_data'}
-    <template class="paypal-unified-ec--cart-data">
-        {$sBasket|json_encode}
-    </template>
-{/block}
-
 {block name='paypal_unified_ec_button_script'}
     {if $paypalEcAjaxCart}
         <script>

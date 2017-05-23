@@ -5,6 +5,6 @@
     {$smarty.block.parent}
 
     {if $sBasket.content && !$sUserLoggedIn && $paypalExpressCheckoutActive}
-        {include file='frontend/paypal_unified/express_checkout/button.tpl' paypalEcAjaxCart = true}
+        {include file='frontend/paypal_unified/express_checkout/button_cart.tpl' paypalEcAjaxCart = true}
     {/if}
 {/block}

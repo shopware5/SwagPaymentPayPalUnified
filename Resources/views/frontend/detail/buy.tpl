@@ -13,12 +13,11 @@
     {$smarty.block.parent}
 {/block}
 
+{* PayPal Express Checkout integration *}
 {block name="frontend_detail_buy_button"}
     {$smarty.block.parent}
 
-    {if $sArticle.sConfigurator && !$activeConfiguratorSelection}
-        {*todo disable express button*}
-    {else}
-        {*todo enable express button*}
+    {if !($sArticle.sConfigurator && !$activeConfiguratorSelection) && $paypalExpressCheckoutDetailActive}
+        {include file='frontend/paypal_unified/express_checkout/button_detail.tpl'}
     {/if}
 {/block}

@@ -46,22 +46,43 @@ class Shopware_Controllers_Widgets_PaypalUnifiedExpressCheckout extends \Enlight
 
     public function createPaymentAction()
     {
-        $cartData = $this->Request()->getParam('cartData');
+        /** @var sBasket $basket */
+        $basket = $this->get('paypal_unified.dependency_provider')->getModule('basket');
+
+        //If the paypal express button on the detail page was clicked, the addArticle equals true.
+        //That means, that we have to add it manually to the basket.
+        $addArticleToBasket = $this->Request()->getParam('addArticle');
+        if ($addArticleToBasket) {
+            $articleNumber = $this->Request()->getParam('articleNumber');
+            $articleQuantity = $this->Request()->getParam('articleQuantity');
+            $basket->sAddArticle($articleNumber, $articleQuantity);
+        }
+
+        //By using the basket module we do not have to deal with any view assignments
+        //as seen in the PayPalUnified controller.
+        $basketData = $basket->sGetBasket();
 
         $profile = $this->get('paypal_unified.web_profile_service')->getWebProfile();
-        $basketData = json_decode($cartData, true);
+
         $userData = [
             'additional' => [
                 'show_net' => !(bool) $this->get('session')->get('sOutputNet'),
             ],
         ];
 
+        /** @var \Shopware\Models\Shop\DetachedShop $shop */
+        $shop = $this->get('paypal_unified.dependency_provider')->getShop();
+        $currency = $shop->getCurrency()->getCurrency();
+
         try {
+            /** @var Payment $params */
             $params = $this->get('paypal_unified.express_checkout.payment_request_service')->getRequestParameters(
                 $profile,
                 $basketData,
-                $userData
+                $userData,
+                $currency
             );
+
             $response = $this->paymentResource->create($params);
             $responseStruct = Payment::fromArray($response);
         } catch (RequestException $requestEx) {

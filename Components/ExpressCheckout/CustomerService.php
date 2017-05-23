@@ -25,6 +25,7 @@
 namespace SwagPaymentPayPalUnified\Components\ExpressCheckout;
 
 use Doctrine\DBAL\Connection;
+use sAdmin;
 use Shopware\Bundle\AccountBundle\Form\Account\AddressFormType;
 use Shopware\Bundle\AccountBundle\Form\Account\PersonalFormType;
 use Shopware\Bundle\AccountBundle\Service\RegisterServiceInterface;
@@ -77,6 +78,15 @@ class CustomerService
     private $front;
 
     /**
+     * @var DependencyProvider
+     */
+    private $dependencyProvider;
+
+    /**
+     * @var sAdmin
+     */
+    private $adminModule;
+    /**
      * @param ShopwareConfig            $shopwareConfig
      * @param Connection                $connection
      * @param FormFactoryInterface      $formFactory
@@ -101,7 +111,7 @@ class CustomerService
         $this->registerService = $registerService;
         $this->paymentMethodProvider = new PaymentMethodProvider();
         $this->front = $front;
-        $this->adminModule = $dependencyProvider->getModule('admin');
+        $this->dependencyProvider = $dependencyProvider;
     }
 
     /**
@@ -109,6 +119,8 @@ class CustomerService
      */
     public function createNewCustomer(Payment $paymentStruct)
     {
+        $this->adminModule = $this->dependencyProvider->getModule('admin');
+
         $payerInfo = $paymentStruct->getPayer()->getPayerInfo();
         $salutation = $this->getSalutation();
         $address = $payerInfo->getBillingAddress();
@@ -148,7 +160,7 @@ class CustomerService
     {
         $sql = 'SELECT id FROM s_core_countries WHERE countryiso=:countryCode';
 
-        return (int) $this->connection->executeQuery($sql, ['countryCode' => $countryCode])->fetchColumn();
+        return (int) $this->connection->fetchColumn($sql, ['countryCode' => $countryCode]);
     }
 
     /**
@@ -161,7 +173,7 @@ class CustomerService
     {
         $sql = 'SELECT id FROM s_core_countries_states WHERE countryID=:countryId AND shortcode=:stateCode';
 
-        return (int) $this->connection->executeQuery($sql, ['countryCode' => $countryId, 'stateCode' => $stateCode])->fetchColumn();
+        return (int) $this->connection->fetchColumn($sql, [':countryId' => $countryId, 'stateCode' => $stateCode]);
     }
 
     /**

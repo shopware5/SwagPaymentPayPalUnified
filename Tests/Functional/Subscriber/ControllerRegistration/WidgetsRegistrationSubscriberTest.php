@@ -39,7 +39,7 @@ class WidgetsRegistrationSubscriberTest extends \PHPUnit_Framework_TestCase
         $events = Widgets::getSubscribedEvents();
         $this->assertCount(2, $events);
         $this->assertEquals('onGetInstallmentsControllerPath', $events['Enlight_Controller_Dispatcher_ControllerPath_Widgets_PaypalUnifiedInstallments']);
-        $this->assertEquals('onGetInstallmentsControllerPath', $events['Enlight_Controller_Dispatcher_ControllerPath_Widgets_PaypalUnifiedInstallments']);
+        $this->assertEquals('onGetEcControllerPath', $events['Enlight_Controller_Dispatcher_ControllerPath_Widgets_PaypalUnifiedExpressCheckout']);
     }
 
     public function test_onGetInstallmentsControllerPath()

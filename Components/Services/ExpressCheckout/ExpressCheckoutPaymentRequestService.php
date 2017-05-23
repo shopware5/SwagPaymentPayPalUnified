@@ -30,14 +30,35 @@ use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile;
 class ExpressCheckoutPaymentRequestService extends PaymentRequestService
 {
     /**
-     * {@inheritdoc}
+     * @param WebProfile $profile
+     * @param array      $basketData
+     * @param array      $userData
+     * @param null       $currency
+     *
+     * @return \SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment
      */
-    public function getRequestParameters(WebProfile $profile, array $basketData, array $userData)
-    {
+    public function getRequestParameters(
+        WebProfile $profile,
+        array $basketData,
+        array $userData,
+        $currency = null
+    ) {
         $result = parent::getRequestParameters($profile, $basketData, $userData);
 
         $result->getRedirectUrls()->setReturnUrl($this->getReturnUrl());
         $result->getRedirectUrls()->setCancelUrl($this->getCancelUrl());
+
+        //Since we used the sBasket module earlier, the currencies might not be available,
+        //but paypal needs them.
+        if (!$result->getTransactions()->getAmount()->getCurrency()) {
+            $result->getTransactions()->getAmount()->setCurrency($currency);
+        }
+
+        foreach ($result->getTransactions()->getItemList()->getItems() as $item) {
+            if (!$item->getCurrency()) {
+                $item->setCurrency($currency);
+            }
+        }
 
         return $result;
     }

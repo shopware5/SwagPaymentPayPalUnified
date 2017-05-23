@@ -18,6 +18,6 @@
     {$smarty.block.parent}
 
     {if $sBasket.content && !$sUserLoggedIn && $paypalExpressCheckoutActive}
-        {include file='frontend/paypal_unified/express_checkout/button.tpl'}
+        {include file='frontend/paypal_unified/express_checkout/button_cart.tpl'}
     {/if}
 {/block}
