@@ -43,4 +43,17 @@ trait PayPalUnifiedPaymentIdTrait
             ->execute()
             ->fetchColumn();
     }
+
+    protected function getInstallmentsPaymentId()
+    {
+        /** @var QueryBuilder $queryBuilder */
+        $queryBuilder = Shopware()->Container()->get('dbal_connection')->createQueryBuilder();
+
+        return $queryBuilder->select('id')
+            ->from('s_core_paymentmeans')
+            ->where('name = :name')
+            ->setParameter(':name', 'SwagPaymentPayPalUnifiedInstallments')
+            ->execute()
+            ->fetchColumn();
+    }
 }

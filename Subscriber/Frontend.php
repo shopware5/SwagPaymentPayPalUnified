@@ -60,6 +60,7 @@ class Frontend implements SubscriberInterface
             'Theme_Compiler_Collect_Plugin_Javascript' => 'onCollectJavascript',
             'Enlight_Controller_Action_PostDispatchSecure_Frontend' => 'onPostDispatchSecure',
             'Enlight_Controller_Action_PostDispatchSecure_Widgets' => 'onPostDispatchSecure',
+            'Theme_Inheritance_Template_Directories_Collected' => 'onCollectTemplateDir',
         ];
     }
 
@@ -95,13 +96,22 @@ class Frontend implements SubscriberInterface
 
         /** @var Enlight_View_Default $view */
         $view = $args->getSubject()->View();
-        $view->addTemplateDir($this->pluginDir . '/Resources/views');
-
         $restylePaymentSelection = ((bool) $this->config->get('plus_active') && (bool) $this->config->get('plus_restyle'));
 
         //Assign shop specific and configurable values to the view.
         $view->assign('showPaypalLogo', (bool) $this->config->get('show_sidebar_logo'));
         $view->assign('restylePaymentSelection', $restylePaymentSelection);
         $view->assign('showPaypalInstallmentsLogo', (bool) $this->config->get('installments_show_logo'));
+    }
+
+    /**
+     * @param \Enlight_Event_EventArgs $args
+     */
+    public function onCollectTemplateDir(\Enlight_Event_EventArgs $args)
+    {
+        $dirs = $args->getReturn();
+        $dirs[] = $this->pluginDir . '/Resources/views';
+
+        $args->setReturn($dirs);
     }
 }

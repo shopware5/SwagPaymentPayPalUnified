@@ -166,11 +166,19 @@ class WebProfile
         $webProfile = new self();
         $webProfile->setName($data['name']);
         $webProfile->setTemporary($data['temporary']);
+
+        if (isset($data['input_fields'])) {
+            $webProfile->setInputFields(WebProfileInputFields::fromArray($data['input_fields']));
+        }
+
         if (isset($data['flow_config'])) {
             $webProfile->setFlowConfig(WebProfileFlowConfig::fromArray($data['flow_config']));
         }
-        $webProfile->setInputFields(WebProfileInputFields::fromArray($data['input_fields']));
-        $webProfile->setPresentation(WebProfilePresentation::fromArray($data['presentation']));
+
+        if (isset($data['presentation'])) {
+            $webProfile->setPresentation(WebProfilePresentation::fromArray($data['presentation']));
+        }
+
         $webProfile->setId($data['id']);
 
         return $webProfile;

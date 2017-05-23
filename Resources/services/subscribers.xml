@@ -37,13 +37,6 @@
             <tag name="shopware.event_subscriber"/>
         </service>
 
-        <service id="paypal_unified.subscriber.document" class="SwagPaymentPayPalUnified\Subscriber\Document">
-            <argument type="service" id="paypal_unified.payment_instruction_service"/>
-            <argument type="service" id="paypal_unified.document_template_service"/>
-            <argument type="service" id="models"/>
-            <tag name="shopware.event_subscriber"/>
-        </service>
-
         <service id="paypal_unified.subscriber.payment_means" class="SwagPaymentPayPalUnified\Subscriber\PaymentMeans">
             <argument type="service" id="dbal_connection"/>
             <argument type="service" id="paypal_unified.settings_service"/>
@@ -58,6 +51,18 @@
         </service>
 
         <service id="paypal_unified.subscriber.backend_order" class="SwagPaymentPayPalUnified\Subscriber\BackendOrder">
+            <tag name="shopware.event_subscriber"/>
+        </service>
+
+        <service id="paypal_unified.subscriber.documents.invoice" class="SwagPaymentPayPalUnified\Subscriber\Documents\Invoice">
+            <argument type="service" id="paypal_unified.payment_instruction_service"/>
+            <argument type="service" id="dbal_connection"/>
+            <tag name="shopware.event_subscriber"/>
+        </service>
+
+        <service id="paypal_unified.subscriber.documents.installments" class="SwagPaymentPayPalUnified\Subscriber\Documents\Installments">
+            <argument type="service" id="paypal_unified.installments.order_credit_info_service"/>
+            <argument type="service" id="dbal_connection"/>
             <tag name="shopware.event_subscriber"/>
         </service>
     </services>
