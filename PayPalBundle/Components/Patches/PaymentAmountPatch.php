@@ -22,23 +22,48 @@
  * our trademarks remain entirely with us.
  */
 
-namespace SwagPaymentPayPalUnified\Components\Services;
+namespace SwagPaymentPayPalUnified\PayPalBundle\Components\Patches;
 
-use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PaymentAddressPatch;
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Transactions\Amount;
 
-class PaymentAddressPatchService
+class PaymentAmountPatch implements PatchInterface
 {
-    /**
-     * @param array $userData
-     *
-     * @return PaymentAddressPatch
-     */
-    public function getPatch(array $userData)
-    {
-        $shippingAddress = $userData['shippingaddress'];
-        $shippingAddress['countryiso'] = $userData['additional']['countryShipping']['countryiso'];
-        $shippingAddress['stateiso'] = $userData['additional']['stateShipping']['shortcode'];
+    const PATH = '/transactions/0/amount';
 
-        return new PaymentAddressPatch($shippingAddress);
+    /**
+     * @var Amount
+     */
+    private $amount;
+
+    /**
+     * @param Amount $amount
+     */
+    public function __construct(Amount $amount)
+    {
+        $this->amount = $amount;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getOperation()
+    {
+        return self::OPERATION_REPLACE;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPath()
+    {
+        return self::PATH;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getValue()
+    {
+        return $this->amount->toArray();
     }
 }

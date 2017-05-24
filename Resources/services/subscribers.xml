@@ -16,6 +16,11 @@
             <tag name="shopware.event_subscriber"/>
         </service>
 
+        <service id="paypal_unified.subscriber.controller.widgets" class="SwagPaymentPayPalUnified\Subscriber\ControllerRegistration\Widgets">
+            <argument>%paypal_unified.plugin_dir%</argument>
+            <tag name="shopware.event_subscriber"/>
+        </service>
+
         <service id="paypal_unified.subscriber.less" class="SwagPaymentPayPalUnified\Subscriber\Less">
             <argument>%paypal_unified.plugin_dir%</argument>
             <tag name="shopware.event_subscriber"/>
@@ -63,6 +68,16 @@
         <service id="paypal_unified.subscriber.documents.installments" class="SwagPaymentPayPalUnified\Subscriber\Documents\Installments">
             <argument type="service" id="paypal_unified.installments.order_credit_info_service"/>
             <argument type="service" id="dbal_connection"/>
+            <tag name="shopware.event_subscriber"/>
+        </service>
+
+        <service id="paypal_unified.subscriber.express_checkout" class="SwagPaymentPayPalUnified\Subscriber\ExpressCheckout">
+            <argument type="service" id="paypal_unified.settings_service"/>
+            <argument type="service" id="session"/>
+            <argument type="service" id="paypal_unified.payment_resource"/>
+            <argument type="service" id="paypal_unified.shipping_address_request_service"/>
+            <argument type="service" id="paypal_unified.payment_request_service"/>
+            <argument type="service" id="pluginlogger"/>
             <tag name="shopware.event_subscriber"/>
         </service>
     </services>

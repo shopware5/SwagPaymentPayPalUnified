@@ -242,7 +242,5 @@
         }
     });
 
-    $(function() {
-        StateManager.addPlugin('*[data-paypalPaymentWall="true"]', 'swagPayPalUnifiedPaymentWall');
-    });
+    window.StateManager.addPlugin('*[data-paypalPaymentWall="true"]', 'swagPayPalUnifiedPaymentWall');
 })(jQuery, window);

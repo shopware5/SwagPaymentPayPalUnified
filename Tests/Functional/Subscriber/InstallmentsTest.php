@@ -132,7 +132,7 @@ class InstallmentsTest extends UnifiedControllerTestCase
         $settings->setInstallmentsPresentmentDetail(1);
         $settingService = new SettingsServiceInstallmentsMock($settings);
 
-        $result = $this->getInstallmentsSubscriber($settingService, 2)->onPostDispatchDetail($actionEventArgs);
+        $result = $this->getInstallmentsSubscriber($settingService)->onPostDispatchDetail($actionEventArgs);
 
         $this->assertNull($result);
     }
@@ -150,7 +150,7 @@ class InstallmentsTest extends UnifiedControllerTestCase
         $settings->setInstallmentsPresentmentDetail(1);
         $settingService = new SettingsServiceInstallmentsMock($settings);
 
-        $result = $this->getInstallmentsSubscriber($settingService, 3)->onPostDispatchDetail($actionEventArgs);
+        $result = $this->getInstallmentsSubscriber($settingService)->onPostDispatchDetail($actionEventArgs);
 
         $this->assertNull($result);
     }

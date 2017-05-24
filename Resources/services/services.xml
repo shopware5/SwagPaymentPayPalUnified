@@ -41,10 +41,16 @@
             <argument type="service" id="paypal_unified.settings_service"/>
         </service>
 
-        <service id="paypal_unified.installments_payment_request_service" class="SwagPaymentPayPalUnified\Components\Services\Installments\InstallmentsPaymentRequestService">
+        <service id="paypal_unified.installments.payment_request_service" class="SwagPaymentPayPalUnified\Components\Services\Installments\InstallmentsPaymentRequestService">
             <argument type="service" id="router"/>
             <argument type="service" id="paypal_unified.settings_service"/>
         </service>
+
+        <service id="paypal_unified.express_checkout.payment_request_service" class="SwagPaymentPayPalUnified\Components\Services\ExpressCheckout\ExpressCheckoutPaymentRequestService">
+            <argument type="service" id="router"/>
+            <argument type="service" id="paypal_unified.settings_service"/>
+        </service>
+
 
         <service id="paypal_unified.partner_attribution_service" class="SwagPaymentPayPalUnified\PayPalBundle\Services\PartnerAttributionService">
             <argument type="service" id="paypal_unified.settings_service"/>
@@ -56,7 +62,7 @@
             <argument type="service" id="models"/>
         </service>
 
-        <service id="paypal_unified.payment_address_patch_service" class="SwagPaymentPayPalUnified\Components\Services\PaymentAddressPatchService"/>
+        <service id="paypal_unified.shipping_address_request_service" class="SwagPaymentPayPalUnified\Components\Services\ShippingAddressRequestService"/>
 
         <service id="paypal_unified.settings_service" class="SwagPaymentPayPalUnified\Components\Services\SettingsService">
             <argument type="service" id="models"/>
@@ -72,6 +78,16 @@
         <service id="paypal_unified.installments.installments_request_service" class="SwagPaymentPayPalUnified\Components\Services\Installments\InstallmentsRequestService">
             <argument type="service" id="paypal_unified.installments_resource"/>
             <argument type="service" id="pluginlogger"/>
+        </service>
+
+        <service id="paypal_unified.express_checkout.customer_service" class="SwagPaymentPayPalUnified\Components\ExpressCheckout\CustomerService">
+            <argument type="service" id="config"/>
+            <argument type="service" id="dbal_connection"/>
+            <argument type="service" id="shopware.form.factory"/>
+            <argument type="service" id="shopware_storefront.context_service"/>
+            <argument type="service" id="shopware_account.register_service"/>
+            <argument type="service" id="front"/>
+            <argument type="service" id="paypal_unified.dependency_provider"/>
         </service>
 
         <service id="paypal_unified.installments.order_credit_info_service" class="SwagPaymentPayPalUnified\Components\Services\Installments\OrderCreditInfoService">

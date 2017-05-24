@@ -50,7 +50,6 @@ class Frontend implements SubscriberInterface
             'Enlight_Controller_Dispatcher_ControllerPath_Frontend_PaypalUnified' => 'onGetUnifiedControllerPath',
             'Enlight_Controller_Dispatcher_ControllerPath_Frontend_PaypalUnifiedInstallments' => 'onGetInstallmentsPaymentControllerPath',
             'Enlight_Controller_Dispatcher_ControllerPath_Frontend_PaypalUnifiedWebhook' => 'onGetWebhookControllerPath',
-            'Enlight_Controller_Dispatcher_ControllerPath_Widgets_PaypalUnifiedInstallments' => 'onGetInstallmentsControllerPath',
         ];
     }
 
@@ -66,28 +65,6 @@ class Frontend implements SubscriberInterface
     }
 
     /**
-     * Handles the Enlight_Controller_Dispatcher_ControllerPath_Frontend_PaypalUnifiedWebhook event.
-     * Returns the path to the webhook controller.
-     *
-     * @return string
-     */
-    public function onGetWebhookControllerPath()
-    {
-        return $this->pluginDirectory . '/Controllers/Frontend/PaypalUnifiedWebhook.php';
-    }
-
-    /**
-     * Handles the Enlight_Controller_Dispatcher_ControllerPath_Widgets_PaypalUnifiedInstallments event.
-     * Returns the path to the installments controller.
-     *
-     * @return string
-     */
-    public function onGetInstallmentsControllerPath()
-    {
-        return $this->pluginDirectory . '/Controllers/Widgets/PaypalUnifiedInstallments.php';
-    }
-
-    /**
      * Handles the Enlight_Controller_Dispatcher_ControllerPath_Frontend_PaypalUnifiedInstallments event.
      * Returns the path to the installments controller.
      *
@@ -96,5 +73,16 @@ class Frontend implements SubscriberInterface
     public function onGetInstallmentsPaymentControllerPath()
     {
         return $this->pluginDirectory . '/Controllers/Frontend/PaypalUnifiedInstallments.php';
+    }
+
+    /**
+     * Handles the Enlight_Controller_Dispatcher_ControllerPath_Frontend_PaypalUnifiedWebhook event.
+     * Returns the path to the webhook controller.
+     *
+     * @return string
+     */
+    public function onGetWebhookControllerPath()
+    {
+        return $this->pluginDirectory . '/Controllers/Frontend/PaypalUnifiedWebhook.php';
     }
 }

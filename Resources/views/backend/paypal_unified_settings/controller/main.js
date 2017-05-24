@@ -42,7 +42,8 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
         { ref: 'generalTab', selector: 'paypal-unified-settings-tabs-general' },
         { ref: 'paypalTab', selector: 'paypal-unified-settings-tabs-paypal' },
         { ref: 'plusTab', selector: 'paypal-unified-settings-tabs-paypal-plus' },
-        { ref: 'installmentsTab', selector: 'paypal-unified-settings-tabs-installments' }
+        { ref: 'installmentsTab', selector: 'paypal-unified-settings-tabs-installments' },
+        { ref: 'ecTab', selector: 'paypal-unified-settings-tabs-express-checkout' }
     ],
 
     init: function() {
@@ -106,7 +107,8 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
             generalSettings = me.getGeneralTab().getForm().getValues(),
             paypalSettings = me.getPaypalTab().getForm().getValues(),
             plusSettings = me.getPlusTab().getForm().getValues(),
-            installmentsSettings = me.getInstallmentsTab().getForm().getValues();
+            installmentsSettings = me.getInstallmentsTab().getForm().getValues(),
+            ecSettings = me.getEcTab().getForm().getValues();
 
         if (!me.getGeneralTab().getForm().isValid()) {
             Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Unified{/s}', '{s name=growl/formValidationError}Please fill out all fields marked in red.{/s}', me.window.title);
@@ -117,6 +119,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
         me.record.set(paypalSettings);
         me.record.set(plusSettings);
         me.record.set(installmentsSettings);
+        me.record.set(ecSettings);
 
         me.record.save();
 
@@ -212,6 +215,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
             paypalTab = me.getPaypalTab(),
             plusTab = me.getPlusTab(),
             installmentsTabs = me.getInstallmentsTab(),
+            ecTab = me.getEcTab(),
             settings = Ext.JSON.decode(response.responseText)['settings'];
 
         me.record = Ext.create('Shopware.apps.PaypalUnifiedSettings.model.Settings', settings);
@@ -227,6 +231,9 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
 
         // Update installments tab
         installmentsTabs.loadRecord(me.record);
+
+        // Update express checkout tab
+        ecTab.loadRecord(me.record);
 
         me.applyActivationState(me.record.get('active'));
 
@@ -247,6 +254,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
         me.getPaypalTab().setDisabled(!active);
         me.getPlusTab().setDisabled(!active);
         me.getInstallmentsTab().setDisabled(!active);
+        me.getEcTab().setDisabled(!active);
     }
 });
 // {/block}

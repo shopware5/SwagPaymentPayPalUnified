@@ -50,11 +50,11 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Installments', {
 
         return Ext.create('Ext.form.field.Checkbox', {
             name: 'installmentsActive',
-            fieldLabel: '{s name=field/activate}Activate PayPal installments integration{/s}',
+            fieldLabel: '{s name=field/activate}Activate PayPal installments{/s}',
             boxLabel: '{s name=field/activate/help}Activate to enable the PayPal installments integration for the selected shop.{/s}',
             inputValue: true,
             uncheckedValue: false,
-            handler: Ext.bind(me.onActivatePayPalPlus, me)
+            handler: Ext.bind(me.onActivateInstallments, me)
         });
     },
 
@@ -103,7 +103,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Installments', {
      * @param { Shopware.apps.Base.view.element.Boolean } element
      * @param { Boolean } checked
      */
-    onActivatePayPalPlus: function(element, checked) {
+    onActivateInstallments: function(element, checked) {
         var me = this;
 
         me.presentmentSelectionDetail.setDisabled(!checked);

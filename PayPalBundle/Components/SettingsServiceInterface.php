@@ -29,7 +29,7 @@ interface SettingsServiceInterface
     /**
      * Returns the whole settings model
      *
-     * @param int $shopId
+     * @param int|null $shopId
      *
      * @return null|\SwagPaymentPayPalUnified\Models\Settings
      */

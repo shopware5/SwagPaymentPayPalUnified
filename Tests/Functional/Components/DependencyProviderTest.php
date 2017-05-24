@@ -55,6 +55,13 @@ class DependencyProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->assertNull($dp->getShop());
     }
+
+    public function test_getModule_has_module()
+    {
+        $dp = new DependencyProvider(Shopware()->Container());
+
+        $this->assertNotNull($dp->getModule('basket'));
+    }
 }
 
 class ContainerMockWithNoShop extends Container

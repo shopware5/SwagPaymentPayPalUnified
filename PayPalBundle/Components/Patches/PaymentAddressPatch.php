@@ -36,25 +36,15 @@ class PaymentAddressPatch implements PatchInterface
     private $address;
 
     /**
-     * The provided array should contain values for the following keys:
-     * [ 'city', 'street', 'zipcode', 'firstname', 'lastname', 'countryiso', 'stateiso' ]
-     * in order to create the address patch.
-     *
-     * @param array $address
+     * @param ShippingAddress $address
      */
-    public function __construct(array $address)
+    public function __construct(ShippingAddress $address)
     {
-        $this->address = new ShippingAddress();
-        $this->address->setCity($address['city']);
-        $this->address->setLine1($address['street']);
-        $this->address->setPostalCode($address['zipcode']);
-        $this->address->setRecipientName($address['firstname'] . ' ' . $address['lastname']);
-        $this->address->setCountryCode($address['countryiso']);
-        $this->address->setState($address['stateiso']);
+        $this->address = $address;
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getOperation()
     {
@@ -62,7 +52,7 @@ class PaymentAddressPatch implements PatchInterface
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getPath()
     {
@@ -70,7 +60,7 @@ class PaymentAddressPatch implements PatchInterface
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getValue()
     {

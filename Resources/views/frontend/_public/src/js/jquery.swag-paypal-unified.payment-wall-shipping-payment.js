@@ -144,7 +144,5 @@
         }
     });
 
-    $(function() {
-        StateManager.addPlugin('*[data-paypalPaymentWallShippingPayment="true"]', 'swagPayPalUnifiedPaymentWallShippingPayment');
-    });
+    window.StateManager.addPlugin('*[data-paypalPaymentWallShippingPayment="true"]', 'swagPayPalUnifiedPaymentWallShippingPayment');
 })(jQuery, window);

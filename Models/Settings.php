@@ -159,6 +159,18 @@ class Settings extends ModelEntity
     private $installmentsShowLogo;
 
     /**
+     * @var bool
+     * @ORM\Column(name="ec_active", type="boolean", nullable=false)
+     */
+    private $ecActive;
+
+    /**
+     * @var bool
+     * @ORM\Column(name="ec_detail_active", type="boolean", nullable=false)
+     */
+    private $ecDetailActive;
+
+    /**
      * @return int
      */
     public function getId()
@@ -407,14 +419,6 @@ class Settings extends ModelEntity
     }
 
     /**
-     * @return array
-     */
-    public function toArray()
-    {
-        return get_object_vars($this);
-    }
-
-    /**
      * @return bool
      */
     public function getInstallmentsActive()
@@ -476,5 +480,45 @@ class Settings extends ModelEntity
     public function setInstallmentsShowLogo($installmentsShowLogo)
     {
         $this->installmentsShowLogo = $installmentsShowLogo;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getEcActive()
+    {
+        return $this->ecActive;
+    }
+
+    /**
+     * @param bool $ecActive
+     */
+    public function setEcActive($ecActive)
+    {
+        $this->ecActive = $ecActive;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getEcDetailActive()
+    {
+        return $this->ecDetailActive;
+    }
+
+    /**
+     * @param bool $ecDetailActive
+     */
+    public function setEcDetailActive($ecDetailActive)
+    {
+        $this->ecDetailActive = $ecDetailActive;
+    }
+
+    /**
+     * @return array
+     */
+    public function toArray()
+    {
+        return get_object_vars($this);
     }
 }
