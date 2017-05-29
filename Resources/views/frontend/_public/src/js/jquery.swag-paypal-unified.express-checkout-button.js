@@ -55,11 +55,10 @@
              */
             color: 'gold',
 
-
             /**
-             * A boolean indicating if the current page is an article detail page.
+             * A boolean indicating if the current page is an product detail page.
              *
-             * @type string
+             * @type boolean
              */
             detailPage: false,
 
@@ -71,7 +70,7 @@
             productQuantitySelector: '#sQuantity',
 
             /**
-             * The selector for the article number on the detail page.
+             * The selector for the product number on the detail page.
              * @type string
              */
             productNumberSelector: 'input[name="sAdd"]'
@@ -216,9 +215,9 @@
             createField('__csrf_token', token).appendTo($form);
 
             if (me.opts.detailPage) {
-                createField('addArticle', true).appendTo($form);
-                createField('articleNumber', me.getArticleNumber()).appendTo($form);
-                createField('articleQuantity', me.getArticleQuantity()).appendTo($form);
+                createField('addProduct', true).appendTo($form);
+                createField('productNumber', me.getProductNumber()).appendTo($form);
+                createField('productQuantity', me.getProductQuantity()).appendTo($form);
             }
 
             $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonCart/createRequestForm', [me, $form]);
@@ -229,24 +228,24 @@
         },
 
         /**
-         * Helper function that returns the current article number.
-         * Will only be used on the article detail page
+         * Helper function that returns the current product number.
+         * Will only be used on the product detail page
          *
          * @returns { String }
          */
-        getArticleNumber: function () {
+        getProductNumber: function () {
             var me = this;
 
             return $(me.opts.productNumberSelector).val();
         },
 
         /**
-         * Helper function that returns the current article quantity.
-         * Will only be used on the article detail page.
+         * Helper function that returns the current product quantity.
+         * Will only be used on the product detail page.
          *
          * @returns { Number }
          */
-        getArticleQuantity: function () {
+        getProductQuantity: function () {
             var me = this;
 
             return $(me.opts.productQuantitySelector).val();

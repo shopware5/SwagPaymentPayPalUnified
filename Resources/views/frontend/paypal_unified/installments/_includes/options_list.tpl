@@ -3,7 +3,7 @@
 
     Required parameters:
     [array] "paypalInstallmentsOptions" - The data that will be displayed in the list.
-    [float] "price" - The price of the article or basket.
+    [float] "price" - The price of the product or basket.
 *}
 
 {namespace name="frontend/paypal_unified/installments/upstream_presentment/complete"}

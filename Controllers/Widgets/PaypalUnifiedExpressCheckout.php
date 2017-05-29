@@ -49,13 +49,13 @@ class Shopware_Controllers_Widgets_PaypalUnifiedExpressCheckout extends \Enlight
         /** @var sBasket $basket */
         $basket = $this->get('paypal_unified.dependency_provider')->getModule('basket');
 
-        //If the paypal express button on the detail page was clicked, the addArticle equals true.
+        //If the paypal express button on the detail page was clicked, the addProduct equals true.
         //That means, that we have to add it manually to the basket.
-        $addArticleToBasket = $this->Request()->getParam('addArticle');
-        if ($addArticleToBasket) {
-            $articleNumber = $this->Request()->getParam('articleNumber');
-            $articleQuantity = $this->Request()->getParam('articleQuantity');
-            $basket->sAddArticle($articleNumber, $articleQuantity);
+        $addProductToBasket = $this->Request()->getParam('addProduct', false);
+        if ($addProductToBasket) {
+            $productNumber = $this->Request()->getParam('productNumber');
+            $productQuantity = $this->Request()->getParam('productQuantity');
+            $basket->sAddArticle($productNumber, $productQuantity);
         }
 
         //By using the basket module we do not have to deal with any view assignments

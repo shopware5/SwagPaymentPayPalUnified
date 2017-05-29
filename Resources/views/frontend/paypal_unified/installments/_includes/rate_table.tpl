@@ -3,7 +3,7 @@
 
     Required parameters:
     [array] "paypalInstallmentsOption" - The data that will be displayed.
-    [float] "paypalInstallmentsProductPrice" - The price of the article.
+    [float] "paypalInstallmentsProductPrice" - The price of the product.
 *}
 
 {namespace name="frontend/paypal_unified/installments/upstream_presentment/rate_table"}

@@ -27,7 +27,7 @@ namespace SwagPaymentPayPalUnified\Subscriber;
 use Enlight\Event\SubscriberInterface;
 use Enlight_Components_Session_Namespace as Session;
 use Enlight_Controller_ActionEventArgs as ActionEventArgs;
-use GuzzleHttp\Exception\RequestException;
+use Shopware\Components\HttpClient\RequestException;
 use Shopware\Components\Logger;
 use SwagPaymentPayPalUnified\Components\Services\ShippingAddressRequestService;
 use SwagPaymentPayPalUnified\Models\Settings;
@@ -206,6 +206,9 @@ class ExpressCheckout implements SubscriberInterface
      * must be updated, because they may have changed during the process
      *
      * @param string $paymentId
+     *
+     * @throws \Exception
+     * @throws RequestException
      */
     private function patchAddressAndAmount($paymentId)
     {
@@ -225,7 +228,7 @@ class ExpressCheckout implements SubscriberInterface
             $amountPatch = new PaymentAmountPatch($paymentStruct->getTransactions()->getAmount());
 
             $this->paymentResource->patch($paymentId, $amountPatch);
-        } catch (\Shopware\Components\HttpClient\RequestException $requestException) {
+        } catch (RequestException $requestException) {
             $this->logger->error('PayPal Unified ExpressCheckout: Unable to patch the payment (RequestException)', [$requestException->getMessage(), $requestException->getBody()]);
             throw $requestException;
         } catch (\Exception $exception) {

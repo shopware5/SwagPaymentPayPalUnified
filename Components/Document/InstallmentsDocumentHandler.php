@@ -28,6 +28,7 @@ namespace SwagPaymentPayPalUnified\Components\Document;
 use Doctrine\DBAL\Connection;
 use Shopware_Components_Document as Document;
 use SwagPaymentPayPalUnified\Components\Services\Installments\OrderCreditInfoService;
+use SwagPaymentPayPalUnified\Models\FinancingInformation;
 
 class InstallmentsDocumentHandler
 {
@@ -66,7 +67,7 @@ class InstallmentsDocumentHandler
     /**
      * @param $orderNumber
      *
-     * @return null|object
+     * @return null|FinancingInformation
      */
     private function getCreditInformation($orderNumber)
     {

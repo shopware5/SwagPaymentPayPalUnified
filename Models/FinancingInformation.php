@@ -26,7 +26,6 @@ namespace SwagPaymentPayPalUnified\Models;
 
 use Doctrine\ORM\Mapping as ORM;
 use Shopware\Components\Model\ModelEntity;
-use Shopware\Models\Order\Order;
 
 /**
  * This model stores several information about the payment instructions that are being provided from

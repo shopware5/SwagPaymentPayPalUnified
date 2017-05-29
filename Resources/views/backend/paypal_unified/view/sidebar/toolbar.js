@@ -69,7 +69,7 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebar.Toolbar', {
 
     /**
      * @param { String } intent
-     * @param { Numeric } amount
+     * @param { Number } amount
      * @param { Boolean } allowVoid
      */
     updateToolbar: function(intent, amount, allowVoid) {

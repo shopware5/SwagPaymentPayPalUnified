@@ -47,8 +47,8 @@ class InvoiceDocumentHandler
      */
     public function __construct(
         PaymentInstructionService $instructionService,
-        Connection $dbalConnection)
-    {
+        Connection $dbalConnection
+    ) {
         $this->instructionService = $instructionService;
         $this->dbalConnection = $dbalConnection;
     }

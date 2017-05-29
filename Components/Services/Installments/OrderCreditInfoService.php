@@ -46,7 +46,7 @@ class OrderCreditInfoService
     /**
      * @param string $paymentId
      *
-     * @return null|object
+     * @return null|FinancingInformation
      */
     public function getCreditInfo($paymentId)
     {
