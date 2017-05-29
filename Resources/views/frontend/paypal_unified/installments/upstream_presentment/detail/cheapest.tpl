@@ -19,7 +19,7 @@
                 {block name="frontend_paypal_unified_installments_cheapest_simple_content"}
                     {block name="frontend_paypal_unified_installments_cheapest_simple_content_text"}
                         <span class="is--block is--bold">
-                            {* example: You may also finance this article for 19,99 per month *}
+                            {* example: You may also finance this product for 19,99 per month *}
                             {s name="textBeforePrice"}Financing from{/s} {$paypalInstallmentsOption.monthlyPayment.value|currency} {s name="textAfterPrice"}per month{/s}
                         </span>
                     {/block}

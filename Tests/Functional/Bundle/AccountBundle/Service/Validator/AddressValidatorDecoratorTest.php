@@ -48,8 +48,6 @@ class AddressValidatorDecoratorTest extends \PHPUnit_Framework_TestCase
 
     public function test_validate_return_without_request()
     {
-        $request = new \Enlight_Controller_Request_RequestTestCase();
-
         $front = new FrontMock();
 
         $validator = new AddressDecorator(new AddressValidatorMock(), $front);
@@ -76,7 +74,7 @@ class AddressValidatorDecoratorTest extends \PHPUnit_Framework_TestCase
 
         $validator = new AddressDecorator(new AddressValidatorWithStateException(), $front);
 
-        $this->expectException(\Shopware\Components\Api\Exception\ValidationException::class);
+        $this->expectException(ValidationException::class);
         $validator->validate(new Address());
     }
 
@@ -151,11 +149,6 @@ class FrontMock extends \Enlight_Controller_Front
 
     public function __construct()
     {
-    }
-
-    public function Request()
-    {
-        return $this->request;
     }
 
     public function setRequest(\Enlight_Controller_Request_RequestTestCase $request)

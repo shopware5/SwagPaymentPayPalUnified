@@ -16,7 +16,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
     window: null,
 
     /**
-     * @type { Shopware.apps.PaypalUnified.view.refund.Window }
+     * @type { Shopware.apps.PaypalUnified.view.refund.CaptureWindow|Shopware.apps.PaypalUnified.view.refund.SaleWindow }
      */
     refundWindow: null,
 
