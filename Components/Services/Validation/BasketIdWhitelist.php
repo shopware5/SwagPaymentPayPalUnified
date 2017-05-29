@@ -22,35 +22,16 @@
  * our trademarks remain entirely with us.
  */
 
-namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services\Installments;
+namespace SwagPaymentPayPalUnified\Components\Services\Validation;
 
-use SwagPaymentPayPalUnified\Components\Services\Installments\ValidationService;
-
-class ValidationServiceTest extends \PHPUnit_Framework_TestCase
+class BasketIdWhitelist
 {
-    public function test_valid_product_price()
-    {
-        $productPrice = 134.99;
-
-        $priceValid = $this->getValidationService()->validatePrice($productPrice);
-
-        $this->assertTrue($priceValid);
-    }
-
-    public function test_invalid_product_price()
-    {
-        $productPrice = 34.99;
-
-        $priceValid = $this->getValidationService()->validatePrice($productPrice);
-
-        $this->assertFalse($priceValid);
-    }
-
     /**
-     * @return ValidationService
+     * Add a value here to always use the simple validator whenever a basket is being validated.
+     * This is important, because not all payments may generate a basket unique id as seen in a regular paypal payment.
      */
-    private function getValidationService()
-    {
-        return new ValidationService();
-    }
+    const WHITELIST_IDS = [
+        'PayPalExpress' => 'express',
+        'PayPalPlus' => 'plus',
+    ];
 }

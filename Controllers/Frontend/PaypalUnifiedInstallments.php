@@ -22,7 +22,7 @@
  * our trademarks remain entirely with us.
  */
 
-class Shopware_Controllers_Frontend_PaypalUnifiedInstallments extends \Shopware_Controllers_Frontend_Payment
+class Shopware_Controllers_Frontend_PaypalUnifiedInstallments extends \Enlight_Controller_Action
 {
     /**
      * To avoid duplicate code, we can simply trigger the unified controller here.
@@ -45,14 +45,16 @@ class Shopware_Controllers_Frontend_PaypalUnifiedInstallments extends \Shopware_
     {
         $request = $this->Request();
         $paymentId = $request->get('paymentId');
-        $payerID = $request->get('PayerID');
+        $payerId = $request->get('PayerID');
+        $basketId = $request->get('basketId');
 
         $this->redirect([
             'controller' => 'checkout',
             'action' => 'confirm',
             'module' => 'frontend',
             'paymentId' => $paymentId,
-            'PayerID' => $payerID,
+            'PayerID' => $payerId,
+            'basketId' => $basketId,
             'forceSecure' => 1,
         ]);
     }

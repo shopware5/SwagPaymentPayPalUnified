@@ -42,10 +42,42 @@
 {/block}
 
 {* PayPal Express Checkout integration *}
+{* add needed values to request *}
 {block name='frontend_checkout_confirm_tos_panel'}
     {if $paypalUnifiedExpressCheckout}
         {include file='frontend/paypal_unified/express_checkout/confirm_inputs.tpl'}
     {/if}
 
     {$smarty.block.parent}
+{/block}
+
+{*No premium items should be available*}
+{block name='frontend_checkout_confirm_premiums'}
+    {block name='frontend_checkout_confirm_premiums_paypal_unified_express_checkout'}
+        {if $paypalUnifiedExpressCheckout}
+        {else}
+            {$smarty.block.parent}
+        {/if}
+    {/block}
+{/block}
+
+{*Do not allow deletion of items*}
+{block name='frontend_checkout_cart_item_delete_article'}
+    {block name='frontend_checkout_cart_item_delete_article_paypal_unified_express_checkout'}
+        {if $paypalUnifiedExpressCheckout}
+        {else}
+            {$smarty.block.parent}
+        {/if}
+    {/block}
+{/block}
+
+{* Disable item quantity selection *}
+{block name='frontend_checkout_cart_item_quantity_selection'}
+    {block name='frontend_checkout_cart_item_quantity_selection_paypal_unified_express_checkout'}
+        {if $paypalUnifiedExpressCheckout}
+            {include file='frontend/paypal_unified/express_checkout/confirm/quantity_selection.tpl'}
+        {else}
+            {$smarty.block.parent}
+        {/if}
+    {/block}
 {/block}

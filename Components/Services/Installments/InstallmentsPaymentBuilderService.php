@@ -24,32 +24,32 @@
 
 namespace SwagPaymentPayPalUnified\Components\Services\Installments;
 
-use SwagPaymentPayPalUnified\Components\Services\PaymentRequestService;
-use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile;
+use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
+use SwagPaymentPayPalUnified\Components\Services\PaymentBuilderService;
 
-class InstallmentsPaymentRequestService extends PaymentRequestService
+class InstallmentsPaymentBuilderService extends PaymentBuilderService
 {
     /**
      * {@inheritdoc}
      */
-    public function getRequestParameters(WebProfile $profile, array $basketData, array $userData)
+    public function getPayment(PaymentBuilderParameters $params)
     {
-        $result = parent::getRequestParameters($profile, $basketData, $userData);
+        $payment = parent::getPayment($params);
 
-        $result->getPayer()->setExternalSelectedFundingInstrumentType('CREDIT');
-        $result->getRedirectUrls()->setReturnUrl($this->getReturnUrl());
+        $payment->getPayer()->setExternalSelectedFundingInstrumentType('CREDIT');
+        $payment->getRedirectUrls()->setReturnUrl($this->getReturnUrl());
 
         switch ($this->settings->get('paypal_payment_intent')) {
             case 0:
-                $result->setIntent('sale');
+                $payment->setIntent('sale');
                 break;
             case 1: //Overwrite "authentication"
             case 2:
-                $result->setIntent('order');
+                $payment->setIntent('order');
                 break;
         }
 
-        return $result;
+        return $payment;
     }
 
     /**
@@ -57,12 +57,19 @@ class InstallmentsPaymentRequestService extends PaymentRequestService
      */
     private function getReturnUrl()
     {
-        return $this->router->assemble(
-            [
+        if ($this->requestParams->getBasketUniqueId()) {
+            return $this->router->assemble([
                 'controller' => 'PaypalUnifiedInstallments',
                 'action' => 'return',
                 'forceSecure' => true,
-            ]
-        );
+                'basketId' => $this->requestParams->getBasketUniqueId(),
+            ]);
+        }
+
+        return $this->router->assemble([
+            'controller' => 'PaypalUnifiedInstallments',
+            'action' => 'return',
+            'forceSecure' => true,
+        ]);
     }
 }

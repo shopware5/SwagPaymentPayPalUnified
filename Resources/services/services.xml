@@ -36,21 +36,25 @@
 
         <service id="paypal_unified.webhook_service" class="SwagPaymentPayPalUnified\PayPalBundle\Services\WebhookService"/>
 
-        <service id="paypal_unified.payment_request_service" class="SwagPaymentPayPalUnified\Components\Services\PaymentRequestService">
+        <service id="paypal_unified.payment_builder_service" class="SwagPaymentPayPalUnified\Components\Services\PaymentBuilderService">
             <argument type="service" id="router"/>
             <argument type="service" id="paypal_unified.settings_service"/>
         </service>
 
-        <service id="paypal_unified.installments.payment_request_service" class="SwagPaymentPayPalUnified\Components\Services\Installments\InstallmentsPaymentRequestService">
+        <service id="paypal_unified.installments.payment_builder_service" class="SwagPaymentPayPalUnified\Components\Services\Installments\InstallmentsPaymentBuilderService">
             <argument type="service" id="router"/>
             <argument type="service" id="paypal_unified.settings_service"/>
         </service>
 
-        <service id="paypal_unified.express_checkout.payment_request_service" class="SwagPaymentPayPalUnified\Components\Services\ExpressCheckout\ExpressCheckoutPaymentRequestService">
+        <service id="paypal_unified.express_checkout.payment_builder_service" class="SwagPaymentPayPalUnified\Components\Services\ExpressCheckout\ExpressCheckoutPaymentBuilderService">
             <argument type="service" id="router"/>
             <argument type="service" id="paypal_unified.settings_service"/>
         </service>
 
+        <service id="paypal_unified.plus.payment_builder_service" class="SwagPaymentPayPalUnified\Components\Services\Plus\PlusPaymentBuilderService">
+            <argument type="service" id="router"/>
+            <argument type="service" id="paypal_unified.settings_service"/>
+        </service>
 
         <service id="paypal_unified.partner_attribution_service" class="SwagPaymentPayPalUnified\PayPalBundle\Services\PartnerAttributionService">
             <argument type="service" id="paypal_unified.settings_service"/>
@@ -93,5 +97,7 @@
         <service id="paypal_unified.installments.order_credit_info_service" class="SwagPaymentPayPalUnified\Components\Services\Installments\OrderCreditInfoService">
             <argument type="service" id="models"/>
         </service>
+
+        <service id="paypal_unified.simple_basket_validator" class="SwagPaymentPayPalUnified\Components\Services\Validation\SimpleBasketValidator"/>
     </services>
 </container>

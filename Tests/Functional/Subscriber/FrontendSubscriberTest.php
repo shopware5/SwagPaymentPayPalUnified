@@ -127,6 +127,22 @@ class FrontendSubscriberTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse((bool) $view->getAssign('restylePaymentSelection'));
     }
 
+    public function test_onCollectTemplateDir()
+    {
+        $subscriber = new Frontend(Shopware()->Container()->getParameter('paypal_unified.plugin_dir'), Shopware()->Container()->get('paypal_unified.settings_service'));
+        $returnValue = [];
+
+        $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
+        ]);
+
+        $enlightEventArgs->setReturn($returnValue);
+
+        $subscriber->onCollectTemplateDir($enlightEventArgs);
+        $returnValue = $enlightEventArgs->getReturn();
+
+        $this->assertDirectoryExists($returnValue[0]);
+    }
+
     /**
      * @param bool $active
      * @param bool $plusActive

@@ -24,60 +24,61 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services;
 
-use SwagPaymentPayPalUnified\Components\Services\PaymentRequestService;
+use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
+use SwagPaymentPayPalUnified\Components\Services\PaymentBuilderService;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile\WebProfileFlowConfig;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile\WebProfileInputFields;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile\WebProfilePresentation;
 
-class PaymentRequestServiceTest extends \PHPUnit_Framework_TestCase
+class PaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
 {
     public function test_is_basket_service_available()
     {
-        $settingService = new SettingsServicePaymentRequestServiceMock(false, 0);
+        $settingService = new SettingsServicePaymentBuilderServiceMock(false, 0);
 
         $requestService = $this->getRequestService($settingService);
 
         $this->assertNotNull($requestService);
     }
 
-    public function test_get_request_parameters_return_plus_intent()
+    public function test_getPayment_return_plus_intent()
     {
         $requestParameters = $this->getRequestData(true, 1);
 
         $this->assertEquals('sale', $requestParameters['intent']);
     }
 
-    public function test_get_request_parameters_return_sale_intent_without_plus()
+    public function test_getPayment_return_sale_intent_without_plus()
     {
         $requestParameters = $this->getRequestData();
 
         $this->assertEquals('sale', $requestParameters['intent']);
     }
 
-    public function test_get_request_parameters_return_authorize_intent_without_plus()
+    public function test_getPayment_return_authorize_intent_without_plus()
     {
         $requestParameters = $this->getRequestData(false, 1);
 
         $this->assertEquals('authorize', $requestParameters['intent']);
     }
 
-    public function test_get_request_parameters_return_order_intent_without_plus()
+    public function test_getPayment_return_order_intent_without_plus()
     {
         $requestParameters = $this->getRequestData(false, 2);
 
         $this->assertEquals('order', $requestParameters['intent']);
     }
 
-    public function test_get_request_parameters_return_valid_payer()
+    public function test_getPayment_return_valid_payer()
     {
         $requestParameters = $this->getRequestData();
 
         $this->assertEquals('paypal', $requestParameters['payer']['payment_method']);
     }
 
-    public function test_get_request_parameters_return_valid_transactions()
+    public function test_getPayment_return_valid_transactions()
     {
         $requestParameters = $this->getRequestData();
 
@@ -90,9 +91,9 @@ class PaymentRequestServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('0.00', $requestParameters['transactions'][0]['amount']['details']['tax']);
     }
 
-    public function test_get_request_parameters_with_show_gross()
+    public function test_getPayment_with_show_gross()
     {
-        $settingService = new SettingsServicePaymentRequestServiceMock(false, 0);
+        $settingService = new SettingsServicePaymentBuilderServiceMock(false, 0);
         $requestService = $this->getRequestService($settingService);
 
         $profile = $this->getWebProfile();
@@ -101,7 +102,12 @@ class PaymentRequestServiceTest extends \PHPUnit_Framework_TestCase
 
         $userData['additional']['show_net'] = false;
 
-        $requestParameters = $requestService->getRequestParameters($profile, $basketData, $userData);
+        $params = new PaymentBuilderParameters();
+        $params->setBasketData($basketData);
+        $params->setWebProfile($profile);
+        $params->setUserData($userData);
+
+        $requestParameters = $requestService->getPayment($params);
         $requestParameters = $requestParameters->toArray();
 
         $this->assertEquals('136.84', $requestParameters['transactions'][0]['amount']['total']);
@@ -110,9 +116,31 @@ class PaymentRequestServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(18.36, $requestParameters['transactions'][0]['amount']['details']['tax']);
     }
 
-    public function test_get_parameters_with_tax_tree_country()
+    public function test_getPayment_with_basket_unique_id()
     {
-        $settingService = new SettingsServicePaymentRequestServiceMock(false, 0);
+        $settingService = new SettingsServicePaymentBuilderServiceMock(false, 0);
+        $requestService = $this->getRequestService($settingService);
+
+        $profile = $this->getWebProfile();
+        $basketData = $this->getBasketDataArray();
+        $userData = $this->getUserDataAsArray();
+
+        $userData['additional']['show_net'] = false;
+
+        $params = new PaymentBuilderParameters();
+        $params->setBasketData($basketData);
+        $params->setWebProfile($profile);
+        $params->setUserData($userData);
+        $params->setBasketUniqueId('MyUniqueBasketId');
+
+        $requestParameters = $requestService->getPayment($params);
+
+        $this->assertStringEndsWith('basketId/MyUniqueBasketId', $requestParameters->getRedirectUrls()->getReturnUrl());
+    }
+
+    public function test_getPayment_with_tax_tree_country()
+    {
+        $settingService = new SettingsServicePaymentBuilderServiceMock(false, 0);
         $requestService = $this->getRequestService($settingService);
 
         $profile = $this->getWebProfile();
@@ -121,7 +149,12 @@ class PaymentRequestServiceTest extends \PHPUnit_Framework_TestCase
 
         $userData['additional']['country']['taxfree'] = '1';
 
-        $requestParameters = $requestService->getRequestParameters($profile, $basketData, $userData);
+        $params = new PaymentBuilderParameters();
+        $params->setBasketData($basketData);
+        $params->setWebProfile($profile);
+        $params->setUserData($userData);
+
+        $requestParameters = $requestService->getPayment($params);
         $requestParameters = $requestParameters->toArray();
 
         $this->assertEquals('96.63', $requestParameters['transactions'][0]['amount']['total']);
@@ -130,7 +163,7 @@ class PaymentRequestServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($requestParameters['transactions'][0]['amount']['details']['tax']);
     }
 
-    public function test_get_request_parameters_return_valid_redirect_urls()
+    public function test_getPayment_return_valid_redirect_urls()
     {
         $requestParameters = $this->getRequestData();
 
@@ -146,14 +179,19 @@ class PaymentRequestServiceTest extends \PHPUnit_Framework_TestCase
      */
     private function getRequestData($plusActive = false, $intent = 0)
     {
-        $settingService = new SettingsServicePaymentRequestServiceMock($plusActive, $intent);
+        $settingService = new SettingsServicePaymentBuilderServiceMock($plusActive, $intent);
         $requestService = $this->getRequestService($settingService);
 
         $profile = $this->getWebProfile();
         $basketData = $this->getBasketDataArray();
         $userData = $this->getUserDataAsArray();
 
-        return $requestService->getRequestParameters($profile, $basketData, $userData)->toArray();
+        $params = new PaymentBuilderParameters();
+        $params->setBasketData($basketData);
+        $params->setWebProfile($profile);
+        $params->setUserData($userData);
+
+        return $requestService->getPayment($params)->toArray();
     }
 
     /**
@@ -191,13 +229,13 @@ class PaymentRequestServiceTest extends \PHPUnit_Framework_TestCase
     /**
      * @param SettingsServiceInterface $settingService
      *
-     * @return PaymentRequestService
+     * @return PaymentBuilderService
      */
     private function getRequestService(SettingsServiceInterface $settingService)
     {
         $router = Shopware()->Container()->get('router');
 
-        return new PaymentRequestService($router, $settingService);
+        return new PaymentBuilderService($router, $settingService);
     }
 
     /**
@@ -245,7 +283,7 @@ class PaymentRequestServiceTest extends \PHPUnit_Framework_TestCase
     }
 }
 
-class SettingsServicePaymentRequestServiceMock implements SettingsServiceInterface
+class SettingsServicePaymentBuilderServiceMock implements SettingsServiceInterface
 {
     /**
      * @var

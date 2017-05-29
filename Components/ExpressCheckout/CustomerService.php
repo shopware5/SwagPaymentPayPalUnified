@@ -86,6 +86,7 @@ class CustomerService
      * @var sAdmin
      */
     private $adminModule;
+
     /**
      * @param ShopwareConfig            $shopwareConfig
      * @param Connection                $connection

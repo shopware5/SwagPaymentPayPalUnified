@@ -22,35 +22,15 @@
  * our trademarks remain entirely with us.
  */
 
-namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services\Installments;
+namespace SwagPaymentPayPalUnified\Components;
 
-use SwagPaymentPayPalUnified\Components\Services\Installments\ValidationService;
-
-class ValidationServiceTest extends \PHPUnit_Framework_TestCase
+class ErrorCodes
 {
-    public function test_valid_product_price()
-    {
-        $productPrice = 134.99;
-
-        $priceValid = $this->getValidationService()->validatePrice($productPrice);
-
-        $this->assertTrue($priceValid);
-    }
-
-    public function test_invalid_product_price()
-    {
-        $productPrice = 34.99;
-
-        $priceValid = $this->getValidationService()->validatePrice($productPrice);
-
-        $this->assertFalse($priceValid);
-    }
-
-    /**
-     * @return ValidationService
-     */
-    private function getValidationService()
-    {
-        return new ValidationService();
-    }
+    const COULD_NOT_PROCESS_ORDER = 0;
+    const CANCELED_BY_USER = 1;
+    const COMMUNICATION_FAILURE = 2;
+    const NO_ORDER_TO_PROCESS = 3;
+    const UNKNOWN = 4;
+    const INSTALLMENTS_ERROR = 5;
+    const BASKET_VALIDATION_ERROR = 6;
 }

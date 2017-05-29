@@ -24,36 +24,37 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services\Installments;
 
-use SwagPaymentPayPalUnified\Components\Services\Installments\InstallmentsPaymentRequestService;
-use SwagPaymentPayPalUnified\Components\Services\PaymentRequestService;
+use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
+use SwagPaymentPayPalUnified\Components\Services\Installments\InstallmentsPaymentBuilderService;
+use SwagPaymentPayPalUnified\Components\Services\PaymentBuilderService;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile\WebProfileFlowConfig;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile\WebProfileInputFields;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile\WebProfilePresentation;
-use SwagPaymentPayPalUnified\Tests\Functional\Components\Services\SettingsServicePaymentRequestServiceMock;
+use SwagPaymentPayPalUnified\Tests\Functional\Components\Services\SettingsServicePaymentBuilderServiceMock;
 
-class InstallmentsPaymentRequestServiceTest extends \PHPUnit_Framework_TestCase
+class InstallmentsPaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
 {
     public function test_serviceIsAvailable()
     {
-        $service = Shopware()->Container()->get('paypal_unified.installments.payment_request_service');
-        $this->assertEquals(InstallmentsPaymentRequestService::class, get_class($service));
+        $service = Shopware()->Container()->get('paypal_unified.installments.payment_builder_service');
+        $this->assertEquals(InstallmentsPaymentBuilderService::class, get_class($service));
     }
 
-    public function test_getRequestParameters_has_correct_intent_order_fallback()
+    public function test_getPayment_has_correct_intent_order_fallback()
     {
         $requestParameters = $this->getRequestData(true, 1);
         $this->assertEquals('order', $requestParameters['intent']);
     }
 
-    public function test_getRequestParameters_has_correct_intent_sale()
+    public function test_getPayment_has_correct_intent_sale()
     {
         $requestParameters = $this->getRequestData(true, 0);
         $this->assertEquals('sale', $requestParameters['intent']);
     }
 
-    public function test_getRequestParameters_has_correct_intent_order()
+    public function test_getPayment_has_correct_intent_order()
     {
         $requestParameters = $this->getRequestData(true, 2);
         $this->assertEquals('order', $requestParameters['intent']);
@@ -67,15 +68,20 @@ class InstallmentsPaymentRequestServiceTest extends \PHPUnit_Framework_TestCase
      */
     private function getRequestData($plusActive = false, $intent = 0)
     {
-        $settingService = new SettingsServicePaymentRequestServiceMock($plusActive, $intent);
+        $settingService = new SettingsServicePaymentBuilderServiceMock($plusActive, $intent);
 
-        $installmentsPaymentRequestService = $this->getInstallmentsPaymentRequestService($settingService);
+        $installmentsPaymentBuilderService = $this->getInstallmentsPaymentBuilderService($settingService);
 
         $profile = $this->getWebProfile();
         $basketData = $this->getBasketDataArray();
         $userData = $this->getUserDataAsArray();
 
-        return $installmentsPaymentRequestService->getRequestParameters($profile, $basketData, $userData)->toArray();
+        $params = new PaymentBuilderParameters();
+        $params->setBasketData($basketData);
+        $params->setWebProfile($profile);
+        $params->setUserData($userData);
+
+        return $installmentsPaymentBuilderService->getPayment($params)->toArray();
     }
 
     /**
@@ -157,12 +163,12 @@ class InstallmentsPaymentRequestServiceTest extends \PHPUnit_Framework_TestCase
     /**
      * @param SettingsServiceInterface $settingService
      *
-     * @return PaymentRequestService
+     * @return PaymentBuilderService
      */
-    private function getInstallmentsPaymentRequestService(SettingsServiceInterface $settingService)
+    private function getInstallmentsPaymentBuilderService(SettingsServiceInterface $settingService)
     {
         $router = Shopware()->Container()->get('router');
 
-        return new InstallmentsPaymentRequestService($router, $settingService);
+        return new InstallmentsPaymentBuilderService($router, $settingService);
     }
 }

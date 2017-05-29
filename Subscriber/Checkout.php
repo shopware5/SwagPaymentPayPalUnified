@@ -29,6 +29,7 @@ use Shopware\Components\HttpClient\RequestException;
 use Shopware\Components\Logger;
 use Shopware\Models\Shop\DetachedShop;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
+use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\Services\OrderDataService;
 use SwagPaymentPayPalUnified\Components\Services\PaymentInstructionService;
@@ -250,11 +251,12 @@ class Checkout implements SubscriberInterface
         $paymentResource = $this->container->get('paypal_unified.payment_resource');
         $profile = $this->container->get('paypal_unified.web_profile_service')->getWebProfile();
 
-        $params = $this->container->get('paypal_unified.payment_request_service')->getRequestParameters(
-            $profile,
-            $basketData,
-            $userData
-        );
+        $requestParams = new PaymentBuilderParameters();
+        $requestParams->setUserData($userData);
+        $requestParams->setWebProfile($profile);
+        $requestParams->setBasketData($basketData);
+
+        $params = $this->container->get('paypal_unified.plus.payment_builder_service')->getPayment($requestParams);
 
         try {
             $payment = $paymentResource->create($params);
