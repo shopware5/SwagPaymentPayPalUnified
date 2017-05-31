@@ -22,35 +22,19 @@
  * our trademarks remain entirely with us.
  */
 
-namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services\Installments;
+namespace SwagPaymentPayPalUnified\Components\Services\Validation;
 
-use SwagPaymentPayPalUnified\Components\Services\Installments\ValidationService;
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
 
-class ValidationServiceTest extends \PHPUnit_Framework_TestCase
+interface BasketValidatorInterface
 {
-    public function test_valid_product_price()
-    {
-        $productPrice = 134.99;
-
-        $priceValid = $this->getValidationService()->validatePrice($productPrice);
-
-        $this->assertTrue($priceValid);
-    }
-
-    public function test_invalid_product_price()
-    {
-        $productPrice = 34.99;
-
-        $priceValid = $this->getValidationService()->validatePrice($productPrice);
-
-        $this->assertFalse($priceValid);
-    }
-
     /**
-     * @return ValidationService
+     * Validates the basket using the shopware basket and the payment response from PayPal
+     *
+     * @param array   $basket
+     * @param Payment $payment
+     *
+     * @return bool
      */
-    private function getValidationService()
-    {
-        return new ValidationService();
-    }
+    public function validate(array $basket, Payment $payment);
 }

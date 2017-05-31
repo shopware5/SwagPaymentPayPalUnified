@@ -24,11 +24,15 @@
 
 use Shopware\Components\HttpClient\RequestException;
 use Shopware\Components\Logger;
+use SwagPaymentPayPalUnified\Components\ErrorCodes;
+use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\PaymentStatus;
 use SwagPaymentPayPalUnified\Components\Services\OrderDataService;
 use SwagPaymentPayPalUnified\Components\Services\PaymentInstructionService;
 use SwagPaymentPayPalUnified\Components\Services\ShippingAddressRequestService;
+use SwagPaymentPayPalUnified\Components\Services\Validation\BasketIdWhitelist;
+use SwagPaymentPayPalUnified\Components\Services\Validation\BasketValidatorInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PaymentAddressPatch;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PaymentOrderNumberPatch;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\PaymentResource;
@@ -69,8 +73,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
         $userData = $orderData['sUserData'];
 
         if ($orderData === null) {
-            //No order to be processed
-            $this->handleError(0);
+            $this->handleError(ErrorCodes::NO_ORDER_TO_PROCESS);
 
             return;
         }
@@ -82,36 +85,37 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
 
             $selectedPaymentName = $orderData['sPayment']['name'];
 
-            /** @var Payment $params */
-            $params = null;
+            $requestParams = new PaymentBuilderParameters();
+            $requestParams->setBasketData($basketData);
+            $requestParams->setUserData($userData);
+            $requestParams->setWebProfile($profile);
+
+            //Prepare the new basket signature feature, announced in SW 5.3.0
+            if (version_compare($this->container->get('config')->offsetGet('version'), '5.3.0', '>=')) {
+                $basketUniqueId = $this->persistBasket();
+                $requestParams->setBasketUniqueId($basketUniqueId);
+            }
+
+            /** @var Payment $payment */
+            $payment = null;
 
             //For generic paypal payments like PayPal or PayPal Plus ones,
             //we need a different parameter for the payment creation than in installments
             if ($selectedPaymentName === PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME) {
-                $params = $this->get('paypal_unified.payment_request_service')->getRequestParameters(
-                    $profile,
-                    $basketData,
-                    $userData
-                );
+                $payment = $this->get('paypal_unified.payment_builder_service')->getPayment($requestParams);
             } elseif ($selectedPaymentName === PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME) {
-                $params = $this->get('paypal_unified.installments.payment_request_service')->getRequestParameters(
-                    $profile,
-                    $basketData,
-                    $userData
-                );
+                $payment = $this->get('paypal_unified.installments.payment_builder_service')->getPayment($requestParams);
             }
 
-            $response = $this->paymentResource->create($params);
+            $response = $this->paymentResource->create($payment);
 
             $responseStruct = Payment::fromArray($response);
         } catch (RequestException $requestEx) {
-            //Communication failure
-            $this->handleError(2, $requestEx);
+            $this->handleError(ErrorCodes::COMMUNICATION_FAILURE, $requestEx);
 
             return;
         } catch (\Exception $exception) {
-            //Unknown error
-            $this->handleError(4);
+            $this->handleError(ErrorCodes::UNKNOWN);
 
             return;
         }
@@ -141,6 +145,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
         $request = $this->Request();
         $paymentId = $request->getParam('paymentId');
         $payerId = $request->getParam('PayerID');
+        $basketId = $request->getParam('basketId');
 
         try {
             $orderNumber = '';
@@ -161,11 +166,26 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
                 $this->paymentResource->patch($paymentId, $paymentPatch);
             }
 
+            //Basket validation with shopware 5.2 support
+            if (in_array($basketId, BasketIdWhitelist::WHITELIST_IDS) || version_compare($this->container->get('config')->offsetGet('version'), '5.3.0', '<')) {
+                //For shopware < 5.3 and for whitelisted basket ids
+                $payment = $this->paymentResource->get($paymentId);
+                $basketValid = $this->validateBasketSimple(Payment::fromArray($payment));
+            } else {
+                //For shopware > 5.3
+                $basketValid = $this->validateBasketExtended($basketId);
+            }
+
+            if (!$basketValid) {
+                $this->handleError(ErrorCodes::BASKET_VALIDATION_ERROR);
+
+                return;
+            }
+
             // execute the payment to the PayPal API
             $executionResponse = $this->paymentResource->execute($payerId, $paymentId);
             if ($executionResponse === null) {
-                //Communication failure
-                $this->handleError(2);
+                $this->handleError(ErrorCodes::COMMUNICATION_FAILURE);
 
                 return;
             }
@@ -186,8 +206,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
             $paymentState = $responseSale->getState();
             if ($paymentState === PaymentStatus::PAYMENT_COMPLETED) {
                 if (!$orderDataService->applyPaymentStatus($orderNumber, PaymentStatus::PAYMENT_STATUS_APPROVED)) {
-                    // Order not found failure
-                    $this->handleError(3);
+                    $this->handleError(ErrorCodes::NO_ORDER_TO_PROCESS);
 
                     return;
                 }
@@ -196,8 +215,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
             //Use TXN-ID instead of the PaymentId
             $saleId = $responseSale->getId();
             if (!$orderDataService->applyTransactionId($orderNumber, $saleId)) {
-                // Order not found failure
-                $this->handleError(3);
+                $this->handleError(ErrorCodes::NO_ORDER_TO_PROCESS);
 
                 return;
             }
@@ -219,11 +237,9 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
                 'action' => 'finish',
             ]);
         } catch (RequestException $exception) {
-            //Communication failure
-            $this->handleError(2, $exception);
+            $this->handleError(ErrorCodes::COMMUNICATION_FAILURE, $exception);
         } catch (\Exception $exception) {
-            //Unknown error
-            $this->handleError(4);
+            $this->handleError(ErrorCodes::UNKNOWN);
         }
     }
 
@@ -252,21 +268,14 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
      */
     public function cancelAction()
     {
-        $this->handleError(1);
+        $this->handleError(ErrorCodes::CANCELED_BY_USER);
     }
 
     /**
      * This method handles the redirection to the shippingPayment action if an
      * error has occurred during the payment process.
      *
-     * It takes the following parameters from the URL:
-     * - code (int): The code of the error that occurred. Depending on the code,
-     *               another message will be displayed in the frontend.
-     *      0 = No order to be processed
-     *      1 = User has canceled the process
-     *      2 = Communication failure
-     *      3 = System order failure
-     *      Any other = Unknown error
+     * @see ErrorCodes
      *
      * @param int              $code
      * @param RequestException $exception
@@ -289,5 +298,41 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
             'action' => 'shippingPayment',
             'paypal_unified_error_code' => $code,
         ]);
+    }
+
+    /**
+     * @param string|null $basketId
+     *
+     * @return bool
+     */
+    private function validateBasketExtended($basketId = null)
+    {
+        //Shopware 5.3 installed but no basket id that can be validated.
+        if ($basketId === null) {
+            return false;
+        }
+
+        //New validation for Shopware 5.3.X
+        try {
+            $basket = $this->loadBasketFromSignature($basketId);
+            $this->verifyBasketSignature($basketId, $basket);
+
+            return true;
+        } catch (RuntimeException $ex) {
+            return false;
+        }
+    }
+
+    /**
+     * @param Payment $payment
+     *
+     * @return bool
+     */
+    private function validateBasketSimple(Payment $payment)
+    {
+        /** @var BasketValidatorInterface $legacyValidator */
+        $legacyValidator = $this->container->get('paypal_unified.simple_basket_validator');
+
+        return $legacyValidator->validate($this->getBasket(), $payment);
     }
 }

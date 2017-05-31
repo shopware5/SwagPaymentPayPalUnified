@@ -1,4 +1,4 @@
-(function($, window) {
+(function($, window, undefined) {
     'use strict';
 
     $.plugin('swagPayPalUnifiedPaymentWallShippingPayment', {
@@ -126,9 +126,11 @@
 
             paymentWallPlugin.createPaymentWall(me.opts.paypalPaymentWallSelector);
 
-            // We have to restore the default of the loading indicator, since it was
-            // updated in the onBeforeSelectedPaymentMethodChange event-handler.
-            $.loadingIndicator.defaults.closeOnClick = true;
+            if ($.loadingIndicator.defaults) {
+                // We have to restore the default of the loading indicator, since it was
+                // updated in the onBeforeSelectedPaymentMethodChange event-handler.
+                $.loadingIndicator.defaults.closeOnClick = true;
+            }
         },
 
         /**
@@ -140,7 +142,9 @@
          * @method onBeforeSelectedPaymentMethodChange
          */
         onBeforeSelectedPaymentMethodChange: function () {
-            $.loadingIndicator.defaults.closeOnClick = false;
+            if ($.loadingIndicator.defaults !== undefined) {
+                $.loadingIndicator.defaults.closeOnClick = false;
+            }
         }
     });
 

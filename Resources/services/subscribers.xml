@@ -76,7 +76,7 @@
             <argument type="service" id="session"/>
             <argument type="service" id="paypal_unified.payment_resource"/>
             <argument type="service" id="paypal_unified.shipping_address_request_service"/>
-            <argument type="service" id="paypal_unified.payment_request_service"/>
+            <argument type="service" id="paypal_unified.payment_builder_service"/>
             <argument type="service" id="pluginlogger"/>
             <tag name="shopware.event_subscriber"/>
         </service>

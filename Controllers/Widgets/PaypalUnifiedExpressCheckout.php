@@ -24,7 +24,9 @@
 
 use Shopware\Components\HttpClient\RequestException;
 use Shopware\Components\Logger;
+use SwagPaymentPayPalUnified\Components\ErrorCodes;
 use SwagPaymentPayPalUnified\Components\ExpressCheckout\CustomerService;
+use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\PaymentResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\ErrorResponse;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
@@ -37,7 +39,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedExpressCheckout extends \Enlight
     private $paymentResource;
 
     /**
-     * initialize payment resource
+     * Initialize payment resource
      */
     public function preDispatch()
     {
@@ -74,25 +76,23 @@ class Shopware_Controllers_Widgets_PaypalUnifiedExpressCheckout extends \Enlight
         $shop = $this->get('paypal_unified.dependency_provider')->getShop();
         $currency = $shop->getCurrency()->getCurrency();
 
+        $requestParams = new PaymentBuilderParameters();
+        $requestParams->setBasketData($basketData);
+        $requestParams->setUserData($userData);
+        $requestParams->setWebProfile($profile);
+
         try {
             /** @var Payment $params */
-            $params = $this->get('paypal_unified.express_checkout.payment_request_service')->getRequestParameters(
-                $profile,
-                $basketData,
-                $userData,
-                $currency
-            );
+            $params = $this->get('paypal_unified.express_checkout.payment_builder_service')->getPayment($requestParams, $currency);
 
             $response = $this->paymentResource->create($params);
             $responseStruct = Payment::fromArray($response);
         } catch (RequestException $requestEx) {
-            //Communication failure
-            $this->handleError(2, $requestEx);
+            $this->handleError(ErrorCodes::COMMUNICATION_FAILURE, $requestEx);
 
             return;
         } catch (\Exception $exception) {
-            //Unknown error
-            $this->handleError(4);
+            $this->handleError(ErrorCodes::UNKNOWN);
 
             return;
         }
@@ -105,18 +105,18 @@ class Shopware_Controllers_Widgets_PaypalUnifiedExpressCheckout extends \Enlight
         $request = $this->Request();
         $paymentId = $request->getParam('paymentId');
         $payerId = $request->getParam('PayerID');
+        $basketId = $request->getParam('basketId');
 
         try {
             $payment = $this->paymentResource->get($paymentId);
+
             $paymentStruct = Payment::fromArray($payment);
         } catch (RequestException $requestEx) {
-            //Communication failure
-            $this->handleError(2, $requestEx);
+            $this->handleError(ErrorCodes::COMMUNICATION_FAILURE, $requestEx);
 
             return;
         } catch (\Exception $exception) {
-            //Unknown error
-            $this->handleError(4);
+            $this->handleError(ErrorCodes::UNKNOWN);
 
             return;
         }
@@ -132,6 +132,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedExpressCheckout extends \Enlight
             'expressCheckout' => true,
             'paymentId' => $paymentId,
             'payerId' => $payerId,
+            'basketId' => $basketId,
         ]);
     }
 
@@ -139,14 +140,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedExpressCheckout extends \Enlight
      * This method handles the redirection to the shippingPayment action if an
      * error has occurred during the payment process.
      *
-     * It takes the following parameters from the URL:
-     * - code (int): The code of the error that occurred. Depending on the code,
-     *               another message will be displayed in the frontend.
-     *      0 = No order to be processed
-     *      1 = User has canceled the process
-     *      2 = Communication failure
-     *      3 = System order failure
-     *      Any other = Unknown error
+     * @see ErrorCodes
      *
      * @param int              $code
      * @param RequestException $exception

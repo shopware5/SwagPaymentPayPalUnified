@@ -82,6 +82,14 @@ class FinancingOptionsHandlerTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($data[3]['hasStar']);
     }
 
+    public function test_finalizeList_without_data()
+    {
+        $service = new FinancingOptionsHandler(FinancingResponse::fromArray([]));
+        $data = $service->finalizeList();
+
+        $this->assertCount(0, $data);
+    }
+
     private function getFinancingFixture()
     {
         return require __DIR__ . '/_fixtures/FinancingResponseFixture.php';

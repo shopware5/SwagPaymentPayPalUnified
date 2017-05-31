@@ -25,7 +25,8 @@
 namespace SwagPaymentPayPalUnified\Components\Services;
 
 use Shopware\Components\Routing\Router;
-use SwagPaymentPayPalUnified\PayPalBundle\Components\PaymentRequestServiceInterface;
+use SwagPaymentPayPalUnified\Components\PaymentBuilderInterface;
+use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentIntent;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
@@ -36,9 +37,8 @@ use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Transactions\Amount;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Transactions\Amount\Details;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Transactions\ItemList;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Transactions\ItemList\Item;
-use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile;
 
-class PaymentRequestService implements PaymentRequestServiceInterface
+class PaymentBuilderService implements PaymentBuilderInterface
 {
     /**
      * @var Router
@@ -49,6 +49,11 @@ class PaymentRequestService implements PaymentRequestServiceInterface
      * @var SettingsService
      */
     protected $settings;
+
+    /**
+     * @var PaymentBuilderParameters
+     */
+    protected $requestParams;
 
     /**
      * @var array
@@ -73,10 +78,11 @@ class PaymentRequestService implements PaymentRequestServiceInterface
     /**
      * {@inheritdoc}
      */
-    public function getRequestParameters(WebProfile $profile, array $basketData, array $userData)
+    public function getPayment(PaymentBuilderParameters $params)
     {
-        $this->basketData = $basketData;
-        $this->userData = $userData;
+        $this->requestParams = $params;
+        $this->basketData = $params->getBasketData();
+        $this->userData = $params->getUserData();
 
         $requestParameters = new Payment();
 
@@ -99,7 +105,7 @@ class PaymentRequestService implements PaymentRequestServiceInterface
             }
         }
 
-        $requestParameters->setProfile($profile->getId());
+        $requestParameters->setProfile($params->getWebProfile()->getId());
 
         $payer = new Payer();
         $payer->setPaymentMethod('paypal');
@@ -110,7 +116,7 @@ class PaymentRequestService implements PaymentRequestServiceInterface
 
         $amount = new Amount();
         $amount->setDetails($this->getAmountDetails());
-        $amount->setCurrency($basketData['sCurrencyName']);
+        $amount->setCurrency($this->basketData['sCurrencyName']);
         $amount->setTotal(number_format($this->getTotalAmount(), 2, '.', ','));
 
         $itemList = new ItemList();
@@ -219,6 +225,19 @@ class PaymentRequestService implements PaymentRequestServiceInterface
      */
     private function getRedirectUrl($action)
     {
+        //Shopware 5.3 + supports cart validation.
+        //In order to use it, we have to slightly modify the return URL.
+        if ($this->requestParams->getBasketUniqueId()) {
+            return $this->router->assemble(
+                [
+                    'controller' => 'PaypalUnified',
+                    'action' => $action,
+                    'forceSecure' => true,
+                    'basketId' => $this->requestParams->getBasketUniqueId(),
+                ]
+            );
+        }
+
         return $this->router->assemble(
             [
                 'controller' => 'PaypalUnified',

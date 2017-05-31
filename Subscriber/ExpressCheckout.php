@@ -29,11 +29,12 @@ use Enlight_Components_Session_Namespace as Session;
 use Enlight_Controller_ActionEventArgs as ActionEventArgs;
 use Shopware\Components\HttpClient\RequestException;
 use Shopware\Components\Logger;
+use SwagPaymentPayPalUnified\Components\PaymentBuilderInterface;
+use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
 use SwagPaymentPayPalUnified\Components\Services\ShippingAddressRequestService;
 use SwagPaymentPayPalUnified\Models\Settings;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PaymentAddressPatch;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PaymentAmountPatch;
-use SwagPaymentPayPalUnified\PayPalBundle\Components\PaymentRequestServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\PaymentResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile;
@@ -61,9 +62,9 @@ class ExpressCheckout implements SubscriberInterface
     private $addressRequestService;
 
     /**
-     * @var PaymentRequestServiceInterface
+     * @var PaymentBuilderInterface
      */
-    private $paymentRequestService;
+    private $paymentBuilder;
 
     /**
      * @var Logger
@@ -71,26 +72,26 @@ class ExpressCheckout implements SubscriberInterface
     private $logger;
 
     /**
-     * @param SettingsServiceInterface       $settingsService
-     * @param Session                        $session
-     * @param PaymentResource                $paymentResource
-     * @param ShippingAddressRequestService  $addressRequestService
-     * @param PaymentRequestServiceInterface $paymentRequestService
-     * @param Logger                         $pluginLogger
+     * @param SettingsServiceInterface      $settingsService
+     * @param Session                       $session
+     * @param PaymentResource               $paymentResource
+     * @param ShippingAddressRequestService $addressRequestService
+     * @param PaymentBuilderInterface       $paymentBuilder
+     * @param Logger                        $pluginLogger
      */
     public function __construct(
         SettingsServiceInterface $settingsService,
         Session $session,
         PaymentResource $paymentResource,
         ShippingAddressRequestService $addressRequestService,
-        PaymentRequestServiceInterface $paymentRequestService,
+        PaymentBuilderInterface $paymentBuilder,
         Logger $pluginLogger
     ) {
         $this->settings = $settingsService->getSettings();
         $this->session = $session;
         $this->paymentResource = $paymentResource;
         $this->addressRequestService = $addressRequestService;
-        $this->paymentRequestService = $paymentRequestService;
+        $this->paymentBuilder = $paymentBuilder;
         $this->logger = $pluginLogger;
     }
 
@@ -155,6 +156,7 @@ class ExpressCheckout implements SubscriberInterface
             $view->assign('paypalUnifiedExpressCheckout', true);
             $view->assign('paypalUnifiedExpressPaymentId', $request->getParam('paymentId'));
             $view->assign('paypalUnifiedExpressPayerId', $request->getParam('payerId'));
+            $view->assign('paypalUnifiedExpressBasketId', $request->getParam('basketId'));
         }
     }
 
@@ -179,6 +181,7 @@ class ExpressCheckout implements SubscriberInterface
                 'expressCheckout' => true,
                 'paymentId' => $paymentId,
                 'PayerID' => $request->getParam('payerId'),
+                'basketId' => $request->getParam('basketId'),
             ]);
         }
     }
@@ -198,7 +201,9 @@ class ExpressCheckout implements SubscriberInterface
 
         $view = $args->getSubject()->View();
 
-        $view->assign('paypalExpressCheckoutDetailActive', true);
+        if (!$view->getAssign('userLoggedIn')) {
+            $view->assign('paypalExpressCheckoutDetailActive', true);
+        }
     }
 
     /**
@@ -224,7 +229,12 @@ class ExpressCheckout implements SubscriberInterface
             $profile = new WebProfile();
             $profile->setId('temporary');
 
-            $paymentStruct = $this->paymentRequestService->getRequestParameters($profile, $basketData, $userData);
+            $requestParams = new PaymentBuilderParameters();
+            $requestParams->setWebProfile($profile);
+            $requestParams->setBasketData($basketData);
+            $requestParams->setUserData($userData);
+
+            $paymentStruct = $this->paymentBuilder->getPayment($requestParams);
             $amountPatch = new PaymentAmountPatch($paymentStruct->getTransactions()->getAmount());
 
             $this->paymentResource->patch($paymentId, $amountPatch);

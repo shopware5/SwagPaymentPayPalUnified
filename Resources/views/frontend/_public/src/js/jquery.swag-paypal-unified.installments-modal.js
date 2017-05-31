@@ -234,6 +234,7 @@
                 };
 
                 $.loadingIndicator.close();
+                $.overlay.close();
                 $.modal.open(response, options);
             } else {
                 // Assign received data to DOM

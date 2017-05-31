@@ -24,33 +24,31 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services\ExpressCheckout;
 
-use SwagPaymentPayPalUnified\Components\Services\ExpressCheckout\ExpressCheckoutPaymentRequestService;
-use SwagPaymentPayPalUnified\Components\Services\PaymentRequestService;
+use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
+use SwagPaymentPayPalUnified\Components\Services\PaymentBuilderService;
+use SwagPaymentPayPalUnified\Components\Services\Plus\PlusPaymentBuilderService;
+use SwagPaymentPayPalUnified\Components\Services\Validation\BasketIdWhitelist;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile\WebProfileFlowConfig;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile\WebProfileInputFields;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile\WebProfilePresentation;
-use SwagPaymentPayPalUnified\Tests\Functional\Components\Services\SettingsServicePaymentRequestServiceMock;
+use SwagPaymentPayPalUnified\Tests\Functional\Components\Services\SettingsServicePaymentBuilderServiceMock;
 
-class ExpressCheckoutPaymentRequestServiceTest extends \PHPUnit_Framework_TestCase
+class PlusPaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
 {
     public function test_serviceIsAvailable()
     {
-        $service = Shopware()->Container()->get('paypal_unified.express_checkout.payment_request_service');
-        $this->assertEquals(ExpressCheckoutPaymentRequestService::class, get_class($service));
+        $service = Shopware()->Container()->get('paypal_unified.plus.payment_builder_service');
+        $this->assertEquals(PlusPaymentBuilderService::class, get_class($service));
     }
 
-    public function test_getRequestParameters_has_currency()
+    public function test_getPayment_has_plus_basketId()
     {
         $request = $this->getRequestData();
 
-        $this->assertEquals('EUR', $request->getTransactions()->getAmount()->getCurrency());
-
-        foreach ($request->getTransactions()->getItemList()->getItems() as $item) {
-            $this->assertEquals('EUR', $item->getCurrency());
-        }
+        $this->assertStringEndsWith('basketId/' . BasketIdWhitelist::WHITELIST_IDS['PayPalPlus'], $request->getRedirectUrls()->getReturnUrl());
     }
 
     /**
@@ -58,27 +56,32 @@ class ExpressCheckoutPaymentRequestServiceTest extends \PHPUnit_Framework_TestCa
      */
     private function getRequestData()
     {
-        $settingService = new SettingsServicePaymentRequestServiceMock(false, 0);
+        $settingService = new SettingsServicePaymentBuilderServiceMock(false, 0);
 
-        $ecRequestService = $this->getExpressCheckoutRequestBuilder($settingService);
+        $ecRequestService = $this->getPlusPaymentBuilder($settingService);
 
         $profile = $this->getWebProfile();
         $basketData = $this->getBasketDataArray();
         $userData = $this->getUserDataAsArray();
 
-        return $ecRequestService->getRequestParameters($profile, $basketData, $userData, 'EUR');
+        $params = new PaymentBuilderParameters();
+        $params->setBasketData($basketData);
+        $params->setWebProfile($profile);
+        $params->setUserData($userData);
+
+        return $ecRequestService->getPayment($params, 'EUR');
     }
 
     /**
      * @param SettingsServiceInterface $settingService
      *
-     * @return PaymentRequestService
+     * @return PaymentBuilderService
      */
-    private function getExpressCheckoutRequestBuilder(SettingsServiceInterface $settingService)
+    private function getPlusPaymentBuilder(SettingsServiceInterface $settingService)
     {
         $router = Shopware()->Container()->get('router');
 
-        return new ExpressCheckoutPaymentRequestService($router, $settingService);
+        return new PlusPaymentBuilderService($router, $settingService);
     }
 
     /**

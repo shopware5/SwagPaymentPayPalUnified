@@ -184,8 +184,6 @@
             }, 100);
 
             $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonCart/createPayment', me);
-
-            return true;
         },
 
         /**

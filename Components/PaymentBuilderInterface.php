@@ -22,21 +22,18 @@
  * our trademarks remain entirely with us.
  */
 
-namespace SwagPaymentPayPalUnified\PayPalBundle\Components;
+namespace SwagPaymentPayPalUnified\Components;
 
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
-use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile;
 
-interface PaymentRequestServiceInterface
+interface PaymentBuilderInterface
 {
     /**
      * The function returns an array with all parameters that are expected by the PayPal API.
      *
-     * @param WebProfile $profile
-     * @param array      $basketData
-     * @param array      $userData
+     * @param PaymentBuilderParameters $params
      *
      * @return Payment
      */
-    public function getRequestParameters(WebProfile $profile, array $basketData, array $userData);
+    public function getPayment(PaymentBuilderParameters $params);
 }

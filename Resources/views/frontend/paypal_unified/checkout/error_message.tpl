@@ -16,6 +16,9 @@
         {elseif $paypalUnifiedErrorCode == 5}
             {* Installments error *}
             {include file="frontend/_includes/messages.tpl" type="error" content="{s name="error/installments"}Could not process credit order. The provided order could not be associated by the payment provider.{/s}"}
+        {elseif $paypalUnifiedErrorCode == 6}
+            {* Basket validation error *}
+            {include file="frontend/_includes/messages.tpl" type="error" content="{s name="error/basket"}The basket has been changed during payment process. Please proceed the payment again.{/s}"}
         {else}
             {* Unknown error *}
             {include file="frontend/_includes/messages.tpl" type="error" content="{s name="error/unkown"}An unknown error occurred while processing the payment.{/s}"}

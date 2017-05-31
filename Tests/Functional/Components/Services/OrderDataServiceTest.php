@@ -159,6 +159,18 @@ class OrderDataServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(PaymentType::PAYPAL_CLASSIC, $updatedAttribute);
     }
 
+    public function test_applyPaymentAttribute_express_checkout()
+    {
+        $orderDataService = $this->getOrderDataService();
+        $orderDataService->applyPaymentTypeAttribute(self::ORDER_NUMBER, new Payment(), true);
+
+        /** @var Connection $dbalConnection */
+        $dbalConnection = Shopware()->Container()->get('dbal_connection');
+        $updatedAttribute = $dbalConnection->executeQuery('SELECT paypal_payment_type FROM s_order_attributes WHERE orderID=9999')->fetchColumn(0);
+
+        $this->assertEquals(PaymentType::PAYPAL_EXPRESS, $updatedAttribute);
+    }
+
     private function createTestSettings()
     {
         $settingsParams = [

@@ -24,43 +24,39 @@
 
 namespace SwagPaymentPayPalUnified\Components\Services\ExpressCheckout;
 
-use SwagPaymentPayPalUnified\Components\Services\PaymentRequestService;
-use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile;
+use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
+use SwagPaymentPayPalUnified\Components\Services\PaymentBuilderService;
+use SwagPaymentPayPalUnified\Components\Services\Validation\BasketIdWhitelist;
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
 
-class ExpressCheckoutPaymentRequestService extends PaymentRequestService
+class ExpressCheckoutPaymentBuilderService extends PaymentBuilderService
 {
     /**
-     * @param WebProfile $profile
-     * @param array      $basketData
-     * @param array      $userData
-     * @param null       $currency
+     * @param PaymentBuilderParameters $params
+     * @param string|null              $currency
      *
-     * @return \SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment
+     * @return Payment
      */
-    public function getRequestParameters(
-        WebProfile $profile,
-        array $basketData,
-        array $userData,
-        $currency = null
-    ) {
-        $result = parent::getRequestParameters($profile, $basketData, $userData);
+    public function getPayment(PaymentBuilderParameters $params, $currency = null)
+    {
+        $payment = parent::getPayment($params);
 
-        $result->getRedirectUrls()->setReturnUrl($this->getReturnUrl());
-        $result->getRedirectUrls()->setCancelUrl($this->getCancelUrl());
+        $payment->getRedirectUrls()->setReturnUrl($this->getReturnUrl());
+        $payment->getRedirectUrls()->setCancelUrl($this->getCancelUrl());
 
         //Since we used the sBasket module earlier, the currencies might not be available,
         //but paypal needs them.
-        if (!$result->getTransactions()->getAmount()->getCurrency()) {
-            $result->getTransactions()->getAmount()->setCurrency($currency);
+        if (!$payment->getTransactions()->getAmount()->getCurrency()) {
+            $payment->getTransactions()->getAmount()->setCurrency($currency);
         }
 
-        foreach ($result->getTransactions()->getItemList()->getItems() as $item) {
+        foreach ($payment->getTransactions()->getItemList()->getItems() as $item) {
             if (!$item->getCurrency()) {
                 $item->setCurrency($currency);
             }
         }
 
-        return $result;
+        return $payment;
     }
 
     /**
@@ -68,14 +64,13 @@ class ExpressCheckoutPaymentRequestService extends PaymentRequestService
      */
     private function getReturnUrl()
     {
-        return $this->router->assemble(
-            [
-                'module' => 'widgets',
-                'controller' => 'PaypalUnifiedExpressCheckout',
-                'action' => 'expressCheckoutReturn',
-                'forceSecure' => true,
-            ]
-        );
+        return $this->router->assemble([
+            'module' => 'widgets',
+            'controller' => 'PaypalUnifiedExpressCheckout',
+            'action' => 'expressCheckoutReturn',
+            'forceSecure' => true,
+            'basketId' => BasketIdWhitelist::WHITELIST_IDS['PayPalExpress'], //PayPal Express Checkout basket Id
+        ]);
     }
 
     /**

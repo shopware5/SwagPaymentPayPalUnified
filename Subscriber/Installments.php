@@ -169,6 +169,7 @@ class Installments implements SubscriberInterface
         $request = $controller->Request();
         $paymentId = $request->get('paymentId');
         $payerId = $request->get('PayerID');
+        $basketId = $request->get('basketId');
 
         if ($paymentId === null || $payerId === null || $request->getActionName() !== 'confirm') {
             return;
@@ -185,6 +186,7 @@ class Installments implements SubscriberInterface
             $view->assign('paypalInstallmentsCredit', $payment['credit_financing_offered']);
             $view->assign('paypalInstallmentsPaymentId', $paymentId);
             $view->assign('paypalInstallmentsPayerId', $payerId);
+            $view->assign('paypalInstallmentsBasketId', $basketId);
 
             $creditStruct = Credit::fromArray($payment['credit_financing_offered']);
 
