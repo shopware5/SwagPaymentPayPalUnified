@@ -27,7 +27,6 @@ namespace SwagPaymentPayPalUnified\Subscriber;
 use Doctrine\DBAL\Connection;
 use Enlight\Event\SubscriberInterface;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
-use SwagPaymentPayPalUnified\Components\Services\SettingsService;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 
 class PaymentMeans implements SubscriberInterface
@@ -43,7 +42,7 @@ class PaymentMeans implements SubscriberInterface
     private $installmentsPaymentId;
 
     /**
-     * @var SettingsService
+     * @var SettingsServiceInterface
      */
     private $settingsService;
 
@@ -53,7 +52,7 @@ class PaymentMeans implements SubscriberInterface
      */
     public function __construct(Connection $connection, SettingsServiceInterface $settingsService)
     {
-        $paymentMethodProvider = new PaymentMethodProvider(null);
+        $paymentMethodProvider = new PaymentMethodProvider();
         $this->unifiedPaymentId = $paymentMethodProvider->getPaymentId($connection);
         $this->installmentsPaymentId = $paymentMethodProvider->getPaymentId($connection, PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME);
         $this->settingsService = $settingsService;
@@ -83,14 +82,12 @@ class PaymentMeans implements SubscriberInterface
             ) {
                 //Force unset the payment method, because it's not available without any settings.
                 unset($availableMethods[$index]);
-                break;
             }
 
             if ((int) $paymentMethod['id'] === $this->installmentsPaymentId
-                && !$this->settingsService->get('installments_active')
+                && (!$this->settingsService->hasSettings() || !$this->settingsService->get('active') || !$this->settingsService->get('installments_active'))
             ) {
                 unset($availableMethods[$index]);
-                break;
             }
         }
 

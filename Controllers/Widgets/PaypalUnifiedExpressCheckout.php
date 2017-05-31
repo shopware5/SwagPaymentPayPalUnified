@@ -64,7 +64,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedExpressCheckout extends \Enlight
         //as seen in the PayPalUnified controller.
         $basketData = $basket->sGetBasket();
 
-        $profile = $this->get('paypal_unified.web_profile_service')->getWebProfile();
+        $webProfileId = $this->get('paypal_unified.settings_service')->get('web_profile_id_ec');
 
         $userData = [
             'additional' => [
@@ -79,7 +79,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedExpressCheckout extends \Enlight
         $requestParams = new PaymentBuilderParameters();
         $requestParams->setBasketData($basketData);
         $requestParams->setUserData($userData);
-        $requestParams->setWebProfile($profile);
+        $requestParams->setWebProfileId($webProfileId);
 
         try {
             /** @var Payment $params */

@@ -32,6 +32,7 @@ class SimpleBasketValidatorTest extends \PHPUnit_Framework_TestCase
     public function test_is_valid()
     {
         $basketData = ['AmountNumeric' => 14.31];
+        $userData = [];
 
         $payment = new Payment();
         $transactions = new Payment\Transactions();
@@ -41,12 +42,13 @@ class SimpleBasketValidatorTest extends \PHPUnit_Framework_TestCase
         $transactions->setAmount($amount);
         $payment->setTransactions($transactions);
 
-        $this->assertTrue($this->getBasketValidator()->validate($basketData, $payment));
+        $this->assertTrue($this->getBasketValidator()->validate($basketData, $userData, $payment));
     }
 
     public function test_is_invalid()
     {
         $basketData = ['AmountNumeric' => 14.32];
+        $userData = [];
 
         $payment = new Payment();
         $transactions = new Payment\Transactions();
@@ -56,9 +58,44 @@ class SimpleBasketValidatorTest extends \PHPUnit_Framework_TestCase
         $transactions->setAmount($amount);
         $payment->setTransactions($transactions);
 
-        $this->assertFalse($this->getBasketValidator()->validate($basketData, $payment));
+        $this->assertFalse($this->getBasketValidator()->validate($basketData, $userData, $payment));
     }
 
+    public function test_is_valid_with_charge_vat()
+    {
+        $basketData = ['AmountNumeric' => 14.31, 'AmountWithTaxNumeric' => 17.03];
+        $userData = ['additional' => ['charge_vat' => true]];
+
+        $payment = new Payment();
+        $transactions = new Payment\Transactions();
+        $amount = new Payment\Transactions\Amount();
+        $amount->setTotal(17.03);
+
+        $transactions->setAmount($amount);
+        $payment->setTransactions($transactions);
+
+        $this->assertTrue($this->getBasketValidator()->validate($basketData, $userData, $payment));
+    }
+
+    public function test_is_invalid_with_charge_vat()
+    {
+        $basketData = ['AmountNumeric' => 14.31, 'AmountWithTaxNumeric' => 17.03];
+        $userData = ['additional' => ['charge_vat' => true]];
+
+        $payment = new Payment();
+        $transactions = new Payment\Transactions();
+        $amount = new Payment\Transactions\Amount();
+        $amount->setTotal(14.31);
+
+        $transactions->setAmount($amount);
+        $payment->setTransactions($transactions);
+
+        $this->assertFalse($this->getBasketValidator()->validate($basketData, $userData, $payment));
+    }
+
+    /**
+     * @return SimpleBasketValidator
+     */
     private function getBasketValidator()
     {
         return new SimpleBasketValidator();

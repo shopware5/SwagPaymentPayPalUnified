@@ -60,7 +60,7 @@ class SaleResource
      *
      * @return array
      */
-    public function refund($saleId, SaleRefund $refund = null)
+    public function refund($saleId, SaleRefund $refund)
     {
         $requestData = $refund->toArray();
 

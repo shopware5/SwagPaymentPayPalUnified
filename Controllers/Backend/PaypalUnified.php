@@ -27,8 +27,8 @@ use Shopware\Components\Logger;
 use Shopware\Components\Model\QueryBuilder;
 use Shopware\Models\Order\Order;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
-use SwagPaymentPayPalUnified\Components\Services\SettingsService;
 use SwagPaymentPayPalUnified\Components\Services\TransactionHistoryBuilderService;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentIntent;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\AuthorizationResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\CaptureResource;
@@ -511,7 +511,7 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
      */
     private function configureClient($shopId)
     {
-        /** @var SettingsService $settingsService */
+        /** @var SettingsServiceInterface $settingsService */
         $settingsService = $this->container->get('paypal_unified.settings_service');
 
         /** @var ClientService $client */

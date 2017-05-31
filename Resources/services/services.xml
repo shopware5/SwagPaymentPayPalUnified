@@ -28,9 +28,8 @@
 
         <service id="paypal_unified.web_profile_service" class="SwagPaymentPayPalUnified\PayPalBundle\Services\WebProfileService">
             <argument type="service" id="paypal_unified.client_service"/>
-            <argument type="service" id="paypal_unified.settings_service"/>
-            <argument type="service" id="paypal_unified.dependency_provider"/>
             <argument type="service" id="pluginlogger"/>
+            <argument type="service" id="models"/>
         </service>
 
         <service id="paypal_unified.webhook_service" class="SwagPaymentPayPalUnified\PayPalBundle\Services\WebhookService"/>

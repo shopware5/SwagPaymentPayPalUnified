@@ -29,17 +29,17 @@ use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
 class SimpleBasketValidator implements BasketValidatorInterface
 {
     /**
-     * Validates the basket using the shopware basket and the payment response from PayPal.
-     *
-     * @param array   $basket
-     * @param Payment $payment
-     *
-     * @return bool
+     * {@inheritdoc}
      */
-    public function validate(array $basket, Payment $payment)
+    public function validate(array $basket, array $user, Payment $payment)
     {
-        $basketAmount = (float) $basket['AmountNumeric'];
-        $paymentAmount = (float) $payment->getTransactions()->getAmount()->getTotal();
+        // looks hacky, but necessary due to float handling on different environments
+        $basketAmount = (string) $basket['AmountNumeric'];
+        $paymentAmount = (string) $payment->getTransactions()->getAmount()->getTotal();
+
+        if ($user['additional']['charge_vat']) {
+            $basketAmount = (string) $basket['AmountWithTaxNumeric'];
+        }
 
         return $basketAmount === $paymentAmount;
     }

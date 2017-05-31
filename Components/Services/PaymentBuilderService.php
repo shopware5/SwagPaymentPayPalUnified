@@ -46,7 +46,7 @@ class PaymentBuilderService implements PaymentBuilderInterface
     protected $router;
 
     /**
-     * @var SettingsService
+     * @var SettingsServiceInterface
      */
     protected $settings;
 
@@ -105,7 +105,7 @@ class PaymentBuilderService implements PaymentBuilderInterface
             }
         }
 
-        $requestParameters->setProfile($params->getWebProfile()->getId());
+        $requestParameters->setProfile($params->getWebProfileId());
 
         $payer = new Payer();
         $payer->setPaymentMethod('paypal');

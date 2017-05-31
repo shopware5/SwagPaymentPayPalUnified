@@ -60,13 +60,21 @@ class InstallmentsPaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('order', $requestParameters['intent']);
     }
 
+    public function test_getPayment_returns_url_with_basket_id()
+    {
+        $requestParameters = $this->getRequestData(true, 2, true);
+        $returnUrl = $requestParameters['redirect_urls']['return_url'];
+
+        $this->assertStringEndsWith('PaypalUnifiedInstallments/return/basketId/test-test-test', $returnUrl);
+    }
+
     /**
      * @param $plusActive
      * @param $intent
      *
      * @return array
      */
-    private function getRequestData($plusActive = false, $intent = 0)
+    private function getRequestData($plusActive = false, $intent = 0, $withBasketId = false)
     {
         $settingService = new SettingsServicePaymentBuilderServiceMock($plusActive, $intent);
 
@@ -78,8 +86,12 @@ class InstallmentsPaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
 
         $params = new PaymentBuilderParameters();
         $params->setBasketData($basketData);
-        $params->setWebProfile($profile);
+        $params->setWebProfileId($profile->getId());
         $params->setUserData($userData);
+
+        if ($withBasketId) {
+            $params->setBasketUniqueId('test-test-test');
+        }
 
         return $installmentsPaymentBuilderService->getPayment($params)->toArray();
     }
@@ -103,12 +115,14 @@ class InstallmentsPaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
             'sAmountTax' => 18.359999999999999,
             'sAmountWithTax' => 136.8381,
             'content' => [
-                'ordernumber' => 'SW10137',
-                'articlename' => 'Fahrerbrille Chronos',
-                'quantity' => '1',
-                'price' => '59,99',
-                'netprice' => '50.411764705882',
-                'sCurrencyName' => 'EUR',
+                [
+                    'ordernumber' => 'SW10137',
+                    'articlename' => 'Fahrerbrille Chronos',
+                    'quantity' => '1',
+                    'price' => '59,99',
+                    'netprice' => '50.411764705882',
+                    'sCurrencyName' => 'EUR',
+                ],
             ],
         ];
     }

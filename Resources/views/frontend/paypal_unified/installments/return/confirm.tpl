@@ -29,7 +29,7 @@
 {* Disable item quantity selection *}
 {block name='frontend_checkout_cart_item_quantity_selection'}
     {if !$sBasketItem.additional_details.laststock || ($sBasketItem.additional_details.laststock && $sBasketItem.additional_details.instock > 0)}
-        <select name="sQuantity" disabled>
+        <select name="sQuantity" disabled="disabled">
             <option value="{$sBasketItem.quantity}" selected="selected">
                 {$sBasketItem.quantity}
             </option>

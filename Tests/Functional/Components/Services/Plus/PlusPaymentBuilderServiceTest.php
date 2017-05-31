@@ -25,7 +25,6 @@
 namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services\ExpressCheckout;
 
 use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
-use SwagPaymentPayPalUnified\Components\Services\PaymentBuilderService;
 use SwagPaymentPayPalUnified\Components\Services\Plus\PlusPaymentBuilderService;
 use SwagPaymentPayPalUnified\Components\Services\Validation\BasketIdWhitelist;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
@@ -58,7 +57,7 @@ class PlusPaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
     {
         $settingService = new SettingsServicePaymentBuilderServiceMock(false, 0);
 
-        $ecRequestService = $this->getPlusPaymentBuilder($settingService);
+        $plusPaymentBuilder = $this->getPlusPaymentBuilder($settingService);
 
         $profile = $this->getWebProfile();
         $basketData = $this->getBasketDataArray();
@@ -66,16 +65,16 @@ class PlusPaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
 
         $params = new PaymentBuilderParameters();
         $params->setBasketData($basketData);
-        $params->setWebProfile($profile);
+        $params->setWebProfileId($profile->getId());
         $params->setUserData($userData);
 
-        return $ecRequestService->getPayment($params, 'EUR');
+        return $plusPaymentBuilder->getPayment($params);
     }
 
     /**
      * @param SettingsServiceInterface $settingService
      *
-     * @return PaymentBuilderService
+     * @return PlusPaymentBuilderService
      */
     private function getPlusPaymentBuilder(SettingsServiceInterface $settingService)
     {
@@ -102,11 +101,13 @@ class PlusPaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
             'sAmountTax' => 18.359999999999999,
             'sAmountWithTax' => 136.8381,
             'content' => [
-                'ordernumber' => 'SW10137',
-                'articlename' => 'Fahrerbrille Chronos',
-                'quantity' => '1',
-                'price' => '59,99',
-                'netprice' => '50.411764705882',
+                [
+                    'ordernumber' => 'SW10137',
+                    'articlename' => 'Fahrerbrille Chronos',
+                    'quantity' => '1',
+                    'price' => '59,99',
+                    'netprice' => '50.411764705882',
+                ],
             ],
         ];
     }

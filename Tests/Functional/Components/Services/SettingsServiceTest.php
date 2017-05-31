@@ -27,6 +27,7 @@ namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\Services\SettingsService;
 use SwagPaymentPayPalUnified\Models\Settings;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 
 class SettingsServiceTest extends \PHPUnit_Framework_TestCase
@@ -67,7 +68,7 @@ class SettingsServiceTest extends \PHPUnit_Framework_TestCase
     {
         $this->createTestSettings();
 
-        /** @var SettingsService $settingsService */
+        /** @var SettingsServiceInterface $settingsService */
         $settingsService = Shopware()->Container()->get('paypal_unified.settings_service');
         $this->assertEquals(self::CLIENT_ID, $settingsService->get('client_id'));
         $this->assertEquals(self::CLIENT_SECRET, $settingsService->get('client_secret'));
@@ -84,7 +85,7 @@ class SettingsServiceTest extends \PHPUnit_Framework_TestCase
 
     public function test_hasSettings_false()
     {
-        /** @var SettingsService $settingsService */
+        /** @var SettingsServiceInterface $settingsService */
         $settingsService = Shopware()->Container()->get('paypal_unified.settings_service');
 
         $this->assertFalse($settingsService->hasSettings());
@@ -101,7 +102,7 @@ class SettingsServiceTest extends \PHPUnit_Framework_TestCase
     {
         $this->createTestSettings();
 
-        /** @var SettingsService $settingsService */
+        /** @var SettingsServiceInterface $settingsService */
         $settingsService = Shopware()->Container()->get('paypal_unified.settings_service');
 
         $this->assertTrue($settingsService->hasSettings());

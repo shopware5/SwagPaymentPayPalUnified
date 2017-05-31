@@ -89,14 +89,14 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
         try {
             //Query all information
             $basketData = $orderData['sBasket'];
-            $profile = $this->get('paypal_unified.web_profile_service')->getWebProfile();
+            $webProfileId = $this->get('paypal_unified.settings_service')->get('web_profile_id');
 
             $selectedPaymentName = $orderData['sPayment']['name'];
 
             $requestParams = new PaymentBuilderParameters();
             $requestParams->setBasketData($basketData);
             $requestParams->setUserData($userData);
-            $requestParams->setWebProfile($profile);
+            $requestParams->setWebProfileId($webProfileId);
 
             //Prepare the new basket signature feature, announced in SW 5.3.0
             if (version_compare($this->container->get('config')->offsetGet('version'), '5.3.0', '>=')) {
@@ -342,6 +342,6 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
         /** @var BasketValidatorInterface $legacyValidator */
         $legacyValidator = $this->container->get('paypal_unified.simple_basket_validator');
 
-        return $legacyValidator->validate($this->getBasket(), $payment);
+        return $legacyValidator->validate($this->getBasket(), $this->getUser(), $payment);
     }
 }
