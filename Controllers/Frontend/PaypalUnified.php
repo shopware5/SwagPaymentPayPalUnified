@@ -35,7 +35,9 @@ use SwagPaymentPayPalUnified\Components\Services\Validation\BasketIdWhitelist;
 use SwagPaymentPayPalUnified\Components\Services\Validation\BasketValidatorInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PaymentAddressPatch;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PaymentOrderNumberPatch;
+use SwagPaymentPayPalUnified\PayPalBundle\PartnerAttributionId;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\PaymentResource;
+use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\ErrorResponse;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\RelatedResources\RelatedResource;
@@ -48,11 +50,17 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
     private $paymentResource;
 
     /**
+     * @var ClientService
+     */
+    private $client;
+
+    /**
      * initialize payment resource
      */
     public function preDispatch()
     {
-        $this->paymentResource = $this->get('paypal_unified.payment_resource');
+        $this->paymentResource = $this->container->get('paypal_unified.payment_resource');
+        $this->client = $this->container->get('paypal_unified.client_service');
     }
 
     /**
@@ -104,6 +112,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
             if ($selectedPaymentName === PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME) {
                 $payment = $this->get('paypal_unified.payment_builder_service')->getPayment($requestParams);
             } elseif ($selectedPaymentName === PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME) {
+                $this->client->setPartnerAttributionId(PartnerAttributionId::PAYPAL_INSTALLMENTS);
                 $payment = $this->get('paypal_unified.installments.payment_builder_service')->getPayment($requestParams);
             }
 

@@ -10,7 +10,6 @@
             <argument type="service" id="paypal_unified.token_service"/>
             <argument type="service" id="pluginlogger"/>
             <argument type="service" id="guzzle_http_client_factory"/>
-            <argument type="service" id="paypal_unified.partner_attribution_service"/>
             <argument type="service" id="paypal_unified.dependency_provider"/>
         </service>
 
@@ -53,10 +52,6 @@
 
         <service id="paypal_unified.plus.payment_builder_service" class="SwagPaymentPayPalUnified\Components\Services\Plus\PlusPaymentBuilderService">
             <argument type="service" id="router"/>
-            <argument type="service" id="paypal_unified.settings_service"/>
-        </service>
-
-        <service id="paypal_unified.partner_attribution_service" class="SwagPaymentPayPalUnified\PayPalBundle\Services\PartnerAttributionService">
             <argument type="service" id="paypal_unified.settings_service"/>
         </service>
 

@@ -34,8 +34,11 @@ use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\Services\OrderDataService;
 use SwagPaymentPayPalUnified\Components\Services\PaymentInstructionService;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
+use SwagPaymentPayPalUnified\PayPalBundle\PartnerAttributionId;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\PaymentResource;
+use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class Checkout implements SubscriberInterface
@@ -249,7 +252,12 @@ class Checkout implements SubscriberInterface
     {
         /** @var PaymentResource $paymentResource */
         $paymentResource = $this->container->get('paypal_unified.payment_resource');
+
+        /** @var WebProfile $profile */
         $profile = $this->container->get('paypal_unified.web_profile_service')->getWebProfile();
+
+        /** @var ClientService $client */
+        $client = $this->container->get('paypal_unified.client_service');
 
         $requestParams = new PaymentBuilderParameters();
         $requestParams->setUserData($userData);
@@ -259,6 +267,7 @@ class Checkout implements SubscriberInterface
         $params = $this->container->get('paypal_unified.plus.payment_builder_service')->getPayment($requestParams);
 
         try {
+            $client->setPartnerAttributionId(PartnerAttributionId::PAYPAL_PLUS);
             $payment = $paymentResource->create($params);
 
             return Payment::fromArray($payment);
