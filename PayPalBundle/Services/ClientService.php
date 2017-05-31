@@ -31,6 +31,7 @@ use Shopware\Components\Logger;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\PayPalBundle\BaseURL;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
+use SwagPaymentPayPalUnified\PayPalBundle\PartnerAttributionId;
 use SwagPaymentPayPalUnified\PayPalBundle\RequestType;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\OAuthCredentials;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Token;
@@ -68,19 +69,17 @@ class ClientService
     private $shopId;
 
     /**
-     * @param SettingsServiceInterface  $config
-     * @param TokenService              $tokenService
-     * @param Logger                    $logger
-     * @param GuzzleFactory             $factory
-     * @param PartnerAttributionService $partnerAttributionService
-     * @param DependencyProvider        $dependencyProvider
+     * @param SettingsServiceInterface $config
+     * @param TokenService             $tokenService
+     * @param Logger                   $logger
+     * @param GuzzleFactory            $factory
+     * @param DependencyProvider       $dependencyProvider
      */
     public function __construct(
         SettingsServiceInterface $config,
         TokenService $tokenService,
         Logger $logger,
         GuzzleFactory $factory,
-        PartnerAttributionService $partnerAttributionService,
         DependencyProvider $dependencyProvider
     ) {
         $this->tokenService = $tokenService;
@@ -101,7 +100,7 @@ class ClientService
         $environment === true ? $this->baseUrl = BaseURL::SANDBOX : $this->baseUrl = BaseURL::LIVE;
 
         //Set Partner-Attribution-Id
-        $this->setPartnerAttributionId($partnerAttributionService->getPartnerAttributionId());
+        $this->setPartnerAttributionId(PartnerAttributionId::PAYPAL_CLASSIC); //Default
 
         //Create authentication
         $restId = $config->get('client_id');
@@ -194,6 +193,14 @@ class ClientService
     }
 
     /**
+     * @param string $partnerId
+     */
+    public function setPartnerAttributionId($partnerId)
+    {
+        $this->setHeader('PayPal-Partner-Attribution-Id', $partnerId);
+    }
+
+    /**
      * @param string $key
      *
      * @return string
@@ -229,13 +236,5 @@ class ClientService
                 $e->getMessage(),
             ]);
         }
-    }
-
-    /**
-     * @param string $partnerId
-     */
-    private function setPartnerAttributionId($partnerId)
-    {
-        $this->setHeader('PayPal-Partner-Attribution-Id', $partnerId);
     }
 }
