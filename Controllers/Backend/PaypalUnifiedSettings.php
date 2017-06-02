@@ -23,8 +23,8 @@
  */
 
 use Shopware\Components\HttpClient\RequestException;
-use SwagPaymentPayPalUnified\Components\Services\SettingsService;
 use SwagPaymentPayPalUnified\Models\Settings;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\WebhookResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService;
 
@@ -41,7 +41,7 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
     protected $alias = 'settings';
 
     /**
-     * @var SettingsService
+     * @var SettingsServiceInterface
      */
     private $settingsService;
 
@@ -123,5 +123,28 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
             $this->View()->assign('success', false);
             $this->View()->assign('message', json_decode($ex->getBody(), true)['error_description']);
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function save($data)
+    {
+        $webProfileService = $this->container->get('paypal_unified.web_profile_service');
+        $this->configureClient($data['shopId']);
+        $data['webProfileId'] = $webProfileService->getWebProfile($data);
+        $data['webProfileIdEc'] = $webProfileService->getWebProfile($data, true);
+
+        return parent::save($data);
+    }
+
+    /**
+     * @param int $shopId
+     */
+    private function configureClient($shopId)
+    {
+        /** @var ClientService $client */
+        $client = $this->container->get('paypal_unified.client_service');
+        $client->configure($this->settingsService->getSettings($shopId)->toArray());
     }
 }

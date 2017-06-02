@@ -69,14 +69,14 @@ class ClientService
     private $shopId;
 
     /**
-     * @param SettingsServiceInterface $config
+     * @param SettingsServiceInterface $settingsService
      * @param TokenService             $tokenService
      * @param Logger                   $logger
      * @param GuzzleFactory            $factory
      * @param DependencyProvider       $dependencyProvider
      */
     public function __construct(
-        SettingsServiceInterface $config,
+        SettingsServiceInterface $settingsService,
         TokenService $tokenService,
         Logger $logger,
         GuzzleFactory $factory,
@@ -90,21 +90,21 @@ class ClientService
 
         //Backend does not have any active shop. In order to authenticate there, please use
         //the "configure()"-function instead.
-        if ($shop === null || !$config->hasSettings() || !$config->get('active')) {
+        if ($shop === null || !$settingsService->hasSettings() || !$settingsService->get('active')) {
             return;
         }
 
         $this->shopId = $shop->getId();
 
-        $environment = (bool) $config->get('sandbox');
+        $environment = (bool) $settingsService->get('sandbox');
         $environment === true ? $this->baseUrl = BaseURL::SANDBOX : $this->baseUrl = BaseURL::LIVE;
 
         //Set Partner-Attribution-Id
         $this->setPartnerAttributionId(PartnerAttributionId::PAYPAL_CLASSIC); //Default
 
         //Create authentication
-        $restId = $config->get('client_id');
-        $restSecret = $config->get('client_secret');
+        $restId = $settingsService->get('client_id');
+        $restSecret = $settingsService->get('client_secret');
         $credentials = new OAuthCredentials();
         $credentials->setRestId($restId);
         $credentials->setRestSecret($restSecret);

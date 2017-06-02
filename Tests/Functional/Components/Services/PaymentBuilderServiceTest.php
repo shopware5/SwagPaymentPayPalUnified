@@ -104,7 +104,7 @@ class PaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
 
         $params = new PaymentBuilderParameters();
         $params->setBasketData($basketData);
-        $params->setWebProfile($profile);
+        $params->setWebProfileId($profile->getId());
         $params->setUserData($userData);
 
         $requestParameters = $requestService->getPayment($params);
@@ -129,7 +129,7 @@ class PaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
 
         $params = new PaymentBuilderParameters();
         $params->setBasketData($basketData);
-        $params->setWebProfile($profile);
+        $params->setWebProfileId($profile->getId());
         $params->setUserData($userData);
         $params->setBasketUniqueId('MyUniqueBasketId');
 
@@ -151,7 +151,7 @@ class PaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
 
         $params = new PaymentBuilderParameters();
         $params->setBasketData($basketData);
-        $params->setWebProfile($profile);
+        $params->setWebProfileId($profile->getId());
         $params->setUserData($userData);
 
         $requestParameters = $requestService->getPayment($params);
@@ -171,6 +171,16 @@ class PaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertNotFalse(stristr($requestParameters['redirect_urls']['cancel_url'], 'cancel'));
     }
 
+    public function test_getPayment_with_custom_products()
+    {
+        $requestParameters = $this->getRequestData();
+
+        $customProductsOption = $requestParameters['transactions'][0]['item_list']['items'][1];
+
+        $this->assertEquals('test: a, b', $customProductsOption['name']);
+        $this->assertEquals(6, $customProductsOption['price']);
+    }
+
     /**
      * @param $plusActive
      * @param $intent
@@ -188,7 +198,7 @@ class PaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
 
         $params = new PaymentBuilderParameters();
         $params->setBasketData($basketData);
-        $params->setWebProfile($profile);
+        $params->setWebProfileId($profile->getId());
         $params->setUserData($userData);
 
         return $requestService->getPayment($params)->toArray();
@@ -257,12 +267,33 @@ class PaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
             'sAmountTax' => 18.359999999999999,
             'sAmountWithTax' => 136.8381,
             'content' => [
-                'ordernumber' => 'SW10137',
-                'articlename' => 'Fahrerbrille Chronos',
-                'quantity' => '1',
-                'price' => '59,99',
-                'netprice' => '50.411764705882',
-                'sCurrencyName' => 'EUR',
+                [
+                    'ordernumber' => 'SW10137',
+                    'articlename' => 'Fahrerbrille Chronos',
+                    'quantity' => '1',
+                    'price' => '59,99',
+                    'netprice' => '50.411764705882',
+                    'sCurrencyName' => 'EUR',
+                    'customProductMode' => '1',
+                ], [
+                    'articlename' => 'test',
+                    'quantity' => '1',
+                    'price' => '1',
+                    'customProductMode' => '2',
+                ], [
+                    'articlename' => 'a',
+                    'quantity' => '1',
+                    'price' => '2',
+                    'customProductMode' => '3',
+                ], [
+                    'articlename' => 'b',
+                    'quantity' => '1',
+                    'price' => '3',
+                    'customProductMode' => '3',
+                ], [
+                    'articlename' => 'test-break',
+                    'customProductMode' => 4,
+                ],
             ],
         ];
     }

@@ -21,7 +21,7 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebar.Toolbar', {
     intent: null,
 
     /**
-     * @type { Numeric }
+     * @type { Number }
      */
     amount: null,
 

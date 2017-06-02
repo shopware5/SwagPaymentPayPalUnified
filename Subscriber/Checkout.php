@@ -38,7 +38,6 @@ use SwagPaymentPayPalUnified\PayPalBundle\PartnerAttributionId;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\PaymentResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
-use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class Checkout implements SubscriberInterface
@@ -56,7 +55,7 @@ class Checkout implements SubscriberInterface
     /**
      * @var SettingsServiceInterface
      */
-    private $config;
+    private $settingsService;
 
     /**
      * @var Logger
@@ -82,7 +81,7 @@ class Checkout implements SubscriberInterface
         ContainerInterface $container
     ) {
         $this->container = $container;
-        $this->config = $container->get('paypal_unified.settings_service');
+        $this->settingsService = $container->get('paypal_unified.settings_service');
         $this->logger = $container->get('pluginlogger');
         $this->paymentMethodProvider = new PaymentMethodProvider($container->get('models'));
 
@@ -123,8 +122,8 @@ class Checkout implements SubscriberInterface
         $view = $controller->View();
 
         $action = $request->getActionName();
-        $unifiedActive = (bool) $this->config->get('active');
-        $usePayPalPlus = (bool) $this->config->get('plus_active');
+        $unifiedActive = (bool) $this->settingsService->get('active');
+        $usePayPalPlus = (bool) $this->settingsService->get('plus_active');
         $errorCode = $request->getParam('paypal_unified_error_code');
 
         if ($unifiedActive && $errorCode) {
@@ -212,7 +211,7 @@ class Checkout implements SubscriberInterface
             return;
         }
 
-        $view->assign('paypalUnifiedModeSandbox', $this->config->get('sandbox'));
+        $view->assign('paypalUnifiedModeSandbox', $this->settingsService->get('sandbox'));
         $view->assign('paypalUnifiedRemotePaymentId', $paymentStruct->getId());
         $view->assign('paypalUnifiedApprovalUrl', $paymentStruct->getLinks()[1]->getHref());
         $view->assign('paypalPlusLanguageIso', $this->getPaymentWallLanguage());
@@ -231,7 +230,7 @@ class Checkout implements SubscriberInterface
             return;
         }
 
-        $view->assign('paypalUnifiedModeSandbox', $this->config->get('sandbox'));
+        $view->assign('paypalUnifiedModeSandbox', $this->settingsService->get('sandbox'));
         $view->assign('paypalUnifiedPaymentId', $this->paymentMethodProvider->getPaymentId($this->container->get('dbal_connection')));
         $view->assign('paypalUnifiedRemotePaymentId', $paymentStruct->getId());
         $view->assign('paypalUnifiedApprovalUrl', $paymentStruct->getLinks()[1]->getHref());
@@ -252,16 +251,14 @@ class Checkout implements SubscriberInterface
     {
         /** @var PaymentResource $paymentResource */
         $paymentResource = $this->container->get('paypal_unified.payment_resource');
-
-        /** @var WebProfile $profile */
-        $profile = $this->container->get('paypal_unified.web_profile_service')->getWebProfile();
+        $webProfileId = $this->settingsService->get('web_profile_id');
 
         /** @var ClientService $client */
         $client = $this->container->get('paypal_unified.client_service');
 
         $requestParams = new PaymentBuilderParameters();
         $requestParams->setUserData($userData);
-        $requestParams->setWebProfile($profile);
+        $requestParams->setWebProfileId($webProfileId);
         $requestParams->setBasketData($basketData);
 
         $params = $this->container->get('paypal_unified.plus.payment_builder_service')->getPayment($requestParams);
@@ -283,7 +280,7 @@ class Checkout implements SubscriberInterface
      */
     private function getPaymentWallLanguage()
     {
-        $languageIso = $this->config->get('plus_language');
+        $languageIso = $this->settingsService->get('plus_language');
 
         //If no locale ISO was set up specifically,
         //we can use the current shop's locale ISO

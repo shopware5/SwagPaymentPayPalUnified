@@ -24,8 +24,6 @@
 
 namespace SwagPaymentPayPalUnified\Components;
 
-use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile;
-
 class PaymentBuilderParameters
 {
     /**
@@ -39,9 +37,9 @@ class PaymentBuilderParameters
     private $basketData;
 
     /**
-     * @var WebProfile
+     * @var string
      */
-    private $webProfile;
+    private $webProfileId;
 
     /**
      * @var string
@@ -81,19 +79,19 @@ class PaymentBuilderParameters
     }
 
     /**
-     * @return WebProfile
+     * @return string
      */
-    public function getWebProfile()
+    public function getWebProfileId()
     {
-        return $this->webProfile;
+        return $this->webProfileId;
     }
 
     /**
-     * @param WebProfile $webProfile
+     * @param string $webProfileId
      */
-    public function setWebProfile($webProfile)
+    public function setWebProfileId($webProfileId)
     {
-        $this->webProfile = $webProfile;
+        $this->webProfileId = $webProfileId;
     }
 
     /**

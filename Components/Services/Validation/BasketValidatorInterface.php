@@ -32,9 +32,10 @@ interface BasketValidatorInterface
      * Validates the basket using the shopware basket and the payment response from PayPal
      *
      * @param array   $basket
+     * @param array   $user
      * @param Payment $payment
      *
      * @return bool
      */
-    public function validate(array $basket, Payment $payment);
+    public function validate(array $basket, array $user, Payment $payment);
 }

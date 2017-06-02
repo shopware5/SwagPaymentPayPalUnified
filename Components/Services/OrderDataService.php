@@ -25,6 +25,7 @@
 namespace SwagPaymentPayPalUnified\Components\Services;
 
 use Doctrine\DBAL\Connection;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
 
@@ -36,20 +37,20 @@ class OrderDataService
     private $dbalConnection;
 
     /**
-     * @var SettingsService
+     * @var SettingsServiceInterface
      */
-    private $config;
+    private $settingsService;
 
     /**
-     * @param Connection      $dbalConnection
-     * @param SettingsService $config
+     * @param Connection               $dbalConnection
+     * @param SettingsServiceInterface $settingsService
      */
     public function __construct(
         Connection $dbalConnection,
-        SettingsService $config
+        SettingsServiceInterface $settingsService
     ) {
         $this->dbalConnection = $dbalConnection;
-        $this->config = $config;
+        $this->settingsService = $settingsService;
     }
 
     /**
@@ -112,7 +113,7 @@ class OrderDataService
             $paymentType = PaymentType::PAYPAL_INSTALLMENTS;
         } elseif ($payment->getPaymentInstruction() !== null) {
             $paymentType = PaymentType::PAYPAL_INVOICE;
-        } elseif ((bool) $this->config->get('plus_active')) {
+        } elseif ((bool) $this->settingsService->get('plus_active')) {
             $paymentType = PaymentType::PAYPAL_PLUS;
         }
 

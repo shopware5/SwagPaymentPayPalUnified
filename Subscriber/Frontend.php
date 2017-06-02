@@ -39,16 +39,16 @@ class Frontend implements SubscriberInterface
     /**
      * @var SettingsServiceInterface
      */
-    private $config;
+    private $settingsService;
 
     /**
      * @param string                   $pluginDir
-     * @param SettingsServiceInterface $config
+     * @param SettingsServiceInterface $settingsService
      */
-    public function __construct($pluginDir, SettingsServiceInterface $config)
+    public function __construct($pluginDir, SettingsServiceInterface $settingsService)
     {
         $this->pluginDir = $pluginDir;
-        $this->config = $config;
+        $this->settingsService = $settingsService;
     }
 
     /**
@@ -90,19 +90,19 @@ class Frontend implements SubscriberInterface
      */
     public function onPostDispatchSecure(\Enlight_Controller_ActionEventArgs $args)
     {
-        $active = (bool) $this->config->get('active');
+        $active = (bool) $this->settingsService->get('active');
         if (!$active) {
             return;
         }
 
         /** @var Enlight_View_Default $view */
         $view = $args->getSubject()->View();
-        $restylePaymentSelection = ((bool) $this->config->get('plus_active') && (bool) $this->config->get('plus_restyle'));
+        $restylePaymentSelection = ((bool) $this->settingsService->get('plus_active') && (bool) $this->settingsService->get('plus_restyle'));
 
         //Assign shop specific and configurable values to the view.
-        $view->assign('showPaypalLogo', (bool) $this->config->get('show_sidebar_logo'));
+        $view->assign('showPaypalLogo', (bool) $this->settingsService->get('show_sidebar_logo'));
         $view->assign('restylePaymentSelection', $restylePaymentSelection);
-        $view->assign('showPaypalInstallmentsLogo', (bool) $this->config->get('installments_show_logo'));
+        $view->assign('showPaypalInstallmentsLogo', (bool) $this->settingsService->get('installments_show_logo'));
     }
 
     /**

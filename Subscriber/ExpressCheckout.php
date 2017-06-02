@@ -32,19 +32,17 @@ use Shopware\Components\Logger;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderInterface;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
 use SwagPaymentPayPalUnified\Components\Services\ShippingAddressRequestService;
-use SwagPaymentPayPalUnified\Models\Settings;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PaymentAddressPatch;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PaymentAmountPatch;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\PaymentResource;
-use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile;
 
 class ExpressCheckout implements SubscriberInterface
 {
     /**
-     * @var Settings
+     * @var SettingsServiceInterface
      */
-    private $settings;
+    private $settingsService;
 
     /**
      * @var Session
@@ -87,7 +85,7 @@ class ExpressCheckout implements SubscriberInterface
         PaymentBuilderInterface $paymentBuilder,
         Logger $pluginLogger
     ) {
-        $this->settings = $settingsService->getSettings();
+        $this->settingsService = $settingsService;
         $this->session = $session;
         $this->paymentResource = $paymentResource;
         $this->addressRequestService = $addressRequestService;
@@ -117,7 +115,8 @@ class ExpressCheckout implements SubscriberInterface
      */
     public function loadExpressCheckoutJS(ActionEventArgs $args)
     {
-        if (!$this->settings || !$this->settings->getActive() || !$this->settings->getEcActive()) {
+        $settings = $this->settingsService->getSettings();
+        if (!$settings || !$settings->getActive() || !$settings->getEcActive()) {
             return;
         }
 
@@ -131,7 +130,8 @@ class ExpressCheckout implements SubscriberInterface
      */
     public function addExpressCheckoutButton(ActionEventArgs $args)
     {
-        if (!$this->settings || !$this->settings->getActive() || !$this->settings->getEcActive()) {
+        $settings = $this->settingsService->getSettings();
+        if (!$settings || !$settings->getActive() || !$settings->getEcActive()) {
             return;
         }
 
@@ -141,7 +141,7 @@ class ExpressCheckout implements SubscriberInterface
             return;
         }
 
-        $view->assign('paypalUnifiedModeSandbox', $this->settings->getSandbox());
+        $view->assign('paypalUnifiedModeSandbox', $settings->getSandbox());
     }
 
     /**
@@ -191,10 +191,11 @@ class ExpressCheckout implements SubscriberInterface
      */
     public function onPostDispatchDetail(ActionEventArgs $args)
     {
-        if (!$this->settings ||
-            !$this->settings->getActive() ||
-            !$this->settings->getEcActive() ||
-            !$this->settings->getEcDetailActive()
+        $settings = $this->settingsService->getSettings();
+        if (!$settings ||
+            !$settings->getActive() ||
+            !$settings->getEcActive() ||
+            !$settings->getEcDetailActive()
         ) {
             return;
         }
@@ -226,11 +227,8 @@ class ExpressCheckout implements SubscriberInterface
             $patch = new PaymentAddressPatch($shippingAddress);
             $this->paymentResource->patch($paymentId, $patch);
 
-            $profile = new WebProfile();
-            $profile->setId('temporary');
-
             $requestParams = new PaymentBuilderParameters();
-            $requestParams->setWebProfile($profile);
+            $requestParams->setWebProfileId('temporary');
             $requestParams->setBasketData($basketData);
             $requestParams->setUserData($userData);
 

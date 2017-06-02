@@ -46,6 +46,7 @@ class FinancingOptionsHandlerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(12, $sorted[1]['creditFinancing']['term']);
         $this->assertEquals(18, $sorted[2]['creditFinancing']['term']);
         $this->assertEquals(24, $sorted[3]['creditFinancing']['term']);
+        $this->assertEquals(24, $sorted[4]['creditFinancing']['term']);
     }
 
     public function test_sortOptionsBy_by_monthly_payment()
@@ -55,9 +56,10 @@ class FinancingOptionsHandlerTest extends \PHPUnit_Framework_TestCase
         $sorted = $service->sortOptionsBy(FinancingOptionsHandler::SORT_BY_MONTHLY_PAYMENT)->toArray()['qualifyingFinancingOptions'];
 
         $this->assertEquals(29.49, $sorted[0]['monthlyPayment']['value']);
-        $this->assertEquals(38.42, $sorted[1]['monthlyPayment']['value']);
-        $this->assertEquals(56.3, $sorted[2]['monthlyPayment']['value']);
-        $this->assertEquals(106.98, $sorted[3]['monthlyPayment']['value']);
+        $this->assertEquals(29.49, $sorted[1]['monthlyPayment']['value']);
+        $this->assertEquals(38.42, $sorted[2]['monthlyPayment']['value']);
+        $this->assertEquals(56.3, $sorted[3]['monthlyPayment']['value']);
+        $this->assertEquals(106.98, $sorted[4]['monthlyPayment']['value']);
     }
 
     public function test_build_by_term()
@@ -79,7 +81,8 @@ class FinancingOptionsHandlerTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($data[0]['hasStar']);
         $this->assertNull($data[1]['hasStar']);
         $this->assertNull($data[2]['hasStar']);
-        $this->assertTrue($data[3]['hasStar']);
+        $this->assertNull($data[3]['hasStar']);
+        $this->assertTrue($data[4]['hasStar']);
     }
 
     public function test_finalizeList_without_data()
@@ -90,6 +93,9 @@ class FinancingOptionsHandlerTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(0, $data);
     }
 
+    /**
+     * @return array
+     */
     private function getFinancingFixture()
     {
         return require __DIR__ . '/_fixtures/FinancingResponseFixture.php';

@@ -26,7 +26,6 @@ namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services\ExpressC
 
 use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
 use SwagPaymentPayPalUnified\Components\Services\ExpressCheckout\ExpressCheckoutPaymentBuilderService;
-use SwagPaymentPayPalUnified\Components\Services\PaymentBuilderService;
 use SwagPaymentPayPalUnified\Components\Services\Validation\BasketIdWhitelist;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
@@ -77,7 +76,7 @@ class ExpressCheckoutPaymentBuilderServiceTest extends \PHPUnit_Framework_TestCa
 
         $params = new PaymentBuilderParameters();
         $params->setBasketData($basketData);
-        $params->setWebProfile($profile);
+        $params->setWebProfileId($profile->getId());
         $params->setUserData($userData);
 
         return $ecRequestService->getPayment($params, 'EUR');
@@ -86,7 +85,7 @@ class ExpressCheckoutPaymentBuilderServiceTest extends \PHPUnit_Framework_TestCa
     /**
      * @param SettingsServiceInterface $settingService
      *
-     * @return PaymentBuilderService
+     * @return ExpressCheckoutPaymentBuilderService
      */
     private function getExpressCheckoutRequestBuilder(SettingsServiceInterface $settingService)
     {
@@ -113,11 +112,13 @@ class ExpressCheckoutPaymentBuilderServiceTest extends \PHPUnit_Framework_TestCa
             'sAmountTax' => 18.359999999999999,
             'sAmountWithTax' => 136.8381,
             'content' => [
-                'ordernumber' => 'SW10137',
-                'articlename' => 'Fahrerbrille Chronos',
-                'quantity' => '1',
-                'price' => '59,99',
-                'netprice' => '50.411764705882',
+                [
+                    'ordernumber' => 'SW10137',
+                    'articlename' => 'Fahrerbrille Chronos',
+                    'quantity' => '1',
+                    'price' => '59,99',
+                    'netprice' => '50.411764705882',
+                ],
             ],
         ];
     }

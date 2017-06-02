@@ -115,15 +115,23 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
             return;
         }
 
+        me.window.setLoading(true);
+
         me.record.set(generalSettings);
         me.record.set(paypalSettings);
         me.record.set(plusSettings);
         me.record.set(installmentsSettings);
         me.record.set(ecSettings);
 
-        me.record.save();
-
-        Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Unified{/s}', '{s name=growl/saveSettings}The settings have been saved!{/s}', me.window.title);
+        me.record.save({
+            success: function() {
+                me.window.setLoading(false);
+                Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Unified{/s}', '{s name=growl/saveSettings}The settings have been saved!{/s}', me.window.title);
+            },
+            failure: function() {
+                me.window.setLoading(false);
+            }
+        });
     },
 
     onRegisterWebhook: function() {

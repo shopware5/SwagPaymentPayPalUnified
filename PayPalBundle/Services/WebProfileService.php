@@ -26,8 +26,8 @@ namespace SwagPaymentPayPalUnified\PayPalBundle\Services;
 
 use Shopware\Components\HttpClient\RequestException;
 use Shopware\Components\Logger;
-use SwagPaymentPayPalUnified\Components\DependencyProvider;
-use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
+use Shopware\Components\Model\ModelManager;
+use Shopware\Models\Shop\Shop;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\WebProfileResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile\WebProfileFlowConfig;
@@ -42,12 +42,7 @@ class WebProfileService
     private $client;
 
     /**
-     * @var DependencyProvider
-     */
-    private $dependencyProvider;
-
-    /**
-     * @var SettingsServiceInterface
+     * @var array
      */
     private $config;
 
@@ -57,21 +52,23 @@ class WebProfileService
     private $logger;
 
     /**
-     * @param ClientService            $client
-     * @param SettingsServiceInterface $config
-     * @param DependencyProvider       $dependencyProvider
-     * @param Logger                   $pluginLogger
+     * @var ModelManager
+     */
+    private $modelManager;
+
+    /**
+     * @param ClientService $client
+     * @param Logger        $pluginLogger
+     * @param ModelManager  $modelManager
      */
     public function __construct(
         ClientService $client,
-        SettingsServiceInterface $config,
-        DependencyProvider $dependencyProvider,
-        Logger $pluginLogger
+        Logger $pluginLogger,
+        ModelManager $modelManager
     ) {
         $this->client = $client;
-        $this->config = $config;
-        $this->dependencyProvider = $dependencyProvider;
         $this->logger = $pluginLogger;
+        $this->modelManager = $modelManager;
     }
 
     /**
@@ -79,12 +76,16 @@ class WebProfileService
      * - Will create a new one, if it does not exist yet.
      * - Will update an existing one if the content has changed.
      *
-     * @return WebProfile
+     * @param array $config
+     * @param bool  $forExpressCheckout
+     *
+     * @return string
      */
-    public function getWebProfile()
+    public function getWebProfile(array $config, $forExpressCheckout = false)
     {
+        $this->config = $config;
         $webProfileResource = new WebProfileResource($this->client);
-        $currentWebProfile = $this->getCurrentWebProfile();
+        $currentWebProfile = $this->getCurrentWebProfile($forExpressCheckout);
 
         try {
             $profileList = $webProfileResource->getList();
@@ -112,7 +113,7 @@ class WebProfileService
                 $selectedRemoteProfile = $currentWebProfile;
             }
 
-            return $selectedRemoteProfile;
+            return $selectedRemoteProfile->getId();
         } catch (RequestException $rex) {
             $this->logger->error('PayPal Unified: Could not request the web profiles.', [$rex->getMessage(), $rex->getBody()]);
         } catch (\Exception $ex) {
@@ -123,19 +124,31 @@ class WebProfileService
     }
 
     /**
+     * @param bool $forExpressCheckout
+     *
      * @return WebProfile
      */
-    private function getCurrentWebProfile()
+    private function getCurrentWebProfile($forExpressCheckout)
     {
-        $shop = $this->dependencyProvider->getShop();
-        $logoImage = $this->config->get('logo_image');
-        $brandName = $this->config->get('brand_name');
+        $shopRepo = $this->modelManager->getRepository(Shop::class);
+        /** @var Shop $shop */
+        $shop = $shopRepo->getActiveById($this->config['shopId']);
+        if (!$shop) {
+            $shop = $shopRepo->getActiveDefault();
+        }
+
+        $logoImage = $this->config['logoImage'];
+        $brandName = $this->config['brandName'];
 
         //Prevent too long brand names
         $brandName = strlen($brandName) > 127 ? substr($brandName, 0, 124) . '...' : $brandName;
 
         $webProfile = new WebProfile();
-        $webProfile->setName($shop->getId() . $shop->getHost() . $shop->getBasePath());
+        $name = $shop->getId() . $shop->getHost() . $shop->getBasePath();
+        if ($forExpressCheckout) {
+            $name = 'EC' . $name;
+        }
+        $webProfile->setName($name);
         $webProfile->setTemporary(false);
 
         $presentation = new WebProfilePresentation();
@@ -145,7 +158,9 @@ class WebProfileService
 
         $flowConfig = new WebProfileFlowConfig();
         $flowConfig->setReturnUriHttpMethod('POST');
-        $flowConfig->setUserAction('Commit');
+        if (!$forExpressCheckout) {
+            $flowConfig->setUserAction('Commit');
+        }
 
         $inputFields = new WebProfileInputFields();
         $inputFields->setAddressOverride('1');

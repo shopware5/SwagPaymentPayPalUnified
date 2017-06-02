@@ -117,6 +117,18 @@ class Settings extends ModelEntity
     private $paypalPaymentIntent;
 
     /**
+     * @var string
+     * @ORM\Column(name="web_profile_id", type="string")
+     */
+    private $webProfileId;
+
+    /**
+     * @var string
+     * @ORM\Column(name="web_profile_id_ec", type="string")
+     */
+    private $webProfileIdEc;
+
+    /**
      * @var bool
      * @ORM\Column(name="plus_active", type="boolean", nullable=false)
      */
@@ -368,6 +380,38 @@ class Settings extends ModelEntity
     public function setPaypalPaymentIntent($paypalPaymentIntent)
     {
         $this->paypalPaymentIntent = $paypalPaymentIntent;
+    }
+
+    /**
+     * @return string
+     */
+    public function getWebProfileId()
+    {
+        return $this->webProfileId;
+    }
+
+    /**
+     * @param string $webProfileId
+     */
+    public function setWebProfileId($webProfileId)
+    {
+        $this->webProfileId = $webProfileId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getWebProfileIdEc()
+    {
+        return $this->webProfileIdEc;
+    }
+
+    /**
+     * @param string $webProfileIdEc
+     */
+    public function setWebProfileIdEc($webProfileIdEc)
+    {
+        $this->webProfileIdEc = $webProfileIdEc;
     }
 
     /**
