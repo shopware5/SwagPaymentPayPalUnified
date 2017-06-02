@@ -34,6 +34,11 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
     validateAPIUrl: '{url controller=PaypalUnifiedSettings action=validateAPI}',
 
     /**
+     * @type { string }
+     */
+    testInstallmentsAvailabilityUrl: '{url controller=PaypalUnifiedSettings action=testInstallmentsAvailability}',
+
+    /**
      * @type { Shopware.apps.PaypalUnifiedSettings.model.Settings }
      */
     record: null,
@@ -69,6 +74,9 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
                 'registerWebhook': me.onRegisterWebhook,
                 'validateAPI': me.onValidateAPISettings,
                 'onChangeShopActivation': me.applyActivationState
+            },
+            'paypal-unified-settings-tabs-installments': {
+                'testInstallmentsAvailability': me.onTestInstallmentsAvailability
             }
         });
     },
@@ -115,7 +123,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
             return;
         }
 
-        me.window.setLoading(true);
+        me.window.setLoading('{s name="loading/saveSettings"}Saving settings...{/s}');
 
         me.record.set(generalSettings);
         me.record.set(paypalSettings);
@@ -263,6 +271,49 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
         me.getPlusTab().setDisabled(!active);
         me.getInstallmentsTab().setDisabled(!active);
         me.getEcTab().setDisabled(!active);
+    },
+
+    onTestInstallmentsAvailability: function() {
+        var me = this,
+            generalSettings = me.getGeneralTab().getForm().getValues();
+
+        me.window.setLoading('{s name=loading/testInstallments}Test installments availability...{/s}');
+
+        Ext.Ajax.request({
+            url: me.testInstallmentsAvailabilityUrl,
+            params: {
+                shopId: me.record.get('shopId'),
+                clientId: generalSettings['clientId'],
+                clientSecret: generalSettings['clientSecret'],
+                sandbox: generalSettings['sandbox']
+            },
+            callback: Ext.bind(me.onTestInstallmentsAvailabilityCallback, me)
+        });
+    },
+
+    /**
+     * @param { Object } options
+     * @param { Boolean } success
+     * @param { Object } response
+     */
+    onTestInstallmentsAvailabilityCallback: function(options, success, response) {
+        var me = this,
+            responseObject = Ext.JSON.decode(response.responseText),
+            successFlag = responseObject.success,
+            errorMessageText;
+
+        if (successFlag) {
+            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Unified{/s}', '{s name=growl/testInstallmentsAvailabilitySuccess}PayPal installments integration is working correct.{/s}', me.window.title);
+        } else {
+            errorMessageText = '{s name=growl/testInstallmentsAvailabilitySuccessError}PayPal installments integration is currently not available for you. Please contact the PayPal support.{/s} ';
+            if (responseObject.message) {
+                errorMessageText += '<br>ErrorMessage:<br><u>' + responseObject.message + '</u>';
+            }
+
+            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Unified{/s}', errorMessageText, me.window.title);
+        }
+
+        me.window.setLoading(false);
     }
 });
 // {/block}

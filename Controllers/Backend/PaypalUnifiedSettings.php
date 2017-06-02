@@ -27,6 +27,7 @@ use SwagPaymentPayPalUnified\Models\Settings;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\WebhookResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService;
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\Installments\FinancingResponse;
 
 class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Controllers_Backend_Application
 {
@@ -92,6 +93,9 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
         $this->View()->assign('url', $url);
     }
 
+    /**
+     * Initialize the REST api client to check if the credentials are correct
+     */
     public function validateAPIAction()
     {
         try {
@@ -101,6 +105,41 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
             $this->View()->assign('success', false);
             $this->View()->assign('message', json_decode($ex->getBody(), true)['error_description']);
         }
+    }
+
+    /**
+     * Makes a test request against the installments endpoint to test if the installments integration is available
+     */
+    public function testInstallmentsAvailabilityAction()
+    {
+        $this->configureClient();
+        $installmentsRequestService = $this->get('paypal_unified.installments.installments_request_service');
+
+        try {
+            $response = $installmentsRequestService->getList(200.0);
+            $financingResponse = FinancingResponse::fromArray($response['financing_options'][0]);
+        } catch (RequestException $e) {
+            $this->get('pluginlogger')->error(
+                'PayPal Unified: Could not get installments financing options due to a communication failure',
+                [
+                    $e->getMessage(),
+                    $e->getBody(),
+                ]
+            );
+
+            $this->View()->assign('success', false);
+            $this->View()->assign('message', json_decode($e->getBody(), true)['message']);
+
+            return;
+        }
+
+        if ($financingResponse->getQualifyingFinancingOptions()) {
+            $this->View()->assign('success', true);
+
+            return;
+        }
+
+        $this->View()->assign('success', false);
     }
 
     /**
