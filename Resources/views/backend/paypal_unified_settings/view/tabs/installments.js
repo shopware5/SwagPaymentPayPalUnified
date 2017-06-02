@@ -22,8 +22,20 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Installments', {
         var me = this;
 
         me.items = me.createItems();
+        me.registerEvents();
 
         me.callParent(arguments);
+    },
+
+    registerEvents: function () {
+        var me = this;
+
+        me.addEvents(
+            /**
+             * This event will be triggered when the user clicks the button to test the installments availability.
+             */
+            'testInstallmentsAvailability'
+        );
     },
 
     /**
@@ -36,15 +48,20 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Installments', {
         me.presentmentSelectionDetail = me.createPresentmentSelectionDetail();
         me.presentmentSelectionCart = me.createPresentmentSelectionCart();
         me.logoCheckBox = me.createLogoCheckBox();
+        me.testAvailabilityButton = me.createTestAvailabilityButton();
 
         return [
             me.installmentsActivate,
             me.presentmentSelectionDetail,
             me.presentmentSelectionCart,
-            me.logoCheckBox
+            me.logoCheckBox,
+            me.testAvailabilityButton
         ];
     },
 
+    /**
+     * @return { Ext.form.field.Checkbox }
+     */
     createInstallmentsActivate: function() {
         var me = this;
 
@@ -88,6 +105,9 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Installments', {
         });
     },
 
+    /**
+     * @returns { Ext.form.field.Checkbox }
+     */
     createLogoCheckBox: function() {
         return Ext.create('Ext.form.field.Checkbox', {
             name: 'installmentsShowLogo',
@@ -96,6 +116,22 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Installments', {
             inputValue: true,
             uncheckedValue: false,
             disabled: true
+        });
+    },
+
+    /**
+     *
+     * @return { Ext.button.Button }
+     */
+    createTestAvailabilityButton: function() {
+        var me = this;
+
+        return Ext.create('Ext.button.Button', {
+            cls: 'primary',
+            text: '{s name=field/testAvailability}Test the availability of your installments integration{/s}',
+            disabled: true,
+            margin: '20px 0 0 0',
+            handler: Ext.bind(me.onTestInstallmentsAvailability, me)
         });
     },
 
@@ -109,6 +145,16 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Installments', {
         me.presentmentSelectionDetail.setDisabled(!checked);
         me.presentmentSelectionCart.setDisabled(!checked);
         me.logoCheckBox.setDisabled(!checked);
+        me.testAvailabilityButton.setDisabled(!checked);
+    },
+
+    /**
+     * fires event to trigger the test request
+     */
+    onTestInstallmentsAvailability: function() {
+        var me = this;
+
+        me.fireEvent('testInstallmentsAvailability');
     }
 });
 // {/block}
