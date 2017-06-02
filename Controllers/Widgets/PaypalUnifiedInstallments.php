@@ -100,11 +100,11 @@ class Shopware_Controllers_Widgets_PaypalUnifiedInstallments extends Enlight_Con
      */
     private function applyCheapestRateTemplate()
     {
-        $productPrice = $this->Request()->get('productPrice');
+        $productPrice = $this->Request()->getParam('productPrice');
 
         //The page type is only required in the templates. Its a value indicating if
         //the user is on a detail or on the cart page.
-        $pageType = $this->Request()->get('pageType');
+        $pageType = $this->Request()->getParam('pageType');
 
         $response = $this->installmentsRequestService->getList($productPrice);
 

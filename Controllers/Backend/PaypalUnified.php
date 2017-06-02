@@ -90,8 +90,8 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
      */
     public function paymentDetailsAction()
     {
-        $paymentId = $this->Request()->get('id');
-        $shopId = $this->Request()->get('shopId');
+        $paymentId = $this->Request()->getParam('id');
+        $shopId = $this->Request()->getParam('shopId');
 
         $this->configureClient($shopId);
 
@@ -127,8 +127,8 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
 
     public function saleDetailsAction()
     {
-        $saleId = $this->Request()->get('id');
-        $shopId = $this->Request()->get('shopId');
+        $saleId = $this->Request()->getParam('id');
+        $shopId = $this->Request()->getParam('shopId');
 
         $this->configureClient($shopId);
 
@@ -148,8 +148,8 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
 
     public function refundDetailsAction()
     {
-        $saleId = $this->Request()->get('id');
-        $shopId = $this->Request()->get('shopId');
+        $saleId = $this->Request()->getParam('id');
+        $shopId = $this->Request()->getParam('shopId');
 
         $this->configureClient($shopId);
 
@@ -169,8 +169,8 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
 
     public function captureDetailsAction()
     {
-        $captureId = $this->Request()->get('id');
-        $shopId = $this->Request()->get('shopId');
+        $captureId = $this->Request()->getParam('id');
+        $shopId = $this->Request()->getParam('shopId');
 
         $this->configureClient($shopId);
 
@@ -190,8 +190,8 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
 
     public function authorizationDetailsAction()
     {
-        $authorizationId = $this->Request()->get('id');
-        $shopId = $this->Request()->get('shopId');
+        $authorizationId = $this->Request()->getParam('id');
+        $shopId = $this->Request()->getParam('shopId');
 
         $this->configureClient($shopId);
 
@@ -211,8 +211,8 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
 
     public function orderDetailsAction()
     {
-        $orderId = $this->Request()->get('id');
-        $shopId = $this->Request()->get('shopId');
+        $orderId = $this->Request()->getParam('id');
+        $shopId = $this->Request()->getParam('shopId');
 
         $this->configureClient($shopId);
 
@@ -232,11 +232,11 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
 
     public function refundSaleAction()
     {
-        $saleId = $this->Request()->get('id');
-        $totalAmount = number_format($this->Request()->get('amount'), 2);
-        $invoiceNumber = $this->Request()->get('invoiceNumber');
-        $refundCompletely = $this->Request()->get('refundCompletely');
-        $shopId = $this->Request()->get('shopId');
+        $saleId = $this->Request()->getParam('id');
+        $totalAmount = number_format($this->Request()->getParam('amount'), 2);
+        $invoiceNumber = $this->Request()->getParam('invoiceNumber');
+        $refundCompletely = $this->Request()->getParam('refundCompletely');
+        $shopId = $this->Request()->getParam('shopId');
 
         try {
             $this->configureClient($shopId);
@@ -267,11 +267,11 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
 
     public function captureOrderAction()
     {
-        $shopId = $this->Request()->get('shopId');
-        $authorizationId = $this->Request()->get('id');
-        $amountToCapture = number_format($this->Request()->get('amount'), 2);
-        $currency = $this->Request()->get('currency');
-        $isFinal = $this->Request()->get('isFinal');
+        $shopId = $this->Request()->getParam('shopId');
+        $authorizationId = $this->Request()->getParam('id');
+        $amountToCapture = number_format($this->Request()->getParam('amount'), 2);
+        $currency = $this->Request()->getParam('currency');
+        $isFinal = $this->Request()->getParam('isFinal');
 
         try {
             $this->configureClient($shopId);
@@ -298,11 +298,11 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
 
     public function captureAuthorizationAction()
     {
-        $shopId = $this->Request()->get('shopId');
-        $authorizationId = $this->Request()->get('id');
-        $amountToCapture = number_format($this->Request()->get('amount'), 2);
-        $currency = $this->Request()->get('currency');
-        $isFinal = $this->Request()->get('isFinal');
+        $shopId = $this->Request()->getParam('shopId');
+        $authorizationId = $this->Request()->getParam('id');
+        $amountToCapture = number_format($this->Request()->getParam('amount'), 2);
+        $currency = $this->Request()->getParam('currency');
+        $isFinal = $this->Request()->getParam('isFinal');
 
         try {
             $this->configureClient($shopId);
@@ -329,10 +329,10 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
 
     public function refundCaptureAction()
     {
-        $id = $this->Request()->get('id');
-        $totalAmount = number_format($this->Request()->get('amount'), 2);
-        $description = $this->Request()->get('note');
-        $shopId = $this->Request()->get('shopId');
+        $id = $this->Request()->getParam('id');
+        $totalAmount = number_format($this->Request()->getParam('amount'), 2);
+        $description = $this->Request()->getParam('note');
+        $shopId = $this->Request()->getParam('shopId');
 
         $this->configureClient($shopId);
 
@@ -360,8 +360,8 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
 
     public function voidAuthorizationAction()
     {
-        $id = $this->Request()->get('id');
-        $shopId = $this->Request()->get('shopId');
+        $id = $this->Request()->getParam('id');
+        $shopId = $this->Request()->getParam('shopId');
 
         try {
             $this->configureClient($shopId);
@@ -380,8 +380,8 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
 
     public function voidOrderAction()
     {
-        $id = $this->Request()->get('id');
-        $shopId = $this->Request()->get('shopId');
+        $id = $this->Request()->getParam('id');
+        $shopId = $this->Request()->getParam('shopId');
 
         try {
             $this->configureClient($shopId);

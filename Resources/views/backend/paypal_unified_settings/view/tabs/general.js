@@ -173,7 +173,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
                     name: 'logoImage',
                     fieldLabel: '{s name="fieldset/behavior/logoImage"}Logo on the PayPal pag{/s}',
                     helpText: '{s name="fieldset/behavior/logoImage/help"}The image you have selected here will be displayed as the brand logo on the PayPal payment page.{/s}',
-                    allowBlank: false
+                    allowBlank: false // logoImage is required for experience profile
                 }, {
                     xtype: 'checkbox',
                     name: 'sendOrderNumber',
