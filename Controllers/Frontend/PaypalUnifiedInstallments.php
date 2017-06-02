@@ -44,9 +44,9 @@ class Shopware_Controllers_Frontend_PaypalUnifiedInstallments extends \Enlight_C
     public function returnAction()
     {
         $request = $this->Request();
-        $paymentId = $request->get('paymentId');
-        $payerId = $request->get('PayerID');
-        $basketId = $request->get('basketId');
+        $paymentId = $request->getParam('paymentId');
+        $payerId = $request->getParam('PayerID');
+        $basketId = $request->getParam('basketId');
 
         $this->redirect([
             'controller' => 'checkout',

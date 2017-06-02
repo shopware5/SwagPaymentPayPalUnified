@@ -56,7 +56,7 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
 
     public function detailAction()
     {
-        $shopId = (int) $this->Request()->get('shopId');
+        $shopId = (int) $this->Request()->getParam('shopId');
 
         $settingsModel = $this->settingsService->getSettings($shopId);
         $settings = $settingsModel === null ? ['shopId' => $shopId] : $settingsModel->toArray();
@@ -119,10 +119,10 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
 
     private function configureClient()
     {
-        $shopId = (int)$this->Request()->get('shopId');
-        $restId = $this->Request()->get('clientId');
-        $sandbox = $this->Request()->get('sandbox') === 'true';
-        $restSecret = $this->Request()->get('clientSecret');
+        $shopId = (int) $this->Request()->getParam('shopId');
+        $restId = $this->Request()->getParam('clientId');
+        $sandbox = (bool) $this->Request()->getParam('sandbox', false);
+        $restSecret = $this->Request()->getParam('clientSecret');
 
         /** @var ClientService $clientService */
         $clientService = $this->container->get('paypal_unified.client_service');
@@ -134,4 +134,3 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
         ]);
     }
 }
-
