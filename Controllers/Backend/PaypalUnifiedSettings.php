@@ -71,19 +71,7 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
      */
     public function registerWebhookAction()
     {
-        $shopId = (int) $this->Request()->get('shopId');
-        $restId = $this->Request()->get('clientId');
-        $restSecret = $this->Request()->get('clientSecret');
-        $sandbox = $this->Request()->get('sandbox') === 'true';
-
-        /** @var ClientService $clientService */
-        $clientService = $this->container->get('paypal_unified.client_service');
-        $clientService->configure([
-            'clientId' => $restId,
-            'clientSecret' => $restSecret,
-            'sandbox' => $sandbox,
-            'shopId' => $shopId,
-        ]);
+        $this->configureClient();
 
         //Generate URL
         /** @var Enlight_Controller_Router $router */
@@ -96,6 +84,9 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
         ]);
         $url = str_replace('http://', 'https://', $url);
 
+        /** @var ClientService $clientService */
+        $clientService = $this->container->get('paypal_unified.client_service');
+
         $webhookResource = new WebhookResource($clientService);
         $webhookResource->create($url, ['*']);
         $this->View()->assign('url', $url);
@@ -103,21 +94,8 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
 
     public function validateAPIAction()
     {
-        $shopId = (int) $this->Request()->get('shopId');
-        $restId = $this->Request()->get('clientId');
-        $sandbox = $this->Request()->get('sandbox') === 'true';
-        $restSecret = $this->Request()->get('clientSecret');
-
         try {
-            /** @var ClientService $clientService */
-            $clientService = $this->container->get('paypal_unified.client_service');
-            $clientService->configure([
-                'clientId' => $restId,
-                'clientSecret' => $restSecret,
-                'sandbox' => $sandbox,
-                'shopId' => $shopId,
-            ]);
-
+            $this->configureClient();
             $this->View()->assign('success', true);
         } catch (RequestException $ex) {
             $this->View()->assign('success', false);
@@ -130,21 +108,30 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
      */
     public function save($data)
     {
+        $this->configureClient();
+
         $webProfileService = $this->container->get('paypal_unified.web_profile_service');
-        $this->configureClient($data['shopId']);
         $data['webProfileId'] = $webProfileService->getWebProfile($data);
         $data['webProfileIdEc'] = $webProfileService->getWebProfile($data, true);
 
         return parent::save($data);
     }
 
-    /**
-     * @param int $shopId
-     */
-    private function configureClient($shopId)
+    private function configureClient()
     {
-        /** @var ClientService $client */
-        $client = $this->container->get('paypal_unified.client_service');
-        $client->configure($this->settingsService->getSettings($shopId)->toArray());
+        $shopId = (int)$this->Request()->get('shopId');
+        $restId = $this->Request()->get('clientId');
+        $sandbox = $this->Request()->get('sandbox') === 'true';
+        $restSecret = $this->Request()->get('clientSecret');
+
+        /** @var ClientService $clientService */
+        $clientService = $this->container->get('paypal_unified.client_service');
+        $clientService->configure([
+            'clientId' => $restId,
+            'clientSecret' => $restSecret,
+            'sandbox' => $sandbox,
+            'shopId' => $shopId,
+        ]);
     }
 }
+
