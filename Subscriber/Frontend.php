@@ -90,6 +90,10 @@ class Frontend implements SubscriberInterface
      */
     public function onPostDispatchSecure(\Enlight_Controller_ActionEventArgs $args)
     {
+        if (!$this->settingsService->hasSettings()) {
+            return;
+        }
+
         $active = (bool) $this->settingsService->get('active');
         if (!$active) {
             return;

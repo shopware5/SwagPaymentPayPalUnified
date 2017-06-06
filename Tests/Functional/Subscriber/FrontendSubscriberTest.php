@@ -62,6 +62,21 @@ class FrontendSubscriberTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(7, $javascripts);
     }
 
+    public function test_onPostDistpatchSecure_without_any_setttings()
+    {
+        $subscriber = new Frontend(Shopware()->Container()->getParameter('paypal_unified.plugin_dir'), Shopware()->Container()->get('paypal_unified.settings_service'));
+
+        $view = new ViewMock(new Enlight_Template_Manager());
+        $request = new \Enlight_Controller_Request_RequestTestCase();
+        $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
+            'subject' => new DummyController($request, $view),
+        ]);
+
+        $result = $subscriber->onPostDispatchSecure($enlightEventArgs);
+
+        $this->assertNull($result);
+    }
+
     public function test_onPostDispatchSecure_assigns_variables_to_view()
     {
         $subscriber = new Frontend(Shopware()->Container()->getParameter('paypal_unified.plugin_dir'), Shopware()->Container()->get('paypal_unified.settings_service'));
