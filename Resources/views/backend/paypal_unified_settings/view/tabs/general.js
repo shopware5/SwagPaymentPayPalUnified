@@ -73,7 +73,11 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
     createItems: function () {
         var me = this;
 
-        return [ me.createActivationContainer(), me.createRestContainer(), me.createBehaviorContainer() ];
+        return [
+            me.createActivationContainer(),
+            me.createRestContainer(),
+            me.createBehaviorContainer()
+        ];
     },
 
     /**
@@ -154,7 +158,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
         });
 
         me.behaviorContainer = Ext.create('Ext.form.FieldSet', {
-            title: '{s name="fieldset/behavior/title"}API Settings{/s}',
+            title: '{s name="fieldset/behavior/title"}Behavior{/s}',
             items: [
                 {
                     xtype: 'checkbox',
@@ -183,7 +187,15 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
                     boxLabel: '{s name="fieldset/behavior/sendOrderNumber/help"}Enable this option to send the order number to PayPal after an order has been completed.{/s}',
                     handler: Ext.bind(me.onSendOrderNumberChecked, me)
                 },
-                me.orderNumberPrefix
+                me.orderNumberPrefix,
+                {
+                    xtype: 'checkbox',
+                    name: 'useInContext',
+                    inputValue: true,
+                    uncheckedValue: false,
+                    fieldLabel: '{s name="fieldset/behaviour/useInContext"}Use in-context mode{/s}',
+                    helpText: '{s name="fieldset/behaviour/useInContext/help"}Enable this option to use the PayPal in-context solution. Instead of redirecting to the PayPal login page, an overlay will be shown and the customer does not need to leave the shop.{/s}'
+                }
             ]
         });
 

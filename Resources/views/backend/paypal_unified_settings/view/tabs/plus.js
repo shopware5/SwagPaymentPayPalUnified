@@ -1,6 +1,6 @@
 // {namespace name="backend/paypal_unified_settings/tabs/paypal_plus"}
 // {block name="backend/paypal_unified_settings/tabs/paypal_plus"}
-Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.PaypalPlus', {
+Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Plus', {
     extend: 'Ext.form.Panel',
     alias: 'widget.paypal-unified-settings-tabs-paypal-plus',
     title: '{s name=title}PayPal Plus Integration{/s}',

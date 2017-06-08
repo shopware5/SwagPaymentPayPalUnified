@@ -111,6 +111,12 @@ class Settings extends ModelEntity
     private $orderNumberPrefix;
 
     /**
+     * @var bool
+     * @ORM\Column(name="use_in_context", type="boolean", nullable=false )
+     */
+    private $useInContext;
+
+    /**
      * @var int
      * @ORM\Column(name="paypal_payment_intent", type="integer")
      */
@@ -366,6 +372,23 @@ class Settings extends ModelEntity
         $this->orderNumberPrefix = $orderNumberPrefix;
     }
 
+
+    /**
+     * @return bool
+     */
+    public function getUseInContext()
+    {
+        return $this->useInContext;
+    }
+
+    /**
+     * @param bool $useInContext
+     */
+    public function setUseInContext($useInContext)
+    {
+        $this->useInContext = $useInContext;
+    }
+
     /**
      * @return int
      */
@@ -557,7 +580,6 @@ class Settings extends ModelEntity
     {
         $this->ecDetailActive = $ecDetailActive;
     }
-
     /**
      * @return array
      */

@@ -22,6 +22,7 @@ CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_settings (
     `brand_name`                        VARCHAR(255),
     `send_order_number`                 TINYINT(1) NOT NULL,
     `order_number_prefix`               VARCHAR(255),
+    `use_in_context`                    TINYINT(1) NOT NULL,
     `paypal_payment_intent`             INT(11),
     `web_profile_id`                    VARCHAR(255),
     `web_profile_id_ec`                 VARCHAR(255),
