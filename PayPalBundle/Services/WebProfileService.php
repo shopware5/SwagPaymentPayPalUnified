@@ -44,7 +44,7 @@ class WebProfileService
     /**
      * @var array
      */
-    private $config;
+    private $settings;
 
     /**
      * @var Logger
@@ -76,14 +76,14 @@ class WebProfileService
      * - Will create a new one, if it does not exist yet.
      * - Will update an existing one if the content has changed.
      *
-     * @param array $config
+     * @param array $settings
      * @param bool  $forExpressCheckout
      *
      * @return string
      */
-    public function getWebProfile(array $config, $forExpressCheckout = false)
+    public function getWebProfile(array $settings, $forExpressCheckout = false)
     {
-        $this->config = $config;
+        $this->settings = $settings;
         $webProfileResource = new WebProfileResource($this->client);
         $currentWebProfile = $this->getCurrentWebProfile($forExpressCheckout);
 
@@ -132,13 +132,13 @@ class WebProfileService
     {
         $shopRepo = $this->modelManager->getRepository(Shop::class);
         /** @var Shop $shop */
-        $shop = $shopRepo->getActiveById($this->config['shopId']);
+        $shop = $shopRepo->getActiveById($this->settings['shopId']);
         if (!$shop) {
             $shop = $shopRepo->getActiveDefault();
         }
 
-        $logoImage = $this->config['logoImage'];
-        $brandName = $this->config['brandName'];
+        $logoImage = $this->settings['logoImage'];
+        $brandName = $this->settings['brandName'];
 
         //Prevent too long brand names
         $brandName = strlen($brandName) > 127 ? substr($brandName, 0, 124) . '...' : $brandName;

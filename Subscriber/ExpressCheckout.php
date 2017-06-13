@@ -102,11 +102,11 @@ class ExpressCheckout implements SubscriberInterface
             'Enlight_Controller_Action_PostDispatchSecure_Frontend' => 'loadExpressCheckoutJS',
             'Enlight_Controller_Action_PostDispatchSecure_Widgets' => 'loadExpressCheckoutJS',
             'Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout' => [
-                ['addExpressCheckoutButton'],
+                ['addExpressCheckoutButtonCart'],
                 ['addEcInfoOnConfirm'],
                 ['addPaymentInfoToRequest', 100],
             ],
-            'Enlight_Controller_Action_PostDispatchSecure_Frontend_Detail' => 'onPostDispatchDetail',
+            'Enlight_Controller_Action_PostDispatchSecure_Frontend_Detail' => 'addExpressCheckoutButtonDetail',
         ];
     }
 
@@ -128,7 +128,7 @@ class ExpressCheckout implements SubscriberInterface
     /**
      * @param ActionEventArgs $args
      */
-    public function addExpressCheckoutButton(ActionEventArgs $args)
+    public function addExpressCheckoutButtonCart(ActionEventArgs $args)
     {
         $settings = $this->settingsService->getSettings();
         if (!$settings || !$settings->getActive() || !$settings->getEcActive()) {
@@ -142,6 +142,7 @@ class ExpressCheckout implements SubscriberInterface
         }
 
         $view->assign('paypalUnifiedModeSandbox', $settings->getSandbox());
+        $view->assign('paypalUnifiedUseInContext', $settings->getUseInContext());
     }
 
     /**
@@ -189,7 +190,7 @@ class ExpressCheckout implements SubscriberInterface
     /**
      * @param ActionEventArgs $args
      */
-    public function onPostDispatchDetail(ActionEventArgs $args)
+    public function addExpressCheckoutButtonDetail(ActionEventArgs $args)
     {
         $settings = $this->settingsService->getSettings();
         if (!$settings ||
@@ -204,6 +205,8 @@ class ExpressCheckout implements SubscriberInterface
 
         if (!$view->getAssign('userLoggedIn')) {
             $view->assign('paypalExpressCheckoutDetailActive', true);
+            $view->assign('paypalUnifiedModeSandbox', $settings->getSandbox());
+            $view->assign('paypalUnifiedUseInContext', $settings->getUseInContext());
         }
     }
 

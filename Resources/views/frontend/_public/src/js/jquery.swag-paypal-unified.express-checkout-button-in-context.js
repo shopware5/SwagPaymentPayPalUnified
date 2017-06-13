@@ -1,5 +1,5 @@
 ;(function($, window, paypal) {
-    $.plugin('swagPayPalUnifiedExpressCheckoutButton', {
+    $.plugin('swagPayPalUnifiedExpressCheckoutButtonInContext', {
         defaults: {
             /**
              * Depending on the mode, the library will load the PSP from different locations. live will
@@ -88,7 +88,7 @@
 
             me.createButton();
 
-            $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonCart/init', me);
+            $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonInContextCart/init', me);
 
             if (me.opts.detailPage) {
                 $.subscribe('plugin/swAjaxVariant/onRequestData', $.proxy(me.onChangeVariant, me));
@@ -100,7 +100,7 @@
          * Re-initializes this plugin.
          */
         onChangeVariant: function() {
-            window.StateManager.addPlugin('*[data-ecButton="true"]', 'swagPayPalUnifiedExpressCheckoutButton');
+            window.StateManager.addPlugin('*[data-ecButtonInContext="true"]', 'swagPayPalUnifiedExpressCheckoutButtonInContext');
         },
 
         /**
@@ -111,7 +111,7 @@
 
             me.expressCheckoutButton = paypal.Button.render(me.createPayPalButtonConfiguration(), me.$el.get(0));
 
-            $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonCart/createButton', me);
+            $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonInContextCart/createButton', me);
         },
 
         /**
@@ -147,10 +147,10 @@
                  * only needed for overlay solution
                  * called if the customer accepts the payment
                  */
-                onAuthorize: $.noop
+                onAuthorize: $.proxy(me.onPayPalAuthorize, me)
             };
 
-            $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonCart/createConfig', [me, config]);
+            $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonInContextCart/createConfig', [me, config]);
 
             return config;
         },
@@ -158,69 +158,46 @@
         /**
          * Callback method for the "payment" function of the button.
          * Calls an action which creates the payment and redirects to the paypal page.
+         *
+         * @return {string}
          */
         onPayPalPayment: function() {
             var me = this,
                 token,
-                form;
-
-            $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonCart/beforeCreatePayment', me);
+                params;
 
             if (CSRF.checkToken()) {
                 token = CSRF.getToken();
             }
 
-            form = me.createCreatePaymentForm(token);
+            params = {
+                'useInContext': true,
+                '__csrf_token': token
+            };
 
-            $.loadingIndicator.open({
-                openOverlay: true,
-                closeOnClick: false
+            if (me.opts.detailPage) {
+                params.addProduct = true;
+                params.productNumber = me.getProductNumber();
+                params.productQuantity = me.getProductQuantity();
+            }
+
+            $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonInContextCart/beforeCreatePayment', [me, params]);
+
+            return paypal.request.post(me.opts.createPaymentUrl, params).then(function(data) {
+                $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonInContextCart/paymentCreated', [me, data]);
+                return data.paymentId;
             });
-
-            me.buffer(function() {
-                form.submit();
-            }, 100);
-
-            $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonCart/createPayment', me);
         },
 
         /**
-         * Creates the form which calls the action.
-         * Appends a new form which stores further required information that are being
-         * used in the action later on.
+         * Callback method for the "authorize" function of the button.
+         * Directly redirects to the given return URL
          *
-         * @param {String} token
-         * @return {Object}
+         * @param {Object} data
+         * @param {Object} actions
          */
-        createCreatePaymentForm: function(token) {
-            var me = this,
-                $form,
-                createField = function(name, val) {
-                    return $('<input>', {
-                        type: 'hidden',
-                        name: name,
-                        value: val
-                    });
-                };
-
-            $form = $('<form>', {
-                action: me.opts.createPaymentUrl,
-                method: 'POST'
-            });
-
-            createField('__csrf_token', token).appendTo($form);
-
-            if (me.opts.detailPage) {
-                createField('addProduct', true).appendTo($form);
-                createField('productNumber', me.getProductNumber()).appendTo($form);
-                createField('productQuantity', me.getProductQuantity()).appendTo($form);
-            }
-
-            $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonCart/createRequestForm', [me, $form]);
-
-            $form.appendTo($('body'));
-
-            return $form;
+        onPayPalAuthorize: function(data, actions) {
+            return actions.redirect();
         },
 
         /**
@@ -245,24 +222,8 @@
             var me = this;
 
             return $(me.opts.productQuantitySelector).val();
-        },
-
-        /**
-         * Buffer for submitting the form
-         * If we don't delay the call, the loading indicator will not show up on mobile
-         *
-         * @param {function} fn
-         * @param {number} timeout
-         * @return {number}
-         */
-        buffer: function(fn, timeout) {
-            var me = this;
-
-            timeout = timeout || 100;
-
-            return window.setTimeout(fn.bind(me), timeout);
         }
     });
 
-    window.StateManager.addPlugin('*[data-ecButton="true"]', 'swagPayPalUnifiedExpressCheckoutButton');
+    window.StateManager.addPlugin('*[data-ecButtonInContext="true"]', 'swagPayPalUnifiedExpressCheckoutButtonInContext');
 })(jQuery, window, paypal);

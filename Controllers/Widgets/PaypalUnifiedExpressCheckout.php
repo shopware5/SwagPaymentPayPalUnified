@@ -97,6 +97,14 @@ class Shopware_Controllers_Widgets_PaypalUnifiedExpressCheckout extends \Enlight
             return;
         }
 
+        $useInContext = $this->Request()->getParam('useInContext', false);
+        if ($useInContext) {
+            $this->Front()->Plugins()->Json()->setRenderer();
+
+            $this->View()->assign('paymentId', $responseStruct->getId());
+            return;
+        }
+
         $this->redirect($responseStruct->getLinks()[1]->getHref());
     }
 

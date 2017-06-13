@@ -59,7 +59,7 @@ class FrontendSubscriberTest extends \PHPUnit_Framework_TestCase
             $this->assertFileExists($script);
         }
 
-        $this->assertCount(7, $javascripts);
+        $this->assertCount(8, $javascripts);
     }
 
     public function test_onPostDistpatchSecure_without_any_setttings()
