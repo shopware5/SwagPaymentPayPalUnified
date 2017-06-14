@@ -142,11 +142,9 @@ class ClientService
     {
         if (!$this->getHeader('Authorization')) {
             //Create authentication
-            $restId = $this->settingsService->get('client_id');
-            $restSecret = $this->settingsService->get('client_secret');
             $credentials = new OAuthCredentials();
-            $credentials->setRestId($restId);
-            $credentials->setRestSecret($restSecret);
+            $credentials->setRestId($this->settingsService->get('client_id'));
+            $credentials->setRestSecret($this->settingsService->get('client_secret'));
             $this->createAuthentication($credentials);
         }
 

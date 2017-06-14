@@ -17,7 +17,7 @@
 {block name="frontend_detail_buy_button"}
     {$smarty.block.parent}
 
-    {if !($sArticle.sConfigurator && !$activeConfiguratorSelection) && $paypalExpressCheckoutDetailActive}
+    {if !($sArticle.sConfigurator && !$activeConfiguratorSelection) && $paypalUnifiedEcDetailActive}
         {include file='frontend/paypal_unified/express_checkout/button_detail.tpl'}
     {/if}
 {/block}

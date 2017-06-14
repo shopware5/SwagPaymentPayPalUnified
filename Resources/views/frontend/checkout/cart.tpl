@@ -17,7 +17,7 @@
 {block name='frontend_checkout_cart_table_actions'}
     {$smarty.block.parent}
 
-    {if $sBasket.content && !$sUserLoggedIn && $paypalExpressCheckoutActive}
+    {if $sBasket.content && !$sUserLoggedIn && $paypalUnifiedEcActive}
         {include file='frontend/paypal_unified/express_checkout/button_cart.tpl'}
     {/if}
 {/block}

@@ -372,7 +372,6 @@ class Settings extends ModelEntity
         $this->orderNumberPrefix = $orderNumberPrefix;
     }
 
-
     /**
      * @return bool
      */
@@ -580,6 +579,7 @@ class Settings extends ModelEntity
     {
         $this->ecDetailActive = $ecDetailActive;
     }
+
     /**
      * @return array
      */

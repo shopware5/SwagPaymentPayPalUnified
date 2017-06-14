@@ -100,7 +100,7 @@
          * Re-initializes this plugin.
          */
         onChangeVariant: function() {
-            window.StateManager.addPlugin('*[data-ecButton="true"]', 'swagPayPalUnifiedExpressCheckoutButton');
+            window.StateManager.addPlugin('*[data-paypalUnifiedEcButton="true"]', 'swagPayPalUnifiedExpressCheckoutButton');
         },
 
         /**
@@ -264,5 +264,5 @@
         }
     });
 
-    window.StateManager.addPlugin('*[data-ecButton="true"]', 'swagPayPalUnifiedExpressCheckoutButton');
+    window.StateManager.addPlugin('*[data-paypalUnifiedEcButton="true"]', 'swagPayPalUnifiedExpressCheckoutButton');
 })(jQuery, window, paypal);

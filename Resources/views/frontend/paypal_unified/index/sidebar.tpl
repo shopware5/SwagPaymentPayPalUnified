@@ -1,5 +1,5 @@
 {namespace name="frontend/paypal_unified/index/sidebar"}
-{if $showPaypalLogo}
+{if $paypalUnifiedShowLogo}
     {block name="frontend_index_sidebar_paypal_unified_logo"}
         <div class="panel is--rounded paypal--sidebar">
             {block name="frontend_index_sidebar_paypal_unified_logo_body"}
@@ -17,7 +17,7 @@
     {/block}
 {/if}
 
-{if $showPaypalInstallmentsLogo}
+{if $paypalUnifiedShowInstallmentsLogo}
     {block name="frontend_index_sidebar_paypal_unified_installments_logo"}
         <div class="panel is--rounded paypal--sidebar">
             {block name="frontend_index_sidebar_paypal_unified_installments_logo_body"}

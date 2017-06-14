@@ -4,7 +4,7 @@
         {* Unified payment wall plugin *}
         <div class="is--hidden"
              data-paypalPaymentWall="true"
-             data-paypalLanguage="{$paypalPlusLanguageIso}"
+             data-paypalLanguage="{$paypalUnifiedPlusLanguageIso}"
              data-paypalApprovalUrl="{$paypalUnifiedApprovalUrl}"
              data-paypalCountryIso="{$sUserData.additional.country.countryiso}"
              data-paypalMode="{if $paypalUnifiedModeSandbox}sandbox{else}live{/if}">
@@ -16,7 +16,7 @@
         <div class="is--hidden"
              data-paypalPaymentWallConfirm="true"
              data-paypalAddressPatchUrl="{url controller=PaypalUnified action=patchAddress forceSecure=true}"
-             data-paypalCameFromPaymentSelection="{$cameFromPaymentSelection}"
+             data-paypalCameFromPaymentSelection="{$paypalUnifiedCameFromPaymentSelection}"
              data-paypalRemotePaymentId="{$paypalUnifiedRemotePaymentId}"
              data-paypalErrorPage="{url controller=checkout action=shippingPayment paypal_unified_error_code=2}">
         </div>

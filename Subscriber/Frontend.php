@@ -105,9 +105,9 @@ class Frontend implements SubscriberInterface
         $restylePaymentSelection = ((bool) $this->settingsService->get('plus_active') && (bool) $this->settingsService->get('plus_restyle'));
 
         //Assign shop specific and configurable values to the view.
-        $view->assign('showPaypalLogo', (bool) $this->settingsService->get('show_sidebar_logo'));
-        $view->assign('restylePaymentSelection', $restylePaymentSelection);
-        $view->assign('showPaypalInstallmentsLogo', (bool) $this->settingsService->get('installments_show_logo'));
+        $view->assign('paypalUnifiedShowLogo', (bool) $this->settingsService->get('show_sidebar_logo'));
+        $view->assign('paypalUnifiedRestylePaymentSelection', $restylePaymentSelection);
+        $view->assign('paypalUnifiedShowInstallmentsLogo', (bool) $this->settingsService->get('installments_show_logo'));
     }
 
     /**

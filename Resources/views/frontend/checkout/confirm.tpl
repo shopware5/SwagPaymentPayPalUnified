@@ -8,7 +8,7 @@
 
 {* PayPal Plus integration *}
 {block name='frontend_checkout_confirm_premiums'}
-    {if $usePayPalPlus && !$paypalUnifiedExpressCheckout && $sUserData.additional.payment.id == $paypalUnifiedPaymentId }
+    {if $paypalUnifiedUsePlus && !$paypalUnifiedExpressCheckout && $sUserData.additional.payment.id == $paypalUnifiedPaymentId }
         {include file='frontend/paypal_unified/plus/checkout/payment_wall_premiums.tpl'}
     {/if}
 

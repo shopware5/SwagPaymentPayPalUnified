@@ -2,9 +2,9 @@
     <div class="paypal-unified-ec--outer-button-container">
         <div class="paypal-unified-ec--button-container right"
             {if $paypalUnifiedUseInContext}
-             data-ecButtonInContext="true"
+             data-paypalUnifiedEcButtonInContext="true"
             {else}
-             data-ecButton="true"
+             data-paypalUnifiedEcButton="true"
             {/if}
              data-paypalMode="{if $paypalUnifiedModeSandbox}sandbox{else}production{/if}"
              data-createPaymentUrl="{url module=widgets controller=PaypalUnifiedExpressCheckout action=createPayment forceSecure}"

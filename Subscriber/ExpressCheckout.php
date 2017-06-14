@@ -122,7 +122,7 @@ class ExpressCheckout implements SubscriberInterface
 
         $view = $args->getSubject()->View();
 
-        $view->assign('paypalExpressCheckoutActive', true);
+        $view->assign('paypalUnifiedEcActive', true);
     }
 
     /**
@@ -153,7 +153,7 @@ class ExpressCheckout implements SubscriberInterface
         $request = $args->getRequest();
         $view = $args->getSubject()->View();
 
-        if ($request->getActionName() === 'confirm' && $request->getParam('expressCheckout')) {
+        if ($request->getActionName() === 'confirm' && $request->getParam('expressCheckout', false)) {
             $view->assign('paypalUnifiedExpressCheckout', true);
             $view->assign('paypalUnifiedExpressPaymentId', $request->getParam('paymentId'));
             $view->assign('paypalUnifiedExpressPayerId', $request->getParam('payerId'));
@@ -204,7 +204,7 @@ class ExpressCheckout implements SubscriberInterface
         $view = $args->getSubject()->View();
 
         if (!$view->getAssign('userLoggedIn')) {
-            $view->assign('paypalExpressCheckoutDetailActive', true);
+            $view->assign('paypalUnifiedEcDetailActive', true);
             $view->assign('paypalUnifiedModeSandbox', $settings->getSandbox());
             $view->assign('paypalUnifiedUseInContext', $settings->getUseInContext());
         }

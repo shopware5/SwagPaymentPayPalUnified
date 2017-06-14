@@ -90,8 +90,8 @@ class FrontendSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $subscriber->onPostDispatchSecure($enlightEventArgs);
 
-        $this->assertTrue((bool) $view->getAssign('showPaypalLogo'));
-        $this->assertTrue((bool) $view->getAssign('restylePaymentSelection'));
+        $this->assertTrue((bool) $view->getAssign('paypalUnifiedShowLogo'));
+        $this->assertTrue((bool) $view->getAssign('paypalUnifiedRestylePaymentSelection'));
     }
 
     public function test_onPostDispatchSecure_assigns_nothing_to_view()
@@ -107,7 +107,7 @@ class FrontendSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $subscriber->onPostDispatchSecure($enlightEventArgs);
 
-        $this->assertNull($view->getAssign('restylePaymentSelection'));
+        $this->assertNull($view->getAssign('paypalUnifiedRestylePaymentSelection'));
     }
 
     public function test_onPostDispatchSecure_sets_restyle_correctly_if_plus_is_inactive()
@@ -123,7 +123,7 @@ class FrontendSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $subscriber->onPostDispatchSecure($enlightEventArgs);
 
-        $this->assertFalse((bool) $view->getAssign('restylePaymentSelection'));
+        $this->assertFalse((bool) $view->getAssign('paypalUnifiedRestylePaymentSelection'));
     }
 
     public function test_onPostDispatchSecure_sets_restyle_correctly_if_plus_both_is_inactive()
@@ -139,7 +139,7 @@ class FrontendSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $subscriber->onPostDispatchSecure($enlightEventArgs);
 
-        $this->assertFalse((bool) $view->getAssign('restylePaymentSelection'));
+        $this->assertFalse((bool) $view->getAssign('paypalUnifiedRestylePaymentSelection'));
     }
 
     public function test_onCollectTemplateDir()

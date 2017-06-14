@@ -140,7 +140,7 @@ class Checkout implements SubscriberInterface
             return;
         }
 
-        $view->assign('usePayPalPlus', $usePayPalPlus);
+        $view->assign('paypalUnifiedUsePlus', $usePayPalPlus);
 
         if ($action === 'finish') {
             $this->handleFinishDispatch($view);
@@ -194,7 +194,7 @@ class Checkout implements SubscriberInterface
         //If so, the payment does not need to be created again.
         $remotePaymentId = $session->get('PayPalUnifiedRemotePaymentId');
 
-        $view->assign('cameFromPaymentSelection', $cameFromPaymentSelection);
+        $view->assign('paypalUnifiedCameFromPaymentSelection', $cameFromPaymentSelection);
         $view->assign('paypalUnifiedPaymentId', $this->paymentMethodProvider->getPaymentId($this->container->get('dbal_connection')));
 
         //If the payment has already been created in the payment selection,
@@ -214,7 +214,7 @@ class Checkout implements SubscriberInterface
         $view->assign('paypalUnifiedModeSandbox', $this->settingsService->get('sandbox'));
         $view->assign('paypalUnifiedRemotePaymentId', $paymentStruct->getId());
         $view->assign('paypalUnifiedApprovalUrl', $paymentStruct->getLinks()[1]->getHref());
-        $view->assign('paypalPlusLanguageIso', $this->getPaymentWallLanguage());
+        $view->assign('paypalUnifiedPlusLanguageIso', $this->getPaymentWallLanguage());
     }
 
     /**
@@ -234,7 +234,7 @@ class Checkout implements SubscriberInterface
         $view->assign('paypalUnifiedPaymentId', $this->paymentMethodProvider->getPaymentId($this->container->get('dbal_connection')));
         $view->assign('paypalUnifiedRemotePaymentId', $paymentStruct->getId());
         $view->assign('paypalUnifiedApprovalUrl', $paymentStruct->getLinks()[1]->getHref());
-        $view->assign('paypalPlusLanguageIso', $this->getPaymentWallLanguage());
+        $view->assign('paypalUnifiedPlusLanguageIso', $this->getPaymentWallLanguage());
 
         //Store the paymentID in the session to indicate that
         //the payment has already been created and can be used on the confirm page.

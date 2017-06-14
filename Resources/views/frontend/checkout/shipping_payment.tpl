@@ -20,7 +20,7 @@
 
 {* PayPal Plus integration *}
 {block name='frontend_checkout_payment_fieldset_description'}
-    {if $paypalUnifiedApprovalUrl && $payment_mean.id == $paypalUnifiedPaymentId && $usePayPalPlus}
+    {if $paypalUnifiedApprovalUrl && $payment_mean.id == $paypalUnifiedPaymentId && $paypalUnifiedUsePlus}
         {block name='frontend_checkout_shipping_payment_paypal_unified_payment_wall'}
             {* This is the placeholder for the payment wall *}
             <div id="ppplus" class="method--description">
