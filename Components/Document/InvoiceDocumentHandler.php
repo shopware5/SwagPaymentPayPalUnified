@@ -70,7 +70,9 @@ class InvoiceDocumentHandler
         $view->assign('Containers', $templateContainers);
 
         $instructions = $this->instructionService->getInstructions($orderNumber);
-        $document->_template->assign('instruction', $instructions->toArray());
+        if ($instructions) {
+            $document->_template->assign('PayPalUnifiedInvoiceInstruction', $instructions->toArray());
+        }
 
         //Reassign the complete template including the new variables.
         $containerData = $view->getTemplateVars('Containers');

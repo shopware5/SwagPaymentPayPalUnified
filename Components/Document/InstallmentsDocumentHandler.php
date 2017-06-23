@@ -61,7 +61,9 @@ class InstallmentsDocumentHandler
         $view = $document->_view;
         $creditInfo = $this->getCreditInformation($orderNumber);
 
-        $view->assign('paypalInstallmentsCredit', $creditInfo->toArray());
+        if ($creditInfo) {
+            $view->assign('paypalInstallmentsCredit', $creditInfo->toArray());
+        }
     }
 
     /**

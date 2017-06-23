@@ -27,7 +27,6 @@ namespace SwagPaymentPayPalUnified\PayPalBundle\Components\Patches;
 interface PatchInterface
 {
     const OPERATION_ADD = 'add';
-
     const OPERATION_REPLACE = 'replace';
 
     /**

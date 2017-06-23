@@ -37,7 +37,7 @@ class SimpleBasketValidator implements BasketValidatorInterface
         $basketAmount = (string) $basket['AmountNumeric'];
         $paymentAmount = (string) $payment->getTransactions()->getAmount()->getTotal();
 
-        if ($user['additional']['charge_vat']) {
+        if ($user['additional']['charge_vat'] && $basket['AmountWithTaxNumeric']) {
             $basketAmount = (string) $basket['AmountWithTaxNumeric'];
         }
 

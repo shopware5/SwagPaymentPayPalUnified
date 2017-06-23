@@ -67,7 +67,7 @@ class CheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $subscriber->onPostDispatchCheckout($enlightEventArgs);
 
-        $this->assertNull($view->getAssign('usePayPalPlus'));
+        $this->assertNull($view->getAssign('paypalUnifiedUsePlus'));
     }
 
     public function test_onPostDispatchCheckout_should_return_because_the_action_is_invalid()
@@ -95,7 +95,7 @@ class CheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $subscriber->onPostDispatchCheckout($enlightEventArgs);
 
-        $this->assertNull($view->getAssign('usePayPalPlus'));
+        $this->assertNull($view->getAssign('paypalUnifiedUsePlus'));
     }
 
     public function test_onPostDispatchCheckout_should_assign_value_usePayPalPlus()
@@ -123,7 +123,7 @@ class CheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $subscriber->onPostDispatchCheckout($enlightEventArgs);
 
-        $this->assertTrue((bool) $view->getAssign('usePayPalPlus'));
+        $this->assertTrue((bool) $view->getAssign('paypalUnifiedUsePlus'));
     }
 
     public function test_onPostDispatchCheckout_should_assign_error_code()
@@ -151,7 +151,7 @@ class CheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $subscriber->onPostDispatchCheckout($enlightEventArgs);
 
-        $this->assertTrue((bool) $view->getAssign('usePayPalPlus'));
+        $this->assertTrue((bool) $view->getAssign('paypalUnifiedUsePlus'));
         $this->assertEquals('5', $view->getAssign('paypalUnifiedErrorCode'));
     }
 

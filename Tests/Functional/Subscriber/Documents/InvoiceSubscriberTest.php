@@ -115,7 +115,7 @@ class InvoiceSubscriberTest extends \PHPUnit_Framework_TestCase
         /** @var \Enlight_Template_Manager $view */
         $view = $hookArgs->getTemplate();
 
-        $this->assertNotNull($view->getVariable('instruction'));
+        $this->assertNotNull($view->getVariable('PayPalUnifiedInvoiceInstruction'));
     }
 
     private function insertTestData()

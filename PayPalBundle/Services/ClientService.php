@@ -69,6 +69,11 @@ class ClientService
     private $shopId;
 
     /**
+     * @var SettingsServiceInterface
+     */
+    private $settingsService;
+
+    /**
      * @param SettingsServiceInterface $settingsService
      * @param TokenService             $tokenService
      * @param Logger                   $logger
@@ -82,6 +87,7 @@ class ClientService
         GuzzleFactory $factory,
         DependencyProvider $dependencyProvider
     ) {
+        $this->settingsService = $settingsService;
         $this->tokenService = $tokenService;
         $this->logger = $logger;
         $this->client = new GuzzleClient($factory);
@@ -90,25 +96,17 @@ class ClientService
 
         //Backend does not have any active shop. In order to authenticate there, please use
         //the "configure()"-function instead.
-        if ($shop === null || !$settingsService->hasSettings() || !$settingsService->get('active')) {
+        if ($shop === null || !$this->settingsService->hasSettings() || !$this->settingsService->get('active')) {
             return;
         }
 
         $this->shopId = $shop->getId();
 
-        $environment = (bool) $settingsService->get('sandbox');
+        $environment = (bool) $this->settingsService->get('sandbox');
         $environment === true ? $this->baseUrl = BaseURL::SANDBOX : $this->baseUrl = BaseURL::LIVE;
 
         //Set Partner-Attribution-Id
         $this->setPartnerAttributionId(PartnerAttributionId::PAYPAL_CLASSIC); //Default
-
-        //Create authentication
-        $restId = $settingsService->get('client_id');
-        $restSecret = $settingsService->get('client_secret');
-        $credentials = new OAuthCredentials();
-        $credentials->setRestId($restId);
-        $credentials->setRestSecret($restSecret);
-        $this->createAuthentication($credentials);
     }
 
     /**
@@ -142,6 +140,14 @@ class ClientService
      */
     public function sendRequest($type, $resourceUri, array $data = [], $jsonPayload = true)
     {
+        if (!$this->getHeader('Authorization')) {
+            //Create authentication
+            $credentials = new OAuthCredentials();
+            $credentials->setRestId($this->settingsService->get('client_id'));
+            $credentials->setRestSecret($this->settingsService->get('client_secret'));
+            $this->createAuthentication($credentials);
+        }
+
         $resourceUri = $this->baseUrl . $resourceUri;
 
         if ($jsonPayload) {

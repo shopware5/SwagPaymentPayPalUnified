@@ -8,7 +8,7 @@
 
 {* PayPal Plus integration *}
 {block name='frontend_checkout_payment_fieldset_description'}
-    {if $payment_mean.id == $paypalUnifiedPaymentId && $usePayPalPlus}
+    {if $payment_mean.id == $paypalUnifiedPaymentId && $paypalUnifiedUsePlus}
         <div id="ppplus" class="method--description">
         </div>
     {else}
@@ -18,7 +18,7 @@
 
 {* PayPal Plus integration *}
 {block name="frontend_checkout_payment_content"}
-    {if $restylePaymentSelection}
+    {if $paypalUnifiedRestylePaymentSelection}
         {include file="frontend/paypal_unified/plus/checkout/custom_shipping_payment/change_payment.tpl"}
     {else}
         {$smarty.block.parent}

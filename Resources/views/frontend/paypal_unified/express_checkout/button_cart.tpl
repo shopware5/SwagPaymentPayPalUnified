@@ -1,8 +1,14 @@
 {block name='paypal_unified_ec_button_container'}
     <div class="paypal-unified-ec--outer-button-container">
         <div class="paypal-unified-ec--button-container right"
+            {if $paypalUnifiedUseInContext}
+             data-paypalUnifiedEcButtonInContext="true"
+            {else}
+             data-paypalUnifiedEcButton="true"
+            {/if}
              data-paypalMode="{if $paypalUnifiedModeSandbox}sandbox{else}production{/if}"
-             data-createPaymentUrl="{url module=widgets controller=PaypalUnifiedExpressCheckout action=createPayment forceSecure}">
+             data-createPaymentUrl="{url module=widgets controller=PaypalUnifiedExpressCheckout action=createPayment forceSecure}"
+             data-cart="true">
         </div>
     </div>
 {/block}
@@ -14,11 +20,20 @@
                we have to use the asyncReady function *}
             var asyncConf = ~~("{$theme.asyncJavascriptLoading}");
             if (typeof document.asyncReady === 'function' && asyncConf) {
-                document.asyncReady(function () {
-                    window.StateManager.addPlugin('.paypal-unified-ec--button-container', 'swagPayPalUnifiedExpressCheckoutButton');
+                document.asyncReady(function() {
+                    {if $paypalUnifiedUseInContext}
+                        window.StateManager.addPlugin('*[data-paypalUnifiedEcButtonInContext="true"]*[data-cart="true"]', 'swagPayPalUnifiedExpressCheckoutButtonInContext');
+                    {else}
+                        window.StateManager.addPlugin('*[data-paypalUnifiedEcButton="true"]*[data-cart="true"]', 'swagPayPalUnifiedExpressCheckoutButton');
+                    {/if}
+
                 });
             } else {
-                window.StateManager.addPlugin('.paypal-unified-ec--button-container', 'swagPayPalUnifiedExpressCheckoutButton');
+                {if $paypalUnifiedUseInContext}
+                    window.StateManager.addPlugin('*[data-paypalUnifiedEcButtonInContext="true"]*[data-cart="true"]', 'swagPayPalUnifiedExpressCheckoutButtonInContext');
+                {else}
+                    window.StateManager.addPlugin('*[data-paypalUnifiedEcButton="true"]*[data-cart="true"]', 'swagPayPalUnifiedExpressCheckoutButton');
+                {/if}
             }
         </script>
     {/if}

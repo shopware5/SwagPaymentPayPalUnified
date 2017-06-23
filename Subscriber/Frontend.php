@@ -77,6 +77,7 @@ class Frontend implements SubscriberInterface
             $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.ajax-installments.js',
             $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.installments-modal.js',
             $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.express-checkout-button.js',
+            $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.express-checkout-button-in-context.js',
         ];
 
         return new ArrayCollection($jsPath);
@@ -104,9 +105,9 @@ class Frontend implements SubscriberInterface
         $restylePaymentSelection = ((bool) $this->settingsService->get('plus_active') && (bool) $this->settingsService->get('plus_restyle'));
 
         //Assign shop specific and configurable values to the view.
-        $view->assign('showPaypalLogo', (bool) $this->settingsService->get('show_sidebar_logo'));
-        $view->assign('restylePaymentSelection', $restylePaymentSelection);
-        $view->assign('showPaypalInstallmentsLogo', (bool) $this->settingsService->get('installments_show_logo'));
+        $view->assign('paypalUnifiedShowLogo', (bool) $this->settingsService->get('show_sidebar_logo'));
+        $view->assign('paypalUnifiedRestylePaymentSelection', $restylePaymentSelection);
+        $view->assign('paypalUnifiedShowInstallmentsLogo', (bool) $this->settingsService->get('installments_show_logo'));
     }
 
     /**

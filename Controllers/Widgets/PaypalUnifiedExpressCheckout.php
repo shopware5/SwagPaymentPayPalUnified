@@ -55,9 +55,19 @@ class Shopware_Controllers_Widgets_PaypalUnifiedExpressCheckout extends \Enlight
         //That means, that we have to add it manually to the basket.
         $addProductToBasket = $this->Request()->getParam('addProduct', false);
         if ($addProductToBasket) {
+            // delete the cart, to make sure that only the selected product is transferred to PayPal
+            $basket->sDeleteBasket();
             $productNumber = $this->Request()->getParam('productNumber');
             $productQuantity = $this->Request()->getParam('productQuantity');
             $basket->sAddArticle($productNumber, $productQuantity);
+
+            // add potential discounts or surcharges to prevent an amount mismatch
+            // on patching the new amount after the confirmation.
+            // only necessary if the customer directly checks out from product detail page
+            /** @var sAdmin $admin */
+            $admin = $this->get('paypal_unified.dependency_provider')->getModule('admin');
+            $countries = $admin->sGetCountryList();
+            $admin->sGetPremiumShippingcosts(reset($countries));
         }
 
         //By using the basket module we do not have to deal with any view assignments
@@ -93,6 +103,15 @@ class Shopware_Controllers_Widgets_PaypalUnifiedExpressCheckout extends \Enlight
             return;
         } catch (\Exception $exception) {
             $this->handleError(ErrorCodes::UNKNOWN);
+
+            return;
+        }
+
+        $useInContext = $this->Request()->getParam('useInContext', false);
+        if ($useInContext) {
+            $this->Front()->Plugins()->Json()->setRenderer();
+
+            $this->View()->assign('paymentId', $responseStruct->getId());
 
             return;
         }

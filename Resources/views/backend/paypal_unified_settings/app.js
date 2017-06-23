@@ -48,7 +48,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings', {
         'TopToolbar',
         'tabs.General',
         'tabs.Paypal',
-        'tabs.PaypalPlus',
+        'tabs.Plus',
         'tabs.Installments'
     ],
 

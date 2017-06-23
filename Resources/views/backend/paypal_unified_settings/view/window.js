@@ -36,7 +36,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.Window', {
     paypalTab: null,
 
     /**
-     * @type { Shopware.apps.PaypalUnifiedSettings.view.tabs.PaypalPlus }
+     * @type { Shopware.apps.PaypalUnifiedSettings.view.tabs.Plus }
      */
     paypalPlusTab: null,
 
@@ -100,7 +100,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.Window', {
 
         me.generalTab = Ext.create('Shopware.apps.PaypalUnifiedSettings.view.tabs.General');
         me.paypalTab = Ext.create('Shopware.apps.PaypalUnifiedSettings.view.tabs.Paypal');
-        me.paypalPlusTab = Ext.create('Shopware.apps.PaypalUnifiedSettings.view.tabs.PaypalPlus');
+        me.paypalPlusTab = Ext.create('Shopware.apps.PaypalUnifiedSettings.view.tabs.Plus');
         me.paypalInstallmentsTab = Ext.create('Shopware.apps.PaypalUnifiedSettings.view.tabs.Installments');
         me.paypalEcTab = Ext.create('Shopware.apps.PaypalUnifiedSettings.view.tabs.ExpressCheckout');
 
