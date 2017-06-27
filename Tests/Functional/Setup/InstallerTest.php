@@ -143,7 +143,7 @@ class InstallerTest extends \PHPUnit_Framework_TestCase
         $query = "SELECT 1 
                     FROM information_schema.COLUMNS 
                     WHERE TABLE_NAME = 's_order_attributes' 
-                    AND COLUMN_NAME = 'paypal_payment_type'";
+                    AND COLUMN_NAME = 'swag_paypal_unified_payment_type'";
 
         /** @var Connection $connection */
         $connection = Shopware()->Container()->get('dbal_connection');

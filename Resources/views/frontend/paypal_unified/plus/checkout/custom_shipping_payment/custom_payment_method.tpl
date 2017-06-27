@@ -1,4 +1,4 @@
-{block name="frontend_checkout_payment_content_paypal_unified_custom_payment_item"}
+{block name='frontend_checkout_payment_content_paypal_unified_custom_payment_item'}
     {$isPayPalUnified = $payment_mean.name eq 'SwagPaymentPayPalUnified'}
     <div class="payment--method block{if $payment_mean@last} method_last{else} method{/if}{if $payment_mean.id eq $sFormData.payment or (!$sFormData && !$smarty.foreach.register_payment_mean.index)} is--active{/if} {if $isPayPalUnified}is--plus-container{/if} unified--payment">
 

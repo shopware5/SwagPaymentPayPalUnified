@@ -127,7 +127,7 @@ class OrderDataService
             ->getSQL();
 
         $builder->update('s_order_attributes', 'oa')
-            ->set('oa.paypal_payment_type', ':paymentType')
+            ->set('oa.swag_paypal_unified_payment_type', ':paymentType')
             ->where('oa.orderID = (' . $subQuery . ')')
             ->setParameters([
                 ':orderNumber' => $orderNumber,

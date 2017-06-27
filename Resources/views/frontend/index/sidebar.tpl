@@ -1,8 +1,11 @@
-{extends file="parent:frontend/index/sidebar.tpl"}
+{extends file='parent:frontend/index/sidebar.tpl'}
 
-{block name="frontend_index_left_menu"}
+{block name='frontend_index_left_menu'}
     {$smarty.block.parent}
-    {if $paypalUnifiedShowLogo || $paypalUnifiedShowInstallmentsLogo}
-        {include file="frontend/paypal_unified/index/sidebar.tpl"}
-    {/if}
+
+    {block name='frontend_index_left_menu_paypal_unified_logos'}
+        {if $paypalUnifiedShowLogo || $paypalUnifiedShowInstallmentsLogo}
+            {include file='frontend/paypal_unified/index/sidebar.tpl'}
+        {/if}
+    {/block}
 {/block}

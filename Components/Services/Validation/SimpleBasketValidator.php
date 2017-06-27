@@ -33,12 +33,11 @@ class SimpleBasketValidator implements BasketValidatorInterface
      */
     public function validate(array $basket, array $user, Payment $payment)
     {
-        // looks hacky, but necessary due to float handling on different environments
-        $basketAmount = (string) $basket['AmountNumeric'];
-        $paymentAmount = (string) $payment->getTransactions()->getAmount()->getTotal();
+        $basketAmount = number_format($basket['AmountNumeric'], 2);
+        $paymentAmount = number_format($payment->getTransactions()->getAmount()->getTotal(), 2);
 
         if ($user['additional']['charge_vat'] && $basket['AmountWithTaxNumeric']) {
-            $basketAmount = (string) $basket['AmountWithTaxNumeric'];
+            $basketAmount = number_format($basket['AmountWithTaxNumeric'], 2);
         }
 
         return $basketAmount === $paymentAmount;

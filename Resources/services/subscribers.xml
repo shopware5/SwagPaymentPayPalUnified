@@ -80,5 +80,12 @@
             <argument type="service" id="pluginlogger"/>
             <tag name="shopware.event_subscriber"/>
         </service>
+
+        <service id="paypal_unified.subscriber.in_context" class="SwagPaymentPayPalUnified\Subscriber\InContext">
+            <argument type="service" id="models"/>
+            <argument type="service" id="dbal_connection"/>
+            <argument type="service" id="paypal_unified.settings_service"/>
+            <tag name="shopware.event_subscriber"/>
+        </service>
     </services>
 </container>

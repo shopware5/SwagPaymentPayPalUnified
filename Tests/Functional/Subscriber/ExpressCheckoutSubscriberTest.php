@@ -285,7 +285,7 @@ class ExpressCheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($subscriber->addPaymentInfoToRequest($enlightEventArgs));
     }
 
-    public function test_addPaymentInfoToRequest_returns_because_redirect()
+    public function test_addPaymentInfoToRequest_returns_because_no_redirect()
     {
         $view = new ViewMock(new \Enlight_Template_Manager());
         $request = new \Enlight_Controller_Request_RequestTestCase();

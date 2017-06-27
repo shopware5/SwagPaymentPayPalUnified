@@ -47,7 +47,7 @@
             paypalErrorPage: ''
         },
 
-        init: function () {
+        init: function() {
             var me = this;
             me.applyDataAttributes();
             me.subscribeEvents();
@@ -61,7 +61,7 @@
          * @private
          * @method subscribeEvents
          */
-        subscribeEvents: function () {
+        subscribeEvents: function() {
             var me = this,
                 $confirmPage = $(me.opts.paypalConfirmPageSelector);
 
@@ -73,7 +73,7 @@
         /**
          * Patches the customer's address into the payment object.
          */
-        patchPaymentAddress: function () {
+        patchPaymentAddress: function() {
             var me = this;
 
             $.publish('plugin/swagPayPalUnifiedPaymentWall/beforePatchAddress', me);
@@ -94,7 +94,7 @@
          * @param {Object} event
          * @param {Object} plugin
          */
-        onInitPaymentWallPlugin: function (event, plugin) {
+        onInitPaymentWallPlugin: function(event, plugin) {
             var me = this;
 
             if (!me.opts.paypalCameFromPaymentSelection) {
@@ -111,7 +111,7 @@
          * @method onConfirmCheckout
          * @param {Object} event
          */
-        onConfirmCheckout: function (event) {
+        onConfirmCheckout: function(event) {
             var me = this;
 
             $.publish('plugin/swagPayPalUnifiedPaymentWallConfirm/confirmCheckout', me);
@@ -127,7 +127,7 @@
          * @private
          * @method addressPatchAjaxCallbackSuccess
          */
-        addressPatchAjaxCallbackSuccess: function () {
+        addressPatchAjaxCallbackSuccess: function() {
             var me = this;
 
             $.publish('plugin/swagPayPalUnifiedPaymentWall/afterPatchAddress', me);
@@ -142,7 +142,7 @@
          * @private
          * @method addressPatchAjaxCallbackSuccess
          */
-        addressPatchAjaxCallbackError: function () {
+        addressPatchAjaxCallbackError: function() {
             var me = this;
 
             $.publish('plugin/swagPayPalUnifiedPaymentWall/afterPatchAddress', me);

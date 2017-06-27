@@ -1,19 +1,22 @@
-{block name='paypal_unified_ec_button_container'}
+{block name='paypal_unified_ec_button_container_cart'}
     <div class="paypal-unified-ec--outer-button-container">
-        <div class="paypal-unified-ec--button-container right"
-            {if $paypalUnifiedUseInContext}
-             data-paypalUnifiedEcButtonInContext="true"
-            {else}
-             data-paypalUnifiedEcButton="true"
-            {/if}
-             data-paypalMode="{if $paypalUnifiedModeSandbox}sandbox{else}production{/if}"
-             data-createPaymentUrl="{url module=widgets controller=PaypalUnifiedExpressCheckout action=createPayment forceSecure}"
-             data-cart="true">
-        </div>
+        {block name='paypal_unified_ec_button_container_cart_inner'}
+            <div class="paypal-unified-ec--button-container right"
+                {if $paypalUnifiedUseInContext}
+                 data-paypalUnifiedEcButtonInContext="true"
+                {else}
+                 data-paypalUnifiedEcButton="true"
+                {/if}
+                 data-paypalMode="{if $paypalUnifiedModeSandbox}sandbox{else}production{/if}"
+                 data-createPaymentUrl="{url module=widgets controller=PaypalUnifiedExpressCheckout action=createPayment forceSecure}"
+                 data-cart="true"
+                {block name='paypal_unified_ec_button_container_cart_data'}{/block}>
+            </div>
+        {/block}
     </div>
 {/block}
 
-{block name='paypal_unified_ec_button_script'}
+{block name='paypal_unified_ec_button_script_cart'}
     {if $paypalEcAjaxCart}
         <script>
             {* Shopware 5.3 may load the javaScript asynchronously, therefore

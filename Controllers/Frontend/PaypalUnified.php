@@ -138,6 +138,14 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
 
         $this->paymentResource->patch($responseStruct->getId(), $addressPatch);
 
+        if ($this->Request()->getParam('useInContext')) {
+            $this->Front()->Plugins()->Json()->setRenderer();
+
+            $this->View()->assign('paymentId', $responseStruct->getId());
+
+            return;
+        }
+
         $this->redirect($responseStruct->getLinks()[1]->getHref());
     }
 

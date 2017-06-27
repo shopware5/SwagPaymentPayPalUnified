@@ -6,6 +6,6 @@
             </option>
         </select>
     {else}
-        {s name="CartColumnQuantityEmpty" namespace="frontend/checkout/cart_item"}{/s}
+        {s name='CartColumnQuantityEmpty' namespace='frontend/checkout/cart_item'}{/s}
     {/if}
 {/block}

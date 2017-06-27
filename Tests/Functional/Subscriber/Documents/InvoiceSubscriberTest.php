@@ -138,7 +138,7 @@ class InvoiceSubscriberTest extends \PHPUnit_Framework_TestCase
         $instructionsService = Shopware()->Container()->get('paypal_unified.payment_instruction_service');
         $instructionsService->createInstructions(self::TEST_ORDER_NUMBER, $instructions);
 
-        $sql = "UPDATE s_order_attributes SET paypal_payment_type='PayPalPlusInvoice' WHERE orderID=15";
+        $sql = "UPDATE s_order_attributes SET swag_paypal_unified_payment_type='PayPalPlusInvoice' WHERE orderID=15";
         $db = Shopware()->Container()->get('dbal_connection');
         $db->executeUpdate($sql);
     }

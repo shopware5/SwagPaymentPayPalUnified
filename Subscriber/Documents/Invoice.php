@@ -87,7 +87,7 @@ class Invoice implements SubscriberInterface
             return;
         }
 
-        $paypalPaymentType = $document->_order->order->attributes['paypal_payment_type'];
+        $paypalPaymentType = $document->_order->order->attributes['swag_paypal_unified_payment_type'];
 
         if ($paypalPaymentType !== PaymentType::PAYPAL_INVOICE) {
             return;

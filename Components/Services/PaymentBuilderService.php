@@ -117,7 +117,7 @@ class PaymentBuilderService implements PaymentBuilderInterface
         $amount = new Amount();
         $amount->setDetails($this->getAmountDetails());
         $amount->setCurrency($this->basketData['sCurrencyName']);
-        $amount->setTotal(number_format($this->getTotalAmount(), 2, '.', ','));
+        $amount->setTotal(number_format($this->getTotalAmount(), 2));
 
         $itemList = new ItemList();
         $itemList->setItems($this->getItemList());
@@ -145,7 +145,7 @@ class PaymentBuilderService implements PaymentBuilderInterface
 
         //Case 2: Show net prices in shopware and don't exclude country tax
         if (!$this->showGrossPrices() && !$this->useNetPriceCalculation()) {
-            return $this->basketData['sAmountWithTax'];
+            return $this->basketData['AmountWithTaxNumeric'];
         }
 
         //Case 3: No tax handling at all, just use the net amounts.
@@ -257,7 +257,7 @@ class PaymentBuilderService implements PaymentBuilderInterface
         if ($this->showGrossPrices() && !$this->useNetPriceCalculation()) {
             $amountDetails->setShipping($this->basketData['sShippingcostsWithTax']);
             $amountDetails->setSubTotal(str_replace(',', '.', $this->basketData['Amount']));
-            $amountDetails->setTax(number_format(0, 2, '.', ','));
+            $amountDetails->setTax(number_format(0, 2));
 
             return $amountDetails;
         }
