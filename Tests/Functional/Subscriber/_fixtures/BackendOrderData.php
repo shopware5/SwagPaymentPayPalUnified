@@ -83,7 +83,7 @@ return [
             'attribute4' => '',
             'attribute5' => '',
             'attribute6' => '',
-            'paypalPaymentType' => 'PayPalPlus',
+            'swagPaypalPaymentType' => 'PayPalPlus',
         ],
     ], [
         'id' => 74,
@@ -145,7 +145,7 @@ return [
             'attribute4' => '',
             'attribute5' => '',
             'attribute6' => '',
-            'paypalPaymentType' => null,
+            'swagPaypalPaymentType' => null,
         ],
     ],
 ];

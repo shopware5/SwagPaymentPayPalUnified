@@ -26,7 +26,7 @@
             paypalPaymentId: null
         },
 
-        init: function () {
+        init: function() {
             var me = this;
 
             me.applyDataAttributes();
@@ -41,7 +41,7 @@
          * @private
          * @method subscribeEvents
          */
-        subscribeEvents: function () {
+        subscribeEvents: function() {
             var me = this;
 
             $.subscribe('plugin/swagPayPalUnifiedPaymentWall/init', $.proxy(me.onInitPaymentWallPlugin, me));
@@ -58,7 +58,7 @@
          * @method getSelectedPaymentMethodId
          * @returns {Numeric}
          */
-        getSelectedPaymentMethodId: function () {
+        getSelectedPaymentMethodId: function() {
             var me = this;
 
             return $(me.opts.paypalSelectedPaymentMethodRadioSelector).attr('value');
@@ -73,7 +73,7 @@
          * @param {Object} event
          * @param {Object} plugin
          */
-        onInitPaymentWallPlugin: function (event, plugin) {
+        onInitPaymentWallPlugin: function(event, plugin) {
             var me = this;
 
             plugin.createPaymentWall(me.opts.paypalPaymentWallSelector);
@@ -102,7 +102,7 @@
          * @private
          * @method onSelectPayPalPaymentMethod
          */
-        onSelectPayPalPaymentMethod: function () {
+        onSelectPayPalPaymentMethod: function() {
             var me = this,
                 $paypalUnifiedRadio = $('#payment_mean' + me.opts.paypalPaymentId),
                 selectedPaymentId = me.getSelectedPaymentMethodId();
@@ -119,7 +119,7 @@
          * @private
          * @method onSelectedPaymentMethodChange
          */
-        onSelectedPaymentMethodChange: function () {
+        onSelectedPaymentMethodChange: function() {
             var me = this,
                 $pluginContainer = $('*[data-paypalPaymentWall="true"]'),
                 paymentWallPlugin = $pluginContainer.data('plugin_swagPayPalUnifiedPaymentWall');
@@ -141,7 +141,7 @@
          * @private
          * @method onBeforeSelectedPaymentMethodChange
          */
-        onBeforeSelectedPaymentMethodChange: function () {
+        onBeforeSelectedPaymentMethodChange: function() {
             if ($.loadingIndicator.defaults !== undefined) {
                 $.loadingIndicator.defaults.closeOnClick = false;
             }

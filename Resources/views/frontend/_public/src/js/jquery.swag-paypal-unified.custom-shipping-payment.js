@@ -1,4 +1,6 @@
 ;(function($) {
+    'use strict';
+
     var defaults = {
             activeCls: 'js--is-active',
             staticActiveCls: 'is--active',
@@ -15,7 +17,7 @@
                 me.$el.on('click', defaults.paymentMethodSelector, $.proxy(me.onClick, me));
                 me.$el.on('change', me.opts.radioSelector, $.proxy(me.onInputChanged, me));
 
-                $.publish('plugin/swShippingPayment/onRegisterEvents', [ me ]);
+                $.publish('plugin/swShippingPayment/onRegisterEvents', [me]);
             },
 
             onClick: function(event) {

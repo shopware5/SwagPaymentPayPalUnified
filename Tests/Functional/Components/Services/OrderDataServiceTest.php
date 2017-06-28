@@ -110,7 +110,7 @@ class OrderDataServiceTest extends \PHPUnit_Framework_TestCase
 
         /** @var Connection $dbalConnection */
         $dbalConnection = Shopware()->Container()->get('dbal_connection');
-        $updatedAttribute = $dbalConnection->executeQuery('SELECT paypal_payment_type FROM s_order_attributes WHERE orderID=9999')->fetchColumn(0);
+        $updatedAttribute = $dbalConnection->executeQuery('SELECT swag_paypal_unified_payment_type FROM s_order_attributes WHERE orderID=9999')->fetchColumn(0);
 
         $this->assertEquals(PaymentType::PAYPAL_INVOICE, $updatedAttribute);
     }
@@ -124,7 +124,7 @@ class OrderDataServiceTest extends \PHPUnit_Framework_TestCase
 
         /** @var Connection $dbalConnection */
         $dbalConnection = Shopware()->Container()->get('dbal_connection');
-        $updatedAttribute = $dbalConnection->executeQuery('SELECT paypal_payment_type FROM s_order_attributes WHERE orderID=9999')->fetchColumn(0);
+        $updatedAttribute = $dbalConnection->executeQuery('SELECT swag_paypal_unified_payment_type FROM s_order_attributes WHERE orderID=9999')->fetchColumn(0);
 
         $this->assertEquals(PaymentType::PAYPAL_PLUS, $updatedAttribute);
     }
@@ -142,7 +142,7 @@ class OrderDataServiceTest extends \PHPUnit_Framework_TestCase
 
         /** @var Connection $dbalConnection */
         $dbalConnection = Shopware()->Container()->get('dbal_connection');
-        $updatedAttribute = $dbalConnection->executeQuery('SELECT paypal_payment_type FROM s_order_attributes WHERE orderID=9999')->fetchColumn(0);
+        $updatedAttribute = $dbalConnection->executeQuery('SELECT swag_paypal_unified_payment_type FROM s_order_attributes WHERE orderID=9999')->fetchColumn(0);
 
         $this->assertEquals(PaymentType::PAYPAL_INSTALLMENTS, $updatedAttribute);
     }
@@ -154,7 +154,7 @@ class OrderDataServiceTest extends \PHPUnit_Framework_TestCase
 
         /** @var Connection $dbalConnection */
         $dbalConnection = Shopware()->Container()->get('dbal_connection');
-        $updatedAttribute = $dbalConnection->executeQuery('SELECT paypal_payment_type FROM s_order_attributes WHERE orderID=9999')->fetchColumn(0);
+        $updatedAttribute = $dbalConnection->executeQuery('SELECT swag_paypal_unified_payment_type FROM s_order_attributes WHERE orderID=9999')->fetchColumn(0);
 
         $this->assertEquals(PaymentType::PAYPAL_CLASSIC, $updatedAttribute);
     }
@@ -166,7 +166,7 @@ class OrderDataServiceTest extends \PHPUnit_Framework_TestCase
 
         /** @var Connection $dbalConnection */
         $dbalConnection = Shopware()->Container()->get('dbal_connection');
-        $updatedAttribute = $dbalConnection->executeQuery('SELECT paypal_payment_type FROM s_order_attributes WHERE orderID=9999')->fetchColumn(0);
+        $updatedAttribute = $dbalConnection->executeQuery('SELECT swag_paypal_unified_payment_type FROM s_order_attributes WHERE orderID=9999')->fetchColumn(0);
 
         $this->assertEquals(PaymentType::PAYPAL_EXPRESS, $updatedAttribute);
     }

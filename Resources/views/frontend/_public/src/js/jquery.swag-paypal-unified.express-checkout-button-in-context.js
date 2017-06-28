@@ -1,4 +1,6 @@
-;(function($, window, paypal) {
+;(function($, window) {
+    'use strict';
+
     $.plugin('swagPayPalUnifiedExpressCheckoutButtonInContext', {
         defaults: {
             /**
@@ -71,6 +73,7 @@
 
             /**
              * The selector for the product number on the detail page.
+             *
              * @type string
              */
             productNumberSelector: 'input[name="sAdd"]'
@@ -111,7 +114,7 @@
 
             me.expressCheckoutButton = paypal.Button.render(me.createPayPalButtonConfiguration(), me.$el.get(0));
 
-            $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonInContextCart/createButton', me);
+            $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonInContextCart/createButton', [me, me.expressCheckoutButton]);
         },
 
         /**
@@ -226,4 +229,4 @@
     });
 
     window.StateManager.addPlugin('*[data-paypalUnifiedEcButtonInContext="true"]', 'swagPayPalUnifiedExpressCheckoutButtonInContext');
-})(jQuery, window, paypal);
+})(jQuery, window);

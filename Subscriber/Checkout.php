@@ -91,9 +91,7 @@ class Checkout implements SubscriberInterface
     }
 
     /**
-     * Returns the subscribed events.
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public static function getSubscribedEvents()
     {

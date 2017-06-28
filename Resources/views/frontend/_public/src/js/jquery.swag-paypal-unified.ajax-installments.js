@@ -93,7 +93,7 @@
          * @public
          * @method init
          */
-        init: function () {
+        init: function() {
             var me = this;
             me.applyDataAttributes();
 
@@ -108,7 +108,7 @@
          * @public
          * @method requestDetails
          */
-        requestDetails: function () {
+        requestDetails: function() {
             var me = this;
 
             $.publish('plugin/swagPayPalUnifiedAjaxInstallments/beforeRequest', me);
@@ -128,7 +128,7 @@
          * @private
          * @method requestCheapestRate
          */
-        requestCheapestRate: function () {
+        requestCheapestRate: function() {
             var me = this;
 
             $.publish('plugin/swagPayPalUnifiedAjaxInstallments/requestCheapestRate', me);
@@ -151,7 +151,7 @@
          * @private
          * @requestCompleteList
          */
-        requestCompleteList: function () {
+        requestCompleteList: function() {
             var me = this;
 
             $.publish('plugin/swagPayPalUnifiedAjaxInstallments/requestCompleteList', me);
@@ -174,7 +174,7 @@
          * @method detailsAjaxCallbackSuccess
          * @param { Object } response
          */
-        detailsAjaxCallbackSuccess: function (response) {
+        detailsAjaxCallbackSuccess: function(response) {
             var me = this,
                 $loadingIndicator = $(me.opts.paypalLoadingIndicatorSelector),
                 $installmentsContainer = $(me.opts.paypalInstallmentsContainerSelector);
@@ -192,7 +192,7 @@
          * @private
          * @method detailsAjaxCallbackError
          */
-        detailsAjaxCallbackError: function () {
+        detailsAjaxCallbackError: function() {
             var me = this,
                 $loadingIndicator = $(me.opts.paypalLoadingIndicatorSelector);
 

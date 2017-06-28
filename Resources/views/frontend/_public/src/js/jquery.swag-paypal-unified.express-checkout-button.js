@@ -1,4 +1,6 @@
-;(function($, window, paypal) {
+;(function($, window) {
+    'use strict';
+
     $.plugin('swagPayPalUnifiedExpressCheckoutButton', {
         defaults: {
             /**
@@ -111,7 +113,7 @@
 
             me.expressCheckoutButton = paypal.Button.render(me.createPayPalButtonConfiguration(), me.$el.get(0));
 
-            $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonCart/createButton', me);
+            $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonCart/createButton', [me, me.expressCheckoutButton]);
         },
 
         /**
@@ -265,4 +267,4 @@
     });
 
     window.StateManager.addPlugin('*[data-paypalUnifiedEcButton="true"]', 'swagPayPalUnifiedExpressCheckoutButton');
-})(jQuery, window, paypal);
+})(jQuery, window);

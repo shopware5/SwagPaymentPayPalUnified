@@ -142,7 +142,7 @@
          */
         placeholder: '',
 
-        init: function () {
+        init: function() {
             var me = this;
             me.applyDataAttributes();
 
@@ -155,7 +155,7 @@
          * @method createPaymentWall
          * @param {String} parent
          */
-        createPaymentWall: function (parent) {
+        createPaymentWall: function(parent) {
             var me = this;
 
             me.loaded = false;
@@ -188,7 +188,7 @@
          *
          * @method createPaymentWall
          */
-        clearPaymentSelection: function () {
+        clearPaymentSelection: function() {
             var me = this;
 
             if (me.loaded) {
@@ -202,7 +202,7 @@
          * @private
          * @method onLoad
          */
-        onLoad: function () {
+        onLoad: function() {
             var me = this;
 
             me.loaded = true;
@@ -217,7 +217,7 @@
          * @private
          * @method onEnableContinue
          */
-        onEnableContinue: function () {
+        onEnableContinue: function() {
             var me = this;
 
             if (me.loaded) {
@@ -233,7 +233,7 @@
          * @private
          * @method onDisableContinue
          */
-        onDisableContinue: function () {
+        onDisableContinue: function() {
             var me = this;
 
             if (me.loaded) {

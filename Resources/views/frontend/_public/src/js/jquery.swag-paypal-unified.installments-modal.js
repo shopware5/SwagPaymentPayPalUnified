@@ -22,6 +22,8 @@
  *
  */
 (function($, window) {
+    'use strict';
+
     $.plugin('swagPayPalUnifiedInstallmentsModal', {
 
         defaults: {
@@ -221,10 +223,10 @@
          *
          * @param { Object } response
          */
-        ajaxRequestCallbackSuccess: function (response) {
+        ajaxRequestCallbackSuccess: function(response) {
             var me = this;
 
-            $.publish('plugin/swagPayPalUnifiedInstallmentsModal/ajaxSuccess', [ me, response ]);
+            $.publish('plugin/swagPayPalUnifiedInstallmentsModal/ajaxSuccess', [me, response]);
 
             if (me.opts.mode === 'modal') {
                 var options = {
@@ -253,12 +255,12 @@
          * @method ajaxRequestCallbackError
          * @param { Object } response
          */
-        ajaxRequestCallbackError: function (response) {
+        ajaxRequestCallbackError: function(response) {
             var me = this;
 
             $.loadingIndicator.close();
 
-            $.publish('plugin/swagPayPalUnifiedInstallmentsModal/ajaxError', [ me, response ]);
+            $.publish('plugin/swagPayPalUnifiedInstallmentsModal/ajaxError', [me, response]);
         },
 
         /**

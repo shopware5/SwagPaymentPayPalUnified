@@ -99,11 +99,11 @@ class BackendOrder implements SubscriberInterface
         $orders = $view->getAssign('data');
 
         foreach ($orders as &$order) {
-            if (!$order['attribute']['paypalPaymentType']) {
+            if (!$order['attribute']['swagPaypalPaymentType']) {
                 continue;
             }
 
-            $order['payment']['description'] = $order['attribute']['paypalPaymentType'];
+            $order['payment']['description'] = $order['attribute']['swagPaypalPaymentType'];
         }
         unset($order);
 
