@@ -5,7 +5,6 @@
  *      requestDetails()
  *          - Requests the details using the configuration object.
  *
- *
  *  Events:
  *      plugin/swagPayPalUnifiedAjaxInstallments/init
  *          - Will be fired when this plugin was initialized.
@@ -32,7 +31,6 @@
  *          - Will be fired when the ajax request failed
  */
 ;(function($) {
-    'use strict';
 
     $.plugin('swagPayPalUnifiedAjaxInstallments', {
         defaults: {
