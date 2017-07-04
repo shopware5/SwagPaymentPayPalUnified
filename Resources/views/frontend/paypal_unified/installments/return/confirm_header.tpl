@@ -12,7 +12,7 @@
                 {/block}
 
                 {block name='frontend_paypal_unified_installments_financing_header_body_msg'}
-                    {include file='frontend/_includes/messages.tpl' type='warning' content='{s name="FinancingHeaderText"}{/s}'}
+                    {include file='frontend/_includes/messages.tpl' type='warning' content="{s name=FinancingHeaderText}{/s}"}
                 {/block}
             </div>
         {/block}
