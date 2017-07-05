@@ -31,6 +31,7 @@
  *          - Will be fired when the ajax request failed
  */
 ;(function($) {
+    'use strict';
 
     $.plugin('swagPayPalUnifiedAjaxInstallments', {
         defaults: {

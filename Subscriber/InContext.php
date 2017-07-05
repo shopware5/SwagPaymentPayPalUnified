@@ -90,7 +90,7 @@ class InContext implements SubscriberInterface
 
         $settings = $this->settingsService->getSettings();
 
-        if (!$settings->getActive() || !$settings->getUseInContext()) {
+        if (!$settings || !$settings->getActive() || !$settings->getUseInContext()) {
             return;
         }
 
