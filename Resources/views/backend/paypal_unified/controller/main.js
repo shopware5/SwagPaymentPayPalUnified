@@ -161,11 +161,11 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
             responseObject = Ext.JSON.decode(response.responseText);
 
         if (responseObject.success) {
-            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Unified{/s}', '{s name=growl/authorizeSuccess}The payment has been authorized successfully{/s}', me.window.title);
+            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Products{/s}', '{s name=growl/authorizeSuccess}The payment has been authorized successfully{/s}', me.window.title);
 
             me.loadDetails(me.record);
         } else {
-            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Unified{/s}', responseObject.message, me.window.title);
+            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Products{/s}', responseObject.message, me.window.title);
         }
 
         me.getSidebar().setLoading(false);
@@ -176,11 +176,11 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
             responseObject = Ext.JSON.decode(response.responseText);
 
         if (responseObject.success) {
-            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Unified{/s}', '{s name=growl/voidSuccess}The payment has been voided successfully.{/s}', me.window.title);
+            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Products{/s}', '{s name=growl/voidSuccess}The payment has been voided successfully.{/s}', me.window.title);
 
             me.loadDetails(me.record);
         } else {
-            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Unified{/s}', responseObject.message, me.window.title);
+            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Products{/s}', responseObject.message, me.window.title);
         }
 
         me.getSidebar().setLoading(false);
@@ -211,7 +211,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
 
             saleDetailsContainer.detailsContainer.disable();
         } else {
-            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Unified{/s}', details.message, me.window.title);
+            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Products{/s}', details.message, me.window.title);
         }
 
         sidebar.setLoading(false);
@@ -230,9 +230,9 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
         if (details.success) {
             me.loadDetails(me.record);
 
-            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Unified{/s}', '{s name=growl/refundSuccess}The refund was successful{/s}', me.window.title);
+            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Products{/s}', '{s name=growl/refundSuccess}The refund was successful{/s}', me.window.title);
         } else {
-            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Unified{/s}', details.message, me.window.title);
+            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Products{/s}', details.message, me.window.title);
         }
 
         me.getSidebar().setLoading(false);
