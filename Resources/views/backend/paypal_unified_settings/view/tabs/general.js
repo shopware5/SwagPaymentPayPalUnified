@@ -92,7 +92,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
                     xtype: 'checkbox',
                     name: 'active',
                     fieldLabel: '{s name="fieldset/activation/activate"}Enable for this shop{/s}',
-                    boxLabel: '{s name="fieldset/activation/activate/help"}Enable this option to activate PayPal Unified for this shop.{/s}',
+                    boxLabel: '{s name="fieldset/activation/activate/help"}Enable this option to activate PayPal Products for this shop.{/s}',
                     inputValue: true,
                     uncheckedValue: false,
                     handler: function(element, checked) {

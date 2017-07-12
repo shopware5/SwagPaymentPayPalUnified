@@ -119,7 +119,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
             ecSettings = me.getEcTab().getForm().getValues();
 
         if (!me.getGeneralTab().getForm().isValid()) {
-            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Unified{/s}', '{s name=growl/formValidationError}Please fill out all fields marked in red.{/s}', me.window.title);
+            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Products{/s}', '{s name=growl/formValidationError}Please fill out all fields marked in red.{/s}', me.window.title);
             return;
         }
 
@@ -134,7 +134,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
         me.record.save({
             success: function() {
                 me.window.setLoading(false);
-                Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Unified{/s}', '{s name=growl/saveSettings}The settings have been saved!{/s}', me.window.title);
+                Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Products{/s}', '{s name=growl/saveSettings}The settings have been saved!{/s}', me.window.title);
             },
             failure: function() {
                 me.window.setLoading(false);
@@ -190,9 +190,9 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
 
         if (success) {
             var responseObject = Ext.JSON.decode(response.responseText);
-            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Unified{/s}', '{s name=growl/registerWebhookSuccess}The webhook has been successfully registered to:{/s} ' + responseObject['url'], me.window.title);
+            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Products{/s}', '{s name=growl/registerWebhookSuccess}The webhook has been successfully registered to:{/s} ' + responseObject['url'], me.window.title);
         } else {
-            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Unified{/s}', '{s name=growl/registerWebhookError}Could not register webhook due to an unknown error.{/s}', me.window.title);
+            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Products{/s}', '{s name=growl/registerWebhookError}Could not register webhook due to an unknown error.{/s}', me.window.title);
         }
     },
 
@@ -207,9 +207,9 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
             successFlag = responseObject.success;
 
         if (successFlag) {
-            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Unified{/s}', '{s name=growl/validateAPISuccess}The API settings are valid.{/s}', me.window.title);
+            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Products{/s}', '{s name=growl/validateAPISuccess}The API settings are valid.{/s}', me.window.title);
         } else {
-            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Unified{/s}', '{s name=growl/validateAPIError}The API settings are invalid:{/s} ' + '<u>' + responseObject.message + '</u>', me.window.title);
+            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Products{/s}', '{s name=growl/validateAPIError}The API settings are invalid:{/s} ' + '<u>' + responseObject.message + '</u>', me.window.title);
         }
 
         me.window.setLoading(false);
@@ -224,7 +224,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
         var me = this;
 
         if (!success) {
-            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Unified{/s}', '{s name=growl/loadSettingsError}Could not load settings due to an unknown error{/s}', me.window.title);
+            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Products{/s}', '{s name=growl/loadSettingsError}Could not load settings due to an unknown error{/s}', me.window.title);
         }
 
         var generalTab = me.getGeneralTab(),
@@ -303,14 +303,14 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
             errorMessageText;
 
         if (successFlag) {
-            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Unified{/s}', '{s name=growl/testInstallmentsAvailabilitySuccess}PayPal installments integration is working correct.{/s}', me.window.title);
+            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Products{/s}', '{s name=growl/testInstallmentsAvailabilitySuccess}PayPal installments integration is working correct.{/s}', me.window.title);
         } else {
             errorMessageText = '{s name=growl/testInstallmentsAvailabilitySuccessError}PayPal installments integration is currently not available for you. Please contact the PayPal support.{/s} ';
             if (responseObject.message) {
                 errorMessageText += '<br>ErrorMessage:<br><u>' + responseObject.message + '</u>';
             }
 
-            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Unified{/s}', errorMessageText, me.window.title);
+            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Products{/s}', errorMessageText, me.window.title);
         }
 
         me.window.setLoading(false);
