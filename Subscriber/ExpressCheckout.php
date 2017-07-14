@@ -143,6 +143,9 @@ class ExpressCheckout implements SubscriberInterface
 
         $view->assign('paypalUnifiedModeSandbox', $settings->getSandbox());
         $view->assign('paypalUnifiedUseInContext', $settings->getUseInContext());
+        $view->assign('paypalUnifiedEcButtonStyleColor', $settings->getEcButtonStyleColor());
+        $view->assign('paypalUnifiedEcButtonStyleShape', $settings->getEcButtonStyleShape());
+        $view->assign('paypalUnifiedEcButtonStyleSize', $settings->getEcButtonStyleSize());
     }
 
     /**
@@ -207,6 +210,9 @@ class ExpressCheckout implements SubscriberInterface
             $view->assign('paypalUnifiedEcDetailActive', true);
             $view->assign('paypalUnifiedModeSandbox', $settings->getSandbox());
             $view->assign('paypalUnifiedUseInContext', $settings->getUseInContext());
+            $view->assign('paypalUnifiedEcButtonStyleColor', $settings->getEcButtonStyleColor());
+            $view->assign('paypalUnifiedEcButtonStyleShape', $settings->getEcButtonStyleShape());
+            $view->assign('paypalUnifiedEcButtonStyleSize', $settings->getEcButtonStyleSize());
         }
     }
 

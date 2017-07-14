@@ -7,6 +7,18 @@
 }
 
 .product--table .paypal-unified-ec--button-container {
-    .unitize(margin-top, -5);
-    .unitize(margin-bottom, 10);
+    .unitize(margin-top, 0);
+}
+
+@media screen and(min-width: @phoneLandscapeViewportWidth) {
+    .product--table .paypal-unified-ec--button-container {
+        .unitize(margin-top, 10);
+    }
+}
+
+@media screen and(min-width: @tabletViewportWidth) {
+    .product--table .paypal-unified-ec--button-container {
+        .unitize(margin-top, -5);
+        .unitize(margin-bottom, 10);
+    }
 }

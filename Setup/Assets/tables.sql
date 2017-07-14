@@ -34,7 +34,10 @@ CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_settings (
     `installments_presentment_cart`     INT(11),
     `installments_show_logo`            TINYINT(1) NOT NULL,
     `ec_active`                         TINYINT(1) NOT NULL,
-    `ec_detail_active`                  TINYINT(1) NOT NULL
+    `ec_detail_active`                  TINYINT(1) NOT NULL,
+    `ec_button_style_color`             VARCHAR(255),
+    `ec_button_style_shape`             VARCHAR(255),
+    `ec_button_style_size`              VARCHAR(255)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_financing_information (

@@ -9,6 +9,9 @@
                 {/if}
                  data-paypalMode="{if $paypalUnifiedModeSandbox}sandbox{else}production{/if}"
                  data-createPaymentUrl="{url module=widgets controller=PaypalUnifiedExpressCheckout action=createPayment forceSecure}"
+                 data-color="{$paypalUnifiedEcButtonStyleColor}"
+                 data-shape="{$paypalUnifiedEcButtonStyleShape}"
+                 data-size="{$paypalUnifiedEcButtonStyleSize}"
                  data-detailPage="true"
                 {block name='paypal_unified_ec_button_container_detail_data'}{/block}>
             </div>

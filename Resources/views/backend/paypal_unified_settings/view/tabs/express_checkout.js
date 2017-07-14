@@ -34,10 +34,16 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.ExpressCheckout', {
 
         me.ecActivate = me.createEcActivate();
         me.ecDetailActivate = me.createEcDetailActivate();
+        me.ecButtonStyleColor = me.createEcButtonStyleColor();
+        me.ecButtonStyleShape = me.createEcButtonStyleShape();
+        me.ecButtonStyleSize = me.createEcButtonStyleSize();
 
         return [
             me.ecActivate,
-            me.ecDetailActivate
+            me.ecDetailActivate,
+            me.ecButtonStyleColor,
+            me.ecButtonStyleShape,
+            me.ecButtonStyleSize
         ];
     },
 
@@ -72,6 +78,45 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.ExpressCheckout', {
     },
 
     /**
+     * @returns { Ext.form.field.ComboBox }
+     */
+    createEcButtonStyleColor: function() {
+        return Ext.create('Ext.form.field.ComboBox', {
+            name: 'ecButtonStyleColor',
+            fieldLabel: '{s name=field/ecButtonStyleColor}Button color{/s}',
+            store: Ext.create('Shopware.apps.PaypalUnifiedSettings.store.EcButtonStyleColor'),
+            valueField: 'id',
+            disabled: true
+        });
+    },
+
+    /**
+     * @returns { Ext.form.field.ComboBox }
+     */
+    createEcButtonStyleShape: function() {
+        return Ext.create('Ext.form.field.ComboBox', {
+            name: 'ecButtonStyleShape',
+            fieldLabel: '{s name=field/ecButtonStyleShape}Button shape{/s}',
+            store: Ext.create('Shopware.apps.PaypalUnifiedSettings.store.EcButtonStyleShape'),
+            valueField: 'id',
+            disabled: true
+        });
+    },
+
+    /**
+     * @returns { Ext.form.field.ComboBox }
+     */
+    createEcButtonStyleSize: function() {
+        return Ext.create('Ext.form.field.ComboBox', {
+            name: 'ecButtonStyleSize',
+            fieldLabel: '{s name=field/ecButtonStyleSize}Button size{/s}',
+            store: Ext.create('Shopware.apps.PaypalUnifiedSettings.store.EcButtonStyleSize'),
+            valueField: 'id',
+            disabled: true
+        });
+    },
+
+    /**
      * @param { Shopware.apps.Base.view.element.Boolean } element
      * @param { Boolean } checked
      */
@@ -79,6 +124,9 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.ExpressCheckout', {
         var me = this;
 
         me.ecDetailActivate.setDisabled(!checked);
+        me.ecButtonStyleColor.setDisabled(!checked);
+        me.ecButtonStyleShape.setDisabled(!checked);
+        me.ecButtonStyleSize.setDisabled(!checked);
     }
 });
 // {/block}

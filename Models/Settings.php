@@ -189,6 +189,24 @@ class Settings extends ModelEntity
     private $ecDetailActive;
 
     /**
+     * @var string
+     * @ORM\Column(name="ec_button_style_color", type="string")
+     */
+    private $ecButtonStyleColor;
+
+    /**
+     * @var string
+     * @ORM\Column(name="ec_button_style_shape", type="string")
+     */
+    private $ecButtonStyleShape;
+
+    /**
+     * @var string
+     * @ORM\Column(name="ec_button_style_size", type="string")
+     */
+    private $ecButtonStyleSize;
+
+    /**
      * @return int
      */
     public function getId()
@@ -578,6 +596,54 @@ class Settings extends ModelEntity
     public function setEcDetailActive($ecDetailActive)
     {
         $this->ecDetailActive = $ecDetailActive;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getEcButtonStyleColor()
+    {
+        return $this->ecButtonStyleColor;
+    }
+
+    /**
+     * @param mixed $ecButtonStyleColor
+     */
+    public function setEcButtonStyleColor($ecButtonStyleColor)
+    {
+        $this->ecButtonStyleColor = $ecButtonStyleColor;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEcButtonStyleShape()
+    {
+        return $this->ecButtonStyleShape;
+    }
+
+    /**
+     * @param string $ecButtonStyleShape
+     */
+    public function setEcButtonStyleShape($ecButtonStyleShape)
+    {
+        $this->ecButtonStyleShape = $ecButtonStyleShape;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEcButtonStyleSize()
+    {
+        return $this->ecButtonStyleSize;
+    }
+
+    /**
+     * @param string $ecButtonStyleSize
+     */
+    public function setEcButtonStyleSize($ecButtonStyleSize)
+    {
+        $this->ecButtonStyleSize = $ecButtonStyleSize;
     }
 
     /**
