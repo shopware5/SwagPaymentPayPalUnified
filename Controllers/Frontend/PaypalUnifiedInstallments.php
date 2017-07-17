@@ -34,6 +34,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedInstallments extends \Enlight_C
             'controller' => 'PaypalUnified',
             'action' => 'gateway',
             'forceSecure' => true,
+            'installments' => true,
         ]);
     }
 
@@ -55,6 +56,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedInstallments extends \Enlight_C
             'paymentId' => $paymentId,
             'PayerID' => $payerId,
             'basketId' => $basketId,
+            'installments' => true,
             'forceSecure' => 1,
         ]);
     }

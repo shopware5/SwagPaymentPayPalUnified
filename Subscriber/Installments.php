@@ -171,8 +171,9 @@ class Installments implements SubscriberInterface
         $paymentId = $request->get('paymentId');
         $payerId = $request->get('PayerID');
         $basketId = $request->get('basketId');
+        $installmentsFlag = $request->get('installments');
 
-        if ($paymentId === null || $payerId === null || $request->getActionName() !== 'confirm') {
+        if (!$installmentsFlag || $paymentId === null || $payerId === null || $request->getActionName() !== 'confirm') {
             return;
         }
 

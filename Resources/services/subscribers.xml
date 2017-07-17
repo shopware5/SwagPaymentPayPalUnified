@@ -45,6 +45,8 @@
         <service id="paypal_unified.subscriber.payment_means" class="SwagPaymentPayPalUnified\Subscriber\PaymentMeans">
             <argument type="service" id="dbal_connection"/>
             <argument type="service" id="paypal_unified.settings_service"/>
+            <argument type="service" id="paypal_unified.installments.validation_service"/>
+            <argument type="service" id="session"/>
             <tag name="shopware.event_subscriber"/>
         </service>
 

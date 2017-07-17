@@ -27,6 +27,7 @@ namespace SwagPaymentPayPalUnified\Subscriber;
 use Doctrine\DBAL\Connection;
 use Enlight\Event\SubscriberInterface;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
+use SwagPaymentPayPalUnified\Components\Services\Installments\ValidationService;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 
 class PaymentMeans implements SubscriberInterface
@@ -47,15 +48,33 @@ class PaymentMeans implements SubscriberInterface
     private $settingsService;
 
     /**
-     * @param Connection               $connection
-     * @param SettingsServiceInterface $settingsService
+     * @var ValidationService
      */
-    public function __construct(Connection $connection, SettingsServiceInterface $settingsService)
-    {
+    private $installmentsValidationService;
+
+    /**
+     * @var \Enlight_Components_Session_Namespace
+     */
+    private $session;
+
+    /**
+     * @param Connection                            $connection
+     * @param SettingsServiceInterface              $settingsService
+     * @param ValidationService                     $installmentsValidationService
+     * @param \Enlight_Components_Session_Namespace $session
+     */
+    public function __construct(
+        Connection $connection,
+        SettingsServiceInterface $settingsService,
+        ValidationService $installmentsValidationService,
+        \Enlight_Components_Session_Namespace $session
+    ) {
         $paymentMethodProvider = new PaymentMethodProvider();
         $this->unifiedPaymentId = $paymentMethodProvider->getPaymentId($connection);
         $this->installmentsPaymentId = $paymentMethodProvider->getPaymentId($connection, PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME);
         $this->settingsService = $settingsService;
+        $this->installmentsValidationService = $installmentsValidationService;
+        $this->session = $session;
     }
 
     /**
@@ -88,6 +107,17 @@ class PaymentMeans implements SubscriberInterface
                 && (!$this->settingsService->hasSettings() || !$this->settingsService->get('active') || !$this->settingsService->get('installments_active'))
             ) {
                 unset($availableMethods[$index]);
+            }
+
+            if ((int) $paymentMethod['id'] === $this->installmentsPaymentId) {
+                $productPrice = (float) $this->session->get('sOrderVariables')['sAmount'];
+                $customerData = $this->session->get('sOrderVariables')['sUserData'];
+
+                if (!$this->installmentsValidationService->validatePrice($productPrice)
+                    || !$this->installmentsValidationService->validateCustomer($customerData)
+                ) {
+                    unset($availableMethods[$index]);
+                }
             }
         }
 

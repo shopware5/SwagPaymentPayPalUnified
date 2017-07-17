@@ -35,4 +35,24 @@ class ValidationService
     {
         return $productPrice >= 99 && $productPrice <= 5000;
     }
+
+    /**
+     * @param array $customerData
+     *
+     * @return bool
+     */
+    public function validateCustomer(array $customerData)
+    {
+        //Check if the customer belongs to a company
+        if (!empty($customerData['billingaddress']['company'])) {
+            return false;
+        }
+
+        //Check if the customer is german
+        if ($customerData['additional']['country']['countryiso'] !== 'DE') {
+            return false;
+        }
+
+        return true;
+    }
 }
