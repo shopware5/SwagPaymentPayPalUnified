@@ -25,9 +25,10 @@
 namespace SwagPaymentPayPalUnified\PayPalBundle\Services;
 
 use Shopware\Components\HttpClient\RequestException;
-use Shopware\Components\Logger;
 use Shopware\Components\Model\ModelManager;
+use Shopware\Models\Shop\Repository as ShopRepository;
 use Shopware\Models\Shop\Shop;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\WebProfileResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile\WebProfileFlowConfig;
@@ -47,7 +48,7 @@ class WebProfileService
     private $settings;
 
     /**
-     * @var Logger
+     * @var LoggerServiceInterface
      */
     private $logger;
 
@@ -57,17 +58,17 @@ class WebProfileService
     private $modelManager;
 
     /**
-     * @param ClientService $client
-     * @param Logger        $pluginLogger
-     * @param ModelManager  $modelManager
+     * @param ClientService          $client
+     * @param LoggerServiceInterface $logger
+     * @param ModelManager           $modelManager
      */
     public function __construct(
         ClientService $client,
-        Logger $pluginLogger,
+        LoggerServiceInterface $logger,
         ModelManager $modelManager
     ) {
         $this->client = $client;
-        $this->logger = $pluginLogger;
+        $this->logger = $logger;
         $this->modelManager = $modelManager;
     }
 
@@ -130,7 +131,9 @@ class WebProfileService
      */
     private function getCurrentWebProfile($forExpressCheckout)
     {
+        /** @var ShopRepository $shopRepo */
         $shopRepo = $this->modelManager->getRepository(Shop::class);
+
         /** @var Shop $shop */
         $shop = $shopRepo->getActiveById($this->settings['shopId']);
         if (!$shop) {

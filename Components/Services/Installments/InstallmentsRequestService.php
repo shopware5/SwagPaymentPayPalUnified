@@ -25,16 +25,16 @@
 namespace SwagPaymentPayPalUnified\Components\Services\Installments;
 
 use Shopware\Components\HttpClient\RequestException;
-use Shopware\Components\Logger;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\InstallmentsResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Installments\FinancingRequest;
 
 class InstallmentsRequestService
 {
     /**
-     * @var Logger
+     * @var LoggerServiceInterface
      */
-    private $pluginLogger;
+    private $logger;
 
     /**
      * @var InstallmentsResource
@@ -42,13 +42,13 @@ class InstallmentsRequestService
     private $resource;
 
     /**
-     * @param InstallmentsResource $resource
-     * @param Logger               $logger
+     * @param InstallmentsResource   $resource
+     * @param LoggerServiceInterface $logger
      */
-    public function __construct(InstallmentsResource $resource, Logger $logger)
+    public function __construct(InstallmentsResource $resource, LoggerServiceInterface $logger)
     {
         $this->resource = $resource;
-        $this->pluginLogger = $logger;
+        $this->logger = $logger;
     }
 
     /**
@@ -69,8 +69,8 @@ class InstallmentsRequestService
         try {
             return $this->resource->getFinancingOptions($financingRequest);
         } catch (RequestException $e) {
-            $this->pluginLogger->error(
-                'PayPal Unified: Could not get installments financing options due to a communication failure',
+            $this->logger->error(
+                'Could not get installments financing options due to a communication failure',
                 [
                     $e->getMessage(),
                     $e->getBody(),

@@ -24,11 +24,11 @@
 
 namespace SwagPaymentPayPalUnified\WebhookHandlers;
 
-use Shopware\Components\Logger;
 use Shopware\Components\Model\ModelManager;
 use Shopware\Models\Order\Order;
 use Shopware\Models\Order\Status;
 use SwagPaymentPayPalUnified\Components\PaymentStatus;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\Webhook\WebhookEventTypes;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\Webhook\WebhookHandler;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Webhook;
@@ -36,9 +36,9 @@ use SwagPaymentPayPalUnified\PayPalBundle\Structs\Webhook;
 class SaleComplete implements WebhookHandler
 {
     /**
-     * @var Logger
+     * @var LoggerServiceInterface
      */
-    private $pluginLogger;
+    private $logger;
 
     /**
      * @var ModelManager
@@ -46,12 +46,12 @@ class SaleComplete implements WebhookHandler
     private $modelManager;
 
     /**
-     * @param Logger       $pluginLogger
-     * @param ModelManager $modelManager
+     * @param LoggerServiceInterface $logger
+     * @param ModelManager           $modelManager
      */
-    public function __construct(Logger $pluginLogger, ModelManager $modelManager)
+    public function __construct(LoggerServiceInterface $logger, ModelManager $modelManager)
     {
-        $this->pluginLogger = $pluginLogger;
+        $this->logger = $logger;
         $this->modelManager = $modelManager;
     }
 
@@ -75,7 +75,7 @@ class SaleComplete implements WebhookHandler
             $orderStatusModel = $this->modelManager->getRepository(Status::class)->find(PaymentStatus::PAYMENT_STATUS_APPROVED);
 
             if ($orderRepository === null) {
-                $this->pluginLogger->error('PayPal Unified: Could not find associated order with the temporaryId ' . $webhook->getResource()['parent_payment']);
+                $this->logger->error('[SaleComplete-Webhook] Could not find associated order with the temporaryID ' . $webhook->getResource()['parent_payment'], ['webhook' => $webhook->toArray()]);
 
                 return false;
             }
@@ -87,7 +87,7 @@ class SaleComplete implements WebhookHandler
 
             return true;
         } catch (\Exception $ex) {
-            $this->pluginLogger->error('PayPal Unified: (Webhook: SaleComplete) Could not write entity to database', [$ex->getMessage()]);
+            $this->logger->error('[SaleComplete-Webhook] Could not update entity', ['message' => $ex->getMessage(), 'stacktrace' => $ex->getTrace()]);
         }
 
         return false;

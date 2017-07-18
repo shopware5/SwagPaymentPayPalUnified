@@ -27,9 +27,9 @@ namespace SwagPaymentPayPalUnified\PayPalBundle\Services;
 use Shopware\Components\HttpClient\GuzzleFactory;
 use Shopware\Components\HttpClient\GuzzleHttpClient as GuzzleClient;
 use Shopware\Components\HttpClient\RequestException;
-use Shopware\Components\Logger;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\PayPalBundle\BaseURL;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\PartnerAttributionId;
 use SwagPaymentPayPalUnified\PayPalBundle\RequestType;
@@ -54,7 +54,7 @@ class ClientService
     private $tokenService;
 
     /**
-     * @var Logger
+     * @var LoggerServiceInterface
      */
     private $logger;
 
@@ -76,14 +76,14 @@ class ClientService
     /**
      * @param SettingsServiceInterface $settingsService
      * @param TokenService             $tokenService
-     * @param Logger                   $logger
+     * @param LoggerServiceInterface   $logger
      * @param GuzzleFactory            $factory
      * @param DependencyProvider       $dependencyProvider
      */
     public function __construct(
         SettingsServiceInterface $settingsService,
         TokenService $tokenService,
-        Logger $logger,
+        LoggerServiceInterface $logger,
         GuzzleFactory $factory,
         DependencyProvider $dependencyProvider
     ) {
@@ -157,6 +157,8 @@ class ClientService
             unset($this->headers['content-type']);
         }
 
+        $this->logger->notify('Sending request [' . $type . '] to ' . $resourceUri, ['payload' => $data]);
+
         switch ($type) {
             case RequestType::POST:
                 $response = $this->client->post($resourceUri, $this->headers, $data)->getBody();
@@ -185,6 +187,8 @@ class ClientService
             default:
                 throw new \RuntimeException('An unsupported request type was provided. The type was: ' . $type);
         }
+
+        $this->logger->notify('Received data from ' . $resourceUri, ['payload' => $response]);
 
         return json_decode($response, true);
     }
@@ -231,15 +235,16 @@ class ClientService
             $token = $this->tokenService->getToken($this, $credentials, $this->shopId);
             $this->setHeader('Authorization', $token->getTokenType() . ' ' . $token->getAccessToken());
         } catch (RequestException $requestException) {
-            $this->logger->error('PayPal: Could not create authentication - request exception', [
-                $requestException->getBody(),
-                $requestException->getMessage(),
+            $this->logger->error('Could not create authentication - request exception', [
+                'payload' => $requestException->getBody(),
+                'message' => $requestException->getMessage(),
             ]);
 
             throw $requestException;
         } catch (\Exception $e) {
-            $this->logger->error('PayPal: Could not create authentication - unknown exception', [
-                $e->getMessage(),
+            $this->logger->error('Could not create authentication - unknown exception', [
+                'message' => $e->getMessage(),
+                'stacktrace' => $e->getTraceAsString(),
             ]);
         }
     }

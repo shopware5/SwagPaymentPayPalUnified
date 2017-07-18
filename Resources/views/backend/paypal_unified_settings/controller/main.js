@@ -266,6 +266,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
 
         me.getGeneralTab().restContainer.setDisabled(!active);
         me.getGeneralTab().behaviorContainer.setDisabled(!active);
+        me.getGeneralTab().errorHandlingContainer.setDisabled(!active);
 
         me.getPaypalTab().setDisabled(!active);
         me.getPlusTab().setDisabled(!active);

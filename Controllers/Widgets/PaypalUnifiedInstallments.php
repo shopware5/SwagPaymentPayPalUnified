@@ -22,19 +22,19 @@
  * our trademarks remain entirely with us.
  */
 
-use Shopware\Components\Logger;
 use SwagPaymentPayPalUnified\Components\Installments\FinancingOptionsHandler;
 use SwagPaymentPayPalUnified\Components\Services\Installments\CompanyInfoService;
 use SwagPaymentPayPalUnified\Components\Services\Installments\InstallmentsRequestService;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\InstallmentsResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Installments\FinancingResponse;
 
 class Shopware_Controllers_Widgets_PaypalUnifiedInstallments extends Enlight_Controller_Action
 {
     /**
-     * @var Logger
+     * @var LoggerServiceInterface
      */
-    private $pluginLogger;
+    private $logger;
 
     /**
      * @var InstallmentsRequestService
@@ -53,7 +53,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedInstallments extends Enlight_Con
 
     public function preDispatch()
     {
-        $this->pluginLogger = $this->get('pluginlogger');
+        $this->logger = $this->get('paypal_unified.logger_service');
         $this->installmentsResource = $this->get('paypal_unified.installments_resource');
         $this->installmentsRequestService = $this->get('paypal_unified.installments.installments_request_service');
         $this->companyInfoService = $this->container->get('paypal_unified.installments.company_info_service');
@@ -109,7 +109,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedInstallments extends Enlight_Con
         $response = $this->installmentsRequestService->getList($productPrice);
 
         if (!isset($response['financing_options'][0])) {
-            $this->pluginLogger->error('PayPal Unified: Could not find financing options in response', ['product price' => $productPrice]);
+            $this->logger->error('Could not find financing options in response', ['payload' => $response, 'product-price' => $productPrice]);
 
             return;
         }
@@ -143,7 +143,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedInstallments extends Enlight_Con
         $response = $this->installmentsRequestService->getList($productPrice);
 
         if (!isset($response['financing_options'][0])) {
-            $this->pluginLogger->error('PayPal Unified: Could not find financing options in response');
+            $this->logger->error('Could not find financing options in response', ['payload' => $response, 'product-price' => $productPrice]);
 
             return;
         }

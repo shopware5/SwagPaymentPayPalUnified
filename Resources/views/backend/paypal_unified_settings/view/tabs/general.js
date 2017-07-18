@@ -33,6 +33,11 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
      */
     activationContainer: null,
 
+    /**
+     * @type { Ext.form.FieldSet }
+     */
+    errorHandlingContainer: null,
+
     initComponent: function () {
         var me = this;
 
@@ -76,7 +81,8 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
         return [
             me.createActivationContainer(),
             me.createRestContainer(),
-            me.createBehaviorContainer()
+            me.createBehaviorContainer(),
+            me.createErrorHandlingContainer(),
         ];
     },
 
@@ -200,6 +206,37 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
         });
 
         return me.behaviorContainer;
+    },
+
+    /**
+     * @returns { Ext.form.FieldSet }
+     */
+    createErrorHandlingContainer: function() {
+        var me = this;
+
+        me.errorHandlingContainer = Ext.create('Ext.form.FieldSet', {
+            title: '{s name="fieldset/errorHandling/title"}Error handling{/s}',
+            disabled: true,
+
+            items: [{
+                xtype: 'checkbox',
+                name: 'displayErrors',
+                helpText: '{s name=fieldset/errorHandling/displayErrors/help}If enabled, the communication error message will be displayed in the store front{/s}',
+                fieldLabel: '{s name=fieldset/errorHandling/displayErrors}Display errors{/s}',
+                inputValue: true,
+                uncheckedValue: false
+            }, {
+                xtype: 'combobox',
+                name: 'logLevel',
+                helpText: '{s name=fieldset/errorHandling/logLevel/help}<u>Normal</u><br>Only errors will be logged to file.<br><br><u>Extended</u>Normal, Warning and Error messages will be logged to file. This is useful for debug environments.{/s}',
+                fieldLabel: '{s name=fieldset/errorHandling/logLevel}Logging{/s}',
+                store: Ext.create('Shopware.apps.PaypalUnifiedSettings.store.LogLevel'),
+                valueField: 'id',
+                value: 0
+            }]
+        });
+
+        return me.errorHandlingContainer;
     },
 
     /**

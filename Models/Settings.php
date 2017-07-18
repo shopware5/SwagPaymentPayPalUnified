@@ -189,6 +189,18 @@ class Settings extends ModelEntity
     private $ecDetailActive;
 
     /**
+     * @var int
+     * @ORM\Column(name="log_level", type="integer")
+     */
+    private $logLevel;
+
+    /**
+     * @var bool
+     * @ORM\Column(name="display_errors", type="boolean", nullable=false)
+     */
+    private $displayErrors;
+
+    /**
      * @var bool
      * @ORM\Column(name="ec_submit_cart", type="boolean", nullable=false)
      */
@@ -602,6 +614,38 @@ class Settings extends ModelEntity
     public function setEcDetailActive($ecDetailActive)
     {
         $this->ecDetailActive = $ecDetailActive;
+    }
+
+    /**
+     * @return int
+     */
+    public function getLogLevel()
+    {
+        return $this->logLevel;
+    }
+
+    /**
+     * @param int $logLevel
+     */
+    public function setLogLevel($logLevel)
+    {
+        $this->logLevel = $logLevel;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getDisplayErrors()
+    {
+        return $this->displayErrors;
+    }
+
+    /**
+     * @param bool $displayErrors
+     */
+    public function setDisplayErrors($displayErrors)
+    {
+        $this->displayErrors = $displayErrors;
     }
 
     /**

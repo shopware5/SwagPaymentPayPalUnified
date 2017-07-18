@@ -24,7 +24,6 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\PayPalBundle\Services;
 
-use Shopware\Components\Logger;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\Webhook\WebhookException;
 use SwagPaymentPayPalUnified\PayPalBundle\Services\WebhookService;
 use SwagPaymentPayPalUnified\WebhookHandlers\SaleComplete;
@@ -41,7 +40,7 @@ class WebhookServiceTest extends \PHPUnit_Framework_TestCase
     public function test_register_webhook()
     {
         $service = new WebhookService();
-        $webhook = new SaleComplete(new Logger('testlogger'), Shopware()->Container()->get('models'));
+        $webhook = new SaleComplete(Shopware()->Container()->get('paypal_unified.logger_service'), Shopware()->Container()->get('models'));
 
         $service->registerWebhooks([$webhook]);
 
@@ -51,7 +50,7 @@ class WebhookServiceTest extends \PHPUnit_Framework_TestCase
     public function test_register_webhook_exception()
     {
         $service = new WebhookService();
-        $webhook = new SaleComplete(new Logger('testlogger'), Shopware()->Container()->get('models'));
+        $webhook = new SaleComplete(Shopware()->Container()->get('paypal_unified.logger_service'), Shopware()->Container()->get('models'));
 
         $service->registerWebhook($webhook);
 
@@ -62,7 +61,7 @@ class WebhookServiceTest extends \PHPUnit_Framework_TestCase
     public function test_webhook_exists()
     {
         $service = new WebhookService();
-        $webhook = new SaleComplete(new Logger('testlogger'), Shopware()->Container()->get('models'));
+        $webhook = new SaleComplete(Shopware()->Container()->get('paypal_unified.logger_service'), Shopware()->Container()->get('models'));
 
         $service->registerWebhook($webhook);
 
@@ -72,7 +71,7 @@ class WebhookServiceTest extends \PHPUnit_Framework_TestCase
     public function test_webhook_not_exist()
     {
         $service = new WebhookService();
-        $webhook = new SaleComplete(new Logger('testlogger'), Shopware()->Container()->get('models'));
+        $webhook = new SaleComplete(Shopware()->Container()->get('paypal_unified.logger_service'), Shopware()->Container()->get('models'));
 
         $service->registerWebhook($webhook);
 
@@ -90,7 +89,7 @@ class WebhookServiceTest extends \PHPUnit_Framework_TestCase
     public function test_get_webhook_handlers()
     {
         $service = new WebhookService();
-        $webhook = new SaleComplete(new Logger('testlogger'), Shopware()->Container()->get('models'));
+        $webhook = new SaleComplete(Shopware()->Container()->get('paypal_unified.logger_service'), Shopware()->Container()->get('models'));
 
         $service->registerWebhook($webhook);
 
