@@ -27,6 +27,7 @@ use Shopware\Components\Logger;
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
 use SwagPaymentPayPalUnified\Components\ExpressCheckout\CustomerService;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
+use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\PaymentResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\ErrorResponse;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
@@ -90,6 +91,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedExpressCheckout extends \Enlight
         $requestParams->setBasketData($basketData);
         $requestParams->setUserData($userData);
         $requestParams->setWebProfileId($webProfileId);
+        $requestParams->setPaymentType(PaymentType::PAYPAL_EXPRESS);
 
         try {
             /** @var Payment $params */

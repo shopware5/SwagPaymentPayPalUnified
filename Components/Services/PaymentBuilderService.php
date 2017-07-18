@@ -29,6 +29,7 @@ use SwagPaymentPayPalUnified\Components\PaymentBuilderInterface;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentIntent;
+use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Payer;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\RedirectUrls;
@@ -119,12 +120,16 @@ class PaymentBuilderService implements PaymentBuilderInterface
         $amount->setCurrency($this->basketData['sCurrencyName']);
         $amount->setTotal(number_format($this->getTotalAmount(), 2));
 
-        $itemList = new ItemList();
-        $itemList->setItems($this->getItemList());
-
         $transactions = new Transactions();
         $transactions->setAmount($amount);
-        $transactions->setItemList($itemList);
+
+        //don't submit the cart if the option is false and the selected payment method is express checkout
+        if ($params->getPaymentType() !== PaymentType::PAYPAL_EXPRESS || $this->settings->get('ec_submit_cart')) {
+            $itemList = new ItemList();
+            $itemList->setItems($this->getItemList());
+
+            $transactions->setItemList($itemList);
+        }
 
         $requestParameters->setPayer($payer);
         $requestParameters->setRedirectUrls($redirectUrls);

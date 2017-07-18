@@ -50,9 +50,11 @@ class ExpressCheckoutPaymentBuilderService extends PaymentBuilderService
             $payment->getTransactions()->getAmount()->setCurrency($currency);
         }
 
-        foreach ($payment->getTransactions()->getItemList()->getItems() as $item) {
-            if (!$item->getCurrency()) {
-                $item->setCurrency($currency);
+        if ($payment->getTransactions()->getItemList() !== null) {
+            foreach ($payment->getTransactions()->getItemList()->getItems() as $item) {
+                if (!$item->getCurrency()) {
+                    $item->setCurrency($currency);
+                }
             }
         }
 

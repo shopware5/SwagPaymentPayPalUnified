@@ -18,6 +18,36 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.ExpressCheckout', {
         labelWidth: 180
     },
 
+    /**
+     * @type { Ext.form.field.Checkbox }
+     */
+    ecActivate: null,
+
+    /**
+     * @type { Ext.form.field.Checkbox }
+     */
+    ecDetailActivate: null,
+
+    /**
+     * @type { Ext.form.field.ComboBox }
+     */
+    ecButtonStyleColor: null,
+
+    /**
+     * @type { Ext.form.field.ComboBox }
+     */
+    ecButtonStyleShape: null,
+
+    /**
+     * @type { Ext.form.field.ComboBox }
+     */
+    ecButtonStyleSize: null,
+
+    /**
+     * @type { Ext.form.field.Checkbox }
+     */
+    ecSubmitCart: null,
+
     initComponent: function() {
         var me = this;
 
@@ -37,13 +67,15 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.ExpressCheckout', {
         me.ecButtonStyleColor = me.createEcButtonStyleColor();
         me.ecButtonStyleShape = me.createEcButtonStyleShape();
         me.ecButtonStyleSize = me.createEcButtonStyleSize();
+        me.ecSubmitCart = me.createEcSubmitCart();
 
         return [
             me.ecActivate,
             me.ecDetailActivate,
             me.ecButtonStyleColor,
             me.ecButtonStyleShape,
-            me.ecButtonStyleSize
+            me.ecButtonStyleSize,
+            me.ecSubmitCart
         ];
     },
 
@@ -71,6 +103,20 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.ExpressCheckout', {
             name: 'ecDetailActive',
             fieldLabel: '{s name=field/ecDetailActivate}Show on detail page{/s}',
             boxLabel: '{s name=field/ecDetailActivate/help}If this option is active, the Express Checkout button will be shown on each product detail page.{/s}',
+            inputValue: true,
+            uncheckedValue: false,
+            disabled: true
+        });
+    },
+
+    /**
+     * @returns { Ext.form.field.Checkbox }
+     */
+    createEcSubmitCart: function() {
+        return Ext.create('Ext.form.field.Checkbox', {
+            name: 'ecSubmitCart',
+            fieldLabel: '{s name=field/submitCart}Submit cart{/s}',
+            boxLabel: '{s name=field/submitCart/help}If this option is active, the cart will be submitted to PayPal for Express orders{/s}',
             inputValue: true,
             uncheckedValue: false,
             disabled: true
@@ -124,6 +170,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.ExpressCheckout', {
         var me = this;
 
         me.ecDetailActivate.setDisabled(!checked);
+        me.ecSubmitCart.setDisabled(!checked);
         me.ecButtonStyleColor.setDisabled(!checked);
         me.ecButtonStyleShape.setDisabled(!checked);
         me.ecButtonStyleSize.setDisabled(!checked);
