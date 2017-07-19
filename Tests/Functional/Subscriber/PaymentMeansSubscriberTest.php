@@ -36,7 +36,7 @@ class PaymentMeansSubscriberTest extends \PHPUnit_Framework_TestCase
 
     public function test_can_be_created()
     {
-        $subscriber = new PaymentMeans(Shopware()->Container()->get('dbal_connection'), new SettingsServiceMock());
+        $subscriber = $this->getSubscriber();
         $this->assertEquals(PaymentMeans::class, get_class($subscriber));
     }
 
@@ -49,7 +49,7 @@ class PaymentMeansSubscriberTest extends \PHPUnit_Framework_TestCase
 
     public function test_onFilterPaymentMeans_without_available_methods()
     {
-        $subscriber = new PaymentMeans(Shopware()->Container()->get('dbal_connection'), new SettingsServiceMock());
+        $subscriber = $this->getSubscriber();
 
         $args = new EventArgsMockWithoutReturn();
         $subscriber->onFilterPaymentMeans($args);
@@ -59,7 +59,7 @@ class PaymentMeansSubscriberTest extends \PHPUnit_Framework_TestCase
 
     public function test_onFilterPaymentMeans_without_unified_method()
     {
-        $subscriber = new PaymentMeans(Shopware()->Container()->get('dbal_connection'), new SettingsServiceMock());
+        $subscriber = $this->getSubscriber();
 
         $args = new EventArgsMockWithoutUnifiedReturn();
         $subscriber->onFilterPaymentMeans($args);
@@ -69,7 +69,7 @@ class PaymentMeansSubscriberTest extends \PHPUnit_Framework_TestCase
 
     public function test_onFilterPaymentMeans_has_unified_method()
     {
-        $subscriber = new PaymentMeans(Shopware()->Container()->get('dbal_connection'), Shopware()->Container()->get('paypal_unified.settings_service'));
+        $subscriber = $this->getSubscriber(false);
         $this->createTestSettings();
 
         $args = new EventArgsMockWithUnifiedReturn();
@@ -82,7 +82,7 @@ class PaymentMeansSubscriberTest extends \PHPUnit_Framework_TestCase
 
     public function test_onFilterPaymentMeans_has_no_unified_method_because_the_settings_dont_exist()
     {
-        $subscriber = new PaymentMeans(Shopware()->Container()->get('dbal_connection'), new SettingsServiceMock());
+        $subscriber = $this->getSubscriber();
         $this->createTestSettings();
 
         $args = new EventArgsMockWithUnifiedReturn();
@@ -90,6 +90,180 @@ class PaymentMeansSubscriberTest extends \PHPUnit_Framework_TestCase
         $result = $args->result;
 
         $this->assertCount(4, $result);
+    }
+
+    public function test_onFilterPaymentMeans_has_no_installments_because_the_sOrderVariables_are_null()
+    {
+        $subscriber = $this->getSubscriber();
+        $this->createTestSettings();
+
+        $args = new EventArgsMockWithInstallmentsReturn();
+        $subscriber->onFilterPaymentMeans($args);
+        $result = $args->result;
+
+        $this->assertCount(4, $result);
+        $this->assertNotContains($this->getInstallmentsPaymentId(), $result);
+    }
+
+    public function test_onFilterPaymentMeans_has_no_installments_because_the_price_is_less_99()
+    {
+        $subscriber = $this->getSubscriber(false);
+        $this->createInstallmentsTestSettings();
+
+        //This is a valid user
+        $userData = [
+            'additional' => [
+                'country' => [
+                    'countryiso' => 'DE',
+                ],
+            ],
+        ];
+
+        $sOrderVariables = [
+            'sUserData' => $userData,
+            'sAmount' => 50.00,
+        ];
+
+        Shopware()->Session()->offsetSet('sOrderVariables', $sOrderVariables);
+
+        $args = new EventArgsMockWithInstallmentsReturn();
+        $subscriber->onFilterPaymentMeans($args);
+        $result = $args->result;
+
+        $this->assertCount(4, $result);
+    }
+
+    public function test_onFilterPaymentMeans_has_no_installments_because_the_price_is_higher_than_5000()
+    {
+        $subscriber = $this->getSubscriber(false);
+        $this->createInstallmentsTestSettings();
+
+        //This is a valid user
+        $userData = [
+            'additional' => [
+                'country' => [
+                    'countryiso' => 'DE',
+                ],
+            ],
+        ];
+
+        $sOrderVariables = [
+            'sUserData' => $userData,
+            'sAmount' => 10000.00,
+        ];
+
+        Shopware()->Session()->offsetSet('sOrderVariables', $sOrderVariables);
+
+        $args = new EventArgsMockWithInstallmentsReturn();
+        $subscriber->onFilterPaymentMeans($args);
+        $result = $args->result;
+
+        $this->assertCount(4, $result);
+    }
+
+    public function test_onFilterPaymentMeans_has_no_installments_because_business_customer()
+    {
+        $subscriber = $this->getSubscriber(false);
+        $this->createInstallmentsTestSettings();
+
+        //This is an invalid user
+        $userData = [
+            'billingaddress' => [
+                'company' => 'TEST_COMPANY',
+            ],
+            'additional' => [
+                'country' => [
+                    'countryiso' => 'DE',
+                ],
+            ],
+        ];
+
+        $sOrderVariables = [
+            'sUserData' => $userData,
+            'sAmount' => 1000.00,
+        ];
+
+        Shopware()->Session()->offsetSet('sOrderVariables', $sOrderVariables);
+
+        $args = new EventArgsMockWithInstallmentsReturn();
+        $subscriber->onFilterPaymentMeans($args);
+        $result = $args->result;
+
+        $this->assertCount(4, $result);
+    }
+
+    public function test_onFilterPaymentMeans_has_no_installments_because_country_is_not_DE()
+    {
+        $subscriber = $this->getSubscriber(false);
+        $this->createInstallmentsTestSettings();
+
+        //This is an invalid user
+        $userData = [
+            'additional' => [
+                'country' => [
+                    'countryiso' => 'GB',
+                ],
+            ],
+        ];
+
+        $sOrderVariables = [
+            'sUserData' => $userData,
+            'sAmount' => 1000.00,
+        ];
+
+        Shopware()->Session()->offsetSet('sOrderVariables', $sOrderVariables);
+
+        $args = new EventArgsMockWithInstallmentsReturn();
+        $subscriber->onFilterPaymentMeans($args);
+        $result = $args->result;
+
+        $this->assertCount(4, $result);
+    }
+
+    public function test_onFilterPaymentMeans_has_installments()
+    {
+        $subscriber = $this->getSubscriber(false);
+        $this->createInstallmentsTestSettings();
+
+        $userData = [
+            'additional' => [
+                'country' => [
+                    'countryiso' => 'DE',
+                ],
+            ],
+        ];
+
+        $sOrderVariables = [
+            'sUserData' => $userData,
+            'sAmount' => 1000.00,
+        ];
+
+        Shopware()->Session()->offsetSet('sOrderVariables', $sOrderVariables);
+
+        $args = new EventArgsMockWithInstallmentsReturn();
+        $subscriber->onFilterPaymentMeans($args);
+        $result = $args->result;
+
+        $this->assertCount(5, $result);
+    }
+
+    private function getSubscriber($mockSettings = true)
+    {
+        if ($mockSettings) {
+            return new PaymentMeans(
+                Shopware()->Container()->get('dbal_connection'),
+                new SettingsServiceMock(),
+                Shopware()->Container()->get('paypal_unified.installments.validation_service'),
+                Shopware()->Container()->get('session')
+            );
+        }
+
+        return new PaymentMeans(
+            Shopware()->Container()->get('dbal_connection'),
+            Shopware()->Container()->get('paypal_unified.settings_service'),
+            Shopware()->Container()->get('paypal_unified.installments.validation_service'),
+            Shopware()->Container()->get('session')
+        );
     }
 
     private function createTestSettings()
@@ -108,6 +282,27 @@ class PaymentMeansSubscriberTest extends \PHPUnit_Framework_TestCase
         $sql = 'INSERT INTO swag_payment_paypal_unified_settings
                 (shop_id, active, client_id, client_secret, sandbox, show_sidebar_logo, logo_image, plus_active)
                 VALUES (:shopId, :active, :clientId, :clientSecret, :sandbox, :showSidebarLogo, :logoImage, :plusActive)';
+
+        Shopware()->Db()->executeUpdate($sql, $settingsParams);
+    }
+
+    private function createInstallmentsTestSettings()
+    {
+        $settingsParams = [
+            ':shopId' => 1,
+            ':clientId' => 'TEST',
+            ':clientSecret' => 'TEST',
+            ':sandbox' => true,
+            ':showSidebarLogo' => true,
+            ':logoImage' => 'None',
+            ':plusActive' => true,
+            ':active' => true,
+            ':installmentsActive' => true,
+        ];
+
+        $sql = 'INSERT INTO swag_payment_paypal_unified_settings
+                (shop_id, active, client_id, client_secret, sandbox, show_sidebar_logo, logo_image, plus_active, installments_active)
+                VALUES (:shopId, :active, :clientId, :clientSecret, :sandbox, :showSidebarLogo, :logoImage, :plusActive, :installmentsActive)';
 
         Shopware()->Db()->executeUpdate($sql, $settingsParams);
     }
@@ -175,6 +370,29 @@ class EventArgsMockWithUnifiedReturn extends \Enlight_Event_EventArgs
             ['id' => 2],
             ['id' => 3],
             ['id' => $this->getUnifiedPaymentId()],
+        ];
+    }
+
+    public function setReturn($result)
+    {
+        $this->result = $result;
+    }
+}
+
+class EventArgsMockWithInstallmentsReturn extends \Enlight_Event_EventArgs
+{
+    use PayPalUnifiedPaymentIdTrait;
+
+    public $result;
+
+    public function getReturn()
+    {
+        return [
+            ['id' => 0],
+            ['id' => 1],
+            ['id' => 2],
+            ['id' => 3],
+            ['id' => $this->getInstallmentsPaymentId()],
         ];
     }
 

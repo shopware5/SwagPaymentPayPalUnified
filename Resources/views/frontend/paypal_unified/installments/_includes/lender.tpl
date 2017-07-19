@@ -28,8 +28,8 @@
                 {if $multiLine == true}
                     {$paypalInstallmentsCompanyInfo.address|nl2br}
                 {else}
-                    {* Replace white spaces with commas *}
-                    {trim(preg_replace('/\s+/', ', ', $paypalInstallmentsCompanyInfo.address))}
+                    {* Replace line-breaks with commas for a single line presentation *}
+                    {"\n"|str_replace:', ':$paypalInstallmentsCompanyInfo.address}
                 {/if}
             </address>
         {/block}
