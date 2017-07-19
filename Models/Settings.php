@@ -189,6 +189,12 @@ class Settings extends ModelEntity
     private $ecDetailActive;
 
     /**
+     * @var bool
+     * @ORM\Column(name="ec_submit_cart", type="boolean", nullable=false)
+     */
+    private $ecSubmitCart;
+
+    /**
      * @var string
      * @ORM\Column(name="ec_button_style_color", type="string")
      */
@@ -596,6 +602,22 @@ class Settings extends ModelEntity
     public function setEcDetailActive($ecDetailActive)
     {
         $this->ecDetailActive = $ecDetailActive;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getEcSubmitCart()
+    {
+        return $this->ecSubmitCart;
+    }
+
+    /**
+     * @param bool $ecSubmitCart
+     */
+    public function setEcSubmitCart($ecSubmitCart)
+    {
+        $this->ecSubmitCart = $ecSubmitCart;
     }
 
     /**

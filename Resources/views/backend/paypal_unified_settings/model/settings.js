@@ -32,6 +32,8 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.model.Settings', {
         { name: 'installmentsShowLogo', type: 'bool' },
         { name: 'ecActive', type: 'bool' },
         { name: 'ecDetailActive', type: 'bool' },
+        { name: 'ecSubmitCart', type: 'bool', defaultValue: true },
+        { name: 'ecDetailActive', type: 'bool' },
         { name: 'ecButtonStyleColor', type: 'string', defaultValue: 'gold' },
         { name: 'ecButtonStyleShape', type: 'string', defaultValue: 'rect' },
         { name: 'ecButtonStyleSize', type: 'string', defaultValue: 'medium' }

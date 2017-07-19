@@ -27,6 +27,7 @@ namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
 use SwagPaymentPayPalUnified\Components\Services\PaymentBuilderService;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
+use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile\WebProfileFlowConfig;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile\WebProfileInputFields;
@@ -181,6 +182,42 @@ class PaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(6, $customProductsOption['price']);
     }
 
+    public function test_getPayment_express_checkout_without_cart()
+    {
+        $settingService = new SettingsServicePaymentBuilderServiceMock(false, 0, false);
+        $requestService = $this->getRequestService($settingService);
+
+        $params = new PaymentBuilderParameters();
+        $profile = $this->getWebProfile();
+        $basketData = $this->getBasketDataArray();
+        $userData = $this->getUserDataAsArray();
+
+        $params->setBasketData($basketData);
+        $params->setWebProfileId($profile->getId());
+        $params->setUserData($userData);
+        $params->setPaymentType(PaymentType::PAYPAL_EXPRESS);
+
+        $this->assertEmpty($requestService->getPayment($params)->getTransactions()->getItemList());
+    }
+
+    public function test_getPayment_express_checkout_with_cart()
+    {
+        $settingService = new SettingsServicePaymentBuilderServiceMock(false, 0, true);
+        $requestService = $this->getRequestService($settingService);
+
+        $params = new PaymentBuilderParameters();
+        $profile = $this->getWebProfile();
+        $basketData = $this->getBasketDataArray();
+        $userData = $this->getUserDataAsArray();
+
+        $params->setBasketData($basketData);
+        $params->setWebProfileId($profile->getId());
+        $params->setUserData($userData);
+        $params->setPaymentType(PaymentType::PAYPAL_EXPRESS);
+
+        $this->assertNotEmpty($requestService->getPayment($params)->getTransactions()->getItemList());
+    }
+
     /**
      * @param $plusActive
      * @param $intent
@@ -317,21 +354,27 @@ class PaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
 class SettingsServicePaymentBuilderServiceMock implements SettingsServiceInterface
 {
     /**
-     * @var
+     * @var bool
      */
     private $plus_active;
 
     /**
-     * @var
+     * @var int
      */
     private $paypal_payment_intent;
 
-    public function __construct($plusActive, $paypalPaymentIntent)
+    /**
+     * @var bool
+     */
+    private $ec_submit_cart;
+
+    public function __construct($plusActive, $paypalPaymentIntent, $submitCart = true)
     {
         // do not delete, even if PHPStorm says they are unused
         // used in the get() method
         $this->plus_active = $plusActive;
         $this->paypal_payment_intent = $paypalPaymentIntent;
+        $this->ec_submit_cart = $submitCart;
     }
 
     public function getSettings($shopId = null)

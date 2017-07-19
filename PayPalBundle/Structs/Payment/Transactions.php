@@ -104,7 +104,10 @@ class Transactions
 
         if ($data['amount']) {
             $result->setAmount(Amount::fromArray($data['amount']));
-            $result->setItemList(ItemList::fromArray($data['item_list']));
+
+            if (!empty($data['item_list'])) {
+                $result->setItemList(ItemList::fromArray($data['item_list']));
+            }
         }
 
         if ($data['related_resources']) {
@@ -119,6 +122,12 @@ class Transactions
      */
     public function toArray()
     {
+        if ($this->getItemList() === null) {
+            return [
+                'amount' => $this->getAmount()->toArray(),
+            ];
+        }
+
         return [
             'amount' => $this->getAmount()->toArray(),
             'item_list' => $this->getItemList()->toArray(),
