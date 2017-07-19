@@ -28,10 +28,10 @@ use Enlight\Event\SubscriberInterface;
 use Enlight_Components_Session_Namespace as Session;
 use Enlight_Controller_ActionEventArgs as ActionEventArgs;
 use Shopware\Components\HttpClient\RequestException;
-use Shopware\Components\Logger;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderInterface;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
 use SwagPaymentPayPalUnified\Components\Services\ShippingAddressRequestService;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PaymentAddressPatch;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PaymentAmountPatch;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
@@ -65,7 +65,7 @@ class ExpressCheckout implements SubscriberInterface
     private $paymentBuilder;
 
     /**
-     * @var Logger
+     * @var LoggerServiceInterface
      */
     private $logger;
 
@@ -75,7 +75,7 @@ class ExpressCheckout implements SubscriberInterface
      * @param PaymentResource               $paymentResource
      * @param ShippingAddressRequestService $addressRequestService
      * @param PaymentBuilderInterface       $paymentBuilder
-     * @param Logger                        $pluginLogger
+     * @param LoggerServiceInterface        $logger
      */
     public function __construct(
         SettingsServiceInterface $settingsService,
@@ -83,14 +83,14 @@ class ExpressCheckout implements SubscriberInterface
         PaymentResource $paymentResource,
         ShippingAddressRequestService $addressRequestService,
         PaymentBuilderInterface $paymentBuilder,
-        Logger $pluginLogger
+        LoggerServiceInterface $logger
     ) {
         $this->settingsService = $settingsService;
         $this->session = $session;
         $this->paymentResource = $paymentResource;
         $this->addressRequestService = $addressRequestService;
         $this->paymentBuilder = $paymentBuilder;
-        $this->logger = $pluginLogger;
+        $this->logger = $logger;
     }
 
     /**

@@ -23,6 +23,7 @@
  */
 
 use Shopware\Components\CSRFWhitelistAware;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\Webhook\WebhookException;
 use SwagPaymentPayPalUnified\PayPalBundle\Services\WebhookService;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Webhook;
@@ -37,6 +38,11 @@ class Shopware_Controllers_Frontend_PaypalUnifiedWebhook extends Enlight_Control
      * @var WebhookService
      */
     private $webhookService;
+
+    /**
+     * @var LoggerServiceInterface
+     */
+    private $logger;
 
     /**
      * {@inheritdoc}
@@ -54,12 +60,13 @@ class Shopware_Controllers_Frontend_PaypalUnifiedWebhook extends Enlight_Control
     public function preDispatch()
     {
         $this->webhookService = $this->get('paypal_unified.webhook_service');
+        $this->logger = $this->get('paypal_unified.logger_service');
 
         $this->webhookService->registerWebhooks([
-            new SaleComplete($this->get('pluginlogger'), $this->get('models')),
-            new SaleDenied($this->get('pluginlogger'), $this->get('models')),
-            new SaleRefunded($this->get('pluginlogger'), $this->get('models')),
-            new AuthorizationVoided($this->get('pluginlogger'), $this->get('models')),
+            new SaleComplete($this->logger, $this->get('models')),
+            new SaleDenied($this->logger, $this->get('models')),
+            new SaleRefunded($this->logger, $this->get('models')),
+            new AuthorizationVoided($this->logger, $this->get('models')),
         ]);
     }
 
@@ -71,7 +78,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedWebhook extends Enlight_Control
         $postData = $this->request->getRawBody();
         $postData = json_decode($postData, true);
 
-        $this->container->get('pluginlogger')->info(var_export($postData));
+        $this->logger->notify('[Webhook] Received webhook', ['payload' => $postData]);
 
         if ($postData === null) {
             return;
@@ -82,8 +89,8 @@ class Shopware_Controllers_Frontend_PaypalUnifiedWebhook extends Enlight_Control
 
             //Webhook handler exists?
             if (!$this->webhookService->handlerExists($webhook->getEventType())) {
-                $this->get('pluginlogger')->info(
-                    'PayPal Unified [Webhook]: Could not process the request, because no handler has been referenced to this type of event.',
+                $this->logger->warning(
+                    '[Webhook] Could not process the request, because no handler has been referenced to this type of event.',
                     [$postData]
                 );
 
@@ -93,7 +100,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedWebhook extends Enlight_Control
             //Delegate the request to the referenced webhook-handler.
             $this->webhookService->getWebhookHandler($webhook->getEventType())->invoke($webhook);
         } catch (WebhookException $webhookException) {
-            $this->get('pluginlogger')->error($webhookException->getMessage(), [$webhookException->getEventType()]);
+            $this->logger->error('[Webhhok]' . $webhookException->getMessage(), ['type' => $webhookException->getEventType()]);
         }
     }
 }

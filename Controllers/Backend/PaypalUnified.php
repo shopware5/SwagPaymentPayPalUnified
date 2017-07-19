@@ -23,12 +23,12 @@
  */
 
 use Shopware\Components\HttpClient\RequestException;
-use Shopware\Components\Logger;
 use Shopware\Components\Model\QueryBuilder;
 use Shopware\Models\Order\Order;
+use Shopware\Models\Shop\Shop;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\Services\TransactionHistoryBuilderService;
-use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentIntent;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\AuthorizationResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\CaptureResource;
@@ -36,7 +36,6 @@ use SwagPaymentPayPalUnified\PayPalBundle\Resources\OrderResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\PaymentResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\RefundResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\SaleResource;
-use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Capture;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\CaptureRefund;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\SaleRefund;
@@ -55,7 +54,7 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
     protected $alias = 'sOrder';
 
     /**
-     * @var Logger
+     * @var LoggerServiceInterface
      */
     protected $logger;
 
@@ -76,7 +75,8 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
      */
     public function preDispatch()
     {
-        $this->logger = $this->container->get('pluginlogger');
+        $this->logger = $this->container->get('paypal_unified.logger_service');
+
         parent::preDispatch();
     }
 
@@ -93,7 +93,7 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
         $paymentId = $this->Request()->getParam('id');
         $shopId = $this->Request()->getParam('shopId');
 
-        $this->configureClient($shopId);
+        $this->registerShopResource($shopId);
 
         /** @var PaymentResource $paymentResource */
         $paymentResource = $this->container->get('paypal_unified.payment_resource');
@@ -118,7 +118,7 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
             $this->View()->assign('success', true);
         } catch (RequestException $ex) {
             $message = json_decode($ex->getBody(), true)['message'];
-            $this->logger->error('PayPal Unified: Could not obtain payment details due to a communication failure', [$ex->getMessage(), $ex->getBody()]);
+            $this->logger->error('Could not obtain payment details due to a communication failure', [$ex->getMessage(), $ex->getBody()]);
             $this->View()->assign('message', $message);
             $this->View()->assign('success', false);
             throw $ex;
@@ -130,7 +130,7 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
         $saleId = $this->Request()->getParam('id');
         $shopId = $this->Request()->getParam('shopId');
 
-        $this->configureClient($shopId);
+        $this->registerShopResource($shopId);
 
         /** @var SaleResource $saleResource */
         $saleResource = $this->container->get('paypal_unified.sale_resource');
@@ -140,7 +140,7 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
             $this->View()->assign('success', true);
         } catch (RequestException $ex) {
             $message = json_decode($ex->getBody(), true)['message'];
-            $this->logger->error('PayPal Unified: Could not obtain sale details due to a communication failure', [$ex->getMessage(), $ex->getBody()]);
+            $this->logger->error('Could not obtain sale details due to a communication failure', [$ex->getMessage(), $ex->getBody()]);
             $this->View()->assign('success', false);
             $this->View()->assign('message', $message);
         }
@@ -151,7 +151,7 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
         $saleId = $this->Request()->getParam('id');
         $shopId = $this->Request()->getParam('shopId');
 
-        $this->configureClient($shopId);
+        $this->registerShopResource($shopId);
 
         /** @var RefundResource $refundResource */
         $refundResource = $this->container->get('paypal_unified.refund_resource');
@@ -161,7 +161,7 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
             $this->View()->assign('success', true);
         } catch (RequestException $ex) {
             $message = json_decode($ex->getBody(), true)['message'];
-            $this->logger->error('PayPal Unified: Could not obtain refund details due to a communication failure', [$ex->getMessage(), $ex->getBody()]);
+            $this->logger->error('Could not obtain refund details due to a communication failure', [$ex->getMessage(), $ex->getBody()]);
             $this->View()->assign('success', false);
             $this->View()->assign('message', $message);
         }
@@ -172,7 +172,7 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
         $captureId = $this->Request()->getParam('id');
         $shopId = $this->Request()->getParam('shopId');
 
-        $this->configureClient($shopId);
+        $this->registerShopResource($shopId);
 
         /** @var CaptureResource $captureResource */
         $captureResource = $this->container->get('paypal_unified.capture_resource');
@@ -182,7 +182,7 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
             $this->View()->assign('success', true);
         } catch (RequestException $ex) {
             $message = json_decode($ex->getBody(), true)['message'];
-            $this->logger->error('PayPal Unified: Could not obtain capture details due to a communication failure', [$ex->getMessage(), $ex->getBody()]);
+            $this->logger->error('Could not obtain capture details due to a communication failure', [$ex->getMessage(), $ex->getBody()]);
             $this->View()->assign('success', false);
             $this->View()->assign('message', $message);
         }
@@ -193,7 +193,7 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
         $authorizationId = $this->Request()->getParam('id');
         $shopId = $this->Request()->getParam('shopId');
 
-        $this->configureClient($shopId);
+        $this->registerShopResource($shopId);
 
         /** @var AuthorizationResource $authorizationResource */
         $authorizationResource = $this->container->get('paypal_unified.authorization_resource');
@@ -203,7 +203,7 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
             $this->View()->assign('success', true);
         } catch (RequestException $ex) {
             $message = json_decode($ex->getBody(), true)['message'];
-            $this->logger->error('PayPal Unified: Could not obtain authorization details due to a communication failure', [$ex->getMessage(), $ex->getBody()]);
+            $this->logger->error('Could not obtain authorization details due to a communication failure', [$ex->getMessage(), $ex->getBody()]);
             $this->View()->assign('success', false);
             $this->View()->assign('message', $message);
         }
@@ -214,7 +214,7 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
         $orderId = $this->Request()->getParam('id');
         $shopId = $this->Request()->getParam('shopId');
 
-        $this->configureClient($shopId);
+        $this->registerShopResource($shopId);
 
         /** @var AuthorizationResource $orderResource */
         $orderResource = $this->container->get('paypal_unified.order_resource');
@@ -224,7 +224,7 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
             $this->View()->assign('success', true);
         } catch (RequestException $ex) {
             $message = json_decode($ex->getBody(), true)['message'];
-            $this->logger->error('PayPal Unified: Could not obtain order details due to a communication failure', [$ex->getMessage(), $ex->getBody()]);
+            $this->logger->error('Could not obtain order details due to a communication failure', [$ex->getMessage(), $ex->getBody()]);
             $this->View()->assign('success', false);
             $this->View()->assign('message', $message);
         }
@@ -239,7 +239,7 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
         $shopId = $this->Request()->getParam('shopId');
 
         try {
-            $this->configureClient($shopId);
+            $this->registerShopResource($shopId);
 
             /** @var SaleResource $saleResource */
             $saleResource = $this->container->get('paypal_unified.sale_resource');
@@ -259,7 +259,7 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
             $this->View()->assign('success', true);
         } catch (RequestException $ex) {
             $message = json_decode($ex->getBody(), true)['message'];
-            $this->logger->error('PayPal Unified: Could not refund sale due to a communication failure', [$ex->getMessage(), $ex->getBody()]);
+            $this->logger->error('Could not refund sale due to a communication failure', [$ex->getMessage(), $ex->getBody()]);
             $this->View()->assign('success', false);
             $this->View()->assign('message', $message);
         }
@@ -274,7 +274,7 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
         $isFinal = $this->Request()->getParam('isFinal');
 
         try {
-            $this->configureClient($shopId);
+            $this->registerShopResource($shopId);
 
             $capture = new Capture();
             $amount = new Amount();
@@ -290,7 +290,7 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
             $this->View()->assign('success', true);
         } catch (RequestException $ex) {
             $message = json_decode($ex->getBody(), true)['message'];
-            $this->logger->error('PayPal Unified: Could not authorize payment due to a communication failure', [$ex->getMessage(), $ex->getBody()]);
+            $this->logger->error('Could not authorize payment due to a communication failure', [$ex->getMessage(), $ex->getBody()]);
             $this->View()->assign('success', false);
             $this->View()->assign('message', $message);
         }
@@ -305,7 +305,7 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
         $isFinal = $this->Request()->getParam('isFinal');
 
         try {
-            $this->configureClient($shopId);
+            $this->registerShopResource($shopId);
 
             $capture = new Capture();
             $amount = new Amount();
@@ -321,7 +321,7 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
             $this->View()->assign('success', true);
         } catch (RequestException $ex) {
             $message = json_decode($ex->getBody(), true)['message'];
-            $this->logger->error('PayPal Unified: Could not authorize payment due to a communication failure', [$ex->getMessage(), $ex->getBody()]);
+            $this->logger->error('Could not authorize payment due to a communication failure', [$ex->getMessage(), $ex->getBody()]);
             $this->View()->assign('success', false);
             $this->View()->assign('message', $message);
         }
@@ -334,9 +334,9 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
         $description = $this->Request()->getParam('note');
         $shopId = $this->Request()->getParam('shopId');
 
-        $this->configureClient($shopId);
-
         try {
+            $this->registerShopResource($shopId);
+
             /** @var CaptureResource $captureResource */
             $captureResource = $this->container->get('paypal_unified.capture_resource');
 
@@ -352,7 +352,7 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
             $this->View()->assign('success', true);
         } catch (RequestException $ex) {
             $message = json_decode($ex->getBody(), true)['message'];
-            $this->logger->error('PayPal Unified: Could not refund capture due to a communication failure', [$ex->getMessage(), $ex->getBody()]);
+            $this->logger->error('Could not refund capture due to a communication failure', [$ex->getMessage(), $ex->getBody()]);
             $this->View()->assign('success', false);
             $this->View()->assign('message', $message);
         }
@@ -364,7 +364,7 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
         $shopId = $this->Request()->getParam('shopId');
 
         try {
-            $this->configureClient($shopId);
+            $this->registerShopResource($shopId);
 
             /** @var AuthorizationResource $authResource */
             $authResource = $this->get('paypal_unified.authorization_resource');
@@ -372,7 +372,7 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
             $this->View()->assign('success', true);
         } catch (RequestException $ex) {
             $message = json_decode($ex->getBody(), true)['message'];
-            $this->logger->error('PayPal Unified: Could not void authorization due to a communication failure', [$ex->getMessage(), $ex->getBody()]);
+            $this->logger->error('Could not void authorization due to a communication failure', [$ex->getMessage(), $ex->getBody()]);
             $this->View()->assign('success', false);
             $this->View()->assign('message', $message);
         }
@@ -384,7 +384,7 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
         $shopId = $this->Request()->getParam('shopId');
 
         try {
-            $this->configureClient($shopId);
+            $this->registerShopResource($shopId);
 
             /** @var OrderResource $orderResource */
             $orderResource = $this->get('paypal_unified.order_resource');
@@ -392,7 +392,7 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
             $this->View()->assign('void', $orderResource->void($id));
         } catch (RequestException $ex) {
             $message = json_decode($ex->getBody(), true)['message'];
-            $this->logger->error('PayPal Unified: Could not void order due to a communication failure', [$ex->getMessage(), $ex->getBody()]);
+            $this->logger->error('Could not void order due to a communication failure', [$ex->getMessage(), $ex->getBody()]);
             $this->View()->assign('success', false);
             $this->View()->assign('message', $message);
         }
@@ -509,13 +509,15 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
     /**
      * @param int $shopId
      */
-    private function configureClient($shopId)
+    private function registerShopResource($shopId = null)
     {
-        /** @var SettingsServiceInterface $settingsService */
-        $settingsService = $this->container->get('paypal_unified.settings_service');
+        /** @var \Shopware\Models\Shop\Repository $shopRepository */
+        $shopRepository = $this->container->get('models')->getRepository(Shop::class);
 
-        /** @var ClientService $client */
-        $client = $this->container->get('paypal_unified.client_service');
-        $client->configure($settingsService->getSettings($shopId)->toArray());
+        if ($shopId === null) {
+            $shopId = $shopRepository->getActiveDefault()->getId();
+        }
+
+        $shopRepository->getActiveById($shopId)->registerResources();
     }
 }

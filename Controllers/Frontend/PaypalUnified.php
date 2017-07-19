@@ -23,7 +23,6 @@
  */
 
 use Shopware\Components\HttpClient\RequestException;
-use Shopware\Components\Logger;
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
@@ -33,12 +32,15 @@ use SwagPaymentPayPalUnified\Components\Services\PaymentInstructionService;
 use SwagPaymentPayPalUnified\Components\Services\ShippingAddressRequestService;
 use SwagPaymentPayPalUnified\Components\Services\Validation\BasketIdWhitelist;
 use SwagPaymentPayPalUnified\Components\Services\Validation\BasketValidatorInterface;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PaymentAddressPatch;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PaymentOrderNumberPatch;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\PartnerAttributionId;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\PaymentResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\ErrorResponse;
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\GenericErrorResponse;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\RelatedResources\RelatedResource;
 
@@ -55,12 +57,18 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
     private $client;
 
     /**
+     * @var LoggerServiceInterface
+     */
+    private $logger;
+
+    /**
      * initialize payment resource
      */
     public function preDispatch()
     {
         $this->paymentResource = $this->container->get('paypal_unified.payment_resource');
         $this->client = $this->container->get('paypal_unified.client_service');
+        $this->logger = $this->container->get('paypal_unified.logger_service');
     }
 
     /**
@@ -299,14 +307,33 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
      */
     private function handleError($code, RequestException $exception = null)
     {
+        /** @var SettingsServiceInterface $settings */
+        $settings = $this->container->get('paypal_unified.settings_service');
+
+        /** @var string $message */
+        $message = null;
+        $name = null;
+
         if ($exception) {
+            $this->logger->error('Received an error during checkout process', ['payload' => $exception->getBody()]);
+
             //Parse the received error
             $error = ErrorResponse::fromArray(json_decode($exception->getBody(), true));
 
-            if ($error !== null) {
-                /** @var Logger $logger */
-                $logger = $this->get('pluginlogger');
-                $logger->warning('PayPal Unified: Received an error: ' . $error->getMessage(), $error->toArray());
+            if ($error->getMessage() !== null) {
+                if ($settings->hasSettings() && $settings->get('display_errors')) {
+                    $message = $error->getMessage();
+                    $name = $error->getName();
+                }
+            }
+
+            $genericError = GenericErrorResponse::fromArray(json_decode($exception->getBody(), true));
+
+            if ($genericError->getErrorDescription() !== null) {
+                if ($settings->hasSettings() && $settings->get('display_errors')) {
+                    $message = $genericError->getErrorDescription();
+                    $name = $genericError->getError();
+                }
             }
         }
 
@@ -314,6 +341,8 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
             'controller' => 'checkout',
             'action' => 'shippingPayment',
             'paypal_unified_error_code' => $code,
+            'paypal_unified_error_message' => $message,
+            'paypal_unified_error_name' => $name,
         ]);
     }
 

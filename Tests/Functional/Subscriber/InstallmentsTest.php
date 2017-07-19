@@ -40,12 +40,12 @@ class InstallmentsTest extends UnifiedControllerTestCase
 {
     public function test_can_be_created()
     {
-        $pluginLogger = Shopware()->Container()->get('pluginlogger');
+        $logger = Shopware()->Container()->get('paypal_unified.logger_service');
         $subscriber = new Installments(
             new SettingsServiceInstallmentsMock(),
             new ValidationService(),
             Shopware()->Container()->get('dbal_connection'),
-            $pluginLogger
+            $logger
         );
 
         $this->assertNotNull($subscriber);

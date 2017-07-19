@@ -48,14 +48,14 @@ class AuthorizationVoidedTest extends \PHPUnit_Framework_TestCase
 
     public function test_can_construct()
     {
-        $instance = new AuthorizationVoided(Shopware()->Container()->get('pluginlogger'), Shopware()->Container()->get('models'));
+        $instance = new AuthorizationVoided(Shopware()->Container()->get('paypal_unified.logger_service'), Shopware()->Container()->get('models'));
 
         $this->assertInstanceOf(AuthorizationVoided::class, $instance);
     }
 
     public function test_invoke_returns_true_because_the_order_status_has_been_updated()
     {
-        $instance = new AuthorizationVoided(Shopware()->Container()->get('pluginlogger'), Shopware()->Container()->get('models'));
+        $instance = new AuthorizationVoided(Shopware()->Container()->get('paypal_unified.logger_service'), Shopware()->Container()->get('models'));
 
         $this->assertTrue($instance->invoke($this->getWebhookStruct()));
 
@@ -67,14 +67,14 @@ class AuthorizationVoidedTest extends \PHPUnit_Framework_TestCase
 
     public function test_invoke_returns_false_because_the_order_does_not_exist()
     {
-        $instance = new AuthorizationVoided(Shopware()->Container()->get('pluginlogger'), Shopware()->Container()->get('models'));
+        $instance = new AuthorizationVoided(Shopware()->Container()->get('paypal_unified.logger_service'), Shopware()->Container()->get('models'));
 
         $this->assertFalse($instance->invoke($this->getWebhookStruct('ORDER_NOT_AVAILABLE')));
     }
 
     public function test_getEventType_is_correct()
     {
-        $instance = new AuthorizationVoided(Shopware()->Container()->get('pluginlogger'), Shopware()->Container()->get('models'));
+        $instance = new AuthorizationVoided(Shopware()->Container()->get('paypal_unified.logger_service'), Shopware()->Container()->get('models'));
         $this->assertEquals(WebhookEventTypes::PAYMENT_AUTHORIZATION_VOIDED, $instance->getEventType());
     }
 

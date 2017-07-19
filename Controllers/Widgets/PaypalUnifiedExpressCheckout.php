@@ -23,13 +23,15 @@
  */
 
 use Shopware\Components\HttpClient\RequestException;
-use Shopware\Components\Logger;
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
 use SwagPaymentPayPalUnified\Components\ExpressCheckout\CustomerService;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\PaymentResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\ErrorResponse;
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\GenericErrorResponse;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
 
 class Shopware_Controllers_Widgets_PaypalUnifiedExpressCheckout extends \Enlight_Controller_Action
@@ -40,10 +42,16 @@ class Shopware_Controllers_Widgets_PaypalUnifiedExpressCheckout extends \Enlight
     private $paymentResource;
 
     /**
+     * @var LoggerServiceInterface
+     */
+    private $logger;
+
+    /**
      * Initialize payment resource
      */
     public function preDispatch()
     {
+        $this->logger = $this->get('paypal_unified.logger_service');
         $this->paymentResource = $this->get('paypal_unified.payment_resource');
     }
 
@@ -168,14 +176,33 @@ class Shopware_Controllers_Widgets_PaypalUnifiedExpressCheckout extends \Enlight
      */
     private function handleError($code, RequestException $exception = null)
     {
+        /** @var SettingsServiceInterface $settings */
+        $settings = $this->container->get('paypal_unified.settings_service');
+
+        /** @var string $message */
+        $message = null;
+        $name = null;
+
         if ($exception) {
+            $this->logger->error('Received an error during express-checkout process', ['payload' => $exception->getBody()]);
+
             //Parse the received error
             $error = ErrorResponse::fromArray(json_decode($exception->getBody(), true));
 
-            if ($error !== null) {
-                /** @var Logger $logger */
-                $logger = $this->get('pluginlogger');
-                $logger->warning('PayPal Unified: Received an error: ' . $error->getMessage(), $error->toArray());
+            if ($error->getMessage() !== null) {
+                if ($settings->hasSettings() && $settings->get('display_errors')) {
+                    $message = $error->getMessage();
+                    $name = $error->getName();
+                }
+            }
+
+            $genericError = GenericErrorResponse::fromArray(json_decode($exception->getBody(), true));
+
+            if ($genericError->getErrorDescription() !== null) {
+                if ($settings->hasSettings() && $settings->get('display_errors')) {
+                    $message = $genericError->getErrorDescription();
+                    $name = $genericError->getError();
+                }
             }
         }
 
@@ -183,6 +210,8 @@ class Shopware_Controllers_Widgets_PaypalUnifiedExpressCheckout extends \Enlight
             'controller' => 'checkout',
             'action' => 'shippingPayment',
             'paypal_unified_error_code' => $code,
+            'paypal_unified_error_message' => $message,
+            'paypal_unified_error_name' => $name,
         ]);
     }
 }

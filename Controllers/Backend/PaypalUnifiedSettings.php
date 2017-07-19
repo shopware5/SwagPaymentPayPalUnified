@@ -24,6 +24,7 @@
 
 use Shopware\Components\HttpClient\RequestException;
 use SwagPaymentPayPalUnified\Models\Settings;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\WebhookResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService;
@@ -47,11 +48,18 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
     private $settingsService;
 
     /**
+     * @var LoggerServiceInterface
+     */
+    private $logger;
+
+    /**
      * {@inheritdoc}
      */
     public function preDispatch()
     {
         $this->settingsService = $this->container->get('paypal_unified.settings_service');
+        $this->logger = $this->container->get('paypal_unified.logger_service');
+
         parent::preDispatch();
     }
 
@@ -119,11 +127,11 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
             $response = $installmentsRequestService->getList(200.0);
             $financingResponse = FinancingResponse::fromArray($response['financing_options'][0]);
         } catch (RequestException $e) {
-            $this->get('pluginlogger')->error(
-                'PayPal Unified: Could not get installments financing options due to a communication failure',
+            $this->logger->error(
+                'Could not get installments financing options due to a communication failure',
                 [
-                    $e->getMessage(),
-                    $e->getBody(),
+                    'message' => $e->getMessage(),
+                    'payload' => $e->getBody(),
                 ]
             );
 

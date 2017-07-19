@@ -26,13 +26,13 @@ namespace SwagPaymentPayPalUnified\Subscriber;
 
 use Enlight\Event\SubscriberInterface;
 use Shopware\Components\HttpClient\RequestException;
-use Shopware\Components\Logger;
 use Shopware\Models\Shop\DetachedShop;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\Services\OrderDataService;
 use SwagPaymentPayPalUnified\Components\Services\PaymentInstructionService;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\PartnerAttributionId;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\PaymentResource;
@@ -58,7 +58,7 @@ class Checkout implements SubscriberInterface
     private $settingsService;
 
     /**
-     * @var Logger
+     * @var LoggerServiceInterface
      */
     private $logger;
 
@@ -82,7 +82,7 @@ class Checkout implements SubscriberInterface
     ) {
         $this->container = $container;
         $this->settingsService = $container->get('paypal_unified.settings_service');
-        $this->logger = $container->get('pluginlogger');
+        $this->logger = $container->get('paypal_unified.logger_service');
         $this->paymentMethodProvider = new PaymentMethodProvider($container->get('models'));
 
         /** @var DependencyProvider $dependencyProvider */
@@ -123,9 +123,13 @@ class Checkout implements SubscriberInterface
         $unifiedActive = (bool) $this->settingsService->get('active');
         $usePayPalPlus = (bool) $this->settingsService->get('plus_active');
         $errorCode = $request->getParam('paypal_unified_error_code');
+        $errorMessage = $request->getParam('paypal_unified_error_message');
+        $errorName = $request->getParam('paypal_unified_error_name');
 
         if ($unifiedActive && $errorCode) {
             $view->assign('paypalUnifiedErrorCode', $errorCode);
+            $view->assign('paypalUnifiedErrorMessage', $errorMessage);
+            $view->assign('paypalUnifiedErrorName', $errorName);
         }
 
         if (!$unifiedActive || !$usePayPalPlus || $controller->Response()->isRedirect()) {
@@ -267,7 +271,7 @@ class Checkout implements SubscriberInterface
 
             return Payment::fromArray($payment);
         } catch (RequestException $ex) {
-            $this->logger->error('PayPal Unified: Could not create payment', [$ex->getMessage(), $ex->getBody()]);
+            $this->logger->error('Could not create payment', ['message' => $ex->getMessage(), 'payload' => $ex->getBody()]);
 
             return null;
         }

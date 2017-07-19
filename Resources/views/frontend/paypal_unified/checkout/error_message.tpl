@@ -23,5 +23,11 @@
             {* Unknown error *}
             {include file='frontend/_includes/messages.tpl' type='error' content="{s name="error/unkown"}An unknown error occurred while processing the payment.{/s}"}
         {/if}
+
+		{if $paypalUnifiedErrorMessage}
+            <div class="paypal-unified--error-message">
+                <b>{s name="errorMessagePrefix"}Error message:{/s}</b> {$paypalUnifiedErrorMessage} [{$paypalUnifiedErrorName}]
+            </div>
+		{/if}
     </div>
 {/block}
