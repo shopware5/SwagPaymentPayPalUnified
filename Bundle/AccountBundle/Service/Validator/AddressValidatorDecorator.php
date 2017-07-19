@@ -58,9 +58,16 @@ class AddressValidatorDecorator implements AddressValidatorInterface
      */
     public function validate(Address $address)
     {
-        if (!$this->front->Request() ||
-            $this->front->Request()->getControllerName() !== 'PaypalUnifiedExpressCheckout'
-        ) {
+        $request = $this->front->Request();
+        if (!$request) {
+            $this->innerValidator->validate($address);
+
+            return;
+        }
+
+        $controllerName = $request->getControllerName();
+        $payPalController = ['paypal_unified_express_checkout', 'paypalunifiedexpresscheckout'];
+        if (!in_array(strtolower($controllerName), $payPalController, true)) {
             $this->innerValidator->validate($address);
 
             return;

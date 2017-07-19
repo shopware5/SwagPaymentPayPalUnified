@@ -36,7 +36,10 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings', {
      */
     stores: [
         'PaymentIntent',
-        'InstallmentsPresentment'
+        'InstallmentsPresentment',
+        'EcButtonStyleColor',
+        'EcButtonStyleShape',
+        'EcButtonStyleSize'
     ],
 
     /**
