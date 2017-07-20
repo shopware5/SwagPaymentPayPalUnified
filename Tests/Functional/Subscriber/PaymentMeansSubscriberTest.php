@@ -25,14 +25,17 @@
 namespace SwagPaymentPayPalUnified\Tests\Functional\Subscriber;
 
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use SwagPaymentPayPalUnified\Subscriber\PaymentMeans;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\PayPalUnifiedPaymentIdTrait;
+use SwagPaymentPayPalUnified\Tests\Functional\SettingsHelperTrait;
 
 class PaymentMeansSubscriberTest extends \PHPUnit_Framework_TestCase
 {
     use DatabaseTestCaseTrait;
     use PayPalUnifiedPaymentIdTrait;
+    use SettingsHelperTrait;
 
     public function test_can_be_created()
     {
@@ -212,7 +215,6 @@ class PaymentMeansSubscriberTest extends \PHPUnit_Framework_TestCase
         ];
 
         Shopware()->Session()->offsetSet('sOrderVariables', $sOrderVariables);
-
         $args = new EventArgsMockWithInstallmentsReturn();
         $subscriber->onFilterPaymentMeans($args);
         $result = $args->result;
@@ -268,57 +270,43 @@ class PaymentMeansSubscriberTest extends \PHPUnit_Framework_TestCase
 
     private function createTestSettings()
     {
-        $settingsParams = [
-            ':shopId' => 1,
-            ':clientId' => 'TEST',
-            ':clientSecret' => 'TEST',
-            ':sandbox' => true,
-            ':showSidebarLogo' => true,
-            ':logoImage' => 'None',
-            ':plusActive' => true,
-            ':active' => true,
-        ];
+        $this->insertGeneralSettingsFromArray([
+            'shopId' => 1,
+            'clientId' => 'test',
+            'clientSecret' => 'test',
+            'sandbox' => true,
+            'showSidebarLogo' => true,
+            'logoImage' => 'None',
+            'active' => true,
+        ]);
 
-        $sql = 'INSERT INTO swag_payment_paypal_unified_settings
-                (shop_id, active, client_id, client_secret, sandbox, show_sidebar_logo, logo_image, plus_active)
-                VALUES (:shopId, :active, :clientId, :clientSecret, :sandbox, :showSidebarLogo, :logoImage, :plusActive)';
-
-        Shopware()->Db()->executeUpdate($sql, $settingsParams);
+        $this->insertPlusSettingsFromArray([
+            'active' => 1,
+            'shopId' => 1,
+        ]);
     }
 
     private function createInstallmentsTestSettings()
     {
-        $settingsParams = [
-            ':shopId' => 1,
-            ':clientId' => 'TEST',
-            ':clientSecret' => 'TEST',
-            ':sandbox' => true,
-            ':showSidebarLogo' => true,
-            ':logoImage' => 'None',
-            ':plusActive' => true,
-            ':active' => true,
-            ':installmentsActive' => true,
-        ];
-
-        $sql = 'INSERT INTO swag_payment_paypal_unified_settings
-                (shop_id, active, client_id, client_secret, sandbox, show_sidebar_logo, logo_image, plus_active, installments_active)
-                VALUES (:shopId, :active, :clientId, :clientSecret, :sandbox, :showSidebarLogo, :logoImage, :plusActive, :installmentsActive)';
-
-        Shopware()->Db()->executeUpdate($sql, $settingsParams);
+        $this->createTestSettings();
+        $this->insertInstallmentsSettingsFromArray([
+            'active' => true,
+            'shopId' => 1,
+        ]);
     }
 }
 
 class SettingsServiceMock implements SettingsServiceInterface
 {
-    public function get($column)
+    public function get($column, $settingsTable = SettingsTable::GENERAL)
     {
     }
 
-    public function hasSettings()
+    public function hasSettings($settingsTable = SettingsTable::GENERAL)
     {
     }
 
-    public function getSettings($shopId = null)
+    public function getSettings($shopId = null, $settingsTable = SettingsTable::GENERAL)
     {
     }
 }

@@ -21,7 +21,22 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
     /**
      * @type { String }
      */
-    saveUrl: '{url controller=PaypalUnifiedSettings action=update}',
+    generalDetailUrl: '{url controller=PaypalUnifiedGeneralSettings action=detail}',
+
+    /**
+     * @type { String }
+     */
+    installmentsDetailUrl: '{url controller=PaypalUnifiedInstallmentsSettings action=detail}',
+
+    /**
+     * @type { String }
+     */
+    expressDetailUrl: '{url controller=PaypalUnifiedExpressSettings action=detail}',
+
+    /**
+     * @type { String }
+     */
+    plusDetailUrl: '{url controller=PaypalUnifiedPlusSettings action=detail}',
 
     /**
      * @type { String }
@@ -39,13 +54,37 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
     testInstallmentsAvailabilityUrl: '{url controller=PaypalUnifiedSettings action=testInstallmentsAvailability}',
 
     /**
-     * @type { Shopware.apps.PaypalUnifiedSettings.model.Settings }
+     * @type { string }
      */
-    record: null,
+    createWebProfilesUrl: '{url controller=PaypalUnifiedSettings action=createWebProfiles}',
+
+    /**
+     * @type { Shopware.apps.PaypalUnifiedSettings.model.General }
+     */
+    generalRecord: null,
+
+    /**
+     * @type { Shopware.apps.PaypalUnifiedSettings.model.Installments }
+     */
+    installmentsRecord: null,
+
+    /**
+     * @type { Shopware.apps.PaypalUnifiedSettings.model.ExpressCheckout }
+     */
+    expressCheckoutRecord: null,
+
+    /**
+     * @type { Shopware.apps.PaypalUnifiedSettings.model.Plus }
+     */
+    plusRecord: null,
+
+    /**
+     * @type { Number }
+     */
+    shopId: null,
 
     refs: [
         { ref: 'generalTab', selector: 'paypal-unified-settings-tabs-general' },
-        { ref: 'paypalTab', selector: 'paypal-unified-settings-tabs-paypal' },
         { ref: 'plusTab', selector: 'paypal-unified-settings-tabs-paypal-plus' },
         { ref: 'installmentsTab', selector: 'paypal-unified-settings-tabs-installments' },
         { ref: 'ecTab', selector: 'paypal-unified-settings-tabs-express-checkout' }
@@ -91,12 +130,76 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
      */
     loadDetails: function(shopId) {
         var me = this;
+
+        me.shopId = shopId;
+
+        me.prepareRecords();
+
+        me.loadSetting(me.generalDetailUrl);
+        me.loadSetting(me.expressDetailUrl);
+        me.loadSetting(me.installmentsDetailUrl);
+        me.loadSetting(me.plusDetailUrl);
+    },
+
+    loadSetting: function(detailUrl) {
+        var me = this;
+
         Ext.Ajax.request({
-            url: me.detailUrl,
+            url: detailUrl,
             params: {
-                shopId: shopId
+                shopId: me.shopId
             },
             callback: Ext.bind(me.onDetailAjaxCallback, me)
+        });
+    },
+
+    saveRecords: function() {
+        var me = this;
+
+        me.generalRecord.save();
+        me.expressCheckoutRecord.save();
+        me.installmentsRecord.save();
+        me.plusRecord.save();
+    },
+
+    prepareRecords: function() {
+        var me = this,
+            generalTab = me.getGeneralTab(),
+            plusTab = me.getPlusTab(),
+            installmentsTab = me.getInstallmentsTab(),
+            ecTab = me.getEcTab();
+
+        me.generalRecord = Ext.create('Shopware.apps.PaypalUnifiedSettings.model.General');
+        me.expressCheckoutRecord = Ext.create('Shopware.apps.PaypalUnifiedSettings.model.ExpressCheckout');
+        me.installmentsRecord = Ext.create('Shopware.apps.PaypalUnifiedSettings.model.Installments');
+        me.plusRecord = Ext.create('Shopware.apps.PaypalUnifiedSettings.model.Plus');
+
+        me.generalRecord.set('shopId', me.shopId);
+        me.expressCheckoutRecord.set('shopId', me.shopId);
+        me.installmentsRecord.set('shopId', me.shopId);
+        me.plusRecord.set('shopId', me.shopId);
+
+        installmentsTab.loadRecord(me.installmentsRecord);
+        generalTab.loadRecord(me.generalRecord);
+        plusTab.loadRecord(me.plusRecord);
+        ecTab.loadRecord(me.expressCheckoutRecord);
+    },
+
+    createWebProfiles: function () {
+        var me = this,
+            generalSettings = me.getGeneralTab().getForm().getValues();
+
+        Ext.Ajax.request({
+            url: me.createWebProfilesUrl,
+            params: {
+                shopId: me.shopId,
+                clientId: generalSettings['clientId'],
+                clientSecret: generalSettings['clientSecret'],
+                sandbox: generalSettings['sandbox'],
+                brandName: generalSettings['brandName'],
+                logoImage: generalSettings['logoImage']
+            },
+            callback: Ext.bind(me.onCreateWebProfilesAjaxCallback, me)
         });
     },
 
@@ -113,7 +216,6 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
     onSaveSettings: function() {
         var me = this,
             generalSettings = me.getGeneralTab().getForm().getValues(),
-            paypalSettings = me.getPaypalTab().getForm().getValues(),
             plusSettings = me.getPlusTab().getForm().getValues(),
             installmentsSettings = me.getInstallmentsTab().getForm().getValues(),
             ecSettings = me.getEcTab().getForm().getValues();
@@ -125,21 +227,16 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
 
         me.window.setLoading('{s name="loading/saveSettings"}Saving settings...{/s}');
 
-        me.record.set(generalSettings);
-        me.record.set(paypalSettings);
-        me.record.set(plusSettings);
-        me.record.set(installmentsSettings);
-        me.record.set(ecSettings);
+        me.generalRecord.set(generalSettings);
+        me.expressCheckoutRecord.set(ecSettings);
+        me.installmentsRecord.set(installmentsSettings);
+        me.plusRecord.set(plusSettings);
 
-        me.record.save({
-            success: function() {
-                me.window.setLoading(false);
-                Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Products{/s}', '{s name=growl/saveSettings}The settings have been saved!{/s}', me.window.title);
-            },
-            failure: function() {
-                me.window.setLoading(false);
-            }
-        });
+        me.saveRecords();
+
+        Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Products{/s}', '{s name=growl/saveSettings}The settings have been saved!{/s}', me.window.title);
+
+        me.createWebProfiles();
     },
 
     onRegisterWebhook: function() {
@@ -151,7 +248,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
         Ext.Ajax.request({
             url: me.registerWebhookUrl,
             params: {
-                shopId: me.record.get('shopId'),
+                shopId: me.shopId,
                 clientId: generalSettings['clientId'],
                 clientSecret: generalSettings['clientSecret'],
                 sandbox: generalSettings['sandbox']
@@ -169,7 +266,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
         Ext.Ajax.request({
             url: me.validateAPIUrl,
             params: {
-                shopId: me.record.get('shopId'),
+                shopId: me.shopId,
                 clientId: generalSettings['clientId'],
                 clientSecret: generalSettings['clientSecret'],
                 sandbox: generalSettings['sandbox']
@@ -228,32 +325,38 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
         }
 
         var generalTab = me.getGeneralTab(),
-            paypalTab = me.getPaypalTab(),
             plusTab = me.getPlusTab(),
-            installmentsTabs = me.getInstallmentsTab(),
+            installmentsTab = me.getInstallmentsTab(),
             ecTab = me.getEcTab(),
-            settings = Ext.JSON.decode(response.responseText)['settings'];
+            settings = Ext.JSON.decode(response.responseText);
 
-        me.record = Ext.create('Shopware.apps.PaypalUnifiedSettings.model.Settings', settings);
-
-        // Update general tab
-        generalTab.loadRecord(me.record);
-
-        // Update the paypal tab
-        paypalTab.loadRecord(me.record);
-
-        // Update plus tab
-        plusTab.loadRecord(me.record);
-
-        // Update installments tab
-        installmentsTabs.loadRecord(me.record);
-
-        // Update express checkout tab
-        ecTab.loadRecord(me.record);
-
-        me.applyActivationState(me.record.get('active'));
+        if (settings.general) {
+            me.generalRecord = Ext.create('Shopware.apps.PaypalUnifiedSettings.model.General', settings.general);
+            generalTab.loadRecord(me.generalRecord);
+            me.applyActivationState(me.generalRecord.get('active'));
+        } else if (settings.installments) {
+            me.installmentsRecord = Ext.create('Shopware.apps.PaypalUnifiedSettings.model.Installments', settings.installments);
+            installmentsTab.loadRecord(me.installmentsRecord);
+        } else if (settings.express) {
+            me.expressCheckoutRecord = Ext.create('Shopware.apps.PaypalUnifiedSettings.model.ExpressCheckout', settings.express);
+            ecTab.loadRecord(me.expressCheckoutRecord);
+        } else if (settings.plus) {
+            me.plusRecord = Ext.create('Shopware.apps.PaypalUnifiedSettings.model.Plus', settings.plus);
+            plusTab.loadRecord(me.plusRecord);
+        }
 
         me.settingsSaved = false;
+    },
+
+    /**
+     * @param { Object } options
+     * @param { Boolean } success
+     * @param { Object } response
+     */
+    onCreateWebProfilesAjaxCallback: function(options, success, response) {
+        var me = this;
+
+        me.window.setLoading(false);
     },
 
     /**
@@ -268,7 +371,6 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
         me.getGeneralTab().behaviorContainer.setDisabled(!active);
         me.getGeneralTab().errorHandlingContainer.setDisabled(!active);
 
-        me.getPaypalTab().setDisabled(!active);
         me.getPlusTab().setDisabled(!active);
         me.getInstallmentsTab().setDisabled(!active);
         me.getEcTab().setDisabled(!active);
@@ -283,7 +385,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
         Ext.Ajax.request({
             url: me.testInstallmentsAvailabilityUrl,
             params: {
-                shopId: me.record.get('shopId'),
+                shopId: me.shopId,
                 clientId: generalSettings['clientId'],
                 clientSecret: generalSettings['clientSecret'],
                 sandbox: generalSettings['sandbox']

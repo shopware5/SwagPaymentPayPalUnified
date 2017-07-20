@@ -29,6 +29,7 @@ use Enlight\Event\SubscriberInterface;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\Services\Installments\ValidationService;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 
 class PaymentMeans implements SubscriberInterface
 {
@@ -104,7 +105,7 @@ class PaymentMeans implements SubscriberInterface
             }
 
             if ((int) $paymentMethod['id'] === $this->installmentsPaymentId
-                && (!$this->settingsService->hasSettings() || !$this->settingsService->get('active') || !$this->settingsService->get('installments_active'))
+                && (!$this->settingsService->hasSettings() || !$this->settingsService->get('active') || !$this->settingsService->get('active', SettingsTable::INSTALLMENTS))
             ) {
                 unset($availableMethods[$index]);
             }

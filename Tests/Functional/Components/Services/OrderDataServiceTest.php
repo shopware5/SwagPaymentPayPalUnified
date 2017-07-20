@@ -31,11 +31,13 @@ use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\PaymentInstruction;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\FixtureImportTestCaseTrait;
+use SwagPaymentPayPalUnified\Tests\Functional\SettingsHelperTrait;
 
 class OrderDataServiceTest extends \PHPUnit_Framework_TestCase
 {
     use DatabaseTestCaseTrait;
     use FixtureImportTestCaseTrait;
+    use SettingsHelperTrait;
 
     const ORDER_NUMBER = 99999;
     const PAYMENT_STATUS_APPROVED = 12;
@@ -173,21 +175,16 @@ class OrderDataServiceTest extends \PHPUnit_Framework_TestCase
 
     private function createTestSettings()
     {
-        $settingsParams = [
-            ':shopId' => 1,
-            ':clientId' => 'TEST',
-            ':clientSecret' => 'TEST',
-            ':sandbox' => 1,
-            ':showSidebarLogo' => 'TEST',
-            ':logoImage' => 'TEST',
-            ':plusActive' => true, //Only this flag has any relevance in this test
-        ];
+        $this->insertGeneralSettingsFromArray([
+            'shopId' => 1,
+            'clientId' => 'TEST',
+            'clientSecret' => 'TEST',
+            'sandbox' => 1,
+            'showSidebarLogo' => 'TEST',
+            'logoImage' => 'TEST',
+        ]);
 
-        $sql = 'INSERT INTO swag_payment_paypal_unified_settings
-                (shop_id, client_id, client_secret, sandbox, show_sidebar_logo, logo_image, plus_active)
-                VALUES (:shopId, :clientId, :clientSecret, :sandbox, :showSidebarLogo, :logoImage, :plusActive)';
-
-        Shopware()->Db()->executeUpdate($sql, $settingsParams);
+        $this->insertPlusSettingsFromArray(['active' => 1]);
     }
 
     /**

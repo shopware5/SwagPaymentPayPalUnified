@@ -28,6 +28,7 @@ use Shopware\Components\Routing\Router;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderInterface;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentIntent;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
@@ -87,11 +88,11 @@ class PaymentBuilderService implements PaymentBuilderInterface
 
         $requestParameters = new Payment();
 
-        if ($this->settings->get('plus_active')) {
+        if ($this->settings->get('active', SettingsTable::PLUS)) {
             $requestParameters->setIntent('sale');
         } else {
             //For the "classic" integration it's possible to use further intents.
-            $intent = (int) $this->settings->get('paypal_payment_intent');
+            $intent = (int) $this->settings->get('payment_intent');
 
             switch ($intent) {
                 case 0:
@@ -124,7 +125,7 @@ class PaymentBuilderService implements PaymentBuilderInterface
         $transactions->setAmount($amount);
 
         //don't submit the cart if the option is false and the selected payment method is express checkout
-        if ($params->getPaymentType() !== PaymentType::PAYPAL_EXPRESS || $this->settings->get('ec_submit_cart')) {
+        if ($params->getPaymentType() !== PaymentType::PAYPAL_EXPRESS || $this->settings->get('submit_cart', SettingsTable::EXPRESS_CHECKOUT)) {
             $itemList = new ItemList();
             $itemList->setItems($this->getItemList());
 

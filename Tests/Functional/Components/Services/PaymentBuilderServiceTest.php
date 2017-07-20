@@ -27,6 +27,7 @@ namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
 use SwagPaymentPayPalUnified\Components\Services\PaymentBuilderService;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile\WebProfileFlowConfig;
@@ -377,16 +378,28 @@ class SettingsServicePaymentBuilderServiceMock implements SettingsServiceInterfa
         $this->ec_submit_cart = $submitCart;
     }
 
-    public function getSettings($shopId = null)
+    public function getSettings($shopId = null, $settingsTable = SettingsTable::GENERAL)
     {
     }
 
-    public function get($column)
+    public function get($column, $settingsTable = SettingsTable::GENERAL)
     {
+        if ($column == 'active' && $settingsTable == SettingsTable::PLUS) {
+            return $this->plus_active;
+        }
+
+        if ($column == 'payment_intent') {
+            return $this->paypal_payment_intent;
+        }
+
+        if ($column == 'submit_cart' && $settingsTable == SettingsTable::EXPRESS_CHECKOUT) {
+            return $this->ec_submit_cart;
+        }
+
         return $this->$column;
     }
 
-    public function hasSettings()
+    public function hasSettings($settingsTable = SettingsTable::GENERAL)
     {
     }
 }

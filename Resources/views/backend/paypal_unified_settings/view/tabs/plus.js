@@ -48,7 +48,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Plus', {
         return [
             {
                 xtype: 'checkbox',
-                name: 'plusActive',
+                name: 'active',
                 fieldLabel: '{s name=field/activate}Activate PayPal Plus{/s}',
                 boxLabel: '{s name=field/activate/help}Activate in order to enable the PayPal Plus integration for the selected shop.{/s}',
                 inputValue: true,
@@ -65,7 +65,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Plus', {
      */
     createRestyleCheckbox: function() {
         return Ext.create('Ext.form.field.Checkbox', {
-            name: 'plusRestyle',
+            name: 'restyle',
             fieldLabel: '{s name=field/restyle}Restyle payment selection{/s}',
             helpText: '{s name=field/restyle/help}Activate this option to apply the payment wall style to the whole payment selection.{/s}',
             boxLabel: '{s name=field/restyle/boxLabel}Activate this option to restyle the payment selection.{/s}',
@@ -86,7 +86,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Plus', {
         store.load();
 
         return Ext.create('Ext.form.field.ComboBox', {
-            name: 'plusLanguage',
+            name: 'language',
             store: store,
             fieldLabel: '{s name=field/language}Payment Wall language{/s}',
             helpText: '{s name=field/language/help}You can define another language for the Payment Wall for the selected shop. Leave the selection empty in order to use the shop locale.{/s}',

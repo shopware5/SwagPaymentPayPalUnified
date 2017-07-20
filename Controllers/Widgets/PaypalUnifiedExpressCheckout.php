@@ -28,6 +28,7 @@ use SwagPaymentPayPalUnified\Components\ExpressCheckout\CustomerService;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\PaymentResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\ErrorResponse;
@@ -83,7 +84,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedExpressCheckout extends \Enlight
         //as seen in the PayPalUnified controller.
         $basketData = $basket->sGetBasket();
 
-        $webProfileId = $this->get('paypal_unified.settings_service')->get('web_profile_id_ec');
+        $webProfileId = $this->get('paypal_unified.settings_service')->get('web_profile_id', SettingsTable::EXPRESS_CHECKOUT);
 
         $userData = [
             'additional' => [

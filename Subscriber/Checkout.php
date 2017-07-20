@@ -34,6 +34,7 @@ use SwagPaymentPayPalUnified\Components\Services\OrderDataService;
 use SwagPaymentPayPalUnified\Components\Services\PaymentInstructionService;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use SwagPaymentPayPalUnified\PayPalBundle\PartnerAttributionId;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\PaymentResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService;
@@ -121,7 +122,8 @@ class Checkout implements SubscriberInterface
 
         $action = $request->getActionName();
         $unifiedActive = (bool) $this->settingsService->get('active');
-        $usePayPalPlus = (bool) $this->settingsService->get('plus_active');
+        $usePayPalPlus = (bool) $this->settingsService->get('active', SettingsTable::PLUS);
+
         $errorCode = $request->getParam('paypal_unified_error_code');
         $errorMessage = $request->getParam('paypal_unified_error_message');
         $errorName = $request->getParam('paypal_unified_error_name');
@@ -137,7 +139,7 @@ class Checkout implements SubscriberInterface
         }
 
         if (!in_array($action, $this::$allowedActions, true)) {
-            $session->offsetUnset('PayPalUnifiedCameFromPaymentSelection');
+            $session->offsetUnset('paypalUnifiedCameFromPaymentSelection');
 
             return;
         }
@@ -190,11 +192,11 @@ class Checkout implements SubscriberInterface
     private function handleConfirmDispatch(\Enlight_View_Default $view, \Enlight_Components_Session_Namespace $session)
     {
         // Check if the user is coming from checkout step 2 (payment & shipping)
-        $cameFromPaymentSelection = $session->get('PayPalUnifiedCameFromPaymentSelection', false);
+        $cameFromPaymentSelection = $session->get('paypalUnifiedCameFromPaymentSelection', false);
 
         //This value could be set in the shippingPayment action.
         //If so, the payment does not need to be created again.
-        $remotePaymentId = $session->get('PayPalUnifiedRemotePaymentId');
+        $remotePaymentId = $session->get('paypalUnifiedRemotePaymentId');
 
         $view->assign('paypalUnifiedCameFromPaymentSelection', $cameFromPaymentSelection);
         $view->assign('paypalUnifiedPaymentId', $this->paymentMethodProvider->getPaymentId($this->container->get('dbal_connection')));
@@ -225,7 +227,7 @@ class Checkout implements SubscriberInterface
      */
     private function handleShippingPaymentDispatch(\Enlight_View_Default $view, \Enlight_Components_Session_Namespace $session)
     {
-        $session->offsetSet('PayPalUnifiedCameFromPaymentSelection', true);
+        $session->offsetSet('paypalUnifiedCameFromPaymentSelection', true);
         $paymentStruct = $this->createPayment($view->getAssign('sBasket'), $view->getAssign('sUserData'));
 
         if (!$paymentStruct) {
@@ -240,7 +242,7 @@ class Checkout implements SubscriberInterface
 
         //Store the paymentID in the session to indicate that
         //the payment has already been created and can be used on the confirm page.
-        $session->offsetSet('PayPalUnifiedRemotePaymentId', $paymentStruct->getId());
+        $session->offsetSet('paypalUnifiedRemotePaymentId', $paymentStruct->getId());
     }
 
     /**
@@ -282,7 +284,7 @@ class Checkout implements SubscriberInterface
      */
     private function getPaymentWallLanguage()
     {
-        $languageIso = $this->settingsService->get('plus_language');
+        $languageIso = $this->settingsService->get('language', SettingsTable::PLUS);
 
         //If no locale ISO was set up specifically,
         //we can use the current shop's locale ISO

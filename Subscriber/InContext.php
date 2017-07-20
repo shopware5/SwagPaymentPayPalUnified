@@ -28,6 +28,7 @@ use Doctrine\DBAL\Connection;
 use Enlight\Event\SubscriberInterface;
 use Shopware\Components\Model\ModelManager;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
+use SwagPaymentPayPalUnified\Models\Settings\General as GeneralSettingsModel;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 
 class InContext implements SubscriberInterface
@@ -88,6 +89,7 @@ class InContext implements SubscriberInterface
             return;
         }
 
+        /** @var GeneralSettingsModel $settings */
         $settings = $this->settingsService->getSettings();
 
         if (!$settings || !$settings->getActive() || !$settings->getUseInContext()) {

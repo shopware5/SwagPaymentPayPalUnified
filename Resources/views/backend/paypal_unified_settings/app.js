@@ -28,7 +28,10 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings', {
      * @type { Array }
      */
     models: [
-        'Settings'
+        'General',
+        'ExpressCheckout',
+        'Installments',
+        'Plus'
     ],
 
     /**

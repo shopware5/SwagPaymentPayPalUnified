@@ -27,12 +27,14 @@ namespace SwagPaymentPayPalUnified\Tests\Functional\Subscriber;
 use Enlight_Template_Manager;
 use SwagPaymentPayPalUnified\Subscriber\Frontend;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
+use SwagPaymentPayPalUnified\Tests\Functional\SettingsHelperTrait;
 use SwagPaymentPayPalUnified\Tests\Mocks\DummyController;
 use SwagPaymentPayPalUnified\Tests\Mocks\ViewMock;
 
 class FrontendSubscriberTest extends \PHPUnit_Framework_TestCase
 {
     use DatabaseTestCaseTrait;
+    use SettingsHelperTrait;
 
     public function test_can_be_created()
     {
@@ -165,22 +167,20 @@ class FrontendSubscriberTest extends \PHPUnit_Framework_TestCase
      */
     private function createTestSettings($active, $plusActive, $restylePaymentSelection)
     {
-        $settingsParams = [
-            ':shopId' => 1,
-            ':clientId' => 'TEST',
-            ':clientSecret' => 'TEST',
-            ':sandbox' => 1,
-            ':showSidebarLogo' => 1,
-            ':logoImage' => 'TEST',
-            ':plusActive' => $plusActive,
-            ':plusRestyle' => $restylePaymentSelection,
-            ':active' => $active,
-        ];
+        $this->insertGeneralSettingsFromArray([
+            'shopId' => 1,
+            'clientId' => 'test',
+            'clientSecret' => 'test',
+            'sandbox' => true,
+            'showSidebarLogo' => true,
+            'logoImage' => 'TEST',
+            'active' => $active,
+        ]);
 
-        $sql = 'INSERT INTO swag_payment_paypal_unified_settings
-                (shop_id, active, client_id, client_secret, sandbox, show_sidebar_logo, logo_image, plus_active, plus_restyle)
-                VALUES (:shopId, :active, :clientId, :clientSecret, :sandbox, :showSidebarLogo, :logoImage, :plusActive, :plusRestyle)';
-
-        Shopware()->Db()->executeUpdate($sql, $settingsParams);
+        $this->insertPlusSettingsFromArray([
+            'shopId' => 1,
+            'active' => $plusActive,
+            'restyle' => $restylePaymentSelection,
+        ]);
     }
 }

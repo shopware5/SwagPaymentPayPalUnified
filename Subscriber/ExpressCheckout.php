@@ -31,10 +31,13 @@ use Shopware\Components\HttpClient\RequestException;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderInterface;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
 use SwagPaymentPayPalUnified\Components\Services\ShippingAddressRequestService;
+use SwagPaymentPayPalUnified\Models\Settings\ExpressCheckout as ExpressSettingsModel;
+use SwagPaymentPayPalUnified\Models\Settings\General as GeneralSettingsModel;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PaymentAddressPatch;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PaymentAmountPatch;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\PaymentResource;
 
 class ExpressCheckout implements SubscriberInterface
@@ -115,8 +118,13 @@ class ExpressCheckout implements SubscriberInterface
      */
     public function loadExpressCheckoutJS(ActionEventArgs $args)
     {
-        $settings = $this->settingsService->getSettings();
-        if (!$settings || !$settings->getActive() || !$settings->getEcActive()) {
+        /** @var GeneralSettingsModel $generalSettings */
+        $generalSettings = $this->settingsService->getSettings();
+
+        /** @var ExpressSettingsModel $expressSettings */
+        $expressSettings = $this->settingsService->getSettings(null, SettingsTable::EXPRESS_CHECKOUT);
+
+        if (!$generalSettings || !$expressSettings || !$generalSettings->getActive() || !$expressSettings->getActive()) {
             return;
         }
 
@@ -130,8 +138,13 @@ class ExpressCheckout implements SubscriberInterface
      */
     public function addExpressCheckoutButtonCart(ActionEventArgs $args)
     {
-        $settings = $this->settingsService->getSettings();
-        if (!$settings || !$settings->getActive() || !$settings->getEcActive()) {
+        /** @var GeneralSettingsModel $generalSettings */
+        $generalSettings = $this->settingsService->getSettings();
+
+        /** @var ExpressSettingsModel $expressSettings */
+        $expressSettings = $this->settingsService->getSettings(null, SettingsTable::EXPRESS_CHECKOUT);
+
+        if (!$generalSettings || !$expressSettings || !$generalSettings->getActive() || !$expressSettings->getActive()) {
             return;
         }
 
@@ -141,11 +154,11 @@ class ExpressCheckout implements SubscriberInterface
             return;
         }
 
-        $view->assign('paypalUnifiedModeSandbox', $settings->getSandbox());
-        $view->assign('paypalUnifiedUseInContext', $settings->getUseInContext());
-        $view->assign('paypalUnifiedEcButtonStyleColor', $settings->getEcButtonStyleColor());
-        $view->assign('paypalUnifiedEcButtonStyleShape', $settings->getEcButtonStyleShape());
-        $view->assign('paypalUnifiedEcButtonStyleSize', $settings->getEcButtonStyleSize());
+        $view->assign('paypalUnifiedModeSandbox', $generalSettings->getSandbox());
+        $view->assign('paypalUnifiedUseInContext', $generalSettings->getUseInContext());
+        $view->assign('paypalUnifiedEcButtonStyleColor', $expressSettings->getButtonStyleColor());
+        $view->assign('paypalUnifiedEcButtonStyleShape', $expressSettings->getButtonStyleShape());
+        $view->assign('paypalUnifiedEcButtonStyleSize', $expressSettings->getButtonStyleSize());
     }
 
     /**
@@ -195,12 +208,13 @@ class ExpressCheckout implements SubscriberInterface
      */
     public function addExpressCheckoutButtonDetail(ActionEventArgs $args)
     {
-        $settings = $this->settingsService->getSettings();
-        if (!$settings ||
-            !$settings->getActive() ||
-            !$settings->getEcActive() ||
-            !$settings->getEcDetailActive()
-        ) {
+        /** @var GeneralSettingsModel $generalSettings */
+        $generalSettings = $this->settingsService->getSettings();
+
+        /** @var ExpressSettingsModel $expressSettings */
+        $expressSettings = $this->settingsService->getSettings(null, SettingsTable::EXPRESS_CHECKOUT);
+
+        if (!$generalSettings || !$expressSettings || !$generalSettings->getActive() || !$expressSettings->getActive() || !$expressSettings->getDetailActive()) {
             return;
         }
 
@@ -208,11 +222,11 @@ class ExpressCheckout implements SubscriberInterface
 
         if (!$view->getAssign('userLoggedIn')) {
             $view->assign('paypalUnifiedEcDetailActive', true);
-            $view->assign('paypalUnifiedModeSandbox', $settings->getSandbox());
-            $view->assign('paypalUnifiedUseInContext', $settings->getUseInContext());
-            $view->assign('paypalUnifiedEcButtonStyleColor', $settings->getEcButtonStyleColor());
-            $view->assign('paypalUnifiedEcButtonStyleShape', $settings->getEcButtonStyleShape());
-            $view->assign('paypalUnifiedEcButtonStyleSize', $settings->getEcButtonStyleSize());
+            $view->assign('paypalUnifiedModeSandbox', $generalSettings->getSandbox());
+            $view->assign('paypalUnifiedUseInContext', $generalSettings->getUseInContext());
+            $view->assign('paypalUnifiedEcButtonStyleColor', $expressSettings->getButtonStyleColor());
+            $view->assign('paypalUnifiedEcButtonStyleShape', $expressSettings->getButtonStyleShape());
+            $view->assign('paypalUnifiedEcButtonStyleSize', $expressSettings->getButtonStyleSize());
         }
     }
 

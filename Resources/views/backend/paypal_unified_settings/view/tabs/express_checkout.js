@@ -86,7 +86,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.ExpressCheckout', {
         var me = this;
 
         return Ext.create('Ext.form.field.Checkbox', {
-            name: 'ecActive',
+            name: 'active',
             fieldLabel: '{s name=field/activate}Activate PayPal EC{/s}',
             boxLabel: '{s name=field/activate/help}Activate in order to enable the PayPal Express Checkout integration for the selected shop.{/s}',
             inputValue: true,
@@ -100,7 +100,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.ExpressCheckout', {
      */
     createEcDetailActivate: function() {
         return Ext.create('Ext.form.field.Checkbox', {
-            name: 'ecDetailActive',
+            name: 'detailActive',
             fieldLabel: '{s name=field/ecDetailActivate}Show on detail page{/s}',
             boxLabel: '{s name=field/ecDetailActivate/help}If this option is active, the Express Checkout button will be shown on each product detail page.{/s}',
             inputValue: true,
@@ -114,7 +114,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.ExpressCheckout', {
      */
     createEcSubmitCart: function() {
         return Ext.create('Ext.form.field.Checkbox', {
-            name: 'ecSubmitCart',
+            name: 'submitCart',
             fieldLabel: '{s name=field/submitCart}Submit cart{/s}',
             boxLabel: '{s name=field/submitCart/help}If this option is active, the cart will be submitted to PayPal for Express orders{/s}',
             inputValue: true,
@@ -128,7 +128,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.ExpressCheckout', {
      */
     createEcButtonStyleColor: function() {
         return Ext.create('Ext.form.field.ComboBox', {
-            name: 'ecButtonStyleColor',
+            name: 'buttonStyleColor',
             fieldLabel: '{s name=field/ecButtonStyleColor}Button color{/s}',
             store: Ext.create('Shopware.apps.PaypalUnifiedSettings.store.EcButtonStyleColor'),
             valueField: 'id',
@@ -141,7 +141,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.ExpressCheckout', {
      */
     createEcButtonStyleShape: function() {
         return Ext.create('Ext.form.field.ComboBox', {
-            name: 'ecButtonStyleShape',
+            name: 'buttonStyleShape',
             fieldLabel: '{s name=field/ecButtonStyleShape}Button shape{/s}',
             store: Ext.create('Shopware.apps.PaypalUnifiedSettings.store.EcButtonStyleShape'),
             valueField: 'id',
@@ -154,7 +154,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.ExpressCheckout', {
      */
     createEcButtonStyleSize: function() {
         return Ext.create('Ext.form.field.ComboBox', {
-            name: 'ecButtonStyleSize',
+            name: 'buttonStyleSize',
             fieldLabel: '{s name=field/ecButtonStyleSize}Button size{/s}',
             store: Ext.create('Shopware.apps.PaypalUnifiedSettings.store.EcButtonStyleSize'),
             valueField: 'id',

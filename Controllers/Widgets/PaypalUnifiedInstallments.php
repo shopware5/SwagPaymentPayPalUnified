@@ -109,7 +109,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedInstallments extends Enlight_Con
         $response = $this->installmentsRequestService->getList($productPrice);
 
         if (!isset($response['financing_options'][0])) {
-            $this->logger->error('Could not find financing options in response', ['payload' => $response, 'product-price' => $productPrice]);
+            $this->logger->warning('Could not find financing options in response', ['payload' => $response, 'product-price' => $productPrice]);
 
             return;
         }

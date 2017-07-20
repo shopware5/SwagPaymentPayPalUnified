@@ -24,42 +24,13 @@
 
 namespace SwagPaymentPayPalUnified\PayPalBundle\Components;
 
-use Shopware\Components\Model\ModelEntity;
-
-interface SettingsServiceInterface
+/**
+ * No complete table names can be declared below to avoid references to the actual plugin.
+ */
+class SettingsTable
 {
-    /**
-     * Returns the whole settings model
-     *
-     * @param int|null $shopId
-     * @param string   $settingsTable
-     *
-     * @return null|ModelEntity
-     *
-     * @see SettingsTable
-     */
-    public function getSettings($shopId = null, $settingsTable = SettingsTable::GENERAL);
-
-    /**
-     * Returns a setting value by the provided column name.
-     *
-     * @param string $column
-     * @param string $settingsTable
-     *
-     * @return mixed
-     *
-     * @see SettingsTable
-     */
-    public function get($column, $settingsTable = SettingsTable::GENERAL);
-
-    /**
-     * Returns a boolean indicating if the shop has any stored settings for the current shop.
-     *
-     * @param string $settingsTable
-     *
-     * @return bool
-     *
-     * @see SettingsTable
-     */
-    public function hasSettings($settingsTable = SettingsTable::GENERAL);
+    const GENERAL = 'general';
+    const EXPRESS_CHECKOUT = 'express';
+    const INSTALLMENTS = 'installments';
+    const PLUS = 'plus';
 }

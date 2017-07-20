@@ -29,10 +29,12 @@ use SwagPaymentPayPalUnified\Components\Services\SettingsService;
 use SwagPaymentPayPalUnified\Models\Settings;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
+use SwagPaymentPayPalUnified\Tests\Functional\SettingsHelperTrait;
 
 class SettingsServiceTest extends \PHPUnit_Framework_TestCase
 {
     use DatabaseTestCaseTrait;
+    use SettingsHelperTrait;
 
     const SHOP_ID = 1;
     const CLIENT_ID = 'TEST_CLIENT_ID';
@@ -48,11 +50,11 @@ class SettingsServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertNotNull(Shopware()->Container()->get('paypal_unified.settings_service'));
     }
 
-    public function test_getSettings_byShopId()
+    public function test_getGeneralSettings_byShopId()
     {
         $this->createTestSettings();
 
-        /** @var Settings $settingsModel */
+        /** @var Settings\General $settingsModel */
         $settingsModel = Shopware()->Container()->get('paypal_unified.settings_service')->getSettings(self::SHOP_ID);
 
         $this->assertEquals(self::ACTIVE, $settingsModel->getActive());
@@ -61,7 +63,6 @@ class SettingsServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(self::SANDBOX, $settingsModel->getSandbox());
         $this->assertEquals(self::SHOW_SIDEBAR_LOGO, $settingsModel->getShowSidebarLogo());
         $this->assertEquals(self::LOGO_IMAGE, $settingsModel->getLogoImage());
-        $this->assertEquals(self::PLUS_ACTIVE, $settingsModel->getPlusActive());
     }
 
     public function test_get()
@@ -76,6 +77,7 @@ class SettingsServiceTest extends \PHPUnit_Framework_TestCase
 
     public function test_get_without_shop_throws_exception()
     {
+        $this->createTestSettings();
         $settingsService = new SettingsService(Shopware()->Container()->get('models'), new DependencyMock());
 
         $this->expectException(\RuntimeException::class);
@@ -110,22 +112,15 @@ class SettingsServiceTest extends \PHPUnit_Framework_TestCase
 
     private function createTestSettings()
     {
-        $settingsParams = [
-            ':shopId' => self::SHOP_ID,
-            ':clientId' => self::CLIENT_ID,
-            ':clientSecret' => self::CLIENT_SECRET,
-            ':sandbox' => self::SANDBOX,
-            ':showSidebarLogo' => self::SHOW_SIDEBAR_LOGO,
-            ':logoImage' => self::LOGO_IMAGE,
-            ':plusActive' => self::PLUS_ACTIVE,
-            ':active' => self::ACTIVE,
-        ];
-
-        $sql = 'INSERT INTO swag_payment_paypal_unified_settings
-                (shop_id, active, client_id, client_secret, sandbox, show_sidebar_logo, logo_image, plus_active)
-                VALUES (:shopId, :active, :clientId, :clientSecret, :sandbox, :showSidebarLogo, :logoImage, :plusActive)';
-
-        Shopware()->Db()->executeUpdate($sql, $settingsParams);
+        $this->insertGeneralSettingsFromArray([
+            'shopId' => self::SHOP_ID,
+            'clientId' => self::CLIENT_ID,
+            'clientSecret' => self::CLIENT_SECRET,
+            'showSidebarLogo' => self::SHOW_SIDEBAR_LOGO,
+            'logoImage' => self::LOGO_IMAGE,
+            'active' => self::ACTIVE,
+            'sandbox' => self::SANDBOX,
+        ]);
     }
 }
 

@@ -24,9 +24,9 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Subscriber;
 
-use Doctrine\DBAL\Connection;
 use SwagPaymentPayPalUnified\Subscriber\ExpressCheckout as ExpressCheckoutSubscriber;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
+use SwagPaymentPayPalUnified\Tests\Functional\SettingsHelperTrait;
 use SwagPaymentPayPalUnified\Tests\Mocks\ClientService;
 use SwagPaymentPayPalUnified\Tests\Mocks\DummyController;
 use SwagPaymentPayPalUnified\Tests\Mocks\ViewMock;
@@ -34,6 +34,7 @@ use SwagPaymentPayPalUnified\Tests\Mocks\ViewMock;
 class ExpressCheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
 {
     use DatabaseTestCaseTrait;
+    use SettingsHelperTrait;
 
     public function test_construct()
     {
@@ -381,17 +382,15 @@ class ExpressCheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
      */
     private function importSettings($active = false, $ecActive = false, $ecDetailActive = false, $sandboxMode = false)
     {
-        /** @var Connection $db */
-        $db = Shopware()->Container()->get('dbal_connection');
+        $this->insertGeneralSettingsFromArray([
+            'active' => $active,
+            'shopId' => 1,
+            'sandbox' => $sandboxMode,
+        ]);
 
-        $sql = 'INSERT INTO swag_payment_paypal_unified_settings (shop_id, active, show_sidebar_logo, plus_active, plus_restyle, installments_show_logo, ec_active, ec_detail_active, sandbox)
-                VALUES (1, :active, false, false, false, false, :ecActive, :ecDetailActive, :sandbox);';
-
-        $db->executeUpdate($sql, [
-            ':active' => $active,
-            ':ecActive' => $ecActive,
-            ':ecDetailActive' => $ecDetailActive,
-            ':sandbox' => $sandboxMode,
+        $this->insertExpressCheckoutSettingsFromArray([
+            'active' => $ecActive,
+            'detailActive' => $ecDetailActive,
         ]);
     }
 

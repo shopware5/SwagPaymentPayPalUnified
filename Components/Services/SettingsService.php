@@ -30,6 +30,7 @@ use Shopware\Models\Shop\DetachedShop;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Models\Settings;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 
 class SettingsService implements SettingsServiceInterface
 {
@@ -64,13 +65,24 @@ class SettingsService implements SettingsServiceInterface
     /**
      * {@inheritdoc}
      */
-    public function getSettings($shopId = null)
+    public function getSettings($shopId = null, $settingsType = SettingsTable::GENERAL)
     {
         //If this function is being called in the storefront, the shopId parameter is
         //not required, because it's being provided during the DI.
         $shopId = $shopId === null ? $this->shop->getId() : $shopId;
 
-        return $this->modelManager->getRepository(Settings::class)->findOneBy(['shopId' => $shopId]);
+        switch ($settingsType) {
+            case SettingsTable::GENERAL:
+                return $this->modelManager->getRepository(Settings\General::class)->findOneBy(['shopId' => $shopId]);
+            case SettingsTable::EXPRESS_CHECKOUT:
+                return $this->modelManager->getRepository(Settings\ExpressCheckout::class)->findOneBy(['shopId' => $shopId]);
+            case SettingsTable::INSTALLMENTS:
+                return $this->modelManager->getRepository(Settings\Installments::class)->findOneBy(['shopId' => $shopId]);
+            case SettingsTable::PLUS:
+                return $this->modelManager->getRepository(Settings\Plus::class)->findOneBy(['shopId' => $shopId]);
+        }
+
+        return null;
     }
 
     /**
@@ -78,13 +90,28 @@ class SettingsService implements SettingsServiceInterface
      *
      * @throws \RuntimeException
      */
-    public function get($column)
+    public function get($column, $settingsType = SettingsTable::GENERAL)
     {
         if ($this->shop === null) {
             throw new \RuntimeException('Could not retrieve a single setting without a shop instance.');
         }
 
-        $sql = 'SELECT * FROM `swag_payment_paypal_unified_settings` WHERE `shop_id`=:shopId';
+        $sql = null;
+
+        switch ($settingsType) {
+            case SettingsTable::GENERAL:
+                $sql = 'SELECT * FROM `swag_payment_paypal_unified_settings_general` WHERE `shop_id`=:shopId';
+                break;
+            case SettingsTable::EXPRESS_CHECKOUT:
+                $sql = 'SELECT * FROM `swag_payment_paypal_unified_settings_express` WHERE `shop_id`=:shopId';
+                break;
+            case SettingsTable::INSTALLMENTS:
+                $sql = 'SELECT * FROM `swag_payment_paypal_unified_settings_installments` WHERE `shop_id`=:shopId';
+                break;
+            case SettingsTable::PLUS:
+                $sql = 'SELECT * FROM `swag_payment_paypal_unified_settings_plus` WHERE `shop_id`=:shopId';
+                break;
+        }
 
         return $this->dbalConnection->fetchAll($sql, [':shopId' => $this->shop->getId()])[0][$column];
     }
@@ -92,13 +119,28 @@ class SettingsService implements SettingsServiceInterface
     /**
      * {@inheritdoc}
      */
-    public function hasSettings()
+    public function hasSettings($settingsType = SettingsTable::GENERAL)
     {
         if ($this->shop === null) {
             return false;
         }
 
-        $sql = 'SELECT `id` IS NOT NULL FROM `swag_payment_paypal_unified_settings` WHERE `shop_id`=:shopId';
+        $sql = null;
+
+        switch ($settingsType) {
+            case SettingsTable::GENERAL:
+                $sql = 'SELECT `id` IS NOT NULL FROM `swag_payment_paypal_unified_settings_general` WHERE `shop_id`=:shopId';
+                break;
+            case SettingsTable::EXPRESS_CHECKOUT:
+                $sql = 'SELECT `id` IS NOT NULL FROM `swag_payment_paypal_unified_settings_express` WHERE `shop_id`=:shopId';
+                break;
+            case SettingsTable::INSTALLMENTS:
+                $sql = 'SELECT `id` IS NOT NULL FROM `swag_payment_paypal_unified_settings_installments` WHERE `shop_id`=:shopId';
+                break;
+            case SettingsTable::PLUS:
+                $sql = 'SELECT `id` IS NOT NULL FROM `swag_payment_paypal_unified_settings_plus` WHERE `shop_id`=:shopId';
+                break;
+        }
 
         return (bool) $this->dbalConnection->fetchColumn($sql, [':shopId' => $this->shop->getId()]);
     }
