@@ -519,5 +519,7 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
         }
 
         $shopRepository->getActiveById($shopId)->registerResources();
+
+        $this->container->get('paypal_unified.settings_service')->refreshDependencies();
     }
 }

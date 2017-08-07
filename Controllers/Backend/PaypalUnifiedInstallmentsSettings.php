@@ -38,26 +38,15 @@ class Shopware_Controllers_Backend_PaypalUnifiedInstallmentsSettings extends Sho
      */
     protected $alias = 'installments';
 
-    /**
-     * @var SettingsServiceInterface
-     */
-    protected $settingsService;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function preDispatch()
-    {
-        $this->settingsService = $this->get('paypal_unified.settings_service');
-        parent::preDispatch();
-    }
-
     public function detailAction()
     {
         $shopId = (int) $this->Request()->getParam('shopId');
 
+        /** @var SettingsServiceInterface $settingsService */
+        $settingsService = $this->get('paypal_unified.settings_service');
+
         /** @var InstallmentsSettingsModel $settings */
-        $settings = $this->settingsService->getSettings($shopId, SettingsTable::INSTALLMENTS);
+        $settings = $settingsService->getSettings($shopId, SettingsTable::INSTALLMENTS);
 
         if ($settings !== null) {
             $this->view->assign('installments', $settings->toArray());

@@ -144,6 +144,8 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
     loadSetting: function(detailUrl) {
         var me = this;
 
+        me.applyActivationState(false);
+
         Ext.Ajax.request({
             url: detailUrl,
             params: {
@@ -188,6 +190,8 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
     createWebProfiles: function () {
         var me = this,
             generalSettings = me.getGeneralTab().getForm().getValues();
+
+        me.window.setLoading('{s name="loading/createWebProfiles"}Creating web-profiles...{/s}');
 
         Ext.Ajax.request({
             url: me.createWebProfilesUrl,
@@ -357,6 +361,12 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
         var me = this;
 
         me.window.setLoading(false);
+
+        if (success) {
+            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Products{/s}', '{s name=growl/createWebProfilesSuccess}Web-profile(s) successfully created{/s}', me.window.title);
+        } else {
+            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Products{/s}', '{s name=growl/createWebProfilesError}Could not create web-profiles due to an unknown error{/s}', me.window.title);
+        }
     },
 
     /**

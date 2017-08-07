@@ -81,7 +81,7 @@ class ExpressCheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
             'subject' => new DummyController($request, $view, null),
         ]);
 
-        $this->importSettings(false, true, true);
+        $this->importSettings(false, false, true);
 
         $subscriber = $this->getSubscriber();
         $subscriber->loadExpressCheckoutJS($enlightEventArgs);
@@ -98,7 +98,7 @@ class ExpressCheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
             'subject' => new DummyController($request, $view, null),
         ]);
 
-        $this->importSettings(true, false, true);
+        $this->importSettings(true, false, false);
 
         $subscriber = $this->getSubscriber();
         $subscriber->loadExpressCheckoutJS($enlightEventArgs);
@@ -376,11 +376,11 @@ class ExpressCheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param bool $active
-     * @param bool $ecActive
+     * @param bool $ecCartActive
      * @param bool $ecDetailActive
      * @param bool $sandboxMode
      */
-    private function importSettings($active = false, $ecActive = false, $ecDetailActive = false, $sandboxMode = false)
+    private function importSettings($active = false, $ecCartActive = false, $ecDetailActive = false, $sandboxMode = false)
     {
         $this->insertGeneralSettingsFromArray([
             'active' => $active,
@@ -389,7 +389,7 @@ class ExpressCheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $this->insertExpressCheckoutSettingsFromArray([
-            'active' => $ecActive,
+            'cartActive' => $ecCartActive,
             'detailActive' => $ecDetailActive,
         ]);
     }

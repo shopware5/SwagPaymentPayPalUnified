@@ -27,7 +27,10 @@ namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\Services\SettingsService;
 use SwagPaymentPayPalUnified\Models\Settings;
+use SwagPaymentPayPalUnified\Models\Settings\Installments as InstallmentsSettingsModel;
+use SwagPaymentPayPalUnified\Models\Settings\Plus as PlusSettingsModel;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\SettingsHelperTrait;
 
@@ -110,6 +113,93 @@ class SettingsServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($settingsService->hasSettings());
     }
 
+    public function test_getSettings_installments()
+    {
+        $this->createInstallmentsTestSettings();
+
+        /** @var SettingsServiceInterface $settingsService */
+        $settingsService = Shopware()->Container()->get('paypal_unified.settings_service');
+
+        /** @var InstallmentsSettingsModel $installmentsSettings */
+        $installmentsSettings = $settingsService->getSettings(self::SHOP_ID, SettingsTable::INSTALLMENTS);
+
+        $this->assertEquals(2, $installmentsSettings->getIntent());
+        $this->assertEquals(1, $installmentsSettings->getPresentmentTypeDetail());
+        $this->assertEquals(2, $installmentsSettings->getPresentmentTypeCart());
+    }
+
+    public function test_getSettings_plus()
+    {
+        $this->createPlusTestSettings();
+
+        /** @var SettingsServiceInterface $settingsService */
+        $settingsService = Shopware()->Container()->get('paypal_unified.settings_service');
+
+        /** @var PlusSettingsModel $plusSettings */
+        $plusSettings = $settingsService->getSettings(self::SHOP_ID, SettingsTable::PLUS);
+
+        $this->assertTrue($plusSettings->getActive());
+        $this->assertTrue($plusSettings->getRestyle());
+    }
+
+    public function test_hasSettings_installments()
+    {
+        $this->createInstallmentsTestSettings();
+
+        /** @var SettingsServiceInterface $settingsService */
+        $settingsService = Shopware()->Container()->get('paypal_unified.settings_service');
+
+        $this->assertTrue($settingsService->hasSettings(SettingsTable::INSTALLMENTS));
+    }
+
+    public function test_hasSettings_plus()
+    {
+        $this->createPlusTestSettings();
+
+        /** @var SettingsServiceInterface $settingsService */
+        $settingsService = Shopware()->Container()->get('paypal_unified.settings_service');
+
+        $this->assertTrue($settingsService->hasSettings(SettingsTable::PLUS));
+    }
+
+    public function test_hasSettings_express()
+    {
+        $this->createExpressTestSettings();
+
+        /** @var SettingsServiceInterface $settingsService */
+        $settingsService = Shopware()->Container()->get('paypal_unified.settings_service');
+
+        $this->assertTrue($settingsService->hasSettings(SettingsTable::EXPRESS_CHECKOUT));
+    }
+
+    public function test_get_express()
+    {
+        $this->createExpressTestSettings();
+
+        /** @var SettingsServiceInterface $settingsService */
+        $settingsService = Shopware()->Container()->get('paypal_unified.settings_service');
+
+        $this->assertTrue((bool) $settingsService->get('cart_active', SettingsTable::EXPRESS_CHECKOUT));
+        $this->assertTrue((bool) $settingsService->get('detail_active', SettingsTable::EXPRESS_CHECKOUT));
+    }
+
+    public function test_getSettings_returns_null_without_correct_table()
+    {
+        /** @var SettingsServiceInterface $settingsService */
+        $settingsService = Shopware()->Container()->get('paypal_unified.settings_service');
+
+        $this->assertNull($settingsService->getSettings(self::SHOP_ID, 'THIS_TABLE_DOES_NOT_EXIST'));
+    }
+
+    public function test_get_will_throw_exception_with_wrong_settings_type()
+    {
+        /** @var SettingsServiceInterface $settingsService */
+        $settingsService = Shopware()->Container()->get('paypal_unified.settings_service');
+
+        $this->expectException(\RuntimeException::class);
+        $settingsService->get(self::SHOP_ID, 'THIS_TABLE_DOES_NOT_EXIST');
+    }
+
     private function createTestSettings()
     {
         $this->insertGeneralSettingsFromArray([
@@ -120,6 +210,37 @@ class SettingsServiceTest extends \PHPUnit_Framework_TestCase
             'logoImage' => self::LOGO_IMAGE,
             'active' => self::ACTIVE,
             'sandbox' => self::SANDBOX,
+        ]);
+    }
+
+    private function createInstallmentsTestSettings()
+    {
+        $this->insertInstallmentsSettingsFromArray([
+            'shopId' => self::SHOP_ID,
+            'active' => self::ACTIVE,
+            'presentmentTypeDetail' => 1,
+            'presentmentTypeCart' => 2,
+            'showLogo' => self::SHOW_SIDEBAR_LOGO,
+            'intent' => 2,
+        ]);
+    }
+
+    private function createPlusTestSettings()
+    {
+        $this->insertPlusSettingsFromArray([
+            'shopId' => self::SHOP_ID,
+            'active' => self::ACTIVE,
+            'restyle' => true,
+        ]);
+    }
+
+    private function createExpressTestSettings()
+    {
+        $this->insertExpressCheckoutSettingsFromArray([
+            'shopId' => self::SHOP_ID,
+            'active' => self::ACTIVE,
+            'detailActive' => true,
+            'cartActive' => true,
         ]);
     }
 }

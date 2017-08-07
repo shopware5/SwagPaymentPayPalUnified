@@ -22,34 +22,16 @@
  * our trademarks remain entirely with us.
  */
 
-use SwagPaymentPayPalUnified\Models\Settings\Plus as PlusSettingsModel;
-use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
-use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
+namespace SwagPaymentPayPalUnified\Tests\Functional\WebhookHandler;
 
-class Shopware_Controllers_Backend_PaypalUnifiedPlusSettings extends Shopware_Controllers_Backend_Application
+class EntityManagerMock extends \Shopware\Components\Model\ModelManager
 {
-    /**
-     * {@inheritdoc}
-     */
-    protected $model = PlusSettingsModel::class;
-
-    /**
-     * {@inheritdoc}
-     */
-    protected $alias = 'plus';
-
-    public function detailAction()
+    public function __construct()
     {
-        $shopId = (int) $this->Request()->getParam('shopId');
+    }
 
-        /** @var SettingsServiceInterface $settingsService */
-        $settingsService = $this->get('paypal_unified.settings_service');
-
-        /** @var PlusSettingsModel $settings */
-        $settings = $settingsService->getSettings($shopId, SettingsTable::PLUS);
-
-        if ($settings !== null) {
-            $this->view->assign('plus', $settings->toArray());
-        }
+    public function getRepository($entityName)
+    {
+        throw new \Exception('Test exception');
     }
 }

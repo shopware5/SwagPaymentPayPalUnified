@@ -97,6 +97,10 @@ trait SettingsHelperTrait
             $data['showLogo'] = 0;
         }
 
+        if (empty($data['intent'])) {
+            $data['intent'] = 0;
+        }
+
         $model = new InstallmentsSettingsModel();
         $this->insertInstallmentsSettings($model->fromArray($data));
     }
@@ -151,8 +155,16 @@ trait SettingsHelperTrait
             $data['detailActive'] = false;
         }
 
+        if (empty($data['cartActive'])) {
+            $data['cartActive'] = false;
+        }
+
         if (empty($data['submitCart'])) {
             $data['submitCart'] = false;
+        }
+
+        if (empty($data['intent'])) {
+            $data['intent'] = 0;
         }
 
         $model = new ExpressSettingsModel();

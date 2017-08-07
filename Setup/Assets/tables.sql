@@ -22,19 +22,21 @@ CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_settings_installments (
     `active`               TINYINT(1),
     `presentment_detail`   INT(11),
     `presentment_cart`     INT(11),
-    `show_logo`            TINYINT(1) NOT NULL
+    `show_logo`            TINYINT(1) NOT NULL,
+    `intent`               INT(11) NOT NULL
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_settings_express (
     `id`                   INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     `shop_id`              INT(11) NOT NULL,
-    `active`               TINYINT(1),
     `web_profile_id`       VARCHAR(255),
     `detail_active`        TINYINT(1) NOT NULL,
+    `cart_active`        TINYINT(1) NOT NULL,
     `button_style_color`   VARCHAR(255),
     `button_style_shape`   VARCHAR(255),
     `button_style_size`    VARCHAR(255),
-    `submit_cart`          TINYINT(1) NOT NULL
+    `submit_cart`          TINYINT(1) NOT NULL,
+    `intent`               INT(11) NOT NULL
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_settings_plus (

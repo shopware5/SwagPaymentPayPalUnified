@@ -37,6 +37,7 @@ use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PaymentAddressPatch
 use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PaymentOrderNumberPatch;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\PartnerAttributionId;
+use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\PaymentResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\ErrorResponse;
@@ -118,9 +119,11 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
             //For generic paypal payments like PayPal or PayPal Plus ones,
             //we need a different parameter for the payment creation than in installments
             if ($selectedPaymentName === PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME) {
+                $requestParams->setPaymentType(PaymentType::PAYPAL_CLASSIC);
                 $payment = $this->get('paypal_unified.payment_builder_service')->getPayment($requestParams);
             } elseif ($selectedPaymentName === PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME) {
                 $this->client->setPartnerAttributionId(PartnerAttributionId::PAYPAL_INSTALLMENTS);
+                $requestParams->setPaymentType(PaymentType::PAYPAL_INSTALLMENTS);
                 $payment = $this->get('paypal_unified.installments.payment_builder_service')->getPayment($requestParams);
             }
 

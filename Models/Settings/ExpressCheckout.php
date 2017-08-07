@@ -49,12 +49,6 @@ class ExpressCheckout extends ModelEntity
     private $shopId;
 
     /**
-     * @var bool
-     * @ORM\Column(name="active", type="boolean", nullable=false)
-     */
-    private $active;
-
-    /**
      * @var string
      * @ORM\Column(name="web_profile_id", type="string")
      */
@@ -65,6 +59,13 @@ class ExpressCheckout extends ModelEntity
      * @ORM\Column(name="detail_active", type="boolean", nullable=false)
      */
     private $detailActive;
+
+    /**
+     * @var bool
+     * @ORM\Column(name="cart_active", type="boolean", nullable=false)
+     */
+    private $cartActive;
+
     /**
      * @var bool
      * @ORM\Column(name="submit_cart", type="boolean", nullable=false)
@@ -88,6 +89,12 @@ class ExpressCheckout extends ModelEntity
      * @ORM\Column(name="button_style_size", type="string")
      */
     private $buttonStyleSize;
+
+    /**
+     * @var int
+     * @ORM\Column(name="intent", type="integer")
+     */
+    private $intent;
 
     /**
      * @return int
@@ -140,22 +147,6 @@ class ExpressCheckout extends ModelEntity
     /**
      * @return bool
      */
-    public function getActive()
-    {
-        return $this->active;
-    }
-
-    /**
-     * @param bool $active
-     */
-    public function setActive($active)
-    {
-        $this->active = $active;
-    }
-
-    /**
-     * @return bool
-     */
     public function getDetailActive()
     {
         return $this->detailActive;
@@ -167,6 +158,22 @@ class ExpressCheckout extends ModelEntity
     public function setDetailActive($detailActive)
     {
         $this->detailActive = $detailActive;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getCartActive()
+    {
+        return $this->cartActive;
+    }
+
+    /**
+     * @param bool $cartActive
+     */
+    public function setCartActive($cartActive)
+    {
+        $this->cartActive = $cartActive;
     }
 
     /**
@@ -231,6 +238,22 @@ class ExpressCheckout extends ModelEntity
     public function setButtonStyleSize($buttonStyleSize)
     {
         $this->buttonStyleSize = $buttonStyleSize;
+    }
+
+    /**
+     * @return int
+     */
+    public function getIntent()
+    {
+        return $this->intent;
+    }
+
+    /**
+     * @param int $intent
+     */
+    public function setIntent($intent)
+    {
+        $this->intent = $intent;
     }
 
     /**

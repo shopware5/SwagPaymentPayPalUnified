@@ -37,26 +37,15 @@ class Shopware_Controllers_Backend_PaypalUnifiedGeneralSettings extends Shopware
      */
     protected $alias = 'general';
 
-    /**
-     * @var SettingsServiceInterface
-     */
-    protected $settingsService;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function preDispatch()
-    {
-        $this->settingsService = $this->get('paypal_unified.settings_service');
-        parent::preDispatch();
-    }
-
     public function detailAction()
     {
         $shopId = (int) $this->Request()->getParam('shopId');
 
+        /** @var SettingsServiceInterface $settingsService */
+        $settingsService = $this->get('paypal_unified.settings_service');
+
         /** @var GeneralSettingsModel $settings */
-        $settings = $this->settingsService->getSettings($shopId);
+        $settings = $settingsService->getSettings($shopId);
 
         if ($settings !== null) {
             $this->view->assign('general', $settings->toArray());

@@ -45,6 +45,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Installments', {
         var me = this;
 
         me.installmentsActivate = me.createInstallmentsActivate();
+        me.intentSelection = me.createPaymentIntentSelection();
         me.presentmentSelectionDetail = me.createPresentmentSelectionDetail();
         me.presentmentSelectionCart = me.createPresentmentSelectionCart();
         me.logoCheckBox = me.createLogoCheckBox();
@@ -52,11 +53,36 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Installments', {
 
         return [
             me.installmentsActivate,
+            me.intentSelection,
             me.presentmentSelectionDetail,
             me.presentmentSelectionCart,
             me.logoCheckBox,
             me.testAvailabilityButton
         ];
+    },
+
+    createPaymentIntentSelection: function() {
+        return Ext.create('Ext.form.field.ComboBox', {
+            name: 'intent',
+            fieldLabel: '{s name="intent/field" namespace="backend/paypal_unified_settings/tabs/payment_intent"}{/s}',
+            helpText: '',
+
+            store: {
+                fields: [
+                    { name: 'id', type: 'int' },
+                    { name: 'text', type: 'string' }
+                ],
+
+                data: [
+                    { id: 0, text: '{s name="intent/sale" namespace="backend/paypal_unified_settings/tabs/payment_intent"}Complete payment immediately (Sale){/s}' },
+                    { id: 2, text: '{s name="intent/orderAuthCapture" namespace="backend/paypal_unified_settings/tabs/payment_intent"}Delayed payment collection (Order-Auth-Capture){/s}' }
+                ]
+            },
+
+            valueField: 'id',
+            disabled: true,
+            value: 0
+        });
     },
 
     /**
@@ -146,6 +172,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Installments', {
         me.presentmentSelectionCart.setDisabled(!checked);
         me.logoCheckBox.setDisabled(!checked);
         me.testAvailabilityButton.setDisabled(!checked);
+        me.intentSelection.setDisabled(!checked);
     },
 
     /**

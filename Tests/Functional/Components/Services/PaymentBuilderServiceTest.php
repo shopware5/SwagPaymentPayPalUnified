@@ -38,7 +38,7 @@ class PaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
 {
     public function test_is_basket_service_available()
     {
-        $settingService = new SettingsServicePaymentBuilderServiceMock(false, 0);
+        $settingService = new SettingsServicePaymentBuilderServiceMock(PaymentType::PAYPAL_CLASSIC, 0);
 
         $requestService = $this->getRequestService($settingService);
 
@@ -47,7 +47,7 @@ class PaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
 
     public function test_getPayment_return_plus_intent()
     {
-        $requestParameters = $this->getRequestData(true, 1);
+        $requestParameters = $this->getRequestData(PaymentType::PAYPAL_PLUS, 0);
 
         $this->assertEquals('sale', $requestParameters['intent']);
     }
@@ -61,14 +61,14 @@ class PaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
 
     public function test_getPayment_return_authorize_intent_without_plus()
     {
-        $requestParameters = $this->getRequestData(false, 1);
+        $requestParameters = $this->getRequestData(PaymentType::PAYPAL_CLASSIC, 1);
 
         $this->assertEquals('authorize', $requestParameters['intent']);
     }
 
     public function test_getPayment_return_order_intent_without_plus()
     {
-        $requestParameters = $this->getRequestData(false, 2);
+        $requestParameters = $this->getRequestData(PaymentType::PAYPAL_CLASSIC, 2);
 
         $this->assertEquals('order', $requestParameters['intent']);
     }
@@ -219,15 +219,53 @@ class PaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertNotEmpty($requestService->getPayment($params)->getTransactions()->getItemList());
     }
 
+    public function test_getIntentAsString_throws_exception()
+    {
+        $settingService = new SettingsServicePaymentBuilderServiceMock(false, 99, true);
+        $requestService = $this->getRequestService($settingService);
+
+        $params = new PaymentBuilderParameters();
+        $profile = $this->getWebProfile();
+        $basketData = $this->getBasketDataArray();
+        $userData = $this->getUserDataAsArray();
+
+        $params->setBasketData($basketData);
+        $params->setWebProfileId($profile->getId());
+        $params->setUserData($userData);
+        $params->setPaymentType(PaymentType::PAYPAL_EXPRESS);
+
+        $this->expectException(\RuntimeException::class);
+        $requestService->getPayment($params);
+    }
+
+    public function test_getPayment_with_installments_payment_type()
+    {
+        $settingService = new SettingsServicePaymentBuilderServiceMock(false, 2, true);
+        $requestService = $this->getRequestService($settingService);
+
+        $params = new PaymentBuilderParameters();
+        $profile = $this->getWebProfile();
+        $basketData = $this->getBasketDataArray();
+        $userData = $this->getUserDataAsArray();
+
+        $params->setBasketData($basketData);
+        $params->setWebProfileId($profile->getId());
+        $params->setUserData($userData);
+        $params->setPaymentType(PaymentType::PAYPAL_INSTALLMENTS);
+
+        $payment = $requestService->getPayment($params);
+        $this->assertEquals('order', $payment->getIntent());
+    }
+
     /**
-     * @param $plusActive
+     * @param string
      * @param $intent
      *
      * @return array
      */
-    private function getRequestData($plusActive = false, $intent = 0)
+    private function getRequestData($paymentType = PaymentType::PAYPAL_CLASSIC, $intent = 0)
     {
-        $settingService = new SettingsServicePaymentBuilderServiceMock($plusActive, $intent);
+        $settingService = new SettingsServicePaymentBuilderServiceMock($paymentType === PaymentType::PAYPAL_PLUS, $intent);
         $requestService = $this->getRequestService($settingService);
 
         $profile = $this->getWebProfile();
@@ -238,6 +276,7 @@ class PaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
         $params->setBasketData($basketData);
         $params->setWebProfileId($profile->getId());
         $params->setUserData($userData);
+        $params->setPaymentType($paymentType);
 
         return $requestService->getPayment($params)->toArray();
     }
@@ -388,7 +427,7 @@ class SettingsServicePaymentBuilderServiceMock implements SettingsServiceInterfa
             return $this->plus_active;
         }
 
-        if ($column == 'payment_intent') {
+        if ($column == 'intent') {
             return $this->paypal_payment_intent;
         }
 
@@ -400,6 +439,10 @@ class SettingsServicePaymentBuilderServiceMock implements SettingsServiceInterfa
     }
 
     public function hasSettings($settingsTable = SettingsTable::GENERAL)
+    {
+    }
+
+    public function refreshDependencies()
     {
     }
 }

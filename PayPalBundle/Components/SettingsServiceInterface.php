@@ -62,4 +62,9 @@ interface SettingsServiceInterface
      * @see SettingsTable
      */
     public function hasSettings($settingsTable = SettingsTable::GENERAL);
+
+    /**
+     * A helper function that refreshes the dependencies. Most commonly used in the backend to refresh the selected shop.
+     */
+    public function refreshDependencies();
 }

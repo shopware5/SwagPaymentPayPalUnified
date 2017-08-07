@@ -124,7 +124,7 @@ class ExpressCheckout implements SubscriberInterface
         /** @var ExpressSettingsModel $expressSettings */
         $expressSettings = $this->settingsService->getSettings(null, SettingsTable::EXPRESS_CHECKOUT);
 
-        if (!$generalSettings || !$expressSettings || !$generalSettings->getActive() || !$expressSettings->getActive()) {
+        if (!$generalSettings || !$expressSettings || !$generalSettings->getActive() || (!$expressSettings->getDetailActive() && !$expressSettings->getCartActive())) {
             return;
         }
 
@@ -144,7 +144,7 @@ class ExpressCheckout implements SubscriberInterface
         /** @var ExpressSettingsModel $expressSettings */
         $expressSettings = $this->settingsService->getSettings(null, SettingsTable::EXPRESS_CHECKOUT);
 
-        if (!$generalSettings || !$expressSettings || !$generalSettings->getActive() || !$expressSettings->getActive()) {
+        if (!$generalSettings || !$expressSettings || !$generalSettings->getActive() || !$expressSettings->getCartActive()) {
             return;
         }
 
@@ -214,7 +214,7 @@ class ExpressCheckout implements SubscriberInterface
         /** @var ExpressSettingsModel $expressSettings */
         $expressSettings = $this->settingsService->getSettings(null, SettingsTable::EXPRESS_CHECKOUT);
 
-        if (!$generalSettings || !$expressSettings || !$generalSettings->getActive() || !$expressSettings->getActive() || !$expressSettings->getDetailActive()) {
+        if (!$generalSettings || !$expressSettings || !$generalSettings->getActive() || !$expressSettings->getDetailActive()) {
             return;
         }
 
@@ -260,7 +260,7 @@ class ExpressCheckout implements SubscriberInterface
 
             $this->paymentResource->patch($paymentId, $amountPatch);
         } catch (RequestException $requestException) {
-            $this->logger->error('PayPal Unified ExpressCheckout: Unable to patch the payment (RequestException)', [$requestException->getMessage(), $requestException->getBody()]);
+            $this->logger->error('PayPal Unified ExpressCheckout: Unable to patch the payment (RequestException)', ['message' => $requestException->getMessage(), 'payload' => $requestException->getBody()]);
             throw $requestException;
         } catch (\Exception $exception) {
             $this->logger->error('PayPal Unified ExpressCheckout: Unable to patch the payment (Exception)', [$exception->getMessage(), $exception->getTraceAsString()]);

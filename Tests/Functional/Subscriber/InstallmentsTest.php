@@ -518,6 +518,10 @@ class SettingsServiceInstallmentsMock implements SettingsServiceInterface
     public function hasSettings($settingsTable = SettingsTable::GENERAL)
     {
     }
+
+    public function refreshDependencies()
+    {
+    }
 }
 
 class InstallmentsResourceMock extends InstallmentsResource

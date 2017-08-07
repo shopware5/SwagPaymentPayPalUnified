@@ -15,7 +15,8 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.model.Installments', {
         { name: 'active', type: 'bool' },
         { name: 'presentmentTypeDetail', type: 'int' },
         { name: 'presentmentTypeCart', type: 'int' },
-        { name: 'showLogo', type: 'bool' }
+        { name: 'showLogo', type: 'bool' },
+        { name: 'intent', type: 'int' }
     ]
 });
 // {/block}

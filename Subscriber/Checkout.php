@@ -36,6 +36,7 @@ use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use SwagPaymentPayPalUnified\PayPalBundle\PartnerAttributionId;
+use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\PaymentResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
@@ -264,6 +265,7 @@ class Checkout implements SubscriberInterface
         $requestParams->setUserData($userData);
         $requestParams->setWebProfileId($webProfileId);
         $requestParams->setBasketData($basketData);
+        $requestParams->setPaymentType(PaymentType::PAYPAL_PLUS);
 
         $params = $this->container->get('paypal_unified.plus.payment_builder_service')->getPayment($requestParams);
 

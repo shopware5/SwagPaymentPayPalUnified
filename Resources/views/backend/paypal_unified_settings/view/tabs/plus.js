@@ -19,6 +19,11 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Plus', {
     },
 
     /**
+     * @type { Ext.form.field.ComboBox }
+     */
+    intentSelection: null,
+
+    /**
      * @type { Ext.form.field.Checkbox }
      */
     restyleCheckbox: null,
@@ -42,6 +47,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Plus', {
     createItems: function() {
         var me = this;
 
+        me.intentSelection = me.createPaymentIntentSelection();
         me.localeSelection = me.createLocaleSelection();
         me.restyleCheckbox = me.createRestyleCheckbox();
 
@@ -55,9 +61,33 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Plus', {
                 uncheckedValue: false,
                 handler: Ext.bind(me.onActivatePayPalPlus, me)
             },
+            me.intentSelection,
             me.restyleCheckbox,
             me.localeSelection
         ];
+    },
+
+    createPaymentIntentSelection: function() {
+        return Ext.create('Ext.form.field.ComboBox', {
+            name: 'intent',
+            fieldLabel: '{s name="intent/field" namespace="backend/paypal_unified_settings/tabs/payment_intent"}{/s}',
+            helpText: '',
+
+            store: {
+                fields: [
+                    { name: 'id', type: 'int' },
+                    { name: 'text', type: 'string' }
+                ],
+
+                data: [
+                    { id: 0, text: '{s name="intent/sale" namespace="backend/paypal_unified_settings/tabs/payment_intent"}Complete payment immediately (Sale){/s}' }
+                ]
+            },
+
+            valueField: 'id',
+            disabled: true,
+            value: 0
+        });
     },
 
     /**
@@ -119,6 +149,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Plus', {
             me.restyleCheckbox.setValue(true);
         }
 
+        me.intentSelection.setDisabled(!checked);
         me.localeSelection.setDisabled(!checked);
         me.restyleCheckbox.setDisabled(!checked);
     }

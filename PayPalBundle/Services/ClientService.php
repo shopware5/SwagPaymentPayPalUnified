@@ -141,6 +141,9 @@ class ClientService
     public function sendRequest($type, $resourceUri, array $data = [], $jsonPayload = true)
     {
         if (!$this->getHeader('Authorization')) {
+            $environment = (bool) $this->settingsService->get('sandbox');
+            $environment === true ? $this->baseUrl = BaseURL::SANDBOX : $this->baseUrl = BaseURL::LIVE;
+
             //Create authentication
             $credentials = new OAuthCredentials();
             $credentials->setRestId($this->settingsService->get('client_id'));

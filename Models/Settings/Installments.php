@@ -73,6 +73,12 @@ class Installments extends ModelEntity
     private $showLogo;
 
     /**
+     * @var int
+     * @ORM\Column(name="intent", type="integer")
+     */
+    private $intent;
+
+    /**
      * @return int
      */
     public function getId()
@@ -166,6 +172,22 @@ class Installments extends ModelEntity
     public function setShowLogo($showLogo)
     {
         $this->showLogo = $showLogo;
+    }
+
+    /**
+     * @return int
+     */
+    public function getIntent()
+    {
+        return $this->intent;
+    }
+
+    /**
+     * @param int $intent
+     */
+    public function setIntent($intent)
+    {
+        $this->intent = $intent;
     }
 
     /**

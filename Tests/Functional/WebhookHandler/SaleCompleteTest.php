@@ -78,6 +78,13 @@ class SaleCompleteTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(WebhookEventTypes::PAYMENT_SALE_COMPLETED, $instance->getEventType());
     }
 
+    public function test_invoke_will_return_false_without_active_entity_manager()
+    {
+        $instance = new SaleComplete(Shopware()->Container()->get('paypal_unified.logger_service'), new EntityManagerMock());
+
+        $this->assertFalse($instance->invoke($this->getWebhookStruct(self::TEST_ORDER_ID)));
+    }
+
     /**
      * @param string $id
      *

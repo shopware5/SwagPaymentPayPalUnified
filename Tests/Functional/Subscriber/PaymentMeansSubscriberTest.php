@@ -309,6 +309,10 @@ class SettingsServiceMock implements SettingsServiceInterface
     public function getSettings($shopId = null, $settingsTable = SettingsTable::GENERAL)
     {
     }
+
+    public function refreshDependencies()
+    {
+    }
 }
 class EventArgsMockWithoutReturn extends \Enlight_Event_EventArgs
 {
