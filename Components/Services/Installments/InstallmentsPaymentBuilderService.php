@@ -26,6 +26,7 @@ namespace SwagPaymentPayPalUnified\Components\Services\Installments;
 
 use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
 use SwagPaymentPayPalUnified\Components\Services\PaymentBuilderService;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 
 class InstallmentsPaymentBuilderService extends PaymentBuilderService
 {
@@ -39,7 +40,7 @@ class InstallmentsPaymentBuilderService extends PaymentBuilderService
         $payment->getPayer()->setExternalSelectedFundingInstrumentType('CREDIT');
         $payment->getRedirectUrls()->setReturnUrl($this->getReturnUrl());
 
-        switch ($this->settings->get('paypal_payment_intent')) {
+        switch ($this->settings->get('intent', SettingsTable::INSTALLMENTS)) {
             case 0:
                 $payment->setIntent('sale');
                 break;

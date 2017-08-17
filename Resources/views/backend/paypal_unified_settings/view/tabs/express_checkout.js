@@ -24,9 +24,19 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.ExpressCheckout', {
     ecActivate: null,
 
     /**
+     * @type { Ext.form.field.ComboBox }
+     */
+    ecIntentSelection: null,
+
+    /**
      * @type { Ext.form.field.Checkbox }
      */
     ecDetailActivate: null,
+
+    /**
+     * @type { Ext.form.field.Checkbox }
+     */
+    ecCartActivate: null,
 
     /**
      * @type { Ext.form.field.ComboBox }
@@ -62,8 +72,9 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.ExpressCheckout', {
     createItems: function() {
         var me = this;
 
-        me.ecActivate = me.createEcActivate();
+        me.ecIntentSelection = me.createPaymentIntentSelection();
         me.ecDetailActivate = me.createEcDetailActivate();
+        me.ecCartActivate = me.createEcCartActivate();
         me.ecButtonStyleColor = me.createEcButtonStyleColor();
         me.ecButtonStyleShape = me.createEcButtonStyleShape();
         me.ecButtonStyleSize = me.createEcButtonStyleSize();
@@ -71,7 +82,9 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.ExpressCheckout', {
 
         return [
             me.ecActivate,
+            me.ecIntentSelection,
             me.ecDetailActivate,
+            me.ecCartActivate,
             me.ecButtonStyleColor,
             me.ecButtonStyleShape,
             me.ecButtonStyleSize,
@@ -80,18 +93,29 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.ExpressCheckout', {
     },
 
     /**
-     * @returns { Ext.form.field.Checkbox }
+     * @returns { Ext.form.field.ComboBox }
      */
-    createEcActivate: function() {
-        var me = this;
+    createPaymentIntentSelection: function() {
+        return Ext.create('Ext.form.field.ComboBox', {
+            name: 'intent',
+            fieldLabel: '{s name="intent/field" namespace="backend/paypal_unified_settings/tabs/payment_intent"}{/s}',
+            helpText: '',
 
-        return Ext.create('Ext.form.field.Checkbox', {
-            name: 'ecActive',
-            fieldLabel: '{s name=field/activate}Activate PayPal EC{/s}',
-            boxLabel: '{s name=field/activate/help}Activate in order to enable the PayPal Express Checkout integration for the selected shop.{/s}',
-            inputValue: true,
-            uncheckedValue: false,
-            handler: Ext.bind(me.onActivateEc, me)
+            store: {
+                fields: [
+                    { name: 'id', type: 'int' },
+                    { name: 'text', type: 'string' }
+                ],
+
+                data: [
+                    { id: 0, text: '{s name="intent/sale" namespace="backend/paypal_unified_settings/tabs/payment_intent"}Complete payment immediately (Sale){/s}' },
+                    { id: 1, text: '{s name="intent/authCapture" namespace="backend/paypal_unified_settings/tabs/payment_intent"}Delayed payment collection (Auth-Capture){/s}' },
+                    { id: 2, text: '{s name="intent/orderAuthCapture" namespace="backend/paypal_unified_settings/tabs/payment_intent"}Delayed payment collection (Order-Auth-Capture){/s}' }
+                ]
+            },
+
+            valueField: 'id',
+            value: 0
         });
     },
 
@@ -100,12 +124,24 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.ExpressCheckout', {
      */
     createEcDetailActivate: function() {
         return Ext.create('Ext.form.field.Checkbox', {
-            name: 'ecDetailActive',
+            name: 'detailActive',
             fieldLabel: '{s name=field/ecDetailActivate}Show on detail page{/s}',
             boxLabel: '{s name=field/ecDetailActivate/help}If this option is active, the Express Checkout button will be shown on each product detail page.{/s}',
             inputValue: true,
-            uncheckedValue: false,
-            disabled: true
+            uncheckedValue: false
+        });
+    },
+
+    /**
+     * @returns { Ext.form.field.Checkbox }
+     */
+    createEcCartActivate: function() {
+        return Ext.create('Ext.form.field.Checkbox', {
+            name: 'cartActive',
+            fieldLabel: '{s name=field/ecCartActivate}Show on cart page{/s}',
+            boxLabel: '{s name=field/ecCartActivate/help}If this option is active, the Express Checkout button will be shown on the cart.{/s}',
+            inputValue: true,
+            uncheckedValue: false
         });
     },
 
@@ -114,12 +150,11 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.ExpressCheckout', {
      */
     createEcSubmitCart: function() {
         return Ext.create('Ext.form.field.Checkbox', {
-            name: 'ecSubmitCart',
+            name: 'submitCart',
             fieldLabel: '{s name=field/submitCart}Submit cart{/s}',
             boxLabel: '{s name=field/submitCart/help}If this option is active, the cart will be submitted to PayPal for Express orders{/s}',
             inputValue: true,
-            uncheckedValue: false,
-            disabled: true
+            uncheckedValue: false
         });
     },
 
@@ -128,11 +163,10 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.ExpressCheckout', {
      */
     createEcButtonStyleColor: function() {
         return Ext.create('Ext.form.field.ComboBox', {
-            name: 'ecButtonStyleColor',
+            name: 'buttonStyleColor',
             fieldLabel: '{s name=field/ecButtonStyleColor}Button color{/s}',
             store: Ext.create('Shopware.apps.PaypalUnifiedSettings.store.EcButtonStyleColor'),
-            valueField: 'id',
-            disabled: true
+            valueField: 'id'
         });
     },
 
@@ -141,11 +175,10 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.ExpressCheckout', {
      */
     createEcButtonStyleShape: function() {
         return Ext.create('Ext.form.field.ComboBox', {
-            name: 'ecButtonStyleShape',
+            name: 'buttonStyleShape',
             fieldLabel: '{s name=field/ecButtonStyleShape}Button shape{/s}',
             store: Ext.create('Shopware.apps.PaypalUnifiedSettings.store.EcButtonStyleShape'),
-            valueField: 'id',
-            disabled: true
+            valueField: 'id'
         });
     },
 
@@ -154,26 +187,11 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.ExpressCheckout', {
      */
     createEcButtonStyleSize: function() {
         return Ext.create('Ext.form.field.ComboBox', {
-            name: 'ecButtonStyleSize',
+            name: 'buttonStyleSize',
             fieldLabel: '{s name=field/ecButtonStyleSize}Button size{/s}',
             store: Ext.create('Shopware.apps.PaypalUnifiedSettings.store.EcButtonStyleSize'),
-            valueField: 'id',
-            disabled: true
+            valueField: 'id'
         });
-    },
-
-    /**
-     * @param { Shopware.apps.Base.view.element.Boolean } element
-     * @param { Boolean } checked
-     */
-    onActivateEc: function(element, checked) {
-        var me = this;
-
-        me.ecDetailActivate.setDisabled(!checked);
-        me.ecSubmitCart.setDisabled(!checked);
-        me.ecButtonStyleColor.setDisabled(!checked);
-        me.ecButtonStyleShape.setDisabled(!checked);
-        me.ecButtonStyleSize.setDisabled(!checked);
     }
 });
 // {/block}

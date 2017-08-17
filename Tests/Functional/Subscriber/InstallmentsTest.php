@@ -27,8 +27,10 @@ namespace SwagPaymentPayPalUnified\Tests\Functional\Subscriber;
 use Shopware\Components\HttpClient\RequestException;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\Services\Installments\ValidationService;
-use SwagPaymentPayPalUnified\Models\Settings;
+use SwagPaymentPayPalUnified\Models\Settings\General as GeneralSettingsModel;
+use SwagPaymentPayPalUnified\Models\Settings\Installments as InstallmentsSettingsModel;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\InstallmentsResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Installments\FinancingRequest;
 use SwagPaymentPayPalUnified\Subscriber\Installments;
@@ -40,12 +42,10 @@ class InstallmentsTest extends UnifiedControllerTestCase
 {
     public function test_can_be_created()
     {
-        $logger = Shopware()->Container()->get('paypal_unified.logger_service');
         $subscriber = new Installments(
             new SettingsServiceInstallmentsMock(),
             new ValidationService(),
-            Shopware()->Container()->get('dbal_connection'),
-            $logger
+            Shopware()->Container()->get('dbal_connection')
         );
 
         $this->assertNotNull($subscriber);
@@ -72,7 +72,7 @@ class InstallmentsTest extends UnifiedControllerTestCase
     {
         $actionEventArgs = $this->getActionEventArgs();
 
-        $settings = new Settings();
+        $settings = new GeneralSettingsModel();
         $settings->setActive(false);
         $settingService = new SettingsServiceInstallmentsMock($settings);
 
@@ -83,10 +83,13 @@ class InstallmentsTest extends UnifiedControllerTestCase
     {
         $actionEventArgs = $this->getActionEventArgs();
 
-        $settings = new Settings();
+        $settings = new GeneralSettingsModel();
         $settings->setActive(true);
-        $settings->setInstallmentsActive(false);
-        $settingService = new SettingsServiceInstallmentsMock($settings);
+
+        $instSettings = new InstallmentsSettingsModel();
+        $instSettings->setActive(false);
+
+        $settingService = new SettingsServiceInstallmentsMock($settings, $instSettings);
 
         $this->assertNull($this->getInstallmentsSubscriber($settingService)->onPostDispatchDetail($actionEventArgs));
     }
@@ -95,24 +98,29 @@ class InstallmentsTest extends UnifiedControllerTestCase
     {
         $actionEventArgs = $this->getActionEventArgs();
 
-        $settings = new Settings();
+        $settings = new GeneralSettingsModel();
         $settings->setActive(true);
-        $settings->setInstallmentsActive(true);
-        $settings->setInstallmentsPresentmentDetail(0);
-        $settingService = new SettingsServiceInstallmentsMock($settings);
+
+        $instSettings = new InstallmentsSettingsModel();
+        $instSettings->setActive(true);
+        $instSettings->setPresentmentTypeDetail(0);
+        $settingService = new SettingsServiceInstallmentsMock($settings, $instSettings);
 
         $this->assertNull($this->getInstallmentsSubscriber($settingService)->onPostDispatchDetail($actionEventArgs));
     }
 
-    public function test_post_dispatch_detail_installments_product_price_dismatch()
+    public function test_post_dispatch_detail_installments_product_price_mismatch()
     {
         $actionEventArgs = $this->getActionEventArgs();
 
-        $settings = new Settings();
+        $settings = new GeneralSettingsModel();
         $settings->setActive(true);
-        $settings->setInstallmentsActive(true);
-        $settings->setInstallmentsPresentmentDetail(1);
-        $settingService = new SettingsServiceInstallmentsMock($settings);
+
+        $instSettings = new InstallmentsSettingsModel();
+        $instSettings->setActive(true);
+        $instSettings->setPresentmentTypeDetail(1);
+
+        $settingService = new SettingsServiceInstallmentsMock($settings, $instSettings);
 
         $this->getInstallmentsSubscriber($settingService)->onPostDispatchDetail($actionEventArgs);
 
@@ -126,11 +134,14 @@ class InstallmentsTest extends UnifiedControllerTestCase
             'price_numeric' => 319.99,
         ]);
 
-        $settings = new Settings();
+        $settings = new GeneralSettingsModel();
         $settings->setActive(true);
-        $settings->setInstallmentsActive(true);
-        $settings->setInstallmentsPresentmentDetail(1);
-        $settingService = new SettingsServiceInstallmentsMock($settings);
+
+        $instSettings = new InstallmentsSettingsModel();
+        $instSettings->setActive(true);
+        $instSettings->setPresentmentTypeDetail(1);
+
+        $settingService = new SettingsServiceInstallmentsMock($settings, $instSettings);
 
         $result = $this->getInstallmentsSubscriber($settingService)->onPostDispatchDetail($actionEventArgs);
 
@@ -144,11 +155,15 @@ class InstallmentsTest extends UnifiedControllerTestCase
             'price_numeric' => 319.99,
         ]);
 
-        $settings = new Settings();
+        $settings = new GeneralSettingsModel();
+
         $settings->setActive(true);
-        $settings->setInstallmentsActive(true);
-        $settings->setInstallmentsPresentmentDetail(1);
-        $settingService = new SettingsServiceInstallmentsMock($settings);
+
+        $instSettings = new InstallmentsSettingsModel();
+        $instSettings->setActive(true);
+        $instSettings->setPresentmentTypeDetail(1);
+
+        $settingService = new SettingsServiceInstallmentsMock($settings, $instSettings);
 
         $result = $this->getInstallmentsSubscriber($settingService)->onPostDispatchDetail($actionEventArgs);
 
@@ -162,11 +177,14 @@ class InstallmentsTest extends UnifiedControllerTestCase
             'price_numeric' => 319.99,
         ]);
 
-        $settings = new Settings();
+        $settings = new GeneralSettingsModel();
         $settings->setActive(true);
-        $settings->setInstallmentsActive(true);
-        $settings->setInstallmentsPresentmentDetail(1);
-        $settingService = new SettingsServiceInstallmentsMock($settings);
+
+        $instSettings = new InstallmentsSettingsModel();
+
+        $instSettings->setActive(true);
+        $instSettings->setPresentmentTypeDetail(1);
+        $settingService = new SettingsServiceInstallmentsMock($settings, $instSettings);
 
         $this->getInstallmentsSubscriber($settingService)->onPostDispatchDetail($actionEventArgs);
 
@@ -182,11 +200,15 @@ class InstallmentsTest extends UnifiedControllerTestCase
             'price_numeric' => 319.99,
         ]);
 
-        $settings = new Settings();
+        $settings = new GeneralSettingsModel();
         $settings->setActive(true);
-        $settings->setInstallmentsActive(true);
-        $settings->setInstallmentsPresentmentDetail(2);
-        $settingService = new SettingsServiceInstallmentsMock($settings);
+
+        $instSettings = new InstallmentsSettingsModel();
+
+        $instSettings->setActive(true);
+        $instSettings->setPresentmentTypeDetail(2);
+
+        $settingService = new SettingsServiceInstallmentsMock($settings, $instSettings);
 
         $this->getInstallmentsSubscriber($settingService)->onPostDispatchDetail($actionEventArgs);
 
@@ -201,7 +223,7 @@ class InstallmentsTest extends UnifiedControllerTestCase
 
         $actionEventArgs = $this->getActionEventArgs();
 
-        $settings = new Settings();
+        $settings = new GeneralSettingsModel();
         $settingService = new SettingsServiceInstallmentsMock($settings);
         $result = $this->getInstallmentsSubscriber($settingService)->onPostDispatchCheckout($actionEventArgs);
 
@@ -214,10 +236,10 @@ class InstallmentsTest extends UnifiedControllerTestCase
 
         $actionEventArgs = $this->getActionEventArgs();
 
-        $settings = new Settings();
+        $settings = new InstallmentsSettingsModel();
+        $settings->setActive(0);
 
-        $settings->setInstallmentsActive(0);
-        $settingService = new SettingsServiceInstallmentsMock($settings);
+        $settingService = new SettingsServiceInstallmentsMock(null, $settings);
 
         $result = $this->getInstallmentsSubscriber($settingService)->onPostDispatchCheckout($actionEventArgs);
 
@@ -230,10 +252,13 @@ class InstallmentsTest extends UnifiedControllerTestCase
 
         $actionEventArgs = $this->getActionEventArgs();
 
-        $settings = new Settings();
+        $settings = new GeneralSettingsModel();
         $settings->setActive(0);
-        $settings->setInstallmentsActive(1);
-        $settingService = new SettingsServiceInstallmentsMock($settings);
+
+        $instSettings = new InstallmentsSettingsModel();
+        $instSettings->setActive(1);
+
+        $settingService = new SettingsServiceInstallmentsMock($settings, $instSettings);
 
         $result = $this->getInstallmentsSubscriber($settingService)->onPostDispatchCheckout($actionEventArgs);
 
@@ -246,11 +271,14 @@ class InstallmentsTest extends UnifiedControllerTestCase
 
         $actionEventArgs = $this->getActionEventArgs();
 
-        $settings = new Settings();
+        $settings = new GeneralSettingsModel();
         $settings->setActive(1);
-        $settings->setInstallmentsActive(1);
-        $settings->setInstallmentsPresentmentCart(0);
-        $settingService = new SettingsServiceInstallmentsMock($settings);
+
+        $instSettings = new InstallmentsSettingsModel();
+        $instSettings->setActive(1);
+        $instSettings->setPresentmentTypeCart(0);
+
+        $settingService = new SettingsServiceInstallmentsMock($settings, $instSettings);
 
         $result = $this->getInstallmentsSubscriber($settingService)->onPostDispatchCheckout($actionEventArgs);
 
@@ -266,11 +294,14 @@ class InstallmentsTest extends UnifiedControllerTestCase
             'AmountNumeric' => 9.99,
         ]);
 
-        $settings = new Settings();
+        $settings = new GeneralSettingsModel();
         $settings->setActive(1);
-        $settings->setInstallmentsActive(1);
-        $settings->setInstallmentsPresentmentCart(1);
-        $settingService = new SettingsServiceInstallmentsMock($settings);
+
+        $instSettings = new InstallmentsSettingsModel();
+        $instSettings->setActive(1);
+        $instSettings->setPresentmentTypeCart(1);
+
+        $settingService = new SettingsServiceInstallmentsMock($settings, $instSettings);
 
         $result = $this->getInstallmentsSubscriber($settingService)->onPostDispatchCheckout($actionEventArgs);
 
@@ -286,11 +317,13 @@ class InstallmentsTest extends UnifiedControllerTestCase
             'AmountNumeric' => 399.99,
         ]);
 
-        $settings = new Settings();
+        $settings = new GeneralSettingsModel();
         $settings->setActive(1);
-        $settings->setInstallmentsActive(1);
-        $settings->setInstallmentsPresentmentCart(1);
-        $settingService = new SettingsServiceInstallmentsMock($settings);
+
+        $instSettings = new InstallmentsSettingsModel();
+        $instSettings->setActive(1);
+        $instSettings->setPresentmentTypeCart(1);
+        $settingService = new SettingsServiceInstallmentsMock($settings, $instSettings);
 
         $this->getInstallmentsSubscriber($settingService)->onPostDispatchCheckout($actionEventArgs);
         $displayKind = $actionEventArgs->getSubject()->View()->getAssign('paypalInstallmentsMode');
@@ -307,11 +340,14 @@ class InstallmentsTest extends UnifiedControllerTestCase
             'AmountNumeric' => 399.99,
         ]);
 
-        $settings = new Settings();
+        $settings = new GeneralSettingsModel();
         $settings->setActive(1);
-        $settings->setInstallmentsActive(1);
-        $settings->setInstallmentsPresentmentCart(2);
-        $settingService = new SettingsServiceInstallmentsMock($settings);
+
+        $instSettings = new InstallmentsSettingsModel();
+
+        $instSettings->setActive(1);
+        $instSettings->setPresentmentTypeCart(2);
+        $settingService = new SettingsServiceInstallmentsMock($settings, $instSettings);
 
         $this->getInstallmentsSubscriber($settingService)->onPostDispatchCheckout($actionEventArgs);
         $displayKind = $actionEventArgs->getSubject()->View()->getAssign('paypalInstallmentsMode');
@@ -328,11 +364,13 @@ class InstallmentsTest extends UnifiedControllerTestCase
             'AmountNumeric' => 399.99,
         ]);
 
-        $settings = new Settings();
+        $settings = new GeneralSettingsModel();
         $settings->setActive(1);
-        $settings->setInstallmentsActive(1);
-        $settings->setInstallmentsPresentmentCart(2);
-        $settingService = new SettingsServiceInstallmentsMock($settings);
+
+        $instSettings = new InstallmentsSettingsModel();
+        $instSettings->setActive(1);
+        $instSettings->setPresentmentTypeCart(2);
+        $settingService = new SettingsServiceInstallmentsMock($settings, $instSettings);
 
         $this->getInstallmentsSubscriber($settingService)->onPostDispatchCheckout($actionEventArgs);
         $price = $actionEventArgs->getSubject()->View()->getAssign('paypalInstallmentsProductPrice');
@@ -349,11 +387,14 @@ class InstallmentsTest extends UnifiedControllerTestCase
             'AmountNumeric' => 399.99,
         ]);
 
-        $settings = new Settings();
+        $settings = new GeneralSettingsModel();
         $settings->setActive(1);
-        $settings->setInstallmentsActive(1);
-        $settings->setInstallmentsPresentmentCart(2);
-        $settingService = new SettingsServiceInstallmentsMock($settings);
+
+        $instSettings = new InstallmentsSettingsModel();
+        $instSettings->setActive(1);
+        $instSettings->setPresentmentTypeCart(2);
+
+        $settingService = new SettingsServiceInstallmentsMock($settings, $instSettings);
 
         $this->getInstallmentsSubscriber($settingService)->onPostDispatchCheckout($actionEventArgs);
         $pageType = $actionEventArgs->getSubject()->View()->getAssign('paypalInstallmentsPageType');
@@ -373,11 +414,14 @@ class InstallmentsTest extends UnifiedControllerTestCase
         ]);
         $actionEventArgs->getSubject()->View()->assign('sPayment', ['id' => $installmentsPaymentId]);
 
-        $settings = new Settings();
+        $settings = new GeneralSettingsModel();
         $settings->setActive(1);
-        $settings->setInstallmentsActive(1);
-        $settings->setInstallmentsPresentmentCart(1);
-        $settingService = new SettingsServiceInstallmentsMock($settings);
+
+        $instSettings = new InstallmentsSettingsModel();
+        $instSettings->setActive(1);
+        $instSettings->setPresentmentTypeCart(1);
+
+        $settingService = new SettingsServiceInstallmentsMock($settings, $instSettings);
 
         $this->getInstallmentsSubscriber($settingService)->onPostDispatchCheckout($actionEventArgs);
         $requestCompleteList = $actionEventArgs->getSubject()->View()->getAssign('paypalInstallmentsRequestCompleteList');
@@ -395,11 +439,14 @@ class InstallmentsTest extends UnifiedControllerTestCase
         ]);
         $actionEventArgs->getSubject()->View()->assign('sPayment', ['id' => 1]);
 
-        $settings = new Settings();
+        $settings = new GeneralSettingsModel();
         $settings->setActive(1);
-        $settings->setInstallmentsActive(1);
-        $settings->setInstallmentsPresentmentCart(1);
-        $settingService = new SettingsServiceInstallmentsMock($settings);
+
+        $instSettings = new InstallmentsSettingsModel();
+        $instSettings->setActive(1);
+        $instSettings->setPresentmentTypeCart(1);
+
+        $settingService = new SettingsServiceInstallmentsMock($settings, $instSettings);
 
         $this->getInstallmentsSubscriber($settingService)->onPostDispatchCheckout($actionEventArgs);
         $requestCompleteList = $actionEventArgs->getSubject()->View()->getAssign('paypalInstallmentsRequestCompleteList');
@@ -439,23 +486,40 @@ class InstallmentsTest extends UnifiedControllerTestCase
 
 class SettingsServiceInstallmentsMock implements SettingsServiceInterface
 {
-    private $settings;
+    /**
+     * @var GeneralSettingsModel
+     */
+    private $generalSettings;
 
-    public function __construct(Settings $settings = null)
+    /**
+     * @var InstallmentsSettingsModel
+     */
+    private $installmentsSettings;
+
+    public function __construct(GeneralSettingsModel $generalSettings = null, InstallmentsSettingsModel $installmentsSettings = null)
     {
-        $this->settings = $settings;
+        $this->generalSettings = $generalSettings;
+        $this->installmentsSettings = $installmentsSettings;
     }
 
-    public function getSettings($shopId = null)
+    public function getSettings($shopId = null, $settingsTable = SettingsTable::GENERAL)
     {
-        return $this->settings;
+        if ($settingsTable == SettingsTable::GENERAL) {
+            return $this->generalSettings;
+        }
+
+        return $this->installmentsSettings;
     }
 
-    public function get($column)
+    public function get($column, $settingsTable = SettingsTable::GENERAL)
     {
     }
 
-    public function hasSettings()
+    public function hasSettings($settingsTable = SettingsTable::GENERAL)
+    {
+    }
+
+    public function refreshDependencies()
     {
     }
 }

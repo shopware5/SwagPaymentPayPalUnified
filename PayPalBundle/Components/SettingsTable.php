@@ -22,28 +22,15 @@
  * our trademarks remain entirely with us.
  */
 
-namespace SwagPaymentPayPalUnified\Components;
+namespace SwagPaymentPayPalUnified\PayPalBundle\Components;
 
-class PaymentStatus
+/**
+ * No complete table names can be declared below to avoid references to the actual plugin.
+ */
+class SettingsTable
 {
-    /**
-     * The default status for approved orders
-     */
-    const PAYMENT_STATUS_APPROVED = 12;
-    /**
-     * The default status for open orders
-     */
-    const PAYMENT_STATUS_OPEN = 17;
-    /**
-     * The default status for refunded orders
-     */
-    const PAYMENT_STATUS_REFUNDED = 20;
-    /**
-     * The default status for voided orders
-     */
-    const PAYMENT_STATUS_CANCELLED = 35;
-    /**
-     * The default status from PayPal to identify completed transactions
-     */
-    const PAYMENT_COMPLETED = 'completed';
+    const GENERAL = 'general';
+    const EXPRESS_CHECKOUT = 'express';
+    const INSTALLMENTS = 'installments';
+    const PLUS = 'plus';
 }

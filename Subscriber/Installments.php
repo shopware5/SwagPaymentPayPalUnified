@@ -31,7 +31,10 @@ use Shopware\Components\HttpClient\RequestException;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\Services\Installments\OrderCreditInfoService;
 use SwagPaymentPayPalUnified\Components\Services\Installments\ValidationService;
+use SwagPaymentPayPalUnified\Models\Settings\General as GeneralSettingsModel;
+use SwagPaymentPayPalUnified\Models\Settings\Installments as InstallmentsSettingsModel;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\PaymentResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Credit;
 
@@ -83,12 +86,17 @@ class Installments implements SubscriberInterface
      */
     public function onPostDispatchDetail(ActionEventArgs $args)
     {
-        $settings = $this->settingsService->getSettings();
-        if (!$settings || !$settings->getActive() || !$settings->getInstallmentsActive()) {
+        /** @var GeneralSettingsModel $generalSettings */
+        $generalSettings = $this->settingsService->getSettings();
+
+        /** @var InstallmentsSettingsModel $installmentsSettings */
+        $installmentsSettings = $this->settingsService->getSettings(null, SettingsTable::INSTALLMENTS);
+
+        if (!$generalSettings || !$installmentsSettings || !$generalSettings->getActive() || !$installmentsSettings->getActive()) {
             return;
         }
 
-        $installmentsDisplayKind = $settings->getInstallmentsPresentmentDetail();
+        $installmentsDisplayKind = $installmentsSettings->getPresentmentTypeDetail();
 
         if ($installmentsDisplayKind === 0) {
             return;
@@ -120,8 +128,13 @@ class Installments implements SubscriberInterface
             return;
         }
 
-        $settings = $this->settingsService->getSettings();
-        if (!$settings || !$settings->getActive() || !$settings->getInstallmentsActive()) {
+        /** @var GeneralSettingsModel $generalSettings */
+        $generalSettings = $this->settingsService->getSettings();
+
+        /** @var InstallmentsSettingsModel $installmentsSettings */
+        $installmentsSettings = $this->settingsService->getSettings(null, SettingsTable::INSTALLMENTS);
+
+        if (!$generalSettings || !$installmentsSettings || !$generalSettings->getActive() || !$installmentsSettings->getActive()) {
             return;
         }
 
@@ -130,7 +143,7 @@ class Installments implements SubscriberInterface
         $paymentMethodProvider = new PaymentMethodProvider();
         $installmentsPaymentId = $paymentMethodProvider->getPaymentId($this->connection, PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME);
 
-        $installmentsDisplayKind = $settings->getInstallmentsPresentmentCart();
+        $installmentsDisplayKind = $installmentsSettings->getPresentmentTypeCart();
 
         //If the selected payment method is Installments, we can not return here, because in any case, the complete financing list should be displayed.
         if ($installmentsDisplayKind === 0 && $selectedPaymentMethodId !== $installmentsPaymentId) {

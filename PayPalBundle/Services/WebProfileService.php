@@ -85,6 +85,7 @@ class WebProfileService
     public function getWebProfile(array $settings, $forExpressCheckout = false)
     {
         $this->settings = $settings;
+
         $webProfileResource = new WebProfileResource($this->client);
         $currentWebProfile = $this->getCurrentWebProfile($forExpressCheckout);
 
@@ -116,9 +117,9 @@ class WebProfileService
 
             return $selectedRemoteProfile->getId();
         } catch (RequestException $rex) {
-            $this->logger->error('PayPal Unified: Could not request the web profiles.', [$rex->getMessage(), $rex->getBody()]);
+            $this->logger->error('Could not request the web profiles.', ['message' => $rex->getMessage(), 'payload' => $rex->getBody()]);
         } catch (\Exception $ex) {
-            $this->logger->error('PayPal Unified: An unknown error occurred while setting the web profile.', [$ex->getMessage()]);
+            $this->logger->error('An unknown error occurred while setting the web profile.', ['message' => $ex->getMessage()]);
         }
 
         return null;

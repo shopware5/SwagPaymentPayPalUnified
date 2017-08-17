@@ -173,10 +173,18 @@ class InstallerTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(1, Shopware()->Db()->fetchRow($query));
     }
 
-    public function test_settings_table_exists()
+    public function test_settings_tables_exists()
     {
-        $query = "SHOW TABLES LIKE 'swag_payment_paypal_unified_settings'";
+        $query = "SHOW TABLES LIKE 'swag_payment_paypal_unified_settings_express';";
+        $this->assertCount(1, Shopware()->Db()->fetchAll($query));
 
+        $query = "SHOW TABLES LIKE 'swag_payment_paypal_unified_settings_installments';";
+        $this->assertCount(1, Shopware()->Db()->fetchAll($query));
+
+        $query = "SHOW TABLES LIKE 'swag_payment_paypal_unified_settings_plus';";
+        $this->assertCount(1, Shopware()->Db()->fetchAll($query));
+
+        $query = "SHOW TABLES LIKE 'swag_payment_paypal_unified_settings_general';";
         $this->assertCount(1, Shopware()->Db()->fetchAll($query));
     }
 }

@@ -24,30 +24,47 @@
 
 namespace SwagPaymentPayPalUnified\PayPalBundle\Components;
 
+use Shopware\Components\Model\ModelEntity;
+
 interface SettingsServiceInterface
 {
     /**
      * Returns the whole settings model
      *
      * @param int|null $shopId
+     * @param string   $settingsTable
      *
-     * @return null|\SwagPaymentPayPalUnified\Models\Settings
+     * @return null|ModelEntity
+     *
+     * @see SettingsTable
      */
-    public function getSettings($shopId = null);
+    public function getSettings($shopId = null, $settingsTable = SettingsTable::GENERAL);
 
     /**
      * Returns a setting value by the provided column name.
      *
-     * @param $column
+     * @param string $column
+     * @param string $settingsTable
      *
      * @return mixed
+     *
+     * @see SettingsTable
      */
-    public function get($column);
+    public function get($column, $settingsTable = SettingsTable::GENERAL);
 
     /**
      * Returns a boolean indicating if the shop has any stored settings for the current shop.
      *
+     * @param string $settingsTable
+     *
      * @return bool
+     *
+     * @see SettingsTable
      */
-    public function hasSettings();
+    public function hasSettings($settingsTable = SettingsTable::GENERAL);
+
+    /**
+     * A helper function that refreshes the dependencies. Most commonly used in the backend to refresh the selected shop.
+     */
+    public function refreshDependencies();
 }

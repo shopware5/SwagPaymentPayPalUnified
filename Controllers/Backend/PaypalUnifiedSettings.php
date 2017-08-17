@@ -23,11 +23,15 @@
  */
 
 use Shopware\Components\HttpClient\RequestException;
-use SwagPaymentPayPalUnified\Models\Settings;
+use Shopware\Components\Model\ModelManager;
+use SwagPaymentPayPalUnified\Models\Settings\ExpressCheckout as ExpressSettingsModel;
+use SwagPaymentPayPalUnified\Models\Settings\General as GeneralSettingsModel;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\WebhookResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService;
+use SwagPaymentPayPalUnified\PayPalBundle\Services\WebProfileService;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Installments\FinancingResponse;
 
 class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Controllers_Backend_Application
@@ -35,7 +39,7 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
     /**
      * {@inheritdoc}
      */
-    protected $model = Settings::class;
+    protected $model = GeneralSettingsModel::class;
 
     /**
      * {@inheritdoc}
@@ -61,16 +65,6 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
         $this->logger = $this->container->get('paypal_unified.logger_service');
 
         parent::preDispatch();
-    }
-
-    public function detailAction()
-    {
-        $shopId = (int) $this->Request()->getParam('shopId');
-
-        $settingsModel = $this->settingsService->getSettings($shopId);
-        $settings = $settingsModel === null ? ['shopId' => $shopId] : $settingsModel->toArray();
-
-        $this->view->assign('settings', $settings);
     }
 
     /**
@@ -150,18 +144,36 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
         $this->View()->assign('success', false);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function save($data)
+    public function createWebProfilesAction()
     {
         $this->configureClient();
+        $shopId = (int) $this->Request()->getParam('shopId');
+        $logoImage = $this->Request()->getParam('logoImage');
+        $brandName = $this->Request()->getParam('brandName');
 
+        $settings = [
+            'shopId' => $shopId,
+            'logoImage' => $logoImage,
+            'brandName' => $brandName,
+        ];
+
+        /** @var WebProfileService $webProfileService */
         $webProfileService = $this->container->get('paypal_unified.web_profile_service');
-        $data['webProfileId'] = $webProfileService->getWebProfile($data);
-        $data['webProfileIdEc'] = $webProfileService->getWebProfile($data, true);
+        $webProfileId = $webProfileService->getWebProfile($settings);
+        $ecWebProfileId = $webProfileService->getWebProfile($settings, true);
 
-        return parent::save($data);
+        /** @var ModelManager $entityManager */
+        $entityManager = $this->get('models');
+
+        /** @var GeneralSettingsModel $generalSettings */
+        $generalSettings = $this->settingsService->getSettings($shopId);
+        $generalSettings->setWebProfileId($webProfileId);
+
+        /** @var ExpressSettingsModel $ecSettings */
+        $ecSettings = $this->settingsService->getSettings($shopId, SettingsTable::EXPRESS_CHECKOUT);
+        $ecSettings->setWebProfileId($ecWebProfileId);
+
+        $entityManager->flush();
     }
 
     private function configureClient()

@@ -24,15 +24,16 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Subscriber;
 
-use Doctrine\DBAL\Connection;
 use SwagPaymentPayPalUnified\Subscriber\InContext;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
+use SwagPaymentPayPalUnified\Tests\Functional\SettingsHelperTrait;
 use SwagPaymentPayPalUnified\Tests\Mocks\DummyController;
 use SwagPaymentPayPalUnified\Tests\Mocks\ViewMock;
 
 class InContextSubscriberTest extends \PHPUnit_Framework_TestCase
 {
     use DatabaseTestCaseTrait;
+    use SettingsHelperTrait;
 
     public function test_construct()
     {
@@ -206,16 +207,14 @@ class InContextSubscriberTest extends \PHPUnit_Framework_TestCase
      */
     private function importSettings($active = false, $useInContext = false, $sandboxMode = false)
     {
-        /** @var Connection $db */
-        $db = Shopware()->Container()->get('dbal_connection');
-
-        $sql = 'INSERT INTO swag_payment_paypal_unified_settings (shop_id, active, sandbox, use_in_context)
-                VALUES (1, :active, :sandbox, :useInContext);';
-
-        $db->executeUpdate($sql, [
-            ':active' => $active,
-            ':useInContext' => $useInContext,
-            ':sandbox' => $sandboxMode,
+        $this->insertGeneralSettingsFromArray([
+            'shopId' => 1,
+            'active' => $active,
+            'sandbox' => $sandboxMode,
+            'useInContext' => $useInContext,
+            'logoImage' => 'None',
+            'clientId' => 'test',
+            'clientSecret' => 'test',
         ]);
     }
 

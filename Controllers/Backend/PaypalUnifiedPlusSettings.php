@@ -22,28 +22,34 @@
  * our trademarks remain entirely with us.
  */
 
-namespace SwagPaymentPayPalUnified\Components;
+use SwagPaymentPayPalUnified\Models\Settings\Plus as PlusSettingsModel;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 
-class PaymentStatus
+class Shopware_Controllers_Backend_PaypalUnifiedPlusSettings extends Shopware_Controllers_Backend_Application
 {
     /**
-     * The default status for approved orders
+     * {@inheritdoc}
      */
-    const PAYMENT_STATUS_APPROVED = 12;
+    protected $model = PlusSettingsModel::class;
+
     /**
-     * The default status for open orders
+     * {@inheritdoc}
      */
-    const PAYMENT_STATUS_OPEN = 17;
-    /**
-     * The default status for refunded orders
-     */
-    const PAYMENT_STATUS_REFUNDED = 20;
-    /**
-     * The default status for voided orders
-     */
-    const PAYMENT_STATUS_CANCELLED = 35;
-    /**
-     * The default status from PayPal to identify completed transactions
-     */
-    const PAYMENT_COMPLETED = 'completed';
+    protected $alias = 'plus';
+
+    public function detailAction()
+    {
+        $shopId = (int) $this->Request()->getParam('shopId');
+
+        /** @var SettingsServiceInterface $settingsService */
+        $settingsService = $this->get('paypal_unified.settings_service');
+
+        /** @var PlusSettingsModel $settings */
+        $settings = $settingsService->getSettings($shopId, SettingsTable::PLUS);
+
+        if ($settings !== null) {
+            $this->view->assign('plus', $settings->toArray());
+        }
+    }
 }

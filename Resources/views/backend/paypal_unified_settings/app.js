@@ -28,14 +28,16 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings', {
      * @type { Array }
      */
     models: [
-        'Settings'
+        'General',
+        'ExpressCheckout',
+        'Installments',
+        'Plus'
     ],
 
     /**
      * @type { Array }
      */
     stores: [
-        'PaymentIntent',
         'InstallmentsPresentment',
         'LogLevel',
         'EcButtonStyleColor',
@@ -51,9 +53,9 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings', {
         'Toolbar',
         'TopToolbar',
         'tabs.General',
-        'tabs.Paypal',
         'tabs.Plus',
-        'tabs.Installments'
+        'tabs.Installments',
+        'tabs.ExpressCheckout'
     ],
 
     /**

@@ -22,28 +22,16 @@
  * our trademarks remain entirely with us.
  */
 
-namespace SwagPaymentPayPalUnified\Components;
+namespace SwagPaymentPayPalUnified\Tests\Functional\WebhookHandler;
 
-class PaymentStatus
+class EntityManagerMock extends \Shopware\Components\Model\ModelManager
 {
-    /**
-     * The default status for approved orders
-     */
-    const PAYMENT_STATUS_APPROVED = 12;
-    /**
-     * The default status for open orders
-     */
-    const PAYMENT_STATUS_OPEN = 17;
-    /**
-     * The default status for refunded orders
-     */
-    const PAYMENT_STATUS_REFUNDED = 20;
-    /**
-     * The default status for voided orders
-     */
-    const PAYMENT_STATUS_CANCELLED = 35;
-    /**
-     * The default status from PayPal to identify completed transactions
-     */
-    const PAYMENT_COMPLETED = 'completed';
+    public function __construct()
+    {
+    }
+
+    public function getRepository($entityName)
+    {
+        throw new \Exception('Test exception');
+    }
 }

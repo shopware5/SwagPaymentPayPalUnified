@@ -28,6 +28,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Enlight\Event\SubscriberInterface;
 use Enlight_View_Default;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 
 class Frontend implements SubscriberInterface
 {
@@ -103,12 +104,12 @@ class Frontend implements SubscriberInterface
 
         /** @var Enlight_View_Default $view */
         $view = $args->getSubject()->View();
-        $restylePaymentSelection = ((bool) $this->settingsService->get('plus_active') && (bool) $this->settingsService->get('plus_restyle'));
+        $restylePaymentSelection = ((bool) $this->settingsService->get('active', SettingsTable::PLUS) && (bool) $this->settingsService->get('restyle', SettingsTable::PLUS));
 
         //Assign shop specific and configurable values to the view.
         $view->assign('paypalUnifiedShowLogo', (bool) $this->settingsService->get('show_sidebar_logo'));
         $view->assign('paypalUnifiedRestylePaymentSelection', $restylePaymentSelection);
-        $view->assign('paypalUnifiedShowInstallmentsLogo', (bool) $this->settingsService->get('installments_show_logo'));
+        $view->assign('paypalUnifiedShowInstallmentsLogo', (bool) $this->settingsService->get('show_logo', SettingsTable::INSTALLMENTS));
     }
 
     /**

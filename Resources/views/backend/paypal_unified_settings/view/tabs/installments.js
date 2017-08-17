@@ -45,6 +45,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Installments', {
         var me = this;
 
         me.installmentsActivate = me.createInstallmentsActivate();
+        me.intentSelection = me.createPaymentIntentSelection();
         me.presentmentSelectionDetail = me.createPresentmentSelectionDetail();
         me.presentmentSelectionCart = me.createPresentmentSelectionCart();
         me.logoCheckBox = me.createLogoCheckBox();
@@ -52,11 +53,36 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Installments', {
 
         return [
             me.installmentsActivate,
+            me.intentSelection,
             me.presentmentSelectionDetail,
             me.presentmentSelectionCart,
             me.logoCheckBox,
             me.testAvailabilityButton
         ];
+    },
+
+    createPaymentIntentSelection: function() {
+        return Ext.create('Ext.form.field.ComboBox', {
+            name: 'intent',
+            fieldLabel: '{s name="intent/field" namespace="backend/paypal_unified_settings/tabs/payment_intent"}{/s}',
+            helpText: '',
+
+            store: {
+                fields: [
+                    { name: 'id', type: 'int' },
+                    { name: 'text', type: 'string' }
+                ],
+
+                data: [
+                    { id: 0, text: '{s name="intent/sale" namespace="backend/paypal_unified_settings/tabs/payment_intent"}Complete payment immediately (Sale){/s}' },
+                    { id: 2, text: '{s name="intent/orderAuthCapture" namespace="backend/paypal_unified_settings/tabs/payment_intent"}Delayed payment collection (Order-Auth-Capture){/s}' }
+                ]
+            },
+
+            valueField: 'id',
+            disabled: true,
+            value: 0
+        });
     },
 
     /**
@@ -66,7 +92,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Installments', {
         var me = this;
 
         return Ext.create('Ext.form.field.Checkbox', {
-            name: 'installmentsActive',
+            name: 'active',
             fieldLabel: '{s name=field/activate}Activate PayPal installments{/s}',
             boxLabel: '{s name=field/activate/help}Activate to enable the PayPal installments integration for the selected shop.{/s}',
             inputValue: true,
@@ -80,7 +106,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Installments', {
      */
     createPresentmentSelectionDetail: function() {
         return Ext.create('Ext.form.field.ComboBox', {
-            name: 'installmentsPresentmentDetail',
+            name: 'presentmentTypeDetail',
             fieldLabel: '{s name=field/installmentsPresentmentDetail}Upstream-Presentment on detail page{/s}',
             store: Ext.create('Shopware.apps.PaypalUnifiedSettings.store.InstallmentsPresentment'),
             helpText: '{s name=field/installmentsPresentmentDetail/help}Indicates which type of upstream-presentment should be displayed on the detail page.<br><br><u>None</u><br>Nothing will be displayed.<br><br><u>Simple</u><br>The customer gets a notification that the explains that installments is available for this cart. Details will be displayed if the customer clicks on the link.<br><br><u>Cheapest Rate</u><br>The cheapest rate will be displayed already. Attention! This option may influence the performance on the detail page!{/s}',
@@ -95,7 +121,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Installments', {
      */
     createPresentmentSelectionCart: function() {
         return Ext.create('Ext.form.field.ComboBox', {
-            name: 'installmentsPresentmentCart',
+            name: 'presentmentTypeCart',
             fieldLabel: '{s name=field/installmentsPresentmentCart}Upstream-Presentment on cart page{/s}',
             store: Ext.create('Shopware.apps.PaypalUnifiedSettings.store.InstallmentsPresentment'),
             helpText: '{s name=field/installmentsPresentmentCart/help}Indicates which type of upstream-presentment should be displayed on the cart page.<br><br><u>None</u><br>Nothing will be displayed.<br><br><u>Simple</u><br>The customer gets a notification that the explains that installments is available for this cart. Details will be displayed if the customer clicks on the link.<br><br><u>Cheapest Rate</u><br>The cheapest rate will be displayed already. Attention! This option may influence the performance on the cart page!{/s}',
@@ -110,7 +136,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Installments', {
      */
     createLogoCheckBox: function() {
         return Ext.create('Ext.form.field.Checkbox', {
-            name: 'installmentsShowLogo',
+            name: 'showLogo',
             fieldLabel: '{s name=field/showLogo}Show logo in sidebar{/s}',
             helpText: '{s name=field/showLogo/help}If this option is active, a template will be included, which shows the logo of the PayPal installments integration in the sidebar element.{/s}',
             inputValue: true,
@@ -146,6 +172,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Installments', {
         me.presentmentSelectionCart.setDisabled(!checked);
         me.logoCheckBox.setDisabled(!checked);
         me.testAvailabilityButton.setDisabled(!checked);
+        me.intentSelection.setDisabled(!checked);
     },
 
     /**

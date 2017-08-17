@@ -22,28 +22,33 @@
  * our trademarks remain entirely with us.
  */
 
-namespace SwagPaymentPayPalUnified\Components;
+use SwagPaymentPayPalUnified\Models\Settings\General as GeneralSettingsModel;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 
-class PaymentStatus
+class Shopware_Controllers_Backend_PaypalUnifiedGeneralSettings extends Shopware_Controllers_Backend_Application
 {
     /**
-     * The default status for approved orders
+     * {@inheritdoc}
      */
-    const PAYMENT_STATUS_APPROVED = 12;
+    protected $model = GeneralSettingsModel::class;
+
     /**
-     * The default status for open orders
+     * {@inheritdoc}
      */
-    const PAYMENT_STATUS_OPEN = 17;
-    /**
-     * The default status for refunded orders
-     */
-    const PAYMENT_STATUS_REFUNDED = 20;
-    /**
-     * The default status for voided orders
-     */
-    const PAYMENT_STATUS_CANCELLED = 35;
-    /**
-     * The default status from PayPal to identify completed transactions
-     */
-    const PAYMENT_COMPLETED = 'completed';
+    protected $alias = 'general';
+
+    public function detailAction()
+    {
+        $shopId = (int) $this->Request()->getParam('shopId');
+
+        /** @var SettingsServiceInterface $settingsService */
+        $settingsService = $this->get('paypal_unified.settings_service');
+
+        /** @var GeneralSettingsModel $settings */
+        $settings = $settingsService->getSettings($shopId);
+
+        if ($settings !== null) {
+            $this->view->assign('general', $settings->toArray());
+        }
+    }
 }

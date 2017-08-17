@@ -57,6 +57,10 @@ class Backend implements SubscriberInterface
         return [
             'Enlight_Controller_Dispatcher_ControllerPath_Backend_PaypalUnified' => 'onGetBackendControllerPath',
             'Enlight_Controller_Dispatcher_ControllerPath_Backend_PaypalUnifiedSettings' => 'onGetBackendSettingsControllerPath',
+            'Enlight_Controller_Dispatcher_ControllerPath_Backend_PaypalUnifiedGeneralSettings' => 'onGetBackendGeneralSettingsControllerPath',
+            'Enlight_Controller_Dispatcher_ControllerPath_Backend_PaypalUnifiedExpressSettings' => 'onGetBackendExpressSettingsControllerPath',
+            'Enlight_Controller_Dispatcher_ControllerPath_Backend_PaypalUnifiedInstallmentsSettings' => 'onGetBackendInstallmentsSettingsControllerPath',
+            'Enlight_Controller_Dispatcher_ControllerPath_Backend_PaypalUnifiedPlusSettings' => 'onGetBackendPlusSettingsControllerPath',
         ];
     }
 
@@ -88,5 +92,49 @@ class Backend implements SubscriberInterface
         );
 
         return $this->pluginDirectory . '/Controllers/Backend/PaypalUnifiedSettings.php';
+    }
+
+    /**
+     * Handles the Enlight_Controller_Dispatcher_ControllerPath_Backend_PaypalUnifiedGeneralSettings event.
+     * Returns the path to the backend application controller.
+     *
+     * @return string
+     */
+    public function onGetBackendGeneralSettingsControllerPath()
+    {
+        return $this->pluginDirectory . '/Controllers/Backend/PaypalUnifiedGeneralSettings.php';
+    }
+
+    /**
+     * Handles the Enlight_Controller_Dispatcher_ControllerPath_Backend_PaypalUnifiedExpressSettings event.
+     * Returns the path to the backend application controller.
+     *
+     * @return string
+     */
+    public function onGetBackendExpressSettingsControllerPath()
+    {
+        return $this->pluginDirectory . '/Controllers/Backend/PaypalUnifiedExpressSettings.php';
+    }
+
+    /**
+     * Handles the Enlight_Controller_Dispatcher_ControllerPath_Backend_PaypalUnifiedInstallmentsSettings event.
+     * Returns the path to the backend application controller.
+     *
+     * @return string
+     */
+    public function onGetBackendInstallmentsSettingsControllerPath()
+    {
+        return $this->pluginDirectory . '/Controllers/Backend/PaypalUnifiedInstallmentsSettings.php';
+    }
+
+    /**
+     * Handles the Enlight_Controller_Dispatcher_ControllerPath_Backend_PaypalUnifiedPlusSettings event.
+     * Returns the path to the backend application controller.
+     *
+     * @return string
+     */
+    public function onGetBackendPlusSettingsControllerPath()
+    {
+        return $this->pluginDirectory . '/Controllers/Backend/PaypalUnifiedPlusSettings.php';
     }
 }

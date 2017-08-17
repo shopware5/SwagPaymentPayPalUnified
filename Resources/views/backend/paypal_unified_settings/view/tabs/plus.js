@@ -19,6 +19,11 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Plus', {
     },
 
     /**
+     * @type { Ext.form.field.ComboBox }
+     */
+    intentSelection: null,
+
+    /**
      * @type { Ext.form.field.Checkbox }
      */
     restyleCheckbox: null,
@@ -42,22 +47,47 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Plus', {
     createItems: function() {
         var me = this;
 
+        me.intentSelection = me.createPaymentIntentSelection();
         me.localeSelection = me.createLocaleSelection();
         me.restyleCheckbox = me.createRestyleCheckbox();
 
         return [
             {
                 xtype: 'checkbox',
-                name: 'plusActive',
+                name: 'active',
                 fieldLabel: '{s name=field/activate}Activate PayPal Plus{/s}',
                 boxLabel: '{s name=field/activate/help}Activate in order to enable the PayPal Plus integration for the selected shop.{/s}',
                 inputValue: true,
                 uncheckedValue: false,
                 handler: Ext.bind(me.onActivatePayPalPlus, me)
             },
+            me.intentSelection,
             me.restyleCheckbox,
             me.localeSelection
         ];
+    },
+
+    createPaymentIntentSelection: function() {
+        return Ext.create('Ext.form.field.ComboBox', {
+            name: 'intent',
+            fieldLabel: '{s name="intent/field" namespace="backend/paypal_unified_settings/tabs/payment_intent"}{/s}',
+            helpText: '',
+
+            store: {
+                fields: [
+                    { name: 'id', type: 'int' },
+                    { name: 'text', type: 'string' }
+                ],
+
+                data: [
+                    { id: 0, text: '{s name="intent/sale" namespace="backend/paypal_unified_settings/tabs/payment_intent"}Complete payment immediately (Sale){/s}' }
+                ]
+            },
+
+            valueField: 'id',
+            disabled: true,
+            value: 0
+        });
     },
 
     /**
@@ -65,7 +95,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Plus', {
      */
     createRestyleCheckbox: function() {
         return Ext.create('Ext.form.field.Checkbox', {
-            name: 'plusRestyle',
+            name: 'restyle',
             fieldLabel: '{s name=field/restyle}Restyle payment selection{/s}',
             helpText: '{s name=field/restyle/help}Activate this option to apply the payment wall style to the whole payment selection.{/s}',
             boxLabel: '{s name=field/restyle/boxLabel}Activate this option to restyle the payment selection.{/s}',
@@ -86,7 +116,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Plus', {
         store.load();
 
         return Ext.create('Ext.form.field.ComboBox', {
-            name: 'plusLanguage',
+            name: 'language',
             store: store,
             fieldLabel: '{s name=field/language}Payment Wall language{/s}',
             helpText: '{s name=field/language/help}You can define another language for the Payment Wall for the selected shop. Leave the selection empty in order to use the shop locale.{/s}',
@@ -119,6 +149,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Plus', {
             me.restyleCheckbox.setValue(true);
         }
 
+        me.intentSelection.setDisabled(!checked);
         me.localeSelection.setDisabled(!checked);
         me.restyleCheckbox.setDisabled(!checked);
     }

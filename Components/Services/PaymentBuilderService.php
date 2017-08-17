@@ -28,7 +28,7 @@ use Shopware\Components\Routing\Router;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderInterface;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
-use SwagPaymentPayPalUnified\PayPalBundle\PaymentIntent;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Payer;
@@ -87,23 +87,12 @@ class PaymentBuilderService implements PaymentBuilderInterface
 
         $requestParameters = new Payment();
 
-        if ($this->settings->get('plus_active')) {
-            $requestParameters->setIntent('sale');
+        if ($params->getPaymentType() === PaymentType::PAYPAL_EXPRESS || $params->getPaymentType() === PaymentType::PAYPAL_CLASSIC) {
+            $requestParameters->setIntent($this->getIntentAsString((int) $this->settings->get('intent', SettingsTable::EXPRESS_CHECKOUT)));
+        } elseif ($params->getPaymentType() === PaymentType::PAYPAL_INSTALLMENTS) {
+            $requestParameters->setIntent($this->getIntentAsString((int) $this->settings->get('intent', SettingsTable::INSTALLMENTS)));
         } else {
-            //For the "classic" integration it's possible to use further intents.
-            $intent = (int) $this->settings->get('paypal_payment_intent');
-
-            switch ($intent) {
-                case 0:
-                    $requestParameters->setIntent(PaymentIntent::SALE);
-                    break;
-                case 1:
-                    $requestParameters->setIntent(PaymentIntent::AUTHORIZE);
-                    break;
-                case 2:
-                    $requestParameters->setIntent(PaymentIntent::ORDER);
-                    break;
-            }
+            $requestParameters->setIntent('sale');
         }
 
         $requestParameters->setProfile($params->getWebProfileId());
@@ -124,7 +113,7 @@ class PaymentBuilderService implements PaymentBuilderInterface
         $transactions->setAmount($amount);
 
         //don't submit the cart if the option is false and the selected payment method is express checkout
-        if ($params->getPaymentType() !== PaymentType::PAYPAL_EXPRESS || $this->settings->get('ec_submit_cart')) {
+        if ($params->getPaymentType() !== PaymentType::PAYPAL_EXPRESS || $this->settings->get('submit_cart', SettingsTable::EXPRESS_CHECKOUT)) {
             $itemList = new ItemList();
             $itemList->setItems($this->getItemList());
 
@@ -136,6 +125,25 @@ class PaymentBuilderService implements PaymentBuilderInterface
         $requestParameters->setTransactions($transactions);
 
         return $requestParameters;
+    }
+
+    /**
+     * @param int $intent
+     *
+     * @return string
+     */
+    private function getIntentAsString($intent)
+    {
+        switch ($intent) {
+            case 0:
+                return 'sale';
+            case 1:
+                return 'authorize';
+            case 2:
+                return 'order';
+            default:
+                throw new \RuntimeException('The intent-type ' . $intent . ' is not supported!');
+        }
     }
 
     /**
