@@ -43,6 +43,7 @@ use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\ErrorResponse;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\GenericErrorResponse;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Instruction\PaymentInstructionType;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\RelatedResources\RelatedResource;
 
 class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_Frontend_Payment
@@ -248,11 +249,14 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
                 return;
             }
 
-            // if we get payment instructions from PayPal save them to database
-            if ($response->getPaymentInstruction()) {
+            // if we get payment instructions from PayPal save them to database.
+            // if the instruction is of type MANUAL_BANK_TRANSFER the instructions are not required,
+            // since they don't have to be displayed on the invoice document
+            $instructions = $response->getPaymentInstruction();
+            if ($instructions && $instructions->getType() === PaymentInstructionType::INVOICE) {
                 /** @var PaymentInstructionService $instructionService */
                 $instructionService = $this->get('paypal_unified.payment_instruction_service');
-                $instructionService->createInstructions($orderNumber, $response->getPaymentInstruction());
+                $instructionService->createInstructions($orderNumber, $instructions);
             }
 
             $isExpressCheckout = (bool) $request->getParam('expressCheckout', false);
