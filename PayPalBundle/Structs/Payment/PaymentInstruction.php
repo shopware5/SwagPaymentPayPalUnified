@@ -25,6 +25,7 @@
 namespace SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
 
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Instruction\Amount;
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Instruction\PaymentInstructionType;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Instruction\RecipientBanking;
 
 class PaymentInstruction
@@ -46,6 +47,8 @@ class PaymentInstruction
 
     /**
      * @var string
+     *
+     * @see PaymentInstructionType
      */
     private $type;
 
