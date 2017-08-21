@@ -110,10 +110,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Plus', {
      */
     createLocaleSelection: function() {
         var me = this,
-            store = Ext.create('Shopware.apps.Base.store.Locale');
-
-        store.filters.clear();
-        store.load();
+            store = Ext.create('Shopware.apps.PaypalUnifiedSettings.store.PlusLanguage');
 
         return Ext.create('Ext.form.field.ComboBox', {
             name: 'language',
@@ -121,10 +118,10 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Plus', {
             fieldLabel: '{s name=field/language}Payment Wall language{/s}',
             helpText: '{s name=field/language/help}You can define another language for the Payment Wall for the selected shop. Leave the selection empty in order to use the shop locale.{/s}',
             disabled: true,
-            queryMode: 'local',
-            displayField: 'locale',
-            valueField: 'locale',
-            forceSelection: false,
+            displayField: 'language',
+            valueField: 'iso',
+            editable: false,
+            emptyText: '{s name=field/language/emptyText}Use the shop language{/s}',
             listeners: {
                 change: function(combo, newValue) {
                     if (newValue === null) {
