@@ -2,7 +2,7 @@
     <br />
     Demo GmbH hat die Forderung gegen Sie im Rahmen eines laufenden Factoringvertrages an die PayPal (Europe) S.àr.l. et Cie, S.C.A. abgetreten. Zahlungen mit schuldbefreiender Wirkung können nur an die PayPal (Europe) S.àr.l. et Cie, S.C.A. geleistet werden
     <br /><br />
-    Bitte überweisen Sie {$instruction.amount|currency} bis {$instruction.dueDate|date_format: "%d.%m.%Y"} an PayPal
+    Bitte überweisen Sie {$PayPalUnifiedInvoiceInstruction.amount|currency} bis {$PayPalUnifiedInvoiceInstruction.dueDate|date_format: "%d.%m.%Y"} an PayPal
     <br /><br />
 </div>
 
@@ -10,27 +10,27 @@
     <tbody>
     <tr>
         <td>Empf&auml;nger:</td>
-        <td>{$instruction.accountHolder}</td>
+        <td>{$PayPalUnifiedInvoiceInstruction.accountHolder}</td>
     </tr>
     <tr>
         <td>IBAN:</td>
-        <td>{$instruction.iban}</td>
+        <td>{$PayPalUnifiedInvoiceInstruction.iban}</td>
     </tr>
     <tr>
         <td>BIC:</td>
-        <td>{$instruction.bic}</td>
+        <td>{$PayPalUnifiedInvoiceInstruction.bic}</td>
     </tr>
     <tr>
         <td>Bank:</td>
-        <td>{$instruction.bankName}</td>
+        <td>{$PayPalUnifiedInvoiceInstruction.bankName}</td>
     </tr>
     <tr>
         <td>Betrag:</td>
-        <td>{$instruction.amount|currency}</td>
+        <td>{$PayPalUnifiedInvoiceInstruction.amount|currency}</td>
     </tr>
     <tr>
         <td>Verwendungszweck:</td>
-        <td>{$instruction.reference}</td>
+        <td>{$PayPalUnifiedInvoiceInstruction.reference}</td>
     </tr>
     </tbody>
 </table>
