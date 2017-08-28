@@ -145,13 +145,15 @@ class Checkout implements SubscriberInterface
             return;
         }
 
+        $isUnifiedSelected = $this->paymentMethodProvider->getPaymentMethodModel()->getId() === (int) $view->getAssign('sPayment')['id'];
+
         $view->assign('paypalUnifiedUsePlus', $usePayPalPlus);
 
-        if ($action === 'finish') {
+        if ($action === 'finish' && $isUnifiedSelected) {
             $this->handleFinishDispatch($view);
-        } elseif ($action === 'confirm') {
+        } elseif ($action === 'confirm' && $isUnifiedSelected) {
             $this->handleConfirmDispatch($view, $session);
-        } else {
+        } elseif ($action === 'shippingPayment') {
             $this->handleShippingPaymentDispatch($view, $session);
         }
     }
@@ -165,11 +167,6 @@ class Checkout implements SubscriberInterface
     {
         /** @var PaymentInstructionService $instructionService */
         $instructionService = $this->container->get('paypal_unified.payment_instruction_service');
-
-        $selectedPaymentMethod = $view->getAssign('sPayment');
-        if ((int) $selectedPaymentMethod['id'] !== $this->paymentMethodProvider->getPaymentId($this->container->get('dbal_connection'))) {
-            return;
-        }
 
         $orderNumber = $view->getAssign('sOrderNumber');
         $paymentInstructions = $instructionService->getInstructions($orderNumber);
@@ -201,6 +198,7 @@ class Checkout implements SubscriberInterface
 
         $view->assign('paypalUnifiedCameFromPaymentSelection', $cameFromPaymentSelection);
         $view->assign('paypalUnifiedPaymentId', $this->paymentMethodProvider->getPaymentId($this->container->get('dbal_connection')));
+        $view->assign('paypalUnifiedFixedCart', true);
 
         //If the payment has already been created in the payment selection,
         //we don't have to do anything else.
