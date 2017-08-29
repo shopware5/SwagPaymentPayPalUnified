@@ -83,7 +83,7 @@ return [
             'attribute4' => '',
             'attribute5' => '',
             'attribute6' => '',
-            'swagPaypalPaymentType' => 'PayPalPlus',
+            'swagPaypalUnifiedPaymentType' => 'PayPalPlus',
         ],
     ], [
         'id' => 74,
