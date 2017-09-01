@@ -60,7 +60,7 @@
             <argument type="service" id="models"/>
         </service>
 
-        <service id="paypal_unified.shipping_address_request_service" class="SwagPaymentPayPalUnified\Components\Services\ShippingAddressRequestService"/>
+        <service id="paypal_unified.payment_address_service" class="SwagPaymentPayPalUnified\Components\Services\PaymentAddressService"/>
 
         <service id="paypal_unified.settings_service" class="SwagPaymentPayPalUnified\Components\Services\SettingsService">
             <argument type="service" id="models"/>

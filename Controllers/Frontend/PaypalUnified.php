@@ -28,11 +28,12 @@ use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\PaymentStatus;
 use SwagPaymentPayPalUnified\Components\Services\OrderDataService;
+use SwagPaymentPayPalUnified\Components\Services\PaymentAddressService;
 use SwagPaymentPayPalUnified\Components\Services\PaymentInstructionService;
-use SwagPaymentPayPalUnified\Components\Services\ShippingAddressRequestService;
 use SwagPaymentPayPalUnified\Components\Services\Validation\BasketIdWhitelist;
 use SwagPaymentPayPalUnified\Components\Services\Validation\BasketValidatorInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PayerInfoPatch;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PaymentAddressPatch;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PaymentOrderNumberPatch;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
@@ -144,11 +145,12 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
         //Patch the address data into the payment.
         //This function is only being called for PayPal classic, therefore,
         //there is an additional action (patchAddressAction()) for the PayPal plus integration.
-        /** @var ShippingAddressRequestService $addressService */
-        $addressService = $this->get('paypal_unified.shipping_address_request_service');
-        $addressPatch = new PaymentAddressPatch($addressService->getAddress($userData));
+        /** @var PaymentAddressService $addressService */
+        $addressService = $this->get('paypal_unified.payment_address_service');
+        $addressPatch = new PaymentAddressPatch($addressService->getShippingAddress($userData));
+        $payerInfoPatch = new PayerInfoPatch($addressService->getPayerInfo($userData));
 
-        $this->paymentResource->patch($responseStruct->getId(), $addressPatch);
+        $this->paymentResource->patch($responseStruct->getId(), [$addressPatch, $payerInfoPatch]);
 
         if ($this->Request()->getParam('useInContext')) {
             $this->Front()->Plugins()->Json()->setRenderer();
@@ -192,7 +194,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
                 /** @var PaymentOrderNumberPatch $paymentPatch */
                 $paymentPatch = new PaymentOrderNumberPatch($patchOrderNumber);
 
-                $this->paymentResource->patch($paymentId, $paymentPatch);
+                $this->paymentResource->patch($paymentId, [$paymentPatch]);
             }
 
             //Basket validation with shopware 5.2 support
@@ -287,11 +289,12 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
         $paymentId = $this->Request()->getParam('paymentId');
         $userData = $this->get('session')->get('sOrderVariables')['sUserData'];
 
-        /** @var ShippingAddressRequestService $patchService */
-        $addressService = $this->get('paypal_unified.shipping_address_request_service');
-        $addressPatch = new PaymentAddressPatch($addressService->getAddress($userData));
+        /** @var PaymentAddressService $addressService */
+        $addressService = $this->get('paypal_unified.payment_address_service');
+        $addressPatch = new PaymentAddressPatch($addressService->getShippingAddress($userData));
+        $payerInfoPatch = new PayerInfoPatch($addressService->getPayerInfo($userData));
 
-        $this->paymentResource->patch($paymentId, $addressPatch);
+        $this->paymentResource->patch($paymentId, [$addressPatch, $payerInfoPatch]);
     }
 
     /**
