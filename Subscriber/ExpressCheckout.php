@@ -30,7 +30,7 @@ use Enlight_Controller_ActionEventArgs as ActionEventArgs;
 use Shopware\Components\HttpClient\RequestException;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderInterface;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
-use SwagPaymentPayPalUnified\Components\Services\ShippingAddressRequestService;
+use SwagPaymentPayPalUnified\Components\Services\PaymentAddressService;
 use SwagPaymentPayPalUnified\Models\Settings\ExpressCheckout as ExpressSettingsModel;
 use SwagPaymentPayPalUnified\Models\Settings\General as GeneralSettingsModel;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
@@ -58,9 +58,9 @@ class ExpressCheckout implements SubscriberInterface
     private $paymentResource;
 
     /**
-     * @var ShippingAddressRequestService
+     * @var PaymentAddressService
      */
-    private $addressRequestService;
+    private $paymentAddressService;
 
     /**
      * @var PaymentBuilderInterface
@@ -73,25 +73,25 @@ class ExpressCheckout implements SubscriberInterface
     private $logger;
 
     /**
-     * @param SettingsServiceInterface      $settingsService
-     * @param Session                       $session
-     * @param PaymentResource               $paymentResource
-     * @param ShippingAddressRequestService $addressRequestService
-     * @param PaymentBuilderInterface       $paymentBuilder
-     * @param LoggerServiceInterface        $logger
+     * @param SettingsServiceInterface $settingsService
+     * @param Session                  $session
+     * @param PaymentResource          $paymentResource
+     * @param PaymentAddressService    $addressRequestService
+     * @param PaymentBuilderInterface  $paymentBuilder
+     * @param LoggerServiceInterface   $logger
      */
     public function __construct(
-        SettingsServiceInterface $settingsService,
-        Session $session,
-        PaymentResource $paymentResource,
-        ShippingAddressRequestService $addressRequestService,
-        PaymentBuilderInterface $paymentBuilder,
-        LoggerServiceInterface $logger
+            SettingsServiceInterface $settingsService,
+            Session $session,
+            PaymentResource $paymentResource,
+            PaymentAddressService $addressRequestService,
+            PaymentBuilderInterface $paymentBuilder,
+            LoggerServiceInterface $logger
     ) {
         $this->settingsService = $settingsService;
         $this->session = $session;
         $this->paymentResource = $paymentResource;
-        $this->addressRequestService = $addressRequestService;
+        $this->paymentAddressService = $addressRequestService;
         $this->paymentBuilder = $paymentBuilder;
         $this->logger = $logger;
     }
@@ -231,7 +231,7 @@ class ExpressCheckout implements SubscriberInterface
     }
 
     /**
-     * before the express checkout payment could be executed, the address and amount, which contains the shipping costs,
+     * before the express checkout payment can be executed, the address and amount, which contains the shipping costs,
      * must be updated, because they may have changed during the process
      *
      * @param string $paymentId
@@ -246,9 +246,8 @@ class ExpressCheckout implements SubscriberInterface
             $userData = $orderVariables['sUserData'];
             $basketData = $orderVariables['sBasket'];
 
-            $shippingAddress = $this->addressRequestService->getAddress($userData);
-            $patch = new PaymentAddressPatch($shippingAddress);
-            $this->paymentResource->patch($paymentId, $patch);
+            $shippingAddress = $this->paymentAddressService->getShippingAddress($userData);
+            $addressPatch = new PaymentAddressPatch($shippingAddress);
 
             $requestParams = new PaymentBuilderParameters();
             $requestParams->setWebProfileId('temporary');
@@ -258,7 +257,7 @@ class ExpressCheckout implements SubscriberInterface
             $paymentStruct = $this->paymentBuilder->getPayment($requestParams);
             $amountPatch = new PaymentAmountPatch($paymentStruct->getTransactions()->getAmount());
 
-            $this->paymentResource->patch($paymentId, $amountPatch);
+            $this->paymentResource->patch($paymentId, [$addressPatch, $amountPatch]);
         } catch (RequestException $requestException) {
             $this->logger->error('PayPal Unified ExpressCheckout: Unable to patch the payment (RequestException)', ['message' => $requestException->getMessage(), 'payload' => $requestException->getBody()]);
             throw $requestException;
