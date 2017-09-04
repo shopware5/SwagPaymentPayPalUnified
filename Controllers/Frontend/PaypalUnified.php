@@ -269,6 +269,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
                 'module' => 'frontend',
                 'controller' => 'checkout',
                 'action' => 'finish',
+                'sUniqueID' => $paymentId,
             ]);
         } catch (RequestException $exception) {
             $this->handleError(ErrorCodes::COMMUNICATION_FAILURE, $exception);
