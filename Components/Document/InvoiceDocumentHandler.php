@@ -27,7 +27,7 @@ namespace SwagPaymentPayPalUnified\Components\Document;
 
 use Doctrine\DBAL\Connection;
 use Shopware_Components_Document as Document;
-use SwagPaymentPayPalUnified\Components\Services\PaymentInstructionService;
+use SwagPaymentPayPalUnified\Components\Services\Plus\PaymentInstructionService;
 
 class InvoiceDocumentHandler
 {

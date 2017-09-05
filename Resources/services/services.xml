@@ -56,7 +56,7 @@
 
         <service id="paypal_unified.transaction_history_builder_service" class="SwagPaymentPayPalUnified\Components\Services\TransactionHistoryBuilderService"/>
 
-        <service id="paypal_unified.payment_instruction_service" class="SwagPaymentPayPalUnified\Components\Services\PaymentInstructionService">
+        <service id="paypal_unified.payment_instruction_service" class="SwagPaymentPayPalUnified\Components\Services\Plus\PaymentInstructionService">
             <argument type="service" id="models"/>
         </service>
 

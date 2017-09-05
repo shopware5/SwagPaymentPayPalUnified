@@ -41,7 +41,7 @@ class WebProfileFlowConfig
      *
      * @var string
      */
-    private $userAction = null;
+    private $userAction;
 
     /**
      * The HTTP method to use to redirect the user to a return URL. Valid value is GET or POST.

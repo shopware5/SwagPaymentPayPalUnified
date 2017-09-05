@@ -38,7 +38,7 @@ class CheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
 
     public function test_can_be_created()
     {
-        $subscriber = new Checkout(Shopware()->Container(), Shopware()->Container()->get('paypal_unified.settings_service'), Shopware()->Container()->get('paypal_unified.dependency_provider'));
+        $subscriber = new Checkout(Shopware()->Container());
         $this->assertNotNull($subscriber);
     }
 
@@ -50,11 +50,7 @@ class CheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
 
     public function test_onPostDispatchCheckout_should_return_because_no_settings_exists()
     {
-        $subscriber = new Checkout(
-            Shopware()->Container(),
-            Shopware()->Container()->get('paypal_unified.settings_service'),
-            Shopware()->Container()->get('paypal_unified.dependency_provider')
-        );
+        $subscriber = new Checkout(Shopware()->Container());
 
         $view = new ViewMock(
             new Enlight_Template_Manager()
@@ -74,11 +70,7 @@ class CheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
 
     public function test_onPostDispatchCheckout_should_return_because_the_action_is_invalid()
     {
-        $subscriber = new Checkout(
-            Shopware()->Container(),
-            Shopware()->Container()->get('paypal_unified.settings_service'),
-            Shopware()->Container()->get('paypal_unified.dependency_provider')
-        );
+        $subscriber = new Checkout(Shopware()->Container());
 
         $request = new \Enlight_Controller_Request_RequestTestCase();
         $request->setActionName('invalidSuperAction');
@@ -102,11 +94,7 @@ class CheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
 
     public function test_onPostDispatchCheckout_should_assign_value_usePayPalPlus()
     {
-        $subscriber = new Checkout(
-            Shopware()->Container(),
-            Shopware()->Container()->get('paypal_unified.settings_service'),
-            Shopware()->Container()->get('paypal_unified.dependency_provider')
-        );
+        $subscriber = new Checkout(Shopware()->Container());
 
         $view = new ViewMock(
             new Enlight_Template_Manager()
@@ -130,11 +118,7 @@ class CheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
 
     public function test_onPostDispatchCheckout_should_assign_error_code()
     {
-        $subscriber = new Checkout(
-            Shopware()->Container(),
-            Shopware()->Container()->get('paypal_unified.settings_service'),
-            Shopware()->Container()->get('paypal_unified.dependency_provider')
-        );
+        $subscriber = new Checkout(Shopware()->Container());
 
         $view = new ViewMock(
             new Enlight_Template_Manager()

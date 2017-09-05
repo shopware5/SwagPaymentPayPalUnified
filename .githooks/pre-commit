@@ -26,11 +26,11 @@ class PreCommitChecks
         if ($this->isRebase()) {
             echo 'Not on branch' . PHP_EOL;
 
-            return (int) 0;
+            return 0;
         }
 
-        $this->runPhpLint($this->getCommittedFileList('php'));
-        $this->runPhpCsFixer($this->getCommittedFileList('php'));
+        $this->runPhpLint($this->getCommittedFileList());
+        $this->runPhpCsFixer($this->getCommittedFileList());
         $this->runEsLint($this->getCommittedFileList('js'));
 
         if ($this->error) {
