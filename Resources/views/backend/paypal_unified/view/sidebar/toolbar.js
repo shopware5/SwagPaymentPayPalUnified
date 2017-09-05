@@ -77,7 +77,7 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebar.Toolbar', {
             voidButton = me.down('#voidButton'),
             authorizeButton = me.down('#authorizeButton');
 
-        if (amount == 0 || intent === 'sale') {
+        if (amount === 0 || intent === 'sale') {
             me.hide();
 
             return;

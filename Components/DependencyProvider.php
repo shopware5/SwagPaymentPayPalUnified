@@ -66,6 +66,6 @@ class DependencyProvider
         /** @var \Shopware_Components_Modules $modules */
         $modules = $this->container->get('modules');
 
-        return $modules->offsetGet($moduleName);
+        return $modules->getModule($moduleName);
     }
 }

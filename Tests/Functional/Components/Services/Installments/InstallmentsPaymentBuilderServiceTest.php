@@ -50,7 +50,7 @@ class InstallmentsPaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
 
     public function test_getPayment_has_correct_intent_sale()
     {
-        $requestParameters = $this->getRequestData(true, 0);
+        $requestParameters = $this->getRequestData(true);
         $this->assertEquals('sale', $requestParameters['intent']);
     }
 

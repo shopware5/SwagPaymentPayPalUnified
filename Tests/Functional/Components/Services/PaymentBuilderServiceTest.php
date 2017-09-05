@@ -47,7 +47,7 @@ class PaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
 
     public function test_getPayment_return_plus_intent()
     {
-        $requestParameters = $this->getRequestData(PaymentType::PAYPAL_PLUS, 0);
+        $requestParameters = $this->getRequestData(PaymentType::PAYPAL_PLUS);
 
         $this->assertEquals('sale', $requestParameters['intent']);
     }
@@ -423,15 +423,15 @@ class SettingsServicePaymentBuilderServiceMock implements SettingsServiceInterfa
 
     public function get($column, $settingsTable = SettingsTable::GENERAL)
     {
-        if ($column == 'active' && $settingsTable == SettingsTable::PLUS) {
+        if ($column === 'active' && $settingsTable === SettingsTable::PLUS) {
             return $this->plus_active;
         }
 
-        if ($column == 'intent') {
+        if ($column === 'intent') {
             return $this->paypal_payment_intent;
         }
 
-        if ($column == 'submit_cart' && $settingsTable == SettingsTable::EXPRESS_CHECKOUT) {
+        if ($column === 'submit_cart' && $settingsTable === SettingsTable::EXPRESS_CHECKOUT) {
             return $this->ec_submit_cart;
         }
 

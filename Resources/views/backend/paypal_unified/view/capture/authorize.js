@@ -45,7 +45,7 @@ Ext.define('Shopware.apps.PaypalUnified.view.capture.Authorize', {
     },
 
     /**
-     * @param { Numeric } maxAmount
+     * @param { Number } maxAmount
      */
     showDialog: function (maxAmount) {
         this.show();

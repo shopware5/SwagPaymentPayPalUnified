@@ -355,9 +355,8 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
     /**
      * @param { Object } options
      * @param { Boolean } success
-     * @param { Object } response
      */
-    onCreateWebProfilesAjaxCallback: function(options, success, response) {
+    onCreateWebProfilesAjaxCallback: function(options, success) {
         var me = this;
 
         me.window.setLoading(false);

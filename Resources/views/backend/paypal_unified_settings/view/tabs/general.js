@@ -82,7 +82,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
             me.createActivationContainer(),
             me.createRestContainer(),
             me.createBehaviorContainer(),
-            me.createErrorHandlingContainer(),
+            me.createErrorHandlingContainer()
         ];
     },
 

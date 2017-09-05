@@ -504,7 +504,7 @@ class SettingsServiceInstallmentsMock implements SettingsServiceInterface
 
     public function getSettings($shopId = null, $settingsTable = SettingsTable::GENERAL)
     {
-        if ($settingsTable == SettingsTable::GENERAL) {
+        if ($settingsTable === SettingsTable::GENERAL) {
             return $this->generalSettings;
         }
 

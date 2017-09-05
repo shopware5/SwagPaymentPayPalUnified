@@ -52,7 +52,7 @@ class PaymentResource
      */
     public function create(Payment $payment)
     {
-        return $this->clientService->sendRequest(RequestType::POST, RequestUri::PAYMENT_RESOURCE, $payment->toArray(), true);
+        return $this->clientService->sendRequest(RequestType::POST, RequestUri::PAYMENT_RESOURCE, $payment->toArray());
     }
 
     /**
@@ -68,8 +68,7 @@ class PaymentResource
         return $this->clientService->sendRequest(
             RequestType::POST,
             RequestUri::PAYMENT_RESOURCE . '/' . $paymentId . '/execute',
-            $requestData,
-            true
+            $requestData
         );
     }
 
@@ -89,6 +88,7 @@ class PaymentResource
      */
     public function patch($paymentId, array $patches)
     {
+        $requestData = [];
         foreach ($patches as $patch) {
             $requestData[] = [
                 'op' => $patch->getOperation(),

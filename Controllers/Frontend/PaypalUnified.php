@@ -198,7 +198,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
             }
 
             //Basket validation with shopware 5.2 support
-            if (in_array($basketId, BasketIdWhitelist::WHITELIST_IDS) || version_compare($this->container->get('config')->get('version'), '5.3.0', '<')) {
+            if (in_array($basketId, BasketIdWhitelist::WHITELIST_IDS, true) || version_compare($this->container->get('config')->get('version'), '5.3.0', '<')) {
                 //For shopware < 5.3 and for whitelisted basket ids
                 $payment = $this->paymentResource->get($paymentId);
                 $basketValid = $this->validateBasketSimple(Payment::fromArray($payment));

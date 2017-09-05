@@ -84,10 +84,12 @@ class PaymentMethodProvider
     public function setPaymentMethodActiveFlag($active, $name = self::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME)
     {
         $paymentMethod = $this->getPaymentMethodModel($name);
-        $paymentMethod->setActive($active);
+        if ($paymentMethod) {
+            $paymentMethod->setActive($active);
 
-        $this->modelManager->persist($paymentMethod);
-        $this->modelManager->flush($paymentMethod);
+            $this->modelManager->persist($paymentMethod);
+            $this->modelManager->flush($paymentMethod);
+        }
     }
 
     /**

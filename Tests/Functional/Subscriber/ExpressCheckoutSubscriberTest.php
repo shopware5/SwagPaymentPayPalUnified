@@ -98,7 +98,7 @@ class ExpressCheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
             'subject' => new DummyController($request, $view, null),
         ]);
 
-        $this->importSettings(true, false, false);
+        $this->importSettings(true);
 
         $subscriber = $this->getSubscriber();
         $subscriber->loadExpressCheckoutJS($enlightEventArgs);
@@ -315,7 +315,7 @@ class ExpressCheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
             'subject' => new DummyController($request, $view),
         ]);
 
-        $this->importSettings(false);
+        $this->importSettings();
 
         $subscriber = $this->getSubscriber();
         $subscriber->addExpressCheckoutButtonDetail($enlightEventArgs);
@@ -332,7 +332,7 @@ class ExpressCheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
             'subject' => new DummyController($request, $view),
         ]);
 
-        $this->importSettings(true, false);
+        $this->importSettings(true);
 
         $subscriber = $this->getSubscriber();
         $subscriber->addExpressCheckoutButtonDetail($enlightEventArgs);
@@ -349,7 +349,7 @@ class ExpressCheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
             'subject' => new DummyController($request, $view),
         ]);
 
-        $this->importSettings(true, true, false);
+        $this->importSettings(true, true);
 
         $subscriber = $this->getSubscriber();
         $subscriber->addExpressCheckoutButtonDetail($enlightEventArgs);
