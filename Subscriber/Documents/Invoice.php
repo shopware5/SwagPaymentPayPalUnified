@@ -28,7 +28,7 @@ use Doctrine\DBAL\Connection;
 use Enlight\Event\SubscriberInterface;
 use SwagPaymentPayPalUnified\Components\Document\InvoiceDocumentHandler;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
-use SwagPaymentPayPalUnified\Components\Services\PaymentInstructionService;
+use SwagPaymentPayPalUnified\Components\Services\Plus\PaymentInstructionService;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 
 class Invoice implements SubscriberInterface

@@ -22,7 +22,7 @@
  * our trademarks remain entirely with us.
  */
 
-namespace SwagPaymentPayPalUnified\Components\Services;
+namespace SwagPaymentPayPalUnified\Components\Services\Plus;
 
 use Shopware\Components\Model\ModelManager;
 use SwagPaymentPayPalUnified\Models\PaymentInstruction as PaymentInstructionModel;
