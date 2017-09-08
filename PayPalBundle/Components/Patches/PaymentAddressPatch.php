@@ -24,7 +24,7 @@
 
 namespace SwagPaymentPayPalUnified\PayPalBundle\Components\Patches;
 
-use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Payer\PayerInfo\ShippingAddress;
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Transactions\ItemList\ShippingAddress;
 
 class PaymentAddressPatch implements PatchInterface
 {

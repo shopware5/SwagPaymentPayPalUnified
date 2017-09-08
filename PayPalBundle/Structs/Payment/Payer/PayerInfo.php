@@ -25,7 +25,6 @@
 namespace SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Payer;
 
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Common\Address;
-use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Payer\PayerInfo\ShippingAddress;
 
 class PayerInfo
 {
@@ -60,7 +59,7 @@ class PayerInfo
     private $countryCode;
 
     /**
-     * @var ShippingAddress
+     * @var Address
      */
     private $billingAddress;
 

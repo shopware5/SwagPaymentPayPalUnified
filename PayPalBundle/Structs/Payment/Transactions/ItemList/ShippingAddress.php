@@ -22,7 +22,7 @@
  * our trademarks remain entirely with us.
  */
 
-namespace SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Payer\PayerInfo;
+namespace SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Transactions\ItemList;
 
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Common\Address;
 

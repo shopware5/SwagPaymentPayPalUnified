@@ -26,7 +26,7 @@ namespace SwagPaymentPayPalUnified\Components\Services;
 
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Common\Address;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Payer\PayerInfo;
-use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Payer\PayerInfo\ShippingAddress;
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Transactions\ItemList\ShippingAddress;
 
 class PaymentAddressService
 {
