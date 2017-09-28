@@ -55,7 +55,10 @@ class BackendRegistrationSubscriberTest extends \PHPUnit_Framework_TestCase
 
         /** @var \Enlight_Template_Manager $template */
         $template = Shopware()->Container()->get('template');
-        $this->assertStringEndsWith('/SwagPaymentPayPalUnified/Resources/views/', $template->getTemplateDir(0)); //We can not use the absolute path, since it's different from machine to machine!
+        $templateDirs = $template->getTemplateDir();
+
+        //Do not use the absolute path, since it's different from machine to machine
+        $this->assertContains('/SwagPaymentPayPalUnified/Resources/views/', implode('', $templateDirs));
     }
 
     public function test_onGetSettingsControllerPath()
@@ -67,7 +70,10 @@ class BackendRegistrationSubscriberTest extends \PHPUnit_Framework_TestCase
 
         /** @var \Enlight_Template_Manager $template */
         $template = Shopware()->Container()->get('template');
-        $this->assertStringEndsWith('/SwagPaymentPayPalUnified/Resources/views/', $template->getTemplateDir(0)); //We can not use the absolute path, since it's different from machine to machine!
+        $templateDirs = $template->getTemplateDir();
+
+        //Do not use the absolute path, since it's different from machine to machine
+        $this->assertContains('/SwagPaymentPayPalUnified/Resources/views/', implode('', $templateDirs));
     }
 
     public function test_onGetGeneralSettingsControllerPath()
