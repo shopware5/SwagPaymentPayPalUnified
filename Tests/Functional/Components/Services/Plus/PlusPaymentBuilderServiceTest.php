@@ -50,17 +50,45 @@ class PlusPaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertStringEndsWith('basketId/' . BasketIdWhitelist::WHITELIST_IDS['PayPalPlus'], $request->getRedirectUrls()->getReturnUrl());
     }
 
+    public function test_estimated_delivery_date_attribute_exists_but_not_set()
+    {
+        $this->createEddAttribute();
+
+        $request = $this->getRequestData();
+
+        $this->assertNull($request->getTransactions()->getShipmentDetails());
+
+        $this->deleteEddAttribute();
+    }
+
+    public function test_estimated_delivery_date_is_correct()
+    {
+        $this->createEddAttribute();
+        $eddDays = 21;
+        $date = new \DateTime();
+        $date->add(new \DateInterval('P' . $eddDays . 'D'));
+        $expectedDate = $date->format('Y-m-d');
+
+        $request = $this->getRequestData($eddDays);
+
+        $this->assertSame($expectedDate, $request->getTransactions()->getShipmentDetails()->getEstimatedDeliveryDate());
+
+        $this->deleteEddAttribute();
+    }
+
     /**
+     * @param null|int $edd
+     *
      * @return Payment
      */
-    private function getRequestData()
+    private function getRequestData($edd = null)
     {
         $settingService = new SettingsServicePaymentBuilderServiceMock(false, 0);
 
         $plusPaymentBuilder = $this->getPlusPaymentBuilder($settingService);
 
         $profile = $this->getWebProfile();
-        $basketData = $this->getBasketDataArray();
+        $basketData = $this->getBasketDataArray($edd);
         $userData = $this->getUserDataAsArray();
 
         $params = new PaymentBuilderParameters();
@@ -85,11 +113,13 @@ class PlusPaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @param null|int $edd
+     *
      * @return array
      */
-    private function getBasketDataArray()
+    private function getBasketDataArray($edd = null)
     {
-        return [
+        $basket = [
             'Amount' => '59,99',
             'AmountNet' => '50,41',
             'Quantity' => 1,
@@ -111,6 +141,12 @@ class PlusPaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
                 ],
             ],
         ];
+
+        if ($edd !== null) {
+            $basket['content'][0]['additional_details'][PlusPaymentBuilderService::EDD_ATTRIBUTE_COLUMN_NAME] = $edd;
+        }
+
+        return $basket;
     }
 
     /**
@@ -158,5 +194,26 @@ class PlusPaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
         $webProfile->setPresentation($presentation);
 
         return $webProfile;
+    }
+
+    private function createEddAttribute()
+    {
+        $attributeService = Shopware()->Container()->get('shopware_attribute.crud_service');
+
+        $attributeService->update(
+            's_articles_attributes',
+            PlusPaymentBuilderService::EDD_ATTRIBUTE_COLUMN_NAME,
+            'integer'
+        );
+    }
+
+    private function deleteEddAttribute()
+    {
+        $attributeService = Shopware()->Container()->get('shopware_attribute.crud_service');
+
+        $attributeService->delete(
+            's_articles_attributes',
+            PlusPaymentBuilderService::EDD_ATTRIBUTE_COLUMN_NAME
+        );
     }
 }
