@@ -52,6 +52,7 @@
         <service id="paypal_unified.plus.payment_builder_service" class="SwagPaymentPayPalUnified\Components\Services\Plus\PlusPaymentBuilderService">
             <argument type="service" id="router"/>
             <argument type="service" id="paypal_unified.settings_service"/>
+            <argument type="service" id="shopware_attribute.crud_service"/>
         </service>
 
         <service id="paypal_unified.transaction_history_builder_service" class="SwagPaymentPayPalUnified\Components\Services\TransactionHistoryBuilderService"/>

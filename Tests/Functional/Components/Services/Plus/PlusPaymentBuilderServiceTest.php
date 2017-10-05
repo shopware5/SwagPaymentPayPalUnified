@@ -79,8 +79,9 @@ class PlusPaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
     private function getPlusPaymentBuilder(SettingsServiceInterface $settingService)
     {
         $router = Shopware()->Container()->get('router');
+        $crudService = Shopware()->Container()->get('shopware_attribute.crud_service');
 
-        return new PlusPaymentBuilderService($router, $settingService);
+        return new PlusPaymentBuilderService($router, $settingService, $crudService);
     }
 
     /**
