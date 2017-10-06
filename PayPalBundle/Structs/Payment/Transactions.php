@@ -27,6 +27,7 @@ namespace SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Transactions\Amount;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Transactions\ItemList;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Transactions\RelatedResources;
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Transactions\ShipmentDetails;
 
 class Transactions
 {
@@ -44,6 +45,11 @@ class Transactions
      * @var RelatedResources
      */
     private $relatedResources;
+
+    /**
+     * @var ShipmentDetails
+     */
+    private $shipmentDetails;
 
     /**
      * @return Amount
@@ -94,6 +100,22 @@ class Transactions
     }
 
     /**
+     * @return ShipmentDetails
+     */
+    public function getShipmentDetails()
+    {
+        return $this->shipmentDetails;
+    }
+
+    /**
+     * @param ShipmentDetails $shipmentDetails
+     */
+    public function setShipmentDetails($shipmentDetails)
+    {
+        $this->shipmentDetails = $shipmentDetails;
+    }
+
+    /**
      * @param array $data
      *
      * @return Transactions
@@ -114,6 +136,10 @@ class Transactions
             $result->setRelatedResources(RelatedResources::fromArray($data['related_resources']));
         }
 
+        if ($data['shipment_details']) {
+            $result->setShipmentDetails(ShipmentDetails::fromArray($data['shipment_details']));
+        }
+
         return $result;
     }
 
@@ -122,15 +148,20 @@ class Transactions
      */
     public function toArray()
     {
-        if ($this->getItemList() === null) {
-            return [
-                'amount' => $this->getAmount()->toArray(),
-            ];
+        $result = [
+            'amount' => $this->getAmount()->toArray(),
+        ];
+
+        if ($this->getShipmentDetails() !== null) {
+            $result['shipment_details'] = $this->getShipmentDetails()->toArray();
         }
 
-        return [
-            'amount' => $this->getAmount()->toArray(),
-            'item_list' => $this->getItemList()->toArray(),
-        ];
+        if ($this->getItemList() === null) {
+            return $result;
+        }
+
+        $result['item_list'] = $this->getItemList()->toArray();
+
+        return $result;
     }
 }
