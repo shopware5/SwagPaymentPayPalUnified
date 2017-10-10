@@ -37,6 +37,11 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebar.Payment', {
      */
     invoiceContainer: null,
 
+    /**
+     * @type { Ext.form.Container }
+     */
+    legacyNotice: null,
+
     initComponent: function () {
         var me = this;
 
@@ -57,7 +62,11 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebar.Payment', {
         me.addressContainer = Ext.create('Shopware.apps.PaypalUnified.view.sidebar.payment.Address');
         me.cartGrid = Ext.create('Shopware.apps.PaypalUnified.view.sidebar.payment.Cart');
         me.invoiceContainer = Ext.create('Shopware.apps.PaypalUnified.view.sidebar.payment.Invoice');
+        me.legacyNotice = Shopware.Notification.createBlockMessage('{s name=legacyNotice}Legacy mode: not all information available{/s}', 'notice');
 
+        me.legacyNotice.hide();
+
+        items.push(me.legacyNotice);
         items.push(me.cartGrid);
         items.push(me.invoiceContainer);
         items.push(me.detailsContainer);
@@ -65,6 +74,19 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebar.Payment', {
         items.push(me.addressContainer);
 
         return items;
+    },
+
+    /**
+     * @param { bool } visible
+     */
+    setLegacyWarning: function(visible) {
+        var me = this;
+
+        if (visible === true) {
+            me.legacyNotice.show();
+        } else {
+            me.legacyNotice.hide();
+        }
     }
 });
 // {/block}

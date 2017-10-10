@@ -27,6 +27,7 @@ use Shopware\Components\Model\QueryBuilder;
 use Shopware\Models\Order\Order;
 use Shopware\Models\Shop\Shop;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
+use SwagPaymentPayPalUnified\Components\Services\Legacy\LegacyService;
 use SwagPaymentPayPalUnified\Components\Services\TransactionHistoryBuilderService;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentIntent;
@@ -38,6 +39,7 @@ use SwagPaymentPayPalUnified\PayPalBundle\Resources\RefundResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\SaleResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Capture;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\CaptureRefund;
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\RelatedResources\Sale;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\SaleRefund;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Transactions\Amount;
 
@@ -91,31 +93,25 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
     public function paymentDetailsAction()
     {
         $paymentId = $this->Request()->getParam('id');
+        $paymentMethodId = $this->Request()->getParam('paymentMethodId');
+
+        //For legacy orders, the payment id is the transactionId and not the temporaryId
+        $transactionId = $this->Request()->getParam('transactionId');
         $shopId = $this->Request()->getParam('shopId');
 
         $this->registerShopResource($shopId);
 
-        /** @var PaymentResource $paymentResource */
-        $paymentResource = $this->container->get('paypal_unified.payment_resource');
+        /** @var LegacyService $legacyService */
+        $legacyService = $this->get('paypal_unified.legacy_service');
+        $legacyPaymentId = $legacyService->getClassicPaymentId();
 
         try {
-            $paymentDetails = $paymentResource->get($paymentId);
-
-            /** @var TransactionHistoryBuilderService $salesBuilder */
-            $salesBuilder = $this->container->get('paypal_unified.transaction_history_builder_service');
-
-            $this->View()->assign('payment', $paymentDetails);
-            $this->View()->assign('history', $salesBuilder->getTransactionHistory($paymentDetails));
-
-            if ($paymentDetails['intent'] === PaymentIntent::AUTHORIZE) {
-                //Separately assign the data, to provide an easier usage
-                $this->View()->assign('authorization', $paymentDetails['transactions'][0]['related_resources'][0]['authorization']);
-            } elseif ($paymentDetails['intent'] === PaymentIntent::ORDER) {
-                $this->View()->assign('order', $paymentDetails['transactions'][0]['related_resources'][0]['order']);
-            } elseif ($paymentDetails['intent'] === PaymentIntent::SALE) {
-                $this->View()->assign('sale', $paymentDetails['transactions'][0]['related_resources'][0]['sale']);
+            //Check for a legacy payment
+            if ($legacyPaymentId === $paymentMethodId) {
+                $this->prepareLegacyDetails($transactionId);
+            } else {
+                $this->prepareUnifiedDetails($paymentId);
             }
-            $this->View()->assign('success', true);
         } catch (RequestException $ex) {
             $message = json_decode($ex->getBody(), true)['message'];
             $this->logger->error('Could not obtain payment details due to a communication failure', [$ex->getMessage(), $ex->getBody()]);
@@ -483,25 +479,40 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
     {
         $paymentMethodProvider = new PaymentMethodProvider($this->container->get('models'));
 
-        $builder->innerJoin(
-            'sOrder.payment',
-            'payment',
-            \Doctrine\ORM\Query\Expr\Join::WITH,
-            'payment.id = ' . $paymentMethodProvider->getPaymentId($this->get('dbal_connection')) .
-            ' OR payment.id = ' . $paymentMethodProvider->getPaymentId($this->get('dbal_connection'), PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME)
-        )
-            ->leftJoin('sOrder.languageSubShop', 'languageSubShop')
-            ->leftJoin('sOrder.customer', 'customer')
-            ->leftJoin('sOrder.orderStatus', 'orderStatus')
-            ->leftJoin('sOrder.paymentStatus', 'paymentStatus')
-            ->leftJoin('sOrder.attribute', 'attribute')
+        //If there was paypal classic installed earlier, we also have to query those orders.
+        $legacyPaymentId = $this->get('paypal_unified.legacy_service')->getClassicPaymentId();
+        if ($legacyPaymentId !== false) {
+            $builder->innerJoin(
+                'sOrder.payment',
+                'payment',
+                \Doctrine\ORM\Query\Expr\Join::WITH,
+                'payment.id IN (' . $paymentMethodProvider->getPaymentId($this->get('dbal_connection')) . ', ' .
+                $paymentMethodProvider->getPaymentId($this->get('dbal_connection'), PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME) . ', ' .
+                $legacyPaymentId . ')'
+            );
+        } else {
+            //No classic was installed, just query the unified orders
+            $builder->innerJoin(
+                'sOrder.payment',
+                'payment',
+                \Doctrine\ORM\Query\Expr\Join::WITH,
+                'payment.id IN (' . $paymentMethodProvider->getPaymentId($this->get('dbal_connection')) . ', ' .
+                $paymentMethodProvider->getPaymentId($this->get('dbal_connection'), PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME) . ')'
+            );
+        }
 
-            ->addSelect('languageSubShop')
-            ->addSelect('payment')
-            ->addSelect('customer')
-            ->addSelect('orderStatus')
-            ->addSelect('paymentStatus')
-            ->addSelect('attribute');
+        $builder->leftJoin('sOrder.languageSubShop', 'languageSubShop')
+                ->leftJoin('sOrder.customer', 'customer')
+                ->leftJoin('sOrder.orderStatus', 'orderStatus')
+                ->leftJoin('sOrder.paymentStatus', 'paymentStatus')
+                ->leftJoin('sOrder.attribute', 'attribute')
+
+                ->addSelect('languageSubShop')
+                ->addSelect('payment')
+                ->addSelect('customer')
+                ->addSelect('orderStatus')
+                ->addSelect('paymentStatus')
+                ->addSelect('attribute');
 
         return $builder;
     }
@@ -521,5 +532,52 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
         $shopRepository->getActiveById($shopId)->registerResources();
 
         $this->container->get('paypal_unified.settings_service')->refreshDependencies();
+    }
+
+    /**
+     * @param string $transactionId
+     */
+    private function prepareLegacyDetails($transactionId)
+    {
+        $this->View()->assign('success', true);
+        $this->View()->assign('legacy', true);
+
+        /** @var SaleResource $saleResource */
+        $saleResource = $this->get('paypal_unified.sale_resource');
+        $details = $saleResource->get($transactionId);
+        $details['intent'] = 'sale';
+
+        /** @var TransactionHistoryBuilderService $transactionHistoryBuilder */
+        $transactionHistoryBuilder = $this->get('paypal_unified.transaction_history_builder_service');
+
+        $this->View()->assign('history', $transactionHistoryBuilder->getLegacyHistory(Sale::fromArray($details)));
+        $this->View()->assign('payment', $details);
+    }
+
+    /**
+     * @param string $paymentId
+     */
+    private function prepareUnifiedDetails($paymentId)
+    {
+        /** @var PaymentResource $paymentResource */
+        $paymentResource = $this->get('paypal_unified.payment_resource');
+        $paymentDetails = $paymentResource->get($paymentId);
+
+        /** @var TransactionHistoryBuilderService $transactionHistoryBuilder */
+        $transactionHistoryBuilder = $this->get('paypal_unified.transaction_history_builder_service');
+
+        $this->View()->assign('payment', $paymentDetails);
+        $this->View()->assign('history', $transactionHistoryBuilder->getTransactionHistory($paymentDetails));
+
+        if ($paymentDetails['intent'] === PaymentIntent::AUTHORIZE) {
+            //Separately assign the data, to provide an easier usage
+            $this->View()->assign('authorization', $paymentDetails['transactions'][0]['related_resources'][0]['authorization']);
+        } elseif ($paymentDetails['intent'] === PaymentIntent::ORDER) {
+            $this->View()->assign('order', $paymentDetails['transactions'][0]['related_resources'][0]['order']);
+        } elseif ($paymentDetails['intent'] === PaymentIntent::SALE) {
+            $this->View()->assign('sale', $paymentDetails['transactions'][0]['related_resources'][0]['sale']);
+        }
+
+        $this->View()->assign('success', true);
     }
 }

@@ -99,5 +99,9 @@
             <argument type="service" id="pluginlogger" />
             <argument type="service" id="paypal_unified.settings_service" />
         </service>
+
+        <service id="paypal_unified.legacy_service" class="SwagPaymentPayPalUnified\Components\Services\Legacy\LegacyService">
+            <argument type="service" id="dbal_connection" />
+        </service>
     </services>
 </container>

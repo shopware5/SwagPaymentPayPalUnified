@@ -194,28 +194,68 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
     paymentDetailsCallback: function (options, success, response) {
         var me = this,
             sidebar = me.getSidebar(),
-            details = Ext.JSON.decode(response.responseText),
-            saleDetailsContainer = sidebar.historyTab;
+            details = Ext.JSON.decode(response.responseText);
 
-        if (details.success) {
-            me.details = details;
-
-            // Populate the sidebar tab "Payment" with the received data.
-            me.updatePaymentDetails();
-            me.updatePaymentCustomer();
-            me.updatePaymentShipping();
-            me.updatePaymentCart();
-            me.updatePaymentInvoice();
-            me.updateRefundSales();
-            me.updateWindowOptions();
-
-            saleDetailsContainer.detailsContainer.disable();
-        } else {
+        if (!details.success) {
             Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Products{/s}', details.message, me.window.title);
+
+            sidebar.setLoading(false);
+            sidebar.disable();
+            return;
+        }
+
+        me.details = details;
+
+        if (details.legacy) {
+            me.displayLegacyDetails();
+        } else {
+            me.displayUnifiedDetails()
         }
 
         sidebar.setLoading(false);
         sidebar.enable();
+    },
+
+    displayUnifiedDetails: function () {
+        var me = this,
+            sidebar = me.getSidebar(),
+            saleDetailsContainer = sidebar.historyTab;
+
+        // Populate the sidebar tab "Payment" with the received data.
+        me.updatePaymentDetails();
+        me.updatePaymentCustomer();
+        me.updatePaymentShipping();
+        me.updatePaymentCart();
+        me.updatePaymentInvoice();
+        me.updateRefundSales();
+        me.updateWindowOptions();
+
+        sidebar.paymentTab.cartGrid.show();
+        sidebar.paymentTab.addressContainer.show();
+        sidebar.paymentTab.customerContainer.show();
+
+        sidebar.paymentTab.setLegacyWarning(false);
+        sidebar.historyTab.setLegacyWarning(false);
+
+        saleDetailsContainer.detailsContainer.disable();
+    },
+
+    displayLegacyDetails: function () {
+        var me = this,
+            sidebar = me.getSidebar();
+
+        // Populate the sidebar tab "Payment" with the received data.
+        me.updatePaymentDetails();
+        me.updatePaymentInvoice();
+        me.updateRefundSales();
+
+        //Hide the information we don't have
+        sidebar.paymentTab.cartGrid.hide();
+        sidebar.paymentTab.addressContainer.hide();
+        sidebar.paymentTab.customerContainer.hide();
+
+        sidebar.paymentTab.setLegacyWarning(true);
+        sidebar.historyTab.setLegacyWarning(true);
     },
 
     /**
@@ -244,6 +284,8 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
     loadDetails: function (record) {
         var me = this,
             paymentId = record.get('temporaryId'), // The plugin stores the PayPal-PaymentId as temporaryId.
+            transactionId = record.get('transactionId'), // The plugin stores the PayPal-PaymentId as temporaryId.
+            paymentMethodId = record.get('paymentId'),
             sidebar = me.getSidebar();
 
         sidebar.setLoading('{s name=sidebar/loading/details}Requesting details from PayPal...{/s}');
@@ -252,7 +294,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
         me.updateOrderDetails(record);
         me.updateCustomerDetails(record);
 
-        me.apiController.getPaymentById(paymentId, Ext.bind(me.paymentDetailsCallback, me));
+        me.apiController.getPaymentById(paymentId, paymentMethodId, transactionId, Ext.bind(me.paymentDetailsCallback, me));
     },
 
     /**
@@ -322,8 +364,10 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
     updatePaymentInvoice: function () {
         var me = this,
             invoiceContainer = me.getSidebar().paymentTab,
-            amountModel = Ext.create('Shopware.apps.PaypalUnified.model.PaymentAmount', me.details.payment.transactions[0].amount),
-            amountDetailsModel = Ext.create('Shopware.apps.PaypalUnified.model.PaymentAmountDetails', me.details.payment.transactions[0].amount.details),
+            amountModel = me.details.legacy ? Ext.create('Shopware.apps.PaypalUnified.model.PaymentAmount', me.details.payment.amount)
+                                            : Ext.create('Shopware.apps.PaypalUnified.model.PaymentAmount', me.details.payment.transactions[0].amount),
+            amountDetailsModel = me.details.legacy ? Ext.create('Shopware.apps.PaypalUnified.model.PaymentAmountDetails', me.details.payment.amount.details)
+                                                   : Ext.create('Shopware.apps.PaypalUnified.model.PaymentAmountDetails', me.details.payment.transactions[0].amount.details),
             currency = amountModel.get('currency');
 
         invoiceContainer.loadRecord(amountModel);
@@ -347,7 +391,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
             refundPanel = me.refundWindow.contentContainer,
             history = me.details.history,
             maxRefundableAmount = me.details.history.maxRefundableAmount,
-            initialSale = me.details.sale,
+            initialSale = me.details.legacy ? me.details.payment : me.details.sale,
             saleModel = Ext.create('Shopware.apps.PaypalUnified.model.PaymentSale', initialSale);
 
         refundPanel.loadRecord(saleModel);

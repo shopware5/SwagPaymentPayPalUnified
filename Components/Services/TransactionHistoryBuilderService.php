@@ -28,6 +28,7 @@ use SwagPaymentPayPalUnified\PayPalBundle\PaymentIntent;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\RelatedResources\RelatedResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\RelatedResources\ResourceType;
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\RelatedResources\Sale;
 
 class TransactionHistoryBuilderService
 {
@@ -56,6 +57,30 @@ class TransactionHistoryBuilderService
             default:
                 throw new \RuntimeException('Could not parse history from an unknown payment type');
         }
+    }
+
+    /**
+     * @param Sale $sale
+     *
+     * @return array
+     */
+    public function getLegacyHistory(Sale $sale)
+    {
+        $result = [
+            'maxRefundableAmount' => $sale->getAmount()->getTotal(),
+        ];
+
+        $result[] = [
+            'id' => $sale->getId(),
+            'state' => $sale->getState(),
+            'amount' => $sale->getAmount()->getTotal(),
+            'create_time' => $sale->getCreateTime(),
+            'update_time' => $sale->getUpdateTime(),
+            'currency' => $sale->getAmount()->getCurrency(),
+            'type' => $sale->getType(),
+        ];
+
+        return $result;
     }
 
     /**
