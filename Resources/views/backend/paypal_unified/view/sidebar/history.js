@@ -45,12 +45,29 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebar.History', {
         me.salesGrid = Ext.create('Shopware.apps.PaypalUnified.view.sidebar.history.Grid');
         me.refundButton = Ext.create('Shopware.apps.PaypalUnified.view.sidebar.history.RefundButton');
         me.detailsContainer = Ext.create('Shopware.apps.PaypalUnified.view.sidebar.history.Details');
+        me.legacyNotice = Shopware.Notification.createBlockMessage('{s name=legacyNotice namespace=backend/paypal_unified/sidebar/payment}Legacy mode: not all information available{/s}', 'notice');
 
+        me.legacyNotice.hide();
+
+        items.push(me.legacyNotice);
         items.push(me.salesGrid);
         items.push(me.detailsContainer);
         items.push(me.refundButton);
 
         return items;
+    },
+
+    /**
+     * @param { bool } visible
+     */
+    setLegacyWarning: function(visible) {
+        var me = this;
+
+        if (visible === true) {
+            me.legacyNotice.show();
+        } else {
+            me.legacyNotice.hide();
+        }
     }
 });
 // {/block}

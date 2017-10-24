@@ -40,13 +40,17 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Api', {
      * callback function after it was received.
      *
      * @param { String } id - The id of the payment that should be received.
+     * @param { Number } paymentMethodId - The id of the payment method.
+     * @param { String } transactionId - The transaction id of the order
      * @param { Function } callback - This function will be triggered after the result was received.
      */
-    getPaymentById: function (id, callback) {
+    getPaymentById: function (id, paymentMethodId, transactionId, callback) {
         Ext.Ajax.request({
             url: this.urls.paymentDetails,
             params: {
                 id: id,
+                paymentMethodId: paymentMethodId,
+                transactionId: transactionId,
                 shopId: this.getCurrentShopId()
             },
             callback: callback
@@ -140,10 +144,12 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Api', {
      * @param { Function } callback - This function will be triggered after the result was received.
      */
     refundSale: function (amount, invoiceNumber, callback) {
+        var id = this.getDetails().legacy ? this.getDetails().payment.id : this.getDetails().sale.id;
+
         Ext.Ajax.request({
             url: this.urls.refundSale,
             params: {
-                id: this.getDetails().sale.id,
+                id: id,
                 shopId: this.getCurrentShopId(),
                 amount: amount,
                 invoiceNumber: invoiceNumber

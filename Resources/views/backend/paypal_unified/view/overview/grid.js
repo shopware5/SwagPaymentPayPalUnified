@@ -32,7 +32,8 @@ Ext.define('Shopware.apps.PaypalUnified.view.overview.Grid', {
         return {
             paymentType: {
                 header: '{s name="column/paymentType"}PayPal type{/s}',
-                draggable: false
+                draggable: false,
+                renderer: me.paymentTypeRenderer
             },
             languageIso: {
                 header: '{s name="column/shopName"}Shop name{/s}',
@@ -200,6 +201,32 @@ Ext.define('Shopware.apps.PaypalUnified.view.overview.Grid', {
         }
 
         return Ext.util.Format.currency(value);
+    },
+
+    /**
+     * @param { String } value
+     * @returns { String }
+     */
+    paymentTypeRenderer: function (value) {
+        if (value === Ext.undefined) {
+            return 'Classic'
+        }
+
+        switch (value) {
+            case 'PayPalClassic':
+                return '{s name="type/classic"}Classic{/s}';
+            case 'PayPalPlus':
+                return '{s name="type/plus"}Plus{/s}';
+            case 'PayPalPlusInvoice':
+                return '{s name="type/invoice"}Invoice{/s}';
+            case 'PayPalInstallments':
+                return '{s name="type/installments"}Installments{/s}';
+            case 'PayPalExpress':
+                return '{s name="type/express"}Express{/s}';
+
+            default:
+                return '{s name="type/legacy"}Classic (old){/s}';
+        }
     }
 });
 // {/block}
