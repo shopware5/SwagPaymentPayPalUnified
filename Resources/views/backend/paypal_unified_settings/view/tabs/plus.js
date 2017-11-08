@@ -48,7 +48,6 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Plus', {
         var me = this;
 
         me.intentSelection = me.createPaymentIntentSelection();
-        me.localeSelection = me.createLocaleSelection();
         me.restyleCheckbox = me.createRestyleCheckbox();
 
         return [
@@ -62,8 +61,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Plus', {
                 handler: Ext.bind(me.onActivatePayPalPlus, me)
             },
             me.intentSelection,
-            me.restyleCheckbox,
-            me.localeSelection
+            me.restyleCheckbox
         ];
     },
 
@@ -106,33 +104,6 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Plus', {
     },
 
     /**
-     * @returns { Ext.form.field.ComboBox }
-     */
-    createLocaleSelection: function() {
-        var me = this,
-            store = Ext.create('Shopware.apps.PaypalUnifiedSettings.store.PlusLanguage');
-
-        return Ext.create('Ext.form.field.ComboBox', {
-            name: 'language',
-            store: store,
-            fieldLabel: '{s name=field/language}Payment Wall language{/s}',
-            helpText: '{s name=field/language/help}You can define another language for the Payment Wall for the selected shop. Leave the selection empty in order to use the shop locale.{/s}',
-            disabled: true,
-            displayField: 'language',
-            valueField: 'iso',
-            editable: false,
-            emptyText: '{s name=field/language/emptyText}Use the shop language{/s}',
-            listeners: {
-                change: function(combo, newValue) {
-                    if (newValue === null) {
-                        me.getRecord().set('plusLanguage', null);
-                    }
-                }
-            }
-        });
-    },
-
-    /**
      * @param { Shopware.apps.Base.view.element.Boolean } element
      * @param { Boolean } checked
      */
@@ -147,7 +118,6 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Plus', {
         }
 
         me.intentSelection.setDisabled(!checked);
-        me.localeSelection.setDisabled(!checked);
         me.restyleCheckbox.setDisabled(!checked);
     }
 });

@@ -61,12 +61,6 @@ class Plus extends ModelEntity
     private $restyle;
 
     /**
-     * @var string
-     * @ORM\Column(name="language", type="string")
-     */
-    private $language;
-
-    /**
      * @return int
      */
     public function getId()
@@ -120,22 +114,6 @@ class Plus extends ModelEntity
     public function setRestyle($restyle)
     {
         $this->restyle = $restyle;
-    }
-
-    /**
-     * @return string
-     */
-    public function getLanguage()
-    {
-        return $this->language;
-    }
-
-    /**
-     * @param string $language
-     */
-    public function setLanguage($language)
-    {
-        $this->language = $language;
     }
 
     /**

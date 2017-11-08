@@ -285,14 +285,15 @@ class Checkout implements SubscriberInterface
      */
     private function getPaymentWallLanguage()
     {
-        $languageIso = $this->settingsService->get('language', SettingsTable::PLUS);
+        $languageIso = $this->shop->getLocale()->getLocale();
 
-        //If no locale ISO was set up specifically,
-        //we can use the current shop's locale ISO
-        if ($languageIso === null || $languageIso === '') {
-            $languageIso = $this->shop->getLocale()->getLocale();
+        $plusLanguage = 'en_US';
+        // use english as default, use german if the locale is from german speaking country (de_DE, de_AT, etc)
+        // by now the PPP iFrame does not support other languages
+        if (strpos($languageIso, 'de_') === 0) {
+            $plusLanguage = 'de_DE';
         }
 
-        return $languageIso;
+        return $plusLanguage;
     }
 }

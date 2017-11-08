@@ -13,10 +13,9 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.model.Plus', {
         { name: 'id', type: 'int' },
         { name: 'shopId', type: 'int' },
         { name: 'active', type: 'bool' },
-        { name: 'restyle', type: 'bool' },
-        { name: 'language', type: 'string' }
+        { name: 'restyle', type: 'bool' }
 
-        //Note: we don't need any intent here, because this payment method does only support "sale". The field exists anyway but only "sale" is being displayed.
+        // Note: we don't need any intent here, because this payment method does only support "sale". The field exists anyway but only "sale" is being displayed.
     ]
 });
 // {/block}
