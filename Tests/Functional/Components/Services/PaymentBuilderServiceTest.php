@@ -179,7 +179,7 @@ class PaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
 
         $customProductsOption = $requestParameters['transactions'][0]['item_list']['items'][1];
 
-        $this->assertEquals('test: a, b', $customProductsOption['name']);
+        $this->assertEquals('1x test: a, b', $customProductsOption['name']);
         $this->assertEquals(6, $customProductsOption['price']);
     }
 
