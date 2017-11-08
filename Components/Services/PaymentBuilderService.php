@@ -172,8 +172,11 @@ class PaymentBuilderService implements PaymentBuilderInterface
     {
         $list = [];
         $lastCustomProduct = null;
+        /** @var array $basketContent */
+        $basketContent = $this->basketData['content'];
+        $index = 0;
 
-        foreach ($this->basketData['content'] as $basketItem) {
+        foreach ($basketContent as $basketItem) {
             $sku = $basketItem['ordernumber'];
             $name = $basketItem['articlename'];
             $quantity = (int) $basketItem['quantity'];
@@ -182,50 +185,93 @@ class PaymentBuilderService implements PaymentBuilderInterface
                 ? str_replace(',', '.', $basketItem['price'])
                 : $basketItem['netprice'];
 
-            // Add support for custom products
+            //In the following part, we modify the CustomProducts positions.
+            //By default, custom products may add a lot of different positions to the basket, which would probably reach
+            //the items limit of PayPal. Therefore, we group the values with the options.
+            //Actually, that causes a loss of quantity precision but there is no other way around this issue but this.
             if (!empty($basketItem['customProductMode'])) {
+                //A value indicating if the surcharge of this position is only being added once
+                $isSingleSurcharge = $basketItem['customProductIsOncePrice'];
+
                 switch ($basketItem['customProductMode']) {
-                    case 1: // Product
-                        $lastCustomProduct = count($list);
-                        break;
-                    case 2: // Option
-                        if (empty($sku) && isset($list[$lastCustomProduct])) {
-                            /** @var Item $lastItem */
-                            $lastItem = $list[$lastCustomProduct];
-                            $sku = $lastItem->getSku();
+                    /*
+                     * The current basket item is of type Option (a group of values)
+                     * This will be our first starting point.
+                     * In this procedure we fake the amount by simply adding a %value%x to the actual name of the group.
+                     * Further more, we add a : to the end of the name (if a value follows this option) to indicate that more values follow.
+                     * At the end, we set the quantity to 1, so PayPal doesn't calculate the total amount. That would cause calculation errors, since we calculate the
+                     * whole position already.
+                     */
+                    case 2: //Option
+                        $nextProduct = $basketContent[$index + 1];
+
+                        $name = $quantity . 'x ' . $name;
+
+                        //Another value is following?
+                        if ($nextProduct && $nextProduct['customProductMode'] === '3') {
+                            $name .= ': ';
                         }
+
+                        //Calculate the total price of this option
+                        if (!$isSingleSurcharge) {
+                            $price *= $quantity;
+                        }
+
+                        $quantity = 1;
                         break;
-                    case 3: // Value
-                        $last = count($list) - 1;
-                        if (isset($list[$last])) {
-                            /** @var Item $lastItem */
-                            $lastItem = $list[$last];
 
-                            $lastItemName = $lastItem->getName();
-                            $lastItemPrice = (float) $lastItem->getPrice();
+                    /*
+                     * This basket item is of type Value.
+                     * In this procedure we calculate the actual price of the value and add it to the option price.
+                     * Further more, we add a comma to the end of the value (if another value is following) to improve the readability on the PayPal page.
+                     * Afterwards, we set the quantity to 0, so that the basket item is not being added to the list. We don't have to add it again,
+                     * since it's already grouped to the option.
+                     */
+                    case 3: //Value
+                        //The last option that has been added to the final list.
+                        //This value will be grouped to it.
+                        $nextProduct = $basketContent[$index + 1];
+                        /** @var Item $lastGroup */
+                        $lastGroup = &$list[count($list) - 1];
+                        $lastGroupName = $lastGroup->getName();
+                        $lastGroupPrice = $lastGroup->getPrice();
 
-                            if (strpos($lastItemName, ': ') === false) {
-                                $lastItem->setName($lastItemName . ': ' . $name);
+                        if ($lastGroup) {
+                            //Check if another value is following, if so, add a comma to the end of the name.
+                            if ($nextProduct && $nextProduct['customProductMode'] === '3') {
+                                //Another value is following
+                                $lastGroup->setName($lastGroupName . $name . ', ');
                             } else {
-                                $lastItem->setName($lastItemName . ', ' . $name);
+                                //This is the last value in this option
+                                $lastGroup->setName($lastGroupName . $name);
                             }
 
-                            $lastItem->setPrice($lastItemPrice + $price);
+                            //Calculate the total price.
+                            if ($isSingleSurcharge) {
+                                $lastGroup->setPrice($lastGroupPrice + $price);
+                            } else {
+                                $lastGroup->setPrice($lastGroupPrice + $price * $quantity);
+                            }
+
+                            //Don't add it to the final list
+                            $quantity = 0;
                         }
-                        continue 2;
-                    default:
                         break;
                 }
             }
 
-            $result = new Item();
-            $result->setCurrency($this->basketData['sCurrencyName']);
-            $result->setName($name);
-            $result->setSku($sku);
-            $result->setPrice($price);
-            $result->setQuantity($quantity);
+            if ($quantity !== 0) {
+                $item = new Item();
+                $item->setCurrency($this->basketData['sCurrencyName']);
+                $item->setName($name);
+                $item->setSku($sku);
+                $item->setPrice($price);
+                $item->setQuantity($quantity);
 
-            $list[] = $result;
+                $list[] = $item;
+            }
+
+            ++$index;
         }
 
         return $list;
