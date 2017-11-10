@@ -44,7 +44,7 @@ class ViewMock extends Enlight_View_Default
     private $assigns = [];
 
     /**
-     * @param string $path
+     * {@inheritdoc}
      */
     public function addTemplateDir($path)
     {
@@ -52,7 +52,7 @@ class ViewMock extends Enlight_View_Default
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public function getTemplateDir()
     {
@@ -60,9 +60,7 @@ class ViewMock extends Enlight_View_Default
     }
 
     /**
-     * @param string $path
-     *
-     * @return Enlight_View_Default
+     * {@inheritdoc}
      */
     public function loadTemplate($path)
     {
@@ -72,25 +70,27 @@ class ViewMock extends Enlight_View_Default
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
-    public function getLoadedTemplates()
-    {
-        return $this->loadedTemplates;
-    }
-
     public function assign($spec, $value = null, $nocache = null, $scope = null)
     {
+        if (is_array($spec)) {
+            $this->assigns = $spec;
+
+            return;
+        }
         $this->assigns[$spec] = $value;
     }
 
     /**
-     * @param string $spec
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
     public function getAssign($spec = '')
     {
+        if ($spec === '') {
+            return $this->assigns;
+        }
+
         return $this->assigns[$spec];
     }
 }

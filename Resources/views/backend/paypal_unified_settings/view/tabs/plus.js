@@ -29,9 +29,14 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Plus', {
     restyleCheckbox: null,
 
     /**
-     * @type { Ext.form.field.ComboBox }
+     * @type { Ext.form.field.Text }
      */
-    localeSelection: null,
+    paymentNameField: null,
+
+    /**
+     * @type { Ext.form.field.Text }
+     */
+    paymentDescriptionField: null,
 
     initComponent: function() {
         var me = this;
@@ -49,6 +54,8 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Plus', {
 
         me.intentSelection = me.createPaymentIntentSelection();
         me.restyleCheckbox = me.createRestyleCheckbox();
+        me.paymentNameField = me.createPaymentNameField();
+        me.paymentDescriptionField = me.createPaymentDescriptionField();
 
         return [
             {
@@ -61,10 +68,15 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Plus', {
                 handler: Ext.bind(me.onActivatePayPalPlus, me)
             },
             me.intentSelection,
-            me.restyleCheckbox
+            me.restyleCheckbox,
+            me.paymentNameField,
+            me.paymentDescriptionField
         ];
     },
 
+    /**
+     * @return { Ext.form.field.ComboBox }
+     */
     createPaymentIntentSelection: function() {
         return Ext.create('Ext.form.field.ComboBox', {
             name: 'intent',
@@ -89,7 +101,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Plus', {
     },
 
     /**
-     * @returns { Ext.form.field.Checkbox }
+     * @return { Ext.form.field.Checkbox }
      */
     createRestyleCheckbox: function() {
         return Ext.create('Ext.form.field.Checkbox', {
@@ -99,6 +111,30 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Plus', {
             boxLabel: '{s name=field/restyle/boxLabel}Activate this option to restyle the payment selection.{/s}',
             inputValue: true,
             uncheckedValue: false,
+            disabled: true
+        });
+    },
+
+    /**
+     * @return { Ext.form.field.Text }
+     */
+    createPaymentNameField: function() {
+        return Ext.create('Ext.form.field.Text', {
+            name: 'paymentName',
+            fieldLabel: '{s name=field/paymentName}Overwrite payment method name{/s}',
+            helpText: '{s name=field/paymentName/help}With this setting you are able to overwrite the payment method name of PayPal.<br>Note: this will only have affect in the storefront view.{/s}',
+            disabled: true
+        });
+    },
+
+    /**
+     * @return { Ext.form.field.Text }
+     */
+    createPaymentDescriptionField: function() {
+        return Ext.create('Ext.form.field.Text', {
+            name: 'paymentDescription',
+            fieldLabel: '{s name=field/paymentDescription}{/s}',
+            helpText: '{s name=field/paymentDescription/help}{/s}',
             disabled: true
         });
     },
@@ -119,6 +155,8 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Plus', {
 
         me.intentSelection.setDisabled(!checked);
         me.restyleCheckbox.setDisabled(!checked);
+        me.paymentNameField.setDisabled(!checked);
+        me.paymentDescriptionField.setDisabled(!checked);
     }
 });
 // {/block}
