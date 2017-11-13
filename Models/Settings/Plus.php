@@ -44,7 +44,7 @@ class Plus extends ModelEntity
 
     /**
      * @var string
-     * @ORM\Column(name="shop_id", type="string", nullable=false)
+     * @ORM\Column(name="shop_id", type="integer", nullable=false)
      */
     private $shopId;
 
@@ -59,6 +59,18 @@ class Plus extends ModelEntity
      * @ORM\Column(name="restyle", type="boolean", nullable=false)
      */
     private $restyle;
+
+    /**
+     * @var string
+     * @ORM\Column(name="payment_name", type="string")
+     */
+    private $paymentName;
+
+    /**
+     * @var string
+     * @ORM\Column(name="payment_description", type="string")
+     */
+    private $paymentDescription;
 
     /**
      * @return int
@@ -114,6 +126,38 @@ class Plus extends ModelEntity
     public function setRestyle($restyle)
     {
         $this->restyle = $restyle;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPaymentName()
+    {
+        return $this->paymentName;
+    }
+
+    /**
+     * @param string $paymentName
+     */
+    public function setPaymentName($paymentName)
+    {
+        $this->paymentName = $paymentName;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPaymentDescription()
+    {
+        return $this->paymentDescription;
+    }
+
+    /**
+     * @param string $paymentDescription
+     */
+    public function setPaymentDescription($paymentDescription)
+    {
+        $this->paymentDescription = $paymentDescription;
     }
 
     /**

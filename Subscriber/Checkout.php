@@ -148,6 +148,8 @@ class Checkout implements SubscriberInterface
             $isUnifiedSelected = $paymentModel->getId() === (int) $view->getAssign('sPayment')['id'];
         }
 
+        $this->overwritePaymentName($view);
+
         $view->assign('paypalUnifiedUsePlus', $usePayPalPlus);
 
         if ($action === 'finish' && $isUnifiedSelected) {
@@ -295,5 +297,44 @@ class Checkout implements SubscriberInterface
         }
 
         return $plusLanguage;
+    }
+
+    /**
+     * @param \Enlight_View_Default $view
+     */
+    private function overwritePaymentName(\Enlight_View_Default $view)
+    {
+        $unifiedPaymentId = $this->paymentMethodProvider->getPaymentId($this->container->get('dbal_connection'));
+        $paymentName = $this->settingsService->get('payment_name', SettingsTable::PLUS);
+        $paymentDescription = $this->settingsService->get('payment_description', SettingsTable::PLUS);
+
+        $customerData = $view->getAssign('sUserData');
+        $customerPayment = $customerData['additional']['payment'];
+        if ((int) $customerPayment['id'] === $unifiedPaymentId) {
+            $customerPayment['description'] = $paymentName;
+            $customerPayment['additionaldescription'] .= '<br>' . $paymentDescription;
+
+            $customerData['additional']['payment'] = $customerPayment;
+            $view->assign('sUserData', $customerData);
+        }
+
+        $paymentMethods = $view->getAssign('sPayments');
+        foreach ($paymentMethods as &$paymentMethod) {
+            if ((int) $paymentMethod['id'] === $unifiedPaymentId) {
+                $paymentMethod['description'] = $paymentName;
+                $paymentMethod['additionaldescription'] .= '<br>' . $paymentDescription;
+                break;
+            }
+        }
+        unset($paymentMethod);
+        $view->assign('sPayments', $paymentMethods);
+
+        $selectedPaymentMethod = $view->getAssign('sPayment');
+        if ((int) $selectedPaymentMethod['id'] === $unifiedPaymentId) {
+            $selectedPaymentMethod['description'] = $paymentName;
+            $selectedPaymentMethod['additionaldescription'] .= '<br>' . $paymentDescription;
+
+            $view->assign('sPayment', $selectedPaymentMethod);
+        }
     }
 }

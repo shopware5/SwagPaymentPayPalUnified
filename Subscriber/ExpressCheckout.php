@@ -81,12 +81,12 @@ class ExpressCheckout implements SubscriberInterface
      * @param LoggerServiceInterface   $logger
      */
     public function __construct(
-            SettingsServiceInterface $settingsService,
-            Session $session,
-            PaymentResource $paymentResource,
-            PaymentAddressService $addressRequestService,
-            PaymentBuilderInterface $paymentBuilder,
-            LoggerServiceInterface $logger
+        SettingsServiceInterface $settingsService,
+        Session $session,
+        PaymentResource $paymentResource,
+        PaymentAddressService $addressRequestService,
+        PaymentBuilderInterface $paymentBuilder,
+        LoggerServiceInterface $logger
     ) {
         $this->settingsService = $settingsService;
         $this->session = $session;
