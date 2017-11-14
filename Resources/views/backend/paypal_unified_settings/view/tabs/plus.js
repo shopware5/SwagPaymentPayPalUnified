@@ -59,6 +59,15 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Plus', {
 
         return [
             {
+                xtype: 'container',
+                html: '{s name=description}PayPal Plus - the four most popular payment methods of German buyers: PayPal, direct debit, credit card and invoice! <br> You can get PayPal Plus here: <a href="https://www.paypal.de/plus" title="https://www.paypal.de/plus" target="_blank">https://www.paypal.de/plus</a>{/s}',
+                margin: '0 0 20',
+                style: {
+                    'font-size': '16px',
+                    'line-height': '30px'
+                }
+            },
+            {
                 xtype: 'checkbox',
                 name: 'active',
                 fieldLabel: '{s name=field/activate}Activate PayPal Plus{/s}',
