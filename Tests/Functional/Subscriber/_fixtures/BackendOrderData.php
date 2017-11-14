@@ -24,7 +24,7 @@
 
 return [
     [
-        'id' => 73,
+        'id' => 9998,
         'number' => '20004',
         'customerId' => 3,
         'status' => 0,
@@ -74,19 +74,8 @@ return [
             'pluginId' => null,
             'source' => null,
         ],
-        'attribute' => [
-            'id' => 4,
-            'orderId' => 73,
-            'attribute1' => '',
-            'attribute2' => '',
-            'attribute3' => '',
-            'attribute4' => '',
-            'attribute5' => '',
-            'attribute6' => '',
-            'swagPaypalUnifiedPaymentType' => 'PayPalPlus',
-        ],
     ], [
-        'id' => 74,
+        'id' => 9999,
         'number' => '20005',
         'customerId' => 3,
         'status' => 0,
@@ -135,17 +124,6 @@ return [
             'action' => 'PaypalUnified',
             'pluginId' => null,
             'source' => null,
-        ],
-        'attribute' => [
-            'id' => 4,
-            'orderId' => 73,
-            'attribute1' => '',
-            'attribute2' => '',
-            'attribute3' => '',
-            'attribute4' => '',
-            'attribute5' => '',
-            'attribute6' => '',
-            'swagPaypalPaymentType' => null,
         ],
     ],
 ];

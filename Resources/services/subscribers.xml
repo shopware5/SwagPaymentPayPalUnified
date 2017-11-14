@@ -65,6 +65,7 @@
         </service>
 
         <service id="paypal_unified.subscriber.backend_order" class="SwagPaymentPayPalUnified\Subscriber\BackendOrder">
+            <argument type="service" id="dbal_connection"/>
             <tag name="shopware.event_subscriber"/>
         </service>
 
