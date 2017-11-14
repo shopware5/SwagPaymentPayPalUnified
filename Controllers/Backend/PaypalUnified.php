@@ -233,6 +233,7 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
         $invoiceNumber = $this->Request()->getParam('invoiceNumber');
         $refundCompletely = $this->Request()->getParam('refundCompletely');
         $shopId = $this->Request()->getParam('shopId');
+        $currency = $this->Request()->getParam('currency');
 
         try {
             $this->registerShopResource($shopId);
@@ -246,7 +247,7 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
             if (!$refundCompletely) {
                 $amountStruct = new Amount();
                 $amountStruct->setTotal($totalAmount);
-                $amountStruct->setCurrency('EUR');
+                $amountStruct->setCurrency($currency);
 
                 $refund->setAmount($amountStruct);
             }
@@ -329,6 +330,7 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
         $totalAmount = number_format($this->Request()->getParam('amount'), 2);
         $description = $this->Request()->getParam('note');
         $shopId = $this->Request()->getParam('shopId');
+        $currency = $this->Request()->getParam('currency');
 
         try {
             $this->registerShopResource($shopId);
@@ -341,7 +343,7 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
 
             $amountStruct = new Amount();
             $amountStruct->setTotal($totalAmount);
-            $amountStruct->setCurrency('EUR');
+            $amountStruct->setCurrency($currency);
             $refund->setAmount($amountStruct);
 
             $this->View()->assign('refund', $captureResource->refund($id, $refund));
