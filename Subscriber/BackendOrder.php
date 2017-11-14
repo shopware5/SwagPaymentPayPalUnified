@@ -24,64 +24,34 @@
 
 namespace SwagPaymentPayPalUnified\Subscriber;
 
+use Doctrine\DBAL\Connection;
 use Enlight\Event\SubscriberInterface;
 
 class BackendOrder implements SubscriberInterface
 {
+    /**
+     * @var Connection
+     */
+    private $connection;
+
+    /**
+     * BackendOrder constructor.
+     *
+     * @param Connection $connection
+     */
+    public function __construct(Connection $connection)
+    {
+        $this->connection = $connection;
+    }
+
     /**
      * {@inheritdoc}
      */
     public static function getSubscribedEvents()
     {
         return [
-            'Shopware\Models\Order\Repository::getBackendOrdersQueryBuilder::after' => 'addAttributesToOrders',
             'Enlight_Controller_Action_PostDispatchSecure_Backend_Order' => 'onPostDispatchOrder',
         ];
-    }
-
-    /**
-     * additionally select the order attributes, so the PayPal attribute could be used in the next event
-     *
-     * @param \Enlight_Hook_HookArgs $args
-     */
-    public function addAttributesToOrders(\Enlight_Hook_HookArgs $args)
-    {
-        /** @var \Shopware\Components\Model\QueryBuilder $queryBuilder */
-        $queryBuilder = $args->getReturn();
-
-        $joinParts = $queryBuilder->getDQLPart('join')['orders'];
-        $joinAttributePartMissing = true;
-        $joinAttributeAlias = 'attribute';
-
-        /** @var \Doctrine\ORM\Query\Expr\Join $joinPart */
-        foreach ($joinParts as $joinPart) {
-            if ($joinPart->getJoin() === 'orders.attribute') {
-                $joinAttributePartMissing = false;
-                $joinAttributeAlias = $joinPart->getAlias();
-            }
-        }
-
-        if ($joinAttributePartMissing) {
-            $queryBuilder->leftJoin('orders.attribute', $joinAttributeAlias);
-        }
-
-        $selectParts = $queryBuilder->getDQLPart('select');
-        $selectAttributePartIsMissing = true;
-
-        /** @var \Doctrine\ORM\Query\Expr\Select $selectPart */
-        foreach ($selectParts as $selectPart) {
-            foreach ($selectPart->getParts() as $part) {
-                if ($part === $joinAttributeAlias) {
-                    $selectAttributePartIsMissing = false;
-                }
-            }
-        }
-
-        if ($selectAttributePartIsMissing) {
-            $queryBuilder->addSelect($joinAttributeAlias);
-        }
-
-        $args->setReturn($queryBuilder);
     }
 
     /**
@@ -97,13 +67,22 @@ class BackendOrder implements SubscriberInterface
 
         $view = $args->getSubject()->View();
         $orders = $view->getAssign('data');
+        $orderIds = array_column($orders, 'id');
+
+        $query = $this->connection->createQueryBuilder();
+        $query->select(['orderID', 'swag_paypal_unified_payment_type'])
+            ->from('s_order_attributes')
+            ->where('orderID IN(:orderIds)')
+            ->setParameter('orderIds', $orderIds, Connection::PARAM_INT_ARRAY);
+
+        $payPalPaymentTypes = $query->execute()->fetchAll(\PDO::FETCH_KEY_PAIR);
 
         foreach ($orders as &$order) {
-            if (!$order['attribute']['swagPaypalUnifiedPaymentType']) {
+            if (!isset($payPalPaymentTypes[$order['id']])) {
                 continue;
             }
 
-            $order['payment']['description'] = $order['attribute']['swagPaypalUnifiedPaymentType'];
+            $order['payment']['description'] = $payPalPaymentTypes[$order['id']];
         }
         unset($order);
 
