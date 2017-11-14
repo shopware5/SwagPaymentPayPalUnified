@@ -159,12 +159,21 @@ class HookArgsWithCorrectPaymentId extends \Enlight_Hook_HookArgs
      */
     private $_template;
 
+    /**
+     * @return Enlight_Class
+     */
     public function getSubject()
     {
         $subject = Enlight_Class::Instance(\Shopware_Components_Document::class);
 
         $subject->_order = new Shopware_Models_Document_Order(15);
-        $subject->_view = new \Smarty_Data();
+        $view = new \Smarty_Data();
+        $view->assign('Order', [
+            '_payment' => [
+                'description' => 'PayPal'
+            ]
+        ]);
+        $subject->_view = $view;
         $subject->_template = new \Enlight_Template_Manager();
 
         $this->_view = $subject->_view;
