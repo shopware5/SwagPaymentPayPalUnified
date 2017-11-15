@@ -136,7 +136,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Api', {
     },
 
     /**
-     * Refunds a sale using the specified amount and invoide number and triggers
+     * Refunds a sale using the specified amount and invoice number and triggers
      * the callback function after a result was received.
      *
      * @param { Numeric } amount - The amount that should be refunded.
@@ -152,7 +152,8 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Api', {
                 id: id,
                 shopId: this.getCurrentShopId(),
                 amount: amount,
-                invoiceNumber: invoiceNumber
+                invoiceNumber: invoiceNumber,
+                currency: this.getPaymentCurrency()
             },
             callback: callback
         });
@@ -169,12 +170,13 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Api', {
      */
     refundCapture: function (id, amount, note, callback) {
         Ext.Ajax.request({
-            url: this.urls.refundSale,
+            url: this.urls.refundCapture,
             params: {
                 id: id,
                 shopId: this.getCurrentShopId(),
                 amount: amount,
-                note: note
+                note: note,
+                currency: this.getPaymentCurrency()
             },
             callback: callback
         });
