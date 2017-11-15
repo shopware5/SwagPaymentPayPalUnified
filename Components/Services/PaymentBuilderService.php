@@ -86,10 +86,11 @@ class PaymentBuilderService implements PaymentBuilderInterface
         $this->userData = $params->getUserData();
 
         $requestParameters = new Payment();
+        $paymentType = $params->getPaymentType();
 
-        if ($params->getPaymentType() === PaymentType::PAYPAL_EXPRESS || $params->getPaymentType() === PaymentType::PAYPAL_CLASSIC) {
+        if ($paymentType === PaymentType::PAYPAL_EXPRESS || $paymentType === PaymentType::PAYPAL_CLASSIC) {
             $requestParameters->setIntent($this->getIntentAsString((int) $this->settings->get('intent', SettingsTable::EXPRESS_CHECKOUT)));
-        } elseif ($params->getPaymentType() === PaymentType::PAYPAL_INSTALLMENTS) {
+        } elseif ($paymentType === PaymentType::PAYPAL_INSTALLMENTS) {
             $requestParameters->setIntent($this->getIntentAsString((int) $this->settings->get('intent', SettingsTable::INSTALLMENTS)));
         } else {
             $requestParameters->setIntent('sale');
@@ -113,7 +114,7 @@ class PaymentBuilderService implements PaymentBuilderInterface
         $transactions->setAmount($amount);
 
         //don't submit the cart if the option is false and the selected payment method is express checkout
-        if ($params->getPaymentType() !== PaymentType::PAYPAL_EXPRESS || $this->settings->get('submit_cart', SettingsTable::EXPRESS_CHECKOUT)) {
+        if ($paymentType !== PaymentType::PAYPAL_EXPRESS || $this->settings->get('submit_cart', SettingsTable::EXPRESS_CHECKOUT)) {
             $itemList = new ItemList();
             $itemList->setItems($this->getItemList());
 

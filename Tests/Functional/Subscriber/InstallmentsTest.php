@@ -45,7 +45,8 @@ class InstallmentsTest extends UnifiedControllerTestCase
         $subscriber = new Installments(
             new SettingsServiceInstallmentsMock(),
             new ValidationService(),
-            Shopware()->Container()->get('dbal_connection')
+            Shopware()->Container()->get('dbal_connection'),
+            Shopware()->Container()->get('paypal_unified.installments.payment_builder_service')
         );
 
         $this->assertNotNull($subscriber);
@@ -292,6 +293,10 @@ class InstallmentsTest extends UnifiedControllerTestCase
         $actionEventArgs = $this->getActionEventArgs();
         $actionEventArgs->getSubject()->View()->assign('sBasket', [
             'AmountNumeric' => 9.99,
+            'AmountWithTaxNumeric' => 11.11,
+        ]);
+        $actionEventArgs->getSubject()->View()->assign('sUserData', [
+            'additional' => ['show_net' => 0],
         ]);
 
         $settings = new GeneralSettingsModel();
@@ -315,6 +320,10 @@ class InstallmentsTest extends UnifiedControllerTestCase
         $actionEventArgs = $this->getActionEventArgs();
         $actionEventArgs->getSubject()->View()->assign('sBasket', [
             'AmountNumeric' => 399.99,
+            'AmountWithTaxNumeric' => 444.44,
+        ]);
+        $actionEventArgs->getSubject()->View()->assign('sUserData', [
+            'additional' => ['show_net' => 0],
         ]);
 
         $settings = new GeneralSettingsModel();
@@ -338,6 +347,10 @@ class InstallmentsTest extends UnifiedControllerTestCase
         $actionEventArgs = $this->getActionEventArgs();
         $actionEventArgs->getSubject()->View()->assign('sBasket', [
             'AmountNumeric' => 399.99,
+            'AmountWithTaxNumeric' => 444.44,
+        ]);
+        $actionEventArgs->getSubject()->View()->assign('sUserData', [
+            'additional' => ['show_net' => 0],
         ]);
 
         $settings = new GeneralSettingsModel();
@@ -362,6 +375,37 @@ class InstallmentsTest extends UnifiedControllerTestCase
         $actionEventArgs = $this->getActionEventArgs();
         $actionEventArgs->getSubject()->View()->assign('sBasket', [
             'AmountNumeric' => 399.99,
+            'AmountWithTaxNumeric' => 444.44,
+        ]);
+        $actionEventArgs->getSubject()->View()->assign('sUserData', [
+            'additional' => ['show_net' => false],
+        ]);
+
+        $settings = new GeneralSettingsModel();
+        $settings->setActive(1);
+
+        $instSettings = new InstallmentsSettingsModel();
+        $instSettings->setActive(1);
+        $instSettings->setPresentmentTypeCart(2);
+        $settingService = new SettingsServiceInstallmentsMock($settings, $instSettings);
+
+        $this->getInstallmentsSubscriber($settingService)->onPostDispatchCheckout($actionEventArgs);
+        $price = $actionEventArgs->getSubject()->View()->getAssign('paypalInstallmentsProductPrice');
+
+        $this->assertEquals(444.44, $price);
+    }
+
+    public function test_OnPostDispatchCheckout_has_correct_product_net_price()
+    {
+        $this->Request()->setActionName('cart');
+
+        $actionEventArgs = $this->getActionEventArgs();
+        $actionEventArgs->getSubject()->View()->assign('sBasket', [
+            'AmountNumeric' => 399.99,
+            'AmountWithTaxNumeric' => 444.44,
+        ]);
+        $actionEventArgs->getSubject()->View()->assign('sUserData', [
+            'additional' => ['show_net' => true],
         ]);
 
         $settings = new GeneralSettingsModel();
@@ -385,6 +429,10 @@ class InstallmentsTest extends UnifiedControllerTestCase
         $actionEventArgs = $this->getActionEventArgs();
         $actionEventArgs->getSubject()->View()->assign('sBasket', [
             'AmountNumeric' => 399.99,
+            'AmountWithTaxNumeric' => 444.44,
+        ]);
+        $actionEventArgs->getSubject()->View()->assign('sUserData', [
+            'additional' => ['show_net' => 0],
         ]);
 
         $settings = new GeneralSettingsModel();
@@ -411,6 +459,10 @@ class InstallmentsTest extends UnifiedControllerTestCase
         $actionEventArgs = $this->getActionEventArgs();
         $actionEventArgs->getSubject()->View()->assign('sBasket', [
             'AmountNumeric' => 399.99,
+            'AmountWithTaxNumeric' => 444.44,
+        ]);
+        $actionEventArgs->getSubject()->View()->assign('sUserData', [
+            'additional' => ['show_net' => 0],
         ]);
         $actionEventArgs->getSubject()->View()->assign('sPayment', ['id' => $installmentsPaymentId]);
 
@@ -436,6 +488,10 @@ class InstallmentsTest extends UnifiedControllerTestCase
         $actionEventArgs = $this->getActionEventArgs();
         $actionEventArgs->getSubject()->View()->assign('sBasket', [
             'AmountNumeric' => 399.99,
+            'AmountWithTaxNumeric' => 444.44,
+        ]);
+        $actionEventArgs->getSubject()->View()->assign('sUserData', [
+            'additional' => ['show_net' => 0],
         ]);
         $actionEventArgs->getSubject()->View()->assign('sPayment', ['id' => 1]);
 
@@ -478,9 +534,12 @@ class InstallmentsTest extends UnifiedControllerTestCase
      */
     private function getInstallmentsSubscriber(SettingsServiceInterface $settingService)
     {
-        $validationService = Shopware()->Container()->get('paypal_unified.installments.validation_service');
-
-        return new Installments($settingService, $validationService, Shopware()->Container()->get('dbal_connection'));
+        return new Installments(
+            $settingService,
+            Shopware()->Container()->get('paypal_unified.installments.validation_service'),
+            Shopware()->Container()->get('dbal_connection'),
+            Shopware()->Container()->get('paypal_unified.installments.payment_builder_service')
+        );
     }
 }
 

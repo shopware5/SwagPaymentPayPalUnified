@@ -28,6 +28,8 @@ use Doctrine\DBAL\Connection;
 use Enlight\Event\SubscriberInterface;
 use Enlight_Controller_ActionEventArgs as ActionEventArgs;
 use Shopware\Components\HttpClient\RequestException;
+use SwagPaymentPayPalUnified\Components\PaymentBuilderInterface;
+use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\Services\Installments\OrderCreditInfoService;
 use SwagPaymentPayPalUnified\Components\Services\Installments\ValidationService;
@@ -36,6 +38,7 @@ use SwagPaymentPayPalUnified\Models\Settings\Installments as InstallmentsSetting
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\PaymentResource;
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Credit;
 
 class Installments implements SubscriberInterface
@@ -56,18 +59,26 @@ class Installments implements SubscriberInterface
     private $connection;
 
     /**
+     * @var PaymentBuilderInterface
+     */
+    private $installmentsPaymentBuilder;
+
+    /**
      * @param SettingsServiceInterface $settingsService
      * @param ValidationService        $validationService
      * @param Connection               $connection
+     * @param PaymentBuilderInterface  $installmentsPaymentBuilder
      */
     public function __construct(
         SettingsServiceInterface $settingsService,
         ValidationService $validationService,
-        Connection $connection
+        Connection $connection,
+        PaymentBuilderInterface $installmentsPaymentBuilder
     ) {
         $this->settingsService = $settingsService;
         $this->validationService = $validationService;
         $this->connection = $connection;
+        $this->installmentsPaymentBuilder = $installmentsPaymentBuilder;
     }
 
     /**
@@ -150,7 +161,12 @@ class Installments implements SubscriberInterface
             return;
         }
 
-        $productPrice = $view->getAssign('sBasket')['AmountNumeric'];
+        $paymentBuilderParams = new PaymentBuilderParameters();
+        $paymentBuilderParams->setBasketData($view->getAssign('sBasket'));
+        $paymentBuilderParams->setUserData($view->getAssign('sUserData'));
+        /** @var Payment $paymentStruct */
+        $paymentStruct = $this->installmentsPaymentBuilder->getPayment($paymentBuilderParams);
+        $productPrice = $paymentStruct->getTransactions()->getAmount()->getTotal();
 
         if (!$this->validationService->validatePrice($productPrice)) {
             return;
