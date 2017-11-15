@@ -79,6 +79,15 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
         var me = this;
 
         return [
+            {
+                xtype: 'container',
+                html: '{s name=description}PayPal - the PayPal button in the checkout! Register for your PayPal business account here: <a href="https://www.paypal.com/de/webapps/mpp/express-checkout" title="https://www.paypal.com/de/webapps/mpp/express-checkout" target="_blank">https://www.paypal.com/de/webapps/mpp/express-checkout</a>{/s}',
+                margin: '0 0 20',
+                style: {
+                    'font-size': '16px',
+                    'line-height': '30px'
+                }
+            },
             me.createActivationContainer(),
             me.createRestContainer(),
             me.createBehaviorContainer(),
