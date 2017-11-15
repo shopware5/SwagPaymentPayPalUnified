@@ -53,7 +53,8 @@ class PaymentInstructionService
     public function getInstructions($orderNumber)
     {
         /** @var PaymentInstructionModel $instructionModel */
-        $instructionModel = $this->modelManager->getRepository(PaymentInstructionModel::class)->findOneBy(['orderNumber' => $orderNumber]);
+        $instructionModel = $this->modelManager->getRepository(PaymentInstructionModel::class)
+            ->findOneBy(['orderNumber' => $orderNumber]);
 
         return $instructionModel;
     }
@@ -76,5 +77,42 @@ class PaymentInstructionService
 
         $this->modelManager->persist($model);
         $this->modelManager->flush();
+
+        $this->setInstructionToInternalComment($orderNumber, $model);
+    }
+
+    /**
+     * @param string                  $orderNumber
+     * @param PaymentInstructionModel $model
+     */
+    private function setInstructionToInternalComment($orderNumber, PaymentInstructionModel $model)
+    {
+        $connection = $this->modelManager->getConnection();
+        $instructionsString = $this->getInstructionString($model);
+
+        $query = $connection->createQueryBuilder();
+        $query->update('s_order')
+            ->set('internalcomment', 'CONCAT(internalcomment, :instructionsString) ')
+            ->where('ordernumber = :orderNumber')
+            ->setParameters([
+                'instructionsString' => $instructionsString,
+                'orderNumber' => $orderNumber,
+            ]);
+        $query->execute();
+    }
+
+    /**
+     * @param PaymentInstructionModel $model
+     *
+     * @return string
+     */
+    private function getInstructionString(PaymentInstructionModel $model)
+    {
+        $modelArray = $model->toArray();
+        unset($modelArray['id'], $modelArray['order']);
+        $modelArray = ['jsonDescription' => 'Pay Upon Invoice Payment Instructions'] + $modelArray;
+        $instructionsJson = json_encode($modelArray);
+
+        return "\n" . $instructionsJson . "\n";
     }
 }

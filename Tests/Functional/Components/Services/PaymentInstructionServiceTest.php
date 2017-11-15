@@ -24,6 +24,7 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services;
 
+use Doctrine\DBAL\Query\QueryBuilder;
 use SwagPaymentPayPalUnified\Components\Services\Plus\PaymentInstructionService;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Instruction\Amount;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Instruction\RecipientBanking;
@@ -64,6 +65,22 @@ class PaymentInstructionServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(self::TEST_BANK_BIC, $testInstructions->getBic());
         $this->assertEquals(self::TEST_BANK_IBAN, $testInstructions->getIban());
         $this->assertEquals(self::TEST_BANK_IBAN, $testInstructions->getIban());
+
+        /** @var QueryBuilder $query */
+        $query = Shopware()->Container()->get('dbal_connection')->createQueryBuilder();
+
+        $query->select('internalcomment')
+            ->from('s_order')
+            ->where('ordernumber = :orderNumber')
+            ->setParameter('orderNumber', self::TEST_ORDER_NUMBER);
+
+        $internalComment = $query->execute()->fetchColumn();
+
+        $expected = '
+{"jsonDescription":"Pay Upon Invoice Payment Instructions","orderNumber":20001,"bankName":"TEST_BANK","accountHolder":"TEST_ACCOUNT_HOLDER","iban":"TEST_IBAN","bic":"TEST_BIC","amount":50.5,"dueDate":"01-01-2000","reference":"TEST_REFERENCE_NUMBER"}
+';
+
+        $this->assertContains($expected, $internalComment);
     }
 
     /**
