@@ -27,6 +27,7 @@ namespace SwagPaymentPayPalUnified\Subscriber;
 use Enlight\Event\SubscriberInterface;
 use Shopware\Components\HttpClient\RequestException;
 use Shopware\Models\Shop\DetachedShop;
+use Shopware_Components_Snippet_Manager as SnippetManager;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
@@ -75,6 +76,11 @@ class Checkout implements SubscriberInterface
     private static $allowedActions = ['shippingPayment', 'confirm', 'finish'];
 
     /**
+     * @var SnippetManager
+     */
+    private $snippetManager;
+
+    /**
      * @param ContainerInterface $container
      */
     public function __construct(ContainerInterface $container)
@@ -87,6 +93,7 @@ class Checkout implements SubscriberInterface
         /** @var DependencyProvider $dependencyProvider */
         $dependencyProvider = $container->get('paypal_unified.dependency_provider');
         $this->shop = $dependencyProvider->getShop();
+        $this->snippetManager = $container->get('snippets');
     }
 
     /**
@@ -175,9 +182,12 @@ class Checkout implements SubscriberInterface
         $paymentInstructions = $instructionService->getInstructions($orderNumber);
 
         if ($paymentInstructions) {
-            $paymementInstructionsArray = $paymentInstructions->toArray();
-            $view->assign('sTransactionumber', $paymementInstructionsArray['reference']);
-            $view->assign('paypalUnifiedPaymentInstructions', $paymementInstructionsArray);
+            $paymentInstructionsArray = $paymentInstructions->toArray();
+            $view->assign('sTransactionumber', $paymentInstructionsArray['reference']);
+            $view->assign('paypalUnifiedPaymentInstructions', $paymentInstructionsArray);
+            $payment = $view->getAssign('sPayment');
+            $payment['description'] = $this->snippetManager->getNamespace('frontend/paypal_unified/checkout/finish')->get('paymentName/PayPalPlusInvoice');
+            $view->assign('sPayment', $payment);
         } else {
             /** @var OrderDataService $orderDataService */
             $orderDataService = $this->container->get('paypal_unified.order_data_service');

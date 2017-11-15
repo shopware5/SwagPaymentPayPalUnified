@@ -35,8 +35,6 @@ class BackendOrder implements SubscriberInterface
     private $connection;
 
     /**
-     * BackendOrder constructor.
-     *
      * @param Connection $connection
      */
     public function __construct(Connection $connection)

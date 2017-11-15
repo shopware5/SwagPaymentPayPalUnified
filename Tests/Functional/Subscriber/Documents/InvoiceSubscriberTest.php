@@ -49,7 +49,8 @@ class InvoiceSubscriberTest extends \PHPUnit_Framework_TestCase
     {
         $subscriber = new Invoice(
             Shopware()->Container()->get('paypal_unified.payment_instruction_service'),
-            Shopware()->Container()->get('dbal_connection')
+            Shopware()->Container()->get('dbal_connection'),
+            Shopware()->Container()->get('snippets')
         );
         $this->assertNotNull($subscriber);
     }
@@ -66,7 +67,8 @@ class InvoiceSubscriberTest extends \PHPUnit_Framework_TestCase
     {
         $subscriber = new Invoice(
             Shopware()->Container()->get('paypal_unified.payment_instruction_service'),
-            Shopware()->Container()->get('dbal_connection')
+            Shopware()->Container()->get('dbal_connection'),
+            Shopware()->Container()->get('snippets')
         );
         $hookArgs = new HookArgsWithoutSubject();
 
@@ -77,7 +79,8 @@ class InvoiceSubscriberTest extends \PHPUnit_Framework_TestCase
     {
         $subscriber = new Invoice(
             Shopware()->Container()->get('paypal_unified.payment_instruction_service'),
-            Shopware()->Container()->get('dbal_connection')
+            Shopware()->Container()->get('dbal_connection'),
+            Shopware()->Container()->get('snippets')
         );
 
         $hookArgs = new HookArgsWithWrongPaymentId();
@@ -89,7 +92,8 @@ class InvoiceSubscriberTest extends \PHPUnit_Framework_TestCase
     {
         $subscriber = new Invoice(
             Shopware()->Container()->get('paypal_unified.payment_instruction_service'),
-            Shopware()->Container()->get('dbal_connection')
+            Shopware()->Container()->get('dbal_connection'),
+            Shopware()->Container()->get('snippets')
         );
 
         $this->updateOrderPaymentId(15, $this->getUnifiedPaymentId());
@@ -102,7 +106,8 @@ class InvoiceSubscriberTest extends \PHPUnit_Framework_TestCase
     {
         $subscriber = new Invoice(
             Shopware()->Container()->get('paypal_unified.payment_instruction_service'),
-            Shopware()->Container()->get('dbal_connection')
+            Shopware()->Container()->get('dbal_connection'),
+            Shopware()->Container()->get('snippets')
         );
 
         $this->updateOrderPaymentId(15, $this->getUnifiedPaymentId());

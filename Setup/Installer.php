@@ -181,7 +181,7 @@ class Installer
         $entity = new Payment();
         $entity->setActive(false);
         $entity->setName(PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME);
-        $entity->setDescription('Ratenzahlung');
+        $entity->setDescription('Ratenzahlung Powered by PayPal');
         $entity->setAdditionalDescription('Wir ermöglichen Ihnen die Finanzierung Ihres Einkaufs mithilfe der Ratenzahlung Powered by PayPal. In Sekundenschnelle, vollständig online, vorbehaltlich Bonitätsprüfung.');
         $entity->setAction('PaypalUnifiedInstallments');
 

@@ -5,13 +5,6 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
-        <service id="paypal_unified.subscriber.controller.account" class="SwagPaymentPayPalUnified\Subscriber\Account">
-            <argument type="service" id="models"/>
-            <argument type="service" id="dbal_connection"/>
-            <argument type="service" id="paypal_unified.settings_service"/>
-            <argument type="service" id="paypal_unified.dependency_provider"/>
-            <tag name="shopware.event_subscriber"/>
-        </service>
         <service id="paypal_unified.subscriber.controller.backend" class="SwagPaymentPayPalUnified\Subscriber\ControllerRegistration\Backend">
             <argument>%paypal_unified.plugin_dir%</argument>
             <argument type="service" id="template"/>
@@ -28,13 +21,24 @@
             <tag name="shopware.event_subscriber"/>
         </service>
 
-        <service id="paypal_unified.subscriber.less" class="SwagPaymentPayPalUnified\Subscriber\Less">
-            <argument>%paypal_unified.plugin_dir%</argument>
+        <service id="paypal_unified.subscriber.documents.installments" class="SwagPaymentPayPalUnified\Subscriber\Documents\Installments">
+            <argument type="service" id="paypal_unified.installments.order_credit_info_service"/>
+            <argument type="service" id="dbal_connection"/>
             <tag name="shopware.event_subscriber"/>
         </service>
 
-        <service id="paypal_unified.subscriber.checkout" class="SwagPaymentPayPalUnified\Subscriber\Checkout">
-            <argument type="service" id="service_container"/>
+        <service id="paypal_unified.subscriber.documents.invoice" class="SwagPaymentPayPalUnified\Subscriber\Documents\Invoice">
+            <argument type="service" id="paypal_unified.payment_instruction_service"/>
+            <argument type="service" id="dbal_connection"/>
+            <argument type="service" id="snippets"/>
+            <tag name="shopware.event_subscriber"/>
+        </service>
+
+        <service id="paypal_unified.subscriber.controller.account" class="SwagPaymentPayPalUnified\Subscriber\Account">
+            <argument type="service" id="models"/>
+            <argument type="service" id="dbal_connection"/>
+            <argument type="service" id="paypal_unified.settings_service"/>
+            <argument type="service" id="paypal_unified.dependency_provider"/>
             <tag name="shopware.event_subscriber"/>
         </service>
 
@@ -43,41 +47,13 @@
             <tag name="shopware.event_subscriber"/>
         </service>
 
-        <service id="paypal_unified.subscriber.frontend" class="SwagPaymentPayPalUnified\Subscriber\Frontend">
-            <argument>%paypal_unified.plugin_dir%</argument>
-            <argument type="service" id="paypal_unified.settings_service"/>
-            <tag name="shopware.event_subscriber"/>
-        </service>
-
-        <service id="paypal_unified.subscriber.payment_means" class="SwagPaymentPayPalUnified\Subscriber\PaymentMeans">
-            <argument type="service" id="dbal_connection"/>
-            <argument type="service" id="paypal_unified.settings_service"/>
-            <argument type="service" id="paypal_unified.installments.validation_service"/>
-            <argument type="service" id="session"/>
-            <tag name="shopware.event_subscriber"/>
-        </service>
-
-        <service id="paypal_unified.subscriber.installments" class="SwagPaymentPayPalUnified\Subscriber\Installments">
-            <argument type="service" id="paypal_unified.settings_service"/>
-            <argument type="service" id="paypal_unified.installments.validation_service"/>
-            <argument type="service" id="dbal_connection"/>
-            <tag name="shopware.event_subscriber"/>
-        </service>
-
         <service id="paypal_unified.subscriber.backend_order" class="SwagPaymentPayPalUnified\Subscriber\BackendOrder">
             <argument type="service" id="dbal_connection"/>
             <tag name="shopware.event_subscriber"/>
         </service>
 
-        <service id="paypal_unified.subscriber.documents.invoice" class="SwagPaymentPayPalUnified\Subscriber\Documents\Invoice">
-            <argument type="service" id="paypal_unified.payment_instruction_service"/>
-            <argument type="service" id="dbal_connection"/>
-            <tag name="shopware.event_subscriber"/>
-        </service>
-
-        <service id="paypal_unified.subscriber.documents.installments" class="SwagPaymentPayPalUnified\Subscriber\Documents\Installments">
-            <argument type="service" id="paypal_unified.installments.order_credit_info_service"/>
-            <argument type="service" id="dbal_connection"/>
+        <service id="paypal_unified.subscriber.checkout" class="SwagPaymentPayPalUnified\Subscriber\Checkout">
+            <argument type="service" id="service_container"/>
             <tag name="shopware.event_subscriber"/>
         </service>
 
@@ -91,10 +67,36 @@
             <tag name="shopware.event_subscriber"/>
         </service>
 
+        <service id="paypal_unified.subscriber.frontend" class="SwagPaymentPayPalUnified\Subscriber\Frontend">
+            <argument>%paypal_unified.plugin_dir%</argument>
+            <argument type="service" id="paypal_unified.settings_service"/>
+            <tag name="shopware.event_subscriber"/>
+        </service>
+
         <service id="paypal_unified.subscriber.in_context" class="SwagPaymentPayPalUnified\Subscriber\InContext">
             <argument type="service" id="models"/>
             <argument type="service" id="dbal_connection"/>
             <argument type="service" id="paypal_unified.settings_service"/>
+            <tag name="shopware.event_subscriber"/>
+        </service>
+
+        <service id="paypal_unified.subscriber.installments" class="SwagPaymentPayPalUnified\Subscriber\Installments">
+            <argument type="service" id="paypal_unified.settings_service"/>
+            <argument type="service" id="paypal_unified.installments.validation_service"/>
+            <argument type="service" id="dbal_connection"/>
+            <tag name="shopware.event_subscriber"/>
+        </service>
+
+        <service id="paypal_unified.subscriber.less" class="SwagPaymentPayPalUnified\Subscriber\Less">
+            <argument>%paypal_unified.plugin_dir%</argument>
+            <tag name="shopware.event_subscriber"/>
+        </service>
+
+        <service id="paypal_unified.subscriber.payment_means" class="SwagPaymentPayPalUnified\Subscriber\PaymentMeans">
+            <argument type="service" id="dbal_connection"/>
+            <argument type="service" id="paypal_unified.settings_service"/>
+            <argument type="service" id="paypal_unified.installments.validation_service"/>
+            <argument type="service" id="session"/>
             <tag name="shopware.event_subscriber"/>
         </service>
     </services>

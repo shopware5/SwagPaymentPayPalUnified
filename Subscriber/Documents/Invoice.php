@@ -26,6 +26,7 @@ namespace SwagPaymentPayPalUnified\Subscriber\Documents;
 
 use Doctrine\DBAL\Connection;
 use Enlight\Event\SubscriberInterface;
+use Shopware_Components_Snippet_Manager as SnippetManager;
 use SwagPaymentPayPalUnified\Components\Document\InvoiceDocumentHandler;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\Services\Plus\PaymentInstructionService;
@@ -44,15 +45,23 @@ class Invoice implements SubscriberInterface
     private $dbalConnection;
 
     /**
+     * @var SnippetManager
+     */
+    private $snippetManager;
+
+    /**
      * @param PaymentInstructionService $paymentInstructionService
      * @param Connection                $dbalConnection
+     * @param SnippetManager            $snippetManager
      */
     public function __construct(
         PaymentInstructionService $paymentInstructionService,
-        Connection $dbalConnection
+        Connection $dbalConnection,
+        SnippetManager $snippetManager
     ) {
         $this->paymentInstructionsService = $paymentInstructionService;
         $this->dbalConnection = $dbalConnection;
+        $this->snippetManager = $snippetManager;
     }
 
     /**
@@ -95,7 +104,11 @@ class Invoice implements SubscriberInterface
 
         $orderNumber = $document->_order->order['ordernumber'];
 
-        $documentHandler = new InvoiceDocumentHandler($this->paymentInstructionsService, $this->dbalConnection);
+        $documentHandler = new InvoiceDocumentHandler(
+            $this->paymentInstructionsService,
+            $this->dbalConnection,
+            $this->snippetManager
+        );
         $documentHandler->handleDocument($orderNumber, $document);
     }
 }
