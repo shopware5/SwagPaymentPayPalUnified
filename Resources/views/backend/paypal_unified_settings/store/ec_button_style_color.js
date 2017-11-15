@@ -12,6 +12,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.store.EcButtonStyleColor', {
     data: [
         { id: 'gold', text: '{s name="color/gold"}Gold{/s}' },
         { id: 'blue', text: '{s name="color/blue"}Blue{/s}' },
-        { id: 'silver', text: '{s name="color/silver"}Silver{/s}' }
+        { id: 'silver', text: '{s name="color/silver"}Silver{/s}' },
+        { id: 'black', text: '{s name="color/black"}Black{/s}' }
     ]
 });

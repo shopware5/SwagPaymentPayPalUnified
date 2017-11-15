@@ -12,6 +12,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.store.EcButtonStyleSize', {
     data: [
         { id: 'small', text: '{s name="size/small"}Small{/s}' },
         { id: 'medium', text: '{s name="size/medium"}Medium{/s}' },
+        { id: 'large', text: '{s name="size/large"}Large{/s}' },
         { id: 'responsive', text: '{s name="size/responsive"}Responsive{/s}' }
     ]
 });
