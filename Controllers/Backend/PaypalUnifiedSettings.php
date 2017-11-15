@@ -114,10 +114,10 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
      */
     public function testInstallmentsAvailabilityAction()
     {
-        $this->configureClient();
         $installmentsRequestService = $this->get('paypal_unified.installments.installments_request_service');
 
         try {
+            $this->configureClient();
             $response = $installmentsRequestService->getList(200.0);
             $financingResponse = FinancingResponse::fromArray($response['financing_options'][0]);
         } catch (RequestException $e) {
