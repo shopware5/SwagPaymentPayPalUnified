@@ -52,6 +52,15 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Installments', {
         me.testAvailabilityButton = me.createTestAvailabilityButton();
 
         return [
+            {
+                xtype: 'container',
+                html: '{s name=description}Get installments Powered by PayPal here: <a href="https://www.paypal.de/ratenzahlung" title="https://www.paypal.de/ratenzahlung" target="_blank">https://www.paypal.de/ratenzahlung</a>{/s}',
+                margin: '0 0 20',
+                style: {
+                    'font-size': '16px',
+                    'line-height': '30px'
+                }
+            },
             me.installmentsActivate,
             me.intentSelection,
             me.presentmentSelectionDetail,
