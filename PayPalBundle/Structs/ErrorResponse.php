@@ -24,6 +24,8 @@
 
 namespace SwagPaymentPayPalUnified\PayPalBundle\Structs;
 
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\ErrorResponse\Detail;
+
 class ErrorResponse
 {
     /**
@@ -45,6 +47,11 @@ class ErrorResponse
      * @var string
      */
     private $debugId;
+
+    /**
+     * @var Detail[]
+     */
+    private $details;
 
     /**
      * @return string
@@ -111,6 +118,22 @@ class ErrorResponse
     }
 
     /**
+     * @return Detail[]
+     */
+    public function getDetails()
+    {
+        return $this->details;
+    }
+
+    /**
+     * @param Detail[] $details
+     */
+    public function setDetails($details)
+    {
+        $this->details = $details;
+    }
+
+    /**
      * @param array $data
      *
      * @return null|ErrorResponse
@@ -126,6 +149,11 @@ class ErrorResponse
         $result->setMessage($data['message']);
         $result->setInformationLink($data['information_link']);
         $result->setDebugId($data['debug_id']);
+        $details = [];
+        foreach ($data['details'] as $detail) {
+            $details[] = Detail::fromArray($detail);
+        }
+        $result->setDetails($details);
 
         return $result;
     }
