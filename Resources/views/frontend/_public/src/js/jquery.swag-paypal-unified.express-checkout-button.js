@@ -27,10 +27,10 @@
             /**
              * size of the button
              * possible values:
-             *  - tiny
              *  - small
              *  - medium
              *  - large
+             *  - responsive
              *
              *  @type string
              */
@@ -52,6 +52,7 @@
              *  - gold
              *  - blue
              *  - silver
+             *  - black
              *
              *  @type string
              */
