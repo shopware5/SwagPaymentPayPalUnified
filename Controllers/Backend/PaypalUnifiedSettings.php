@@ -32,6 +32,7 @@ use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\WebhookResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService;
 use SwagPaymentPayPalUnified\PayPalBundle\Services\WebProfileService;
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\ErrorResponse;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Installments\FinancingResponse;
 
 class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Controllers_Backend_Application
@@ -74,8 +75,6 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
      */
     public function registerWebhookAction()
     {
-        $this->configureClient();
-
         //Generate URL
         /** @var Enlight_Controller_Router $router */
         $router = $this->container->get('front')->Router();
@@ -87,12 +86,45 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
         ]);
         $url = str_replace('http://', 'https://', $url);
 
-        /** @var ClientService $clientService */
-        $clientService = $this->container->get('paypal_unified.client_service');
+        try {
+            $this->configureClient();
+            /** @var ClientService $clientService */
+            $clientService = $this->container->get('paypal_unified.client_service');
 
-        $webhookResource = new WebhookResource($clientService);
-        $webhookResource->create($url, ['*']);
-        $this->View()->assign('url', $url);
+            $webhookResource = new WebhookResource($clientService);
+            $webhookResource->create($url, ['*']);
+        } catch (RequestException $rex) {
+            $errorStruct = ErrorResponse::fromArray(json_decode($rex->getBody(), true));
+
+            if ($errorStruct->getName() === 'WEBHOOK_URL_ALREADY_EXISTS') {
+                $this->View()->assign([
+                    'success' => true,
+                    'url' => $url,
+                ]);
+
+                return;
+            }
+
+            $this->logger->error(
+                'Could not register webhooks due to a communication failure',
+                [
+                    'message' => $rex->getMessage(),
+                    'payload' => $rex->getBody(),
+                ]
+            );
+
+            $this->View()->assign([
+                'success' => false,
+                'message' => $errorStruct->getMessage() . ': ' . $errorStruct->getDetails()[0]->getIssue(),
+            ]);
+
+            return;
+        }
+
+        $this->View()->assign([
+            'success' => true,
+            'url' => $url,
+        ]);
     }
 
     /**
@@ -146,7 +178,20 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
 
     public function createWebProfilesAction()
     {
-        $this->configureClient();
+        try {
+            $this->configureClient();
+        } catch (RequestException $e) {
+            $this->logger->error(
+                'Could not configure client for creating webProfiles due to a communication failure',
+                [
+                    'message' => $e->getMessage(),
+                    'payload' => $e->getBody(),
+                ]
+            );
+            $this->View()->assign('success', false);
+
+            return;
+        }
         $shopId = (int) $this->Request()->getParam('shopId');
         $logoImage = $this->Request()->getParam('logoImage');
         $brandName = $this->Request()->getParam('brandName');
@@ -162,16 +207,26 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
         $webProfileId = $webProfileService->getWebProfile($settings);
         $ecWebProfileId = $webProfileService->getWebProfile($settings, true);
 
+        if ($webProfileId === null || $ecWebProfileId === null) {
+            $this->View()->assign('success', false);
+
+            return;
+        }
+
         /** @var ModelManager $entityManager */
         $entityManager = $this->get('models');
 
         /** @var GeneralSettingsModel $generalSettings */
         $generalSettings = $this->settingsService->getSettings($shopId);
-        $generalSettings->setWebProfileId($webProfileId);
+        if ($generalSettings !== null) {
+            $generalSettings->setWebProfileId($webProfileId);
+        }
 
         /** @var ExpressSettingsModel $ecSettings */
         $ecSettings = $this->settingsService->getSettings($shopId, SettingsTable::EXPRESS_CHECKOUT);
-        $ecSettings->setWebProfileId($ecWebProfileId);
+        if ($ecSettings !== null) {
+            $ecSettings->setWebProfileId($ecWebProfileId);
+        }
 
         $entityManager->flush();
     }
