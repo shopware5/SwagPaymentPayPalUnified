@@ -43,7 +43,7 @@ use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class Checkout implements SubscriberInterface
+class Plus implements SubscriberInterface
 {
     /**
      * @var ContainerInterface
@@ -239,6 +239,9 @@ class Checkout implements SubscriberInterface
      */
     private function handleShippingPaymentDispatch(\Enlight_View_Default $view, \Enlight_Components_Session_Namespace $session)
     {
+        $restylePaymentSelection = (bool) $this->settingsService->get('restyle', SettingsTable::PLUS);
+        $view->assign('paypalUnifiedRestylePaymentSelection', $restylePaymentSelection);
+
         $session->offsetSet('paypalUnifiedCameFromPaymentSelection', true);
         $paymentStruct = $this->createPayment($view->getAssign('sBasket'), $view->getAssign('sUserData'));
 

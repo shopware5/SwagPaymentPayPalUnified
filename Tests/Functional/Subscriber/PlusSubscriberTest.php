@@ -25,32 +25,32 @@
 namespace SwagPaymentPayPalUnified\Tests\Functional\Subscriber;
 
 use Enlight_Template_Manager;
-use SwagPaymentPayPalUnified\Subscriber\Checkout;
+use SwagPaymentPayPalUnified\Subscriber\Plus;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\SettingsHelperTrait;
 use SwagPaymentPayPalUnified\Tests\Mocks\DummyController;
 use SwagPaymentPayPalUnified\Tests\Mocks\ViewMock;
 
-class CheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
+class PlusSubscriberTest extends \PHPUnit_Framework_TestCase
 {
     use DatabaseTestCaseTrait;
     use SettingsHelperTrait;
 
     public function test_can_be_created()
     {
-        $subscriber = new Checkout(Shopware()->Container());
+        $subscriber = new Plus(Shopware()->Container());
         $this->assertNotNull($subscriber);
     }
 
     public function test_getSubscribedEvents_has_correct_events()
     {
-        $events = Checkout::getSubscribedEvents();
+        $events = Plus::getSubscribedEvents();
         $this->assertEquals('onPostDispatchCheckout', $events['Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout']);
     }
 
     public function test_onPostDispatchCheckout_should_return_because_no_settings_exists()
     {
-        $subscriber = new Checkout(Shopware()->Container());
+        $subscriber = new Plus(Shopware()->Container());
 
         $view = new ViewMock(
             new Enlight_Template_Manager()
@@ -70,7 +70,7 @@ class CheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
 
     public function test_onPostDispatchCheckout_should_return_because_the_action_is_invalid()
     {
-        $subscriber = new Checkout(Shopware()->Container());
+        $subscriber = new Plus(Shopware()->Container());
 
         $request = new \Enlight_Controller_Request_RequestTestCase();
         $request->setActionName('invalidSuperAction');
@@ -94,7 +94,7 @@ class CheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
 
     public function test_onPostDispatchCheckout_should_assign_value_usePayPalPlus()
     {
-        $subscriber = new Checkout(Shopware()->Container());
+        $subscriber = new Plus(Shopware()->Container());
 
         $view = new ViewMock(
             new Enlight_Template_Manager()
@@ -118,7 +118,7 @@ class CheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
 
     public function test_onPostDispatchCheckout_should_assign_error_code()
     {
-        $subscriber = new Checkout(Shopware()->Container());
+        $subscriber = new Plus(Shopware()->Container());
 
         $view = new ViewMock(
             new Enlight_Template_Manager()

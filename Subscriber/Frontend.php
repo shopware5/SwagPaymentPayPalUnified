@@ -71,15 +71,15 @@ class Frontend implements SubscriberInterface
     public function onCollectJavascript()
     {
         $jsPath = [
-            $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.payment-wall-confirm.js',
-            $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.payment-wall-shipping-payment.js',
-            $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.payment-wall.js',
-            $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.custom-shipping-payment.js',
             $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.ajax-installments.js',
-            $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.installments-modal.js',
+            $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.custom-shipping-payment.js',
             $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.express-checkout-button.js',
             $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.express-checkout-button-in-context.js',
             $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.in-context-checkout.js',
+            $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.installments-modal.js',
+            $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.payment-wall.js',
+            $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.payment-wall-confirm.js',
+            $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.payment-wall-shipping-payment.js',
         ];
 
         return new ArrayCollection($jsPath);
@@ -104,11 +104,9 @@ class Frontend implements SubscriberInterface
 
         /** @var Enlight_View_Default $view */
         $view = $args->getSubject()->View();
-        $restylePaymentSelection = ((bool) $this->settingsService->get('active', SettingsTable::PLUS) && (bool) $this->settingsService->get('restyle', SettingsTable::PLUS));
 
         //Assign shop specific and configurable values to the view.
         $view->assign('paypalUnifiedShowLogo', (bool) $this->settingsService->get('show_sidebar_logo'));
-        $view->assign('paypalUnifiedRestylePaymentSelection', $restylePaymentSelection);
         $view->assign('paypalUnifiedShowInstallmentsLogo', (bool) $this->settingsService->get('show_logo', SettingsTable::INSTALLMENTS));
     }
 
