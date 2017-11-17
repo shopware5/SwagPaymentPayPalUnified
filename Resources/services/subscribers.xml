@@ -52,11 +52,6 @@
             <tag name="shopware.event_subscriber"/>
         </service>
 
-        <service id="paypal_unified.subscriber.checkout" class="SwagPaymentPayPalUnified\Subscriber\Checkout">
-            <argument type="service" id="service_container"/>
-            <tag name="shopware.event_subscriber"/>
-        </service>
-
         <service id="paypal_unified.subscriber.express_checkout" class="SwagPaymentPayPalUnified\Subscriber\ExpressCheckout">
             <argument type="service" id="paypal_unified.settings_service"/>
             <argument type="service" id="session"/>
@@ -98,6 +93,11 @@
             <argument type="service" id="paypal_unified.settings_service"/>
             <argument type="service" id="paypal_unified.installments.validation_service"/>
             <argument type="service" id="session"/>
+            <tag name="shopware.event_subscriber"/>
+        </service>
+
+        <service id="paypal_unified.subscriber.plus" class="SwagPaymentPayPalUnified\Subscriber\Plus">
+            <argument type="service" id="service_container"/>
             <tag name="shopware.event_subscriber"/>
         </service>
     </services>

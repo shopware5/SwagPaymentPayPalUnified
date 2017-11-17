@@ -133,24 +133,26 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
 
             items: [
                 {
+                    xtype: 'textfield',
+                    name: 'clientId',
+                    fieldLabel: '{s name="fieldset/rest/clientId"}Client-ID{/s}',
+                    helpText: '{s name="fieldset/rest/clientId/help"}The REST-API Client-ID that is being used to authenticate this plugin to the PayPal API.{/s}',
+                    allowBlank: false
+                },
+                {
+                    xtype: 'textfield',
+                    name: 'clientSecret',
+                    fieldLabel: '{s name="fieldset/rest/clientSecret"}Client-Secret{/s}',
+                    helpText: '{s name="fieldset/rest/clientSecret/help"}The REST-API Client-Secret that is being used to authenticate this plugin to the PayPal API.{/s}',
+                    allowBlank: false
+                },
+                {
                     xtype: 'checkbox',
                     name: 'sandbox',
                     inputValue: true,
                     uncheckedValue: false,
                     fieldLabel: '{s name="fieldset/rest/enableSandbox"}Enable sandbox{/s}',
                     boxLabel: '{s name="fieldset/rest/enableSandbox/help"}Enable this option to test the integration.{/s}'
-                }, {
-                    xtype: 'textfield',
-                    name: 'clientId',
-                    fieldLabel: '{s name="fieldset/rest/clientId"}Client-ID{/s}',
-                    helpText: '{s name="fieldset/rest/clientId/help"}The REST-API Client-ID that is being used to authenticate this plugin to the PayPal API.{/s}',
-                    allowBlank: false
-                }, {
-                    xtype: 'textfield',
-                    name: 'clientSecret',
-                    fieldLabel: '{s name="fieldset/rest/clientSecret"}Client-Secret{/s}',
-                    helpText: '{s name="fieldset/rest/clientSecret/help"}The REST-API Client-Secret that is being used to authenticate this plugin to the PayPal API.{/s}',
-                    allowBlank: false
                 },
                 me.toolbarContainer
             ]
@@ -176,24 +178,35 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
             title: '{s name="fieldset/behavior/title"}Behavior{/s}',
             items: [
                 {
+                    xtype: 'base-element-media',
+                    name: 'logoImage',
+                    fieldLabel: '{s name="fieldset/behavior/logoImage"}Logo on the PayPal pag{/s}',
+                    helpText: '{s name="fieldset/behavior/logoImage/help"}The image you have selected here will be displayed as the brand logo on the PayPal payment page.{/s}',
+                    allowBlank: false // logoImage is required for experience profile
+                },
+                {
+                    xtype: 'textfield',
+                    name: 'brandName',
+                    fieldLabel: '{s name="fieldset/behavior/brandName"}Brand name on the PayPal page{/s}',
+                    helpText: '{s name="fieldset/behavior/brandName/help"}This text will be displayed as the brand name on the PayPal payment page.{/s}'
+                },
+                {
+                    xtype: 'checkbox',
+                    name: 'useInContext',
+                    inputValue: true,
+                    uncheckedValue: false,
+                    fieldLabel: '{s name="fieldset/behaviour/useInContext"}Use in-context mode{/s}',
+                    helpText: '{s name="fieldset/behaviour/useInContext/help"}Enable this option to use the PayPal in-context solution. Instead of redirecting to the PayPal login page, an overlay will be shown and the customer does not need to leave the shop.{/s}'
+                },
+                {
                     xtype: 'checkbox',
                     name: 'showSidebarLogo',
                     inputValue: true,
                     uncheckedValue: false,
                     fieldLabel: '{s name="fieldset/behavior/showSidebarLogo"}Show logo in sidebar{/s}',
                     boxLabel: '{s name="fieldset/behavior/showSidebarLogo/help"}Enable this option to show the PayPal logo in the storefront sidebar.{/s}'
-                }, {
-                    xtype: 'textfield',
-                    name: 'brandName',
-                    fieldLabel: '{s name="fieldset/behavior/brandName"}Brand name on the PayPal page{/s}',
-                    helpText: '{s name="fieldset/behavior/brandName/help"}This text will be displayed as the brand name on the PayPal payment page.{/s}'
-                }, {
-                    xtype: 'base-element-media',
-                    name: 'logoImage',
-                    fieldLabel: '{s name="fieldset/behavior/logoImage"}Logo on the PayPal pag{/s}',
-                    helpText: '{s name="fieldset/behavior/logoImage/help"}The image you have selected here will be displayed as the brand logo on the PayPal payment page.{/s}',
-                    allowBlank: false // logoImage is required for experience profile
-                }, {
+                },
+                {
                     xtype: 'checkbox',
                     name: 'sendOrderNumber',
                     inputValue: true,
@@ -205,11 +218,12 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
                 me.orderNumberPrefix,
                 {
                     xtype: 'checkbox',
-                    name: 'useInContext',
+                    name: 'advertiseReturns',
                     inputValue: true,
                     uncheckedValue: false,
-                    fieldLabel: '{s name="fieldset/behaviour/useInContext"}Use in-context mode{/s}',
-                    helpText: '{s name="fieldset/behaviour/useInContext/help"}Enable this option to use the PayPal in-context solution. Instead of redirecting to the PayPal login page, an overlay will be shown and the customer does not need to leave the shop.{/s}'
+                    fieldLabel: '{s name="fieldset/behaviour/advertiseReturns"}Free returns{/s}',
+                    boxLabel: '{s name="fieldset/behaviour/advertiseReturns/boxLabel"}Enablte to advertise free returns via PayPal. More information <a href="https://www.paypal.com/de/webapps/mpp/returns-on-paypal" title="PayPal returns" target="_blank">here</a>{/s}',
+                    helpText: '{s name="fieldset/behaviour/advertiseReturns/helpText"}If you already offer free returns, the use of the program is excluded.{/s}'
                 }
             ]
         });

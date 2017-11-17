@@ -68,6 +68,10 @@ trait SettingsHelperTrait
             $data['displayErrors'] = false;
         }
 
+        if (empty($data['advertiseReturns'])) {
+            $data['advertiseReturns'] = false;
+        }
+
         $model = new GeneralSettingsModel();
         $model->fromArray($data);
 

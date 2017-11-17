@@ -127,6 +127,12 @@ class General extends ModelEntity
     private $displayErrors;
 
     /**
+     * @var bool
+     * @ORM\Column(name="advertise_returns", type="boolean", nullable=false)
+     */
+    private $advertiseReturns;
+
+    /**
      * @return int
      */
     public function getId()
@@ -364,6 +370,22 @@ class General extends ModelEntity
     public function setDisplayErrors($displayErrors)
     {
         $this->displayErrors = $displayErrors;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getAdvertiseReturns()
+    {
+        return $this->advertiseReturns;
+    }
+
+    /**
+     * @param bool $advertiseReturns
+     */
+    public function setAdvertiseReturns($advertiseReturns)
+    {
+        $this->advertiseReturns = $advertiseReturns;
     }
 
     /**
