@@ -13,7 +13,8 @@ CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_settings_general (
     `use_in_context`      TINYINT(1) NOT NULL,
     `web_profile_id`      VARCHAR(255),
     `log_level`           INT(11)    NOT NULL,
-    `display_errors`      TINYINT(1) NOT NULL
+    `display_errors`      TINYINT(1) NOT NULL,
+    `advertise_returns`    TINYINT(1) NOT NULL
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
@@ -49,10 +50,10 @@ CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_settings_express (
     COLLATE = utf8_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_settings_plus (
-    `id`                 INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    `shop_id`            INT(11)    NOT NULL,
-    `active`             TINYINT(1),
-    `restyle`            TINYINT(1) NOT NULL,
+    `id`                  INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `shop_id`             INT(11)    NOT NULL,
+    `active`              TINYINT(1),
+    `restyle`             TINYINT(1) NOT NULL,
     `payment_name`        VARCHAR(255),
     `payment_description` VARCHAR(255)
 )

@@ -141,7 +141,63 @@ class PlusSubscriberTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('5', $view->getAssign('paypalUnifiedErrorCode'));
     }
 
-    private function createTestSettings()
+    public function test_onPostDispatchSecure_assigns_nothing_to_view()
+    {
+        $subscriber = new Plus(Shopware()->Container());
+        $this->createTestSettings(false, true, true);
+
+        $view = new ViewMock(new Enlight_Template_Manager());
+        $request = new \Enlight_Controller_Request_RequestTestCase();
+        $request->setActionName('shippingPayment');
+        $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
+            'subject' => new DummyController($request, $view),
+        ]);
+
+        $subscriber->onPostDispatchCheckout($enlightEventArgs);
+
+        $this->assertNull($view->getAssign('paypalUnifiedRestylePaymentSelection'));
+    }
+
+    public function test_onPostDispatchSecure_sets_restyle_correctly_if_plus_is_inactive()
+    {
+        $subscriber = new Plus(Shopware()->Container());
+        $this->createTestSettings(true, false, true);
+
+        $view = new ViewMock(new Enlight_Template_Manager());
+        $request = new \Enlight_Controller_Request_RequestTestCase();
+        $request->setActionName('shippingPayment');
+        $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
+            'subject' => new DummyController($request, $view),
+        ]);
+
+        $subscriber->onPostDispatchCheckout($enlightEventArgs);
+
+        $this->assertFalse((bool) $view->getAssign('paypalUnifiedRestylePaymentSelection'));
+    }
+
+    public function test_onPostDispatchSecure_sets_restyle_correctly_if_plus_both_is_inactive()
+    {
+        $subscriber = new Plus(Shopware()->Container());
+        $this->createTestSettings(true, false, false);
+
+        $view = new ViewMock(new Enlight_Template_Manager());
+        $request = new \Enlight_Controller_Request_RequestTestCase();
+        $request->setActionName('shippingPayment');
+        $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
+            'subject' => new DummyController($request, $view),
+        ]);
+
+        $subscriber->onPostDispatchCheckout($enlightEventArgs);
+
+        $this->assertFalse((bool) $view->getAssign('paypalUnifiedRestylePaymentSelection'));
+    }
+
+    /**
+     * @param bool $active
+     * @param bool $plusActive
+     * @param bool $restylePaymentSelection
+     */
+    private function createTestSettings($active = true, $plusActive = true, $restylePaymentSelection = false)
     {
         $this->insertGeneralSettingsFromArray([
             'shopId' => 1,
@@ -150,12 +206,13 @@ class PlusSubscriberTest extends \PHPUnit_Framework_TestCase
             'sandbox' => true,
             'showSidebarLogo' => true,
             'logoImage' => 'TEST',
-            'active' => true,
+            'active' => $active,
         ]);
 
         $this->insertPlusSettingsFromArray([
             'shopId' => 1,
-            'active' => true,
+            'active' => $plusActive,
+            'restyle' => $restylePaymentSelection,
         ]);
     }
 }

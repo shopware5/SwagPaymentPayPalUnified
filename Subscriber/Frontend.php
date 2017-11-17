@@ -102,12 +102,16 @@ class Frontend implements SubscriberInterface
             return;
         }
 
+        $showPayPalLogo = (bool) $this->settingsService->get('show_sidebar_logo');
+        $showInstallmentsLogo = (bool) $this->settingsService->get('active', SettingsTable::INSTALLMENTS) && (bool) $this->settingsService->get('show_logo', SettingsTable::INSTALLMENTS);
+
         /** @var Enlight_View_Default $view */
         $view = $args->getSubject()->View();
 
         //Assign shop specific and configurable values to the view.
-        $view->assign('paypalUnifiedShowLogo', (bool) $this->settingsService->get('show_sidebar_logo'));
-        $view->assign('paypalUnifiedShowInstallmentsLogo', (bool) $this->settingsService->get('show_logo', SettingsTable::INSTALLMENTS));
+        $view->assign('paypalUnifiedShowLogo', $showPayPalLogo);
+        $view->assign('paypalUnifiedShowInstallmentsLogo', $showInstallmentsLogo);
+        $view->assign('paypalUnifiedAdvertiseReturns', (bool) $this->settingsService->get('advertise_returns'));
     }
 
     /**

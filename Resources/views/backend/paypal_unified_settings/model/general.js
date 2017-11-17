@@ -23,7 +23,8 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.model.General', {
         { name: 'orderNumberPrefix', type: 'string' },
         { name: 'useInContext', type: 'bool', defaultValue: true },
         { name: 'logLevel', type: 'int', defaultValue: 0 },
-        { name: 'displayErrors', type: 'bool' }
+        { name: 'displayErrors', type: 'bool' },
+        { name: 'advertiseReturns', type: 'bool' }
     ]
 });
 // {/block}

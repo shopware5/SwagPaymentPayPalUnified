@@ -54,7 +54,10 @@ class FrontendSubscriberTest extends \PHPUnit_Framework_TestCase
 
     public function test_onCollectJavascript()
     {
-        $subscriber = new Frontend(Shopware()->Container()->getParameter('paypal_unified.plugin_dir'), Shopware()->Container()->get('paypal_unified.settings_service'));
+        $subscriber = new Frontend(
+            Shopware()->Container()->getParameter('paypal_unified.plugin_dir'),
+            Shopware()->Container()->get('paypal_unified.settings_service')
+        );
         $javascripts = $subscriber->onCollectJavascript();
 
         foreach ($javascripts as $script) {
@@ -66,7 +69,10 @@ class FrontendSubscriberTest extends \PHPUnit_Framework_TestCase
 
     public function test_onPostDistpatchSecure_without_any_setttings()
     {
-        $subscriber = new Frontend(Shopware()->Container()->getParameter('paypal_unified.plugin_dir'), Shopware()->Container()->get('paypal_unified.settings_service'));
+        $subscriber = new Frontend(
+            Shopware()->Container()->getParameter('paypal_unified.plugin_dir'),
+            Shopware()->Container()->get('paypal_unified.settings_service')
+        );
 
         $view = new ViewMock(new Enlight_Template_Manager());
         $request = new \Enlight_Controller_Request_RequestTestCase();
@@ -81,8 +87,11 @@ class FrontendSubscriberTest extends \PHPUnit_Framework_TestCase
 
     public function test_onPostDispatchSecure_assigns_variables_to_view()
     {
-        $subscriber = new Frontend(Shopware()->Container()->getParameter('paypal_unified.plugin_dir'), Shopware()->Container()->get('paypal_unified.settings_service'));
-        $this->createTestSettings(true, true, true);
+        $subscriber = new Frontend(
+            Shopware()->Container()->getParameter('paypal_unified.plugin_dir'),
+            Shopware()->Container()->get('paypal_unified.settings_service')
+        );
+        $this->createTestSettings();
 
         $view = new ViewMock(new Enlight_Template_Manager());
         $request = new \Enlight_Controller_Request_RequestTestCase();
@@ -93,60 +102,16 @@ class FrontendSubscriberTest extends \PHPUnit_Framework_TestCase
         $subscriber->onPostDispatchSecure($enlightEventArgs);
 
         $this->assertTrue((bool) $view->getAssign('paypalUnifiedShowLogo'));
-        $this->assertTrue((bool) $view->getAssign('paypalUnifiedRestylePaymentSelection'));
-    }
-
-    public function test_onPostDispatchSecure_assigns_nothing_to_view()
-    {
-        $subscriber = new Frontend(Shopware()->Container()->getParameter('paypal_unified.plugin_dir'), Shopware()->Container()->get('paypal_unified.settings_service'));
-        $this->createTestSettings(false, true, true);
-
-        $view = new ViewMock(new Enlight_Template_Manager());
-        $request = new \Enlight_Controller_Request_RequestTestCase();
-        $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
-        ]);
-
-        $subscriber->onPostDispatchSecure($enlightEventArgs);
-
-        $this->assertNull($view->getAssign('paypalUnifiedRestylePaymentSelection'));
-    }
-
-    public function test_onPostDispatchSecure_sets_restyle_correctly_if_plus_is_inactive()
-    {
-        $subscriber = new Frontend(Shopware()->Container()->getParameter('paypal_unified.plugin_dir'), Shopware()->Container()->get('paypal_unified.settings_service'));
-        $this->createTestSettings(true, false, true);
-
-        $view = new ViewMock(new Enlight_Template_Manager());
-        $request = new \Enlight_Controller_Request_RequestTestCase();
-        $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
-        ]);
-
-        $subscriber->onPostDispatchSecure($enlightEventArgs);
-
-        $this->assertFalse((bool) $view->getAssign('paypalUnifiedRestylePaymentSelection'));
-    }
-
-    public function test_onPostDispatchSecure_sets_restyle_correctly_if_plus_both_is_inactive()
-    {
-        $subscriber = new Frontend(Shopware()->Container()->getParameter('paypal_unified.plugin_dir'), Shopware()->Container()->get('paypal_unified.settings_service'));
-        $this->createTestSettings(true, false, false);
-
-        $view = new ViewMock(new Enlight_Template_Manager());
-        $request = new \Enlight_Controller_Request_RequestTestCase();
-        $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
-        ]);
-
-        $subscriber->onPostDispatchSecure($enlightEventArgs);
-
-        $this->assertFalse((bool) $view->getAssign('paypalUnifiedRestylePaymentSelection'));
+        $this->assertTrue((bool) $view->getAssign('paypalUnifiedShowInstallmentsLogo'));
+        $this->assertTrue((bool) $view->getAssign('paypalUnifiedAdvertiseReturns'));
     }
 
     public function test_onCollectTemplateDir()
     {
-        $subscriber = new Frontend(Shopware()->Container()->getParameter('paypal_unified.plugin_dir'), Shopware()->Container()->get('paypal_unified.settings_service'));
+        $subscriber = new Frontend(
+            Shopware()->Container()->getParameter('paypal_unified.plugin_dir'),
+            Shopware()->Container()->get('paypal_unified.settings_service')
+        );
         $returnValue = [];
 
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
@@ -160,12 +125,7 @@ class FrontendSubscriberTest extends \PHPUnit_Framework_TestCase
         $this->assertDirectoryExists($returnValue[0]);
     }
 
-    /**
-     * @param bool $active
-     * @param bool $plusActive
-     * @param bool $restylePaymentSelection
-     */
-    private function createTestSettings($active, $plusActive, $restylePaymentSelection)
+    private function createTestSettings()
     {
         $this->insertGeneralSettingsFromArray([
             'shopId' => 1,
@@ -174,13 +134,13 @@ class FrontendSubscriberTest extends \PHPUnit_Framework_TestCase
             'sandbox' => true,
             'showSidebarLogo' => true,
             'logoImage' => 'TEST',
-            'active' => $active,
+            'active' => true,
+            'advertiseReturns' => true,
         ]);
 
-        $this->insertPlusSettingsFromArray([
-            'shopId' => 1,
-            'active' => $plusActive,
-            'restyle' => $restylePaymentSelection,
+        $this->insertInstallmentsSettingsFromArray([
+            'active' => true,
+            'showLogo' => true,
         ]);
     }
 }
