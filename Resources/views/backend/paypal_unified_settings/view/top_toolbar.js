@@ -44,7 +44,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.TopToolbar', {
     },
 
     /**
-     * @returns { Shopware.apps.Base.view.element.Select }
+     * @returns { Ext.Container }
      */
     createShopSelection: function() {
         var me = this,
@@ -68,13 +68,21 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.TopToolbar', {
             store: store,
             name: 'shopId',
             fieldLabel: '{s name=label/shop}Select shop{/s}',
-            labelWidth: 80,
+            width: '33%',
             listeners: {
                 select: Ext.bind(me.onSelectShop, me)
+            },
+            style: {
+                float: 'right'
             }
         });
 
-        return selection;
+        return Ext.create('Ext.Container', {
+            width: '100%',
+            items: [
+                selection
+            ]
+        });
     },
 
     /**
