@@ -29,8 +29,10 @@ use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
+use SwagPaymentPayPalUnified\PayPalBundle\PartnerAttributionId;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\PaymentResource;
+use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\ErrorResponse;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\GenericErrorResponse;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
@@ -48,12 +50,18 @@ class Shopware_Controllers_Widgets_PaypalUnifiedExpressCheckout extends \Enlight
     private $logger;
 
     /**
+     * @var ClientService
+     */
+    private $client;
+
+    /**
      * Initialize payment resource
      */
     public function preDispatch()
     {
-        $this->logger = $this->get('paypal_unified.logger_service');
         $this->paymentResource = $this->get('paypal_unified.payment_resource');
+        $this->client = $this->container->get('paypal_unified.client_service');
+        $this->logger = $this->get('paypal_unified.logger_service');
     }
 
     public function createPaymentAction()
@@ -102,6 +110,8 @@ class Shopware_Controllers_Widgets_PaypalUnifiedExpressCheckout extends \Enlight
         $requestParams->setWebProfileId($webProfileId);
         $requestParams->setPaymentType(PaymentType::PAYPAL_EXPRESS);
 
+        $this->client->setPartnerAttributionId(PartnerAttributionId::PAYPAL_EXPRESS_CHECKOUT);
+
         try {
             /** @var Payment $params */
             $params = $this->get('paypal_unified.express_checkout.payment_builder_service')->getPayment($requestParams, $currency);
@@ -118,8 +128,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedExpressCheckout extends \Enlight
             return;
         }
 
-        $useInContext = $this->Request()->getParam('useInContext', false);
-        if ($useInContext) {
+        if ($this->Request()->getParam('useInContext', false)) {
             $this->Front()->Plugins()->Json()->setRenderer();
 
             $this->View()->assign('paymentId', $responseStruct->getId());

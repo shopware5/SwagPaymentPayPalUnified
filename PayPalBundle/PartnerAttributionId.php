@@ -40,4 +40,9 @@ class PartnerAttributionId
      * Shopware Partner Id for PayPal Installments
      */
     const PAYPAL_INSTALLMENTS = 'Shopware_Cart_Inst_2';
+
+    /**
+     * Shopware Partner Id for PayPal Express Checkout with full page redirect
+     */
+    const PAYPAL_EXPRESS_CHECKOUT = 'Shopware_Cart_ECS_2';
 }
