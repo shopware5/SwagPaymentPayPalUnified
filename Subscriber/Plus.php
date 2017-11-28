@@ -321,6 +321,10 @@ class Plus implements SubscriberInterface
         $paymentName = $this->settingsService->get('payment_name', SettingsTable::PLUS);
         $paymentDescription = $this->settingsService->get('payment_description', SettingsTable::PLUS);
 
+        if ($paymentName === '' || $paymentName === null) {
+            return;
+        }
+
         $customerData = $view->getAssign('sUserData');
         $customerPayment = $customerData['additional']['payment'];
         if ((int) $customerPayment['id'] === $unifiedPaymentId) {
