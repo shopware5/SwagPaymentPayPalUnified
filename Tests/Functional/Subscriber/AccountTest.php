@@ -69,6 +69,31 @@ class AccountTest extends \PHPUnit_Framework_TestCase
         $this->assertSame('PayPal', $customerData['additional']['payment']['description']);
     }
 
+    public function test_onPostDispatchAccount_no_shop()
+    {
+        $subscriber = $this->getSubscriber();
+        $shop = Shopware()->Container()->get('shop');
+
+        Shopware()->Container()->reset('shop');
+
+        $view = new ViewMock(
+            new \Enlight_Template_Manager()
+        );
+        $view->assign($this->getAccountViewAssigns());
+
+        $request = new \Enlight_Controller_Request_RequestTestCase();
+        $request->setActionName('payment');
+
+        $eventArgs = new \Enlight_Controller_ActionEventArgs([
+            'subject' => new DummyController($request, $view),
+        ]);
+
+        $subscriber->onPostDispatchAccount($eventArgs);
+        $customerData = $view->getAssign('sUserData');
+        $this->assertSame('PayPal', $customerData['additional']['payment']['description']);
+        Shopware()->Container()->set('shop', $shop);
+    }
+
     public function test_onPostDispatchAccount_no_settings()
     {
         $subscriber = $this->getSubscriber();
@@ -95,6 +120,29 @@ class AccountTest extends \PHPUnit_Framework_TestCase
         $subscriber = $this->getSubscriber();
 
         $this->addSettings(false);
+
+        $view = new ViewMock(
+            new \Enlight_Template_Manager()
+        );
+        $view->assign($this->getAccountViewAssigns());
+
+        $request = new \Enlight_Controller_Request_RequestTestCase();
+        $request->setActionName('index');
+
+        $eventArgs = new \Enlight_Controller_ActionEventArgs([
+            'subject' => new DummyController($request, $view),
+        ]);
+
+        $subscriber->onPostDispatchAccount($eventArgs);
+        $customerData = $view->getAssign('sUserData');
+        $this->assertSame('PayPal', $customerData['additional']['payment']['description']);
+    }
+
+    public function test_onPostDispatchAccount_empty_string()
+    {
+        $subscriber = $this->getSubscriber();
+
+        $this->addSettings(true, '');
 
         $view = new ViewMock(
             new \Enlight_Template_Manager()
@@ -196,13 +244,14 @@ class AccountTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param bool $active
+     * @param bool   $active
+     * @param string $paymentName
      */
-    private function addSettings($active = true)
+    private function addSettings($active = true, $paymentName = 'PayPal, Lastschrift oder Kreditkarte')
     {
         $this->insertPlusSettingsFromArray([
             'active' => $active,
-            'paymentName' => 'PayPal, Lastschrift oder Kreditkarte',
+            'paymentName' => $paymentName,
             'paymentDescription' => 'Zahlung per Lastschrift oder Kreditkarte ist auch ohne PayPal Konto möglich',
         ]);
     }

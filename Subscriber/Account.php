@@ -111,6 +111,13 @@ class Account implements SubscriberInterface
             return;
         }
 
+        $paymentName = $plusSettings->getPaymentName();
+        $paymentDescription = $plusSettings->getPaymentDescription();
+
+        if ($paymentName === '' || $paymentName === null) {
+            return;
+        }
+
         $view = $controller->View();
         $paymentMethodProvider = new PaymentMethodProvider($this->modelManager);
         $unifiedPaymentId = $paymentMethodProvider->getPaymentId($this->connection);
@@ -119,8 +126,8 @@ class Account implements SubscriberInterface
         $customerPayment = $customerData['additional']['payment'];
 
         if ((int) $customerPayment['id'] === $unifiedPaymentId) {
-            $customerPayment['description'] = $plusSettings->getPaymentName();
-            $customerPayment['additionaldescription'] .= '<br>' . $plusSettings->getPaymentDescription();
+            $customerPayment['description'] = $paymentName;
+            $customerPayment['additionaldescription'] .= '<br>' . $paymentDescription;
 
             $customerData['additional']['payment'] = $customerPayment;
             $view->assign('sUserData', $customerData);
@@ -130,8 +137,8 @@ class Account implements SubscriberInterface
 
         foreach ($paymentMethods as &$paymentMethod) {
             if ((int) $paymentMethod['id'] === $unifiedPaymentId) {
-                $paymentMethod['description'] = $plusSettings->getPaymentName();
-                $paymentMethod['additionaldescription'] .= '<br>' . $plusSettings->getPaymentDescription();
+                $paymentMethod['description'] = $paymentName;
+                $paymentMethod['additionaldescription'] .= '<br>' . $paymentDescription;
                 break;
             }
         }

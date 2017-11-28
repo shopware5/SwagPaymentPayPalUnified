@@ -196,7 +196,7 @@ class InContextSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $subscriber->addInContextInfoToRequest($enlightEventArgs);
 
-        $this->assertEquals('http://localhost/PaypalUnified/gateway/useInContext/1', $response->getHeader('Location'));
+        $this->assertContains('/PaypalUnified/gateway/useInContext/1', $response->getHeader('Location'));
         $this->assertEquals(302, $response->getHttpResponseCode());
     }
 
