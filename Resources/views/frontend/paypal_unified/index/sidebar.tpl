@@ -43,14 +43,14 @@
     {block name='frontend_index_sidebar_paypal_unified_advertise_returns'}
         <div class="panel is--rounded paypal--sidebar">
             {block name='frontend_index_sidebar_paypal_unified_advertise_returns_body'}
-                <div class="panel--body is--wide paypal--sidebar-advertise-returns">
+                <div class="panel--body is--wide paypal--sidebar-inner">
                     {block name='frontend_index_sidebar_paypal_unified_advertise_returns_body'}
                         <a href="http://adfarm.mediaplex.com/ad/nc/27730-212148-12439-92?mpt=[CACHEBUSTER]"
                            target="_blank"
                            title="{"{s name="logo/advertise_returns/title"}Free returns via PayPal{/s}"|escape}">
-                            <img src="http://adfarm.mediaplex.com/ad/nb/27730-212148-12439-92?mpt=[CACHEBUSTER]"
-                                 alt="{"{s name="logo/advertise_returns/title"}Free returns via PayPal{/s}"|escape}"
-                                 border="0">
+                            <img class="logo--image"
+                                 src="http://adfarm.mediaplex.com/ad/nb/27730-212148-12439-92?mpt=[CACHEBUSTER]"
+                                 alt="{"{s name="logo/advertise_returns/title"}Free returns via PayPal{/s}"|escape}">
                         </a>
                     {/block}
                 </div>
