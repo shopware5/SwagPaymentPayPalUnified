@@ -290,7 +290,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
 
         me.window.setLoading(false);
 
-        if (responseObject.success) {
+        if (Ext.isDefined(responseObject) && responseObject.success) {
             Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Products{/s}', '{s name=growl/registerWebhookSuccess}The webhook has been successfully registered to:{/s} ' + responseObject.url, me.window.title);
         } else {
             Shopware.Notification.createStickyGrowlMessage(
@@ -310,10 +310,9 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
      */
     onValidateAPIAjaxCallback: function(options, success, response) {
         var me = this,
-            responseObject = Ext.JSON.decode(response.responseText),
-            successFlag = responseObject.success;
+            responseObject = Ext.JSON.decode(response.responseText);
 
-        if (successFlag) {
+        if (Ext.isDefined(responseObject) && responseObject.success) {
             Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Products{/s}', '{s name=growl/validateAPISuccess}The API settings are valid.{/s}', me.window.title);
         } else {
             Shopware.Notification.createStickyGrowlMessage(
@@ -375,7 +374,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
 
         me.window.setLoading(false);
 
-        if (responseObject.success) {
+        if (Ext.isDefined(responseObject) && responseObject.success) {
             Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Products{/s}', '{s name=growl/createWebProfilesSuccess}Web-profile(s) successfully created{/s}', me.window.title);
         } else {
             Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Products{/s}', '{s name=growl/createWebProfilesError}Could not create web-profiles due to an unknown error{/s}', me.window.title);
@@ -427,10 +426,9 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
     onTestInstallmentsAvailabilityCallback: function(options, success, response) {
         var me = this,
             responseObject = Ext.JSON.decode(response.responseText),
-            successFlag = responseObject.success,
             errorMessageText;
 
-        if (successFlag) {
+        if (Ext.isDefined(responseObject) && responseObject.success) {
             Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Products{/s}', '{s name=growl/testInstallmentsAvailabilitySuccess}PayPal installments integration is working correct.{/s}', me.window.title);
         } else {
             errorMessageText = '{s name=growl/testInstallmentsAvailabilitySuccessError}PayPal installments integration is currently not available for you. Please contact the PayPal support.{/s} ';

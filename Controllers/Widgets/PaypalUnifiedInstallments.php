@@ -56,7 +56,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedInstallments extends Enlight_Con
         $this->logger = $this->get('paypal_unified.logger_service');
         $this->installmentsResource = $this->get('paypal_unified.installments_resource');
         $this->installmentsRequestService = $this->get('paypal_unified.installments.installments_request_service');
-        $this->companyInfoService = $this->container->get('paypal_unified.installments.company_info_service');
+        $this->companyInfoService = $this->get('paypal_unified.installments.company_info_service');
     }
 
     /**
@@ -114,7 +114,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedInstallments extends Enlight_Con
             return;
         }
 
-        //We have to sort the result to get the cheapest rate, since it's being delivered unsorted from paypal
+        // The result must be sorted to get the cheapest rate, since it's being delivered unsorted from PayPal
         $financingResponseStruct = FinancingResponse::fromArray($response['financing_options'][0]);
         $optionsHandler = new FinancingOptionsHandler($financingResponseStruct);
         $financingResponseStruct = $optionsHandler->sortOptionsBy(FinancingOptionsHandler::SORT_BY_MONTHLY_PAYMENT);

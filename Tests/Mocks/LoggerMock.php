@@ -22,63 +22,49 @@
  * our trademarks remain entirely with us.
  */
 
-namespace SwagPaymentPayPalUnified\PayPalBundle\Structs\ErrorResponse;
+namespace SwagPaymentPayPalUnified\Tests\Mocks;
 
-class Detail
+use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
+
+class LoggerMock implements LoggerServiceInterface
 {
     /**
-     * @var string
+     * @var array
      */
-    private $field;
+    private $errors;
 
-    /**
-     * @var string
-     */
-    private $issue;
-
-    /**
-     * @return string
-     */
-    public function getField()
+    public function __construct()
     {
-        return $this->field;
+        $this->errors = [];
     }
 
     /**
-     * @param string $field
+     * {@inheritdoc}
      */
-    public function setField($field)
+    public function notify($message, array $context = [])
     {
-        $this->field = $field;
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
-    public function getIssue()
+    public function warning($message, array $context = [])
     {
-        return $this->issue;
     }
 
     /**
-     * @param string $issue
+     * {@inheritdoc}
      */
-    public function setIssue($issue)
+    public function error($message, array $context = [])
     {
-        $this->issue = $issue;
+        $this->errors[$message] = $context;
     }
 
     /**
-     * @param $detail
-     *
-     * @return Detail
+     * @return array
      */
-    public static function fromArray($detail)
+    public function getErrors()
     {
-        $result = new self();
-        $result->setField($detail['field']);
-        $result->setIssue($detail['issue']);
-
-        return $result;
+        return $this->errors;
     }
 }

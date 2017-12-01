@@ -160,7 +160,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
         var me = this,
             responseObject = Ext.JSON.decode(response.responseText);
 
-        if (responseObject.success) {
+        if (Ext.isDefined(responseObject) && responseObject.success) {
             Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Products{/s}', '{s name=growl/authorizeSuccess}The payment has been authorized successfully{/s}', me.window.title);
 
             me.loadDetails(me.record);
@@ -175,7 +175,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
         var me = this,
             responseObject = Ext.JSON.decode(response.responseText);
 
-        if (responseObject.success) {
+        if (Ext.isDefined(responseObject) && responseObject.success) {
             Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Products{/s}', '{s name=growl/voidSuccess}The payment has been voided successfully.{/s}', me.window.title);
 
             me.loadDetails(me.record);
@@ -196,7 +196,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
             sidebar = me.getSidebar(),
             details = Ext.JSON.decode(response.responseText);
 
-        if (!details.success) {
+        if (!Ext.isDefined(details) || !details.success) {
             Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Products{/s}', details.message, me.window.title);
 
             sidebar.setLoading(false);
@@ -209,7 +209,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
         if (details.legacy) {
             me.displayLegacyDetails();
         } else {
-            me.displayUnifiedDetails()
+            me.displayUnifiedDetails();
         }
 
         sidebar.setLoading(false);
@@ -249,7 +249,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
         me.updatePaymentInvoice();
         me.updateRefundSales();
 
-        //Hide the information we don't have
+        // Hide the information we don't have
         sidebar.paymentTab.cartGrid.hide();
         sidebar.paymentTab.addressContainer.hide();
         sidebar.paymentTab.customerContainer.hide();
@@ -267,7 +267,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
         var me = this,
             details = Ext.JSON.decode(response.responseText);
 
-        if (details.success) {
+        if (Ext.isDefined(details) && details.success) {
             me.loadDetails(me.record);
 
             Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal Products{/s}', '{s name=growl/refundSuccess}The refund was successful{/s}', me.window.title);

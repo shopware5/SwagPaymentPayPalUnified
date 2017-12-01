@@ -24,6 +24,7 @@
 
 use Shopware\Components\HttpClient\RequestException;
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
+use SwagPaymentPayPalUnified\Components\ExceptionHandlerServiceInterface;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\PaymentStatus;
@@ -41,8 +42,6 @@ use SwagPaymentPayPalUnified\PayPalBundle\PartnerAttributionId;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\PaymentResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService;
-use SwagPaymentPayPalUnified\PayPalBundle\Structs\ErrorResponse;
-use SwagPaymentPayPalUnified\PayPalBundle\Structs\GenericErrorResponse;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Instruction\PaymentInstructionType;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\RelatedResources\RelatedResource;
@@ -65,13 +64,22 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
     private $logger;
 
     /**
-     * initialize payment resource
+     * @var SettingsServiceInterface
      */
+    private $settingsService;
+
+    /**
+     * @var \Shopware_Components_Config
+     */
+    private $shopwareConfig;
+
     public function preDispatch()
     {
-        $this->paymentResource = $this->container->get('paypal_unified.payment_resource');
-        $this->client = $this->container->get('paypal_unified.client_service');
-        $this->logger = $this->container->get('paypal_unified.logger_service');
+        $this->paymentResource = $this->get('paypal_unified.payment_resource');
+        $this->client = $this->get('paypal_unified.client_service');
+        $this->logger = $this->get('paypal_unified.logger_service');
+        $this->settingsService = $this->get('paypal_unified.settings_service');
+        $this->shopwareConfig = $this->get('config');
     }
 
     /**
@@ -83,8 +91,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
     }
 
     /**
-     * The gateway to PayPal. The payment will be created and the user will be redirected to the
-     * PayPal site.
+     * The gateway to PayPal. The payment will be created and the user will be redirected to the PayPal site.
      */
     public function gatewayAction()
     {
@@ -100,7 +107,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
         try {
             //Query all information
             $basketData = $orderData['sBasket'];
-            $webProfileId = $this->get('paypal_unified.settings_service')->get('web_profile_id');
+            $webProfileId = $this->settingsService->get('web_profile_id');
 
             $selectedPaymentName = $orderData['sPayment']['name'];
 
@@ -110,7 +117,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
             $requestParams->setWebProfileId($webProfileId);
 
             //Prepare the new basket signature feature, announced in SW 5.3.0
-            if (version_compare($this->container->get('config')->offsetGet('version'), '5.3.0', '>=')) {
+            if (version_compare($this->shopwareConfig->offsetGet('version'), '5.3.0', '>=')) {
                 $basketUniqueId = $this->persistBasket();
                 $requestParams->setBasketUniqueId($basketUniqueId);
             }
@@ -118,8 +125,8 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
             /** @var Payment $payment */
             $payment = null;
 
-            //For generic paypal payments like PayPal or PayPal Plus ones,
-            //we need a different parameter for the payment creation than in installments
+            // For generic PayPal payments like PayPal or PayPal Plus ones,
+            // a different parameter than in installments for the payment creation is needed
             if ($selectedPaymentName === PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME) {
                 $requestParams->setPaymentType(PaymentType::PAYPAL_CLASSIC);
                 $payment = $this->get('paypal_unified.payment_builder_service')->getPayment($requestParams);
@@ -137,7 +144,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
 
             return;
         } catch (\Exception $exception) {
-            $this->handleError(ErrorCodes::UNKNOWN);
+            $this->handleError(ErrorCodes::UNKNOWN, $exception);
 
             return;
         }
@@ -164,8 +171,8 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
     }
 
     /**
-     * This action is called when the user is being redirected back from PayPal after a successful payment process. Here we save the order in the system
-     * and handle the data exchange with PayPal.
+     * This action is called when the user is being redirected back from PayPal after a successful payment process.
+     * The order is saved here in the system and handle the data exchange with PayPal.
      * Required parameters:
      *  (string) paymentId
      *  (string) PayerID
@@ -184,12 +191,12 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
             /** @var OrderDataService $orderDataService */
             $orderDataService = $this->get('paypal_unified.order_data_service');
 
-            $sendOrderNumber = (bool) $this->get('paypal_unified.settings_service')->get('send_order_number');
+            $sendOrderNumber = (bool) $this->settingsService->get('send_order_number');
 
             // if the order number should be send to PayPal do it before the execute
             if ($sendOrderNumber) {
                 $orderNumber = $this->saveOrder($paymentId, $paymentId, PaymentStatus::PAYMENT_STATUS_OPEN);
-                $patchOrderNumber = $this->container->get('paypal_unified.settings_service')->get('order_number_prefix') . $orderNumber;
+                $patchOrderNumber = $this->settingsService->get('order_number_prefix') . $orderNumber;
 
                 /** @var PaymentOrderNumberPatch $paymentPatch */
                 $paymentPatch = new PaymentOrderNumberPatch($patchOrderNumber);
@@ -198,7 +205,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
             }
 
             //Basket validation with shopware 5.2 support
-            if (in_array($basketId, BasketIdWhitelist::WHITELIST_IDS, true) || version_compare($this->container->get('config')->get('version'), '5.3.0', '<')) {
+            if (in_array($basketId, BasketIdWhitelist::WHITELIST_IDS, true) || version_compare($this->shopwareConfig->get('version'), '5.3.0', '<')) {
                 //For shopware < 5.3 and for whitelisted basket ids
                 $payment = $this->paymentResource->get($paymentId);
                 $basketValid = $this->validateBasketSimple(Payment::fromArray($payment));
@@ -251,7 +258,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
                 return;
             }
 
-            // if we get payment instructions from PayPal save them to database.
+            // Save payment instructions from PayPal to database.
             // if the instruction is of type MANUAL_BANK_TRANSFER the instructions are not required,
             // since they don't have to be displayed on the invoice document
             $instructions = $response->getPaymentInstruction();
@@ -274,7 +281,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
         } catch (RequestException $exception) {
             $this->handleError(ErrorCodes::COMMUNICATION_FAILURE, $exception);
         } catch (\Exception $exception) {
-            $this->handleError(ErrorCodes::UNKNOWN);
+            $this->handleError(ErrorCodes::UNKNOWN, $exception);
         }
     }
 
@@ -313,39 +320,22 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
      *
      * @see ErrorCodes
      *
-     * @param int              $code
-     * @param RequestException $exception
+     * @param int       $code
+     * @param Exception $exception
      */
-    private function handleError($code, RequestException $exception = null)
+    private function handleError($code, Exception $exception = null)
     {
-        /** @var SettingsServiceInterface $settings */
-        $settings = $this->container->get('paypal_unified.settings_service');
-
         /** @var string $message */
         $message = null;
         $name = null;
 
-        if ($exception) {
-            $this->logger->error('Received an error during checkout process', ['payload' => $exception->getBody()]);
+        if ($exception && $this->settingsService->hasSettings() && $this->settingsService->get('display_errors')) {
+            /** @var ExceptionHandlerServiceInterface $exceptionHandler */
+            $exceptionHandler = $this->get('paypal_unified.exception_handler_service');
 
-            //Parse the received error
-            $error = ErrorResponse::fromArray(json_decode($exception->getBody(), true));
-
-            if ($error->getMessage() !== null) {
-                if ($settings->hasSettings() && $settings->get('display_errors')) {
-                    $message = $error->getMessage();
-                    $name = $error->getName();
-                }
-            }
-
-            $genericError = GenericErrorResponse::fromArray(json_decode($exception->getBody(), true));
-
-            if ($genericError->getErrorDescription() !== null) {
-                if ($settings->hasSettings() && $settings->get('display_errors')) {
-                    $message = $genericError->getErrorDescription();
-                    $name = $genericError->getError();
-                }
-            }
+            $error = $exceptionHandler->handle($exception, 'process checkout');
+            $message = $error->getMessage();
+            $name = $error->getName();
         }
 
         $this->redirect([
@@ -388,7 +378,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
     private function validateBasketSimple(Payment $payment)
     {
         /** @var BasketValidatorInterface $legacyValidator */
-        $legacyValidator = $this->container->get('paypal_unified.simple_basket_validator');
+        $legacyValidator = $this->get('paypal_unified.simple_basket_validator');
 
         return $legacyValidator->validate($this->getBasket(), $this->getUser(), $payment);
     }

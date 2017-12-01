@@ -22,63 +22,39 @@
  * our trademarks remain entirely with us.
  */
 
-namespace SwagPaymentPayPalUnified\PayPalBundle\Structs\ErrorResponse;
+namespace SwagPaymentPayPalUnified\Components;
 
-class Detail
+class PayPalApiException extends \Exception
 {
     /**
      * @var string
      */
-    private $field;
+    private $name;
 
     /**
-     * @var string
+     * @param string $name
+     * @param string $message
      */
-    private $issue;
-
-    /**
-     * @return string
-     */
-    public function getField()
+    public function __construct($name, $message)
     {
-        return $this->field;
-    }
+        $this->name = $name;
 
-    /**
-     * @param string $field
-     */
-    public function setField($field)
-    {
-        $this->field = $field;
+        parent::__construct($message);
     }
 
     /**
      * @return string
      */
-    public function getIssue()
+    public function getName()
     {
-        return $this->issue;
+        return $this->name;
     }
 
     /**
-     * @param string $issue
+     * @return string
      */
-    public function setIssue($issue)
+    public function getCompleteMessage()
     {
-        $this->issue = $issue;
-    }
-
-    /**
-     * @param $detail
-     *
-     * @return Detail
-     */
-    public static function fromArray($detail)
-    {
-        $result = new self();
-        $result->setField($detail['field']);
-        $result->setIssue($detail['issue']);
-
-        return $result;
+        return $this->getMessage() . ' [' . $this->getName() . ']';
     }
 }

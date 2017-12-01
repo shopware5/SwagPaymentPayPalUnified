@@ -62,7 +62,7 @@ class Backend implements SubscriberInterface
     {
         /** @var Enlight_View_Default $view */
         $view = $args->getSubject()->View();
-        $view->addTemplateDir($this->pluginDir . '/Resources/views');
+        $view->addTemplateDir($this->pluginDir . '/Resources/views/');
         $view->extendsTemplate('backend/paypal_unified/menu_icon.tpl');
     }
 }

@@ -74,7 +74,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.History', {
             responseObject = Ext.JSON.decode(response.responseText),
             details;
 
-        if (responseObject.success) {
+        if (Ext.isDefined(responseObject) && responseObject.success) {
             details = responseObject.details;
             historyTab.loadRecord(Ext.create('Shopware.apps.PaypalUnified.model.Sale', details));
             historyTab.loadRecord(Ext.create('Shopware.apps.PaypalUnified.model.PaymentAmount', details.amount));
@@ -105,7 +105,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.History', {
             responseObject = Ext.JSON.decode(response.responseText),
             details;
 
-        if (responseObject.success) {
+        if (Ext.isDefined(responseObject) && responseObject.success) {
             details = responseObject.details;
             historyTab.loadRecord(Ext.create('Shopware.apps.PaypalUnified.model.Refund', details));
             historyTab.loadRecord(Ext.create('Shopware.apps.PaypalUnified.model.PaymentAmount', details.amount));
@@ -135,7 +135,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.History', {
             responseObject = Ext.JSON.decode(response.responseText),
             details;
 
-        if (responseObject.success) {
+        if (Ext.isDefined(responseObject) && responseObject.success) {
             details = responseObject.details;
 
             historyTab.loadRecord(Ext.create('Shopware.apps.PaypalUnified.model.Capture', details));
@@ -167,7 +167,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.History', {
             responseObject = Ext.JSON.decode(response.responseText),
             details;
 
-        if (responseObject.success) {
+        if (Ext.isDefined(responseObject) && responseObject.success) {
             details = responseObject.details;
             historyTab.loadRecord(Ext.create('Shopware.apps.PaypalUnified.model.Order', details));
             historyTab.loadRecord(Ext.create('Shopware.apps.PaypalUnified.model.PaymentAmount', details.amount));
@@ -197,7 +197,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.History', {
             responseObject = Ext.JSON.decode(response.responseText),
             details;
 
-        if (responseObject.success) {
+        if (Ext.isDefined(responseObject) && responseObject.success) {
             details = responseObject.details;
             historyTab.loadRecord(Ext.create('Shopware.apps.PaypalUnified.model.Authorization', details));
             historyTab.loadRecord(Ext.create('Shopware.apps.PaypalUnified.model.PaymentAmount', details.amount));

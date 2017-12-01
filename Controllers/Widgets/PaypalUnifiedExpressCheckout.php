@@ -23,7 +23,9 @@
  */
 
 use Shopware\Components\HttpClient\RequestException;
+use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
+use SwagPaymentPayPalUnified\Components\ExceptionHandlerServiceInterface;
 use SwagPaymentPayPalUnified\Components\ExpressCheckout\CustomerService;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
@@ -33,8 +35,6 @@ use SwagPaymentPayPalUnified\PayPalBundle\PartnerAttributionId;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\PaymentResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService;
-use SwagPaymentPayPalUnified\PayPalBundle\Structs\ErrorResponse;
-use SwagPaymentPayPalUnified\PayPalBundle\Structs\GenericErrorResponse;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
 
 class Shopware_Controllers_Widgets_PaypalUnifiedExpressCheckout extends \Enlight_Controller_Action
@@ -55,22 +55,31 @@ class Shopware_Controllers_Widgets_PaypalUnifiedExpressCheckout extends \Enlight
     private $client;
 
     /**
-     * Initialize payment resource
+     * @var DependencyProvider
      */
+    private $dependencyProvider;
+
+    /**
+     * @var SettingsServiceInterface
+     */
+    private $settingsService;
+
     public function preDispatch()
     {
         $this->paymentResource = $this->get('paypal_unified.payment_resource');
-        $this->client = $this->container->get('paypal_unified.client_service');
+        $this->client = $this->get('paypal_unified.client_service');
         $this->logger = $this->get('paypal_unified.logger_service');
+        $this->dependencyProvider = $this->get('paypal_unified.dependency_provider');
+        $this->settingsService = $this->get('paypal_unified.settings_service');
     }
 
     public function createPaymentAction()
     {
         /** @var sBasket $basket */
-        $basket = $this->get('paypal_unified.dependency_provider')->getModule('basket');
+        $basket = $this->dependencyProvider->getModule('basket');
 
-        //If the paypal express button on the detail page was clicked, the addProduct equals true.
-        //That means, that we have to add it manually to the basket.
+        //If the PayPal express button on the detail page was clicked, the addProduct equals true.
+        //That means, that it has to be added manually to the basket.
         $addProductToBasket = $this->Request()->getParam('addProduct', false);
         if ($addProductToBasket) {
             // delete the cart, to make sure that only the selected product is transferred to PayPal
@@ -83,16 +92,16 @@ class Shopware_Controllers_Widgets_PaypalUnifiedExpressCheckout extends \Enlight
             // on patching the new amount after the confirmation.
             // only necessary if the customer directly checks out from product detail page
             /** @var sAdmin $admin */
-            $admin = $this->get('paypal_unified.dependency_provider')->getModule('admin');
+            $admin = $this->dependencyProvider->getModule('admin');
             $countries = $admin->sGetCountryList();
             $admin->sGetPremiumShippingcosts(reset($countries));
         }
 
-        //By using the basket module we do not have to deal with any view assignments
-        //as seen in the PayPalUnified controller.
+        // By using the basket module it is not necessary to deal with any view assignments
+        // as seen in the PayPalUnified controller.
         $basketData = $basket->sGetBasket();
 
-        $webProfileId = $this->get('paypal_unified.settings_service')->get('web_profile_id', SettingsTable::EXPRESS_CHECKOUT);
+        $webProfileId = $this->settingsService->get('web_profile_id', SettingsTable::EXPRESS_CHECKOUT);
 
         $userData = [
             'additional' => [
@@ -101,7 +110,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedExpressCheckout extends \Enlight
         ];
 
         /** @var \Shopware\Models\Shop\DetachedShop $shop */
-        $shop = $this->get('paypal_unified.dependency_provider')->getShop();
+        $shop = $this->dependencyProvider->getShop();
         $currency = $shop->getCurrency()->getCurrency();
 
         $requestParams = new PaymentBuilderParameters();
@@ -122,8 +131,8 @@ class Shopware_Controllers_Widgets_PaypalUnifiedExpressCheckout extends \Enlight
             $this->handleError(ErrorCodes::COMMUNICATION_FAILURE, $requestEx);
 
             return;
-        } catch (\Exception $exception) {
-            $this->handleError(ErrorCodes::UNKNOWN);
+        } catch (Exception $exception) {
+            $this->handleError(ErrorCodes::UNKNOWN, $exception);
 
             return;
         }
@@ -154,8 +163,8 @@ class Shopware_Controllers_Widgets_PaypalUnifiedExpressCheckout extends \Enlight
             $this->handleError(ErrorCodes::COMMUNICATION_FAILURE, $requestEx);
 
             return;
-        } catch (\Exception $exception) {
-            $this->handleError(ErrorCodes::UNKNOWN);
+        } catch (Exception $exception) {
+            $this->handleError(ErrorCodes::UNKNOWN, $exception);
 
             return;
         }
@@ -181,39 +190,22 @@ class Shopware_Controllers_Widgets_PaypalUnifiedExpressCheckout extends \Enlight
      *
      * @see ErrorCodes
      *
-     * @param int              $code
-     * @param RequestException $exception
+     * @param int       $code
+     * @param Exception $exception
      */
-    private function handleError($code, RequestException $exception = null)
+    private function handleError($code, Exception $exception = null)
     {
-        /** @var SettingsServiceInterface $settings */
-        $settings = $this->container->get('paypal_unified.settings_service');
-
         /** @var string $message */
         $message = null;
         $name = null;
 
-        if ($exception) {
-            $this->logger->error('Received an error during express-checkout process', ['payload' => $exception->getBody()]);
+        if ($exception && $this->settingsService->hasSettings() && $this->settingsService->get('display_errors')) {
+            /** @var ExceptionHandlerServiceInterface $exceptionHandler */
+            $exceptionHandler = $this->get('paypal_unified.exception_handler_service');
 
-            //Parse the received error
-            $error = ErrorResponse::fromArray(json_decode($exception->getBody(), true));
-
-            if ($error->getMessage() !== null) {
-                if ($settings->hasSettings() && $settings->get('display_errors')) {
-                    $message = $error->getMessage();
-                    $name = $error->getName();
-                }
-            }
-
-            $genericError = GenericErrorResponse::fromArray(json_decode($exception->getBody(), true));
-
-            if ($genericError->getErrorDescription() !== null) {
-                if ($settings->hasSettings() && $settings->get('display_errors')) {
-                    $message = $genericError->getErrorDescription();
-                    $name = $genericError->getError();
-                }
-            }
+            $error = $exceptionHandler->handle($exception, 'process express-checkout');
+            $message = $error->getMessage();
+            $name = $error->getName();
         }
 
         $this->redirect([
