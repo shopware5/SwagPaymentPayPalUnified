@@ -22,63 +22,15 @@
  * our trademarks remain entirely with us.
  */
 
-namespace SwagPaymentPayPalUnified\PayPalBundle\Structs\ErrorResponse;
+namespace SwagPaymentPayPalUnified\Components;
 
-class Detail
+interface ExceptionHandlerServiceInterface
 {
     /**
-     * @var string
-     */
-    private $field;
-
-    /**
-     * @var string
-     */
-    private $issue;
-
-    /**
-     * @return string
-     */
-    public function getField()
-    {
-        return $this->field;
-    }
-
-    /**
-     * @param string $field
-     */
-    public function setField($field)
-    {
-        $this->field = $field;
-    }
-
-    /**
-     * @return string
-     */
-    public function getIssue()
-    {
-        return $this->issue;
-    }
-
-    /**
-     * @param string $issue
-     */
-    public function setIssue($issue)
-    {
-        $this->issue = $issue;
-    }
-
-    /**
-     * @param $detail
+     * @param \Exception $e
+     * @param string     $currentAction
      *
-     * @return Detail
+     * @return PayPalApiException The error message and name extracted from the exception
      */
-    public static function fromArray($detail)
-    {
-        $result = new self();
-        $result->setField($detail['field']);
-        $result->setIssue($detail['issue']);
-
-        return $result;
-    }
+    public function handle(\Exception $e, $currentAction);
 }

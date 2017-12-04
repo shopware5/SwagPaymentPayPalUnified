@@ -72,9 +72,7 @@ class Backend implements SubscriberInterface
      */
     public function onGetBackendControllerPath()
     {
-        $this->template->addTemplateDir(
-            $this->pluginDirectory . '/Resources/views/'
-        );
+        $this->template->addTemplateDir($this->pluginDirectory . '/Resources/views/');
 
         return $this->pluginDirectory . '/Controllers/Backend/PaypalUnified.php';
     }
@@ -87,9 +85,7 @@ class Backend implements SubscriberInterface
      */
     public function onGetBackendSettingsControllerPath()
     {
-        $this->template->addTemplateDir(
-            $this->pluginDirectory . '/Resources/views/'
-        );
+        $this->template->addTemplateDir($this->pluginDirectory . '/Resources/views/');
 
         return $this->pluginDirectory . '/Controllers/Backend/PaypalUnifiedSettings.php';
     }

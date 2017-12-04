@@ -25,7 +25,7 @@
 class Shopware_Controllers_Frontend_PaypalUnifiedInstallments extends \Enlight_Controller_Action
 {
     /**
-     * To avoid duplicate code, we can simply trigger the unified controller here.
+     * To avoid duplicate code, simply trigger the unified controller here.
      */
     public function indexAction()
     {
@@ -39,8 +39,8 @@ class Shopware_Controllers_Frontend_PaypalUnifiedInstallments extends \Enlight_C
     }
 
     /**
-     * Will be triggered when the user returns from the paypal payment page.
-     * To avoid duplicate code, we can simply trigger the checkout controller here.
+     * Will be triggered when the user returns from the PayPal payment page.
+     * To avoid duplicate code, simply trigger the checkout controller here.
      */
     public function returnAction()
     {

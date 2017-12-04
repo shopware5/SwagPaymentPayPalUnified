@@ -100,7 +100,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedWebhook extends Enlight_Control
             //Delegate the request to the referenced webhook-handler.
             $this->webhookService->getWebhookHandler($webhook->getEventType())->invoke($webhook);
         } catch (WebhookException $webhookException) {
-            $this->logger->error('[Webhhok]' . $webhookException->getMessage(), ['type' => $webhookException->getEventType()]);
+            $this->logger->error('[Webhhok] ' . $webhookException->getMessage(), ['type' => $webhookException->getEventType()]);
         }
     }
 }

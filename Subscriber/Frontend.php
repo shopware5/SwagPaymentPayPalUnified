@@ -60,7 +60,6 @@ class Frontend implements SubscriberInterface
         return [
             'Theme_Compiler_Collect_Plugin_Javascript' => 'onCollectJavascript',
             'Enlight_Controller_Action_PostDispatchSecure_Frontend' => 'onPostDispatchSecure',
-            'Enlight_Controller_Action_PostDispatchSecure_Widgets' => 'onPostDispatchSecure',
             'Theme_Inheritance_Template_Directories_Collected' => 'onCollectTemplateDir',
         ];
     }
@@ -120,7 +119,7 @@ class Frontend implements SubscriberInterface
     public function onCollectTemplateDir(\Enlight_Event_EventArgs $args)
     {
         $dirs = $args->getReturn();
-        $dirs[] = $this->pluginDir . '/Resources/views';
+        $dirs[] = $this->pluginDir . '/Resources/views/';
 
         $args->setReturn($dirs);
     }

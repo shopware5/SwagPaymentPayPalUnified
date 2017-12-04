@@ -45,10 +45,9 @@ class FrontendSubscriberTest extends \PHPUnit_Framework_TestCase
     public function test_getSubscribedEvents_has_correct_events()
     {
         $events = Frontend::getSubscribedEvents();
-        $this->assertCount(4, $events);
+        $this->assertCount(3, $events);
         $this->assertEquals('onCollectJavascript', $events['Theme_Compiler_Collect_Plugin_Javascript']);
         $this->assertEquals('onPostDispatchSecure', $events['Enlight_Controller_Action_PostDispatchSecure_Frontend']);
-        $this->assertEquals('onPostDispatchSecure', $events['Enlight_Controller_Action_PostDispatchSecure_Widgets']);
         $this->assertEquals('onCollectTemplateDir', $events['Theme_Inheritance_Template_Directories_Collected']);
     }
 
