@@ -98,7 +98,7 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
         } catch (Exception $e) {
             $error = $this->exceptionHandler->handle($e, 'register webhooks');
 
-            if ($error['message'] === 'Webhook URL already exists') {
+            if ($error->getMessage() === 'Webhook URL already exists') {
                 $this->View()->assign([
                     'success' => true,
                     'url' => $url,
@@ -109,7 +109,7 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
 
             $this->View()->assign([
                 'success' => false,
-                $error->getCompleteMessage(),
+                'message' => $error->getCompleteMessage(),
             ]);
 
             return;
@@ -134,7 +134,7 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
 
             $this->View()->assign([
                 'success' => false,
-                $error->getCompleteMessage(),
+                'message' => $error->getCompleteMessage(),
             ]);
         }
     }
@@ -155,7 +155,7 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
 
             $this->View()->assign([
                 'success' => false,
-                $error->getCompleteMessage(),
+                'message' => $error->getCompleteMessage(),
             ]);
 
             return;
@@ -179,7 +179,7 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
 
             $this->View()->assign([
                 'success' => false,
-                $error->getCompleteMessage(),
+                'message' => $error->getCompleteMessage(),
             ]);
 
             return;
