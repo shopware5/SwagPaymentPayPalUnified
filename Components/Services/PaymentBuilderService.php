@@ -265,9 +265,12 @@ class PaymentBuilderService implements PaymentBuilderInterface
                 $item = new Item();
                 $item->setCurrency($this->basketData['sCurrencyName']);
                 $item->setName($name);
-                $item->setSku($sku);
                 $item->setPrice($price);
                 $item->setQuantity($quantity);
+
+                if ($sku !== null && $sku !== '') {
+                    $item->setSku($sku);
+                }
 
                 $list[] = $item;
             }
