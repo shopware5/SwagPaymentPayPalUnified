@@ -24,6 +24,7 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Subscriber;
 
+use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Subscriber\Account;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\SettingsHelperTrait;
@@ -92,6 +93,31 @@ class AccountTest extends \PHPUnit_Framework_TestCase
         $customerData = $view->getAssign('sUserData');
         $this->assertSame('PayPal', $customerData['additional']['payment']['description']);
         Shopware()->Container()->set('shop', $shop);
+    }
+
+    public function test_onPostDispatchAccount_payment_method_inactive()
+    {
+        $paymentMethodProvider = new PaymentMethodProvider(Shopware()->Container()->get('models'));
+        $paymentMethodProvider->setPaymentMethodActiveFlag(false);
+        $subscriber = $this->getSubscriber();
+
+        $view = new ViewMock(
+            new \Enlight_Template_Manager()
+        );
+        $view->assign($this->getAccountViewAssigns());
+
+        $request = new \Enlight_Controller_Request_RequestTestCase();
+        $request->setActionName('index');
+
+        $eventArgs = new \Enlight_Controller_ActionEventArgs([
+            'subject' => new DummyController($request, $view),
+        ]);
+
+        $subscriber->onPostDispatchAccount($eventArgs);
+        $customerData = $view->getAssign('sUserData');
+        $this->assertSame('PayPal', $customerData['additional']['payment']['description']);
+
+        $paymentMethodProvider->setPaymentMethodActiveFlag(true);
     }
 
     public function test_onPostDispatchAccount_no_settings()
@@ -226,7 +252,6 @@ class AccountTest extends \PHPUnit_Framework_TestCase
     private function getSubscriber()
     {
         $subscriber = new Account(
-            Shopware()->Container()->get('models'),
             Shopware()->Container()->get('dbal_connection'),
             Shopware()->Container()->get('paypal_unified.settings_service'),
             Shopware()->Container()->get('paypal_unified.dependency_provider')

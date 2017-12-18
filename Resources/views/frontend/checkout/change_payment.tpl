@@ -3,7 +3,7 @@
 {* PayPal Plus integration *}
 {block name='frontend_index_header_javascript_jquery_lib'}
     {block name='frontend_index_header_javascript_jquery_lib_paypal_unified_plus'}
-        {if $paypalUnifiedUsePlus}
+        {if $paypalUnifiedUsePlus && $paypalUnifiedApprovalUrl}
             <script src="https://www.paypalobjects.com/webstatic/ppplus/ppplus.min.js"></script>
         {/if}
     {/block}
@@ -14,7 +14,7 @@
 {* PayPal Plus integration *}
 {block name='frontend_checkout_payment_fieldset_description'}
     {block name='frontend_checkout_payment_fieldset_description_paypal_unified_plus'}
-        {if $payment_mean.id == $paypalUnifiedPaymentId && $paypalUnifiedUsePlus}
+        {if $paypalUnifiedUsePlus && $paypalUnifiedApprovalUrl && $payment_mean.id == $paypalUnifiedPaymentId}
             <div id="ppplus" class="method--description">
             </div>
         {else}
@@ -26,7 +26,7 @@
 {* PayPal Plus integration *}
 {block name='frontend_checkout_payment_content'}
     {block name='frontend_checkout_payment_content_paypal_unified_plus'}
-        {if $paypalUnifiedUsePlus && $paypalUnifiedRestylePaymentSelection}
+        {if $paypalUnifiedUsePlus && $paypalUnifiedApprovalUrl && $paypalUnifiedRestylePaymentSelection}
             {include file='frontend/paypal_unified/plus/checkout/custom_shipping_payment/change_payment.tpl'}
         {else}
             {$smarty.block.parent}

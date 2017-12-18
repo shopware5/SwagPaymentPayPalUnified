@@ -24,6 +24,7 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Subscriber;
 
+use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Subscriber\ExpressCheckout as ExpressCheckoutSubscriber;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\SettingsHelperTrait;
@@ -72,6 +73,27 @@ class ExpressCheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($view->getAssign('paypalUnifiedEcActive'));
     }
 
+    public function test_loadExpressCheckoutJs_return_payment_method_inactive()
+    {
+        $paymentMethodProvider = new PaymentMethodProvider(Shopware()->Container()->get('models'));
+        $paymentMethodProvider->setPaymentMethodActiveFlag(false);
+
+        $view = new ViewMock(new \Enlight_Template_Manager());
+        $request = new \Enlight_Controller_Request_RequestTestCase();
+
+        $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
+            'subject' => new DummyController($request, $view, null),
+        ]);
+
+        $this->importSettings();
+
+        $subscriber = $this->getSubscriber();
+        $subscriber->loadExpressCheckoutJS($enlightEventArgs);
+
+        $this->assertNull($view->getAssign('paypalUnifiedEcActive'));
+        $paymentMethodProvider->setPaymentMethodActiveFlag(true);
+    }
+
     public function test_loadExpressCheckoutJs_return_unified_inactive()
     {
         $view = new ViewMock(new \Enlight_Template_Manager());
@@ -104,6 +126,27 @@ class ExpressCheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
         $subscriber->loadExpressCheckoutJS($enlightEventArgs);
 
         $this->assertNull($view->getAssign('paypalUnifiedEcActive'));
+    }
+
+    public function test_addExpressCheckoutButtonCart_return_payment_method_inactive()
+    {
+        $paymentMethodProvider = new PaymentMethodProvider(Shopware()->Container()->get('models'));
+        $paymentMethodProvider->setPaymentMethodActiveFlag(false);
+
+        $view = new ViewMock(new \Enlight_Template_Manager());
+        $request = new \Enlight_Controller_Request_RequestTestCase();
+
+        $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
+            'subject' => new DummyController($request, $view, null),
+        ]);
+
+        $this->importSettings();
+
+        $subscriber = $this->getSubscriber();
+        $subscriber->addExpressCheckoutButtonCart($enlightEventArgs);
+
+        $this->assertNull($view->getAssign('paypalUnifiedModeSandbox'));
+        $paymentMethodProvider->setPaymentMethodActiveFlag(true);
     }
 
     public function test_addExpressCheckoutButtonCart_return_unified_inactive()
@@ -197,7 +240,7 @@ class ExpressCheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($view->getAssign('paypalUnifiedModeSandbox'));
     }
 
-    public function test_addEcInfoOnConfirm_returns_because_wrong_action()
+    public function test_addEcInfoOnConfirm_return_wrong_action()
     {
         $view = new ViewMock(new \Enlight_Template_Manager());
         $request = new \Enlight_Controller_Request_RequestTestCase();
@@ -214,7 +257,7 @@ class ExpressCheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($view->getAssign('paypalUnifiedExpressPaymentId'));
     }
 
-    public function test_addEcInfoOnConfirm_returns_because_no_ec()
+    public function test_addEcInfoOnConfirm_return_no_ec()
     {
         $view = new ViewMock(new \Enlight_Template_Manager());
         $request = new \Enlight_Controller_Request_RequestTestCase();
@@ -254,7 +297,7 @@ class ExpressCheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($view->getAssign('paypalUnifiedExpressCheckout'));
     }
 
-    public function test_addPaymentInfoToRequest_returns_because_wrong_action()
+    public function test_addPaymentInfoToRequest_return_wrong_action()
     {
         $view = new ViewMock(new \Enlight_Template_Manager());
         $request = new \Enlight_Controller_Request_RequestTestCase();
@@ -270,7 +313,7 @@ class ExpressCheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($subscriber->addPaymentInfoToRequest($enlightEventArgs));
     }
 
-    public function test_addPaymentInfoToRequest_returns_because_wrong_param()
+    public function test_addPaymentInfoToRequest_return_wrong_param()
     {
         $view = new ViewMock(new \Enlight_Template_Manager());
         $request = new \Enlight_Controller_Request_RequestTestCase();
@@ -286,7 +329,7 @@ class ExpressCheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($subscriber->addPaymentInfoToRequest($enlightEventArgs));
     }
 
-    public function test_addPaymentInfoToRequest_returns_because_no_redirect()
+    public function test_addPaymentInfoToRequest_return_no_redirect()
     {
         $view = new ViewMock(new \Enlight_Template_Manager());
         $request = new \Enlight_Controller_Request_RequestTestCase();
@@ -306,7 +349,58 @@ class ExpressCheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($subscriber->addPaymentInfoToRequest($enlightEventArgs));
     }
 
-    public function test_addExpressCheckoutButtonDetail_returns_because_unified_inactive()
+    public function test_addPaymentInfoToRequest()
+    {
+        $session = Shopware()->Session();
+        $session->offsetSet('sOrderVariables', require __DIR__ . '/_fixtures/sOrderVariables.php');
+        $view = new ViewMock(new \Enlight_Template_Manager());
+        $request = new \Enlight_Controller_Request_RequestTestCase();
+        $request->setActionName('payment');
+        $request->setParam('expressCheckout', true);
+
+        $response = new \Enlight_Controller_Response_ResponseTestCase();
+
+        $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
+            'subject' => new DummyController($request, $view, $response),
+            'request' => $request,
+            'response' => $response,
+        ]);
+
+        $subscriber = $this->getSubscriber();
+
+        $reflectionClass = new \ReflectionClass(\Enlight_Controller_Response_ResponseTestCase::class);
+        $prop = $reflectionClass->getProperty('_isRedirect');
+        $prop->setAccessible(true);
+        $prop->setValue($response, true);
+
+        $subscriber->addPaymentInfoToRequest($enlightEventArgs);
+
+        $this->assertContains('/PaypalUnified/return/expressCheckout/1/paymentId//PayerID//basketId/', $response->getHeader('Location'));
+        $this->assertEquals(302, $response->getHttpResponseCode());
+    }
+
+    public function test_addExpressCheckoutButtonDetail_return_payment_method_inactive()
+    {
+        $paymentMethodProvider = new PaymentMethodProvider(Shopware()->Container()->get('models'));
+        $paymentMethodProvider->setPaymentMethodActiveFlag(false);
+
+        $view = new ViewMock(new \Enlight_Template_Manager());
+        $request = new \Enlight_Controller_Request_RequestTestCase();
+
+        $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
+            'subject' => new DummyController($request, $view),
+        ]);
+
+        $this->importSettings();
+
+        $subscriber = $this->getSubscriber();
+        $subscriber->addExpressCheckoutButtonDetail($enlightEventArgs);
+
+        $this->assertNull($view->getAssign('paypalUnifiedEcDetailActive'));
+        $paymentMethodProvider->setPaymentMethodActiveFlag(true);
+    }
+
+    public function test_addExpressCheckoutButtonDetail_return_unified_inactive()
     {
         $view = new ViewMock(new \Enlight_Template_Manager());
         $request = new \Enlight_Controller_Request_RequestTestCase();
@@ -340,7 +434,7 @@ class ExpressCheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($view->getAssign('paypalUnifiedEcDetailActive'));
     }
 
-    public function test_addExpressCheckoutButtonDetail_returns_because_ec_detail_inactive()
+    public function test_addExpressCheckoutButtonDetail_return_ec_detail_inactive()
     {
         $view = new ViewMock(new \Enlight_Template_Manager());
         $request = new \Enlight_Controller_Request_RequestTestCase();
@@ -394,6 +488,9 @@ class ExpressCheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
         ]);
     }
 
+    /**
+     * @return ExpressCheckoutSubscriber
+     */
     private function getSubscriber()
     {
         Shopware()->Container()->set('paypal_unified.client_service', new ClientService());
@@ -404,7 +501,8 @@ class ExpressCheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
             Shopware()->Container()->get('paypal_unified.payment_resource'),
             Shopware()->Container()->get('paypal_unified.payment_address_service'),
             Shopware()->Container()->get('paypal_unified.payment_builder_service'),
-            Shopware()->Container()->get('paypal_unified.logger_service')
+            Shopware()->Container()->get('paypal_unified.exception_handler_service'),
+            Shopware()->Container()->get('dbal_connection')
         );
     }
 }

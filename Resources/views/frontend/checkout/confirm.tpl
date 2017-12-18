@@ -3,7 +3,7 @@
 {* PayPal Plus integration *}
 {block name='frontend_index_header_javascript_jquery_lib'}
     {block name='frontend_index_header_javascript_jquery_lib_paypal_unified_plus'}
-        {if $paypalUnifiedUsePlus}
+        {if $paypalUnifiedUsePlus && $paypalUnifiedApprovalUrl}
             <script src="https://www.paypalobjects.com/webstatic/ppplus/ppplus.min.js"></script>
         {/if}
     {/block}
@@ -14,7 +14,7 @@
 {* PayPal Plus integration *}
 {block name='frontend_checkout_confirm_premiums'}
     {block name='frontend_checkout_confirm_premiums_paypal_unified_plus'}
-        {if $paypalUnifiedUsePlus && !$paypalUnifiedExpressCheckout && $sUserData.additional.payment.id == $paypalUnifiedPaymentId }
+        {if $paypalUnifiedUsePlus && $paypalUnifiedApprovalUrl && !$paypalUnifiedExpressCheckout && $sUserData.additional.payment.id == $paypalUnifiedPaymentId}
             {include file='frontend/paypal_unified/plus/checkout/payment_wall_premiums.tpl'}
         {/if}
     {/block}

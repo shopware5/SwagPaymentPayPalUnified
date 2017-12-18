@@ -27,7 +27,7 @@ namespace SwagPaymentPayPalUnified\Subscriber;
 use Doctrine\DBAL\Connection;
 use Enlight\Event\SubscriberInterface;
 use Enlight_Controller_ActionEventArgs as ActionEventArgs;
-use Shopware\Components\HttpClient\RequestException;
+use SwagPaymentPayPalUnified\Components\ExceptionHandlerServiceInterface;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderInterface;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
@@ -64,21 +64,35 @@ class Installments implements SubscriberInterface
     private $installmentsPaymentBuilder;
 
     /**
-     * @param SettingsServiceInterface $settingsService
-     * @param ValidationService        $validationService
-     * @param Connection               $connection
-     * @param PaymentBuilderInterface  $installmentsPaymentBuilder
+     * @var ExceptionHandlerServiceInterface
+     */
+    private $exceptionHandlerService;
+
+    /**
+     * @var PaymentMethodProvider
+     */
+    private $paymentMethodProvider;
+
+    /**
+     * @param SettingsServiceInterface         $settingsService
+     * @param ValidationService                $validationService
+     * @param Connection                       $connection
+     * @param PaymentBuilderInterface          $installmentsPaymentBuilder
+     * @param ExceptionHandlerServiceInterface $exceptionHandlerService
      */
     public function __construct(
         SettingsServiceInterface $settingsService,
         ValidationService $validationService,
         Connection $connection,
-        PaymentBuilderInterface $installmentsPaymentBuilder
+        PaymentBuilderInterface $installmentsPaymentBuilder,
+        ExceptionHandlerServiceInterface $exceptionHandlerService
     ) {
         $this->settingsService = $settingsService;
         $this->validationService = $validationService;
         $this->connection = $connection;
         $this->installmentsPaymentBuilder = $installmentsPaymentBuilder;
+        $this->exceptionHandlerService = $exceptionHandlerService;
+        $this->paymentMethodProvider = new PaymentMethodProvider();
     }
 
     /**
@@ -97,13 +111,20 @@ class Installments implements SubscriberInterface
      */
     public function onPostDispatchDetail(ActionEventArgs $args)
     {
+        $swUnifiedInstallmentsActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag($this->connection, PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME);
+        if (!$swUnifiedInstallmentsActive) {
+            return;
+        }
+
         /** @var GeneralSettingsModel $generalSettings */
         $generalSettings = $this->settingsService->getSettings();
+        if (!$generalSettings || !$generalSettings->getActive()) {
+            return;
+        }
 
         /** @var InstallmentsSettingsModel $installmentsSettings */
         $installmentsSettings = $this->settingsService->getSettings(null, SettingsTable::INSTALLMENTS);
-
-        if (!$generalSettings || !$installmentsSettings || !$generalSettings->getActive() || !$installmentsSettings->getActive()) {
+        if (!$installmentsSettings || !$installmentsSettings->getActive()) {
             return;
         }
 
@@ -139,13 +160,20 @@ class Installments implements SubscriberInterface
             return;
         }
 
+        $swUnifiedInstallmentsActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag($this->connection, PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME);
+        if (!$swUnifiedInstallmentsActive) {
+            return;
+        }
+
         /** @var GeneralSettingsModel $generalSettings */
         $generalSettings = $this->settingsService->getSettings();
+        if (!$generalSettings || !$generalSettings->getActive()) {
+            return;
+        }
 
         /** @var InstallmentsSettingsModel $installmentsSettings */
         $installmentsSettings = $this->settingsService->getSettings(null, SettingsTable::INSTALLMENTS);
-
-        if (!$generalSettings || !$installmentsSettings || !$generalSettings->getActive() || !$installmentsSettings->getActive()) {
+        if (!$installmentsSettings || !$installmentsSettings->getActive()) {
             return;
         }
 
@@ -227,12 +255,16 @@ class Installments implements SubscriberInterface
 
             //Load the custom confirm page
             $view->loadTemplate('frontend/paypal_unified/installments/return/confirm.tpl');
-        } catch (RequestException $requestException) {
+        } catch (\Exception $e) {
+            $error = $this->exceptionHandlerService->handle($e, 'get installments information');
+
             $controller->redirect([
                 'module' => 'frontend',
                 'controller' => 'checkout',
                 'action' => 'shippingPayment',
                 'paypal_unified_error_code' => '5', //Installments error
+                'paypal_unified_error_message' => $error->getMessage(),
+                'paypal_unified_error_name' => $error->getName(),
             ]);
         }
     }

@@ -95,7 +95,7 @@
             $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonInContextCart/init', me);
 
             if (me.opts.detailPage) {
-                $.subscribe('plugin/swAjaxVariant/onRequestData', $.proxy(me.onChangeVariant, me));
+                $.subscribe(me.getEventName('plugin/swAjaxVariant/onRequestData'), $.proxy(me.onChangeVariant, me));
             }
         },
 
@@ -226,6 +226,17 @@
             var me = this;
 
             return $(me.opts.productQuantitySelector).val();
+        },
+
+        /**
+         * Destroys the plugin and unsubscribes from subscribed events
+         */
+        destroy: function() {
+            var me = this;
+
+            $.unsubscribe(me.getEventName('plugin/swAjaxVariant/onRequestData'));
+
+            me._destroy();
         }
     });
 

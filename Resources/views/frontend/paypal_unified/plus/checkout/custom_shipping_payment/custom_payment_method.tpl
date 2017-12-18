@@ -1,6 +1,6 @@
 {block name='frontend_checkout_payment_content_paypal_unified_custom_payment_item'}
     {$isPayPalUnified = $payment_mean.name eq 'SwagPaymentPayPalUnified'}
-    <div class="payment--method block{if $payment_mean@last} method_last{else} method{/if}{if $payment_mean.id eq $sFormData.payment or (!$sFormData && !$smarty.foreach.register_payment_mean.index)} is--active{/if} {if $isPayPalUnified}is--plus-container{/if} unified--payment">
+    <div class="payment--method block{if $payment_mean@last} method_last{else} method{/if}{if $payment_mean.id eq $sFormData.payment or (!$sFormData && !$smarty.foreach.register_payment_mean.index)} is--active{/if}{if $isPayPalUnified} is--plus-container{/if}{if $payment_mean.swag_paypal_unified_display_in_plus_iframe} is--hidden{/if} unified--payment">
 
         {* Radio Button *}
         {block name='frontend_checkout_payment_fieldset_input_radio'}

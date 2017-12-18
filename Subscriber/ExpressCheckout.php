@@ -24,16 +24,17 @@
 
 namespace SwagPaymentPayPalUnified\Subscriber;
 
+use Doctrine\DBAL\Connection;
 use Enlight\Event\SubscriberInterface;
 use Enlight_Components_Session_Namespace as Session;
 use Enlight_Controller_ActionEventArgs as ActionEventArgs;
-use Shopware\Components\HttpClient\RequestException;
+use SwagPaymentPayPalUnified\Components\ExceptionHandlerServiceInterface;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderInterface;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
+use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\Services\PaymentAddressService;
 use SwagPaymentPayPalUnified\Models\Settings\ExpressCheckout as ExpressSettingsModel;
 use SwagPaymentPayPalUnified\Models\Settings\General as GeneralSettingsModel;
-use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PaymentAddressPatch;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PaymentAmountPatch;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
@@ -68,17 +69,28 @@ class ExpressCheckout implements SubscriberInterface
     private $paymentBuilder;
 
     /**
-     * @var LoggerServiceInterface
+     * @var ExceptionHandlerServiceInterface
      */
-    private $logger;
+    private $exceptionHandlerService;
 
     /**
-     * @param SettingsServiceInterface $settingsService
-     * @param Session                  $session
-     * @param PaymentResource          $paymentResource
-     * @param PaymentAddressService    $addressRequestService
-     * @param PaymentBuilderInterface  $paymentBuilder
-     * @param LoggerServiceInterface   $logger
+     * @var PaymentMethodProvider
+     */
+    private $paymentMethodProvider;
+
+    /**
+     * @var Connection
+     */
+    private $connection;
+
+    /**
+     * @param SettingsServiceInterface         $settingsService
+     * @param Session                          $session
+     * @param PaymentResource                  $paymentResource
+     * @param PaymentAddressService            $addressRequestService
+     * @param PaymentBuilderInterface          $paymentBuilder
+     * @param ExceptionHandlerServiceInterface $exceptionHandlerService
+     * @param Connection                       $connection
      */
     public function __construct(
         SettingsServiceInterface $settingsService,
@@ -86,14 +98,17 @@ class ExpressCheckout implements SubscriberInterface
         PaymentResource $paymentResource,
         PaymentAddressService $addressRequestService,
         PaymentBuilderInterface $paymentBuilder,
-        LoggerServiceInterface $logger
+        ExceptionHandlerServiceInterface $exceptionHandlerService,
+        Connection $connection
     ) {
         $this->settingsService = $settingsService;
         $this->session = $session;
         $this->paymentResource = $paymentResource;
         $this->paymentAddressService = $addressRequestService;
         $this->paymentBuilder = $paymentBuilder;
-        $this->logger = $logger;
+        $this->exceptionHandlerService = $exceptionHandlerService;
+        $this->paymentMethodProvider = new PaymentMethodProvider();
+        $this->connection = $connection;
     }
 
     /**
@@ -118,13 +133,19 @@ class ExpressCheckout implements SubscriberInterface
      */
     public function loadExpressCheckoutJS(ActionEventArgs $args)
     {
-        /** @var GeneralSettingsModel $generalSettings */
-        $generalSettings = $this->settingsService->getSettings();
+        $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag($this->connection);
+        if (!$swUnifiedActive) {
+            return;
+        }
+
+        $unifiedActive = (bool) $this->settingsService->get('active');
+        if (!$unifiedActive) {
+            return;
+        }
 
         /** @var ExpressSettingsModel $expressSettings */
         $expressSettings = $this->settingsService->getSettings(null, SettingsTable::EXPRESS_CHECKOUT);
-
-        if (!$generalSettings || !$expressSettings || !$generalSettings->getActive() || (!$expressSettings->getDetailActive() && !$expressSettings->getCartActive())) {
+        if (!$expressSettings || (!$expressSettings->getDetailActive() && !$expressSettings->getCartActive())) {
             return;
         }
 
@@ -138,13 +159,20 @@ class ExpressCheckout implements SubscriberInterface
      */
     public function addExpressCheckoutButtonCart(ActionEventArgs $args)
     {
+        $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag($this->connection);
+        if (!$swUnifiedActive) {
+            return;
+        }
+
         /** @var GeneralSettingsModel $generalSettings */
         $generalSettings = $this->settingsService->getSettings();
+        if (!$generalSettings || !$generalSettings->getActive()) {
+            return;
+        }
 
         /** @var ExpressSettingsModel $expressSettings */
         $expressSettings = $this->settingsService->getSettings(null, SettingsTable::EXPRESS_CHECKOUT);
-
-        if (!$generalSettings || !$expressSettings || !$generalSettings->getActive() || !$expressSettings->getCartActive()) {
+        if (!$expressSettings || !$expressSettings->getCartActive()) {
             return;
         }
 
@@ -208,13 +236,20 @@ class ExpressCheckout implements SubscriberInterface
      */
     public function addExpressCheckoutButtonDetail(ActionEventArgs $args)
     {
+        $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag($this->connection);
+        if (!$swUnifiedActive) {
+            return;
+        }
+
         /** @var GeneralSettingsModel $generalSettings */
         $generalSettings = $this->settingsService->getSettings();
+        if (!$generalSettings || !$generalSettings->getActive()) {
+            return;
+        }
 
         /** @var ExpressSettingsModel $expressSettings */
         $expressSettings = $this->settingsService->getSettings(null, SettingsTable::EXPRESS_CHECKOUT);
-
-        if (!$generalSettings || !$expressSettings || !$generalSettings->getActive() || !$expressSettings->getDetailActive()) {
+        if (!$expressSettings || !$expressSettings->getDetailActive()) {
             return;
         }
 
@@ -237,7 +272,6 @@ class ExpressCheckout implements SubscriberInterface
      * @param string $paymentId
      *
      * @throws \Exception
-     * @throws RequestException
      */
     private function patchAddressAndAmount($paymentId)
     {
@@ -258,11 +292,8 @@ class ExpressCheckout implements SubscriberInterface
             $amountPatch = new PaymentAmountPatch($paymentStruct->getTransactions()->getAmount());
 
             $this->paymentResource->patch($paymentId, [$addressPatch, $amountPatch]);
-        } catch (RequestException $requestException) {
-            $this->logger->error('PayPal Unified ExpressCheckout: Unable to patch the payment (RequestException)', ['message' => $requestException->getMessage(), 'payload' => $requestException->getBody()]);
-            throw $requestException;
         } catch (\Exception $exception) {
-            $this->logger->error('PayPal Unified ExpressCheckout: Unable to patch the payment (Exception)', [$exception->getMessage(), $exception->getTraceAsString()]);
+            $this->exceptionHandlerService->handle($exception, 'patch the payment for express checkout');
             throw $exception;
         }
     }

@@ -5,7 +5,8 @@
          data-paypalLanguage="{$paypalUnifiedPlusLanguageIso}"
          data-paypalApprovalUrl="{$paypalUnifiedApprovalUrl}"
          data-paypalCountryIso="{$sUserData.additional.country.countryiso}"
-         data-paypalMode="{if $paypalUnifiedModeSandbox}sandbox{else}live{/if}">
+         data-paypalMode="{if $paypalUnifiedModeSandbox}sandbox{else}live{/if}"
+         data-thirdPartyPaymentMethods="{$paypalUnifiedPlusPaymentMethodsPaymentWall|escapeHtml}">
     </div>
 {/block}
 

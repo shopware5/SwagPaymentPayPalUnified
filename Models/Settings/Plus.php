@@ -61,6 +61,12 @@ class Plus extends ModelEntity
     private $restyle;
 
     /**
+     * @var bool
+     * @ORM\Column(name="integrate_third_party_methods", type="boolean", nullable=false)
+     */
+    private $integrateThirdPartyMethods;
+
+    /**
      * @var string
      * @ORM\Column(name="payment_name", type="string")
      */
@@ -126,6 +132,22 @@ class Plus extends ModelEntity
     public function setRestyle($restyle)
     {
         $this->restyle = $restyle;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getIntegrateThirdPartyMethods()
+    {
+        return $this->integrateThirdPartyMethods;
+    }
+
+    /**
+     * @param bool $integrateThirdPartyMethods
+     */
+    public function setIntegrateThirdPartyMethods($integrateThirdPartyMethods)
+    {
+        $this->integrateThirdPartyMethods = $integrateThirdPartyMethods;
     }
 
     /**

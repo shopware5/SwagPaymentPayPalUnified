@@ -27,7 +27,6 @@ namespace SwagPaymentPayPalUnified\Subscriber;
 use Doctrine\DBAL\Connection;
 use Enlight\Event\SubscriberInterface;
 use Enlight_Controller_ActionEventArgs as ActionEventArgs;
-use Shopware\Components\Model\ModelManager;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Models\Settings\Plus;
@@ -36,11 +35,6 @@ use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 
 class Account implements SubscriberInterface
 {
-    /**
-     * @var ModelManager
-     */
-    private $modelManager;
-
     /**
      * @var Connection
      */
@@ -57,21 +51,24 @@ class Account implements SubscriberInterface
     private $dependencyProvider;
 
     /**
-     * @param ModelManager             $modelManager
+     * @var PaymentMethodProvider
+     */
+    private $paymentMethodProvider;
+
+    /**
      * @param Connection               $connection
      * @param SettingsServiceInterface $settingsService
      * @param DependencyProvider       $dependencyProvider
      */
     public function __construct(
-        ModelManager $modelManager,
         Connection $connection,
         SettingsServiceInterface $settingsService,
         DependencyProvider $dependencyProvider
     ) {
-        $this->modelManager = $modelManager;
         $this->connection = $connection;
         $this->settingsService = $settingsService;
         $this->dependencyProvider = $dependencyProvider;
+        $this->paymentMethodProvider = new PaymentMethodProvider();
     }
 
     /**
@@ -103,6 +100,11 @@ class Account implements SubscriberInterface
             return;
         }
 
+        $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag($this->connection);
+        if (!$swUnifiedActive) {
+            return;
+        }
+
         $shopId = $shop->getId();
         /** @var Plus $plusSettings */
         $plusSettings = $this->settingsService->getSettings($shopId, SettingsTable::PLUS);
@@ -119,8 +121,7 @@ class Account implements SubscriberInterface
         }
 
         $view = $controller->View();
-        $paymentMethodProvider = new PaymentMethodProvider($this->modelManager);
-        $unifiedPaymentId = $paymentMethodProvider->getPaymentId($this->connection);
+        $unifiedPaymentId = $this->paymentMethodProvider->getPaymentId($this->connection);
 
         $customerData = $view->getAssign('sUserData');
         $customerPayment = $customerData['additional']['payment'];

@@ -35,7 +35,6 @@
         </service>
 
         <service id="paypal_unified.subscriber.controller.account" class="SwagPaymentPayPalUnified\Subscriber\Account">
-            <argument type="service" id="models"/>
             <argument type="service" id="dbal_connection"/>
             <argument type="service" id="paypal_unified.settings_service"/>
             <argument type="service" id="paypal_unified.dependency_provider"/>
@@ -58,18 +57,19 @@
             <argument type="service" id="paypal_unified.payment_resource"/>
             <argument type="service" id="paypal_unified.payment_address_service"/>
             <argument type="service" id="paypal_unified.payment_builder_service"/>
-            <argument type="service" id="paypal_unified.logger_service"/>
+            <argument type="service" id="paypal_unified.exception_handler_service"/>
+            <argument type="service" id="dbal_connection"/>
             <tag name="shopware.event_subscriber"/>
         </service>
 
         <service id="paypal_unified.subscriber.frontend" class="SwagPaymentPayPalUnified\Subscriber\Frontend">
             <argument>%paypal_unified.plugin_dir%</argument>
             <argument type="service" id="paypal_unified.settings_service"/>
+            <argument type="service" id="dbal_connection"/>
             <tag name="shopware.event_subscriber"/>
         </service>
 
         <service id="paypal_unified.subscriber.in_context" class="SwagPaymentPayPalUnified\Subscriber\InContext">
-            <argument type="service" id="models"/>
             <argument type="service" id="dbal_connection"/>
             <argument type="service" id="paypal_unified.settings_service"/>
             <tag name="shopware.event_subscriber"/>
@@ -80,6 +80,7 @@
             <argument type="service" id="paypal_unified.installments.validation_service"/>
             <argument type="service" id="dbal_connection"/>
             <argument type="service" id="paypal_unified.installments.payment_builder_service"/>
+            <argument type="service" id="paypal_unified.exception_handler_service"/>
             <tag name="shopware.event_subscriber"/>
         </service>
 
@@ -97,7 +98,16 @@
         </service>
 
         <service id="paypal_unified.subscriber.plus" class="SwagPaymentPayPalUnified\Subscriber\Plus">
-            <argument type="service" id="service_container"/>
+            <argument type="service" id="paypal_unified.settings_service"/>
+            <argument type="service" id="paypal_unified.dependency_provider"/>
+            <argument type="service" id="snippets"/>
+            <argument type="service" id="dbal_connection"/>
+            <argument type="service" id="paypal_unified.payment_instruction_service"/>
+            <argument type="service" id="paypal_unified.order_data_service"/>
+            <argument type="service" id="paypal_unified.plus.payment_builder_service"/>
+            <argument type="service" id="paypal_unified.client_service"/>
+            <argument type="service" id="paypal_unified.payment_resource"/>
+            <argument type="service" id="paypal_unified.exception_handler_service"/>
             <tag name="shopware.event_subscriber"/>
         </service>
     </services>

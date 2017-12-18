@@ -3,7 +3,7 @@
 {* PayPal Plus integration *}
 {block name='frontend_index_header_javascript_jquery_lib'}
     {block name='frontend_index_header_javascript_jquery_lib_paypal_unified_plus'}
-        {if $paypalUnifiedUsePlus}
+        {if $paypalUnifiedUsePlus && $paypalUnifiedApprovalUrl}
             <script src="https://www.paypalobjects.com/webstatic/ppplus/ppplus.min.js"></script>
         {/if}
     {/block}
@@ -19,7 +19,7 @@
 *}
 {block name='frontend_index_content'}
     {block name='frontend_index_content_paypal_unified_plus'}
-        {if $paypalUnifiedUsePlus}
+        {if $paypalUnifiedUsePlus && $paypalUnifiedApprovalUrl}
             {include file='frontend/paypal_unified/plus/checkout/payment_wall_shipping_payment.tpl'}
         {/if}
     {/block}
@@ -30,7 +30,7 @@
 {* PayPal Plus integration *}
 {block name='frontend_checkout_payment_fieldset_description'}
     {block name='frontend_checkout_payment_fieldset_description_paypal_unified_plus'}
-        {if $paypalUnifiedApprovalUrl && $payment_mean.id == $paypalUnifiedPaymentId && $paypalUnifiedUsePlus}
+        {if $paypalUnifiedUsePlus && $paypalUnifiedApprovalUrl && $payment_mean.id == $paypalUnifiedPaymentId}
             {block name='frontend_checkout_shipping_payment_paypal_unified_payment_wall'}
                 {* This is the placeholder for the payment wall *}
                 <div id="ppplus" class="method--description">
