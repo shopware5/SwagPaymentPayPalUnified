@@ -21,9 +21,16 @@
             /**
              * The payment id of PayPal Unified.
              *
-             * @type Numeric
+             * @type Number
              */
-            paypalPaymentId: null
+            paypalPaymentId: null,
+
+            /**
+             * The selector prefix for the payment method radio input fields
+             *
+             * @type string
+             */
+            paymentMethodInputSelectorPrefix: '#payment_mean'
         },
 
         init: function() {
@@ -44,11 +51,12 @@
         subscribeEvents: function() {
             var me = this;
 
-            $.subscribe('plugin/swagPayPalUnifiedPaymentWall/init', $.proxy(me.onInitPaymentWallPlugin, me));
-            $.subscribe('plugin/swagPayPalUnifiedPaymentWall/enableContinue', $.proxy(me.onSelectPayPalPaymentMethod, me));
-            $.subscribe('plugin/swagPayPalUnifiedPaymentWall/load', $.proxy(me.onLoadPaymentWall, me));
-            $.subscribe('plugin/swShippingPayment/onInputChanged', $.proxy(me.onSelectedPaymentMethodChange, me));
-            $.subscribe('plugin/swShippingPayment/onInputChangedBefore', $.proxy(me.onBeforeSelectedPaymentMethodChange, me));
+            $.subscribe(me.getEventName('plugin/swagPayPalUnifiedPaymentWall/init'), $.proxy(me.onInitPaymentWallPlugin, me));
+            $.subscribe(me.getEventName('plugin/swagPayPalUnifiedPaymentWall/enableContinue'), $.proxy(me.onSelectPayPalPaymentMethod, me));
+            $.subscribe(me.getEventName('plugin/swagPayPalUnifiedPaymentWall/load'), $.proxy(me.onLoadPaymentWall, me));
+            $.subscribe(me.getEventName('plugin/swShippingPayment/onInputChanged'), $.proxy(me.onSelectedPaymentMethodChange, me));
+            $.subscribe(me.getEventName('plugin/swShippingPayment/onInputChangedBefore'), $.proxy(me.onBeforeSelectedPaymentMethodChange, me));
+            $.subscribe(me.getEventName('plugin/swagPayPalUnifiedPaymentWall/thirdPartyPaymentMethodSelected'), $.proxy(me.onThirdPartyPaymentMethodSelected, me));
         },
 
         /**
@@ -56,12 +64,39 @@
          *
          * @private
          * @method getSelectedPaymentMethodId
-         * @returns {Numeric}
+         * @returns {Number}
          */
         getSelectedPaymentMethodId: function() {
-            var me = this;
+            var me = this,
+                selectedPaymentId;
 
-            return $(me.opts.paypalSelectedPaymentMethodRadioSelector).attr('value');
+            selectedPaymentId = $(me.opts.paypalSelectedPaymentMethodRadioSelector).attr('value');
+
+            return parseInt(selectedPaymentId);
+        },
+
+        /**
+         * Returns the formatted paymentId of a third party payment object
+         *
+         * @private
+         * @method getPaymentIdFromThirdPartyMethod
+         * @param {Object} thirdPartyPaymentMethod
+         * @return {Number}
+         */
+        getPaymentIdFromThirdPartyMethod: function(thirdPartyPaymentMethod) {
+            return parseInt(thirdPartyPaymentMethod.redirectUrl.substring(7)); // length of "http://"
+        },
+
+        /**
+         * Selects the given payment radio input field and triggers the change call
+         *
+         * @private
+         * @method triggerPaymentMethodChange
+         * @param {Object} $selectedPaymentRadio
+         */
+        triggerPaymentMethodChange: function($selectedPaymentRadio) {
+            $selectedPaymentRadio.prop('checked', true);
+            $('*[data-ajax-shipping-payment="true"]').data('plugin_swShippingPayment').onInputChanged();
         },
 
         /**
@@ -80,7 +115,7 @@
         },
 
         /**
-         * Will be triggered when the iframe was completely loaded.
+         * Will be triggered when the iFrame was completely loaded.
          *
          * @private
          * @method onLoadPaymentWall
@@ -89,27 +124,37 @@
          */
         onLoadPaymentWall: function(event, plugin) {
             var me = this,
-                selectedPaymentId = me.getSelectedPaymentMethodId();
+                selectedPaymentId = me.getSelectedPaymentMethodId(),
+                thirdPartyPaymentMethods = plugin.opts.thirdPartyPaymentMethods,
+                clearPaymentSelection = selectedPaymentId !== me.opts.paypalPaymentId,
+                thirdPartyPaymentId;
 
-            if (parseInt(selectedPaymentId) !== parseInt(me.opts.paypalPaymentId)) {
+            $.each(thirdPartyPaymentMethods, function(index, thirdPartyPaymentMethod) {
+                thirdPartyPaymentId = me.getPaymentIdFromThirdPartyMethod(thirdPartyPaymentMethod);
+
+                if (thirdPartyPaymentId === selectedPaymentId) {
+                    clearPaymentSelection = false;
+                }
+            });
+
+            if (clearPaymentSelection) {
                 plugin.clearPaymentSelection();
             }
         },
 
         /**
-         * Will be triggered if any payment method is being selected in the iframe
+         * Will be triggered if any payment method is being selected in the iFrame
          *
          * @private
          * @method onSelectPayPalPaymentMethod
          */
         onSelectPayPalPaymentMethod: function() {
             var me = this,
-                $paypalUnifiedRadio = $('#payment_mean' + me.opts.paypalPaymentId),
+                $paypalUnifiedRadio = $(me.opts.paymentMethodInputSelectorPrefix + me.opts.paypalPaymentId),
                 selectedPaymentId = me.getSelectedPaymentMethodId();
 
-            if (parseInt(selectedPaymentId) !== parseInt(me.opts.paypalPaymentId) && !$paypalUnifiedRadio.prop('checked')) {
-                $paypalUnifiedRadio.prop('checked', true);
-                $('*[data-ajax-shipping-payment="true"]').data('plugin_swShippingPayment').onInputChanged();
+            if (selectedPaymentId !== me.opts.paypalPaymentId && !$paypalUnifiedRadio.prop('checked')) {
+                me.triggerPaymentMethodChange($paypalUnifiedRadio);
             }
         },
 
@@ -145,6 +190,52 @@
             if ($.loadingIndicator.defaults !== undefined) {
                 $.loadingIndicator.defaults.closeOnClick = false;
             }
+        },
+
+        /**
+         * Will be triggered, if a third party payment method is selected in the iFrame
+         *
+         * @private
+         * @method onThirdPartyPaymentMethodSelected
+         */
+        onThirdPartyPaymentMethodSelected: function(event, plugin, data) {
+            var me = this,
+                thirdPartyPaymentMethods = plugin.opts.thirdPartyPaymentMethods,
+                selectedThirdPartyPaymentMethod = data.thirdPartyPaymentMethod,
+                selectedPaymentId = me.getSelectedPaymentMethodId(),
+                thirdPartyPaymentId = -1,
+                $thirdPartyPaymentRadio;
+
+            $.each(thirdPartyPaymentMethods, function(index, thirdPartyPaymentMethod) {
+                if (selectedThirdPartyPaymentMethod !== thirdPartyPaymentMethod.methodName) {
+                    return;
+                }
+
+                thirdPartyPaymentId = me.getPaymentIdFromThirdPartyMethod(thirdPartyPaymentMethod);
+            });
+
+            if (selectedPaymentId === thirdPartyPaymentId) {
+                return;
+            }
+
+            $thirdPartyPaymentRadio = $(me.opts.paymentMethodInputSelectorPrefix + thirdPartyPaymentId);
+            me.triggerPaymentMethodChange($thirdPartyPaymentRadio);
+        },
+
+        /**
+         * Destroys the plugin and unsubscribes from subscribed events
+         */
+        destroy: function() {
+            var me = this;
+
+            $.unsubscribe(me.getEventName('plugin/swagPayPalUnifiedPaymentWall/init'));
+            $.unsubscribe(me.getEventName('plugin/swagPayPalUnifiedPaymentWall/enableContinue'));
+            $.unsubscribe(me.getEventName('plugin/swagPayPalUnifiedPaymentWall/load'));
+            $.unsubscribe(me.getEventName('plugin/swShippingPayment/onInputChanged'));
+            $.unsubscribe(me.getEventName('plugin/swShippingPayment/onInputChangedBefore'));
+            $.unsubscribe(me.getEventName('plugin/swagPayPalUnifiedPaymentWall/thirdPartyPaymentMethodSelected'));
+
+            me._destroy();
         }
     });
 

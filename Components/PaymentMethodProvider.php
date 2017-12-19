@@ -99,6 +99,26 @@ class PaymentMethodProvider
      * @param Connection $connection
      * @param string     $name
      *
+     * @return bool
+     */
+    public function getPaymentMethodActiveFlag(Connection $connection, $name = self::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME)
+    {
+        $sql = 'SELECT `active` FROM s_core_paymentmeans WHERE `name`=:paymentName';
+
+        return (bool) $connection->fetchColumn($sql, [
+            ':paymentName' => $name === self::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME
+                ? self::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME
+                : self::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME,
+        ]);
+    }
+
+    /**
+     * @see PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME
+     * @see PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME
+     *
+     * @param Connection $connection
+     * @param string     $name
+     *
      * @return int
      */
     public function getPaymentId(Connection $connection, $name = self::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME)

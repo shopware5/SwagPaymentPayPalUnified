@@ -132,6 +132,10 @@ trait SettingsHelperTrait
             $data['restyle'] = 0;
         }
 
+        if (empty($data['integrateThirdPartyMethods'])) {
+            $data['integrateThirdPartyMethods'] = 0;
+        }
+
         $model = new PlusSettingsModel();
         $this->insertPlusSettings($model->fromArray($data));
     }

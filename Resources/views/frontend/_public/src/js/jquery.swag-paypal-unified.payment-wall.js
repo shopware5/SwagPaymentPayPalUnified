@@ -15,16 +15,22 @@
             Will be fired if the payment wall was successfully initialized
 
         - plugin/swagPayPalUnifiedPaymentWall/enableContinue
-            Will be fired if a payment method is being selected in the iframe
+            Will be fired if a payment method is being selected in the iFrame
 
         - plugin/swagPayPalUnifiedPaymentWall/disableContinue
-            Will be fired if the payment method is being deselected in the iframe
+            Will be fired if a payment method is being deselected in the iFrame
 
         - plugin/swagPayPalUnifiedPaymentWall/beforeCreate
             Will be fired before the actual payment wall object is being created
 
         - plugin/swagPayPalUnifiedPaymentWall/afterCreate
             Will be fired after the actual payment wall object was created
+
+        - plugin/swagPayPalUnifiedPaymentWall/thirdPartyPaymentMethodSelected
+            Will be fired if a third party payment method is being selected in the iFrame
+
+        - plugin/swagPayPalUnifiedPaymentWall/thirdPartyPaymentMethodDeselected
+            Will be fired if a third party payment method is being deselected in the iFrame
  */
 ;(function($, window) {
     'use strict';
@@ -78,7 +84,7 @@
              * Determines if one of the following should be preselected:
              * nothing (="none"),
              * PayPal Wallet (="paypal") or
-             * thirdparty method with methodName
+             * third party method with methodName
              *
              * @type string
              */
@@ -121,7 +127,15 @@
              *
              * @type boolean
              */
-            paypalShowPuiOnSandbox: true
+            paypalShowPuiOnSandbox: true,
+
+            /**
+             * Third party methods which will be shown in the payment wall iFrame
+             * formatted as JSON string, will be decoded on calling `applyDataAttributes`
+             *
+             * @type string
+             */
+            thirdPartyPaymentMethods: ''
         },
 
         /**
@@ -142,6 +156,18 @@
          */
         placeholder: '',
 
+        /**
+         * @private
+         * @type {boolean}
+         */
+        thirdPartyMethodSelected: false,
+
+        /**
+         * @private
+         * @type {String}
+         */
+        thirdPartyMethodNameSelected: '',
+
         init: function() {
             var me = this;
             me.applyDataAttributes();
@@ -150,7 +176,7 @@
         },
 
         /**
-         * Creates a payment wall iframe inside the provided element
+         * Creates a payment wall iFrame inside the provided element
          *
          * @method createPaymentWall
          * @param {String} parent
@@ -160,6 +186,8 @@
 
             me.loaded = false;
             me.placeholder = parent;
+            me.thirdPartyMethodSelected = false;
+            me.thirdPartyMethodNameSelected = '';
 
             $.publish('plugin/swagPayPalUnifiedPaymentWall/beforeCreate', me);
 
@@ -177,16 +205,19 @@
                 showPuiOnSandbox: me.opts.paypalShowPuiOnSandbox,
                 onLoad: $.proxy(me.onLoad, me),
                 enableContinue: $.proxy(me.onEnableContinue, me),
-                disableContinue: $.proxy(me.onDisableContinue, me)
+                disableContinue: $.proxy(me.onDisableContinue, me),
+                thirdPartyPaymentMethods: me.opts.thirdPartyPaymentMethods,
+                onThirdPartyPaymentMethodSelected: $.proxy(me.onThirdPartyPaymentMethodSelectedCallback, me),
+                onThirdPartyPaymentMethodDeselected: $.proxy(me.onThirdPartyPaymentMethodDeselectedCallback, me)
             });
 
             $.publish('plugin/swagPayPalUnifiedPaymentWall/afterCreate', me);
         },
 
         /**
-         * This function deselect any payment method inside the iframe
+         * This function deselect any payment method inside the iFrame
          *
-         * @method createPaymentWall
+         * @method clearPaymentSelection
          */
         clearPaymentSelection: function() {
             var me = this;
@@ -210,9 +241,9 @@
         },
 
         /**
-         * This function will be triggered if the "enableContinue" event was fired inside the iframe.
-         * In addition to that, this event can be used to determine if the user has clicked on one of the
-         * methods inside the iframe.
+         * This function will be triggered if the "enableContinue" event was fired inside the iFrame.
+         * In addition to that, this event can be used to determine if the user has clicked on one of the payment
+         * methods inside the iFrame.
          *
          * @private
          * @method onEnableContinue
@@ -220,15 +251,15 @@
         onEnableContinue: function() {
             var me = this;
 
-            if (me.loaded) {
+            if (me.loaded && !me.thirdPartyMethodSelected) {
                 $.publish('plugin/swagPayPalUnifiedPaymentWall/enableContinue', me);
             }
         },
 
         /**
-         * This function will be triggered if the "disableContinue" event was fired inside the iframe.
+         * This function will be triggered if the "disableContinue" event was fired inside the iFrame.
          * In addition to that, this event can be used to determine if the user has deselected a payment
-         * method inside the iframe.
+         * method inside the iFrame.
          *
          * @private
          * @method onDisableContinue
@@ -236,8 +267,45 @@
         onDisableContinue: function() {
             var me = this;
 
-            if (me.loaded) {
+            if (me.loaded && !me.thirdPartyMethodSelected) {
                 $.publish('plugin/swagPayPalUnifiedPaymentWall/disableContinue', me);
+            }
+        },
+
+        /**
+         * This function will be triggered if the "onThirdPartyPaymentMethodSelected" event was fired inside the iFrame.
+         * In addition to that, this event can be used to determine if the user has clicked on one of the
+         * third party payment methods inside the iFrame.
+         *
+         * @private
+         * @method onThirdPartyPaymentMethodSelectedCallback
+         * @param data
+         */
+        onThirdPartyPaymentMethodSelectedCallback: function(data) {
+            var me = this;
+
+            if (me.loaded && me.thirdPartyMethodNameSelected !== data.thirdPartyPaymentMethod) {
+                me.thirdPartyMethodSelected = true;
+                me.thirdPartyMethodNameSelected = data.thirdPartyPaymentMethod;
+                $.publish('plugin/swagPayPalUnifiedPaymentWall/thirdPartyPaymentMethodSelected', [me, data]);
+            }
+        },
+
+        /**
+         * This function will be triggered if the "onThirdPartyPaymentMethodDeselected" event was fired inside the iFrame.
+         * In addition to that, this event can be used to determine if the user has deselected a
+         * third party payment method inside the iFrame.
+         *
+         * @private
+         * @method onThirdPartyPaymentMethodDeselectedCallback
+         * @param data
+         */
+        onThirdPartyPaymentMethodDeselectedCallback: function(data) {
+            var me = this;
+
+            if (me.loaded && me.thirdPartyMethodNameSelected === data.thirdPartyPaymentMethod) {
+                me.thirdPartyMethodSelected = false;
+                $.publish('plugin/swagPayPalUnifiedPaymentWall/thirdPartyPaymentMethodDeselected', [me, data]);
             }
         }
     });

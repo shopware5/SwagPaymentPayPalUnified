@@ -26,7 +26,6 @@ namespace SwagPaymentPayPalUnified\Subscriber;
 
 use Doctrine\DBAL\Connection;
 use Enlight\Event\SubscriberInterface;
-use Shopware\Components\Model\ModelManager;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Models\Settings\General as GeneralSettingsModel;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
@@ -49,16 +48,14 @@ class InContext implements SubscriberInterface
     private $settingsService;
 
     /**
-     * @param ModelManager             $modelManager
      * @param Connection               $connection
      * @param SettingsServiceInterface $settingsService
      */
     public function __construct(
-        ModelManager $modelManager,
         Connection $connection,
         SettingsServiceInterface $settingsService
     ) {
-        $this->paymentMethodProvider = new PaymentMethodProvider($modelManager);
+        $this->paymentMethodProvider = new PaymentMethodProvider();
         $this->connection = $connection;
         $this->settingsService = $settingsService;
     }
@@ -89,9 +86,13 @@ class InContext implements SubscriberInterface
             return;
         }
 
+        $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag($this->connection);
+        if (!$swUnifiedActive) {
+            return;
+        }
+
         /** @var GeneralSettingsModel $settings */
         $settings = $this->settingsService->getSettings();
-
         if (!$settings || !$settings->getActive() || !$settings->getUseInContext()) {
             return;
         }

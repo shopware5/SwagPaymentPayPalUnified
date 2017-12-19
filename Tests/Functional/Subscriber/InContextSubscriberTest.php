@@ -24,6 +24,7 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Subscriber;
 
+use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Subscriber\InContext;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\SettingsHelperTrait;
@@ -63,11 +64,35 @@ class InContextSubscriberTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $subscriber = $this->getSubscriber();
+        $subscriber->addInContextButton($enlightEventArgs);
 
-        $this->assertNull($subscriber->addInContextButton($enlightEventArgs));
+        $this->assertNull($view->getAssign('paypalUnifiedPaymentId'));
     }
 
     public function test_addInContextButton_return_unified_inactive()
+    {
+        $paymentMethodProvider = new PaymentMethodProvider(Shopware()->Container()->get('models'));
+        $paymentMethodProvider->setPaymentMethodActiveFlag(false);
+
+        $view = new ViewMock(new \Enlight_Template_Manager());
+        $request = new \Enlight_Controller_Request_RequestTestCase();
+        $request->setActionName('confirm');
+
+        $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
+            'subject' => new DummyController($request, $view, null),
+        ]);
+
+        $this->importSettings();
+
+        $subscriber = $this->getSubscriber();
+        $subscriber->addInContextButton($enlightEventArgs);
+
+        $this->assertNull($view->getAssign('paypalUnifiedPaymentId'));
+
+        $paymentMethodProvider->setPaymentMethodActiveFlag(true);
+    }
+
+    public function test_addInContextButton_return_payment_method_inactive()
     {
         $view = new ViewMock(new \Enlight_Template_Manager());
         $request = new \Enlight_Controller_Request_RequestTestCase();
@@ -80,8 +105,9 @@ class InContextSubscriberTest extends \PHPUnit_Framework_TestCase
         $this->importSettings();
 
         $subscriber = $this->getSubscriber();
+        $subscriber->addInContextButton($enlightEventArgs);
 
-        $this->assertNull($subscriber->addInContextButton($enlightEventArgs));
+        $this->assertNull($view->getAssign('paypalUnifiedPaymentId'));
     }
 
     public function test_addInContextButton_return_not_use_in_context()
@@ -97,8 +123,9 @@ class InContextSubscriberTest extends \PHPUnit_Framework_TestCase
         $this->importSettings(true);
 
         $subscriber = $this->getSubscriber();
+        $subscriber->addInContextButton($enlightEventArgs);
 
-        $this->assertNull($subscriber->addInContextButton($enlightEventArgs));
+        $this->assertNull($view->getAssign('paypalUnifiedPaymentId'));
     }
 
     public function test_addInContextButton_right_template_assigns()
@@ -224,7 +251,6 @@ class InContextSubscriberTest extends \PHPUnit_Framework_TestCase
     private function getSubscriber()
     {
         return new InContext(
-            Shopware()->Container()->get('models'),
             Shopware()->Container()->get('dbal_connection'),
             Shopware()->Container()->get('paypal_unified.settings_service')
         );

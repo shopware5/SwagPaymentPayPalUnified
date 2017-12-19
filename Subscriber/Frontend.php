@@ -25,8 +25,10 @@
 namespace SwagPaymentPayPalUnified\Subscriber;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\DBAL\Connection;
 use Enlight\Event\SubscriberInterface;
 use Enlight_View_Default;
+use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 
@@ -43,13 +45,29 @@ class Frontend implements SubscriberInterface
     private $settingsService;
 
     /**
+     * @var Connection
+     */
+    private $connection;
+
+    /**
+     * @var PaymentMethodProvider
+     */
+    private $paymentMethodProvider;
+
+    /**
      * @param string                   $pluginDir
      * @param SettingsServiceInterface $settingsService
+     * @param Connection               $connection
      */
-    public function __construct($pluginDir, SettingsServiceInterface $settingsService)
-    {
+    public function __construct(
+        $pluginDir,
+        SettingsServiceInterface $settingsService,
+        Connection $connection
+    ) {
         $this->pluginDir = $pluginDir;
         $this->settingsService = $settingsService;
+        $this->connection = $connection;
+        $this->paymentMethodProvider = new PaymentMethodProvider();
     }
 
     /**
@@ -101,16 +119,23 @@ class Frontend implements SubscriberInterface
             return;
         }
 
-        $showPayPalLogo = (bool) $this->settingsService->get('show_sidebar_logo');
-        $showInstallmentsLogo = (bool) $this->settingsService->get('active', SettingsTable::INSTALLMENTS) && (bool) $this->settingsService->get('show_logo', SettingsTable::INSTALLMENTS);
+        $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag($this->connection);
+        $showPayPalLogo = $swUnifiedActive && (bool) $this->settingsService->get('show_sidebar_logo');
+
+        $advertiseReturns = $swUnifiedActive && (bool) $this->settingsService->get('advertise_returns');
+
+        $swUnifiedInstallmentsActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag($this->connection, PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME);
+        $installmentsActive = (bool) $this->settingsService->get('active', SettingsTable::INSTALLMENTS);
+        $showInstallmentsLogoSetting = (bool) $this->settingsService->get('show_logo', SettingsTable::INSTALLMENTS);
+        $showInstallmentsLogo = $swUnifiedInstallmentsActive && $installmentsActive && $showInstallmentsLogoSetting;
 
         /** @var Enlight_View_Default $view */
         $view = $args->getSubject()->View();
 
         //Assign shop specific and configurable values to the view.
         $view->assign('paypalUnifiedShowLogo', $showPayPalLogo);
+        $view->assign('paypalUnifiedAdvertiseReturns', $advertiseReturns);
         $view->assign('paypalUnifiedShowInstallmentsLogo', $showInstallmentsLogo);
-        $view->assign('paypalUnifiedAdvertiseReturns', (bool) $this->settingsService->get('advertise_returns'));
     }
 
     /**

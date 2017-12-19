@@ -65,7 +65,7 @@
             var me = this,
                 $confirmPage = $(me.opts.paypalConfirmPageSelector);
 
-            $.subscribe('plugin/swagPayPalUnifiedPaymentWall/init', $.proxy(me.onInitPaymentWallPlugin, me));
+            $.subscribe(me.getEventName('plugin/swagPayPalUnifiedPaymentWall/init'), $.proxy(me.onInitPaymentWallPlugin, me));
 
             me._on($confirmPage, 'submit', $.proxy(me.onConfirmCheckout, me));
         },
@@ -148,8 +148,18 @@
             $.publish('plugin/swagPayPalUnifiedPaymentWall/afterPatchAddress', me);
 
             $(location).attr('href', me.opts.paypalErrorPage);
-        }
+        },
 
+        /**
+         * Destroys the plugin and unsubscribes from subscribed events
+         */
+        destroy: function() {
+            var me = this;
+
+            $.unsubscribe(me.getEventName('plugin/swagPayPalUnifiedPaymentWall/init'));
+
+            me._destroy();
+        }
     });
 
     window.StateManager.addPlugin('*[data-paypalPaymentWallConfirm="true"]', 'swagPayPalUnifiedPaymentWallConfirm');

@@ -29,6 +29,11 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Plus', {
     restyleCheckbox: null,
 
     /**
+     * @type { Ext.form.field.Checkbox }
+     */
+    integrateThirdPartyMethodsCheckbox: null,
+
+    /**
      * @type { Ext.form.field.Text }
      */
     paymentNameField: null,
@@ -54,6 +59,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Plus', {
 
         me.intentSelection = me.createPaymentIntentSelection();
         me.restyleCheckbox = me.createRestyleCheckbox();
+        me.integrateThirdPartyMethodsCheckbox = me.createIntegrateThirdPartyMethodsCheckbox();
         me.paymentNameField = me.createPaymentNameField();
         me.paymentDescriptionField = me.createPaymentDescriptionField();
 
@@ -78,6 +84,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Plus', {
             },
             me.intentSelection,
             me.restyleCheckbox,
+            me.integrateThirdPartyMethodsCheckbox,
             me.paymentNameField,
             me.paymentDescriptionField
         ];
@@ -120,6 +127,22 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Plus', {
             boxLabel: '{s name=field/restyle/boxLabel}Activate this option to restyle the payment selection.{/s}',
             inputValue: true,
             uncheckedValue: false,
+            disabled: true,
+            handler: Ext.bind(this.onActivateRestyle, this)
+        });
+    },
+
+    /**
+     * @return { Ext.form.field.Checkbox }
+     */
+    createIntegrateThirdPartyMethodsCheckbox: function() {
+        return Ext.create('Ext.form.field.Checkbox', {
+            name: 'integrateThirdPartyMethods',
+            fieldLabel: '{s name=field/integrateThirdPartyMethods}Display other payments methods in iFrame{/s}',
+            helpText: "{s name=field/integrateThirdPartyMethods/help}Activate this option to display third party payment methods in the Payment Wall iFrame. Select the payment method you want to display there in 'Configuration' -> 'Payment methods' -> 'Free text fields'{/s}",
+            boxLabel: '{s name=field/integrateThirdPartyMethods/boxLabel}Activate this option to display third party methods in the Payment Wall iFrame.{/s}',
+            inputValue: true,
+            uncheckedValue: false,
             disabled: true
         });
     },
@@ -149,7 +172,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Plus', {
     },
 
     /**
-     * @param { Shopware.apps.Base.view.element.Boolean } element
+     * @param { Ext.form.field.Checkbox } element
      * @param { Boolean } checked
      */
     onActivatePayPalPlus: function(element, checked) {
@@ -164,8 +187,24 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Plus', {
 
         me.intentSelection.setDisabled(!checked);
         me.restyleCheckbox.setDisabled(!checked);
+        me.integrateThirdPartyMethodsCheckbox.setDisabled(!checked);
         me.paymentNameField.setDisabled(!checked);
         me.paymentDescriptionField.setDisabled(!checked);
+    },
+
+    /**
+     *
+     * @param { Ext.form.field.Checkbox } element
+     * @param { Boolean } checked
+     */
+    onActivateRestyle: function(element, checked) {
+        var me = this;
+
+        me.integrateThirdPartyMethodsCheckbox.setVisible(checked);
+
+        if (!checked) {
+            me.integrateThirdPartyMethodsCheckbox.setValue(false);
+        }
     }
 });
 // {/block}

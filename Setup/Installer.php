@@ -120,7 +120,19 @@ class Installer
     private function createAttributes()
     {
         $this->attributeCrudService->update('s_order_attributes', 'swag_paypal_unified_payment_type', 'string');
-        $this->modelManager->generateAttributeModels(['s_order_attributes']);
+        $this->attributeCrudService->update(
+            's_core_paymentmeans_attributes',
+            'swag_paypal_unified_display_in_plus_iframe',
+            'boolean',
+            [
+                'position' => -100,
+                'displayInBackend' => true,
+                'label' => 'Display in PayPal Plus iFrame',
+                'helpText' => 'Activate this option, to display this payment method in the PayPal Plus iFrame',
+            ]
+        );
+
+        $this->modelManager->generateAttributeModels(['s_order_attributes', 's_core_paymentmeans_attributes']);
     }
 
     private function createDocumentTemplates()
