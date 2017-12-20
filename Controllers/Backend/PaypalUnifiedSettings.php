@@ -98,7 +98,7 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
         } catch (Exception $e) {
             $error = $this->exceptionHandler->handle($e, 'register webhooks');
 
-            if ($error->getMessage() === 'Webhook URL already exists') {
+            if ($error->getName() === 'WEBHOOK_URL_ALREADY_EXISTS') {
                 $this->View()->assign([
                     'success' => true,
                     'url' => $url,
@@ -172,19 +172,6 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
 
     public function createWebProfilesAction()
     {
-        try {
-            $this->configureClient();
-        } catch (Exception $e) {
-            $error = $this->exceptionHandler->handle($e, 'configure client for creating webProfiles');
-
-            $this->View()->assign([
-                'success' => false,
-                'message' => $error->getCompleteMessage(),
-            ]);
-
-            return;
-        }
-
         $shopId = (int) $this->Request()->getParam('shopId');
         $logoImage = $this->Request()->getParam('logoImage');
         $brandName = $this->Request()->getParam('brandName');
@@ -197,11 +184,19 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
 
         /** @var WebProfileService $webProfileService */
         $webProfileService = $this->get('paypal_unified.web_profile_service');
-        $webProfileId = $webProfileService->getWebProfile($settings);
-        $ecWebProfileId = $webProfileService->getWebProfile($settings, true);
 
-        if ($webProfileId === null || $ecWebProfileId === null) {
-            $this->View()->assign('success', false);
+        try {
+            $this->configureClient();
+
+            $webProfileId = $webProfileService->getWebProfile($settings);
+            $ecWebProfileId = $webProfileService->getWebProfile($settings, true);
+        } catch (Exception $rex) {
+            $error = $this->exceptionHandler->handle($rex, 'request the web profiles');
+
+            $this->View()->assign([
+                'success' => false,
+                'message' => $error->getCompleteMessage(),
+            ]);
 
             return;
         }
