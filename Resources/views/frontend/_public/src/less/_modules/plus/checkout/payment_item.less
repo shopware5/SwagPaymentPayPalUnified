@@ -92,27 +92,23 @@
         border-bottom: 0;
     }
 
-    .method--label,
-    .method--description {
-        padding-left: 0;
-        float: left;
-    }
-
     .method--label {
-        width: 17%;
-    }
-
-    .method--name {
-        .unitize(font-size, 12);
         .unitize(padding-left, 8);
-        color: @paypal-text-color;
-        font-weight: normal;
-        cursor: pointer;
+        width: 17%;
+        float: left;
     }
 
     .method--description {
         display: none;
+        float: left;
         width: 65%;
+    }
+
+    .method--name {
+        .unitize(font-size, 12);
+        color: @paypal-text-color;
+        font-weight: normal;
+        cursor: pointer;
     }
 
     .method--bankdata {
