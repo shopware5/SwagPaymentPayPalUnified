@@ -15,7 +15,7 @@
         {* Unified confirm page plugin *}
         <div class="is--hidden"
              data-paypalPaymentWallConfirm="true"
-             data-paypalAddressPatchUrl="{url controller=PaypalUnified action=patchAddress forceSecure=true}"
+             data-paypalAddressPatchUrl="{url controller=PaypalUnified action=patchAddress forceSecure}"
              data-paypalCameFromPaymentSelection="{$paypalUnifiedCameFromPaymentSelection}"
              data-paypalRemotePaymentId="{$paypalUnifiedRemotePaymentId}"
              data-paypalErrorPage="{url controller=checkout action=shippingPayment paypal_unified_error_code=2}">
