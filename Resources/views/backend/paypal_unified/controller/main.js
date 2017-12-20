@@ -35,7 +35,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
      */
     apiController: null,
 
-    init: function () {
+    init: function() {
         var me = this;
 
         me.apiController = me.getController('Api');
@@ -45,7 +45,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
         me.callParent(arguments);
     },
 
-    createComponentControl: function () {
+    createComponentControl: function() {
         var me = this;
 
         me.control({
@@ -71,7 +71,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
         });
     },
 
-    createWindow: function () {
+    createWindow: function() {
         var me = this;
 
         me.window = me.getView('overview.Window').create().show();
@@ -81,13 +81,13 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
      * @param { Ext.selection.RowModel } element
      * @param { Ext.data.Model } record
      */
-    onSelectGridRecord: function (element, record) {
+    onSelectGridRecord: function(element, record) {
         var me = this;
 
         me.loadDetails(record);
     },
 
-    onRefundButtonClick: function () {
+    onRefundButtonClick: function() {
         var me = this;
 
         if (me.details.authorization || me.details.order) {
@@ -101,14 +101,14 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
         }
     },
 
-    onVoidAuthorization: function () {
+    onVoidAuthorization: function() {
         var me = this;
 
         me.getSidebar().setLoading('{s name=sidebar/loading/voiding}Voiding payment...{/s}');
         me.apiController.voidAuthorization(Ext.bind(me.voidCallback, me));
     },
 
-    onVoidOrder: function () {
+    onVoidOrder: function() {
         var me = this;
 
         me.getSidebar().setLoading('{s name=sidebar/loading/voiding}Voiding payment...{/s}');
@@ -118,7 +118,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
     /**
      * @param { Object } data
      */
-    onRefundSale: function (data) {
+    onRefundSale: function(data) {
         var me = this,
             amount = data.amount,
             invoiceNumber = data.invoiceNumber;
@@ -130,7 +130,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
     /**
      * @param { Object } data
      */
-    onRefundCapture: function (data) {
+    onRefundCapture: function(data) {
         var me = this,
             captureId = data.id,
             amount = data.amount,
@@ -144,7 +144,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
      * @param { Numeric } amount
      * @param { Boolean } isFinal
      */
-    onAuthorizePayment: function (amount, isFinal) {
+    onAuthorizePayment: function(amount, isFinal) {
         var me = this;
 
         me.getSidebar().setLoading('{s name=sidebar/loading/authorizing}Authorizing payment...{/s}');
@@ -156,7 +156,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
         }
     },
 
-    captureCallback: function (options, success, response) {
+    captureCallback: function(options, success, response) {
         var me = this,
             responseObject = Ext.JSON.decode(response.responseText);
 
@@ -171,7 +171,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
         me.getSidebar().setLoading(false);
     },
 
-    voidCallback: function (options, success, response) {
+    voidCallback: function(options, success, response) {
         var me = this,
             responseObject = Ext.JSON.decode(response.responseText);
 
@@ -191,7 +191,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
      * @param { Boolean } success
      * @param { Object } response
      */
-    paymentDetailsCallback: function (options, success, response) {
+    paymentDetailsCallback: function(options, success, response) {
         var me = this,
             sidebar = me.getSidebar(),
             details = Ext.JSON.decode(response.responseText);
@@ -216,7 +216,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
         sidebar.enable();
     },
 
-    displayUnifiedDetails: function () {
+    displayUnifiedDetails: function() {
         var me = this,
             sidebar = me.getSidebar(),
             saleDetailsContainer = sidebar.historyTab;
@@ -240,7 +240,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
         saleDetailsContainer.detailsContainer.disable();
     },
 
-    displayLegacyDetails: function () {
+    displayLegacyDetails: function() {
         var me = this,
             sidebar = me.getSidebar();
 
@@ -263,7 +263,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
      * @param { Boolean } success
      * @param { Object } response
      */
-    refundCallback: function (options, success, response) {
+    refundCallback: function(options, success, response) {
         var me = this,
             details = Ext.JSON.decode(response.responseText);
 
@@ -281,7 +281,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
     /**
      * @param { Ext.data.Model } record
      */
-    loadDetails: function (record) {
+    loadDetails: function(record) {
         var me = this,
             paymentId = record.get('temporaryId'), // The plugin stores the PayPal-PaymentId as temporaryId.
             transactionId = record.get('transactionId'), // The plugin stores the PayPal-PaymentId as temporaryId.
@@ -300,7 +300,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
     /**
      * @param { Ext.data.Model } record
      */
-    updateOrderDetails: function (record) {
+    updateOrderDetails: function(record) {
         var me = this,
             sidebar = me.getSidebar();
 
@@ -315,7 +315,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
     /**
      * @param { Ext.data.Model } record
      */
-    updateCustomerDetails: function (record) {
+    updateCustomerDetails: function(record) {
         var me = this,
             customer = record.getCustomer().first().raw, // we use the "raw" property, since the base customer model does not include firstname or lastname.
             customerContainer = me.getSidebar().orderTab.customerContainer;
@@ -327,7 +327,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
         customerContainer.down('#groupKey').setValue(customer.groupKey);
     },
 
-    updatePaymentDetails: function () {
+    updatePaymentDetails: function() {
         var me = this,
             detailsContainer = me.getSidebar().paymentTab,
             detailsModel = Ext.create('Shopware.apps.PaypalUnified.model.Payment', me.details.payment);
@@ -337,7 +337,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
         detailsContainer.down('#updateTime').setValue(Ext.util.Format.date(detailsModel.get('update_time'), 'd.m.Y H:i:s'));
     },
 
-    updatePaymentCustomer: function () {
+    updatePaymentCustomer: function() {
         var me = this,
             customerContainer = me.getSidebar().paymentTab,
             customerModel = Ext.create('Shopware.apps.PaypalUnified.model.PaymentCustomer', me.details.payment.payer.payer_info);
@@ -345,7 +345,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
         customerContainer.loadRecord(customerModel);
     },
 
-    updatePaymentShipping: function () {
+    updatePaymentShipping: function() {
         var me = this,
             addressContainer = me.getSidebar().paymentTab,
             shippingModel = Ext.create('Shopware.apps.PaypalUnified.model.PaymentCustomerShipping', me.details.payment.payer.payer_info.shipping_address);
@@ -353,7 +353,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
         addressContainer.loadRecord(shippingModel);
     },
 
-    updatePaymentCart: function () {
+    updatePaymentCart: function() {
         var me = this,
             cartGrid = me.getSidebar().paymentTab.cartGrid,
             itemList = me.details.payment.transactions[0].item_list.items;
@@ -361,13 +361,13 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
         cartGrid.reconfigure(me.createPaymentCartStore(itemList));
     },
 
-    updatePaymentInvoice: function () {
+    updatePaymentInvoice: function() {
         var me = this,
             invoiceContainer = me.getSidebar().paymentTab,
             amountModel = me.details.legacy ? Ext.create('Shopware.apps.PaypalUnified.model.PaymentAmount', me.details.payment.amount)
-                                            : Ext.create('Shopware.apps.PaypalUnified.model.PaymentAmount', me.details.payment.transactions[0].amount),
+                : Ext.create('Shopware.apps.PaypalUnified.model.PaymentAmount', me.details.payment.transactions[0].amount),
             amountDetailsModel = me.details.legacy ? Ext.create('Shopware.apps.PaypalUnified.model.PaymentAmountDetails', me.details.payment.amount.details)
-                                                   : Ext.create('Shopware.apps.PaypalUnified.model.PaymentAmountDetails', me.details.payment.transactions[0].amount.details),
+                : Ext.create('Shopware.apps.PaypalUnified.model.PaymentAmountDetails', me.details.payment.transactions[0].amount.details),
             currency = amountModel.get('currency');
 
         invoiceContainer.loadRecord(amountModel);
@@ -377,7 +377,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
         invoiceContainer.down('#shipping').setValue(Ext.util.Format.currency(amountDetailsModel.get('shipping')) + ' ' + currency);
     },
 
-    updateRefundSales: function () {
+    updateRefundSales: function() {
         var me = this,
             saleGrid = me.getSidebar().historyTab.salesGrid,
             history = me.details.history;
@@ -386,13 +386,15 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
         me.getSidebar().historyTab.refundButton.setDisabled(me.details.history.maxRefundableAmount === 0);
     },
 
-    updateSaleRefundWindow: function () {
+    updateSaleRefundWindow: function() {
         var me = this,
             refundPanel = me.refundWindow.contentContainer,
             history = me.details.history,
             maxRefundableAmount = me.details.history.maxRefundableAmount,
             initialSale = me.details.legacy ? me.details.payment : me.details.sale,
             saleModel = Ext.create('Shopware.apps.PaypalUnified.model.PaymentSale', initialSale);
+
+        me.refundWindow.currency = initialSale.amount.currency;
 
         refundPanel.loadRecord(saleModel);
         refundPanel.down('#maxAmount').setValue(maxRefundableAmount);
@@ -410,24 +412,27 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
      * A helper function that parses all available captures for the selected payment
      * and hands them to the capture refund window.
      */
-    updateCaptureRefundWindow: function () {
+    updateCaptureRefundWindow: function() {
         var me = this,
-            captures = [];
+            captures = [],
+            currency = '';
 
         Ext.iterate(me.details.history, function(key, value) {
             if (value.type === 'capture') {
                 value.description = Ext.util.Format.date(value.create_time) + ' (' + Ext.util.Format.currency(value.amount) + ' ' + value.currency + ') - ' + value.id;
                 captures.push(value);
+                currency = value.currency;
             }
         });
 
+        me.refundWindow.currency = currency;
         me.refundWindow.setCaptures(captures);
     },
 
     /**
      * A helper function that updates the window options.
      */
-    updateWindowOptions: function () {
+    updateWindowOptions: function() {
         var me = this,
             isAuthorization = typeof (me.details.authorization) !== 'undefined',
             isSale = typeof (me.details.sale) !== 'undefined',
@@ -449,7 +454,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
      *      - Enable the refund option
      *      - Disable all toolbar options
      */
-    updateWindowBySale: function () {
+    updateWindowBySale: function() {
         var me = this,
             refundButton = me.getSidebar().historyTab.down('#refundButton'),
             toolbar = me.getSidebar().toolbar,
@@ -477,7 +482,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
      *          - Disable the refund option
      *          - Disable the toolbar
      */
-    updateWindowByAuthorization: function () {
+    updateWindowByAuthorization: function() {
         var me = this,
             refundButton = me.getSidebar().historyTab.down('#refundButton'),
             toolbar = me.getSidebar().toolbar,
@@ -514,7 +519,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
      *          - Disable the refund option
      *          - Disable all toolbar options
      */
-    updateWindowByOrder: function () {
+    updateWindowByOrder: function() {
         var me = this,
             refundButton = me.getSidebar().historyTab.down('#refundButton'),
             toolbar = me.getSidebar().toolbar,
@@ -539,7 +544,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
      * @param { Array } lineItems
      * @returns { Shopware.apps.PaypalUnified.store.PaymentCart }
      */
-    createPaymentCartStore: function (lineItems) {
+    createPaymentCartStore: function(lineItems) {
         var cartStore = Ext.create('Shopware.apps.PaypalUnified.store.PaymentCart');
 
         Ext.iterate(lineItems, function(value) {
@@ -556,7 +561,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
      * @param { Array } sales
      * @returns { Shopware.apps.PaypalUnified.store.PaymentSale }
      */
-    createPaymentHistoryStore: function (sales) {
+    createPaymentHistoryStore: function(sales) {
         var saleStore = Ext.create('Shopware.apps.PaypalUnified.store.PaymentSale');
 
         Ext.iterate(sales, function(key, value) {
@@ -574,7 +579,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
      *
      * @returns { Ext.data.Model }
      */
-    getRecord: function () {
+    getRecord: function() {
         var me = this;
         return me.record;
     },
@@ -584,7 +589,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
      *
      * @returns { Object }
      */
-    getDetails: function () {
+    getDetails: function() {
         var me = this;
         return me.details;
     }

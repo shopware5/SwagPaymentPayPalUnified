@@ -222,6 +222,8 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
         }
 
         $entityManager->flush();
+
+        $this->View()->assign('success', true);
     }
 
     private function configureClient()
