@@ -17,7 +17,12 @@ Ext.define('Shopware.apps.PaypalUnified.view.refund.CaptureWindow', {
      */
     contentContainer: null,
 
-    initComponent: function () {
+    /**
+     * @type { string }
+     */
+    currency: '',
+
+    initComponent: function() {
         var me = this;
 
         me.items = me.getItems();
@@ -29,7 +34,7 @@ Ext.define('Shopware.apps.PaypalUnified.view.refund.CaptureWindow', {
         me.down('#executeButton').disable();
     },
 
-    registerEvents: function () {
+    registerEvents: function() {
         var me = this;
 
         me.addEvents(
@@ -47,7 +52,7 @@ Ext.define('Shopware.apps.PaypalUnified.view.refund.CaptureWindow', {
      * override the original close function, otherwise that would cause an ExtJs error and the window
      * would not be closed correctly.
      */
-    close: function () {
+    close: function() {
         var me = this;
         me.destroy();
     },
@@ -55,7 +60,7 @@ Ext.define('Shopware.apps.PaypalUnified.view.refund.CaptureWindow', {
     /**
      * @returns { Ext.form.Panel }
      */
-    getItems: function () {
+    getItems: function() {
         var me = this;
 
         me.contentContainer = Ext.create('Ext.form.Panel', {
@@ -109,21 +114,20 @@ Ext.define('Shopware.apps.PaypalUnified.view.refund.CaptureWindow', {
     /**
      * @param { Array } captures
      */
-    setCaptures: function (captures) {
-        var me = this,
-            store = { };
+    setCaptures: function(captures) {
+        var me = this;
 
-        store.fields = [ 'id', 'amount', 'create_time', 'description' ];
-        store.data = captures;
-
-        me.down('#captureSelection').store = store;
+        me.down('#captureSelection').store = Ext.create('Ext.data.Store', {
+            fields: ['id', 'amount', 'create_time', 'description'],
+            data: captures
+        });
     },
 
     /**
      * @param { Ext.form.ComboBox } element
      * @param { Ext.data.Model } record
      */
-    onSelectCapture: function (element, record) {
+    onSelectCapture: function(element, record) {
         var me = this,
             selectedRecord = record[0];
 
@@ -142,10 +146,10 @@ Ext.define('Shopware.apps.PaypalUnified.view.refund.CaptureWindow', {
      * Barely validates the input and then displays a confirmation
      * message box. If the user clicks "yes" it will continue the refund process.
      */
-    onRefundButtonClick: function () {
+    onRefundButtonClick: function() {
         var me = this,
             amount = me.down('#currentAmount').value,
-            amountFormatted = Ext.util.Format.number(amount, '0,000.00 EUR');
+            amountFormatted = Ext.util.Format.number(amount, '0,000.00 ' + me.currency);
 
         if (amount <= 0) {
             Ext.MessageBox.alert(

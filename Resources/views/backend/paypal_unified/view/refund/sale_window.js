@@ -17,6 +17,11 @@ Ext.define('Shopware.apps.PaypalUnified.view.refund.SaleWindow', {
      */
     contentContainer: null,
 
+    /**
+     * @type { string }
+     */
+    currency: '',
+
     initComponent: function() {
         var me = this;
 
@@ -101,9 +106,9 @@ Ext.define('Shopware.apps.PaypalUnified.view.refund.SaleWindow', {
     onRefundButtonClick: function() {
         var me = this,
             amount = me.down('#currentAmount').value,
-            amountFormatted = Ext.util.Format.number(amount, '0,000.00 EUR'),
+            amountFormatted = Ext.util.Format.number(amount, '0,000.00 ' + me.currency),
             maxAmount = me.down('#maxAmount').value,
-            maxAmountFormatted = Ext.util.Format.number(maxAmount, '0,000.00 EUR');
+            maxAmountFormatted = Ext.util.Format.number(maxAmount, '0,000.00 ' + me.currency);
 
         if (amount <= 0) {
             Ext.MessageBox.alert(

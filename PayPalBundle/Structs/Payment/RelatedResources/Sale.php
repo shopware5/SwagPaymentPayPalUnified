@@ -333,8 +333,11 @@ class Sale extends RelatedResource
         $result->setPaymentMode($data['payment_mode']);
         $result->setProtectionEligibility($data['protection_eligibility']);
         $result->setProtectionEligibilityType($data['protection_eligibility_type']);
-        $result->setTransactionFee(TransactionFee::fromArray($data['transaction_fee']));
         $result->setReceiptId($data['receipt_id']);
+
+        if (is_array($data['transaction_fee'])) {
+            $result->setTransactionFee(TransactionFee::fromArray($data['transaction_fee']));
+        }
 
         $links = [];
         foreach ($data['links'] as $link) {
