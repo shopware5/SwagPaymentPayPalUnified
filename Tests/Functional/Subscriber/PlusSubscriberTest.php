@@ -94,6 +94,27 @@ class PlusSubscriberTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($view->getAssign('paypalUnifiedUsePlus'));
     }
 
+    public function test_onPostDispatchCheckout_should_return_because_is_express_checkout()
+    {
+        $subscriber = $this->getSubscriber();
+
+        $view = new ViewMock(
+            new Enlight_Template_Manager()
+        );
+
+        $request = new \Enlight_Controller_Request_RequestTestCase();
+        $request->setActionName('finish');
+        $request->setParam('expressCheckout', true);
+
+        $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
+            'subject' => new DummyController($request, $view),
+        ]);
+
+        $subscriber->onPostDispatchCheckout($enlightEventArgs);
+
+        $this->assertNull($view->getAssign('paypalUnifiedUsePlus'));
+    }
+
     public function test_onPostDispatchCheckout_should_return_because_the_action_is_invalid()
     {
         $subscriber = $this->getSubscriber();
