@@ -7,7 +7,7 @@
             <div class="buttons--off-canvas">
                 <a class="close--off-canvas">
                     <i class="icon--arrow-left"></i>
-                    {s name='offcanvas/close' namespace='frontend/payment_paypal_installments/upstream_presentment/modal'}Back{/s}
+                    {s name='offcanvas/close'}Back{/s}
                 </a>
             </div>
         {/block}
