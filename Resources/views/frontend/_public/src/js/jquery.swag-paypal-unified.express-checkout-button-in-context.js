@@ -240,5 +240,13 @@
         }
     });
 
+    /**
+     *  After the loading another product variant, we lose the
+     *  plugin instance, therefore, we have to re-initialize it here.
+     */
+    $.subscribe('plugin/swAjaxVariant/onRequestData', function() {
+        window.StateManager.addPlugin('*[data-paypalUnifiedEcButtonInContext="true"]', 'swagPayPalUnifiedExpressCheckoutButtonInContext');
+    });
+
     window.StateManager.addPlugin('*[data-paypalUnifiedEcButtonInContext="true"]', 'swagPayPalUnifiedExpressCheckoutButtonInContext');
 })(jQuery, window);

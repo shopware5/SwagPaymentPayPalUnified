@@ -284,7 +284,7 @@
     });
 
     /**
-     *  After the loading another product-variant, we lose the
+     *  After the loading another product variant, we lose the
      *  plugin instance, therefore, we have to re-initialize it here.
      */
     $.subscribe('plugin/swAjaxVariant/onRequestData', function() {
