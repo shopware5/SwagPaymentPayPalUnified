@@ -478,7 +478,9 @@ class Plus implements SubscriberInterface
             if ($paymentMethod['swag_paypal_unified_display_in_plus_iframe']) {
                 $paymentMethodsForPaymentWall[] = [
                     'redirectUrl' => 'http://' . $paymentMethod['id'],
-                    'methodName' => $paymentMethod['description'],
+                    // 25 is the max length for payment name
+                    // cut here, because the name is needed for a check in jQuery plugin
+                    'methodName' => substr($paymentMethod['description'], 0, 25),
                     'description' => $paymentMethod['additionaldescription'],
                 ];
             }

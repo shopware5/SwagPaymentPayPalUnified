@@ -214,7 +214,7 @@
                 thirdPartyPaymentId = me.getPaymentIdFromThirdPartyMethod(thirdPartyPaymentMethod);
             });
 
-            if (selectedPaymentId === thirdPartyPaymentId) {
+            if (thirdPartyPaymentId === -1 || selectedPaymentId === thirdPartyPaymentId) {
                 return;
             }
 

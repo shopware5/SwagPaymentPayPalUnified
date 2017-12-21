@@ -175,6 +175,9 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
         $shopId = (int) $this->Request()->getParam('shopId');
         $logoImage = $this->Request()->getParam('logoImage');
         $brandName = $this->Request()->getParam('brandName');
+        $webProfileId = null;
+        $ecWebProfileId = null;
+        $error = null;
 
         $settings = [
             'shopId' => $shopId,
@@ -192,13 +195,6 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
             $ecWebProfileId = $webProfileService->getWebProfile($settings, true);
         } catch (Exception $rex) {
             $error = $this->exceptionHandler->handle($rex, 'request the web profiles');
-
-            $this->View()->assign([
-                'success' => false,
-                'message' => $error->getCompleteMessage(),
-            ]);
-
-            return;
         }
 
         /** @var ModelManager $entityManager */
@@ -217,6 +213,15 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
         }
 
         $entityManager->flush();
+
+        if ($error !== null) {
+            $this->View()->assign([
+                'success' => false,
+                'message' => $error->getCompleteMessage(),
+            ]);
+
+            return;
+        }
 
         $this->View()->assign('success', true);
     }
