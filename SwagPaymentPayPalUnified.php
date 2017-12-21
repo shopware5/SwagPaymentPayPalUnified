@@ -69,6 +69,11 @@ class SwagPaymentPayPalUnified extends Plugin
         $paymentMethodProvider->setPaymentMethodActiveFlag(false);
         $paymentMethodProvider->setPaymentMethodActiveFlag(false, PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME);
 
+        $this->container->get('shopware_attribute.crud_service')->delete(
+            's_core_paymentmeans_attributes',
+            'swag_paypal_unified_display_in_plus_iframe'
+        );
+
         parent::uninstall($context);
     }
 
