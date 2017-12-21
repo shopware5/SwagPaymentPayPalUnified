@@ -30,7 +30,7 @@
  *      plugin/swagPayPalUnifiedAjaxInstallments/ajaxError
  *          - Will be fired when the ajax request failed
  */
-;(function($) {
+;(function($, window) {
     'use strict';
 
     $.plugin('swagPayPalUnifiedAjaxInstallments', {
@@ -201,7 +201,15 @@
         }
     });
 
-    $(function() {
-        StateManager.addPlugin('*[data-paypalAjaxInstallments="true"]', 'swagPayPalUnifiedAjaxInstallments');
+    /**
+     *  After the loading another product-variant, we lose the
+     *  plugin instance, therefore, we have to re-initialize it here.
+     */
+    $.subscribe('plugin/swAjaxVariant/onRequestData', function() {
+        window.StateManager.addPlugin('*[data-paypalAjaxInstallments="true"]', 'swagPayPalUnifiedAjaxInstallments');
+
+        window.StateManager.addPlugin('*[data-paypalAjaxInstallments="true"]', 'swagPayPalUnifiedAjaxInstallments');
     });
-})(jQuery);
+
+    window.StateManager.addPlugin('*[data-paypalAjaxInstallments="true"]', 'swagPayPalUnifiedAjaxInstallments');
+})(jQuery, window);

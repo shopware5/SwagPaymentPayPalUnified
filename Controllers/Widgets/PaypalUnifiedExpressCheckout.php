@@ -211,6 +211,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedExpressCheckout extends \Enlight
         $this->redirect([
             'controller' => 'checkout',
             'action' => 'shippingPayment',
+            'expressCheckout' => true,
             'paypal_unified_error_code' => $code,
             'paypal_unified_error_message' => $message,
             'paypal_unified_error_name' => $name,

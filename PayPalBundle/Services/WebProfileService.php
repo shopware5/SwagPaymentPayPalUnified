@@ -24,11 +24,9 @@
 
 namespace SwagPaymentPayPalUnified\PayPalBundle\Services;
 
-use Shopware\Components\HttpClient\RequestException;
 use Shopware\Components\Model\ModelManager;
 use Shopware\Models\Shop\Repository as ShopRepository;
 use Shopware\Models\Shop\Shop;
-use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\WebProfileResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile\WebProfileFlowConfig;
@@ -48,27 +46,19 @@ class WebProfileService
     private $settings;
 
     /**
-     * @var LoggerServiceInterface
-     */
-    private $logger;
-
-    /**
      * @var ModelManager
      */
     private $modelManager;
 
     /**
-     * @param ClientService          $client
-     * @param LoggerServiceInterface $logger
-     * @param ModelManager           $modelManager
+     * @param ClientService $client
+     * @param ModelManager  $modelManager
      */
     public function __construct(
         ClientService $client,
-        LoggerServiceInterface $logger,
         ModelManager $modelManager
     ) {
         $this->client = $client;
-        $this->logger = $logger;
         $this->modelManager = $modelManager;
     }
 
@@ -89,40 +79,32 @@ class WebProfileService
         $webProfileResource = new WebProfileResource($this->client);
         $currentWebProfile = $this->getCurrentWebProfile($forExpressCheckout);
 
-        try {
-            $profileList = $webProfileResource->getList();
+        $profileList = $webProfileResource->getList();
 
-            /** @var WebProfile $selectedRemoteProfile */
-            $selectedRemoteProfile = null;
+        /** @var WebProfile $selectedRemoteProfile */
+        $selectedRemoteProfile = null;
 
-            foreach ($profileList as $remoteProfile) {
-                $profileStruct = WebProfile::fromArray($remoteProfile);
-                if ($profileStruct->getName() === $currentWebProfile->getName()) {
-                    $selectedRemoteProfile = $profileStruct;
-                    break;
-                }
+        foreach ($profileList as $remoteProfile) {
+            $profileStruct = WebProfile::fromArray($remoteProfile);
+            if ($profileStruct->getName() === $currentWebProfile->getName()) {
+                $selectedRemoteProfile = $profileStruct;
+                break;
             }
-
-            if ($selectedRemoteProfile === null) {
-                //If we don't have a profile for the shop (yet) we have to create one.
-                $selectedRemoteProfile = $webProfileResource->create($currentWebProfile);
-            } elseif (!$currentWebProfile->equals($selectedRemoteProfile)) {
-                //The web profile is not the same as the current profile, therefore we need to patch it.
-                $webProfileResource->update($selectedRemoteProfile->getId(), $currentWebProfile);
-
-                //Store the id in the current web-profile
-                $currentWebProfile->setId($selectedRemoteProfile->getId());
-                $selectedRemoteProfile = $currentWebProfile;
-            }
-
-            return $selectedRemoteProfile->getId();
-        } catch (RequestException $rex) {
-            $this->logger->error('Could not request the web profiles.', ['message' => $rex->getMessage(), 'payload' => $rex->getBody()]);
-        } catch (\Exception $ex) {
-            $this->logger->error('An unknown error occurred while setting the web profile.', ['message' => $ex->getMessage()]);
         }
 
-        return null;
+        if ($selectedRemoteProfile === null) {
+            //If we don't have a profile for the shop (yet) we have to create one.
+            $selectedRemoteProfile = $webProfileResource->create($currentWebProfile);
+        } elseif (!$currentWebProfile->equals($selectedRemoteProfile)) {
+            //The web profile is not the same as the current profile, therefore we need to patch it.
+            $webProfileResource->update($selectedRemoteProfile->getId(), $currentWebProfile);
+
+            //Store the id in the current web-profile
+            $currentWebProfile->setId($selectedRemoteProfile->getId());
+            $selectedRemoteProfile = $currentWebProfile;
+        }
+
+        return $selectedRemoteProfile->getId();
     }
 
     /**

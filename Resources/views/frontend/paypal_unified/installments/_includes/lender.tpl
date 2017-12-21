@@ -1,7 +1,7 @@
 {*
     This templates adds the lender (company name & info) to the view.
 
-    [example]: {include file='frontend/payment_paypal_installments/upstream_presentment/_includes/lender.tpl' centerText=true multiline=true}
+    [example]: {include file='frontend/paypal_unified/installments/_includes/lender.tpl' centerText=true multiline=true}
 
     Available parameters:
        [array] 'paypalInstallmentsCompanyInfo': An array that contains the company information

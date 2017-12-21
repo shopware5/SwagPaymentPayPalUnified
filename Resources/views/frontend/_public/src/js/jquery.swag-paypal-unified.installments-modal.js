@@ -121,9 +121,13 @@
          *
          * @private
          * @method onClick
+         *
+         * @param {object} event
          */
-        onClick: function() {
+        onClick: function(event) {
             var me = this;
+
+            event.preventDefault();
 
             $.publish('plugin/swagPayPalUnifiedInstallmentsModal/beforeClick', me);
 
