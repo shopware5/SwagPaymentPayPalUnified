@@ -26,7 +26,7 @@
              *
              * @type string
              */
-            label: 'checkout',
+            label: 'pay',
 
             /**
              * size of the button
@@ -48,7 +48,7 @@
              *
              * @type string
              */
-            shape: 'rect',
+            shape: 'pill',
 
             /**
              * color of the button

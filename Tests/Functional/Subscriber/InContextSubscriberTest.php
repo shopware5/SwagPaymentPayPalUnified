@@ -128,6 +128,24 @@ class InContextSubscriberTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($view->getAssign('paypalUnifiedPaymentId'));
     }
 
+    public function test_addInContextButton_return_no_ec_settings()
+    {
+        $view = new ViewMock(new \Enlight_Template_Manager());
+        $request = new \Enlight_Controller_Request_RequestTestCase();
+        $request->setActionName('confirm');
+
+        $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
+            'subject' => new DummyController($request, $view, null),
+        ]);
+
+        $this->importSettings(true, true, false, false);
+
+        $subscriber = $this->getSubscriber();
+        $subscriber->addInContextButton($enlightEventArgs);
+
+        $this->assertNull($view->getAssign('paypalUnifiedPaymentId'));
+    }
+
     public function test_addInContextButton_right_template_assigns()
     {
         $view = new ViewMock(new \Enlight_Template_Manager());
@@ -231,8 +249,9 @@ class InContextSubscriberTest extends \PHPUnit_Framework_TestCase
      * @param bool $active
      * @param bool $useInContext
      * @param bool $sandboxMode
+     * @param bool $hasEcSettings
      */
-    private function importSettings($active = false, $useInContext = false, $sandboxMode = false)
+    private function importSettings($active = false, $useInContext = false, $sandboxMode = false, $hasEcSettings = true)
     {
         $this->insertGeneralSettingsFromArray([
             'shopId' => 1,
@@ -243,6 +262,10 @@ class InContextSubscriberTest extends \PHPUnit_Framework_TestCase
             'clientId' => 'test',
             'clientSecret' => 'test',
         ]);
+
+        if ($hasEcSettings) {
+            $this->insertExpressCheckoutSettingsFromArray([]);
+        }
     }
 
     /**
