@@ -5,6 +5,9 @@
                  data-paypalUnifiedNormalCheckoutButtonInContext="true"
                  data-paypalMode="{if $paypalUnifiedModeSandbox}sandbox{else}production{/if}"
                  data-label="pay"
+                 data-color="{$paypalUnifiedEcButtonStyleColor}"
+                 data-shape="{$paypalUnifiedEcButtonStyleShape}"
+                 data-size="{$paypalUnifiedEcButtonStyleSize}"
                 {block name='frontend_checkout_confirm_paypal_unified_in_context_button_data'}{/block}>
             </div>
         {/block}

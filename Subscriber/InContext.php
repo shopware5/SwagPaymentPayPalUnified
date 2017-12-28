@@ -27,8 +27,10 @@ namespace SwagPaymentPayPalUnified\Subscriber;
 use Doctrine\DBAL\Connection;
 use Enlight\Event\SubscriberInterface;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
+use SwagPaymentPayPalUnified\Models\Settings\ExpressCheckout as ExpressSettingsModel;
 use SwagPaymentPayPalUnified\Models\Settings\General as GeneralSettingsModel;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 
 class InContext implements SubscriberInterface
 {
@@ -97,10 +99,19 @@ class InContext implements SubscriberInterface
             return;
         }
 
+        /** @var ExpressSettingsModel $expressSettings */
+        $expressSettings = $this->settingsService->getSettings(null, SettingsTable::EXPRESS_CHECKOUT);
+        if (!$expressSettings) {
+            return;
+        }
+
         $view = $controller->View();
         $view->assign('paypalUnifiedPaymentId', $this->paymentMethodProvider->getPaymentId($this->connection));
         $view->assign('paypalUnifiedModeSandbox', $settings->getSandbox());
         $view->assign('paypalUnifiedUseInContext', $settings->getUseInContext());
+        $view->assign('paypalUnifiedEcButtonStyleColor', $expressSettings->getButtonStyleColor());
+        $view->assign('paypalUnifiedEcButtonStyleShape', $expressSettings->getButtonStyleShape());
+        $view->assign('paypalUnifiedEcButtonStyleSize', $expressSettings->getButtonStyleSize());
     }
 
     /**

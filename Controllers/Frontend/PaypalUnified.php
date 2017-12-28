@@ -271,13 +271,19 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
             $isExpressCheckout = (bool) $request->getParam('expressCheckout', false);
             $orderDataService->applyPaymentTypeAttribute($orderNumber, $response, $isExpressCheckout);
 
-            // Done, redirect to the finish page
-            $this->redirect([
+            $redirectParameter = [
                 'module' => 'frontend',
                 'controller' => 'checkout',
                 'action' => 'finish',
                 'sUniqueID' => $paymentId,
-            ]);
+            ];
+
+            if ($isExpressCheckout) {
+                $redirectParameter['expressCheckout'] = true;
+            }
+
+            // Done, redirect to the finish page
+            $this->redirect($redirectParameter);
         } catch (RequestException $exception) {
             $this->handleError(ErrorCodes::COMMUNICATION_FAILURE, $exception);
         } catch (\Exception $exception) {

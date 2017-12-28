@@ -44,7 +44,7 @@
              *
              *  @type string
              */
-            shape: 'rect',
+            shape: 'pill',
 
             /**
              * size of the button
