@@ -65,7 +65,7 @@ class Installer
     public function install()
     {
         if ($this->hasPayPalClassicInstalled()) {
-            throw new InstallationException('This plugin can not be used while PayPal Classic or PayPal Plus are installed and active.');
+            throw new InstallationException('This plugin can not be used while PayPal Classic, PayPal Plus or PayPal Installments are installed and active.');
         }
 
         $this->createDatabaseTables();
@@ -90,8 +90,12 @@ class Installer
             'name' => 'SwagPaymentPaypalPlus',
             'active' => 1,
         ]);
+        $classicInstallmentsPlugin = $this->modelManager->getRepository(Plugin::class)->findOneBy([
+            'name' => 'SwagPaymentPayPalInstallments',
+            'active' => 1,
+        ]);
 
-        return $classicPlugin !== null || $classicPlusPlugin !== null;
+        return $classicPlugin !== null || $classicPlusPlugin !== null || $classicInstallmentsPlugin !== null;
     }
 
     private function createDatabaseTables()
