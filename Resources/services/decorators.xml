@@ -10,7 +10,7 @@
                  decorates="shopware_account.address_validator"
                  public="false">
             <argument type="service" id="paypal_unified.shopware_account.address_validator_decorator.inner"/>
-            <argument type="service" id="front" />
+            <argument type="service" id="front"/>
         </service>
     </services>
 </container>

@@ -108,7 +108,7 @@
         },
 
         /**
-         * Creates the paypal express checkout over the provided paypal javascript
+         * Creates the PayPal express checkout over the provided PayPal javascript
          */
         createButton: function() {
             var me = this;

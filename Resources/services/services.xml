@@ -5,7 +5,8 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
-        <service id="paypal_unified.client_service" class="SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService">
+        <service id="paypal_unified.client_service"
+                 class="SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService">
             <argument type="service" id="paypal_unified.settings_service"/>
             <argument type="service" id="paypal_unified.token_service"/>
             <argument type="service" id="paypal_unified.logger_service"/>
@@ -14,7 +15,8 @@
             <argument type="service" id="dbal_connection"/>
         </service>
 
-        <service id="paypal_unified.token_service" class="SwagPaymentPayPalUnified\PayPalBundle\Services\TokenService">
+        <service id="paypal_unified.token_service"
+                 class="SwagPaymentPayPalUnified\PayPalBundle\Services\TokenService">
             <argument type="service" id="shopware.cache_manager"/>
         </service>
 
@@ -24,7 +26,8 @@
             <argument type="service" id="paypal_unified.settings_service"/>
         </service>
 
-        <service id="paypal_unified.dependency_provider" class="SwagPaymentPayPalUnified\Components\DependencyProvider">
+        <service id="paypal_unified.dependency_provider"
+                 class="SwagPaymentPayPalUnified\Components\DependencyProvider">
             <argument type="service" id="service_container"/>
         </service>
 
@@ -34,7 +37,8 @@
             <argument type="service" id="models"/>
         </service>
 
-        <service id="paypal_unified.webhook_service" class="SwagPaymentPayPalUnified\PayPalBundle\Services\WebhookService"/>
+        <service id="paypal_unified.webhook_service"
+                 class="SwagPaymentPayPalUnified\PayPalBundle\Services\WebhookService"/>
 
         <service id="paypal_unified.payment_builder_service"
                  class="SwagPaymentPayPalUnified\Components\Services\PaymentBuilderService">
@@ -69,7 +73,8 @@
             <argument type="service" id="models"/>
         </service>
 
-        <service id="paypal_unified.payment_address_service" class="SwagPaymentPayPalUnified\Components\Services\PaymentAddressService"/>
+        <service id="paypal_unified.payment_address_service"
+                 class="SwagPaymentPayPalUnified\Components\Services\PaymentAddressService"/>
 
         <service id="paypal_unified.settings_service"
                  class="SwagPaymentPayPalUnified\Components\Services\SettingsService">
@@ -77,8 +82,7 @@
             <argument type="service" id="paypal_unified.dependency_provider"/>
         </service>
 
-        <service id="paypal_unified.installments.validation_service"
-                 class="SwagPaymentPayPalUnified\Components\Services\Installments\ValidationService"/>
+        <service id="paypal_unified.installments.validation_service" class="SwagPaymentPayPalUnified\Components\Services\Installments\ValidationService"/>
 
         <service id="paypal_unified.installments.company_info_service"
                  class="SwagPaymentPayPalUnified\Components\Services\Installments\CompanyInfoService">
