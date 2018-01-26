@@ -1,5 +1,11 @@
 {
-    "name": "shopware/SwagPaymentPayPalUnified",
+    "name": "shopwareLabs/swag-payment-paypal-unified",
+    "type": "shopware-plugin",
+    "description": "All PayPal payment methods in one plugin",
+    "license": "MTI",
+    "extra": {
+        "installer-name": "SwagPaymentPayPalUnified"
+    },
     "require-dev": {
         "shopware/plugin-dev-tools": "master-dev"
     },

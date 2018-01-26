@@ -1,25 +1,9 @@
 <?php
 /**
- * Shopware 5
- * Copyright (c) shopware AG
+ * (c) shopware AG <info@shopware.com>
  *
- * According to our dual licensing model, this program can be used either
- * under the terms of the GNU Affero General Public License, version 3,
- * or under a proprietary license.
- *
- * The texts of the GNU Affero General Public License with an additional
- * permission and of our proprietary license can be found at and
- * in the LICENSE file you have received along with this program.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * "Shopware" is a registered trademark of shopware AG.
- * The licensing of the program under the AGPLv3 does not imply a
- * trademark license. Therefore any rights, title and interest in
- * our trademarks remain entirely with us.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 use Shopware\Components\Model\ModelManager;
@@ -228,10 +212,11 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
 
     private function configureClient()
     {
-        $shopId = (int) $this->Request()->getParam('shopId');
-        $restId = $this->Request()->getParam('clientId');
-        $sandbox = (bool) $this->Request()->getParam('sandbox', false);
-        $restSecret = $this->Request()->getParam('clientSecret');
+        $request = $this->Request();
+        $shopId = (int) $request->getParam('shopId');
+        $restId = $request->getParam('clientId');
+        $sandbox = $request->getParam('sandbox', 'false') !== 'false';
+        $restSecret = $request->getParam('clientSecret');
 
         $this->clientService->configure([
             'clientId' => $restId,

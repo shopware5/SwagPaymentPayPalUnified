@@ -180,7 +180,7 @@
             var me = this;
 
             me.$form.on('change', function() {
-                if (me.checkFormValidity(actions)) {
+                if (me.checkFormValidity()) {
                     $.publish('plugin/swagPayPalUnifiedInContextCheckout/formValid', [me, actions]);
 
                     return actions.enable();
@@ -191,7 +191,7 @@
                 return actions.disable();
             });
 
-            if (!me.checkFormValidity(actions)) {
+            if (!me.checkFormValidity()) {
                 $.publish('plugin/swagPayPalUnifiedInContextCheckout/formInValid', [me, actions]);
 
                 return actions.disable();

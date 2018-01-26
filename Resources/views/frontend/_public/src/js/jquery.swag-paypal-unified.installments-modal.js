@@ -147,8 +147,7 @@
          * @method showModal
          */
         showModal: function() {
-            var me = this,
-                url = me.opts.paypalInstallmentsModalURL;
+            var me = this;
 
             $.publish('plugin/swagPayPalUnifiedInstallmentsModal/showModal', me);
 
@@ -160,7 +159,7 @@
 
             $.ajax({
                 method: 'GET',
-                url: url,
+                url: me.opts.paypalInstallmentsModalURL,
                 data: {
                     productPrice: me.opts.paypalInstallmentsProductPrice
                 },

@@ -81,7 +81,7 @@
             $.ajax({
                 url: me.opts.paypalAddressPatchUrl,
                 data: { paymentId: me.opts.paypalRemotePaymentId },
-                method: 'GET',
+                method: 'POST',
                 success: $.proxy(me.addressPatchAjaxCallbackSuccess, me),
                 error: $.proxy(me.addressPatchAjaxCallbackError, me)
             });
