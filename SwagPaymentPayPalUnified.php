@@ -13,6 +13,7 @@ use Shopware\Components\Plugin\Context\ActivateContext;
 use Shopware\Components\Plugin\Context\DeactivateContext;
 use Shopware\Components\Plugin\Context\InstallContext;
 use Shopware\Components\Plugin\Context\UninstallContext;
+use Shopware\Components\Plugin\Context\UpdateContext;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Setup\Installer;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -20,7 +21,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 class SwagPaymentPayPalUnified extends Plugin
 {
     /**
-     * @param ContainerBuilder $container
+     * {@inheritdoc}
      */
     public function build(ContainerBuilder $container)
     {
@@ -48,8 +49,8 @@ class SwagPaymentPayPalUnified extends Plugin
      */
     public function uninstall(UninstallContext $context)
     {
-        /** @var PaymentMethodProvider $paymentMethodProvider */
-        $paymentMethodProvider = new PaymentMethodProvider($this->container->get('models'));
+        $modelManager = $this->container->get('models');
+        $paymentMethodProvider = new PaymentMethodProvider($modelManager);
         $paymentMethodProvider->setPaymentMethodActiveFlag(false);
         $paymentMethodProvider->setPaymentMethodActiveFlag(false, PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME);
 
@@ -58,7 +59,20 @@ class SwagPaymentPayPalUnified extends Plugin
             'swag_paypal_unified_display_in_plus_iframe'
         );
 
+        $modelManager->generateAttributeModels(['s_core_paymentmeans_attributes']);
+        $context->scheduleClearCache(['theme']);
+
         parent::uninstall($context);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function update(UpdateContext $context)
+    {
+        $context->scheduleClearCache(['theme']);
+
+        parent::update($context);
     }
 
     /**
