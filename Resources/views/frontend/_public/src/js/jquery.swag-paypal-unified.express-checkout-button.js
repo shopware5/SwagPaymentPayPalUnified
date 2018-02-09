@@ -112,9 +112,12 @@
         createButton: function() {
             var me = this;
 
-            me.expressCheckoutButton = paypal.Button.render(me.createPayPalButtonConfiguration(), me.$el.get(0));
+            // wait for the PayPal javascript to be loaded
+            me.buffer(function() {
+                me.expressCheckoutButton = paypal.Button.render(me.createPayPalButtonConfiguration(), me.$el.get(0));
 
-            $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonCart/createButton', [me, me.expressCheckoutButton]);
+                $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonCart/createButton', [me, me.expressCheckoutButton]);
+            });
         },
 
         /**
@@ -180,9 +183,10 @@
                 closeOnClick: false
             });
 
+            // delay the call, so the loading indicator will show up on mobile
             me.buffer(function() {
                 form.submit();
-            }, 100);
+            });
 
             $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonCart/createPayment', me);
         },
@@ -251,8 +255,7 @@
         },
 
         /**
-         * Buffer for submitting the form
-         * If we don't delay the call, the loading indicator will not show up on mobile
+         * Buffer helper function to set a timeout for a function
          *
          * @param {function} fn
          * @param {number} timeout

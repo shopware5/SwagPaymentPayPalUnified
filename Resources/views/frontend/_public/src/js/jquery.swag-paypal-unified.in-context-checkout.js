@@ -113,9 +113,12 @@
         createButton: function() {
             var me = this;
 
-            me.inContextCheckoutButton = paypal.Button.render(me.createPayPalButtonConfiguration(), me.$el.get(0));
+            // wait for the PayPal javascript to be loaded
+            me.buffer(function() {
+                me.inContextCheckoutButton = paypal.Button.render(me.createPayPalButtonConfiguration(), me.$el.get(0));
 
-            $.publish('plugin/swagPayPalUnifiedInContextCheckout/createButton', [me, me.inContextCheckoutButton]);
+                $.publish('plugin/swagPayPalUnifiedInContextCheckout/createButton', [me, me.inContextCheckoutButton]);
+            });
         },
 
         /**
@@ -279,6 +282,21 @@
          */
         onPayPalAuthorize: function(data, actions) {
             return actions.redirect();
+        },
+
+        /**
+         * Buffer helper function to set a timeout for a function
+         *
+         * @param {function} fn
+         * @param {number} timeout
+         * @return {number}
+         */
+        buffer: function(fn, timeout) {
+            var me = this;
+
+            timeout = timeout || 100;
+
+            return window.setTimeout(fn.bind(me), timeout);
         }
     });
 
