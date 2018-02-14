@@ -22,7 +22,6 @@
                 <!-- Classes that communicate with the PayPal API -->
                 <file>./Components/Services/Installments/InstallmentsRequestService.php</file>
                 <file>./PayPalBundle/Services/TokenService.php</file>
-                <file>./PayPalBundle/Services/WebProfileService.php</file>
 
             </exclude>
         </whitelist>
