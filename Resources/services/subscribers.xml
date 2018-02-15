@@ -125,5 +125,9 @@
             <argument type="service" id="paypal_unified.exception_handler_service"/>
             <tag name="shopware.event_subscriber"/>
         </service>
+
+        <service id="paypal_unified.subscriber.media_garbage_collector" class="SwagPaymentPayPalUnified\Subscriber\MediaGarbageCollector">
+            <tag name="shopware.event_subscriber"/>
+        </service>
     </services>
 </container>

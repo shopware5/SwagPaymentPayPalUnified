@@ -60,9 +60,8 @@ class SwagPaymentPayPalUnified extends Plugin
         );
 
         $modelManager->generateAttributeModels(['s_core_paymentmeans_attributes']);
-        $context->scheduleClearCache(['theme']);
 
-        parent::uninstall($context);
+        $context->scheduleClearCache(UninstallContext::CACHE_LIST_ALL);
     }
 
     /**
@@ -70,9 +69,7 @@ class SwagPaymentPayPalUnified extends Plugin
      */
     public function update(UpdateContext $context)
     {
-        $context->scheduleClearCache(['theme']);
-
-        parent::update($context);
+        $context->scheduleClearCache(UpdateContext::CACHE_LIST_ALL);
     }
 
     /**
@@ -84,9 +81,7 @@ class SwagPaymentPayPalUnified extends Plugin
         $paymentMethodProvider->setPaymentMethodActiveFlag(true);
         $paymentMethodProvider->setPaymentMethodActiveFlag(true, PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME);
 
-        $context->scheduleClearCache(['theme']);
-
-        parent::activate($context);
+        $context->scheduleClearCache(ActivateContext::CACHE_LIST_ALL);
     }
 
     /**
@@ -98,8 +93,6 @@ class SwagPaymentPayPalUnified extends Plugin
         $paymentMethodProvider->setPaymentMethodActiveFlag(false);
         $paymentMethodProvider->setPaymentMethodActiveFlag(false, PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME);
 
-        $context->scheduleClearCache(['theme']);
-
-        parent::deactivate($context);
+        $context->scheduleClearCache(DeactivateContext::CACHE_LIST_ALL);
     }
 }

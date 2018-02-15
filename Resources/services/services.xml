@@ -35,6 +35,7 @@
                  class="SwagPaymentPayPalUnified\PayPalBundle\Services\WebProfileService">
             <argument type="service" id="paypal_unified.client_service"/>
             <argument type="service" id="models"/>
+            <argument type="service" id="shopware_media.media_service"/>
         </service>
 
         <service id="paypal_unified.webhook_service"

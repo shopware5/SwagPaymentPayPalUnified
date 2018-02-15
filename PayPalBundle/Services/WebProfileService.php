@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\PayPalBundle\Services;
 
+use Shopware\Bundle\MediaBundle\MediaServiceInterface;
 use Shopware\Components\Model\ModelManager;
 use Shopware\Models\Shop\Repository as ShopRepository;
 use Shopware\Models\Shop\Shop;
@@ -35,15 +36,23 @@ class WebProfileService
     private $modelManager;
 
     /**
-     * @param ClientService $client
-     * @param ModelManager  $modelManager
+     * @var MediaServiceInterface
+     */
+    private $mediaService;
+
+    /**
+     * @param ClientService         $client
+     * @param ModelManager          $modelManager
+     * @param MediaServiceInterface $mediaService
      */
     public function __construct(
         ClientService $client,
-        ModelManager $modelManager
+        ModelManager $modelManager,
+        MediaServiceInterface $mediaService
     ) {
         $this->client = $client;
         $this->modelManager = $modelManager;
+        $this->mediaService = $mediaService;
     }
 
     /**
@@ -107,7 +116,7 @@ class WebProfileService
             $shop = $shopRepo->getActiveDefault();
         }
 
-        $logoImage = $this->settings['logoImage'];
+        $logoImage = $this->mediaService->getUrl($this->settings['logoImage']);
         $brandName = $this->settings['brandName'];
 
         //Prevent too long brand names
