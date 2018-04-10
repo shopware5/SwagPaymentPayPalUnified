@@ -150,6 +150,10 @@ trait SettingsHelperTrait
             $data['cartActive'] = false;
         }
 
+        if (empty($data['loginActive'])) {
+            $data['loginActive'] = false;
+        }
+
         if (empty($data['submitCart'])) {
             $data['submitCart'] = false;
         }
