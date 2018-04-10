@@ -1,7 +1,7 @@
 {block name='paypal_unified_ec_button_container_cart'}
     <div class="paypal-unified-ec--outer-button-container">
         {block name='paypal_unified_ec_button_container_cart_inner'}
-            <div class="paypal-unified-ec--button-container right"
+            <div class="paypal-unified-ec--button-container{if $isLoginPage} left{else} right{/if}"
                 {if $paypalUnifiedUseInContext}
                  data-paypalUnifiedEcButtonInContext="true"
                 {else}

@@ -101,41 +101,14 @@ class ExpressCheckout implements SubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            'Enlight_Controller_Action_PostDispatchSecure_Frontend' => 'loadExpressCheckoutJS',
-            'Enlight_Controller_Action_PostDispatchSecure_Widgets' => 'loadExpressCheckoutJS',
             'Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout' => [
                 ['addExpressCheckoutButtonCart'],
                 ['addEcInfoOnConfirm'],
                 ['addPaymentInfoToRequest', 100],
             ],
             'Enlight_Controller_Action_PostDispatchSecure_Frontend_Detail' => 'addExpressCheckoutButtonDetail',
+            'Enlight_Controller_Action_PostDispatch_Frontend_Register' => 'addExpressCheckoutButtonLogin', // cannot use "secure" here, because it's forwarded call from checkout/confirm
         ];
-    }
-
-    /**
-     * @param ActionEventArgs $args
-     */
-    public function loadExpressCheckoutJS(ActionEventArgs $args)
-    {
-        $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag($this->connection);
-        if (!$swUnifiedActive) {
-            return;
-        }
-
-        $unifiedActive = (bool) $this->settingsService->get('active');
-        if (!$unifiedActive) {
-            return;
-        }
-
-        /** @var ExpressSettingsModel $expressSettings */
-        $expressSettings = $this->settingsService->getSettings(null, SettingsTable::EXPRESS_CHECKOUT);
-        if (!$expressSettings || (!$expressSettings->getDetailActive() && !$expressSettings->getCartActive())) {
-            return;
-        }
-
-        $view = $args->getSubject()->View();
-
-        $view->assign('paypalUnifiedEcActive', true);
     }
 
     /**
@@ -162,15 +135,21 @@ class ExpressCheckout implements SubscriberInterface
 
         $action = $args->getRequest()->getActionName();
         $view = $args->getSubject()->View();
-        if ($action !== 'cart' && $action !== 'ajaxCart') {
+        if ($action !== 'cart' && $action !== 'ajaxCart' && $action !== 'ajax_add_article') {
             return;
         }
 
-        $view->assign('paypalUnifiedModeSandbox', $generalSettings->getSandbox());
-        $view->assign('paypalUnifiedUseInContext', $generalSettings->getUseInContext());
-        $view->assign('paypalUnifiedEcButtonStyleColor', $expressSettings->getButtonStyleColor());
-        $view->assign('paypalUnifiedEcButtonStyleShape', $expressSettings->getButtonStyleShape());
-        $view->assign('paypalUnifiedEcButtonStyleSize', $expressSettings->getButtonStyleSize());
+        $cart = $view->getAssign('sBasket');
+        $product = $view->getAssign('sArticle'); // content on modal window of ajaxAddArticleAction
+
+        if ((isset($cart['content']) || $product) && !$view->getAssign('sUserLoggedIn')) {
+            $view->assign('paypalUnifiedEcCartActive', true);
+            $view->assign('paypalUnifiedModeSandbox', $generalSettings->getSandbox());
+            $view->assign('paypalUnifiedUseInContext', $generalSettings->getUseInContext());
+            $view->assign('paypalUnifiedEcButtonStyleColor', $expressSettings->getButtonStyleColor());
+            $view->assign('paypalUnifiedEcButtonStyleShape', $expressSettings->getButtonStyleShape());
+            $view->assign('paypalUnifiedEcButtonStyleSize', $expressSettings->getButtonStyleSize());
+        }
     }
 
     /**
@@ -241,6 +220,41 @@ class ExpressCheckout implements SubscriberInterface
 
         if (!$view->getAssign('userLoggedIn')) {
             $view->assign('paypalUnifiedEcDetailActive', true);
+            $view->assign('paypalUnifiedModeSandbox', $generalSettings->getSandbox());
+            $view->assign('paypalUnifiedUseInContext', $generalSettings->getUseInContext());
+            $view->assign('paypalUnifiedEcButtonStyleColor', $expressSettings->getButtonStyleColor());
+            $view->assign('paypalUnifiedEcButtonStyleShape', $expressSettings->getButtonStyleShape());
+            $view->assign('paypalUnifiedEcButtonStyleSize', $expressSettings->getButtonStyleSize());
+        }
+    }
+
+    /**
+     * @param ActionEventArgs $args
+     */
+    public function addExpressCheckoutButtonLogin(ActionEventArgs $args)
+    {
+        $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag($this->connection);
+        if (!$swUnifiedActive) {
+            return;
+        }
+
+        /** @var GeneralSettingsModel $generalSettings */
+        $generalSettings = $this->settingsService->getSettings();
+        if (!$generalSettings || !$generalSettings->getActive()) {
+            return;
+        }
+
+        /** @var ExpressSettingsModel $expressSettings */
+        $expressSettings = $this->settingsService->getSettings(null, SettingsTable::EXPRESS_CHECKOUT);
+        if (!$expressSettings || !$expressSettings->getLoginActive()) {
+            return;
+        }
+
+        $view = $args->getSubject()->View();
+        $requestParams = $args->getRequest()->getParams();
+
+        if ($requestParams['sTarget'] === 'checkout' && $requestParams['sTargetAction'] === 'confirm') {
+            $view->assign('paypalUnifiedEcLoginActive', true);
             $view->assign('paypalUnifiedModeSandbox', $generalSettings->getSandbox());
             $view->assign('paypalUnifiedUseInContext', $generalSettings->getUseInContext());
             $view->assign('paypalUnifiedEcButtonStyleColor', $expressSettings->getButtonStyleColor());
