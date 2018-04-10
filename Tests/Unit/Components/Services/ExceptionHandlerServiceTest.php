@@ -190,7 +190,7 @@ class ExceptionHandlerServiceTest extends \PHPUnit_Framework_TestCase
         $error = $handler->handle($e, 'testing');
 
         $this->assertEquals('error name', $error->getName());
-        $this->assertEquals('An error occurred: error message: error field, error issue', $error->getMessage());
+        $this->assertEquals('An error occurred: error message: error issue "error field" ', $error->getMessage());
 
         $logErrors = $loggerMock->getErrors();
 
