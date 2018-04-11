@@ -52,6 +52,12 @@ class ExpressCheckout extends ModelEntity
 
     /**
      * @var bool
+     * @ORM\Column(name="login_active", type="boolean", nullable=false)
+     */
+    private $loginActive;
+
+    /**
+     * @var bool
      * @ORM\Column(name="submit_cart", type="boolean", nullable=false)
      */
     private $submitCart;
@@ -158,6 +164,22 @@ class ExpressCheckout extends ModelEntity
     public function setCartActive($cartActive)
     {
         $this->cartActive = $cartActive;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getLoginActive()
+    {
+        return $this->loginActive;
+    }
+
+    /**
+     * @param bool $loginActive
+     */
+    public function setLoginActive($loginActive)
+    {
+        $this->loginActive = $loginActive;
     }
 
     /**

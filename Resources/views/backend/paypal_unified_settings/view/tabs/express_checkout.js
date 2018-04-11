@@ -39,6 +39,11 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.ExpressCheckout', {
     ecCartActivate: null,
 
     /**
+     * @type { Ext.form.field.Checkbox }
+     */
+    ecLoginActivate: null,
+
+    /**
      * @type { Ext.form.field.ComboBox }
      */
     ecButtonStyleColor: null,
@@ -75,6 +80,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.ExpressCheckout', {
         me.ecIntentSelection = me.createPaymentIntentSelection();
         me.ecDetailActivate = me.createEcDetailActivate();
         me.ecCartActivate = me.createEcCartActivate();
+        me.ecLoginActivate = me.createEcLoginActivate();
         me.ecButtonStyleColor = me.createEcButtonStyleColor();
         me.ecButtonStyleShape = me.createEcButtonStyleShape();
         me.ecButtonStyleSize = me.createEcButtonStyleSize();
@@ -94,6 +100,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.ExpressCheckout', {
             me.ecIntentSelection,
             me.ecDetailActivate,
             me.ecCartActivate,
+            me.ecLoginActivate,
             me.ecButtonStyleColor,
             me.ecButtonStyleShape,
             me.ecButtonStyleSize,
@@ -134,7 +141,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.ExpressCheckout', {
     createEcDetailActivate: function() {
         return Ext.create('Ext.form.field.Checkbox', {
             name: 'detailActive',
-            fieldLabel: '{s name=field/ecDetailActivate}Show on detail page{/s}',
+            fieldLabel: '{s name=field/ecDetailActivate}\'Pay now\' on detail page{/s}',
             boxLabel: '{s name=field/ecDetailActivate/help}If this option is active, the Express Checkout button will be shown on each product detail page.{/s}',
             inputValue: true,
             uncheckedValue: false
@@ -147,8 +154,21 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.ExpressCheckout', {
     createEcCartActivate: function() {
         return Ext.create('Ext.form.field.Checkbox', {
             name: 'cartActive',
-            fieldLabel: '{s name=field/ecCartActivate}Show on cart page{/s}',
+            fieldLabel: '{s name=field/ecCartActivate}\'Pay now\' on cart{/s}',
             boxLabel: '{s name=field/ecCartActivate/help}If this option is active, the Express Checkout button will be shown on the cart.{/s}',
+            inputValue: true,
+            uncheckedValue: false
+        });
+    },
+
+    /**
+     * @returns { Ext.form.field.Checkbox }
+     */
+    createEcLoginActivate: function() {
+        return Ext.create('Ext.form.field.Checkbox', {
+            name: 'loginActive',
+            fieldLabel: '{s name=field/ecLoginActivate}\'Pay now\' on login page{/s}',
+            boxLabel: '{s name=field/ecLoginActivate/help}If this option is active, the Express Checkout button will be shown on the login and register page.{/s}',
             inputValue: true,
             uncheckedValue: false
         });

@@ -165,6 +165,7 @@ class SettingsServiceTest extends \PHPUnit_Framework_TestCase
 
         $this->assertTrue((bool) $settingsService->get('cart_active', SettingsTable::EXPRESS_CHECKOUT));
         $this->assertTrue((bool) $settingsService->get('detail_active', SettingsTable::EXPRESS_CHECKOUT));
+        $this->assertTrue((bool) $settingsService->get('login_active', SettingsTable::EXPRESS_CHECKOUT));
     }
 
     public function test_getSettings_returns_null_without_correct_table()
@@ -225,6 +226,7 @@ class SettingsServiceTest extends \PHPUnit_Framework_TestCase
             'active' => self::ACTIVE,
             'detailActive' => true,
             'cartActive' => true,
+            'loginActive' => true,
         ]);
     }
 }

@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\Components\Services;
 
+use GuzzleHttp\Exception\ClientException;
 use Shopware\Components\HttpClient\RequestException;
 use SwagPaymentPayPalUnified\Components\ExceptionHandlerServiceInterface;
 use SwagPaymentPayPalUnified\Components\PayPalApiException;
@@ -53,6 +54,13 @@ class ExceptionHandlerService implements ExceptionHandlerServiceInterface
 
         $requestBody = $e->getBody();
 
+        if (!$requestBody) {
+            $clientException = $e->getPrevious();
+            if ($clientException instanceof ClientException) {
+                $requestBody = $clientException->getResponse()->getBody()->getContents();
+            }
+        }
+
         $this->loggerService->error(sprintf(self::LOG_MESSAGE, $currentAction), [
             'message' => $exceptionMessage,
             'payload' => $requestBody,
@@ -93,10 +101,13 @@ class ExceptionHandlerService implements ExceptionHandlerServiceInterface
         }
 
         $message = self::DEFAULT_MESSAGE . $errorStruct->getMessage();
-        $errorDetail = $errorStruct->getDetails()[0];
+        $errorDetails = $errorStruct->getDetails();
 
-        if ($errorDetail) {
-            $message .= ': ' . $errorDetail->getField() . ', ' . $errorDetail->getIssue();
+        if (!empty($errorDetails)) {
+            $message .= ': ';
+            foreach ($errorDetails as $errorDetail) {
+                $message .= $errorDetail->getIssue() . ' "' . $errorDetail->getField() . '" ';
+            }
         }
 
         return new PayPalApiException(
