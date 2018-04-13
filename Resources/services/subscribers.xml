@@ -93,6 +93,8 @@
             <argument type="service" id="dbal_connection"/>
             <argument type="service" id="paypal_unified.installments.payment_builder_service"/>
             <argument type="service" id="paypal_unified.exception_handler_service"/>
+            <argument type="service" id="paypal_unified.payment_resource"/>
+            <argument type="service" id="paypal_unified.installments.order_credit_info_service"/>
             <tag name="shopware.event_subscriber"/>
         </service>
 
@@ -126,7 +128,8 @@
             <tag name="shopware.event_subscriber"/>
         </service>
 
-        <service id="paypal_unified.subscriber.media_garbage_collector" class="SwagPaymentPayPalUnified\Subscriber\MediaGarbageCollector">
+        <service id="paypal_unified.subscriber.media_garbage_collector"
+                 class="SwagPaymentPayPalUnified\Subscriber\MediaGarbageCollector">
             <tag name="shopware.event_subscriber"/>
         </service>
     </services>

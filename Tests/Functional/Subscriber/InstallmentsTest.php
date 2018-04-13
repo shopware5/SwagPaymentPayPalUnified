@@ -17,10 +17,14 @@ use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use SwagPaymentPayPalUnified\Subscriber\Installments;
 use SwagPaymentPayPalUnified\Tests\Functional\UnifiedControllerTestCase;
 use SwagPaymentPayPalUnified\Tests\Mocks\DummyController;
+use SwagPaymentPayPalUnified\Tests\Mocks\OrderCreditInfoServiceMock;
+use SwagPaymentPayPalUnified\Tests\Mocks\PaymentResourceMock;
 use SwagPaymentPayPalUnified\Tests\Mocks\ViewMock;
 
 class InstallmentsTest extends UnifiedControllerTestCase
 {
+    const INSTALLMENTS_PAYMENT_ID = 'installmentsPaymentId';
+
     public function test_can_be_created()
     {
         $subscriber = new Installments(
@@ -28,7 +32,9 @@ class InstallmentsTest extends UnifiedControllerTestCase
             new ValidationService(),
             Shopware()->Container()->get('dbal_connection'),
             Shopware()->Container()->get('paypal_unified.installments.payment_builder_service'),
-            Shopware()->Container()->get('paypal_unified.exception_handler_service')
+            Shopware()->Container()->get('paypal_unified.exception_handler_service'),
+            new PaymentResourceMock(),
+            new OrderCreditInfoServiceMock()
         );
 
         $this->assertNotNull($subscriber);
@@ -219,6 +225,19 @@ class InstallmentsTest extends UnifiedControllerTestCase
     public function test_OnPostDispatchCheckout_with_wrong_action()
     {
         $this->Request()->setActionName('test');
+
+        $actionEventArgs = $this->getActionEventArgs();
+
+        $settings = new GeneralSettingsModel();
+        $settingService = new SettingsServiceInstallmentsMock($settings);
+        $result = $this->getInstallmentsSubscriber($settingService)->onPostDispatchCheckout($actionEventArgs);
+
+        $this->assertNull($result);
+    }
+
+    public function test_OnPostDispatchCheckout_express_checkout()
+    {
+        $this->Request()->setParam('expressCheckout', 1);
 
         $actionEventArgs = $this->getActionEventArgs();
 
@@ -532,14 +551,74 @@ class InstallmentsTest extends UnifiedControllerTestCase
         $this->assertNull($requestCompleteList);
     }
 
+    public function test_onConfirmInstallments_wrong_action()
+    {
+        $this->Request()->setActionName('foo');
+        $actionEventArgs = $this->getActionEventArgs();
+        $settingService = new SettingsServiceInstallmentsMock();
+
+        $this->getInstallmentsSubscriber($settingService)->onConfirmInstallments($actionEventArgs);
+    }
+
+    public function test_onConfirmInstallments_without_flag()
+    {
+        $this->Request()->setActionName('confirm');
+        $actionEventArgs = $this->getActionEventArgs();
+        $settingService = new SettingsServiceInstallmentsMock();
+
+        $this->getInstallmentsSubscriber($settingService)->onConfirmInstallments($actionEventArgs);
+    }
+
+    public function test_onConfirmInstallments_without_paymentId_and_payer()
+    {
+        $this->Request()->setActionName('confirm');
+        $this->Request()->setParam('installments', true);
+        $actionEventArgs = $this->getActionEventArgs();
+        $settingService = new SettingsServiceInstallmentsMock();
+
+        $this->getInstallmentsSubscriber($settingService)->onConfirmInstallments($actionEventArgs);
+    }
+
+    public function test_onConfirmInstallments_throws_exception()
+    {
+        $this->Request()->setActionName('confirm');
+        $this->Request()->setParam('installments', true);
+        $this->Request()->setParam('paymentId', 'exception');
+        $this->Request()->setParam('PayerID', 'payerId');
+        $actionEventArgs = $this->getActionEventArgs();
+        $settingService = new SettingsServiceInstallmentsMock();
+
+        $this->getInstallmentsSubscriber($settingService)->onConfirmInstallments($actionEventArgs);
+        $header = $this->Response()->getHeaders()[0];
+        $this->assertContains('checkout/shippingPayment/paypal_unified_error_code/5/paypal_unified_error_message', $header['value']);
+        $this->assertTrue($this->Response()->isRedirect());
+    }
+
+    public function test_onConfirmInstallments_success()
+    {
+        $this->Request()->setActionName('confirm');
+        $this->Request()->setParam('installments', true);
+        $this->Request()->setParam('paymentId', self::INSTALLMENTS_PAYMENT_ID);
+        $this->Request()->setParam('PayerID', 'payerId');
+        $actionEventArgs = $this->getActionEventArgs();
+        $settingService = new SettingsServiceInstallmentsMock();
+
+        $this->getInstallmentsSubscriber($settingService)->onConfirmInstallments($actionEventArgs);
+        $viewAssignments = $actionEventArgs->getSubject()->View()->getAssign();
+
+        $this->assertEquals(self::INSTALLMENTS_PAYMENT_ID, $viewAssignments['paypalInstallmentsPaymentId']);
+        $this->assertEquals('payerId', $viewAssignments['paypalInstallmentsPayerId']);
+    }
+
     /**
      * @return \Enlight_Controller_ActionEventArgs
      */
     private function getActionEventArgs()
     {
         $controllerMock = new DummyController(
-            new \Enlight_Controller_Request_RequestTestCase(),
-            new ViewMock(new \Enlight_Template_Manager())
+            $this->Request(),
+            new ViewMock(new \Enlight_Template_Manager()),
+            $this->Response()
         );
 
         return new \Enlight_Controller_ActionEventArgs([
@@ -561,7 +640,9 @@ class InstallmentsTest extends UnifiedControllerTestCase
             Shopware()->Container()->get('paypal_unified.installments.validation_service'),
             Shopware()->Container()->get('dbal_connection'),
             Shopware()->Container()->get('paypal_unified.installments.payment_builder_service'),
-            Shopware()->Container()->get('paypal_unified.exception_handler_service')
+            Shopware()->Container()->get('paypal_unified.exception_handler_service'),
+            new PaymentResourceMock(),
+            new OrderCreditInfoServiceMock()
         );
     }
 }
