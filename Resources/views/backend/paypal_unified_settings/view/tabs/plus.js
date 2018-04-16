@@ -64,15 +64,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Plus', {
         me.paymentDescriptionField = me.createPaymentDescriptionField();
 
         return [
-            {
-                xtype: 'container',
-                html: '{s name=description}PayPal Plus - the four most popular payment methods of German buyers: PayPal, direct debit, credit card and invoice! <br> You can get PayPal Plus here: <a href="https://www.paypal.de/plus" title="https://www.paypal.de/plus" target="_blank">https://www.paypal.de/plus</a>{/s}',
-                margin: '0 0 20',
-                style: {
-                    'font-size': '16px',
-                    'line-height': '30px'
-                }
-            },
+            me.createNotice(),
             {
                 xtype: 'checkbox',
                 name: 'active',
@@ -88,6 +80,23 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Plus', {
             me.paymentNameField,
             me.paymentDescriptionField
         ];
+    },
+
+    /**
+     * @returns { Ext.form.Container }
+     */
+    createNotice: function () {
+        var infoNotice = Shopware.Notification.createBlockMessage('{s name=description}PayPal Plus - the four most popular payment methods of German buyers: PayPal, direct debit, credit card and invoice! <br> You can get PayPal Plus here: <a href="https://www.paypal.de/plus" title="https://www.paypal.de/plus" target="_blank">https://www.paypal.de/plus</a>{/s}', 'info');
+
+        //There is no style defined for the type "info" in the shopware backend stylesheet, therefore we have to apply it manually
+        infoNotice.style = {
+            'color': 'white',
+            'font-size': '14px',
+            'background-color': '#4AA3DF',
+            'text-shadow': '0 0 5px rgba(0, 0, 0, 0.3)'
+        };
+
+        return infoNotice;
     },
 
     /**
