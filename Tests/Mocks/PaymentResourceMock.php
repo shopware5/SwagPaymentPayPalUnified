@@ -10,6 +10,7 @@ namespace SwagPaymentPayPalUnified\Tests\Mocks;
 
 use Shopware\Components\HttpClient\RequestException;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\PaymentResource;
+use SwagPaymentPayPalUnified\Tests\Functional\Subscriber\InstallmentsTest;
 
 class PaymentResourceMock extends PaymentResource
 {
@@ -23,5 +24,39 @@ class PaymentResourceMock extends PaymentResource
     public function patch($paymentId, array $patches)
     {
         throw new RequestException('patch exception');
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @throws RequestException
+     */
+    public function get($paymentId)
+    {
+        if ($paymentId === 'exception') {
+            throw new RequestException('get exception');
+        }
+
+        if ($paymentId === InstallmentsTest::INSTALLMENTS_PAYMENT_ID) {
+            return ['credit_financing_offered' => [
+                'total_cost' => [
+                    'value' => '486.57',
+                    'currency' => 'EUR',
+                ],
+                'term' => 6,
+                'monthly_payment' => [
+                    'value' => '81.22',
+                    'currency' => 'EUR',
+                ],
+                'total_interest' => [
+                    'value' => '12.57',
+                    'currency' => 'EUR',
+                ],
+                'payer_acceptance' => true,
+                'cart_amount_immutable' => true,
+            ]];
+        }
+
+        return [];
     }
 }

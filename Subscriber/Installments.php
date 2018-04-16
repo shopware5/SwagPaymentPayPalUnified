@@ -58,24 +58,40 @@ class Installments implements SubscriberInterface
     private $paymentMethodProvider;
 
     /**
+     * @var PaymentResource
+     */
+    private $paymentResource;
+
+    /**
+     * @var OrderCreditInfoService
+     */
+    private $orderCreditInfoService;
+
+    /**
      * @param SettingsServiceInterface         $settingsService
      * @param ValidationService                $validationService
      * @param Connection                       $connection
      * @param PaymentBuilderInterface          $installmentsPaymentBuilder
      * @param ExceptionHandlerServiceInterface $exceptionHandlerService
+     * @param PaymentResource                  $paymentResource
+     * @param OrderCreditInfoService           $orderCreditInfoService
      */
     public function __construct(
         SettingsServiceInterface $settingsService,
         ValidationService $validationService,
         Connection $connection,
         PaymentBuilderInterface $installmentsPaymentBuilder,
-        ExceptionHandlerServiceInterface $exceptionHandlerService
+        ExceptionHandlerServiceInterface $exceptionHandlerService,
+        PaymentResource $paymentResource,
+        OrderCreditInfoService $orderCreditInfoService
     ) {
         $this->settingsService = $settingsService;
         $this->validationService = $validationService;
         $this->connection = $connection;
         $this->installmentsPaymentBuilder = $installmentsPaymentBuilder;
         $this->exceptionHandlerService = $exceptionHandlerService;
+        $this->paymentResource = $paymentResource;
+        $this->orderCreditInfoService = $orderCreditInfoService;
         $this->paymentMethodProvider = new PaymentMethodProvider();
     }
 
@@ -119,7 +135,6 @@ class Installments implements SubscriberInterface
         }
 
         $view = $args->getSubject()->View();
-
         $productPrice = $view->getAssign('sArticle')['price_numeric'];
 
         if (!$this->validationService->validatePrice($productPrice)) {
@@ -138,8 +153,12 @@ class Installments implements SubscriberInterface
      */
     public function onPostDispatchCheckout(ActionEventArgs $args)
     {
-        $action = $args->getRequest()->getActionName();
+        $request = $args->getRequest();
+        if ((bool) $request->getParam('expressCheckout')) {
+            return;
+        }
 
+        $action = $request->getActionName();
         if ($action !== 'cart' && $action !== 'confirm') {
             return;
         }
@@ -200,49 +219,47 @@ class Installments implements SubscriberInterface
     /**
      * Fetches data for the installments finishing process.
      *
-     * @param \Enlight_Controller_ActionEventArgs $args
+     * @param ActionEventArgs $args
      */
-    public function onConfirmInstallments(\Enlight_Controller_ActionEventArgs $args)
+    public function onConfirmInstallments(ActionEventArgs $args)
     {
-        /** @var \Enlight_Controller_Action $controller */
-        $controller = $args->getSubject();
-
         /** @var \Enlight_Controller_Request_Request $request */
-        $request = $controller->Request();
-        $paymentId = $request->get('paymentId');
-        $payerId = $request->get('PayerID');
-        $basketId = $request->get('basketId');
-        $installmentsFlag = $request->get('installments');
-
-        if (!$installmentsFlag || $paymentId === null || $payerId === null || $request->getActionName() !== 'confirm') {
+        $request = $args->getRequest();
+        if ($request->getActionName() !== 'confirm') {
             return;
         }
 
-        /** @var \Enlight_View_Default $view */
-        $view = $controller->View();
+        $installmentsFlag = $request->getParam('installments');
+        if (!$installmentsFlag) {
+            return;
+        }
 
-        /** @var PaymentResource $paymentResource */
-        $paymentResource = $args->getSubject()->get('paypal_unified.payment_resource');
+        $paymentId = $request->getParam('paymentId');
+        $payerId = $request->getParam('PayerID');
+        if ($paymentId === null || $payerId === null) {
+            return;
+        }
+
+        $basketId = $request->getParam('basketId');
+        /** @var \Enlight_View_Default $view */
+        $view = $args->getSubject()->View();
 
         try {
-            $payment = $paymentResource->get($paymentId);
+            $payment = $this->paymentResource->get($paymentId);
             $view->assign('paypalInstallmentsCredit', $payment['credit_financing_offered']);
             $view->assign('paypalInstallmentsPaymentId', $paymentId);
             $view->assign('paypalInstallmentsPayerId', $payerId);
             $view->assign('paypalInstallmentsBasketId', $basketId);
 
             $creditStruct = Credit::fromArray($payment['credit_financing_offered']);
-
-            /** @var OrderCreditInfoService $creditInfoService */
-            $creditInfoService = $controller->get('paypal_unified.installments.order_credit_info_service');
-            $creditInfoService->saveCreditInfo($creditStruct, $payment['id']);
+            $this->orderCreditInfoService->saveCreditInfo($creditStruct, $payment['id']);
 
             //Load the custom confirm page
             $view->loadTemplate('frontend/paypal_unified/installments/return/confirm.tpl');
         } catch (\Exception $e) {
             $error = $this->exceptionHandlerService->handle($e, 'get installments information');
 
-            $controller->redirect([
+            $args->getSubject()->redirect([
                 'module' => 'frontend',
                 'controller' => 'checkout',
                 'action' => 'shippingPayment',
