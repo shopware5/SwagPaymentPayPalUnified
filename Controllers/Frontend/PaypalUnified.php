@@ -332,8 +332,8 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
             'controller' => 'checkout',
             'action' => 'shippingPayment',
             'paypal_unified_error_code' => $code,
-            'paypal_unified_error_message' => $message,
             'paypal_unified_error_name' => $name,
+            'paypal_unified_error_message' => $message,
         ]);
     }
 

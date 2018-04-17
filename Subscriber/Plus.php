@@ -167,14 +167,14 @@ class Plus implements SubscriberInterface
         $view = $controller->View();
 
         $errorCode = $request->getParam('paypal_unified_error_code');
-        $errorMessage = $request->getParam('paypal_unified_error_message');
         $errorName = $request->getParam('paypal_unified_error_name');
+        $errorMessage = $request->getParam('paypal_unified_error_message');
 
         if ($errorCode) {
             // all integrations
             $view->assign('paypalUnifiedErrorCode', $errorCode);
-            $view->assign('paypalUnifiedErrorMessage', $errorMessage);
             $view->assign('paypalUnifiedErrorName', $errorName);
+            $view->assign('paypalUnifiedErrorMessage', $errorMessage);
         }
 
         $isExpressCheckout = (bool) $request->getParam('expressCheckout', false);

@@ -264,8 +264,8 @@ class Installments implements SubscriberInterface
                 'controller' => 'checkout',
                 'action' => 'shippingPayment',
                 'paypal_unified_error_code' => '5', //Installments error
-                'paypal_unified_error_message' => $error->getMessage(),
                 'paypal_unified_error_name' => $error->getName(),
+                'paypal_unified_error_message' => $error->getMessage(),
             ]);
         }
     }

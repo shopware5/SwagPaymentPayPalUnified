@@ -197,8 +197,8 @@ class Shopware_Controllers_Widgets_PaypalUnifiedExpressCheckout extends \Enlight
             'action' => 'shippingPayment',
             'expressCheckout' => true,
             'paypal_unified_error_code' => $code,
-            'paypal_unified_error_message' => $message,
             'paypal_unified_error_name' => $name,
+            'paypal_unified_error_message' => $message,
         ]);
     }
 }
