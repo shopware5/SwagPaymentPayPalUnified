@@ -106,7 +106,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.ExpressCheckout', {
     createNotice: function () {
         var infoNotice = Shopware.Notification.createBlockMessage('{s name=description}PayPal Express Checkout - the PayPal button on the product detail page for maximum conversion<br>Find more infos about the PayPal Express Shortcut here: <a href="https://www.paypal.com/de/webapps/mpp/express-checkout" title="https://www.paypal.com/de/webapps/mpp/express-checkout" target="_blank">https://www.paypal.com/de/webapps/mpp/express-checkout</a>{/s}', 'info');
 
-        //There is no style defined for the type "info" in the shopware backend stylesheet, therefore we have to apply it manually
+        // There is no style defined for the type "info" in the shopware backend stylesheet, therefore we have to apply it manually
         infoNotice.style = {
             'color': 'white',
             'font-size': '14px',

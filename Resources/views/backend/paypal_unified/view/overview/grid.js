@@ -209,7 +209,7 @@ Ext.define('Shopware.apps.PaypalUnified.view.overview.Grid', {
      */
     paymentTypeRenderer: function (value) {
         if (value === Ext.undefined) {
-            return 'Classic'
+            return 'Classic';
         }
 
         switch (value) {

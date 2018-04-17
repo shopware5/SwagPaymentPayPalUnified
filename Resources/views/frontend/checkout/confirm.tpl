@@ -82,8 +82,7 @@
 {*Do not allow deletion of items*}
 {block name='frontend_checkout_cart_item_delete_article'}
     {block name='frontend_checkout_cart_item_delete_article_paypal_unified_express_checkout'}
-        {if $paypalUnifiedExpressCheckout || $paypalUnifiedFixedCart}
-        {else}
+        {if !$paypalUnifiedExpressCheckout}
             {$smarty.block.parent}
         {/if}
     {/block}
@@ -92,7 +91,7 @@
 {* Disable item quantity selection *}
 {block name='frontend_checkout_cart_item_quantity_selection'}
     {block name='frontend_checkout_cart_item_quantity_selection_paypal_unified_express_checkout'}
-        {if $paypalUnifiedExpressCheckout || $paypalUnifiedFixedCart}
+        {if $paypalUnifiedExpressCheckout}
             {include file='frontend/paypal_unified/express_checkout/confirm/quantity_selection.tpl'}
         {else}
             {$smarty.block.parent}

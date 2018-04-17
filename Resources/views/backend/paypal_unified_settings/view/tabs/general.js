@@ -93,7 +93,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
     createNotice: function () {
         var infoNotice = Shopware.Notification.createBlockMessage('{s name=description}PayPal - the PayPal button in the checkout! Register for your PayPal business account here: <a href="https://www.paypal.com/de/webapps/mpp/express-checkout" title="https://www.paypal.com/de/webapps/mpp/express-checkout" target="_blank">https://www.paypal.com/de/webapps/mpp/express-checkout</a>{/s}', 'info');
 
-        //There is no style defined for the type "info" in the shopware backend stylesheet, therefore we have to apply it manually
+        // There is no style defined for the type "info" in the shopware backend stylesheet, therefore we have to apply it manually
         infoNotice.style = {
             'color': 'white',
             'font-size': '14px',
