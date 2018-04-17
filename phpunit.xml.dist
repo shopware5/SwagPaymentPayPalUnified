@@ -10,19 +10,11 @@
             <directory suffix=".php">./</directory>
             <exclude>
                 <directory suffix=".php">./Tests</directory>
-                <directory suffix=".php">./PayPalBundle/Resources</directory>
-                <directory suffix=".php">./PayPalBundle/Components</directory>
                 <directory suffix=".php">./vendor</directory>
-                <directory suffix=".php">./Models</directory>
 
                 <!-- Bootstrap -->
                 <file>SwagPaymentPayPalUnified.php</file>
                 <file>./Setup/InstallationException.php</file>
-
-                <!-- Classes that communicate with the PayPal API -->
-                <file>./Components/Services/Installments/InstallmentsRequestService.php</file>
-                <file>./PayPalBundle/Services/TokenService.php</file>
-
             </exclude>
         </whitelist>
     </filter>
