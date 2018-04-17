@@ -297,7 +297,6 @@ class Plus implements SubscriberInterface
 
         $view->assign('paypalUnifiedCameFromPaymentSelection', $cameFromPaymentSelection);
         $view->assign('paypalUnifiedPaymentId', $this->paymentMethodProvider->getPaymentId($this->connection));
-        $view->assign('paypalUnifiedFixedCart', true);
 
         //If the payment has already been created in the payment selection,
         //we don't have to do anything else.

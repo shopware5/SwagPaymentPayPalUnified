@@ -5,7 +5,6 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 use Shopware\Components\HttpClient\RequestException;
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
 use SwagPaymentPayPalUnified\Components\ExceptionHandlerServiceInterface;
@@ -20,6 +19,8 @@ use SwagPaymentPayPalUnified\Components\Services\Validation\BasketValidatorInter
 use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PayerInfoPatch;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PaymentAddressPatch;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PaymentAmountPatch;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PaymentItemsPatch;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PaymentOrderNumberPatch;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\PartnerAttributionId;
@@ -285,14 +286,30 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
         $this->Front()->Plugins()->ViewRenderer()->setNoRender();
 
         $paymentId = $this->Request()->getParam('paymentId');
-        $userData = $this->get('session')->get('sOrderVariables')['sUserData'];
+        $orderData = $this->get('session')->get('sOrderVariables');
+        $userData = $orderData['sUserData'];
+        $basketData = $orderData['sBasket'];
 
         /** @var PaymentAddressService $addressService */
         $addressService = $this->get('paypal_unified.payment_address_service');
         $addressPatch = new PaymentAddressPatch($addressService->getShippingAddress($userData));
         $payerInfoPatch = new PayerInfoPatch($addressService->getPayerInfo($userData));
 
-        $this->paymentResource->patch($paymentId, [$addressPatch, $payerInfoPatch]);
+        $requestParams = new PaymentBuilderParameters();
+        $requestParams->setBasketData($basketData);
+        $requestParams->setUserData($userData);
+        $paymentStruct = $this->get('paypal_unified.installments.payment_builder_service')->getPayment($requestParams);
+
+        $amountPatch = new PaymentAmountPatch($paymentStruct->getTransactions()->getAmount());
+        $itemsPatch = new PaymentItemsPatch($paymentStruct->getTransactions()->getItemList()->getItems());
+
+        try {
+            $this->paymentResource->patch($paymentId, [$addressPatch, $payerInfoPatch, $itemsPatch, $amountPatch]);
+        } catch (Exception $e) {
+            $this->get('paypal_unified.exception_handler_service')->handle($e, 'patch address, payer info, item list and amount');
+            // trigger error callback method of ajax call
+            $this->Response()->setHttpResponseCode(400);
+        }
     }
 
     /**
