@@ -5,7 +5,6 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 class Shopware_Controllers_Frontend_PaypalUnifiedInstallments extends \Enlight_Controller_Action
 {
     /**

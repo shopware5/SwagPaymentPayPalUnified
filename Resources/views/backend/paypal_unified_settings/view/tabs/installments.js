@@ -68,7 +68,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Installments', {
     createNotice: function () {
         var infoNotice = Shopware.Notification.createBlockMessage('{s name=description}Get installments Powered by PayPal here: <a href="https://www.paypal.de/ratenzahlung" title="https://www.paypal.de/ratenzahlung" target="_blank">https://www.paypal.de/ratenzahlung</a>{/s}', 'info');
 
-        //There is no style defined for the type "info" in the shopware backend stylesheet, therefore we have to apply it manually
+        // There is no style defined for the type "info" in the shopware backend stylesheet, therefore we have to apply it manually
         infoNotice.style = {
             'color': 'white',
             'font-size': '14px',

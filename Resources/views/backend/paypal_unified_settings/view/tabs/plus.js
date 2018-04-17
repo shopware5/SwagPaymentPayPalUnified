@@ -88,7 +88,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Plus', {
     createNotice: function () {
         var infoNotice = Shopware.Notification.createBlockMessage('{s name=description}PayPal Plus - the four most popular payment methods of German buyers: PayPal, direct debit, credit card and invoice! <br> You can get PayPal Plus here: <a href="https://www.paypal.de/plus" title="https://www.paypal.de/plus" target="_blank">https://www.paypal.de/plus</a>{/s}', 'info');
 
-        //There is no style defined for the type "info" in the shopware backend stylesheet, therefore we have to apply it manually
+        // There is no style defined for the type "info" in the shopware backend stylesheet, therefore we have to apply it manually
         infoNotice.style = {
             'color': 'white',
             'font-size': '14px',
