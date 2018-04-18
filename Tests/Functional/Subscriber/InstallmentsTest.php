@@ -590,7 +590,7 @@ class InstallmentsTest extends UnifiedControllerTestCase
 
         $this->getInstallmentsSubscriber($settingService)->onConfirmInstallments($actionEventArgs);
         $header = $this->Response()->getHeaders()[0];
-        $this->assertContains('checkout/shippingPayment/paypal_unified_error_code/5/paypal_unified_error_message', $header['value']);
+        $this->assertContains('checkout/shippingPayment/paypal_unified_error_code/5/paypal_unified_error_name/0/paypal_unified_error_message', $header['value']);
         $this->assertTrue($this->Response()->isRedirect());
     }
 
