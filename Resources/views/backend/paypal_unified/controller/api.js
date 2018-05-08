@@ -144,7 +144,8 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Api', {
      * @param { Function } callback - This function will be triggered after the result was received.
      */
     refundSale: function (amount, invoiceNumber, callback) {
-        var id = this.getDetails().legacy ? this.getDetails().payment.id : this.getDetails().sale.id;
+        var details = this.getDetails(),
+            id = details.legacy ? details.payment.id : details.sale.id;
 
         Ext.Ajax.request({
             url: this.urls.refundSale,
@@ -302,7 +303,13 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Api', {
      * @returns { String } - The payment's currency ISO (e.g EUR)
      */
     getPaymentCurrency: function () {
-        return this.getDetails().payment.transactions[0].amount.currency;
+        var details = this.getDetails();
+
+        if (details.legacy) {
+            return details.payment.amount.currency;
+        }
+
+        return details.payment.transactions[0].amount.currency;
     }
 });
 // {/block}
