@@ -5,6 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 use Shopware\Components\Model\QueryBuilder;
 use Shopware\Models\Order\Order;
 use Shopware\Models\Shop\Shop;
@@ -83,11 +84,11 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
 
         /** @var LegacyService $legacyService */
         $legacyService = $this->get('paypal_unified.legacy_service');
-        $legacyPaymentId = $legacyService->getClassicPaymentId();
+        $legacyPaymentIds = $legacyService->getClassicPaymentIds();
 
         try {
             //Check for a legacy payment
-            if ($legacyPaymentId === $paymentMethodId) {
+            if (in_array($paymentMethodId, $legacyPaymentIds, true)) {
                 $this->prepareLegacyDetails($transactionId);
             } else {
                 $this->prepareUnifiedDetails($paymentId);
@@ -485,26 +486,23 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
         $paymentMethodProvider = new PaymentMethodProvider($this->get('models'));
 
         // If there was PayPal classic installed earlier, those orders have to be queried.
-        $legacyPaymentId = $this->get('paypal_unified.legacy_service')->getClassicPaymentId();
-        if ($legacyPaymentId !== false) {
-            $builder->innerJoin(
-                'sOrder.payment',
-                'payment',
-                \Doctrine\ORM\Query\Expr\Join::WITH,
-                'payment.id IN (' . $paymentMethodProvider->getPaymentId($this->get('dbal_connection')) . ', ' .
-                $paymentMethodProvider->getPaymentId($this->get('dbal_connection'), PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME) . ', ' .
-                $legacyPaymentId . ')'
-            );
-        } else {
-            //No classic was installed, just query the unified orders
-            $builder->innerJoin(
-                'sOrder.payment',
-                'payment',
-                \Doctrine\ORM\Query\Expr\Join::WITH,
-                'payment.id IN (' . $paymentMethodProvider->getPaymentId($this->get('dbal_connection')) . ', ' .
-                $paymentMethodProvider->getPaymentId($this->get('dbal_connection'), PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME) . ')'
-            );
+        $legacyPaymentIds = $this->get('paypal_unified.legacy_service')->getClassicPaymentIds();
+        $paymentIds = [
+            $paymentMethodProvider->getPaymentId($this->get('dbal_connection')),
+            $paymentMethodProvider->getPaymentId($this->get('dbal_connection'), PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME),
+        ];
+
+        if ($legacyPaymentIds !== false) {
+            $paymentIds = array_merge($paymentIds, $legacyPaymentIds);
         }
+
+        //No classic was installed, just query the unified orders
+        $builder->innerJoin(
+            'sOrder.payment',
+            'payment',
+            \Doctrine\ORM\Query\Expr\Join::WITH,
+            'payment.id IN ' . $this->getInQueryForPaymentMethods($paymentIds)
+        );
 
         $builder->leftJoin('sOrder.languageSubShop', 'languageSubShop')
                 ->leftJoin('sOrder.customer', 'customer')
@@ -584,5 +582,27 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
         }
 
         $this->View()->assign('success', true);
+    }
+
+    /**
+     * @param array $values
+     *
+     * @return string
+     */
+    private function getInQueryForPaymentMethods(array $values)
+    {
+        $result = '(';
+        $count = count($values);
+
+        foreach ($values as $i => $value) {
+            //No comma separation for the last item
+            if ($i === $count - 1) {
+                $result .= $value;
+            } else {
+                $result .= $value . ', ';
+            }
+        }
+
+        return $result . ')';
     }
 }

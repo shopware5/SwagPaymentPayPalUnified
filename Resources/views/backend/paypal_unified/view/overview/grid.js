@@ -205,11 +205,22 @@ Ext.define('Shopware.apps.PaypalUnified.view.overview.Grid', {
 
     /**
      * @param { String } value
-     * @returns { String }
+     * @param { Object } metaData
+     * @param { Ext.data.Model } record
+     * @return { String }
      */
-    paymentTypeRenderer: function (value) {
-        if (value === Ext.undefined) {
-            return 'Classic';
+    paymentTypeRenderer: function (value, metaData, record) {
+        var paymentMethod = record.getPayment().first(),
+            paymentMethodName;
+
+        if (paymentMethod instanceof Ext.data.Model) {
+            paymentMethodName = paymentMethod.get('name');
+
+            if (paymentMethodName === 'paypal') {
+                return '{s name="type/legacy"}Classic (old){/s}';
+            } else if (paymentMethodName === 'payment_paypal_installments') {
+                return '{s name="type/legacyInstallments"}Installments (old){/s}';
+            }
         }
 
         switch (value) {
@@ -223,9 +234,6 @@ Ext.define('Shopware.apps.PaypalUnified.view.overview.Grid', {
                 return '{s name="type/installments"}Installments{/s}';
             case 'PayPalExpress':
                 return '{s name="type/express"}Express{/s}';
-
-            default:
-                return '{s name="type/legacy"}Classic (old){/s}';
         }
     }
 });

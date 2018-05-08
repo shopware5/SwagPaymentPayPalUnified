@@ -28,7 +28,7 @@ class LegacyServiceTest extends \PHPUnit_Framework_TestCase
 
         $service = Shopware()->Container()->get('paypal_unified.legacy_service');
 
-        $this->assertNotFalse($service->getClassicPaymentId());
+        $this->assertNotFalse($service->getClassicPaymentIds());
     }
 
     private function insertClassicPayment()
