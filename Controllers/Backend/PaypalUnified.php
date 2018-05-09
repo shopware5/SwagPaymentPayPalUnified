@@ -6,6 +6,7 @@
  * file that was distributed with this source code.
  */
 
+use Doctrine\DBAL\Connection;
 use Shopware\Components\Model\QueryBuilder;
 use Shopware\Models\Order\Order;
 use Shopware\Models\Shop\Shop;
@@ -492,17 +493,14 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
             $paymentMethodProvider->getPaymentId($this->get('dbal_connection'), PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME),
         ];
 
-        if ($legacyPaymentIds !== false) {
-            $paymentIds = array_merge($paymentIds, $legacyPaymentIds);
-        }
+        $paymentIds = array_merge($paymentIds, $legacyPaymentIds);
 
-        //No classic was installed, just query the unified orders
         $builder->innerJoin(
             'sOrder.payment',
             'payment',
             \Doctrine\ORM\Query\Expr\Join::WITH,
-            'payment.id IN ' . $this->getInQueryForPaymentMethods($paymentIds)
-        );
+            'payment.id IN (:paymentIds)'
+        )->setParameter('paymentIds', $paymentIds, Connection::PARAM_INT_ARRAY);
 
         $builder->leftJoin('sOrder.languageSubShop', 'languageSubShop')
                 ->leftJoin('sOrder.customer', 'customer')
@@ -582,27 +580,5 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
         }
 
         $this->View()->assign('success', true);
-    }
-
-    /**
-     * @param array $values
-     *
-     * @return string
-     */
-    private function getInQueryForPaymentMethods(array $values)
-    {
-        $result = '(';
-        $count = count($values);
-
-        foreach ($values as $i => $value) {
-            //No comma separation for the last item
-            if ($i === $count - 1) {
-                $result .= $value;
-            } else {
-                $result .= $value . ', ';
-            }
-        }
-
-        return $result . ')';
     }
 }

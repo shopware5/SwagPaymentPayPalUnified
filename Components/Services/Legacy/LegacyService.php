@@ -26,7 +26,7 @@ class LegacyService
     }
 
     /**
-     * @return array|bool
+     * @return array
      */
     public function getClassicPaymentIds()
     {
