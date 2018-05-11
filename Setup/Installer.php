@@ -73,6 +73,7 @@ class Installer
         $this->createInstallmentsPaymentMethod();
         $this->createAttributes();
         $this->createDocumentTemplates();
+        $this->migrate();
 
         return true;
     }
@@ -193,6 +194,13 @@ class Installer
     {
         $sql = "DELETE FROM s_core_documents_box WHERE `name` LIKE 'PayPal_Unified%'";
         $this->connection->exec($sql);
+    }
+
+    private function migrate()
+    {
+        $sql = file_get_contents($this->bootstrapPath . '/Setup/Assets/migration.sql');
+
+        $this->connection->query($sql);
     }
 
     /**
