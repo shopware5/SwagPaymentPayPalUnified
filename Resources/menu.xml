@@ -4,8 +4,8 @@
     <entries>
         <entry>
             <name>PayPal</name>
-            <label lang="en">PayPal Products</label>
-            <label lang="de">PayPal Produkte</label>
+            <label lang="en">PayPal</label>
+            <label lang="de">PayPal</label>
             <class>sprite--paypal-unified</class>
             <parent identifiedBy="controller">Payments</parent>
             <children>

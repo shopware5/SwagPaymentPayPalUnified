@@ -45,7 +45,7 @@ class LoggerService implements LoggerServiceInterface
         }
 
         if ((int) $this->settings->get('log_level') === 1) {
-            $finalMessage = 'PayPal Products: ' . $message;
+            $finalMessage = 'PayPal: ' . $message;
             $this->logger->addWarning($finalMessage, $context);
         }
     }
@@ -61,7 +61,7 @@ class LoggerService implements LoggerServiceInterface
         }
 
         if ((int) $this->settings->get('log_level') === 1) {
-            $finalMessage = 'PayPal Products: ' . $message;
+            $finalMessage = 'PayPal: ' . $message;
             $this->logger->addInfo($finalMessage, $context);
         }
     }
@@ -72,7 +72,7 @@ class LoggerService implements LoggerServiceInterface
      */
     public function error($message, array $context = [])
     {
-        $finalMessage = 'PayPal Products: ' . $message;
+        $finalMessage = 'PayPal: ' . $message;
         $this->logger->addError($finalMessage, $context);
     }
 }
