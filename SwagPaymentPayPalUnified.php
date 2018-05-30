@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified;
 
+use Shopware\Bundle\AttributeBundle\Service\CrudService;
 use Shopware\Components\Plugin;
 use Shopware\Components\Plugin\Context\ActivateContext;
 use Shopware\Components\Plugin\Context\DeactivateContext;
@@ -54,12 +55,16 @@ class SwagPaymentPayPalUnified extends Plugin
         $paymentMethodProvider->setPaymentMethodActiveFlag(false);
         $paymentMethodProvider->setPaymentMethodActiveFlag(false, PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME);
 
-        $this->container->get('shopware_attribute.crud_service')->delete(
-            's_core_paymentmeans_attributes',
-            'swag_paypal_unified_display_in_plus_iframe'
-        );
+        /** @var CrudService $attributeCrudService */
+        $attributeCrudService = $this->container->get('shopware_attribute.crud_service');
 
-        $modelManager->generateAttributeModels(['s_core_paymentmeans_attributes']);
+        if ($attributeCrudService->get('s_core_paymentmeans_attributes', 'swag_paypal_unified_display_in_plus_iframe') !== null) {
+            $attributeCrudService->delete(
+                's_core_paymentmeans_attributes',
+                'swag_paypal_unified_display_in_plus_iframe'
+            );
+            $modelManager->generateAttributeModels(['s_core_paymentmeans_attributes']);
+        }
 
         $context->scheduleClearCache(UninstallContext::CACHE_LIST_ALL);
     }
