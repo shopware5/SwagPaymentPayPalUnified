@@ -25,6 +25,8 @@ class BackendSubscriberTest extends \PHPUnit_Framework_TestCase
     {
         $events = Backend::getSubscribedEvents();
         $this->assertEquals('onLoadBackendIndex', $events['Enlight_Controller_Action_PostDispatchSecure_Backend_Index']);
+        $this->assertEquals('onPostDispatchConfig', $events['Enlight_Controller_Action_PostDispatchSecure_Backend_Config']);
+        $this->assertCount(2, $events);
     }
 
     public function test_onLoadBackendIndex_extends_template()
@@ -43,6 +45,27 @@ class BackendSubscriberTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $subscriber->onLoadBackendIndex($enlightEventArgs);
+
+        $this->assertCount(1, $view->getTemplateDir());
+    }
+
+    public function test_onPostDispatchConfig_extends_template()
+    {
+        $subscriber = new Backend(Shopware()->Container()->getParameter('paypal_unified.plugin_dir'));
+
+        $view = new ViewMock(
+            new Enlight_Template_Manager()
+        );
+
+        $request = new \Enlight_Controller_Request_RequestTestCase();
+        $request->setActionName('load');
+
+        $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
+            'subject' => new DummyController($request, $view),
+            'request' => $request,
+        ]);
+
+        $subscriber->onPostDispatchConfig($enlightEventArgs);
 
         $this->assertCount(1, $view->getTemplateDir());
     }
