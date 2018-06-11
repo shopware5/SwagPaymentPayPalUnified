@@ -9,6 +9,7 @@
 namespace SwagPaymentPayPalUnified\Subscriber;
 
 use Enlight\Event\SubscriberInterface;
+use Enlight_Controller_ActionEventArgs as ActionEventArgs;
 use Enlight_View_Default;
 
 class Backend implements SubscriberInterface
@@ -33,6 +34,7 @@ class Backend implements SubscriberInterface
     {
         return [
             'Enlight_Controller_Action_PostDispatchSecure_Backend_Index' => 'onLoadBackendIndex',
+            'Enlight_Controller_Action_PostDispatchSecure_Backend_Config' => 'onPostDispatchConfig',
         ];
     }
 
@@ -40,13 +42,27 @@ class Backend implements SubscriberInterface
      * Handles the Enlight_Controller_Action_PostDispatchSecure_Backend_Index event.
      * Extends the backend icon set by the paypal icon.
      *
-     * @param \Enlight_Controller_ActionEventArgs $args
+     * @param ActionEventArgs $args
      */
-    public function onLoadBackendIndex(\Enlight_Controller_ActionEventArgs $args)
+    public function onLoadBackendIndex(ActionEventArgs $args)
     {
         /** @var Enlight_View_Default $view */
         $view = $args->getSubject()->View();
         $view->addTemplateDir($this->pluginDir . '/Resources/views/');
         $view->extendsTemplate('backend/paypal_unified/menu_icon.tpl');
+    }
+
+    /**
+     * @param ActionEventArgs $arguments
+     */
+    public function onPostDispatchConfig(ActionEventArgs $arguments)
+    {
+        /* @var Enlight_View_Default $view */
+        $view = $arguments->getSubject()->View();
+
+        if ($arguments->getRequest()->getActionName() === 'load') {
+            $view->addTemplateDir($this->pluginDir . '/Resources/views/');
+            $view->extendsTemplate('backend/config/view/form/document_paypal_unified.js');
+        }
     }
 }
