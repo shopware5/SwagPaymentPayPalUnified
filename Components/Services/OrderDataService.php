@@ -9,6 +9,7 @@
 namespace SwagPaymentPayPalUnified\Components\Services;
 
 use Doctrine\DBAL\Connection;
+use SwagPaymentPayPalUnified\Components\PaymentStatus;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
@@ -47,16 +48,19 @@ class OrderDataService
     public function applyPaymentStatus($orderNumber, $paymentStatusId)
     {
         $builder = $this->dbalConnection->createQueryBuilder();
-        $result = $builder->update('s_order', 'o')
+        $builder->update('s_order', 'o')
             ->set('o.cleared', ':paymentStatus')
             ->where('o.ordernumber = :orderNumber')
             ->setParameters([
                 ':orderNumber' => $orderNumber,
                 ':paymentStatus' => $paymentStatusId,
-            ])
-            ->execute();
+            ]);
 
-        return $result === 1;
+        if ($paymentStatusId === PaymentStatus::PAYMENT_STATUS_APPROVED) {
+            $builder->set('o.cleareddate', 'NOW()');
+        }
+
+        return $builder->execute() === 1;
     }
 
     /**
