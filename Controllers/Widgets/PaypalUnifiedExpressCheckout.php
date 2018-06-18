@@ -139,6 +139,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedExpressCheckout extends \Enlight
         $basketId = $request->getParam('basketId');
 
         try {
+            $this->client->setPartnerAttributionId(PartnerAttributionId::PAYPAL_EXPRESS_CHECKOUT);
             $payment = $this->paymentResource->get($paymentId);
 
             $paymentStruct = Payment::fromArray($payment);

@@ -83,7 +83,7 @@
 
 {* Reset the submit button text  *}
 {block name='frontend_checkout_confirm_submit'}
-    <a class="button btn is--primary is--large right is--icon-right" href="{url controller=PaypalUnified action=return paymentId=$paypalInstallmentsPaymentId PayerID=$paypalInstallmentsPayerId basketId=$paypalInstallmentsBasketId forceSecure}">
+    <a class="button btn is--primary is--large right is--icon-right" href="{url controller=PaypalUnified action=return paymentId=$paypalInstallmentsPaymentId PayerID=$paypalInstallmentsPayerId basketId=$paypalInstallmentsBasketId installments=true forceSecure}">
         {s name='ConfirmActionSubmit' namespace='frontend/checkout/confirm'}{/s}<i class="icon--arrow-right"></i>
     </a>
 {/block}

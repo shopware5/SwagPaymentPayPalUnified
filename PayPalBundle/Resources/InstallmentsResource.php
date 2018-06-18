@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\PayPalBundle\Resources;
 
+use SwagPaymentPayPalUnified\PayPalBundle\PartnerAttributionId;
 use SwagPaymentPayPalUnified\PayPalBundle\RequestType;
 use SwagPaymentPayPalUnified\PayPalBundle\RequestUri;
 use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService;
@@ -35,6 +36,12 @@ class InstallmentsResource
      */
     public function getFinancingOptions(FinancingRequest $financingRequest)
     {
-        return $this->clientService->sendRequest(RequestType::POST, RequestUri::FINANCING_RESOURCE, $financingRequest->toArray());
+        $this->clientService->setPartnerAttributionId(PartnerAttributionId::PAYPAL_INSTALLMENTS);
+
+        return $this->clientService->sendRequest(
+            RequestType::POST,
+            RequestUri::FINANCING_RESOURCE,
+            $financingRequest->toArray()
+        );
     }
 }
