@@ -9,7 +9,6 @@ use SwagPaymentPayPalUnified\Components\Installments\FinancingOptionsHandler;
 use SwagPaymentPayPalUnified\Components\Services\Installments\CompanyInfoService;
 use SwagPaymentPayPalUnified\Components\Services\Installments\InstallmentsRequestService;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
-use SwagPaymentPayPalUnified\PayPalBundle\Resources\InstallmentsResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Installments\FinancingResponse;
 
 class Shopware_Controllers_Widgets_PaypalUnifiedInstallments extends Enlight_Controller_Action
@@ -25,11 +24,6 @@ class Shopware_Controllers_Widgets_PaypalUnifiedInstallments extends Enlight_Con
     private $installmentsRequestService;
 
     /**
-     * @var InstallmentsResource
-     */
-    private $installmentsResource;
-
-    /**
      * @var CompanyInfoService
      */
     private $companyInfoService;
@@ -37,7 +31,6 @@ class Shopware_Controllers_Widgets_PaypalUnifiedInstallments extends Enlight_Con
     public function preDispatch()
     {
         $this->logger = $this->get('paypal_unified.logger_service');
-        $this->installmentsResource = $this->get('paypal_unified.installments_resource');
         $this->installmentsRequestService = $this->get('paypal_unified.installments.installments_request_service');
         $this->companyInfoService = $this->get('paypal_unified.installments.company_info_service');
     }
@@ -90,26 +83,30 @@ class Shopware_Controllers_Widgets_PaypalUnifiedInstallments extends Enlight_Con
         $pageType = $this->Request()->getParam('pageType');
 
         $response = $this->installmentsRequestService->getList($productPrice);
+        $financingResponseStruct = FinancingResponse::fromArray($response['financing_options'][0]);
 
-        if (!isset($response['financing_options'][0])) {
-            $this->logger->warning('Could not find financing options in response', ['payload' => $response, 'product-price' => $productPrice]);
+        if (count($financingResponseStruct->getQualifyingFinancingOptions()) === 0) {
+            $this->logger->error(
+                'Could not find financing options in response',
+                ['payload' => $response, 'product-price' => $productPrice]
+            );
 
             return;
         }
 
         // The result must be sorted to get the cheapest rate, since it's being delivered unsorted from PayPal
-        $financingResponseStruct = FinancingResponse::fromArray($response['financing_options'][0]);
         $optionsHandler = new FinancingOptionsHandler($financingResponseStruct);
         $financingResponseStruct = $optionsHandler->sortOptionsBy(FinancingOptionsHandler::SORT_BY_MONTHLY_PAYMENT);
         $qualifyingFinancingOptions = $financingResponseStruct->toArray()['qualifyingFinancingOptions'];
 
         //The cheapest rate is now the first entry in the struct.
-        $this->View()->assign('paypalInstallmentsOption', $qualifyingFinancingOptions[0]); //index 0 because it was sorted above.
-        $this->View()->assign('paypalInstallmentsProductPrice', $productPrice);
-        $this->View()->assign('paypalInstallmentsCompanyInfo', $this->companyInfoService->getCompanyInfo());
+        $view = $this->View();
+        $view->assign('paypalInstallmentsOption', $qualifyingFinancingOptions[0]); //index 0 because it was sorted above.
+        $view->assign('paypalInstallmentsProductPrice', $productPrice);
+        $view->assign('paypalInstallmentsCompanyInfo', $this->companyInfoService->getCompanyInfo());
 
         //Depending on this value either the detail or the cart upstream presentment will be loaded
-        $this->View()->assign('paypalInstallmentsPageType', $pageType);
+        $view->assign('paypalInstallmentsPageType', $pageType);
     }
 
     /**
@@ -124,19 +121,23 @@ class Shopware_Controllers_Widgets_PaypalUnifiedInstallments extends Enlight_Con
         $productPrice = $this->Request()->getParam('productPrice');
 
         $response = $this->installmentsRequestService->getList($productPrice);
+        $financingResponseStruct = FinancingResponse::fromArray($response['financing_options'][0]);
 
-        if (!isset($response['financing_options'][0])) {
-            $this->logger->error('Could not find financing options in response', ['payload' => $response, 'product-price' => $productPrice]);
+        if (count($financingResponseStruct->getQualifyingFinancingOptions()) === 0) {
+            $this->logger->error(
+                'Could not find financing options in response',
+                ['payload' => $response, 'product-price' => $productPrice]
+            );
 
             return;
         }
 
-        $financingResponseStruct = FinancingResponse::fromArray($response['financing_options'][0]);
         $optionsHandler = new FinancingOptionsHandler($financingResponseStruct);
         $qualifyingFinancingOptions = $optionsHandler->finalizeList();
 
-        $this->View()->assign('paypalInstallmentsOptions', $qualifyingFinancingOptions);
-        $this->View()->assign('paypalInstallmentsProductPrice', $productPrice);
-        $this->View()->assign('paypalInstallmentsCompanyInfo', $this->companyInfoService->getCompanyInfo());
+        $view = $this->View();
+        $view->assign('paypalInstallmentsOptions', $qualifyingFinancingOptions);
+        $view->assign('paypalInstallmentsProductPrice', $productPrice);
+        $view->assign('paypalInstallmentsCompanyInfo', $this->companyInfoService->getCompanyInfo());
     }
 }

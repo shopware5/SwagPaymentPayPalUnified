@@ -53,8 +53,9 @@ class InstallmentsPaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param $plusActive
-     * @param $intent
+     * @param bool $plusActive
+     * @param int  $intent
+     * @param bool $withBasketId
      *
      * @return array
      */

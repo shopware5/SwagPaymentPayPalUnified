@@ -60,6 +60,7 @@ class PlusPaymentBuilderService extends PaymentBuilderService
             'action' => 'return',
             'controller' => 'PaypalUnified',
             'forceSecure' => true,
+            'plus' => true,
             'basketId' => BasketIdWhitelist::WHITELIST_IDS['PayPalPlus'],
         ]);
     }

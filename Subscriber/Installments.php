@@ -21,7 +21,9 @@ use SwagPaymentPayPalUnified\Models\Settings\General as GeneralSettingsModel;
 use SwagPaymentPayPalUnified\Models\Settings\Installments as InstallmentsSettingsModel;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
+use SwagPaymentPayPalUnified\PayPalBundle\PartnerAttributionId;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\PaymentResource;
+use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Credit;
 
@@ -68,6 +70,11 @@ class Installments implements SubscriberInterface
     private $orderCreditInfoService;
 
     /**
+     * @var ClientService
+     */
+    private $clientService;
+
+    /**
      * @param SettingsServiceInterface         $settingsService
      * @param ValidationService                $validationService
      * @param Connection                       $connection
@@ -75,6 +82,7 @@ class Installments implements SubscriberInterface
      * @param ExceptionHandlerServiceInterface $exceptionHandlerService
      * @param PaymentResource                  $paymentResource
      * @param OrderCreditInfoService           $orderCreditInfoService
+     * @param ClientService                    $clientService
      */
     public function __construct(
         SettingsServiceInterface $settingsService,
@@ -83,7 +91,8 @@ class Installments implements SubscriberInterface
         PaymentBuilderInterface $installmentsPaymentBuilder,
         ExceptionHandlerServiceInterface $exceptionHandlerService,
         PaymentResource $paymentResource,
-        OrderCreditInfoService $orderCreditInfoService
+        OrderCreditInfoService $orderCreditInfoService,
+        ClientService $clientService
     ) {
         $this->settingsService = $settingsService;
         $this->validationService = $validationService;
@@ -92,6 +101,7 @@ class Installments implements SubscriberInterface
         $this->exceptionHandlerService = $exceptionHandlerService;
         $this->paymentResource = $paymentResource;
         $this->orderCreditInfoService = $orderCreditInfoService;
+        $this->clientService = $clientService;
         $this->paymentMethodProvider = new PaymentMethodProvider();
     }
 
@@ -245,6 +255,7 @@ class Installments implements SubscriberInterface
         $view = $args->getSubject()->View();
 
         try {
+            $this->clientService->setPartnerAttributionId(PartnerAttributionId::PAYPAL_INSTALLMENTS);
             $payment = $this->paymentResource->get($paymentId);
             $view->assign('paypalInstallmentsCredit', $payment['credit_financing_offered']);
             $view->assign('paypalInstallmentsPaymentId', $paymentId);

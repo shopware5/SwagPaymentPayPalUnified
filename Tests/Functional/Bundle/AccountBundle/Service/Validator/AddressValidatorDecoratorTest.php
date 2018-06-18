@@ -78,12 +78,9 @@ class AddressValidatorMock implements AddressValInterface
 {
     /**
      * @param Address $address
-     *
-     * @throws ValidationException
      */
     public function validate(Address $address)
     {
-        // TODO: Implement validate() method.
     }
 
     /**

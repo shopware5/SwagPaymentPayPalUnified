@@ -65,9 +65,10 @@
             <argument type="service" id="session"/>
             <argument type="service" id="paypal_unified.payment_resource"/>
             <argument type="service" id="paypal_unified.payment_address_service"/>
-            <argument type="service" id="paypal_unified.payment_builder_service"/>
+            <argument type="service" id="paypal_unified.express_checkout.payment_builder_service"/>
             <argument type="service" id="paypal_unified.exception_handler_service"/>
             <argument type="service" id="dbal_connection"/>
+            <argument type="service" id="paypal_unified.client_service"/>
             <tag name="shopware.event_subscriber"/>
         </service>
 
@@ -95,6 +96,7 @@
             <argument type="service" id="paypal_unified.exception_handler_service"/>
             <argument type="service" id="paypal_unified.payment_resource"/>
             <argument type="service" id="paypal_unified.installments.order_credit_info_service"/>
+            <argument type="service" id="paypal_unified.client_service"/>
             <tag name="shopware.event_subscriber"/>
         </service>
 

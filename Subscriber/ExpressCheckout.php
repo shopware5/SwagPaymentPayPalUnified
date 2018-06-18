@@ -23,7 +23,9 @@ use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PaymentAddressPatch
 use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PaymentAmountPatch;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
+use SwagPaymentPayPalUnified\PayPalBundle\PartnerAttributionId;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\PaymentResource;
+use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService;
 
 class ExpressCheckout implements SubscriberInterface
 {
@@ -68,6 +70,11 @@ class ExpressCheckout implements SubscriberInterface
     private $connection;
 
     /**
+     * @var ClientService
+     */
+    private $clientService;
+
+    /**
      * @param SettingsServiceInterface         $settingsService
      * @param Session                          $session
      * @param PaymentResource                  $paymentResource
@@ -75,6 +82,7 @@ class ExpressCheckout implements SubscriberInterface
      * @param PaymentBuilderInterface          $paymentBuilder
      * @param ExceptionHandlerServiceInterface $exceptionHandlerService
      * @param Connection                       $connection
+     * @param ClientService                    $clientService
      */
     public function __construct(
         SettingsServiceInterface $settingsService,
@@ -83,7 +91,8 @@ class ExpressCheckout implements SubscriberInterface
         PaymentAddressService $addressRequestService,
         PaymentBuilderInterface $paymentBuilder,
         ExceptionHandlerServiceInterface $exceptionHandlerService,
-        Connection $connection
+        Connection $connection,
+        ClientService $clientService
     ) {
         $this->settingsService = $settingsService;
         $this->session = $session;
@@ -93,6 +102,7 @@ class ExpressCheckout implements SubscriberInterface
         $this->exceptionHandlerService = $exceptionHandlerService;
         $this->paymentMethodProvider = new PaymentMethodProvider();
         $this->connection = $connection;
+        $this->clientService = $clientService;
     }
 
     /**
@@ -289,6 +299,7 @@ class ExpressCheckout implements SubscriberInterface
             $paymentStruct = $this->paymentBuilder->getPayment($requestParams);
             $amountPatch = new PaymentAmountPatch($paymentStruct->getTransactions()->getAmount());
 
+            $this->clientService->setPartnerAttributionId(PartnerAttributionId::PAYPAL_EXPRESS_CHECKOUT);
             $this->paymentResource->patch($paymentId, [$addressPatch, $amountPatch]);
         } catch (\Exception $exception) {
             $this->exceptionHandlerService->handle($exception, 'patch the payment for express checkout');

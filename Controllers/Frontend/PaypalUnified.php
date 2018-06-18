@@ -169,14 +169,24 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
         $paymentId = $request->getParam('paymentId');
         $payerId = $request->getParam('PayerID');
         $basketId = $request->getParam('basketId');
+        $isExpressCheckout = (bool) $request->getParam('expressCheckout', false);
+        $isPlus = (bool) $request->getParam('plus', false);
+        $isInstallments = (bool) $request->getParam('installments', false);
 
         try {
             $orderNumber = '';
 
             /** @var OrderDataService $orderDataService */
             $orderDataService = $this->get('paypal_unified.order_data_service');
-
             $sendOrderNumber = (bool) $this->settingsService->get('send_order_number');
+
+            if ($isPlus) {
+                $this->client->setPartnerAttributionId(PartnerAttributionId::PAYPAL_PLUS);
+            } elseif ($isExpressCheckout) {
+                $this->client->setPartnerAttributionId(PartnerAttributionId::PAYPAL_EXPRESS_CHECKOUT);
+            } elseif ($isInstallments) {
+                $this->client->setPartnerAttributionId(PartnerAttributionId::PAYPAL_INSTALLMENTS);
+            }
 
             // if the order number should be send to PayPal do it before the execute
             if ($sendOrderNumber) {
@@ -227,12 +237,12 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
 
             // apply the payment status if its completed by PayPal
             $paymentState = $responseSale->getState();
-            if ($paymentState === PaymentStatus::PAYMENT_COMPLETED) {
-                if (!$orderDataService->applyPaymentStatus($orderNumber, PaymentStatus::PAYMENT_STATUS_APPROVED)) {
-                    $this->handleError(ErrorCodes::NO_ORDER_TO_PROCESS);
+            if ($paymentState === PaymentStatus::PAYMENT_COMPLETED &&
+                !$orderDataService->applyPaymentStatus($orderNumber, PaymentStatus::PAYMENT_STATUS_APPROVED)
+            ) {
+                $this->handleError(ErrorCodes::NO_ORDER_TO_PROCESS);
 
-                    return;
-                }
+                return;
             }
 
             //Use TXN-ID instead of the PaymentId
@@ -253,7 +263,6 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
                 $instructionService->createInstructions($orderNumber, $instructions);
             }
 
-            $isExpressCheckout = (bool) $request->getParam('expressCheckout', false);
             $orderDataService->applyPaymentTypeAttribute($orderNumber, $response, $isExpressCheckout);
 
             $redirectParameter = [
@@ -298,12 +307,13 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
         $requestParams = new PaymentBuilderParameters();
         $requestParams->setBasketData($basketData);
         $requestParams->setUserData($userData);
-        $paymentStruct = $this->get('paypal_unified.installments.payment_builder_service')->getPayment($requestParams);
+        $paymentStruct = $this->get('paypal_unified.plus.payment_builder_service')->getPayment($requestParams);
 
         $amountPatch = new PaymentAmountPatch($paymentStruct->getTransactions()->getAmount());
         $itemsPatch = new PaymentItemsPatch($paymentStruct->getTransactions()->getItemList()->getItems());
 
         try {
+            $this->client->setPartnerAttributionId(PartnerAttributionId::PAYPAL_PLUS);
             $this->paymentResource->patch($paymentId, [$addressPatch, $payerInfoPatch, $itemsPatch, $amountPatch]);
         } catch (Exception $e) {
             $this->get('paypal_unified.exception_handler_service')->handle($e, 'patch address, payer info, item list and amount');
