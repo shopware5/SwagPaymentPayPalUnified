@@ -77,7 +77,7 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebar.Payment', {
     },
 
     /**
-     * @param { bool } visible
+     * @param { boolean } visible
      */
     setLegacyWarning: function(visible) {
         var me = this;

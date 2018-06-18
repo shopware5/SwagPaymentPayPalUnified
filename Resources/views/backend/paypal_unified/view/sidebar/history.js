@@ -58,7 +58,7 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebar.History', {
     },
 
     /**
-     * @param { bool } visible
+     * @param { boolean } visible
      */
     setLegacyWarning: function(visible) {
         var me = this;

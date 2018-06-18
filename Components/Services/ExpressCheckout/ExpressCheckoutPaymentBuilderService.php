@@ -25,8 +25,9 @@ class ExpressCheckoutPaymentBuilderService extends PaymentBuilderService
     {
         $payment = parent::getPayment($params);
 
-        $payment->getRedirectUrls()->setReturnUrl($this->getReturnUrl());
-        $payment->getRedirectUrls()->setCancelUrl($this->getCancelUrl());
+        $redirectUrls = $payment->getRedirectUrls();
+        $redirectUrls->setReturnUrl($this->getReturnUrl());
+        $redirectUrls->setCancelUrl($this->getCancelUrl());
 
         //Since we used the sBasket module earlier, the currencies might not be available,
         //but paypal needs them.

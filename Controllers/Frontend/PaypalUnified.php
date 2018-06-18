@@ -237,12 +237,12 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
 
             // apply the payment status if its completed by PayPal
             $paymentState = $responseSale->getState();
-            if ($paymentState === PaymentStatus::PAYMENT_COMPLETED) {
-                if (!$orderDataService->applyPaymentStatus($orderNumber, PaymentStatus::PAYMENT_STATUS_APPROVED)) {
-                    $this->handleError(ErrorCodes::NO_ORDER_TO_PROCESS);
+            if ($paymentState === PaymentStatus::PAYMENT_COMPLETED &&
+                !$orderDataService->applyPaymentStatus($orderNumber, PaymentStatus::PAYMENT_STATUS_APPROVED)
+            ) {
+                $this->handleError(ErrorCodes::NO_ORDER_TO_PROCESS);
 
-                    return;
-                }
+                return;
             }
 
             //Use TXN-ID instead of the PaymentId

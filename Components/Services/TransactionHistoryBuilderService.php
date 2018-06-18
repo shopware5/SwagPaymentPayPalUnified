@@ -50,17 +50,19 @@ class TransactionHistoryBuilderService
      */
     public function getLegacyHistory(Sale $sale)
     {
+        $amount = $sale->getAmount();
+        $amountTotal = $amount->getTotal();
         $result = [
-            'maxRefundableAmount' => $sale->getAmount()->getTotal(),
+            'maxRefundableAmount' => $amountTotal,
         ];
 
         $result[] = [
             'id' => $sale->getId(),
             'state' => $sale->getState(),
-            'amount' => $sale->getAmount()->getTotal(),
+            'amount' => $amountTotal,
             'create_time' => $sale->getCreateTime(),
             'update_time' => $sale->getUpdateTime(),
-            'currency' => $sale->getAmount()->getCurrency(),
+            'currency' => $amount->getCurrency(),
             'type' => $sale->getType(),
         ];
 
@@ -121,25 +123,27 @@ class TransactionHistoryBuilderService
         $maxAuthorizableAmount = $payment->getTransactions()->getAmount()->getTotal();
 
         foreach ($payment->getTransactions()->getRelatedResources()->getResources() as $authorization) {
+            $amount = $authorization->getAmount();
+            $amountTotal = $amount->getTotal();
             $id = $authorization->getId();
             $result[$id] = [
                 'id' => $id,
                 'state' => $authorization->getState(),
-                'amount' => $authorization->getAmount()->getTotal(),
+                'amount' => $amountTotal,
                 'create_time' => $authorization->getCreateTime(),
                 'update_time' => $authorization->getUpdateTime(),
-                'currency' => $authorization->getAmount()->getCurrency(),
+                'currency' => $amount->getCurrency(),
                 'type' => $authorization->getType(),
             ];
 
             $type = $authorization->getType();
             if ($type === ResourceType::CAPTURE) {
-                $maxRefundableAmount += $authorization->getAmount()->getTotal();
-                $maxAuthorizableAmount -= $authorization->getAmount()->getTotal();
-                $result[$id]['amount'] = $authorization->getAmount()->getTotal();
+                $maxRefundableAmount += $amountTotal;
+                $maxAuthorizableAmount -= $amountTotal;
+                $result[$id]['amount'] = $amountTotal;
             } elseif ($type === ResourceType::REFUND) {
-                $result[$id]['amount'] = $authorization->getAmount()->getTotal() * -1;
-                $maxRefundableAmount -= $authorization->getAmount()->getTotal();
+                $result[$id]['amount'] = $amountTotal * -1;
+                $maxRefundableAmount -= $amountTotal;
             }
         }
 

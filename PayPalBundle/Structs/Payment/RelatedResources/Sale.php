@@ -9,7 +9,6 @@
 namespace SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\RelatedResources;
 
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Common\Link;
-use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Transactions\Amount;
 
 class Sale extends RelatedResource
 {
@@ -42,46 +41,6 @@ class Sale extends RelatedResource
      * @var string
      */
     private $invoiceNumber;
-
-    /**
-     * @var Amount
-     */
-    private $amount;
-
-    /**
-     * @var string
-     */
-    private $id;
-
-    /**
-     * @var string
-     */
-    private $parentPayment;
-
-    /**
-     * @var Link[]
-     */
-    private $links;
-
-    /**
-     * @var string
-     */
-    private $state;
-
-    /**
-     * @var string
-     */
-    private $createTime;
-
-    /**
-     * @var string
-     */
-    private $updateTime;
-
-    /**
-     * @var string
-     */
-    private $type = 'sale';
 
     /**
      * @return string
@@ -180,126 +139,6 @@ class Sale extends RelatedResource
     }
 
     /**
-     * @return Amount
-     */
-    public function getAmount()
-    {
-        return $this->amount;
-    }
-
-    /**
-     * @param Amount $amount
-     */
-    public function setAmount($amount)
-    {
-        $this->amount = $amount;
-    }
-
-    /**
-     * @return string
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * @param string $id
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-    }
-
-    /**
-     * @return string
-     */
-    public function getParentPayment()
-    {
-        return $this->parentPayment;
-    }
-
-    /**
-     * @param string $parentPayment
-     */
-    public function setParentPayment($parentPayment)
-    {
-        $this->parentPayment = $parentPayment;
-    }
-
-    /**
-     * @return Link[]
-     */
-    public function getLinks()
-    {
-        return $this->links;
-    }
-
-    /**
-     * @param Link[] $links
-     */
-    public function setLinks($links)
-    {
-        $this->links = $links;
-    }
-
-    /**
-     * @return string
-     */
-    public function getState()
-    {
-        return $this->state;
-    }
-
-    /**
-     * @param string $state
-     */
-    public function setState($state)
-    {
-        $this->state = $state;
-    }
-
-    /**
-     * @return string
-     */
-    public function getCreateTime()
-    {
-        return $this->createTime;
-    }
-
-    /**
-     * @param string $createTime
-     */
-    public function setCreateTime($createTime)
-    {
-        $this->createTime = $createTime;
-    }
-
-    /**
-     * @return string
-     */
-    public function getUpdateTime()
-    {
-        return $this->updateTime;
-    }
-
-    /**
-     * @param string $updateTime
-     */
-    public function setUpdateTime($updateTime)
-    {
-        $this->updateTime = $updateTime;
-    }
-
-    /**
-     * @return string
-     */
-    public function getType()
-    {
-        return $this->type;
-    }
-
-    /**
      * @param array $data
      *
      * @return Sale
@@ -307,13 +146,8 @@ class Sale extends RelatedResource
     public static function fromArray(array $data)
     {
         $result = new self();
+        $result->prepare($result, $data, ResourceType::SALE);
 
-        $result->setAmount(Amount::fromArray($data['amount']));
-        $result->setId($data['id']);
-        $result->setState($data['state']);
-        $result->setParentPayment($data['parent_payment']);
-        $result->setCreateTime($data['create_time']);
-        $result->setUpdateTime($data['update_time']);
         $result->setPaymentMode($data['payment_mode']);
         $result->setProtectionEligibility($data['protection_eligibility']);
         $result->setProtectionEligibilityType($data['protection_eligibility_type']);

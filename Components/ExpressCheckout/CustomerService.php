@@ -206,8 +206,9 @@ class CustomerService
      */
     private function loginCustomer(Customer $customerModel)
     {
-        $this->front->Request()->setPost('email', $customerModel->getEmail());
-        $this->front->Request()->setPost('passwordMD5', $customerModel->getPassword());
+        $request = $this->front->Request();
+        $request->setPost('email', $customerModel->getEmail());
+        $request->setPost('passwordMD5', $customerModel->getPassword());
         $this->adminModule->sLogin(true);
     }
 }
