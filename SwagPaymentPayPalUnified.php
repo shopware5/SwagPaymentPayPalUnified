@@ -8,7 +8,6 @@
 
 namespace SwagPaymentPayPalUnified;
 
-use Shopware\Bundle\AttributeBundle\Service\CrudService;
 use Shopware\Components\Plugin;
 use Shopware\Components\Plugin\Context\ActivateContext;
 use Shopware\Components\Plugin\Context\DeactivateContext;
@@ -17,6 +16,8 @@ use Shopware\Components\Plugin\Context\UninstallContext;
 use Shopware\Components\Plugin\Context\UpdateContext;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Setup\Installer;
+use SwagPaymentPayPalUnified\Setup\Uninstaller;
+use SwagPaymentPayPalUnified\Setup\Updater;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class SwagPaymentPayPalUnified extends Plugin
@@ -50,21 +51,11 @@ class SwagPaymentPayPalUnified extends Plugin
      */
     public function uninstall(UninstallContext $context)
     {
-        $modelManager = $this->container->get('models');
-        $paymentMethodProvider = new PaymentMethodProvider($modelManager);
-        $paymentMethodProvider->setPaymentMethodActiveFlag(false);
-        $paymentMethodProvider->setPaymentMethodActiveFlag(false, PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME);
-
-        /** @var CrudService $attributeCrudService */
-        $attributeCrudService = $this->container->get('shopware_attribute.crud_service');
-
-        if ($attributeCrudService->get('s_core_paymentmeans_attributes', 'swag_paypal_unified_display_in_plus_iframe') !== null) {
-            $attributeCrudService->delete(
-                's_core_paymentmeans_attributes',
-                'swag_paypal_unified_display_in_plus_iframe'
-            );
-            $modelManager->generateAttributeModels(['s_core_paymentmeans_attributes']);
-        }
+        $uninstaller = new Uninstaller(
+            $this->container->get('shopware_attribute.crud_service'),
+            $this->container->get('models')
+        );
+        $uninstaller->uninstall();
 
         $context->scheduleClearCache(UninstallContext::CACHE_LIST_ALL);
     }
@@ -74,6 +65,12 @@ class SwagPaymentPayPalUnified extends Plugin
      */
     public function update(UpdateContext $context)
     {
+        $updater = new Updater(
+            $this->container->get('shopware_attribute.crud_service'),
+            $this->container->get('models')
+        );
+        $updater->update($context->getCurrentVersion());
+
         $context->scheduleClearCache(UpdateContext::CACHE_LIST_ALL);
     }
 

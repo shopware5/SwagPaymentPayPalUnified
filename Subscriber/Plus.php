@@ -242,16 +242,22 @@ class Plus implements SubscriberInterface
         $paymentIds = array_column($paymentMethods, 'id');
 
         $queryBuilder = $this->connection->createQueryBuilder();
-        $queryBuilder->select('paymentmeanID', 'swag_paypal_unified_display_in_plus_iframe')
+        $queryBuilder->select(
+            'paymentmeanID',
+            'swag_paypal_unified_display_in_plus_iframe',
+            'swag_paypal_unified_plus_iframe_payment_logo'
+        )
             ->from('s_core_paymentmeans_attributes')
             ->where('paymentmeanID IN(:paymentIds)')
             ->setParameter('paymentIds', $paymentIds, Connection::PARAM_INT_ARRAY);
 
-        $attributes = $queryBuilder->execute()->fetchAll(\PDO::FETCH_KEY_PAIR);
+        $attributes = $queryBuilder->execute()->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_UNIQUE);
 
         foreach ($paymentMethods as &$paymentMethod) {
             if (array_key_exists($paymentMethod['id'], $attributes)) {
-                $paymentMethod['swag_paypal_unified_display_in_plus_iframe'] = (bool) $attributes[$paymentMethod['id']];
+                $attribute = $attributes[$paymentMethod['id']];
+                $paymentMethod['swag_paypal_unified_display_in_plus_iframe'] = (bool) $attribute['swag_paypal_unified_display_in_plus_iframe'];
+                $paymentMethod['swag_paypal_unified_plus_iframe_payment_logo'] = $attribute['swag_paypal_unified_plus_iframe_payment_logo'];
             }
         }
         unset($paymentMethod);
@@ -465,6 +471,7 @@ class Plus implements SubscriberInterface
                     // cut here, because the name is needed for a check in jQuery plugin
                     'methodName' => substr($paymentMethod['description'], 0, 25),
                     'description' => $paymentMethod['additionaldescription'],
+                    'imageUrl' => $paymentMethod['swag_paypal_unified_plus_iframe_payment_logo'],
                 ];
             }
         }
