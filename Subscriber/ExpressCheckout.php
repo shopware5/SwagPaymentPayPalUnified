@@ -111,8 +111,8 @@ class ExpressCheckout implements SubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
+            'Enlight_Controller_Action_PostDispatchSecure_Frontend' => 'addExpressCheckoutButtonCart',
             'Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout' => [
-                ['addExpressCheckoutButtonCart'],
                 ['addEcInfoOnConfirm'],
                 ['addPaymentInfoToRequest', 100],
             ],
@@ -143,9 +143,22 @@ class ExpressCheckout implements SubscriberInterface
             return;
         }
 
-        $action = $args->getRequest()->getActionName();
         $view = $args->getSubject()->View();
-        if ($action !== 'cart' && $action !== 'ajaxCart' && $action !== 'ajax_add_article') {
+        $view->assign('paypalUnifiedEcCartActive', true);
+
+        $request = $args->getRequest();
+        $controller = strtolower($request->getControllerName());
+        if ($controller !== 'checkout') {
+            return;
+        }
+
+        $action = strtolower($request->getActionName());
+        if ($action !== 'cart' &&
+            $action !== 'ajaxcart' &&
+            $action !== 'ajax_cart' &&
+            $action !== 'ajax_add_article' &&
+            $action !== 'ajaxaddarticle'
+        ) {
             return;
         }
 
@@ -153,7 +166,6 @@ class ExpressCheckout implements SubscriberInterface
         $product = $view->getAssign('sArticle'); // content on modal window of ajaxAddArticleAction
 
         if ((isset($cart['content']) || $product) && !$view->getAssign('sUserLoggedIn')) {
-            $view->assign('paypalUnifiedEcCartActive', true);
             $view->assign('paypalUnifiedModeSandbox', $generalSettings->getSandbox());
             $view->assign('paypalUnifiedUseInContext', $generalSettings->getUseInContext());
             $view->assign('paypalUnifiedEcButtonStyleColor', $expressSettings->getButtonStyleColor());
@@ -170,7 +182,7 @@ class ExpressCheckout implements SubscriberInterface
         $request = $args->getRequest();
         $view = $args->getSubject()->View();
 
-        if ($request->getActionName() === 'confirm' && $request->getParam('expressCheckout', false)) {
+        if (strtolower($request->getActionName()) === 'confirm' && $request->getParam('expressCheckout', false)) {
             $view->assign('paypalUnifiedExpressCheckout', true);
             $view->assign('paypalUnifiedExpressPaymentId', $request->getParam('paymentId'));
             $view->assign('paypalUnifiedExpressPayerId', $request->getParam('payerId'));
@@ -185,7 +197,7 @@ class ExpressCheckout implements SubscriberInterface
     {
         $request = $args->getRequest();
 
-        if ($request->getActionName() === 'payment' &&
+        if (strtolower($request->getActionName()) === 'payment' &&
             $request->getParam('expressCheckout') &&
             $args->getResponse()->isRedirect()
         ) {
