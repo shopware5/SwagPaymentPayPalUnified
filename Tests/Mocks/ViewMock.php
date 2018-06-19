@@ -30,9 +30,9 @@ class ViewMock extends Enlight_View_Default
     /**
      * {@inheritdoc}
      */
-    public function addTemplateDir($path)
+    public function addTemplateDir($templateDir, $key = null)
     {
-        $this->templates[] = $path;
+        $this->templates[] = $templateDir;
     }
 
     /**
