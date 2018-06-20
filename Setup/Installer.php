@@ -120,6 +120,17 @@ class Installer
                 'helpText' => 'Activate this option, to display this payment method in the PayPal Plus iFrame',
             ]
         );
+        $this->attributeCrudService->update(
+            's_core_paymentmeans_attributes',
+            'swag_paypal_unified_plus_iframe_payment_logo',
+            'string',
+            [
+                'position' => -99,
+                'displayInBackend' => true,
+                'label' => 'Payment logo for iFrame',
+                'helpText' => 'Simply put an URL to an image here, if you want to show a logo for this payment in the PayPal Plus iFrame.<br><ul><li>The URL must be secure (https)</li><li>The image size must be maximum 100x25px</li></ul>',
+            ]
+        );
 
         $this->modelManager->generateAttributeModels(['s_order_attributes', 's_core_paymentmeans_attributes']);
     }
