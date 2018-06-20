@@ -53,9 +53,10 @@ class SwagPaymentPayPalUnified extends Plugin
     {
         $uninstaller = new Uninstaller(
             $this->container->get('shopware_attribute.crud_service'),
-            $this->container->get('models')
+            $this->container->get('models'),
+            $this->container->get('dbal_connection')
         );
-        $uninstaller->uninstall();
+        $uninstaller->uninstall($context->keepUserData());
 
         $context->scheduleClearCache(UninstallContext::CACHE_LIST_ALL);
     }
