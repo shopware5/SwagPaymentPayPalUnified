@@ -5,12 +5,25 @@
     <label lang="de">PayPal</label>
     <label lang="en">PayPal</label>
 
-    <version>1.0.2</version>
+    <version>1.0.3</version>
     <copyright>(c) by shopware AG</copyright>
     <license>MIT</license>
     <link>http://store.shopware.com</link>
     <author>shopware AG</author>
     <compatibility minVersion="5.2.0"/>
+
+    <changelog version="1.0.3">
+        <changes lang="de">
+            PT-9252 - Anzeige des Express Checkout Buttons korrigiert;
+            PT-9285 - Logo für Drittanbieter Zahlungsart im Plus iFrame nun pflegbar;
+            PT-9290 - Einstellungen werden jetzt entfernt, wenn dies bei der Deinstallation ausgewählt wird;
+        </changes>
+        <changes lang="en">
+            PT-9252 - Fix displaying of express checkout button;
+            PT-9285 - Logo for third party payment in Plus iFrame method can now be maintained;
+            PT-9290 - If selected on uninstallation, the settings now will be removed;
+        </changes>
+    </changelog>
 
     <changelog version="1.0.2">
         <changes lang="de">PT-9245 - Bezahldatum wird nun korrekt gesetzt;</changes>
