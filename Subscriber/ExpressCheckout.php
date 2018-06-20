@@ -145,6 +145,7 @@ class ExpressCheckout implements SubscriberInterface
 
         $view = $args->getSubject()->View();
         $view->assign('paypalUnifiedEcCartActive', true);
+        $view->assign('paypalUnifiedModeSandbox', $generalSettings->getSandbox());
 
         $request = $args->getRequest();
         $controller = strtolower($request->getControllerName());
@@ -166,7 +167,6 @@ class ExpressCheckout implements SubscriberInterface
         $product = $view->getAssign('sArticle'); // content on modal window of ajaxAddArticleAction
 
         if ((isset($cart['content']) || $product) && !$view->getAssign('sUserLoggedIn')) {
-            $view->assign('paypalUnifiedModeSandbox', $generalSettings->getSandbox());
             $view->assign('paypalUnifiedUseInContext', $generalSettings->getUseInContext());
             $view->assign('paypalUnifiedEcButtonStyleColor', $expressSettings->getButtonStyleColor());
             $view->assign('paypalUnifiedEcButtonStyleShape', $expressSettings->getButtonStyleShape());
