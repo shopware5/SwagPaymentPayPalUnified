@@ -45,13 +45,7 @@
             {block name='frontend_index_sidebar_paypal_unified_advertise_returns_body'}
                 <div class="panel--body is--wide paypal--sidebar-inner">
                     {block name='frontend_index_sidebar_paypal_unified_advertise_returns_body'}
-                        <a href="http://adfarm.mediaplex.com/ad/nc/27730-212148-12439-92?mpt=[CACHEBUSTER]"
-                           target="_blank"
-                           title="{"{s name="logo/advertise_returns/title"}Free returns via PayPal{/s}"|escape}">
-                            <img class="logo--image"
-                                 src="http://adfarm.mediaplex.com/ad/nb/27730-212148-12439-92?mpt=[CACHEBUSTER]"
-                                 alt="{"{s name="logo/advertise_returns/title"}Free returns via PayPal{/s}"|escape}">
-                        </a>
+                        <script src="https://ad.doubleclick.net/ddm/adj/N426203.3552PAYPAL/B21012703.220637106;sz=180x180;u=PayerID;ord=[timestamp];dc_lat=;dc_rdid=;tag_for_child_directed_treatment=;tfua="></script>
                     {/block}
                 </div>
             {/block}

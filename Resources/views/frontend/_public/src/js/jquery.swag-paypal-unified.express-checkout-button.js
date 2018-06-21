@@ -44,7 +44,7 @@
              *
              *  @type string
              */
-            shape: 'pill',
+            shape: 'rect',
 
             /**
              * size of the button
@@ -57,6 +57,13 @@
              *  @type string
              */
             color: 'gold',
+
+            /**
+             * show text under the button
+             *
+             * @type boolean
+             */
+            tagline: false,
 
             /**
              * A boolean indicating if the current page is an product detail page.
@@ -141,7 +148,8 @@
                 style: {
                     size: me.opts.size,
                     shape: me.opts.shape,
-                    color: me.opts.color
+                    color: me.opts.color,
+                    tagline: me.opts.tagline
                 },
 
                 /**
