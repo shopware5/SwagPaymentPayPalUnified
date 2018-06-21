@@ -20,13 +20,28 @@
             /**
              * label of the button
              * possible values:
+             *  - buynow
              *  - checkout
              *  - credit
              *  - pay
              *
              * @type string
              */
-            label: 'pay',
+            label: 'buynow',
+
+            /**
+             * show PayPal branding
+             *
+             * @type boolean
+             */
+            branding: true,
+
+            /**
+             * show text under the button
+             *
+             * @type boolean
+             */
+            tagline: false,
 
             /**
              * size of the button
@@ -48,7 +63,7 @@
              *
              * @type string
              */
-            shape: 'pill',
+            shape: 'rect',
 
             /**
              * color of the button
@@ -141,6 +156,8 @@
                  */
                 style: {
                     label: me.opts.label,
+                    branding: me.opts.branding,
+                    tagline: me.opts.tagline,
                     size: me.opts.size,
                     shape: me.opts.shape,
                     color: me.opts.color

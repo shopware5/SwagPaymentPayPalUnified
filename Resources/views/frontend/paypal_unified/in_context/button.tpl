@@ -4,7 +4,7 @@
             <div class="paypal-unified-in-context--button-container right"
                  data-paypalUnifiedNormalCheckoutButtonInContext="true"
                  data-paypalMode="{if $paypalUnifiedModeSandbox}sandbox{else}production{/if}"
-                 data-label="pay"
+                 data-label="buynow"
                  data-color="{$paypalUnifiedEcButtonStyleColor}"
                  data-shape="{$paypalUnifiedEcButtonStyleShape}"
                  data-size="{$paypalUnifiedEcButtonStyleSize}"
