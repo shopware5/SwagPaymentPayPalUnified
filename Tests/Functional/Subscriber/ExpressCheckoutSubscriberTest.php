@@ -59,7 +59,7 @@ class ExpressCheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
         $subscriber = $this->getSubscriber();
         $subscriber->addExpressCheckoutButtonCart($enlightEventArgs);
 
-        $this->assertNull($view->getAssign('paypalUnifiedModeSandbox'));
+        $this->assertNull($view->getAssign('paypalUnifiedUseInContext'));
         $paymentMethodProvider->setPaymentMethodActiveFlag(true);
     }
 
@@ -77,7 +77,7 @@ class ExpressCheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
         $subscriber = $this->getSubscriber();
         $subscriber->addExpressCheckoutButtonCart($enlightEventArgs);
 
-        $this->assertNull($view->getAssign('paypalUnifiedModeSandbox'));
+        $this->assertNull($view->getAssign('paypalUnifiedUseInContext'));
     }
 
     public function test_addExpressCheckoutButtonCart_return_ec_inactive()
@@ -94,7 +94,7 @@ class ExpressCheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
         $subscriber = $this->getSubscriber();
         $subscriber->addExpressCheckoutButtonCart($enlightEventArgs);
 
-        $this->assertNull($view->getAssign('paypalUnifiedModeSandbox'));
+        $this->assertNull($view->getAssign('paypalUnifiedUseInContext'));
     }
 
     public function test_addExpressCheckoutButtonCart_return_wrongController()
@@ -113,7 +113,7 @@ class ExpressCheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
         $subscriber = $this->getSubscriber();
         $subscriber->addExpressCheckoutButtonCart($enlightEventArgs);
 
-        $this->assertNull($view->getAssign('paypalUnifiedModeSandbox'));
+        $this->assertNull($view->getAssign('paypalUnifiedUseInContext'));
     }
 
     public function test_addExpressCheckoutButtonCart_return_wrongAction()
@@ -133,7 +133,7 @@ class ExpressCheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
         $subscriber = $this->getSubscriber();
         $subscriber->addExpressCheckoutButtonCart($enlightEventArgs);
 
-        $this->assertNull($view->getAssign('paypalUnifiedModeSandbox'));
+        $this->assertNull($view->getAssign('paypalUnifiedUseInContext'));
     }
 
     public function test_addExpressCheckoutButtonCart_assigns_value_to_cart()
