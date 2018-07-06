@@ -110,6 +110,11 @@ class InstallmentsSubscriberTest extends \PHPUnit_Framework_TestCase
 
 class HookArgsWithoutSubject extends \Enlight_Hook_HookArgs
 {
+    public function __construct()
+    {
+        parent::__construct(new \stdClass(), '');
+    }
+
     public function getSubject()
     {
         return null;
@@ -118,6 +123,11 @@ class HookArgsWithoutSubject extends \Enlight_Hook_HookArgs
 
 class HookArgsWithWrongPaymentId extends \Enlight_Hook_HookArgs
 {
+    public function __construct()
+    {
+        parent::__construct(new \stdClass(), '');
+    }
+
     /**
      * @return Enlight_Class
      */
@@ -142,6 +152,11 @@ class HookArgsWithCorrectPaymentId extends \Enlight_Hook_HookArgs
      * @var \Enlight_Template_Manager
      */
     private $_template;
+
+    public function __construct()
+    {
+        parent::__construct(new \stdClass(), '');
+    }
 
     /**
      * @return Enlight_Class
