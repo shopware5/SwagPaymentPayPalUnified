@@ -34,33 +34,6 @@ class OrderDataServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(OrderDataService::class, $orderDataService);
     }
 
-    public function test_apply_order_status_without_existing_order_returns_false()
-    {
-        $orderDataService = $this->getOrderDataService();
-
-        $this->assertFalse($orderDataService->applyPaymentStatus('WRONG_ORDER_NUMBER', self::PAYMENT_STATUS_APPROVED));
-    }
-
-    public function test_should_update_order_status()
-    {
-        $orderDataService = $this->getOrderDataService();
-
-        $orderDataService->applyPaymentStatus(self::ORDER_NUMBER, self::PAYMENT_STATUS_APPROVED);
-
-        /** @var Connection $dbalConnection */
-        $dbalConnection = Shopware()->Container()->get('dbal_connection');
-        $updatedOrder = $dbalConnection->executeQuery('SELECT * FROM s_order WHERE ordernumber="' . self::ORDER_NUMBER . '"')->fetchAll();
-
-        $this->assertEquals(self::PAYMENT_STATUS_APPROVED, $updatedOrder[0]['cleared']);
-    }
-
-    public function test_apply_transaction_id_without_existing_order_returns_false()
-    {
-        $orderDataService = $this->getOrderDataService();
-
-        $this->assertFalse($orderDataService->applyPaymentStatus('WRONG_ORDER_NUMBER', self::PAYMENT_STATUS_APPROVED));
-    }
-
     public function test_should_update_transaction_id()
     {
         $orderDataService = $this->getOrderDataService();

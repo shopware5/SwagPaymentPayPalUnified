@@ -40,30 +40,6 @@ class OrderDataService
     }
 
     /**
-     * @param string $orderNumber
-     * @param int    $paymentStatusId
-     *
-     * @return bool
-     */
-    public function applyPaymentStatus($orderNumber, $paymentStatusId)
-    {
-        $builder = $this->dbalConnection->createQueryBuilder();
-        $builder->update('s_order', 'o')
-            ->set('o.cleared', ':paymentStatus')
-            ->where('o.ordernumber = :orderNumber')
-            ->setParameters([
-                ':orderNumber' => $orderNumber,
-                ':paymentStatus' => $paymentStatusId,
-            ]);
-
-        if ($paymentStatusId === PaymentStatus::PAYMENT_STATUS_APPROVED) {
-            $builder->set('o.cleareddate', 'NOW()');
-        }
-
-        return $builder->execute() === 1;
-    }
-
-    /**
      * @param int    $orderNumber
      * @param string $transactionId
      *
