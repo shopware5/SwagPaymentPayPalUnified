@@ -78,6 +78,13 @@
             color: 'gold',
 
             /**
+             * The language ISO (ISO_639) for the payment wall.
+             *
+             * @type string
+             */
+            paypalLanguage: 'en_US',
+
+            /**
              * selector for the checkout confirm form element
              *
              * @type string
@@ -162,6 +169,8 @@
                     shape: me.opts.shape,
                     color: me.opts.color
                 },
+
+                locale: me.opts.paypalLanguage,
 
                 /**
                  * listener for custom validations

@@ -8,6 +8,7 @@
                  data-color="{$paypalUnifiedEcButtonStyleColor}"
                  data-shape="{$paypalUnifiedEcButtonStyleShape}"
                  data-size="{$paypalUnifiedEcButtonStyleSize}"
+                 data-paypalLanguage="{$paypalUnifiedLanguageIso}"
                 {block name='frontend_checkout_confirm_paypal_unified_in_context_button_data'}{/block}>
             </div>
         {/block}

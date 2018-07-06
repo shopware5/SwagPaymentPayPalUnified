@@ -12,6 +12,7 @@ use Doctrine\DBAL\Connection;
 use Enlight\Event\SubscriberInterface;
 use Enlight_Components_Session_Namespace as Session;
 use Enlight_Controller_ActionEventArgs as ActionEventArgs;
+use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\ExceptionHandlerServiceInterface;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderInterface;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
@@ -75,6 +76,11 @@ class ExpressCheckout implements SubscriberInterface
     private $clientService;
 
     /**
+     * @var DependencyProvider
+     */
+    private $dependencyProvider;
+
+    /**
      * @param SettingsServiceInterface         $settingsService
      * @param Session                          $session
      * @param PaymentResource                  $paymentResource
@@ -83,6 +89,7 @@ class ExpressCheckout implements SubscriberInterface
      * @param ExceptionHandlerServiceInterface $exceptionHandlerService
      * @param Connection                       $connection
      * @param ClientService                    $clientService
+     * @param DependencyProvider               $dependencyProvider
      */
     public function __construct(
         SettingsServiceInterface $settingsService,
@@ -92,7 +99,8 @@ class ExpressCheckout implements SubscriberInterface
         PaymentBuilderInterface $paymentBuilder,
         ExceptionHandlerServiceInterface $exceptionHandlerService,
         Connection $connection,
-        ClientService $clientService
+        ClientService $clientService,
+        DependencyProvider $dependencyProvider
     ) {
         $this->settingsService = $settingsService;
         $this->session = $session;
@@ -103,6 +111,7 @@ class ExpressCheckout implements SubscriberInterface
         $this->paymentMethodProvider = new PaymentMethodProvider();
         $this->connection = $connection;
         $this->clientService = $clientService;
+        $this->dependencyProvider = $dependencyProvider;
     }
 
     /**
@@ -171,6 +180,7 @@ class ExpressCheckout implements SubscriberInterface
             $view->assign('paypalUnifiedEcButtonStyleColor', $expressSettings->getButtonStyleColor());
             $view->assign('paypalUnifiedEcButtonStyleShape', $expressSettings->getButtonStyleShape());
             $view->assign('paypalUnifiedEcButtonStyleSize', $expressSettings->getButtonStyleSize());
+            $view->assign('paypalUnifiedLanguageIso', $this->getExpressCheckoutButtonLanguage());
         }
     }
 
@@ -247,6 +257,7 @@ class ExpressCheckout implements SubscriberInterface
             $view->assign('paypalUnifiedEcButtonStyleColor', $expressSettings->getButtonStyleColor());
             $view->assign('paypalUnifiedEcButtonStyleShape', $expressSettings->getButtonStyleShape());
             $view->assign('paypalUnifiedEcButtonStyleSize', $expressSettings->getButtonStyleSize());
+            $view->assign('paypalUnifiedLanguageIso', $this->getExpressCheckoutButtonLanguage());
         }
     }
 
@@ -282,6 +293,7 @@ class ExpressCheckout implements SubscriberInterface
             $view->assign('paypalUnifiedEcButtonStyleColor', $expressSettings->getButtonStyleColor());
             $view->assign('paypalUnifiedEcButtonStyleShape', $expressSettings->getButtonStyleShape());
             $view->assign('paypalUnifiedEcButtonStyleSize', $expressSettings->getButtonStyleSize());
+            $view->assign('paypalUnifiedLanguageIso', $this->getExpressCheckoutButtonLanguage());
         }
     }
 
@@ -317,5 +329,21 @@ class ExpressCheckout implements SubscriberInterface
             $this->exceptionHandlerService->handle($exception, 'patch the payment for express checkout');
             throw $exception;
         }
+    }
+
+    /**
+     * @return string
+     */
+    private function getExpressCheckoutButtonLanguage()
+    {
+        $languageIso = $this->dependencyProvider->getShop()->getLocale()->getLocale();
+
+        // use english as default, use german if the locale is from german speaking country (de_DE, de_AT, etc)
+        // by now the PPP iFrame does not support other languages
+        if (strpos($languageIso, 'de_') === 0) {
+            $languageIso = 'de_DE';
+        }
+
+        return $languageIso;
     }
 }

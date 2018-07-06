@@ -69,6 +69,7 @@
             <argument type="service" id="paypal_unified.exception_handler_service"/>
             <argument type="service" id="dbal_connection"/>
             <argument type="service" id="paypal_unified.client_service"/>
+            <argument type="service" id="paypal_unified.dependency_provider"/>
             <tag name="shopware.event_subscriber"/>
         </service>
 
@@ -84,6 +85,7 @@
                  class="SwagPaymentPayPalUnified\Subscriber\InContext">
             <argument type="service" id="dbal_connection"/>
             <argument type="service" id="paypal_unified.settings_service"/>
+            <argument type="service" id="paypal_unified.dependency_provider"/>
             <tag name="shopware.event_subscriber"/>
         </service>
 

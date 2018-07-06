@@ -10,6 +10,7 @@ namespace SwagPaymentPayPalUnified\Subscriber;
 
 use Doctrine\DBAL\Connection;
 use Enlight\Event\SubscriberInterface;
+use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Models\Settings\ExpressCheckout as ExpressSettingsModel;
 use SwagPaymentPayPalUnified\Models\Settings\General as GeneralSettingsModel;
@@ -34,16 +35,24 @@ class InContext implements SubscriberInterface
     private $settingsService;
 
     /**
+     * @var DependencyProvider
+     */
+    private $dependencyProvider;
+
+    /**
      * @param Connection               $connection
      * @param SettingsServiceInterface $settingsService
+     * @param DependencyProvider       $dependencyProvider
      */
     public function __construct(
         Connection $connection,
-        SettingsServiceInterface $settingsService
+        SettingsServiceInterface $settingsService,
+        DependencyProvider $dependencyProvider
     ) {
         $this->paymentMethodProvider = new PaymentMethodProvider();
         $this->connection = $connection;
         $this->settingsService = $settingsService;
+        $this->dependencyProvider = $dependencyProvider;
     }
 
     /**
@@ -96,6 +105,7 @@ class InContext implements SubscriberInterface
         $view->assign('paypalUnifiedEcButtonStyleColor', $expressSettings->getButtonStyleColor());
         $view->assign('paypalUnifiedEcButtonStyleShape', $expressSettings->getButtonStyleShape());
         $view->assign('paypalUnifiedEcButtonStyleSize', $expressSettings->getButtonStyleSize());
+        $view->assign('paypalUnifiedLanguageIso', $this->getExpressCheckoutButtonLanguage());
     }
 
     /**
@@ -114,5 +124,21 @@ class InContext implements SubscriberInterface
                 'useInContext' => true,
             ]);
         }
+    }
+
+    /**
+     * @return string
+     */
+    private function getExpressCheckoutButtonLanguage()
+    {
+        $languageIso = $this->dependencyProvider->getShop()->getLocale()->getLocale();
+
+        // use english as default, use german if the locale is from german speaking country (de_DE, de_AT, etc)
+        // by now the PPP iFrame does not support other languages
+        if (strpos($languageIso, 'de_') === 0) {
+            $languageIso = 'de_DE';
+        }
+
+        return $languageIso;
     }
 }

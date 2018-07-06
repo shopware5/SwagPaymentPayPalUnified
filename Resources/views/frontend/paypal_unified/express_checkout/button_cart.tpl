@@ -12,6 +12,7 @@
                  data-color="{$paypalUnifiedEcButtonStyleColor}"
                  data-shape="{$paypalUnifiedEcButtonStyleShape}"
                  data-size="{$paypalUnifiedEcButtonStyleSize}"
+                 data-paypalLanguage="{$paypalUnifiedLanguageIso}"
                  data-cart="true"
                 {block name='paypal_unified_ec_button_container_cart_data'}{/block}>
             </div>

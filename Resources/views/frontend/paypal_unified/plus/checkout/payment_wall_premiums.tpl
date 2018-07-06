@@ -4,7 +4,7 @@
             {* Unified payment wall plugin *}
             <div class="is--hidden"
                  data-paypalPaymentWall="true"
-                 data-paypalLanguage="{$paypalUnifiedPlusLanguageIso}"
+                 data-paypalLanguage="{$paypalUnifiedLanguageIso}"
                  data-paypalApprovalUrl="{$paypalUnifiedApprovalUrl}"
                  data-paypalCountryIso="{$sUserData.additional.country.countryiso}"
                  data-paypalMode="{if $paypalUnifiedModeSandbox}sandbox{else}live{/if}">

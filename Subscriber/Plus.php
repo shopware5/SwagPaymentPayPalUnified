@@ -321,7 +321,7 @@ class Plus implements SubscriberInterface
         $view->assign('paypalUnifiedModeSandbox', $this->settingsService->get('sandbox'));
         $view->assign('paypalUnifiedRemotePaymentId', $paymentStruct->getId());
         $view->assign('paypalUnifiedApprovalUrl', $paymentStruct->getLinks()[1]->getHref());
-        $view->assign('paypalUnifiedPlusLanguageIso', $this->getPaymentWallLanguage());
+        $view->assign('paypalUnifiedLanguageIso', $this->getPaymentWallLanguage());
     }
 
     /**
@@ -341,7 +341,7 @@ class Plus implements SubscriberInterface
         $view->assign('paypalUnifiedPaymentId', $this->paymentMethodProvider->getPaymentId($this->connection));
         $view->assign('paypalUnifiedRemotePaymentId', $paymentStruct->getId());
         $view->assign('paypalUnifiedApprovalUrl', $paymentStruct->getLinks()[1]->getHref());
-        $view->assign('paypalUnifiedPlusLanguageIso', $this->getPaymentWallLanguage());
+        $view->assign('paypalUnifiedLanguageIso', $this->getPaymentWallLanguage());
 
         //Store the paymentID in the session to indicate that
         //the payment has already been created and can be used on the confirm page.
