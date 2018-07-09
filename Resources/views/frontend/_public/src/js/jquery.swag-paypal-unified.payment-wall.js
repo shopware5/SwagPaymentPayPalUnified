@@ -133,9 +133,9 @@
              * Third party methods which will be shown in the payment wall iFrame
              * formatted as JSON string, will be decoded on calling `applyDataAttributes`
              *
-             * @type string
+             * @type Array
              */
-            thirdPartyPaymentMethods: ''
+            thirdPartyPaymentMethods: []
         },
 
         /**
