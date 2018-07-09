@@ -346,22 +346,29 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
         $message = null;
         $name = null;
 
-        if ($exception && $this->settingsService->hasSettings() && $this->settingsService->get('display_errors')) {
+        if ($exception) {
             /** @var ExceptionHandlerServiceInterface $exceptionHandler */
             $exceptionHandler = $this->get('paypal_unified.exception_handler_service');
-
             $error = $exceptionHandler->handle($exception, 'process checkout');
-            $message = $error->getMessage();
-            $name = $error->getName();
+
+            if ($this->settingsService->hasSettings() && $this->settingsService->get('display_errors')) {
+                $message = $error->getMessage();
+                $name = $error->getName();
+            }
         }
 
-        $this->redirect([
+        $redirectData = [
             'controller' => 'checkout',
             'action' => 'shippingPayment',
             'paypal_unified_error_code' => $code,
-            'paypal_unified_error_name' => $name,
-            'paypal_unified_error_message' => $message,
-        ]);
+        ];
+
+        if ($name !== null) {
+            $redirectData['paypal_unified_error_name'] = $name;
+            $redirectData['paypal_unified_error_message'] = $message;
+        }
+
+        $this->redirect($redirectData);
     }
 
     /**

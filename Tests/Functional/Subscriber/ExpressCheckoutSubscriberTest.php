@@ -576,7 +576,8 @@ class ExpressCheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
             Shopware()->Container()->get('paypal_unified.payment_builder_service'),
             Shopware()->Container()->get('paypal_unified.exception_handler_service'),
             Shopware()->Container()->get('dbal_connection'),
-            Shopware()->Container()->get('paypal_unified.client_service')
+            Shopware()->Container()->get('paypal_unified.client_service'),
+            Shopware()->Container()->get('paypal_unified.dependency_provider')
         );
     }
 }

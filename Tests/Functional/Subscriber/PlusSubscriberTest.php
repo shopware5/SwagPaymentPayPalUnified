@@ -387,7 +387,7 @@ class PlusSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals('PAY-9HW62735H82101921LLK3D4I', $viewAssignments['paypalUnifiedRemotePaymentId']);
         $this->assertEquals('https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=_express-checkout&token=EC-49W9096312907153R', $viewAssignments['paypalUnifiedApprovalUrl']);
-        $this->assertEquals('de_DE', $viewAssignments['paypalUnifiedPlusLanguageIso']);
+        $this->assertEquals('de_DE', $viewAssignments['paypalUnifiedLanguageIso']);
     }
 
     public function test_onPostDispatchSecure_handleConfirmDispatch_should_return_because_of_no_paymentStruct()
@@ -413,7 +413,7 @@ class PlusSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $this->assertNull($viewAssignments['paypalUnifiedRemotePaymentId']);
         $this->assertNull($viewAssignments['paypalUnifiedApprovalUrl']);
-        $this->assertNull($viewAssignments['paypalUnifiedPlusLanguageIso']);
+        $this->assertNull($viewAssignments['paypalUnifiedLanguageIso']);
     }
 
     public function test_onPostDispatchSecure_handleConfirmDispatch_return_came_from_step_two()

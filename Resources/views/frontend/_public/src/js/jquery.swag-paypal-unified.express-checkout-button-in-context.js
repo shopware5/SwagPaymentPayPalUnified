@@ -66,6 +66,13 @@
             tagline: false,
 
             /**
+             * The language ISO (ISO_639) for the payment wall.
+             *
+             * @type string
+             */
+            paypalLanguage: 'en_US',
+
+            /**
              * A boolean indicating if the current page is an product detail page.
              *
              * @type boolean
@@ -152,6 +159,8 @@
                     color: me.opts.color,
                     tagline: me.opts.tagline
                 },
+
+                locale: me.opts.paypalLanguage,
 
                 /**
                  * listener for the button

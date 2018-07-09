@@ -259,7 +259,8 @@ class InContextSubscriberTest extends \PHPUnit_Framework_TestCase
     {
         return new InContext(
             Shopware()->Container()->get('dbal_connection'),
-            Shopware()->Container()->get('paypal_unified.settings_service')
+            Shopware()->Container()->get('paypal_unified.settings_service'),
+            Shopware()->Container()->get('paypal_unified.dependency_provider')
         );
     }
 }
