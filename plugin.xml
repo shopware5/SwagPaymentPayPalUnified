@@ -5,12 +5,25 @@
     <label lang="de">PayPal</label>
     <label lang="en">PayPal</label>
 
-    <version>1.0.4</version>
+    <version>1.0.5</version>
     <copyright>(c) by shopware AG</copyright>
     <license>MIT</license>
     <link>http://store.shopware.com</link>
     <author>shopware AG</author>
     <compatibility minVersion="5.2.0"/>
+
+    <changelog version="1.0.5">
+        <changes lang="de">
+            PT-9318 - Sprache der Buttons für Express Checkout und In-Context richtet sich nun nach der Shopsprache;
+            PT-9366 - Javascript Warnung korrigiert;
+            Datum in der Bestellübersicht korrigiert;
+        </changes>
+        <changes lang="en">
+            PT-9318 - The shop language is now considered for the language of the express checkout and in-context buttons;
+            PT-9366 - Fix Javascript warning;
+            Fix date in order overview;
+        </changes>
+    </changelog>
 
     <changelog version="1.0.4">
         <changes lang="de">PT-9241 - Optimierung von PayPal Bannern und Buttons;</changes>
