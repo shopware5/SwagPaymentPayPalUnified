@@ -81,7 +81,7 @@ class InvoiceSubscriberTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->updateOrderPaymentId(15, $this->getUnifiedPaymentId());
-        $hookArgs = new HookArgsWithCorrectPaymentId();
+        $hookArgs = new HookArgsWithCorrectPaymentId(Shopware()->Container()->has('shopware.benchmark_bundle.collector'));
 
         $this->assertNull($subscriber->onBeforeRenderDocument($hookArgs));
     }
@@ -97,7 +97,7 @@ class InvoiceSubscriberTest extends \PHPUnit_Framework_TestCase
         $this->updateOrderPaymentId(15, $this->getUnifiedPaymentId());
         $this->insertTestData();
 
-        $hookArgs = new HookArgsWithCorrectPaymentId();
+        $hookArgs = new HookArgsWithCorrectPaymentId(Shopware()->Container()->has('shopware.benchmark_bundle.collector'));
 
         $subscriber->onBeforeRenderDocument($hookArgs);
 

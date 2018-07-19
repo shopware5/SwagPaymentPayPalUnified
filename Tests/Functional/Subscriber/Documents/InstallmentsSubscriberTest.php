@@ -44,7 +44,7 @@ class InstallmentsSubscriberTest extends \PHPUnit_Framework_TestCase
             Shopware()->Container()->get('dbal_connection')
         );
 
-        $hookArgs = new HookArgsWithoutSubject();
+        $hookArgs = new HookArgsWithoutSubject(Shopware()->Container()->has('shopware.benchmark_bundle.collector'));
 
         $this->assertNull($subscriber->onBeforeRenderDocument($hookArgs));
     }
@@ -56,7 +56,7 @@ class InstallmentsSubscriberTest extends \PHPUnit_Framework_TestCase
             Shopware()->Container()->get('dbal_connection')
         );
 
-        $hookArgs = new HookArgsWithWrongPaymentId();
+        $hookArgs = new HookArgsWithWrongPaymentId(Shopware()->Container()->has('shopware.benchmark_bundle.collector'));
 
         $this->assertNull($subscriber->onBeforeRenderDocument($hookArgs));
     }
@@ -71,7 +71,7 @@ class InstallmentsSubscriberTest extends \PHPUnit_Framework_TestCase
         $this->updateOrderPaymentId(15, $this->getInstallmentsPaymentId());
         $this->insertTestData();
 
-        $hookArgs = new HookArgsWithCorrectPaymentId();
+        $hookArgs = new HookArgsWithCorrectPaymentId(Shopware()->Container()->has('shopware.benchmark_bundle.collector'));
 
         $subscriber->onBeforeRenderDocument($hookArgs);
         $view = $hookArgs->getView();
@@ -110,6 +110,16 @@ class InstallmentsSubscriberTest extends \PHPUnit_Framework_TestCase
 
 class HookArgsWithoutSubject extends \Enlight_Hook_HookArgs
 {
+    /**
+     * @param bool $isShopware55
+     */
+    public function __construct($isShopware55 = false)
+    {
+        if ($isShopware55) {
+            parent::__construct(new \stdClass(), '');
+        }
+    }
+
     public function getSubject()
     {
         return null;
@@ -118,6 +128,16 @@ class HookArgsWithoutSubject extends \Enlight_Hook_HookArgs
 
 class HookArgsWithWrongPaymentId extends \Enlight_Hook_HookArgs
 {
+    /**
+     * @param bool $isShopware55
+     */
+    public function __construct($isShopware55 = false)
+    {
+        if ($isShopware55) {
+            parent::__construct(new \stdClass(), '');
+        }
+    }
+
     /**
      * @return Enlight_Class
      */
@@ -142,6 +162,16 @@ class HookArgsWithCorrectPaymentId extends \Enlight_Hook_HookArgs
      * @var \Enlight_Template_Manager
      */
     private $_template;
+
+    /**
+     * @param bool $isShopware55
+     */
+    public function __construct($isShopware55 = false)
+    {
+        if ($isShopware55) {
+            parent::__construct(new \stdClass(), '');
+        }
+    }
 
     /**
      * @return Enlight_Class
