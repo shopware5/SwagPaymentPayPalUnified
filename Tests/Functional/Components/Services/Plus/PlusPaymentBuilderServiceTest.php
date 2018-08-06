@@ -92,8 +92,9 @@ class PlusPaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
     {
         $router = Shopware()->Container()->get('router');
         $crudService = Shopware()->Container()->get('shopware_attribute.crud_service');
+        $snippetManager = Shopware()->Container()->get('snippets');
 
-        return new PlusPaymentBuilderService($router, $settingService, $crudService);
+        return new PlusPaymentBuilderService($router, $settingService, $crudService, $snippetManager);
     }
 
     /**

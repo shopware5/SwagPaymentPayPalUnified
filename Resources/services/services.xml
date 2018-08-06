@@ -45,18 +45,21 @@
                  class="SwagPaymentPayPalUnified\Components\Services\PaymentBuilderService">
             <argument type="service" id="router"/>
             <argument type="service" id="paypal_unified.settings_service"/>
+            <argument type="service" id="snippets"/>
         </service>
 
         <service id="paypal_unified.installments.payment_builder_service"
                  class="SwagPaymentPayPalUnified\Components\Services\Installments\InstallmentsPaymentBuilderService">
             <argument type="service" id="router"/>
             <argument type="service" id="paypal_unified.settings_service"/>
+            <argument type="service" id="snippets"/>
         </service>
 
         <service id="paypal_unified.express_checkout.payment_builder_service"
                  class="SwagPaymentPayPalUnified\Components\Services\ExpressCheckout\ExpressCheckoutPaymentBuilderService">
             <argument type="service" id="router"/>
             <argument type="service" id="paypal_unified.settings_service"/>
+            <argument type="service" id="snippets"/>
         </service>
 
         <service id="paypal_unified.plus.payment_builder_service"
@@ -64,6 +67,7 @@
             <argument type="service" id="router"/>
             <argument type="service" id="paypal_unified.settings_service"/>
             <argument type="service" id="shopware_attribute.crud_service"/>
+            <argument type="service" id="snippets"/>
         </service>
 
         <service id="paypal_unified.transaction_history_builder_service"

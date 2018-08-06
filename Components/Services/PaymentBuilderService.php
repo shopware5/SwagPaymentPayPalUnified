@@ -9,6 +9,7 @@
 namespace SwagPaymentPayPalUnified\Components\Services;
 
 use Shopware\Components\Routing\Router;
+use Shopware_Components_Snippet_Manager as SnippetManager;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderInterface;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
@@ -51,13 +52,23 @@ class PaymentBuilderService implements PaymentBuilderInterface
     private $userData;
 
     /**
+     * @var SnippetManager
+     */
+    private $snippetManager;
+
+    /**
      * @param Router                   $router
      * @param SettingsServiceInterface $settingsService
+     * @param SnippetManager           $snippetManager
      */
-    public function __construct(Router $router, SettingsServiceInterface $settingsService)
-    {
+    public function __construct(
+        Router $router,
+        SettingsServiceInterface $settingsService,
+        SnippetManager $snippetManager
+    ) {
         $this->router = $router;
         $this->settings = $settingsService;
+        $this->snippetManager = $snippetManager;
     }
 
     /**
@@ -156,110 +167,64 @@ class PaymentBuilderService implements PaymentBuilderInterface
     private function getItemList()
     {
         $list = [];
-        $lastCustomProduct = null;
         /** @var array $basketContent */
         $basketContent = $this->basketData['content'];
-        $index = 0;
+        $customProductMainLineItemKey = 0;
+        $customProductsHint = $this->snippetManager->getNamespace('frontend/paypal_unified/checkout/item_list')
+            ->get('paymentBuilder/customProductsHint', ' incl. surcharges for Custom Products configuration');
 
-        foreach ($basketContent as $basketItem) {
+        foreach ($basketContent as $key => $basketItem) {
             $sku = $basketItem['ordernumber'];
             $name = $basketItem['articlename'];
             $quantity = (int) $basketItem['quantity'];
 
             $price = $this->showGrossPrices() === true
-                ? str_replace(',', '.', $basketItem['price'])
-                : $basketItem['netprice'];
+                ? (float) str_replace(',', '.', $basketItem['price'])
+                : (float) $basketItem['netprice'];
 
-            //In the following part, we modify the CustomProducts positions.
-            //By default, custom products may add a lot of different positions to the basket, which would probably reach
-            //the items limit of PayPal. Therefore, we group the values with the options.
-            //Actually, that causes a loss of quantity precision but there is no other way around this issue but this.
+            // In the following part, we modify the CustomProducts positions.
+            // All position prices of the Custom Products configuration are added up, so that no items with 0€ are committed to PayPal
             if (!empty($basketItem['customProductMode'])) {
                 //A value indicating if the surcharge of this position is only being added once
                 $isSingleSurcharge = $basketItem['customProductIsOncePrice'];
 
                 switch ($basketItem['customProductMode']) {
-                    /*
-                     * The current basket item is of type Option (a group of values)
-                     * This will be our first starting point.
-                     * In this procedure we fake the amount by simply adding a %value%x to the actual name of the group.
-                     * Further more, we add a : to the end of the name (if a value follows this option) to indicate that more values follow.
-                     * At the end, we set the quantity to 1, so PayPal doesn't calculate the total amount. That would cause calculation errors, since we calculate the
-                     * whole position already.
-                     */
-                    case 2: //Option
-                        $nextProduct = $basketContent[$index + 1];
+                    case 1:
+                        $customProductMainLineItemKey = $key;
+                        $name .= $customProductsHint;
 
-                        $name = $quantity . 'x ' . $name;
-
-                        //Another value is following?
-                        if ($nextProduct && $nextProduct['customProductMode'] === '3') {
-                            $name .= ': ';
+                        if ($quantity !== 1) {
+                            $price *= $quantity;
+                            $name = $quantity . 'x ' . $name;
+                            $quantity = 1;
                         }
 
-                        //Calculate the total price of this option
+                        break;
+                    case 2: //Option
+                    case 3: //Value
+                        //Calculate the total price
                         if (!$isSingleSurcharge) {
                             $price *= $quantity;
                         }
 
-                        $quantity = 1;
-                        break;
-
-                    /*
-                     * This basket item is of type Value.
-                     * In this procedure we calculate the actual price of the value and add it to the option price.
-                     * Further more, we add a comma to the end of the value (if another value is following) to improve the readability on the PayPal page.
-                     * Afterwards, we set the quantity to 0, so that the basket item is not being added to the list. We don't have to add it again,
-                     * since it's already grouped to the option.
-                     */
-                    case 3: //Value
-                        //The last option that has been added to the final list.
-                        //This value will be grouped to it.
-                        $nextProduct = $basketContent[$index + 1];
-                        /** @var Item $lastGroup */
-                        $lastGroup = &$list[count($list) - 1];
-                        $lastGroupName = $lastGroup->getName();
-                        $lastGroupPrice = $lastGroup->getPrice();
-
-                        if ($lastGroup) {
-                            //Check if another value is following, if so, add a comma to the end of the name.
-                            if ($nextProduct && $nextProduct['customProductMode'] === '3') {
-                                //Another value is following
-                                $lastGroup->setName($lastGroupName . $name . ', ');
-                            } else {
-                                //This is the last value in this option
-                                $lastGroup->setName($lastGroupName . $name);
-                            }
-
-                            //Calculate the total price.
-                            if ($isSingleSurcharge) {
-                                $lastGroup->setPrice($lastGroupPrice + $price);
-                            } else {
-                                $lastGroup->setPrice($lastGroupPrice + $price * $quantity);
-                            }
-
-                            //Don't add it to the final list
-                            $quantity = 0;
-                        }
-                        break;
+                        /** @var Item $mainProduct */
+                        $mainProduct = $list[$customProductMainLineItemKey];
+                        $mainProduct->setPrice($mainProduct->getPrice() + $price);
+                        continue 2;
                 }
             }
 
-            if ($quantity !== 0) {
-                $item = new Item();
-                $item->setCurrency($this->basketData['sCurrencyName']);
-                $item->setName($name);
-                $item->setPrice($price);
-                $item->setQuantity($quantity);
+            $item = new Item();
+            $item->setCurrency($this->basketData['sCurrencyName']);
+            $item->setName($name);
+            $item->setPrice($price);
+            $item->setQuantity($quantity);
 
-                if ($sku !== null && $sku !== '') {
-                    $item->setSku($sku);
-                }
-
-                $list[] = $item;
+            if ($sku !== null && $sku !== '') {
+                $item->setSku($sku);
             }
 
-            ++$index;
+            $list[$key] = $item;
         }
 
         return $list;

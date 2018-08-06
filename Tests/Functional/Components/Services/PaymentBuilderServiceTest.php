@@ -161,10 +161,10 @@ class PaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
     {
         $requestParameters = $this->getRequestData();
 
-        $customProductsOption = $requestParameters['transactions'][0]['item_list']['items'][1];
+        $customProductsOption = $requestParameters['transactions'][0]['item_list']['items'][0];
 
-        $this->assertEquals('1x test: a, b', $customProductsOption['name']);
-        $this->assertEquals(6, $customProductsOption['price']);
+        // summed up price -> product price and configurations
+        $this->assertEquals(round(59.99 + 1 * 1 + 2 * 2 + 1 * 3, 2), (float) $customProductsOption['price']);
     }
 
     public function test_getPayment_express_checkout_without_cart()
@@ -305,8 +305,9 @@ class PaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
     private function getRequestService(SettingsServiceInterface $settingService)
     {
         $router = Shopware()->Container()->get('router');
+        $snippetManager = Shopware()->Container()->get('snippets');
 
-        return new PaymentBuilderService($router, $settingService);
+        return new PaymentBuilderService($router, $settingService, $snippetManager);
     }
 
     /**
@@ -343,13 +344,14 @@ class PaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
                     'customProductMode' => '2',
                 ], [
                     'articlename' => 'a',
-                    'quantity' => '1',
+                    'quantity' => '2',
                     'price' => '2',
                     'customProductMode' => '3',
                 ], [
                     'articlename' => 'b',
-                    'quantity' => '1',
+                    'quantity' => '2',
                     'price' => '3',
+                    'customProductIsOncePrice' => true,
                     'customProductMode' => '3',
                 ], [
                     'articlename' => 'test-break',
