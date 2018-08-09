@@ -167,7 +167,8 @@ class InstallmentsPaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
     private function getInstallmentsPaymentBuilderService(SettingsServiceInterface $settingService)
     {
         $router = Shopware()->Container()->get('router');
+        $snippetManager = Shopware()->Container()->get('snippets');
 
-        return new InstallmentsPaymentBuilderService($router, $settingService);
+        return new InstallmentsPaymentBuilderService($router, $settingService, $snippetManager);
     }
 }

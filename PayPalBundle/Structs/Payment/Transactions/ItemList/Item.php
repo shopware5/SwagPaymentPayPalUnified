@@ -89,7 +89,7 @@ class Item
     }
 
     /**
-     * @return string
+     * @return float
      */
     public function getPrice()
     {
@@ -97,7 +97,7 @@ class Item
     }
 
     /**
-     * @param string $price
+     * @param float $price
      */
     public function setPrice($price)
     {
@@ -147,10 +147,10 @@ class Item
 
         $result->setName($data['name']);
         $result->setSku($data['sku']);
-        $result->setPrice($data['price']);
+        $result->setPrice((float) $data['price']);
         $result->setCurrency($data['currency']);
         $result->setTax($data['tax']);
-        $result->setQuantity($data['quantity']);
+        $result->setQuantity((int) $data['quantity']);
 
         return $result;
     }

@@ -74,8 +74,9 @@ class ExpressCheckoutPaymentBuilderServiceTest extends \PHPUnit_Framework_TestCa
     private function getExpressCheckoutRequestBuilder(SettingsServiceInterface $settingService)
     {
         $router = Shopware()->Container()->get('router');
+        $snippetManager = Shopware()->Container()->get('snippets');
 
-        return new ExpressCheckoutPaymentBuilderService($router, $settingService);
+        return new ExpressCheckoutPaymentBuilderService($router, $settingService, $snippetManager);
     }
 
     /**
