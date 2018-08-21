@@ -13,20 +13,45 @@ use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
 
 class SimpleBasketValidatorTest extends \PHPUnit_Framework_TestCase
 {
-    public function test_is_valid()
+    /**
+     * @dataProvider test_is_valid_dataProvider
+     *
+     * @param float $amountNumeric
+     * @param float amountNetNumeric
+     * @param int|null $chargeVat
+     * @param float    $totalAmount
+     * @param bool     $expectedResult
+     */
+    public function test_is_valid($amountNumeric, $amountNetNumeric, $chargeVat, $totalAmount, $expectedResult)
     {
-        $basketData = ['AmountNumeric' => 14.31];
-        $userData = [];
+        $basketData = [
+            'AmountNumeric' => $amountNumeric,
+            'AmountNetNumeric' => $amountNetNumeric,
+        ];
+        $userData = [
+            'additional' => [
+            'charge_vat' => $chargeVat,
+        ], ];
 
         $payment = new Payment();
         $transactions = new Payment\Transactions();
         $amount = new Payment\Transactions\Amount();
-        $amount->setTotal(14.31);
+        $amount->setTotal($totalAmount);
 
         $transactions->setAmount($amount);
         $payment->setTransactions($transactions);
 
-        $this->assertTrue($this->getBasketValidator()->validate($basketData, $userData, $payment));
+        $this->assertSame($expectedResult, $this->getBasketValidator()->validate($basketData, $userData, $payment));
+    }
+
+    public function test_is_valid_dataProvider()
+    {
+        return [
+            [15.00, 12.61, 1, 15.00, true],
+            [15.00, 12.61, null, 12.61, true],
+            [15.00, 12.61, null, 15, false],
+            [15.00, 12.61, 1, 14.00, false],
+        ];
     }
 
     public function test_is_invalid()

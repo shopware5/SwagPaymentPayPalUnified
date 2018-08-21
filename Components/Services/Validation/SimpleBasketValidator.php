@@ -17,7 +17,11 @@ class SimpleBasketValidator implements BasketValidatorInterface
      */
     public function validate(array $basket, array $user, Payment $payment)
     {
-        $basketAmount = number_format($basket['AmountNumeric'], 2);
+        if ($user['additional']['charge_vat']) {
+            $basketAmount = number_format($basket['AmountNumeric'], 2);
+        } else {
+            $basketAmount = number_format($basket['AmountNetNumeric'], 2);
+        }
         $paymentAmount = number_format($payment->getTransactions()->getAmount()->getTotal(), 2);
 
         if ($user['additional']['charge_vat'] && $basket['AmountWithTaxNumeric']) {
