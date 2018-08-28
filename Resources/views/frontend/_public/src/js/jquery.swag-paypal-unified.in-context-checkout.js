@@ -96,7 +96,14 @@
              *
              * @type string
              */
-            confirmFormSubmitButtonSelector: ':submit[form="confirm--form"]'
+            confirmFormSubmitButtonSelector: ':submit[form="confirm--form"]',
+
+            /**
+             * selector for the sAgb Checkbox
+             *
+             * @type string
+             */
+            agbSelector: '#sAGB'
         },
 
         /**
@@ -106,6 +113,7 @@
 
         init: function() {
             var me = this;
+            me.shouldRun = false;
 
             me.applyDataAttributes();
 
@@ -220,11 +228,31 @@
                 return actions.disable();
             });
 
-            if (!me.checkFormValidity()) {
+            // If-Statement is required since we don´t want Validation on Load
+            if (me.shouldRun) {
+                if (!me.checkFormValidity()) {
+                    $.publish('plugin/swagPayPalUnifiedInContextCheckout/formInValid', [me, actions]);
+
+                    return actions.disable();
+                }
+
+                $.publish('plugin/swagPayPalUnifiedInContextCheckout/formValid', [me, actions]);
+
+                return actions.enable();
+            }
+
+            me.shouldRun = true;
+
+            // if sAGB Checkbox exists return disable as default because a checkbox can´t be checked on load
+            if ($(me.opts.agbSelector).length > 0) {
                 $.publish('plugin/swagPayPalUnifiedInContextCheckout/formInValid', [me, actions]);
 
                 return actions.disable();
             }
+
+            $.publish('plugin/swagPayPalUnifiedInContextCheckout/formValid', [me, actions]);
+
+            return actions.enable();
         },
 
         /**
