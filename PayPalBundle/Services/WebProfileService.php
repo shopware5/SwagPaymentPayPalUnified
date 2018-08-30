@@ -131,7 +131,13 @@ class WebProfileService
         $webProfile->setTemporary(false);
 
         $presentation = new WebProfilePresentation();
-        $presentation->setLocaleCode($shop->getLocale()->getLocale());
+
+        if (strpos($shop->getLocale()->getLocale(), 'de_') === 0) {
+            $presentation->setLocaleCode('de_DE');
+        } else {
+            $presentation->setLocaleCode($shop->getLocale()->getLocale());
+        }
+
         $presentation->setLogoImage($logoImage);
         $presentation->setBrandName($brandName);
 
