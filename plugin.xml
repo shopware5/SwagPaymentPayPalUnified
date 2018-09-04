@@ -5,12 +5,27 @@
     <label lang="de">PayPal</label>
     <label lang="en">PayPal</label>
 
-    <version>1.0.5</version>
+    <version>1.0.6</version>
     <copyright>(c) by shopware AG</copyright>
     <license>MIT</license>
     <link>http://store.shopware.com</link>
     <author>shopware AG</author>
     <compatibility minVersion="5.2.0"/>
+
+    <changelog version="1.0.6">
+        <changes lang="de">
+            PT-9367 - Aufgrund des PayPal Risk-Managements werden Custom Products Optionen nicht mehr als einzelne Warenkorb Positionen übertragen. Evtl. Aufschläge werden auf den Produktpreis aufgerechnet;
+            PT-9383 - Workflow mit steuerfreien oder Netto-Bestellungen verbessert;
+            PT-9424 - AGB-Checkbox Validierung verbessert;
+            PT-9546 - Setzen des Ländersprachcodes korrigiert;
+        </changes>
+        <changes lang="en">
+            PT-9367 - Due to PayPal's risk management, Custom Products options are no longer transferred as single shopping cart items. Possible surcharges will be added to the product price;
+            PT-9383 - Improve workflow with tax free and net orders;
+            PT-9424 - Improve ToS checkbox validation;
+            PT-9546 - Fix setting of country language code;
+        </changes>
+    </changelog>
 
     <changelog version="1.0.5">
         <changes lang="de">
