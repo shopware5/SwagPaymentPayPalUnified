@@ -43,6 +43,11 @@ class PaymentMeans implements SubscriberInterface
     private $session;
 
     /**
+     * @var Connection
+     */
+    private $connection;
+
+    /**
      * @param Connection                            $connection
      * @param SettingsServiceInterface              $settingsService
      * @param ValidationService                     $installmentsValidationService
@@ -54,6 +59,7 @@ class PaymentMeans implements SubscriberInterface
         ValidationService $installmentsValidationService,
         \Enlight_Components_Session_Namespace $session
     ) {
+        $this->connection = $connection;
         $paymentMethodProvider = new PaymentMethodProvider();
         $this->unifiedPaymentId = $paymentMethodProvider->getPaymentId($connection);
         $this->installmentsPaymentId = $paymentMethodProvider->getPaymentId($connection, PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME);
@@ -89,14 +95,20 @@ class PaymentMeans implements SubscriberInterface
             }
 
             if ((int) $paymentMethod['id'] === $this->installmentsPaymentId
-                && (!$this->settingsService->hasSettings() || !$this->settingsService->get('active') || !$this->settingsService->get('active', SettingsTable::INSTALLMENTS))
+                && (!$this->settingsService->hasSettings()
+                    || !$this->settingsService->get('active')
+                    || !$this->settingsService->get('active', SettingsTable::INSTALLMENTS))
             ) {
                 unset($availableMethods[$index]);
             }
 
             if ((int) $paymentMethod['id'] === $this->installmentsPaymentId) {
-                $productPrice = (float) $this->session->get('sOrderVariables')['sAmount'];
+                $productPrice = (float) $this->session->get('sBasketAmount');
                 $customerData = $this->session->get('sOrderVariables')['sUserData'];
+
+                if ($customerData === null) {
+                    $customerData = $this->getCustomerData();
+                }
 
                 if (!$this->installmentsValidationService->validatePrice($productPrice)
                     || !$this->installmentsValidationService->validateCustomer($customerData)
@@ -107,5 +119,30 @@ class PaymentMeans implements SubscriberInterface
         }
 
         $args->setReturn($availableMethods);
+    }
+
+    /**
+     * @return array
+     */
+    private function getCustomerData()
+    {
+        $customerData = [];
+        $registerData = $this->session->get('sRegister');
+        $customerData['billingaddress']['company'] = null;
+        if (isset($registerData['billing']['company'])) {
+            $customerData['billingaddress']['company'] = $registerData['billing']['company'];
+        }
+
+        $countryIso = $this->connection->createQueryBuilder()
+            ->select('countryiso')
+            ->from('s_core_countries')
+            ->where('id = :countryId')
+            ->setParameter('countryId', $registerData['billing']['country'])
+            ->execute()
+            ->fetchColumn();
+
+        $customerData['additional']['country']['countryiso'] = $countryIso;
+
+        return $customerData;
     }
 }

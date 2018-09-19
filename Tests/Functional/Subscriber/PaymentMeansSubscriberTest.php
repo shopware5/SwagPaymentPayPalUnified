@@ -63,32 +63,88 @@ class PaymentMeansSubscriberTest extends \PHPUnit_Framework_TestCase
         $subscriber->onFilterPaymentMeans($args);
         $result = $args->result;
 
-        $this->assertCount(5, $result);
-        $this->assertEquals($this->getUnifiedPaymentId(), $result[4]['id']);
+        $this->assertCount(6, $result);
+        $this->assertEquals($this->getUnifiedPaymentId(), $result[5]['id']);
     }
 
     public function test_onFilterPaymentMeans_has_no_unified_method_because_the_settings_dont_exist()
     {
-        $subscriber = $this->getSubscriber();
-        $this->createTestSettings();
+        $subscriber = $this->getSubscriber(false);
+        $this->createTestSettings(false);
 
         $args = new EventArgsMockWithUnifiedReturn();
         $subscriber->onFilterPaymentMeans($args);
         $result = $args->result;
 
-        $this->assertCount(4, $result);
+        $this->assertCount(5, $result);
+        $this->assertNotContains($this->getUnifiedPaymentId(), $result);
     }
 
-    public function test_onFilterPaymentMeans_has_no_installments_because_the_sOrderVariables_are_null()
+    public function test_onFilterPaymentMeans_has_no_installments_method_because_the_settings_dont_exist()
     {
-        $subscriber = $this->getSubscriber();
+        $subscriber = $this->getSubscriber(false);
         $this->createTestSettings();
 
         $args = new EventArgsMockWithInstallmentsReturn();
         $subscriber->onFilterPaymentMeans($args);
         $result = $args->result;
 
-        $this->assertCount(4, $result);
+        $this->assertCount(5, $result);
+        $this->assertNotContains($this->getInstallmentsPaymentId(), $result);
+    }
+
+    public function test_onFilterPaymentMeans_installments_with_sOrderVariables_null()
+    {
+        $subscriber = $this->getSubscriber(false);
+        $this->createInstallmentsTestSettings();
+
+        $args = new EventArgsMockWithInstallmentsReturn();
+        $subscriber->onFilterPaymentMeans($args);
+        $result = $args->result;
+
+        $this->assertCount(5, $result);
+        $this->assertNotContains($this->getInstallmentsPaymentId(), $result);
+    }
+
+    public function test_onFilterPaymentMeans_installments_with_sOrderVariables_null_but_with_register()
+    {
+        $subscriber = $this->getSubscriber(false);
+        $this->createInstallmentsTestSettings();
+
+        $registerData = [
+            'billing' => [
+                'country' => 2,
+            ],
+        ];
+        Shopware()->Session()->offsetSet('sRegister', $registerData);
+        Shopware()->Session()->offsetSet('sBasketAmount', 500);
+
+        $args = new EventArgsMockWithInstallmentsReturn();
+        $subscriber->onFilterPaymentMeans($args);
+        $result = $args->result;
+
+        $this->assertCount(6, $result);
+    }
+
+    public function test_onFilterPaymentMeans_installments_with_sOrderVariables_null_but_with_register_with_company()
+    {
+        $subscriber = $this->getSubscriber(false);
+        $this->createInstallmentsTestSettings();
+
+        $registerData = [
+            'billing' => [
+                'company' => 'shopware AG',
+                'country' => 2,
+            ],
+        ];
+        Shopware()->Session()->offsetSet('sRegister', $registerData);
+        Shopware()->Session()->offsetSet('sBasketAmount', 500);
+
+        $args = new EventArgsMockWithInstallmentsReturn();
+        $subscriber->onFilterPaymentMeans($args);
+        $result = $args->result;
+
+        $this->assertCount(5, $result);
         $this->assertNotContains($this->getInstallmentsPaymentId(), $result);
     }
 
@@ -108,16 +164,16 @@ class PaymentMeansSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $sOrderVariables = [
             'sUserData' => $userData,
-            'sAmount' => 50.00,
         ];
 
         Shopware()->Session()->offsetSet('sOrderVariables', $sOrderVariables);
+        Shopware()->Session()->offsetSet('sBasketAmount', 50.00);
 
         $args = new EventArgsMockWithInstallmentsReturn();
         $subscriber->onFilterPaymentMeans($args);
         $result = $args->result;
 
-        $this->assertCount(4, $result);
+        $this->assertCount(5, $result);
     }
 
     public function test_onFilterPaymentMeans_has_no_installments_because_the_price_is_higher_than_5000()
@@ -136,16 +192,16 @@ class PaymentMeansSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $sOrderVariables = [
             'sUserData' => $userData,
-            'sAmount' => 10000.00,
         ];
 
         Shopware()->Session()->offsetSet('sOrderVariables', $sOrderVariables);
+        Shopware()->Session()->offsetSet('sBasketAmount', 10000.00);
 
         $args = new EventArgsMockWithInstallmentsReturn();
         $subscriber->onFilterPaymentMeans($args);
         $result = $args->result;
 
-        $this->assertCount(4, $result);
+        $this->assertCount(5, $result);
     }
 
     public function test_onFilterPaymentMeans_has_no_installments_because_business_customer()
@@ -167,16 +223,16 @@ class PaymentMeansSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $sOrderVariables = [
             'sUserData' => $userData,
-            'sAmount' => 1000.00,
         ];
 
         Shopware()->Session()->offsetSet('sOrderVariables', $sOrderVariables);
+        Shopware()->Session()->offsetSet('sBasketAmount', 1000.00);
 
         $args = new EventArgsMockWithInstallmentsReturn();
         $subscriber->onFilterPaymentMeans($args);
         $result = $args->result;
 
-        $this->assertCount(4, $result);
+        $this->assertCount(5, $result);
     }
 
     public function test_onFilterPaymentMeans_has_no_installments_because_country_is_not_DE()
@@ -195,15 +251,16 @@ class PaymentMeansSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $sOrderVariables = [
             'sUserData' => $userData,
-            'sAmount' => 1000.00,
         ];
 
         Shopware()->Session()->offsetSet('sOrderVariables', $sOrderVariables);
+        Shopware()->Session()->offsetSet('sBasketAmount', 1000.00);
+
         $args = new EventArgsMockWithInstallmentsReturn();
         $subscriber->onFilterPaymentMeans($args);
         $result = $args->result;
 
-        $this->assertCount(4, $result);
+        $this->assertCount(5, $result);
     }
 
     public function test_onFilterPaymentMeans_has_installments()
@@ -221,16 +278,16 @@ class PaymentMeansSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $sOrderVariables = [
             'sUserData' => $userData,
-            'sAmount' => 1000.00,
         ];
 
         Shopware()->Session()->offsetSet('sOrderVariables', $sOrderVariables);
+        Shopware()->Session()->offsetSet('sBasketAmount', 1000.00);
 
         $args = new EventArgsMockWithInstallmentsReturn();
         $subscriber->onFilterPaymentMeans($args);
         $result = $args->result;
 
-        $this->assertCount(5, $result);
+        $this->assertCount(6, $result);
     }
 
     private function getSubscriber($mockSettings = true)
@@ -252,7 +309,10 @@ class PaymentMeansSubscriberTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    private function createTestSettings()
+    /**
+     * @param bool $active
+     */
+    private function createTestSettings($active = true)
     {
         $this->insertGeneralSettingsFromArray([
             'shopId' => 1,
@@ -261,7 +321,7 @@ class PaymentMeansSubscriberTest extends \PHPUnit_Framework_TestCase
             'sandbox' => true,
             'showSidebarLogo' => true,
             'logoImage' => 'None',
-            'active' => true,
+            'active' => $active,
         ]);
 
         $this->insertPlusSettingsFromArray([
@@ -345,6 +405,7 @@ class EventArgsMockWithUnifiedReturn extends \Enlight_Event_EventArgs
             ['id' => 1],
             ['id' => 2],
             ['id' => 3],
+            ['id' => 4],
             ['id' => $this->getUnifiedPaymentId()],
         ];
     }
@@ -368,6 +429,7 @@ class EventArgsMockWithInstallmentsReturn extends \Enlight_Event_EventArgs
             ['id' => 1],
             ['id' => 2],
             ['id' => 3],
+            ['id' => 4],
             ['id' => $this->getInstallmentsPaymentId()],
         ];
     }
