@@ -142,7 +142,7 @@ class PlusPaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
         return [
             'additional' => [
                 'show_net' => true,
-                'country' => [
+                'countryShipping' => [
                     'taxfree' => '0',
                 ],
             ],

@@ -22,6 +22,7 @@ use SwagPaymentPayPalUnified\Models\Settings\ExpressCheckout as ExpressSettingsM
 use SwagPaymentPayPalUnified\Models\Settings\General as GeneralSettingsModel;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PaymentAddressPatch;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PaymentAmountPatch;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PaymentItemsPatch;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use SwagPaymentPayPalUnified\PayPalBundle\PartnerAttributionId;
@@ -307,23 +308,31 @@ class ExpressCheckout implements SubscriberInterface
      */
     private function patchAddressAndAmount($paymentId)
     {
+        $orderVariables = $this->session->get('sOrderVariables');
+        $userData = $orderVariables['sUserData'];
+        $basketData = $orderVariables['sBasket'];
+
+        $shippingAddress = $this->paymentAddressService->getShippingAddress($userData);
+        $addressPatch = new PaymentAddressPatch($shippingAddress);
+
+        $requestParams = new PaymentBuilderParameters();
+        $requestParams->setWebProfileId('temporary');
+        $requestParams->setBasketData($basketData);
+        $requestParams->setUserData($userData);
+
+        $paymentStruct = $this->paymentBuilder->getPayment($requestParams);
+        $amountPatch = new PaymentAmountPatch($paymentStruct->getTransactions()->getAmount());
+
+        $this->clientService->setPartnerAttributionId(PartnerAttributionId::PAYPAL_EXPRESS_CHECKOUT);
+
         try {
-            $orderVariables = $this->session->get('sOrderVariables');
-            $userData = $orderVariables['sUserData'];
-            $basketData = $orderVariables['sBasket'];
+            if ($this->settingsService->get('submit_cart', SettingsTable::EXPRESS_CHECKOUT)) {
+                $itemListPatch = new PaymentItemsPatch($paymentStruct->getTransactions()->getItemList()->getItems());
+                $this->paymentResource->patch($paymentId, [$addressPatch, $amountPatch, $itemListPatch]);
 
-            $shippingAddress = $this->paymentAddressService->getShippingAddress($userData);
-            $addressPatch = new PaymentAddressPatch($shippingAddress);
+                return;
+            }
 
-            $requestParams = new PaymentBuilderParameters();
-            $requestParams->setWebProfileId('temporary');
-            $requestParams->setBasketData($basketData);
-            $requestParams->setUserData($userData);
-
-            $paymentStruct = $this->paymentBuilder->getPayment($requestParams);
-            $amountPatch = new PaymentAmountPatch($paymentStruct->getTransactions()->getAmount());
-
-            $this->clientService->setPartnerAttributionId(PartnerAttributionId::PAYPAL_EXPRESS_CHECKOUT);
             $this->paymentResource->patch($paymentId, [$addressPatch, $amountPatch]);
         } catch (\Exception $exception) {
             $this->exceptionHandlerService->handle($exception, 'patch the payment for express checkout');
@@ -338,7 +347,7 @@ class ExpressCheckout implements SubscriberInterface
     {
         $languageIso = $this->dependencyProvider->getShop()->getLocale()->getLocale();
 
-        if (strpos($languageIso, 'de_') === 0) {
+        if (strncmp($languageIso, 'de_', 3) === 0) {
             $languageIso = 'de_DE';
         }
 

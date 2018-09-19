@@ -149,16 +149,16 @@ class PaymentBuilderService implements PaymentBuilderInterface
     {
         //Case 1: Show gross prices in shopware and don't exclude country tax
         if ($this->showGrossPrices() && !$this->useNetPriceCalculation()) {
-            return $this->basketData['AmountNumeric'];
+            return $this->formatPrice($this->basketData['AmountNumeric']);
         }
 
         //Case 2: Show net prices in shopware and don't exclude country tax
         if (!$this->showGrossPrices() && !$this->useNetPriceCalculation()) {
-            return $this->basketData['AmountWithTaxNumeric'];
+            return $this->formatPrice($this->basketData['AmountWithTaxNumeric']);
         }
 
         //Case 3: No tax handling at all, just use the net amounts.
-        return $this->basketData['AmountNetNumeric'];
+        return $this->formatPrice($this->basketData['AmountNetNumeric']);
     }
 
     /**
@@ -179,8 +179,8 @@ class PaymentBuilderService implements PaymentBuilderInterface
             $quantity = (int) $basketItem['quantity'];
 
             $price = $this->showGrossPrices() === true
-                ? (float) str_replace(',', '.', $basketItem['price'])
-                : (float) $basketItem['netprice'];
+                ? $this->formatPrice($basketItem['price'])
+                : $this->formatPrice($basketItem['netprice']);
 
             // In the following part, we modify the CustomProducts positions.
             // All position prices of the Custom Products configuration are added up, so that no items with 0€ are committed to PayPal
@@ -267,8 +267,8 @@ class PaymentBuilderService implements PaymentBuilderInterface
         $amountDetails = new Details();
 
         if ($this->showGrossPrices() && !$this->useNetPriceCalculation()) {
-            $amountDetails->setShipping($this->basketData['sShippingcostsWithTax']);
-            $amountDetails->setSubTotal(str_replace(',', '.', $this->basketData['Amount']));
+            $amountDetails->setShipping($this->formatPrice($this->basketData['sShippingcostsWithTax']));
+            $amountDetails->setSubTotal($this->formatPrice($this->basketData['Amount']));
             $amountDetails->setTax(number_format(0, 2));
 
             return $amountDetails;
@@ -276,16 +276,16 @@ class PaymentBuilderService implements PaymentBuilderInterface
 
         //Case 2: Show net prices in shopware and don't exclude country tax
         if (!$this->showGrossPrices() && !$this->useNetPriceCalculation()) {
-            $amountDetails->setShipping($this->basketData['sShippingcostsNet']);
-            $amountDetails->setSubTotal(str_replace(',', '.', $this->basketData['AmountNet']));
+            $amountDetails->setShipping($this->formatPrice($this->basketData['sShippingcostsNet']));
+            $amountDetails->setSubTotal($this->formatPrice($this->basketData['AmountNet']));
             $amountDetails->setTax($this->basketData['sAmountTax']);
 
             return $amountDetails;
         }
 
         //Case 3: No tax handling at all, just use the net amounts.
-        $amountDetails->setShipping($this->basketData['sShippingcostsNet']);
-        $amountDetails->setSubTotal(str_replace(',', '.', $this->basketData['AmountNet']));
+        $amountDetails->setShipping($this->formatPrice($this->basketData['sShippingcostsNet']));
+        $amountDetails->setSubTotal($this->formatPrice($this->basketData['AmountNet']));
 
         return $amountDetails;
     }
@@ -309,6 +309,16 @@ class PaymentBuilderService implements PaymentBuilderInterface
      */
     private function useNetPriceCalculation()
     {
-        return (bool) $this->userData['additional']['country']['taxfree'];
+        return (bool) $this->userData['additional']['countryShipping']['taxfree'];
+    }
+
+    /**
+     * @param float|string $price
+     *
+     * @return float
+     */
+    private function formatPrice($price)
+    {
+        return round((float) str_replace(',', '.', $price), 2);
     }
 }
