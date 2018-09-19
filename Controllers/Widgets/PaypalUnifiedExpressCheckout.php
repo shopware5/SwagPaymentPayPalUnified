@@ -20,7 +20,7 @@ use SwagPaymentPayPalUnified\PayPalBundle\Resources\PaymentResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
 
-class Shopware_Controllers_Widgets_PaypalUnifiedExpressCheckout extends \Enlight_Controller_Action
+class Shopware_Controllers_Widgets_PaypalUnifiedExpressCheckout extends \Shopware_Controllers_Frontend_Checkout
 {
     /**
      * @var PaymentResource
@@ -80,18 +80,10 @@ class Shopware_Controllers_Widgets_PaypalUnifiedExpressCheckout extends \Enlight
             $admin->sGetPremiumShippingcosts(reset($countries));
         }
 
-        // By using the basket module it is not necessary to deal with any view assignments
-        // as seen in the PayPalUnified controller.
-        $basketData = $basket->sGetBasket();
+        $userData = $this->getUserData();
+        $basketData = $this->getBasket();
 
         $webProfileId = $this->settingsService->get('web_profile_id', SettingsTable::EXPRESS_CHECKOUT);
-
-        $userData = [
-            'additional' => [
-                'show_net' => !(bool) $this->get('session')->get('sOutputNet'),
-            ],
-        ];
-
         /** @var \Shopware\Models\Shop\DetachedShop $shop */
         $shop = $this->dependencyProvider->getShop();
         $currency = $shop->getCurrency()->getCurrency();

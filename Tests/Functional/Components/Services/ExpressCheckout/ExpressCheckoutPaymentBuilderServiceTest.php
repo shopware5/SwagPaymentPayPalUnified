@@ -116,7 +116,7 @@ class ExpressCheckoutPaymentBuilderServiceTest extends \PHPUnit_Framework_TestCa
         return [
             'additional' => [
                 'show_net' => true,
-                'country' => [
+                'countryShipping' => [
                     'taxfree' => '0',
                 ],
             ],

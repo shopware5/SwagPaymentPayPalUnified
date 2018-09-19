@@ -133,7 +133,7 @@ class PaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
         $basketData = $this->getBasketDataArray();
         $userData = $this->getUserDataAsArray();
 
-        $userData['additional']['country']['taxfree'] = '1';
+        $userData['additional']['countryShipping']['taxfree'] = '1';
 
         $params = new PaymentBuilderParameters();
         $params->setBasketData($basketData);
@@ -369,7 +369,7 @@ class PaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
         return [
             'additional' => [
                 'show_net' => true,
-                'country' => [
+                'countryShipping' => [
                     'taxfree' => '0',
                 ],
             ],
