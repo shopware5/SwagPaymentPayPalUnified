@@ -124,7 +124,7 @@ class PaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertStringEndsWith('basketId/MyUniqueBasketId', $requestParameters->getRedirectUrls()->getReturnUrl());
     }
 
-    public function test_getPayment_with_tax_tree_country()
+    public function test_getPayment_with_tax_free_country()
     {
         $settingService = new SettingsServicePaymentBuilderServiceMock(false, 0);
         $requestService = $this->getRequestService($settingService);
@@ -134,6 +134,84 @@ class PaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
         $userData = $this->getUserDataAsArray();
 
         $userData['additional']['countryShipping']['taxfree'] = '1';
+
+        $params = new PaymentBuilderParameters();
+        $params->setBasketData($basketData);
+        $params->setWebProfileId($profile->getId());
+        $params->setUserData($userData);
+
+        $requestParameters = $requestService->getPayment($params);
+        $requestParameters = $requestParameters->toArray();
+
+        $this->assertEquals('96.63', $requestParameters['transactions'][0]['amount']['total']);
+        $this->assertEquals(46.22, $requestParameters['transactions'][0]['amount']['details']['shipping']);
+        $this->assertEquals('50.41', $requestParameters['transactions'][0]['amount']['details']['subtotal']);
+        $this->assertNull($requestParameters['transactions'][0]['amount']['details']['tax']);
+    }
+
+    public function test_getPayment_with_tax_free_companies_without_vat_id()
+    {
+        $settingService = new SettingsServicePaymentBuilderServiceMock(false, 0);
+        $requestService = $this->getRequestService($settingService);
+
+        $profile = $this->getWebProfile();
+        $basketData = $this->getBasketDataArray();
+        $userData = $this->getUserDataAsArray();
+
+        $userData['additional']['countryShipping']['taxfree_ustid'] = '1';
+
+        $params = new PaymentBuilderParameters();
+        $params->setBasketData($basketData);
+        $params->setWebProfileId($profile->getId());
+        $params->setUserData($userData);
+
+        $requestParameters = $requestService->getPayment($params);
+        $requestParameters = $requestParameters->toArray();
+
+        $this->assertEquals('114.99', $requestParameters['transactions'][0]['amount']['total']);
+        $this->assertEquals(55, $requestParameters['transactions'][0]['amount']['details']['shipping']);
+        $this->assertEquals('59.99', $requestParameters['transactions'][0]['amount']['details']['subtotal']);
+        $this->assertEquals('0.00', $requestParameters['transactions'][0]['amount']['details']['tax']);
+    }
+
+    public function test_getPayment_with_tax_free_companies_with_vat_id()
+    {
+        $settingService = new SettingsServicePaymentBuilderServiceMock(false, 0);
+        $requestService = $this->getRequestService($settingService);
+
+        $profile = $this->getWebProfile();
+        $basketData = $this->getBasketDataArray();
+        $userData = $this->getUserDataAsArray();
+
+        $userData['additional']['countryShipping']['taxfree_ustid'] = '1';
+        $userData['shippingaddress']['ustid'] = 'VATID123';
+
+        $params = new PaymentBuilderParameters();
+        $params->setBasketData($basketData);
+        $params->setWebProfileId($profile->getId());
+        $params->setUserData($userData);
+
+        $requestParameters = $requestService->getPayment($params);
+        $requestParameters = $requestParameters->toArray();
+
+        $this->assertEquals('96.63', $requestParameters['transactions'][0]['amount']['total']);
+        $this->assertEquals(46.22, $requestParameters['transactions'][0]['amount']['details']['shipping']);
+        $this->assertEquals('50.41', $requestParameters['transactions'][0]['amount']['details']['subtotal']);
+        $this->assertNull($requestParameters['transactions'][0]['amount']['details']['tax']);
+    }
+
+    public function test_getPayment_with_tax_free_companies_with_vat_id_billing()
+    {
+        $settingService = new SettingsServicePaymentBuilderServiceMock(false, 0);
+        $requestService = $this->getRequestService($settingService);
+
+        $profile = $this->getWebProfile();
+        $basketData = $this->getBasketDataArray();
+        $userData = $this->getUserDataAsArray();
+
+        $userData['additional']['countryShipping']['taxfree_ustid'] = '1';
+        $userData['additional']['country']['taxfree_ustid'] = '1';
+        $userData['billingaddress']['ustid'] = 'VATID123';
 
         $params = new PaymentBuilderParameters();
         $params->setBasketData($basketData);
@@ -164,7 +242,7 @@ class PaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
         $customProductsOption = $requestParameters['transactions'][0]['item_list']['items'][0];
 
         // summed up price -> product price and configurations
-        $this->assertEquals(round(59.99 + 1 * 1 + 2 * 2 + 1 * 3, 2), (float) $customProductsOption['price']);
+        $this->assertEquals(round(2 * 59.99 + 1 * 1 + 2 * 2 + 1 * 3, 2), (float) $customProductsOption['price']);
     }
 
     public function test_getPayment_express_checkout_without_cart()
@@ -332,7 +410,7 @@ class PaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
                 [
                     'ordernumber' => 'SW10137',
                     'articlename' => 'Fahrerbrille Chronos',
-                    'quantity' => '1',
+                    'quantity' => '2',
                     'price' => '59,99',
                     'netprice' => '50.411764705882',
                     'sCurrencyName' => 'EUR',
