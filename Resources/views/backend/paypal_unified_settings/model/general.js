@@ -18,7 +18,6 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.model.General', {
         { name: 'sandbox', type: 'bool' },
         { name: 'showSidebarLogo', type: 'bool' },
         { name: 'brandName', type: 'string' },
-        { name: 'logoImage', type: 'string' },
         { name: 'sendOrderNumber', type: 'bool' },
         { name: 'orderNumberPrefix', type: 'string' },
         { name: 'useInContext', type: 'bool', defaultValue: true },

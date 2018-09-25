@@ -187,18 +187,11 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
             title: '{s name="fieldset/behavior/title"}Behavior{/s}',
             items: [
                 {
-                    xtype: 'base-element-media',
-                    name: 'logoImage',
-                    fieldLabel: '{s name="fieldset/behavior/logoImage"}Logo on the PayPal pag{/s}',
-                    helpText: '{s name="fieldset/behavior/logoImage/help"}The image you have selected here will be displayed as the brand logo on the PayPal payment page.<br>The image must be accessible from external via https.<br> The image\'s maximum width is 190px and maximum height is 60px. PayPal crops images that are larger.<br>Valid media types are .gif, .jpg, or .png{/s}',
-                    allowBlank: false, // logoImage is required for experience profile
-                    valueField: 'virtualPath' // use the virtualPath - required for the mediaGarbageCollector
-                },
-                {
                     xtype: 'textfield',
                     name: 'brandName',
                     fieldLabel: '{s name="fieldset/behavior/brandName"}Brand name on the PayPal page{/s}',
-                    helpText: '{s name="fieldset/behavior/brandName/help"}This text will be displayed as the brand name on the PayPal payment page.{/s}'
+                    helpText: '{s name="fieldset/behavior/brandName/help"}This text will be displayed as the brand name on the PayPal payment page.{/s}',
+                    maxLength: 127
                 },
                 {
                     xtype: 'checkbox',

@@ -5,6 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 use Shopware\Components\HttpClient\RequestException;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
@@ -13,7 +14,6 @@ use SwagPaymentPayPalUnified\Components\ExpressCheckout\CustomerService;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
-use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use SwagPaymentPayPalUnified\PayPalBundle\PartnerAttributionId;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\PaymentResource;
@@ -83,7 +83,6 @@ class Shopware_Controllers_Widgets_PaypalUnifiedExpressCheckout extends \Shopwar
         $basketData = $this->getBasket();
         $userData = $this->getUserData();
 
-        $webProfileId = $this->settingsService->get('web_profile_id', SettingsTable::EXPRESS_CHECKOUT);
         /** @var \Shopware\Models\Shop\DetachedShop $shop */
         $shop = $this->dependencyProvider->getShop();
         $currency = $shop->getCurrency()->getCurrency();
@@ -91,7 +90,6 @@ class Shopware_Controllers_Widgets_PaypalUnifiedExpressCheckout extends \Shopwar
         $requestParams = new PaymentBuilderParameters();
         $requestParams->setBasketData($basketData);
         $requestParams->setUserData($userData);
-        $requestParams->setWebProfileId($webProfileId);
         $requestParams->setPaymentType(PaymentType::PAYPAL_EXPRESS);
 
         $this->client->setPartnerAttributionId(PartnerAttributionId::PAYPAL_EXPRESS_CHECKOUT);

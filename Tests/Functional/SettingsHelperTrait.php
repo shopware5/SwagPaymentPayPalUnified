@@ -55,6 +55,10 @@ trait SettingsHelperTrait
             $data['advertiseReturns'] = false;
         }
 
+        if (empty($data['brandName'])) {
+            $data['brandName'] = 'TestBrandName';
+        }
+
         $model = new GeneralSettingsModel();
         $model->fromArray($data);
 

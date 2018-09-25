@@ -23,11 +23,6 @@ class PaymentBuilderParameters
     /**
      * @var string
      */
-    private $webProfileId;
-
-    /**
-     * @var string
-     */
     private $basketUniqueId;
 
     /**
@@ -65,22 +60,6 @@ class PaymentBuilderParameters
     public function setBasketData($basketData)
     {
         $this->basketData = $basketData;
-    }
-
-    /**
-     * @return string
-     */
-    public function getWebProfileId()
-    {
-        return $this->webProfileId;
-    }
-
-    /**
-     * @param string $webProfileId
-     */
-    public function setWebProfileId($webProfileId)
-    {
-        $this->webProfileId = $webProfileId;
     }
 
     /**

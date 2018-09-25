@@ -6,12 +6,10 @@ CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_settings_general (
     `client_secret`       VARCHAR(255),
     `sandbox`             TINYINT(1),
     `show_sidebar_logo`   TINYINT(1) NOT NULL,
-    `logo_image`          VARCHAR(1024),
     `brand_name`          VARCHAR(255),
     `send_order_number`   TINYINT(1) NOT NULL,
     `order_number_prefix` VARCHAR(255),
     `use_in_context`      TINYINT(1) NOT NULL,
-    `web_profile_id`      VARCHAR(255),
     `log_level`           INT(11)    NOT NULL,
     `display_errors`      TINYINT(1) NOT NULL,
     `advertise_returns`   TINYINT(1) NOT NULL
@@ -36,7 +34,6 @@ CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_settings_installments (
 CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_settings_express (
     `id`                 INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     `shop_id`            INT(11)    NOT NULL,
-    `web_profile_id`     VARCHAR(255),
     `detail_active`      TINYINT(1) NOT NULL,
     `cart_active`        TINYINT(1) NOT NULL,
     `login_active`       TINYINT(1) NOT NULL,

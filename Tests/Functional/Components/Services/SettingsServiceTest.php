@@ -28,7 +28,6 @@ class SettingsServiceTest extends \PHPUnit_Framework_TestCase
     const CLIENT_SECRET = 'TEST_CLIENT_SECRET';
     const SANDBOX = true;
     const SHOW_SIDEBAR_LOGO = false;
-    const LOGO_IMAGE = '/test/image/test.png';
     const PLUS_ACTIVE = true;
     const ACTIVE = true;
 
@@ -49,7 +48,6 @@ class SettingsServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(self::CLIENT_SECRET, $settingsModel->getClientSecret());
         $this->assertEquals(self::SANDBOX, $settingsModel->getSandbox());
         $this->assertEquals(self::SHOW_SIDEBAR_LOGO, $settingsModel->getShowSidebarLogo());
-        $this->assertEquals(self::LOGO_IMAGE, $settingsModel->getLogoImage());
     }
 
     public function test_get()
@@ -192,7 +190,6 @@ class SettingsServiceTest extends \PHPUnit_Framework_TestCase
             'clientId' => self::CLIENT_ID,
             'clientSecret' => self::CLIENT_SECRET,
             'showSidebarLogo' => self::SHOW_SIDEBAR_LOGO,
-            'logoImage' => self::LOGO_IMAGE,
             'active' => self::ACTIVE,
             'sandbox' => self::SANDBOX,
         ]);

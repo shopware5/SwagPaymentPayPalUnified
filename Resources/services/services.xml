@@ -31,13 +31,6 @@
             <argument type="service" id="service_container"/>
         </service>
 
-        <service id="paypal_unified.web_profile_service"
-                 class="SwagPaymentPayPalUnified\PayPalBundle\Services\WebProfileService">
-            <argument type="service" id="paypal_unified.client_service"/>
-            <argument type="service" id="models"/>
-            <argument type="service" id="shopware_media.media_service"/>
-        </service>
-
         <service id="paypal_unified.webhook_service"
                  class="SwagPaymentPayPalUnified\PayPalBundle\Services\WebhookService"/>
 
@@ -46,6 +39,7 @@
             <argument type="service" id="router"/>
             <argument type="service" id="paypal_unified.settings_service"/>
             <argument type="service" id="snippets"/>
+            <argument type="service" id="paypal_unified.dependency_provider"/>
         </service>
 
         <service id="paypal_unified.installments.payment_builder_service"
@@ -53,6 +47,7 @@
             <argument type="service" id="router"/>
             <argument type="service" id="paypal_unified.settings_service"/>
             <argument type="service" id="snippets"/>
+            <argument type="service" id="paypal_unified.dependency_provider"/>
         </service>
 
         <service id="paypal_unified.express_checkout.payment_builder_service"
@@ -60,6 +55,7 @@
             <argument type="service" id="router"/>
             <argument type="service" id="paypal_unified.settings_service"/>
             <argument type="service" id="snippets"/>
+            <argument type="service" id="paypal_unified.dependency_provider"/>
         </service>
 
         <service id="paypal_unified.plus.payment_builder_service"
@@ -68,6 +64,7 @@
             <argument type="service" id="paypal_unified.settings_service"/>
             <argument type="service" id="shopware_attribute.crud_service"/>
             <argument type="service" id="snippets"/>
+            <argument type="service" id="paypal_unified.dependency_provider"/>
         </service>
 
         <service id="paypal_unified.transaction_history_builder_service"
