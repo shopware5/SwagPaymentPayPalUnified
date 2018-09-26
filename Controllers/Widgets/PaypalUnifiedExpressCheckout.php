@@ -80,8 +80,8 @@ class Shopware_Controllers_Widgets_PaypalUnifiedExpressCheckout extends \Shopwar
             $admin->sGetPremiumShippingcosts(reset($countries));
         }
 
-        $userData = $this->getUserData();
         $basketData = $this->getBasket();
+        $userData = $this->getUserData();
 
         $webProfileId = $this->settingsService->get('web_profile_id', SettingsTable::EXPRESS_CHECKOUT);
         /** @var \Shopware\Models\Shop\DetachedShop $shop */
