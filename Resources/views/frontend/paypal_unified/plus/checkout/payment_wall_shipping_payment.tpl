@@ -3,7 +3,6 @@
     <div class="is--hidden"
          data-paypaLPaymentWall="true"
          data-paypalLanguage="{$paypalUnifiedLanguageIso}"
-         data-paypalApprovalUrl="{$paypalUnifiedApprovalUrl}"
          data-paypalCountryIso="{$sUserData.additional.country.countryiso}"
          data-paypalMode="{if $paypalUnifiedModeSandbox}sandbox{else}live{/if}"
          data-thirdPartyPaymentMethods="{$paypalUnifiedPlusPaymentMethodsPaymentWall|escapeHtml}">

@@ -26,29 +26,3 @@
 
     {$smarty.block.parent}
 {/block}
-
-{* PayPal Plus integration *}
-{block name='frontend_checkout_payment_fieldset_description'}
-    {block name='frontend_checkout_payment_fieldset_description_paypal_unified_plus'}
-        {if $paypalUnifiedUsePlus && $paypalUnifiedApprovalUrl && $payment_mean.id == $paypalUnifiedPaymentId}
-            {block name='frontend_checkout_shipping_payment_paypal_unified_payment_wall'}
-                {* This is the placeholder for the payment wall *}
-                <div id="ppplus" class="method--description">
-                </div>
-            {/block}
-        {else}
-            {$smarty.block.parent}
-        {/if}
-    {/block}
-{/block}
-
-{* All integrations *}
-{block name='frontend_account_payment_error_messages'}
-    {block name='frontend_account_payment_error_messages_paypal_unified_errors'}
-        {if $paypalUnifiedErrorCode}
-            {include file='frontend/paypal_unified/checkout/error_message.tpl'}
-        {/if}
-    {/block}
-
-    {$smarty.block.parent}
-{/block}

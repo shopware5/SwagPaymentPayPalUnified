@@ -135,7 +135,14 @@
              *
              * @type Array
              */
-            thirdPartyPaymentMethods: []
+            thirdPartyPaymentMethods: [],
+
+            /**
+             * div element which contains the approval URL
+             *
+             * @type string
+             */
+            paypalApprovalUrlSelector: '.paypal-unified--plus-approval-url'
         },
 
         /**
@@ -182,7 +189,13 @@
          * @param {String} parent
          */
         createPaymentWall: function(parent) {
-            var me = this;
+            var me = this,
+                approvalUrl = $(me.opts.paypalApprovalUrlSelector).text();
+
+            // PaymentWall on Confirm page
+            if (approvalUrl === '') {
+                approvalUrl = me.opts.paypalApprovalUrl;
+            }
 
             me.loaded = false;
             me.placeholder = parent;
@@ -192,7 +205,7 @@
             $.publish('plugin/swagPayPalUnifiedPaymentWall/beforeCreate', me);
 
             me.paymentWall = PAYPAL.apps.PPP({
-                approvalUrl: me.opts.paypalApprovalUrl,
+                approvalUrl: approvalUrl,
                 placeholder: parent,
                 country: me.opts.paypalCountryIso,
                 mode: me.opts.paypalMode,
