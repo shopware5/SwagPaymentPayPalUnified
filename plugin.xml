@@ -5,12 +5,29 @@
     <label lang="de">PayPal</label>
     <label lang="en">PayPal</label>
 
-    <version>1.0.6</version>
+    <version>1.0.7</version>
     <copyright>(c) by shopware AG</copyright>
     <license>MIT</license>
     <link>http://store.shopware.com</link>
     <author>shopware AG</author>
     <compatibility minVersion="5.2.0"/>
+
+    <changelog version="1.0.7">
+        <changes lang="de">
+            PT-9420 - Ratenzahlung wird nun korrekt nach der Registrierung angezeigt;
+            PT-9542 - Anzeige Fehler beim Zahlungsartwechsel behoben;
+            PT-9590 - Netto/Brutto Behandlung bei Express Checkout verbessert;
+            PT-9596 - Behandlung von 'Steuerfrei für Unternehmen' verbessert;
+            PT-9604 - Versandkosten werden nun bei Nutzung von Plus korrekt zu PayPal übertragen;
+        </changes>
+        <changes lang="en">
+            PT-9420 - After registration installments is shown correctly;
+            PT-9542 - Fix display bug on payment method change;
+            PT-9590 - Improve net/gross handling on Express Checkout;
+            PT-9596 - Improve handling of tax free for companies;
+            PT-9604 - Shipping costs are now transferred correctly to PayPal if Plus is used;
+        </changes>
+    </changelog>
 
     <changelog version="1.0.6">
         <changes lang="de">
