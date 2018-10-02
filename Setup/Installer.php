@@ -13,6 +13,7 @@ use Shopware\Bundle\AttributeBundle\Service\CrudService;
 use Shopware\Components\Model\ModelManager;
 use Shopware\Models\Payment\Payment;
 use Shopware\Models\Plugin\Plugin;
+use Shopware_Components_Translation;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 
 class Installer
@@ -74,6 +75,7 @@ class Installer
         $this->createAttributes();
         $this->createDocumentTemplates();
         $this->migrate();
+        $this->writeTranslation();
 
         return true;
     }
@@ -224,5 +226,53 @@ class Installer
         . ' href="https://www.paypal.com/de/cgi-bin/webscr?cmd=xpt/cps/popup/OLCWhatIsPayPal-outside" target="_blank">'
         . '<img src="{link file=\'frontend/_public/src/img/sidebar-paypal-generic.png\' fullPath}" alt="Logo \'PayPal empfohlen\'">'
         . '</a><br>' . '<!-- PayPal Logo -->';
+    }
+
+    private function writeTranslation()
+    {
+        /** @var array $translationKeys */
+        $translationKeys = $this->getTranslationKeys();
+
+        $translation = new Shopware_Components_Translation();
+
+        $translation->write(
+            2,
+            'config_payment',
+            $translationKeys['SwagPaymentPayPalUnified'],
+            [
+                'description' => 'PayPal',
+                'additionalDescription' => '<!-- PayPal Logo --><a onclick="window.open(this.href, \'olcwhatispaypal\',\'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=400, height=500\'); '
+                    . 'return false;" href="https://www.paypal.com/de/cgi-bin/webscr?cmd=xpt/cps/popup/OLCWhatIsPayPal-outside" target="_blank">'
+                    . '<img src="{link file=\'frontend/_public/src/img/sidebar-paypal-generic.png\' fullPath}" alt="Logo \'PayPal recommended\'">'
+                    . '</a><br><!-- PayPal Logo -->Paying with PayPal - easy, fast and secure.',
+            ],
+            true
+        );
+
+        $translation->write(
+            2,
+            'config_payment',
+            $translationKeys['SwagPaymentPayPalUnifiedInstallments'],
+            [
+                'description' => 'Installments powered by PayPal',
+                'additionalDescription' => 'We allow you to finance your purchase with installments powered by PayPal. '
+                    . 'Only a few seconds, completely online, conditional credit assessment.',
+            ],
+            true
+        );
+    }
+
+    /**
+     * @return array
+     */
+    private function getTranslationKeys()
+    {
+        return $this->modelManager->getDBALQueryBuilder()
+            ->select('name, id')
+            ->from('s_core_paymentmeans', 'pm')
+            ->where("pm.name = 'SwagPaymentPayPalUnified'")
+            ->orWhere("pm.name = 'SwagPaymentPayPalUnifiedInstallments'")
+            ->execute()
+            ->fetchAll(\PDO::FETCH_KEY_PAIR);
     }
 }
