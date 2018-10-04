@@ -7,7 +7,8 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
      * @type { Array }
      */
     refs: [
-        { ref: 'sidebar', selector: 'paypal-unified-overview-sidebar' }
+        { ref: 'sidebar', selector: 'paypal-unified-overview-sidebar' },
+        { ref: 'grid', selector: 'paypal-unified-overview-grid' }
     ],
 
     /**
@@ -276,6 +277,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
         }
 
         me.getSidebar().setLoading(false);
+        me.getGrid().getStore().reload();
     },
 
     /**
