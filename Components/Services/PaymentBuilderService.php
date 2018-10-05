@@ -10,12 +10,14 @@ namespace SwagPaymentPayPalUnified\Components\Services;
 
 use Shopware\Components\Routing\Router;
 use Shopware_Components_Snippet_Manager as SnippetManager;
+use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderInterface;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\ApplicationContext;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Payer;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\RedirectUrls;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Transactions;
@@ -57,18 +59,26 @@ class PaymentBuilderService implements PaymentBuilderInterface
     private $snippetManager;
 
     /**
+     * @var DependencyProvider
+     */
+    private $dependencyProvider;
+
+    /**
      * @param Router                   $router
      * @param SettingsServiceInterface $settingsService
      * @param SnippetManager           $snippetManager
+     * @param DependencyProvider       $dependencyProvider
      */
     public function __construct(
         Router $router,
         SettingsServiceInterface $settingsService,
-        SnippetManager $snippetManager
+        SnippetManager $snippetManager,
+        DependencyProvider $dependencyProvider
     ) {
         $this->router = $router;
         $this->settings = $settingsService;
         $this->snippetManager = $snippetManager;
+        $this->dependencyProvider = $dependencyProvider;
     }
 
     /**
@@ -83,6 +93,8 @@ class PaymentBuilderService implements PaymentBuilderInterface
         $requestParameters = new Payment();
         $paymentType = $params->getPaymentType();
 
+        $applicationContext = $this->getApplicationContext($paymentType);
+
         if ($paymentType === PaymentType::PAYPAL_EXPRESS || $paymentType === PaymentType::PAYPAL_CLASSIC) {
             $requestParameters->setIntent($this->getIntentAsString((int) $this->settings->get('intent', SettingsTable::EXPRESS_CHECKOUT)));
         } elseif ($paymentType === PaymentType::PAYPAL_INSTALLMENTS) {
@@ -90,8 +102,6 @@ class PaymentBuilderService implements PaymentBuilderInterface
         } else {
             $requestParameters->setIntent('sale');
         }
-
-        $requestParameters->setProfile($params->getWebProfileId());
 
         $payer = new Payer();
         $payer->setPaymentMethod('paypal');
@@ -119,6 +129,7 @@ class PaymentBuilderService implements PaymentBuilderInterface
         $requestParameters->setPayer($payer);
         $requestParameters->setRedirectUrls($redirectUrls);
         $requestParameters->setTransactions($transactions);
+        $requestParameters->setApplicationContext($applicationContext);
 
         return $requestParameters;
     }
@@ -334,5 +345,54 @@ class PaymentBuilderService implements PaymentBuilderInterface
     private function formatPrice($price)
     {
         return round((float) str_replace(',', '.', $price), 2);
+    }
+
+    /**
+     * @param string $paymentType
+     *
+     * @return ApplicationContext
+     */
+    private function getApplicationContext($paymentType)
+    {
+        $applicationContext = new ApplicationContext();
+
+        $applicationContext->setBrandName($this->getBrandName());
+        $applicationContext->setLocale($this->getLocale());
+
+        if ($paymentType === PaymentType::PAYPAL_EXPRESS) {
+            $applicationContext->setUserAction('continue');
+        }
+
+        return $applicationContext;
+    }
+
+    /**
+     * Returns the locale as a 5 digit ISO code
+     *
+     * @return string
+     */
+    private function getLocale()
+    {
+        $locale = $this->dependencyProvider->getShop()->getLocale()->getLocale();
+
+        if (strpos($locale, 'de_') === 0) {
+            $locale = 'de_DE';
+        }
+
+        return $locale;
+    }
+
+    /**
+     * @return string
+     */
+    private function getBrandName()
+    {
+        $brandName = (string) $this->settings->get('brand_name', SettingsTable::GENERAL);
+
+        if (strlen($brandName) > 127) {
+            $brandName = substr($brandName, 0, 127);
+        }
+
+        return $brandName;
     }
 }

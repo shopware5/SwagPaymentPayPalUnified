@@ -5,6 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 use Shopware\Components\HttpClient\RequestException;
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
 use SwagPaymentPayPalUnified\Components\ExceptionHandlerServiceInterface;
@@ -92,14 +93,11 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
         try {
             //Query all information
             $basketData = $orderData['sBasket'];
-            $webProfileId = $this->settingsService->get('web_profile_id');
-
             $selectedPaymentName = $orderData['sPayment']['name'];
 
             $requestParams = new PaymentBuilderParameters();
             $requestParams->setBasketData($basketData);
             $requestParams->setUserData($userData);
-            $requestParams->setWebProfileId($webProfileId);
 
             //Prepare the new basket signature feature, announced in SW 5.3.0
             if (version_compare($this->shopwareConfig->offsetGet('version'), '5.3.0', '>=')) {

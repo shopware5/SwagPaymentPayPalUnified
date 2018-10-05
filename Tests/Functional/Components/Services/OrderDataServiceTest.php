@@ -165,7 +165,6 @@ class OrderDataServiceTest extends \PHPUnit_Framework_TestCase
             'clientSecret' => 'TEST',
             'sandbox' => 1,
             'showSidebarLogo' => 'TEST',
-            'logoImage' => 'TEST',
         ]);
 
         $this->insertPlusSettingsFromArray(['active' => 1]);

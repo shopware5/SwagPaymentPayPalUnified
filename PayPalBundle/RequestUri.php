@@ -11,7 +11,6 @@ namespace SwagPaymentPayPalUnified\PayPalBundle;
 class RequestUri
 {
     const PAYMENT_RESOURCE = 'payments/payment';
-    const PROFILE_RESOURCE = 'payment-experience/web-profiles';
     const WEBHOOK_RESOURCE = 'notifications/webhooks';
     const TOKEN_RESOURCE = 'oauth2/token';
     const SALE_RESOURCE = 'payments/sale';

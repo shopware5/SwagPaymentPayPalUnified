@@ -13,10 +13,6 @@ use SwagPaymentPayPalUnified\Components\Services\PaymentBuilderService;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
-use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile;
-use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile\WebProfileFlowConfig;
-use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile\WebProfileInputFields;
-use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile\WebProfilePresentation;
 
 class PaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
 {
@@ -82,7 +78,6 @@ class PaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
         $settingService = new SettingsServicePaymentBuilderServiceMock(false, 0);
         $requestService = $this->getRequestService($settingService);
 
-        $profile = $this->getWebProfile();
         $basketData = $this->getBasketDataArray();
         $userData = $this->getUserDataAsArray();
 
@@ -90,7 +85,6 @@ class PaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
 
         $params = new PaymentBuilderParameters();
         $params->setBasketData($basketData);
-        $params->setWebProfileId($profile->getId());
         $params->setUserData($userData);
 
         $requestParameters = $requestService->getPayment($params);
@@ -107,7 +101,6 @@ class PaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
         $settingService = new SettingsServicePaymentBuilderServiceMock(false, 0);
         $requestService = $this->getRequestService($settingService);
 
-        $profile = $this->getWebProfile();
         $basketData = $this->getBasketDataArray();
         $userData = $this->getUserDataAsArray();
 
@@ -115,7 +108,6 @@ class PaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
 
         $params = new PaymentBuilderParameters();
         $params->setBasketData($basketData);
-        $params->setWebProfileId($profile->getId());
         $params->setUserData($userData);
         $params->setBasketUniqueId('MyUniqueBasketId');
 
@@ -129,7 +121,6 @@ class PaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
         $settingService = new SettingsServicePaymentBuilderServiceMock(false, 0);
         $requestService = $this->getRequestService($settingService);
 
-        $profile = $this->getWebProfile();
         $basketData = $this->getBasketDataArray();
         $userData = $this->getUserDataAsArray();
 
@@ -137,7 +128,6 @@ class PaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
 
         $params = new PaymentBuilderParameters();
         $params->setBasketData($basketData);
-        $params->setWebProfileId($profile->getId());
         $params->setUserData($userData);
 
         $requestParameters = $requestService->getPayment($params);
@@ -154,7 +144,6 @@ class PaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
         $settingService = new SettingsServicePaymentBuilderServiceMock(false, 0);
         $requestService = $this->getRequestService($settingService);
 
-        $profile = $this->getWebProfile();
         $basketData = $this->getBasketDataArray();
         $userData = $this->getUserDataAsArray();
 
@@ -162,7 +151,6 @@ class PaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
 
         $params = new PaymentBuilderParameters();
         $params->setBasketData($basketData);
-        $params->setWebProfileId($profile->getId());
         $params->setUserData($userData);
 
         $requestParameters = $requestService->getPayment($params);
@@ -179,7 +167,6 @@ class PaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
         $settingService = new SettingsServicePaymentBuilderServiceMock(false, 0);
         $requestService = $this->getRequestService($settingService);
 
-        $profile = $this->getWebProfile();
         $basketData = $this->getBasketDataArray();
         $userData = $this->getUserDataAsArray();
 
@@ -188,7 +175,6 @@ class PaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
 
         $params = new PaymentBuilderParameters();
         $params->setBasketData($basketData);
-        $params->setWebProfileId($profile->getId());
         $params->setUserData($userData);
 
         $requestParameters = $requestService->getPayment($params);
@@ -205,7 +191,6 @@ class PaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
         $settingService = new SettingsServicePaymentBuilderServiceMock(false, 0);
         $requestService = $this->getRequestService($settingService);
 
-        $profile = $this->getWebProfile();
         $basketData = $this->getBasketDataArray();
         $userData = $this->getUserDataAsArray();
 
@@ -215,7 +200,6 @@ class PaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
 
         $params = new PaymentBuilderParameters();
         $params->setBasketData($basketData);
-        $params->setWebProfileId($profile->getId());
         $params->setUserData($userData);
 
         $requestParameters = $requestService->getPayment($params);
@@ -251,12 +235,10 @@ class PaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
         $requestService = $this->getRequestService($settingService);
 
         $params = new PaymentBuilderParameters();
-        $profile = $this->getWebProfile();
         $basketData = $this->getBasketDataArray();
         $userData = $this->getUserDataAsArray();
 
         $params->setBasketData($basketData);
-        $params->setWebProfileId($profile->getId());
         $params->setUserData($userData);
         $params->setPaymentType(PaymentType::PAYPAL_EXPRESS);
 
@@ -269,12 +251,10 @@ class PaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
         $requestService = $this->getRequestService($settingService);
 
         $params = new PaymentBuilderParameters();
-        $profile = $this->getWebProfile();
         $basketData = $this->getBasketDataArray();
         $userData = $this->getUserDataAsArray();
 
         $params->setBasketData($basketData);
-        $params->setWebProfileId($profile->getId());
         $params->setUserData($userData);
         $params->setPaymentType(PaymentType::PAYPAL_EXPRESS);
 
@@ -287,12 +267,10 @@ class PaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
         $requestService = $this->getRequestService($settingService);
 
         $params = new PaymentBuilderParameters();
-        $profile = $this->getWebProfile();
         $basketData = $this->getBasketDataArray();
         $userData = $this->getUserDataAsArray();
 
         $params->setBasketData($basketData);
-        $params->setWebProfileId($profile->getId());
         $params->setUserData($userData);
         $params->setPaymentType(PaymentType::PAYPAL_EXPRESS);
 
@@ -306,12 +284,10 @@ class PaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
         $requestService = $this->getRequestService($settingService);
 
         $params = new PaymentBuilderParameters();
-        $profile = $this->getWebProfile();
         $basketData = $this->getBasketDataArray();
         $userData = $this->getUserDataAsArray();
 
         $params->setBasketData($basketData);
-        $params->setWebProfileId($profile->getId());
         $params->setUserData($userData);
         $params->setPaymentType(PaymentType::PAYPAL_INSTALLMENTS);
 
@@ -330,49 +306,15 @@ class PaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
         $settingService = new SettingsServicePaymentBuilderServiceMock($paymentType === PaymentType::PAYPAL_PLUS, $intent);
         $requestService = $this->getRequestService($settingService);
 
-        $profile = $this->getWebProfile();
         $basketData = $this->getBasketDataArray();
         $userData = $this->getUserDataAsArray();
 
         $params = new PaymentBuilderParameters();
         $params->setBasketData($basketData);
-        $params->setWebProfileId($profile->getId());
         $params->setUserData($userData);
         $params->setPaymentType($paymentType);
 
         return $requestService->getPayment($params)->toArray();
-    }
-
-    /**
-     * @return WebProfile
-     */
-    private function getWebProfile()
-    {
-        $shop = Shopware()->Shop();
-
-        $webProfile = new WebProfile();
-        $webProfile->setName($shop->getId() . $shop->getHost() . $shop->getBasePath());
-        $webProfile->setTemporary(false);
-
-        $presentation = new WebProfilePresentation();
-        $presentation->setLocaleCode($shop->getLocale()->getLocale());
-        $presentation->setLogoImage(null);
-        $presentation->setBrandName('Test brand name');
-
-        $flowConfig = new WebProfileFlowConfig();
-        $flowConfig->setReturnUriHttpMethod('POST');
-        $flowConfig->setUserAction('Commit');
-
-        $inputFields = new WebProfileInputFields();
-        $inputFields->setAddressOverride('1');
-        $inputFields->setAllowNote(false);
-        $inputFields->setNoShipping(0);
-
-        $webProfile->setFlowConfig($flowConfig);
-        $webProfile->setInputFields($inputFields);
-        $webProfile->setPresentation($presentation);
-
-        return $webProfile;
     }
 
     /**
@@ -384,8 +326,9 @@ class PaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
     {
         $router = Shopware()->Container()->get('router');
         $snippetManager = Shopware()->Container()->get('snippets');
+        $dependencyProvider = Shopware()->Container()->get('paypal_unified.dependency_provider');
 
-        return new PaymentBuilderService($router, $settingService, $snippetManager);
+        return new PaymentBuilderService($router, $settingService, $snippetManager, $dependencyProvider);
     }
 
     /**
@@ -497,6 +440,10 @@ class SettingsServicePaymentBuilderServiceMock implements SettingsServiceInterfa
 
         if ($column === 'submit_cart' && $settingsTable === SettingsTable::EXPRESS_CHECKOUT) {
             return $this->ec_submit_cart;
+        }
+
+        if ($column === 'brand_name') {
+            return 'TestBrandName';
         }
 
         return $this->$column;

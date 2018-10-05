@@ -564,6 +564,25 @@ class PlusSubscriberTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @return array
+     */
+    private function getGeneralSettingsAsArray()
+    {
+        return [
+            'id' => 1,
+            'shopId' => 1,
+            'active' => 1,
+            'showSidebarLogo' => 0,
+            'useInContext' => 0,
+            'sendOrderNumber' => 0,
+            'logLevel' => 0,
+            'displayErrors' => 0,
+            'advertiseReturns' => 0,
+            'brandName' => 'TestBrandName',
+        ];
+    }
+
+    /**
      * @param bool $active
      * @param bool $plusActive
      * @param bool $restylePaymentSelection
@@ -583,7 +602,6 @@ class PlusSubscriberTest extends \PHPUnit_Framework_TestCase
             'clientSecret' => 'test',
             'sandbox' => true,
             'showSidebarLogo' => true,
-            'logoImage' => 'TEST',
             'active' => $active,
         ]);
 
@@ -598,7 +616,7 @@ class PlusSubscriberTest extends \PHPUnit_Framework_TestCase
             $plusSettings['paymentName'] = 'Test Plus Name';
             $plusSettings['paymentDescription'] = 'Test Plus Description';
         }
-
+        $this->insertGeneralSettingsFromArray($this->getGeneralSettingsAsArray());
         $this->insertPlusSettingsFromArray($plusSettings);
     }
 

@@ -111,7 +111,6 @@ class PaymentResourceMock extends PaymentResource
                     'related_resources' => [],
                 ],
             ],
-            'experience_profile_id' => 'XP-H9SZ-G664-VUF4-NN3S',
             'create_time' => '2018-04-17T08:36:01Z',
             'links' => [
                 0 => [

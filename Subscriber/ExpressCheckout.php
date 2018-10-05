@@ -316,7 +316,6 @@ class ExpressCheckout implements SubscriberInterface
         $addressPatch = new PaymentAddressPatch($shippingAddress);
 
         $requestParams = new PaymentBuilderParameters();
-        $requestParams->setWebProfileId('temporary');
         $requestParams->setBasketData($basketData);
         $requestParams->setUserData($userData);
 

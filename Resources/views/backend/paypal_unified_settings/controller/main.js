@@ -54,11 +54,6 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
     testInstallmentsAvailabilityUrl: '{url controller=PaypalUnifiedSettings action=testInstallmentsAvailability}',
 
     /**
-     * @type { string }
-     */
-    createWebProfilesUrl: '{url controller=PaypalUnifiedSettings action=createWebProfiles}',
-
-    /**
      * @type { Shopware.apps.PaypalUnifiedSettings.model.General }
      */
     generalRecord: null,
@@ -187,26 +182,6 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
         ecTab.loadRecord(me.expressCheckoutRecord);
     },
 
-    createWebProfiles: function () {
-        var me = this,
-            generalSettings = me.getGeneralTab().getForm().getValues();
-
-        me.window.setLoading('{s name="loading/createWebProfiles"}Creating web-profiles...{/s}');
-
-        Ext.Ajax.request({
-            url: me.createWebProfilesUrl,
-            params: {
-                shopId: me.shopId,
-                clientId: generalSettings['clientId'],
-                clientSecret: generalSettings['clientSecret'],
-                sandbox: generalSettings['sandbox'],
-                brandName: generalSettings['brandName'],
-                logoImage: generalSettings['logoImage']
-            },
-            callback: Ext.bind(me.onCreateWebProfilesAjaxCallback, me)
-        });
-    },
-
     /**
      * @param { Shopware.data.Model } record
      */
@@ -240,7 +215,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
 
         Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal{/s}', '{s name=growl/saveSettings}The settings have been saved!{/s}', me.window.title);
 
-        me.createWebProfiles();
+        me.onRegisterWebhook();
     },
 
     onRegisterWebhook: function() {
@@ -375,40 +350,6 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
         }
 
         me.settingsSaved = false;
-    },
-
-    /**
-     * @param { Object } options
-     * @param { Boolean } success
-     * @param { Object } response
-     */
-    onCreateWebProfilesAjaxCallback: function(options, success, response) {
-        var me = this,
-            responseObject = Ext.JSON.decode(response.responseText),
-            message = '';
-
-        me.window.setLoading(false);
-
-        if (Ext.isDefined(responseObject) && responseObject.success) {
-            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal{/s}', '{s name=growl/createWebProfilesSuccess}Web-profile(s) successfully created{/s}', me.window.title);
-            me.onRegisterWebhook();
-
-            return;
-        }
-
-        if (Ext.isDefined(responseObject)) {
-            message = responseObject.message;
-        }
-
-        Shopware.Notification.createStickyGrowlMessage(
-            {
-                title: '{s name=growl/title}PayPal{/s}',
-                text: '{s name=growl/createWebProfilesError}Could not create web-profiles due to this error:{/s}' + '<br><u>' + message + '</u>'
-            },
-            me.window.title
-        );
-
-        me.onRegisterWebhook();
     },
 
     /**

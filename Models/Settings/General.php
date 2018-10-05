@@ -64,15 +64,9 @@ class General extends ModelEntity
 
     /**
      * @var string
-     * @ORM\Column(name="brand_name", type="string")
+     * @ORM\Column(name="brand_name", type="string", length=127)
      */
     private $brandName;
-
-    /**
-     * @var string
-     * @ORM\Column(name="logo_image", type="string")
-     */
-    private $logoImage;
 
     /**
      * @var bool
@@ -91,12 +85,6 @@ class General extends ModelEntity
      * @ORM\Column(name="use_in_context", type="boolean", nullable=false )
      */
     private $useInContext;
-
-    /**
-     * @var string
-     * @ORM\Column(name="web_profile_id", type="string")
-     */
-    private $webProfileId;
 
     /**
      * @var int
@@ -245,22 +233,6 @@ class General extends ModelEntity
     }
 
     /**
-     * @return string
-     */
-    public function getLogoImage()
-    {
-        return $this->logoImage;
-    }
-
-    /**
-     * @param string $logoImage
-     */
-    public function setLogoImage($logoImage)
-    {
-        $this->logoImage = $logoImage;
-    }
-
-    /**
      * @return bool
      */
     public function getSendOrderNumber()
@@ -306,22 +278,6 @@ class General extends ModelEntity
     public function setUseInContext($useInContext)
     {
         $this->useInContext = $useInContext;
-    }
-
-    /**
-     * @return string
-     */
-    public function getWebProfileId()
-    {
-        return $this->webProfileId;
-    }
-
-    /**
-     * @param string $webProfileId
-     */
-    public function setWebProfileId($webProfileId)
-    {
-        $this->webProfileId = $webProfileId;
     }
 
     /**

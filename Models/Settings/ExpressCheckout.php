@@ -33,12 +33,6 @@ class ExpressCheckout extends ModelEntity
     private $shopId;
 
     /**
-     * @var string
-     * @ORM\Column(name="web_profile_id", type="string")
-     */
-    private $webProfileId;
-
-    /**
      * @var bool
      * @ORM\Column(name="detail_active", type="boolean", nullable=false)
      */
@@ -116,22 +110,6 @@ class ExpressCheckout extends ModelEntity
     public function setShopId($shopId)
     {
         $this->shopId = $shopId;
-    }
-
-    /**
-     * @return string
-     */
-    public function getWebProfileId()
-    {
-        return $this->webProfileId;
-    }
-
-    /**
-     * @param string $webProfileId
-     */
-    public function setWebProfileId($webProfileId)
-    {
-        $this->webProfileId = $webProfileId;
     }
 
     /**

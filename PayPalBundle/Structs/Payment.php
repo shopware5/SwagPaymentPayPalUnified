@@ -9,6 +9,7 @@
 namespace SwagPaymentPayPalUnified\PayPalBundle\Structs;
 
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Common\Link;
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\ApplicationContext;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Credit;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Payer;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\PaymentInstruction;
@@ -21,11 +22,6 @@ class Payment
      * @var string
      */
     private $intent;
-
-    /**
-     * @var string
-     */
-    private $experienceProfileId;
 
     /**
      * @var Payer
@@ -83,6 +79,11 @@ class Payment
     private $creditFinancingOffered;
 
     /**
+     * @var ApplicationContext
+     */
+    private $applicationContext;
+
+    /**
      * @return string
      */
     public function getIntent()
@@ -96,22 +97,6 @@ class Payment
     public function setIntent($intent)
     {
         $this->intent = $intent;
-    }
-
-    /**
-     * @return string
-     */
-    public function getProfile()
-    {
-        return $this->experienceProfileId;
-    }
-
-    /**
-     * @param string $experienceProfileId
-     */
-    public function setProfile($experienceProfileId)
-    {
-        $this->experienceProfileId = $experienceProfileId;
     }
 
     /**
@@ -176,22 +161,6 @@ class Payment
     public function setLinks(array $links)
     {
         $this->links = $links;
-    }
-
-    /**
-     * @return string
-     */
-    public function getExperienceProfileId()
-    {
-        return $this->experienceProfileId;
-    }
-
-    /**
-     * @param string $experienceProfileId
-     */
-    public function setExperienceProfileId($experienceProfileId)
-    {
-        $this->experienceProfileId = $experienceProfileId;
     }
 
     /**
@@ -307,6 +276,22 @@ class Payment
     }
 
     /**
+     * @return ApplicationContext
+     */
+    public function getApplicationContext()
+    {
+        return $this->applicationContext;
+    }
+
+    /**
+     * @param ApplicationContext $applicationContext
+     */
+    public function setApplicationContext(ApplicationContext $applicationContext)
+    {
+        $this->applicationContext = $applicationContext;
+    }
+
+    /**
      * @param array $data
      *
      * @return Payment
@@ -316,7 +301,6 @@ class Payment
         $result = new self();
 
         $result->setIntent($data['intent']);
-        $result->setProfile($data['experience_profile_id']);
         $result->setCart($data['cart']);
         $result->setId($data['id']);
         $result->setState($data['state']);
@@ -357,7 +341,7 @@ class Payment
     {
         return [
             'intent' => $this->getIntent(),
-            'experience_profile_id' => $this->getProfile(),
+            'application_context' => $this->getApplicationContext()->toArray(),
             'payer' => $this->getPayer()->toArray(),
             'transactions' => [
                 $this->getTransactions()->toArray(),

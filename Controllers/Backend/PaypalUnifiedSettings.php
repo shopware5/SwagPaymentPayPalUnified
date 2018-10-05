@@ -5,15 +5,12 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-use Shopware\Components\Model\ModelManager;
+
 use SwagPaymentPayPalUnified\Components\ExceptionHandlerServiceInterface;
-use SwagPaymentPayPalUnified\Models\Settings\ExpressCheckout as ExpressSettingsModel;
 use SwagPaymentPayPalUnified\Models\Settings\General as GeneralSettingsModel;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
-use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\WebhookResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService;
-use SwagPaymentPayPalUnified\PayPalBundle\Services\WebProfileService;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Installments\FinancingResponse;
 
 class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Controllers_Backend_Application
@@ -151,62 +148,6 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
         }
 
         $this->View()->assign('success', false);
-    }
-
-    public function createWebProfilesAction()
-    {
-        $shopId = (int) $this->Request()->getParam('shopId');
-        $logoImage = $this->Request()->getParam('logoImage');
-        $brandName = $this->Request()->getParam('brandName');
-        $webProfileId = null;
-        $ecWebProfileId = null;
-        $error = null;
-
-        $settings = [
-            'shopId' => $shopId,
-            'logoImage' => $logoImage,
-            'brandName' => $brandName,
-        ];
-
-        /** @var WebProfileService $webProfileService */
-        $webProfileService = $this->get('paypal_unified.web_profile_service');
-
-        try {
-            $this->configureClient();
-
-            $webProfileId = $webProfileService->getWebProfile($settings);
-            $ecWebProfileId = $webProfileService->getWebProfile($settings, true);
-        } catch (Exception $rex) {
-            $error = $this->exceptionHandler->handle($rex, 'request the web profiles');
-        }
-
-        /** @var ModelManager $entityManager */
-        $entityManager = $this->get('models');
-
-        /** @var GeneralSettingsModel $generalSettings */
-        $generalSettings = $this->settingsService->getSettings($shopId);
-        if ($generalSettings !== null) {
-            $generalSettings->setWebProfileId($webProfileId);
-        }
-
-        /** @var ExpressSettingsModel $ecSettings */
-        $ecSettings = $this->settingsService->getSettings($shopId, SettingsTable::EXPRESS_CHECKOUT);
-        if ($ecSettings !== null) {
-            $ecSettings->setWebProfileId($ecWebProfileId);
-        }
-
-        $entityManager->flush();
-
-        if ($error !== null) {
-            $this->View()->assign([
-                'success' => false,
-                'message' => $error->getCompleteMessage(),
-            ]);
-
-            return;
-        }
-
-        $this->View()->assign('success', true);
     }
 
     private function configureClient()

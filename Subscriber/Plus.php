@@ -366,11 +366,8 @@ class Plus implements SubscriberInterface
      */
     private function createPayment(array $basketData, array $userData)
     {
-        $webProfileId = $this->settingsService->get('web_profile_id');
-
         $requestParams = new PaymentBuilderParameters();
         $requestParams->setUserData($userData);
-        $requestParams->setWebProfileId($webProfileId);
         $requestParams->setBasketData($basketData);
         $requestParams->setPaymentType(PaymentType::PAYPAL_PLUS);
 

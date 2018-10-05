@@ -13,10 +13,6 @@ use SwagPaymentPayPalUnified\Components\Services\Plus\PlusPaymentBuilderService;
 use SwagPaymentPayPalUnified\Components\Services\Validation\BasketIdWhitelist;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
-use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile;
-use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile\WebProfileFlowConfig;
-use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile\WebProfileInputFields;
-use SwagPaymentPayPalUnified\PayPalBundle\Structs\WebProfile\WebProfilePresentation;
 use SwagPaymentPayPalUnified\Tests\Functional\Components\Services\SettingsServicePaymentBuilderServiceMock;
 
 class PlusPaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
@@ -71,13 +67,11 @@ class PlusPaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
 
         $plusPaymentBuilder = $this->getPlusPaymentBuilder($settingService);
 
-        $profile = $this->getWebProfile();
         $basketData = $this->getBasketDataArray($edd);
         $userData = $this->getUserDataAsArray();
 
         $params = new PaymentBuilderParameters();
         $params->setBasketData($basketData);
-        $params->setWebProfileId($profile->getId());
         $params->setUserData($userData);
 
         return $plusPaymentBuilder->getPayment($params);
@@ -93,8 +87,9 @@ class PlusPaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
         $router = Shopware()->Container()->get('router');
         $crudService = Shopware()->Container()->get('shopware_attribute.crud_service');
         $snippetManager = Shopware()->Container()->get('snippets');
+        $dependencyProvider = Shopware()->Container()->get('paypal_unified.dependency_provider');
 
-        return new PlusPaymentBuilderService($router, $settingService, $crudService, $snippetManager);
+        return new PlusPaymentBuilderService($router, $settingService, $crudService, $snippetManager, $dependencyProvider);
     }
 
     /**
@@ -147,38 +142,6 @@ class PlusPaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
                 ],
             ],
         ];
-    }
-
-    /**
-     * @return WebProfile
-     */
-    private function getWebProfile()
-    {
-        $shop = Shopware()->Shop();
-
-        $webProfile = new WebProfile();
-        $webProfile->setName($shop->getId() . $shop->getHost() . $shop->getBasePath());
-        $webProfile->setTemporary(false);
-
-        $presentation = new WebProfilePresentation();
-        $presentation->setLocaleCode($shop->getLocale()->getLocale());
-        $presentation->setLogoImage(null);
-        $presentation->setBrandName('Test brand name');
-
-        $flowConfig = new WebProfileFlowConfig();
-        $flowConfig->setReturnUriHttpMethod('POST');
-        $flowConfig->setUserAction('Commit');
-
-        $inputFields = new WebProfileInputFields();
-        $inputFields->setAddressOverride('1');
-        $inputFields->setAllowNote(false);
-        $inputFields->setNoShipping(0);
-
-        $webProfile->setFlowConfig($flowConfig);
-        $webProfile->setInputFields($inputFields);
-        $webProfile->setPresentation($presentation);
-
-        return $webProfile;
     }
 
     private function createEddAttribute()

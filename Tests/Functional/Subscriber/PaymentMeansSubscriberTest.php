@@ -320,7 +320,6 @@ class PaymentMeansSubscriberTest extends \PHPUnit_Framework_TestCase
             'clientSecret' => 'test',
             'sandbox' => true,
             'showSidebarLogo' => true,
-            'logoImage' => 'None',
             'active' => $active,
         ]);
 
