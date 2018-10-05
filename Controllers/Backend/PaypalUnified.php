@@ -5,12 +5,15 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 use Doctrine\DBAL\Connection;
 use Shopware\Components\Model\QueryBuilder;
 use Shopware\Models\Order\Order;
+use Shopware\Models\Order\Status;
 use Shopware\Models\Shop\Shop;
 use SwagPaymentPayPalUnified\Components\ExceptionHandlerServiceInterface;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
+use SwagPaymentPayPalUnified\Components\PaymentStatus;
 use SwagPaymentPayPalUnified\Components\Services\Legacy\LegacyService;
 use SwagPaymentPayPalUnified\Components\Services\TransactionHistoryBuilderService;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentIntent;
@@ -250,7 +253,13 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
                 $refund->setAmount($amountStruct);
             }
 
-            $view->assign('refund', $saleResource->refund($saleId, $refund));
+            $refundData = $saleResource->refund($saleId, $refund);
+
+            if ($refundData['state'] === 'completed') {
+                $this->updatePaymentStatus($refundData);
+            }
+
+            $view->assign('refund', $refundData);
             $view->assign('success', true);
         } catch (Exception $e) {
             $error = $this->exceptionHandler->handle($e, 'refund sale');
@@ -353,7 +362,13 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
             $amountStruct->setCurrency($currency);
             $refund->setAmount($amountStruct);
 
-            $view->assign('refund', $captureResource->refund($id, $refund));
+            $refundData = $captureResource->refund($id, $refund);
+
+            if ($refundData['state'] === 'completed') {
+                $this->updatePaymentStatus($refundData);
+            }
+
+            $view->assign('refund', $refundData);
             $view->assign('success', true);
         } catch (Exception $e) {
             $error = $this->exceptionHandler->handle($e, 'refund capture');
@@ -592,5 +607,25 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
         }
 
         $view->assign('success', true);
+    }
+
+    /**
+     * @param array $refundData
+     */
+    private function updatePaymentStatus(array $refundData)
+    {
+        /** @var Order $orderModel */
+        $orderModel = $this->getModelManager()->getRepository(Order::class)->findOneBy(['temporaryId' => $refundData['parent_payment']]);
+
+        if (!($orderModel instanceof Order)) {
+            return;
+        }
+
+        /** @var Status $orderStatusModel */
+        $orderStatusModel = $this->getModelManager()->getRepository(Status::class)->find(PaymentStatus::PAYMENT_STATUS_REFUNDED);
+
+        $orderModel->setPaymentStatus($orderStatusModel);
+
+        $this->getModelManager()->flush($orderModel);
     }
 }
