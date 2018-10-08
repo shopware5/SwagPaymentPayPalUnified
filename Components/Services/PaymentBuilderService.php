@@ -358,6 +358,7 @@ class PaymentBuilderService implements PaymentBuilderInterface
 
         $applicationContext->setBrandName($this->getBrandName());
         $applicationContext->setLocale($this->getLocale());
+        $applicationContext->setLandingPage($this->getLandingPage());
 
         if ($paymentType === PaymentType::PAYPAL_EXPRESS) {
             $applicationContext->setUserAction('continue');
@@ -394,5 +395,13 @@ class PaymentBuilderService implements PaymentBuilderInterface
         }
 
         return $brandName;
+    }
+
+    /**
+     * @return string
+     */
+    private function getLandingPage()
+    {
+        return (string) $this->settings->get('landing_page_type', SettingsTable::GENERAL);
     }
 }

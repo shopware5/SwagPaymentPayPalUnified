@@ -68,7 +68,8 @@ class SwagPaymentPayPalUnified extends Plugin
     {
         $updater = new Updater(
             $this->container->get('shopware_attribute.crud_service'),
-            $this->container->get('models')
+            $this->container->get('models'),
+            $this->container->get('dbal_connection')
         );
         $updater->update($context->getCurrentVersion());
 

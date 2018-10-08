@@ -26,6 +26,11 @@ class ApplicationContext
     private $userAction = 'commit';
 
     /**
+     * @var string
+     */
+    private $landingPage;
+
+    /**
      * @return string
      */
     public function getBrandName()
@@ -74,6 +79,22 @@ class ApplicationContext
     }
 
     /**
+     * @return string
+     */
+    public function getLandingPage()
+    {
+        return $this->landingPage;
+    }
+
+    /**
+     * @param string $landingPage
+     */
+    public function setLandingPage($landingPage)
+    {
+        $this->landingPage = $landingPage;
+    }
+
+    /**
      * @return array
      */
     public function toArray()
@@ -82,6 +103,7 @@ class ApplicationContext
             'brand_name' => $this->getBrandName(),
             'locale' => $this->getLocale(),
             'user_action' => $this->getUserAction(),
+            'landing_page' => $this->getLandingPage(),
         ];
     }
 }
