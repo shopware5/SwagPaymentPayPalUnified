@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\Setup;
 
+use Doctrine\DBAL\Connection;
 use Shopware\Bundle\AttributeBundle\Service\CrudService;
 use Shopware\Components\Model\ModelManager;
 
@@ -24,13 +25,20 @@ class Updater
     private $modelManager;
 
     /**
+     * @var Connection
+     */
+    private $connection;
+
+    /**
      * @param CrudService  $attributeCrudService
      * @param ModelManager $modelManager
+     * @param Connection   $connection
      */
-    public function __construct(CrudService $attributeCrudService, ModelManager $modelManager)
+    public function __construct(CrudService $attributeCrudService, ModelManager $modelManager, Connection $connection)
     {
         $this->attributeCrudService = $attributeCrudService;
         $this->modelManager = $modelManager;
+        $this->connection = $connection;
     }
 
     /**
@@ -40,6 +48,10 @@ class Updater
     {
         if (version_compare($oldVersion, '1.0.2', '<=')) {
             $this->updateTo103();
+        }
+
+        if (version_compare($oldVersion, '1.0.7', '<=')) {
+            $this->updateTo108();
         }
     }
 
@@ -58,5 +70,14 @@ class Updater
         );
 
         $this->modelManager->generateAttributeModels(['s_core_paymentmeans_attributes']);
+    }
+
+    private function updateTo108()
+    {
+        $sql = 'ALTER TABLE `swag_payment_paypal_unified_settings_general` 
+                ADD COLUMN `landing_page_type` VARCHAR(255);
+                UPDATE `swag_payment_paypal_unified_settings_general` SET `landing_page_type` = "Login";';
+
+        $this->connection->executeQuery($sql);
     }
 }

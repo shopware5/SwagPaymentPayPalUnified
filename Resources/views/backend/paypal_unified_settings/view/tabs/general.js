@@ -202,6 +202,15 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
                     helpText: '{s name="fieldset/behaviour/useInContext/help"}Enable this option to use the PayPal in-context solution. Instead of redirecting to the PayPal login page, an overlay will be shown and the customer does not need to leave the shop.{/s}'
                 },
                 {
+                    xtype: 'combobox',
+                    name: 'landingPageType',
+                    helpText: '{s name=fieldset/landingPage/help}<u>Login</u><br>The PayPal site displays a login screen as landingpage.<br><br><u>Registration</u><br>The PayPal site displays a registration form as landingpage.{/s}',
+                    fieldLabel: '{s name=fieldset/landingPage/title}PayPal landingpage{/s}',
+                    store: Ext.create('Shopware.apps.PaypalUnifiedSettings.store.LandingPageType'),
+                    valueField: 'type',
+                    value: 'Login'
+                },
+                {
                     xtype: 'checkbox',
                     name: 'showSidebarLogo',
                     inputValue: true,

@@ -82,9 +82,15 @@ class General extends ModelEntity
 
     /**
      * @var bool
-     * @ORM\Column(name="use_in_context", type="boolean", nullable=false )
+     * @ORM\Column(name="use_in_context", type="boolean", nullable=false)
      */
     private $useInContext;
+
+    /**
+     * @var string
+     * @ORM\Column(name="landing_page_type", type="string")
+     */
+    private $landingPageType;
 
     /**
      * @var int
@@ -326,6 +332,22 @@ class General extends ModelEntity
     public function setAdvertiseReturns($advertiseReturns)
     {
         $this->advertiseReturns = $advertiseReturns;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLandingPageType()
+    {
+        return $this->landingPageType;
+    }
+
+    /**
+     * @param string $landingPageType
+     */
+    public function setLandingPageType($landingPageType)
+    {
+        $this->landingPageType = $landingPageType;
     }
 
     /**
