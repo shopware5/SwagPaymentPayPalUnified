@@ -18,7 +18,7 @@ class Amount
     private $currency;
 
     /**
-     * @var float
+     * @var string
      */
     private $total;
 
@@ -44,7 +44,7 @@ class Amount
     }
 
     /**
-     * @return float
+     * @return string
      */
     public function getTotal()
     {
@@ -52,11 +52,11 @@ class Amount
     }
 
     /**
-     * @param float $total
+     * @param string|float $total
      */
     public function setTotal($total)
     {
-        $this->total = $total;
+        $this->total = (string) $total;
     }
 
     /**

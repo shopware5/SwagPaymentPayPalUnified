@@ -11,22 +11,22 @@ namespace SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Transactions\Amo
 class Details
 {
     /**
-     * @var float
+     * @var string
      */
     private $shipping;
 
     /**
-     * @var float
+     * @var string
      */
     private $subTotal;
 
     /**
-     * @var float
+     * @var string
      */
     private $tax;
 
     /**
-     * @return float
+     * @return string
      */
     public function getShipping()
     {
@@ -38,11 +38,11 @@ class Details
      */
     public function setShipping($shipping)
     {
-        $this->shipping = $shipping;
+        $this->shipping = (string) $shipping;
     }
 
     /**
-     * @return float
+     * @return string
      */
     public function getSubTotal()
     {
@@ -54,11 +54,11 @@ class Details
      */
     public function setSubTotal($subTotal)
     {
-        $this->subTotal = $subTotal;
+        $this->subTotal = (string) $subTotal;
     }
 
     /**
-     * @return float
+     * @return string
      */
     public function getTax()
     {
@@ -70,7 +70,7 @@ class Details
      */
     public function setTax($tax)
     {
-        $this->tax = $tax;
+        $this->tax = (string) $tax;
     }
 
     /**
