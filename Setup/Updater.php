@@ -51,7 +51,11 @@ class Updater
         }
 
         if (version_compare($oldVersion, '1.0.7', '<=')) {
-            $this->updateTo108();
+            $this->updateTo110();
+        }
+
+        if (version_compare($oldVersion, '1.1.0', '<=')) {
+            $this->updateTo111();
         }
     }
 
@@ -72,11 +76,19 @@ class Updater
         $this->modelManager->generateAttributeModels(['s_core_paymentmeans_attributes']);
     }
 
-    private function updateTo108()
+    private function updateTo110()
     {
         $sql = 'ALTER TABLE `swag_payment_paypal_unified_settings_general` 
                 ADD COLUMN `landing_page_type` VARCHAR(255);
                 UPDATE `swag_payment_paypal_unified_settings_general` SET `landing_page_type` = "Login";';
+
+        $this->connection->executeQuery($sql);
+    }
+
+    private function updateTo111()
+    {
+        $sql = 'ALTER TABLE `swag_payment_paypal_unified_settings_general` 
+                DROP COLUMN `logo_image`;';
 
         $this->connection->executeQuery($sql);
     }
