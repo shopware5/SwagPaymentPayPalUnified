@@ -5,12 +5,27 @@
     <label lang="de">PayPal</label>
     <label lang="en">PayPal</label>
 
-    <version>1.0.7</version>
+    <version>1.1.0</version>
     <copyright>(c) by shopware AG</copyright>
     <license>MIT</license>
     <link>http://store.shopware.com</link>
     <author>shopware AG</author>
     <compatibility minVersion="5.2.0"/>
+
+    <changelog version="1.1.0">
+        <changes lang="de">
+            PT-8708, PT-9707 - Die PayPal Experience Profile Logik wurde durch den Application Context ersetzt;
+            PT-9269 - Englische Übersetzungen korrigiert;
+            PT-9649 - Nach einer Rückerstattung wird der Status der Bestellung korrekt gesetzt;
+            PT-9710 - Übertragung von Preisen zu PayPal verbessert;
+        </changes>
+        <changes lang="en">
+            PT-8708, PT-9707 - The PayPal Experience Profile logic has been replaced by the Application Context;
+            PT-9269 - Fixed English translation;
+            PT-9649 - The status of the order will be set correctly after a refund;
+            PT-9710 - Improved transmission of prices to PayPal;
+        </changes>
+    </changelog>
 
     <changelog version="1.0.7">
         <changes lang="de">
