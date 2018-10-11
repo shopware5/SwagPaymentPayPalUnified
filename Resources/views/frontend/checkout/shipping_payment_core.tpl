@@ -6,14 +6,14 @@
     Since the created payment changes on every payment or shipping selection change, we have to use the correct
     approval URL. Otherwise the initial URL will always be used, which is wrong
 *}
-{block name='frontend_checkout_shipping_payment_core_buttons'}
+{block name='frontend_checkout_shipping_payment_core_payment_fields'}
+    {$smarty.block.parent}
+
     {block name='frontend_checkout_shipping_payment_core_buttons_top_paypal_unified_plus'}
         {if $paypalUnifiedUsePlus && $paypalUnifiedApprovalUrl}
             <div class="is--hidden paypal-unified--plus-approval-url">{$paypalUnifiedApprovalUrl}</div>
         {/if}
     {/block}
-
-    {$smarty.block.parent}
 {/block}
 
 {* All integrations *}
