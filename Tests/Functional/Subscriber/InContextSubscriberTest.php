@@ -242,7 +242,6 @@ class InContextSubscriberTest extends \PHPUnit_Framework_TestCase
             'active' => $active,
             'sandbox' => $sandboxMode,
             'useInContext' => $useInContext,
-            'logoImage' => 'None',
             'clientId' => 'test',
             'clientSecret' => 'test',
         ]);

@@ -156,7 +156,6 @@ class FrontendSubscriberTest extends \PHPUnit_Framework_TestCase
             'clientSecret' => 'test',
             'sandbox' => true,
             'showSidebarLogo' => true,
-            'logoImage' => 'TEST',
             'active' => $active,
             'advertiseReturns' => true,
         ]);
