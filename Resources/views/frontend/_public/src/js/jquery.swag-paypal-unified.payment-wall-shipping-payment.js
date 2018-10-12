@@ -129,13 +129,15 @@
                 clearPaymentSelection = selectedPaymentId !== me.opts.paypalPaymentId,
                 thirdPartyPaymentId;
 
-            $.each(thirdPartyPaymentMethods, function(index, thirdPartyPaymentMethod) {
-                thirdPartyPaymentId = me.getPaymentIdFromThirdPartyMethod(thirdPartyPaymentMethod);
+            if ($.isArray(thirdPartyPaymentMethods)) {
+                $.each(thirdPartyPaymentMethods, function(index, thirdPartyPaymentMethod) {
+                    thirdPartyPaymentId = me.getPaymentIdFromThirdPartyMethod(thirdPartyPaymentMethod);
 
-                if (thirdPartyPaymentId === selectedPaymentId) {
-                    clearPaymentSelection = false;
-                }
-            });
+                    if (thirdPartyPaymentId === selectedPaymentId) {
+                        clearPaymentSelection = false;
+                    }
+                });
+            }
 
             if (clearPaymentSelection) {
                 plugin.clearPaymentSelection();
