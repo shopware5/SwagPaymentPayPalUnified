@@ -21,7 +21,7 @@ class Item
     private $sku;
 
     /**
-     * @var float
+     * @var string
      */
     private $price;
 
@@ -31,7 +31,7 @@ class Item
     private $currency;
 
     /**
-     * @var int
+     * @var string
      */
     private $quantity;
 
@@ -53,7 +53,7 @@ class Item
      */
     public function setTax($tax)
     {
-        $this->tax = $tax;
+        $this->tax = (string) $tax;
     }
 
     /**
@@ -89,7 +89,7 @@ class Item
     }
 
     /**
-     * @return float
+     * @return string
      */
     public function getPrice()
     {
@@ -101,7 +101,7 @@ class Item
      */
     public function setPrice($price)
     {
-        $this->price = $price;
+        $this->price = (string) $price;
     }
 
     /**
@@ -133,7 +133,7 @@ class Item
      */
     public function setQuantity($quantity)
     {
-        $this->quantity = $quantity;
+        $this->quantity = (string) $quantity;
     }
 
     /**
