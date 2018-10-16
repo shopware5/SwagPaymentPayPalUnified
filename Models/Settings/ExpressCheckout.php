@@ -46,6 +46,12 @@ class ExpressCheckout extends ModelEntity
 
     /**
      * @var bool
+     * @ORM\Column(name="off_canvas_active", type="boolean", nullable=false)
+     */
+    private $offCanvasActive;
+
+    /**
+     * @var bool
      * @ORM\Column(name="login_active", type="boolean", nullable=false)
      */
     private $loginActive;
@@ -142,6 +148,22 @@ class ExpressCheckout extends ModelEntity
     public function setCartActive($cartActive)
     {
         $this->cartActive = $cartActive;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getOffCanvasActive()
+    {
+        return $this->offCanvasActive;
+    }
+
+    /**
+     * @param bool $offCanvasActive
+     */
+    public function setOffCanvasActive($offCanvasActive)
+    {
+        $this->offCanvasActive = $offCanvasActive;
     }
 
     /**

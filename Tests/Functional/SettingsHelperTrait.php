@@ -166,6 +166,10 @@ trait SettingsHelperTrait
             $data['intent'] = 0;
         }
 
+        if (empty($data['offCanvasActive'])) {
+            $data['offCanvasActive'] = 0;
+        }
+
         $model = new ExpressSettingsModel();
         $this->insertExpressCheckoutSettings($model->fromArray($data));
     }

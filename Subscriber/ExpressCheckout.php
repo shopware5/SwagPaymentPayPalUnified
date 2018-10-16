@@ -156,6 +156,7 @@ class ExpressCheckout implements SubscriberInterface
         $view = $args->getSubject()->View();
         $view->assign('paypalUnifiedEcCartActive', true);
         $view->assign('paypalUnifiedModeSandbox', $generalSettings->getSandbox());
+        $view->assign('paypalUnifiedEcOffCanvasActive', $expressSettings->getOffCanvasActive());
 
         $request = $args->getRequest();
         $controller = strtolower($request->getControllerName());
