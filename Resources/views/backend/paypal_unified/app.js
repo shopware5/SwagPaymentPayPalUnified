@@ -62,6 +62,7 @@ Ext.define('Shopware.apps.PaypalUnified', {
         'overview.Window',
         'overview.Grid',
         'overview.Sidebar',
+        'overview.extensions.Filter',
         'capture.Authorize',
         'sidebar.Order',
         'sidebar.Payment',

@@ -54,8 +54,6 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
         'orderTime',
         'invoiceAmount',
         'customer.email',
-        'orderStatus.description',
-        'paymentStatus.description',
     ];
 
     /**
@@ -464,6 +462,11 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
      */
     protected function getFilterConditions($filters, $model, $alias, $whiteList = [])
     {
+        if ($this->isFilterRequest($filters)) {
+            $whiteList[] = 'status';
+            $whiteList[] = 'cleared';
+        }
+
         $conditions = parent::getFilterConditions(
             $filters,
             $model,
@@ -493,8 +496,6 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
                 $fields,
                 [
                     'customer.email' => ['alias' => 'customer.email', 'type' => 'string'],
-                    'orderStatus.description' => ['alias' => 'orderStatus.description', 'type' => 'string'],
-                    'paymentStatus.description' => ['alias' => 'paymentStatus.description', 'type' => 'string'],
                 ]
             );
         }
@@ -627,5 +628,17 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
         $orderModel->setPaymentStatus($orderStatusModel);
 
         $this->getModelManager()->flush($orderModel);
+    }
+
+    /**
+     * Checks if one of the filter conditions is "search". If not, the filters were set by the filter panel
+     *
+     * @param array $filters
+     *
+     * @return bool
+     */
+    private function isFilterRequest(array $filters)
+    {
+        return !in_array('search', array_column($filters, 'property'), true);
     }
 }
