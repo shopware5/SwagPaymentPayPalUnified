@@ -16,10 +16,21 @@ Ext.define('Shopware.apps.Config.view.form.DocumentPaypalUnified', {
      * @return { Array }
      */
     getFormItems: function() {
-        var me = this,
-            data = me.callParent(arguments);
+        var formItems = this.callParent(arguments);
 
-        data[1].items.push({
+        var elementFieldSetIndex = -1;
+        formItems.forEach(function (item, index) {
+            if (item && item.name === 'elementFieldSet') {
+                elementFieldSetIndex = index;
+
+                return false;
+            }
+        });
+        if (elementFieldSetIndex === -1) {
+            return formItems;
+        }
+
+        formItems[elementFieldSetIndex].items.push({
             xtype: 'tinymce',
             fieldLabel: '{s name=document/detail/content_footer_label}Footer content{/s}',
             labelWidth: 100,
@@ -49,7 +60,7 @@ Ext.define('Shopware.apps.Config.view.form.DocumentPaypalUnified', {
             translatable: true
         });
 
-        return data;
+        return formItems;
     }
 });
 // {/block}
