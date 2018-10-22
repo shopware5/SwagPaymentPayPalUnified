@@ -90,7 +90,14 @@
              * The selector for the product number on the detail page.
              * @type string
              */
-            productNumberSelector: 'input[name="sAdd"]'
+            productNumberSelector: 'input[name="sAdd"]',
+
+            /**
+             * The selector for the indicator whether the PayPal javascript is already loaded or not
+             *
+             * @type string
+             */
+            paypalScriptLoadedSelector: 'paypal-checkout-js-loaded'
         },
 
         /**
@@ -121,9 +128,36 @@
         },
 
         /**
-         * Creates the paypal express checkout over the provided paypal javascript
+         * Creates the PayPal express checkout button with the loaded PayPal javascript
          */
         createButton: function() {
+            var me = this,
+                paypalScriptUrl = 'https://www.paypalobjects.com/api/checkout.min.js',
+                $head = $('head');
+
+            if (me.opts.paypalMode === 'sandbox') {
+                paypalScriptUrl = 'https://www.paypalobjects.com/api/checkout.js';
+            }
+
+            if (!$head.data(me.opts.paypalScriptLoadedSelector)) {
+                $.ajax({
+                    url: paypalScriptUrl,
+                    dataType: 'script',
+                    cache: true,
+                    success: function() {
+                        $head.data(me.opts.paypalScriptLoadedSelector, true);
+                        me.renderButton();
+                    }
+                });
+            } else {
+                me.renderButton();
+            }
+        },
+
+        /**
+         * Renders the ECS button
+         */
+        renderButton: function() {
             var me = this;
 
             // wait for the PayPal javascript to be loaded
