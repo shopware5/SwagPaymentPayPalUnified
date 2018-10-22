@@ -5,12 +5,25 @@
     <label lang="de">PayPal</label>
     <label lang="en">PayPal</label>
 
-    <version>1.1.0</version>
+    <version>1.1.1</version>
     <copyright>(c) by shopware AG</copyright>
     <license>MIT</license>
     <link>http://store.shopware.com</link>
     <author>shopware AG</author>
     <compatibility minVersion="5.2.0"/>
+
+    <changelog version="1.1.1">
+        <changes lang="de">
+            PT-8708 - Obsoleten Code und Tabellenspalte entfernt;
+            PT-9564 - Kompatibilität mit Safari auf iOS und MacOS verbessert;
+            PT-9710 - Übertragung von Preisen zu PayPal verbessert;
+        </changes>
+        <changes lang="en">
+            PT-8708 - Removed obsolete code and table column;
+            PT-9564 - Improved compatibility with Safari on iOS and MacOS;
+            PT-9710 - Improved transmission of prices to PayPal;
+        </changes>
+    </changelog>
 
     <changelog version="1.1.0">
         <changes lang="de">

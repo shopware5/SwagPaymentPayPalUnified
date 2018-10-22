@@ -97,7 +97,7 @@ class Item
     }
 
     /**
-     * @param float $price
+     * @param float|string $price
      */
     public function setPrice($price)
     {

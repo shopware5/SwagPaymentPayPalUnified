@@ -11,7 +11,7 @@ namespace SwagPaymentPayPalUnified\PayPalBundle\Structs\Installments\FinancingRe
 class TransactionAmount
 {
     /**
-     * @var float
+     * @var string
      */
     private $value;
 
@@ -21,7 +21,7 @@ class TransactionAmount
     private $currencyCode;
 
     /**
-     * @return float
+     * @return string
      */
     public function getValue()
     {
@@ -29,11 +29,11 @@ class TransactionAmount
     }
 
     /**
-     * @param float $value
+     * @param float|string $value
      */
     public function setValue($value)
     {
-        $this->value = $value;
+        $this->value = (string) $value;
     }
 
     /**
