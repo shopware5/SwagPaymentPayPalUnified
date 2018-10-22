@@ -46,7 +46,7 @@ class InstallmentsRequestService
         $financingRequest = new FinancingRequest();
         $financingRequest->setFinancingCountryCode('DE');
         $transactionAmount = new FinancingRequest\TransactionAmount();
-        $transactionAmount->setValue($productPrice);
+        $transactionAmount->setValue($this->formatPrice($productPrice));
         $transactionAmount->setCurrencyCode('EUR');
         $financingRequest->setTransactionAmount($transactionAmount);
 
@@ -63,5 +63,15 @@ class InstallmentsRequestService
 
             return null;
         }
+    }
+
+    /**
+     * @param float|string $price
+     *
+     * @return float
+     */
+    private function formatPrice($price)
+    {
+        return round((float) str_replace(',', '.', $price), 2);
     }
 }

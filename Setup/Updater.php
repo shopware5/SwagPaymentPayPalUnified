@@ -78,18 +78,46 @@ class Updater
 
     private function updateTo110()
     {
-        $sql = 'ALTER TABLE `swag_payment_paypal_unified_settings_general` 
-                ADD COLUMN `landing_page_type` VARCHAR(255);
-                UPDATE `swag_payment_paypal_unified_settings_general` SET `landing_page_type` = "Login";';
+        if (!$this->checkIfColumnExist('swag_payment_paypal_unified_settings_general', 'landing_page_type')) {
+            $sql = 'ALTER TABLE `swag_payment_paypal_unified_settings_general`
+                    ADD COLUMN `landing_page_type` VARCHAR(255);
+                    UPDATE `swag_payment_paypal_unified_settings_general`
+                    SET `landing_page_type` = "Login";';
 
-        $this->connection->executeQuery($sql);
+            $this->connection->executeQuery($sql);
+        }
     }
 
     private function updateTo111()
     {
-        $sql = 'ALTER TABLE `swag_payment_paypal_unified_settings_general` 
-                DROP COLUMN `logo_image`;';
+        if ($this->checkIfColumnExist('swag_payment_paypal_unified_settings_general', 'logo_image')) {
+            $sql = 'ALTER TABLE `swag_payment_paypal_unified_settings_general`
+                    DROP COLUMN `logo_image`;';
 
-        $this->connection->executeQuery($sql);
+            $this->connection->executeQuery($sql);
+        }
+    }
+
+    /**
+     * Helper function to check if a column exists which is needed during update
+     *
+     * @param string $tableName
+     * @param string $columnName
+     *
+     * @return bool
+     */
+    private function checkIfColumnExist($tableName, $columnName)
+    {
+        $sql = <<<SQL
+SELECT column_name
+FROM information_schema.columns
+WHERE table_name = :tableName
+    AND column_name = :columnName
+    AND table_schema = DATABASE();
+SQL;
+
+        $columnNameInDb = $this->connection->executeQuery($sql, ['tableName' => $tableName, 'columnName' => $columnName])->fetchColumn();
+
+        return $columnNameInDb === $columnName;
     }
 }
