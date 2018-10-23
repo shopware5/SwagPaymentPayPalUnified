@@ -11,7 +11,7 @@ namespace SwagPaymentPayPalUnified\Subscriber;
 use Doctrine\DBAL\Connection;
 use Enlight\Event\SubscriberInterface;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
-use SwagPaymentPayPalUnified\Components\Services\Installments\ValidationService;
+use SwagPaymentPayPalUnified\Components\Services\Installments\ValidationServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 
@@ -33,7 +33,7 @@ class PaymentMeans implements SubscriberInterface
     private $settingsService;
 
     /**
-     * @var ValidationService
+     * @var ValidationServiceInterface
      */
     private $installmentsValidationService;
 
@@ -50,13 +50,13 @@ class PaymentMeans implements SubscriberInterface
     /**
      * @param Connection                            $connection
      * @param SettingsServiceInterface              $settingsService
-     * @param ValidationService                     $installmentsValidationService
+     * @param ValidationServiceInterface            $installmentsValidationService
      * @param \Enlight_Components_Session_Namespace $session
      */
     public function __construct(
         Connection $connection,
         SettingsServiceInterface $settingsService,
-        ValidationService $installmentsValidationService,
+        ValidationServiceInterface $installmentsValidationService,
         \Enlight_Components_Session_Namespace $session
     ) {
         $this->connection = $connection;
