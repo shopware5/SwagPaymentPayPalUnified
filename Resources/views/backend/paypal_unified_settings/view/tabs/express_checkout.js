@@ -80,6 +80,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.ExpressCheckout', {
         me.ecIntentSelection = me.createPaymentIntentSelection();
         me.ecDetailActivate = me.createEcDetailActivate();
         me.ecCartActivate = me.createEcCartActivate();
+        me.ecOffCanvasActivate = me.createEcOffCanvasActivate();
         me.ecLoginActivate = me.createEcLoginActivate();
         me.ecButtonStyleColor = me.createEcButtonStyleColor();
         me.ecButtonStyleShape = me.createEcButtonStyleShape();
@@ -92,6 +93,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.ExpressCheckout', {
             me.ecIntentSelection,
             me.ecDetailActivate,
             me.ecCartActivate,
+            me.ecOffCanvasActivate,
             me.ecLoginActivate,
             me.ecButtonStyleColor,
             me.ecButtonStyleShape,
@@ -165,6 +167,19 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.ExpressCheckout', {
             name: 'cartActive',
             fieldLabel: '{s name=field/ecCartActivate}\'Pay now\' on cart{/s}',
             boxLabel: '{s name=field/ecCartActivate/help}If this option is active, the Express Checkout button will be shown on the cart.{/s}',
+            inputValue: true,
+            uncheckedValue: false
+        });
+    },
+
+    /**
+     * @returns { Ext.form.field.Checkbox }
+     */
+    createEcOffCanvasActivate: function() {
+        return Ext.create('Ext.form.field.Checkbox', {
+            name: 'offCanvasActive',
+            fieldLabel: '{s name=field/ecOffCanvasActivate}\'Pay now\' on Off-Canvas cart{/s}',
+            boxLabel: '{s name=field/ecOffCanvasActivate/help}If this option is active, the Express Checkout button will be shown on the Off-Canvas cart.{/s}',
             inputValue: true,
             uncheckedValue: false
         });

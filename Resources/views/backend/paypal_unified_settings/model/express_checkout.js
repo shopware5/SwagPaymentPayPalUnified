@@ -14,6 +14,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.model.ExpressCheckout', {
         { name: 'shopId', type: 'int' },
         { name: 'detailActive', type: 'bool', defaultValue: true },
         { name: 'cartActive', type: 'bool', defaultValue: true },
+        { name: 'offCanvasActive', type: 'bool', defaultValue: true },
         { name: 'loginActive', type: 'bool', defaultValue: true },
         { name: 'buttonStyleColor', type: 'string', defaultValue: 'gold' },
         { name: 'buttonStyleShape', type: 'string', defaultValue: 'rect' },
