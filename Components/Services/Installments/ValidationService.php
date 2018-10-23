@@ -8,7 +8,8 @@
 
 namespace SwagPaymentPayPalUnified\Components\Services\Installments;
 
-class ValidationService
+
+class ValidationService implements ValidationServiceInterface
 {
     /**
      * @param float $productPrice

@@ -16,7 +16,7 @@ use SwagPaymentPayPalUnified\Components\PaymentBuilderInterface;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\Services\Installments\OrderCreditInfoService;
-use SwagPaymentPayPalUnified\Components\Services\Installments\ValidationService;
+use SwagPaymentPayPalUnified\Components\Services\Installments\ValidationServiceInterface;
 use SwagPaymentPayPalUnified\Models\Settings\General as GeneralSettingsModel;
 use SwagPaymentPayPalUnified\Models\Settings\Installments as InstallmentsSettingsModel;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
@@ -35,7 +35,7 @@ class Installments implements SubscriberInterface
     private $settingsService;
 
     /**
-     * @var ValidationService
+     * @var ValidationServiceInterface
      */
     private $validationService;
 
@@ -76,7 +76,7 @@ class Installments implements SubscriberInterface
 
     /**
      * @param SettingsServiceInterface         $settingsService
-     * @param ValidationService                $validationService
+     * @param ValidationServiceInterface       $validationService
      * @param Connection                       $connection
      * @param PaymentBuilderInterface          $installmentsPaymentBuilder
      * @param ExceptionHandlerServiceInterface $exceptionHandlerService
@@ -86,7 +86,7 @@ class Installments implements SubscriberInterface
      */
     public function __construct(
         SettingsServiceInterface $settingsService,
-        ValidationService $validationService,
+        ValidationServiceInterface $validationService,
         Connection $connection,
         PaymentBuilderInterface $installmentsPaymentBuilder,
         ExceptionHandlerServiceInterface $exceptionHandlerService,
