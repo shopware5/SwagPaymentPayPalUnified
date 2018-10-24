@@ -57,6 +57,10 @@ class Updater
         if (version_compare($oldVersion, '1.1.0', '<=')) {
             $this->updateTo111();
         }
+
+        if (version_compare($oldVersion, '1.1.1', '<=')) {
+            $this->updateTo112();
+        }
     }
 
     private function updateTo103()
@@ -96,7 +100,10 @@ class Updater
 
             $this->connection->executeQuery($sql);
         }
+    }
 
+    private function updateTo112()
+    {
         if (!$this->checkIfColumnExist('swag_payment_paypal_unified_settings_express', 'off_canvas_active')) {
             $sql = 'ALTER TABLE `swag_payment_paypal_unified_settings_express` 
                 ADD `off_canvas_active`  TINYINT(1) NOT NULL; 
