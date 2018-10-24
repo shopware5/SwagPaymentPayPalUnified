@@ -22,7 +22,10 @@ Ext.define('Shopware.apps.PaypalUnified.view.overview.Window', {
 
         return {
             listingGrid: 'Shopware.apps.PaypalUnified.view.overview.Grid',
-            listingStore: 'Shopware.apps.PaypalUnified.store.Order'
+            listingStore: 'Shopware.apps.PaypalUnified.store.Order',
+            extensions: [
+                { xtype: 'paypal-unified-overview-filter-panel' }
+            ]
         };
     },
 
