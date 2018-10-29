@@ -149,12 +149,12 @@ class ExpressCheckout implements SubscriberInterface
 
         /** @var ExpressSettingsModel $expressSettings */
         $expressSettings = $this->settingsService->getSettings(null, SettingsTable::EXPRESS_CHECKOUT);
-        if (!$expressSettings || !$expressSettings->getCartActive()) {
+        if (!($expressSettings instanceof ExpressSettingsModel)) {
             return;
         }
 
         $view = $args->getSubject()->View();
-        $view->assign('paypalUnifiedEcCartActive', true);
+        $view->assign('paypalUnifiedEcCartActive', $expressSettings->getCartActive());
         $view->assign('paypalUnifiedModeSandbox', $generalSettings->getSandbox());
         $view->assign('paypalUnifiedEcOffCanvasActive', $expressSettings->getOffCanvasActive());
 
