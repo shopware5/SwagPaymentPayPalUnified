@@ -454,7 +454,28 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
             $sort[] = $defaultSort;
         }
 
-        return parent::getList($offset, $limit, $sort, $filter, $wholeParams);
+        $orderList = parent::getList($offset, $limit, $sort, $filter, $wholeParams);
+
+        /*
+         * After the removal of the order/payment status description in Shopware 5.5,
+         * we need to add the translations manually.
+         */
+        $orderStatusNamespace = $this->container->get('snippets')->getNamespace('backend/static/order_status');
+        $paymentStatusNamespace = $this->container->get('snippets')->getNamespace('backend/static/payment_status');
+
+        $orderList['data'] = array_map(function ($order) use ($orderStatusNamespace, $paymentStatusNamespace) {
+            if (!isset($order['orderStatus']['description'])) {
+                $order['orderStatus']['description'] = $orderStatusNamespace->get($order['orderStatus']['name']);
+            }
+
+            if (!isset($order['paymentStatus']['description'])) {
+                $order['paymentStatus']['description'] = $paymentStatusNamespace->get($order['paymentStatus']['name']);
+            }
+
+            return $order;
+        }, $orderList['data']);
+
+        return $orderList;
     }
 
     /**
