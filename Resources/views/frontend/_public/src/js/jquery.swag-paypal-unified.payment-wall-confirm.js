@@ -142,12 +142,22 @@
          * @private
          * @method addressPatchAjaxCallbackSuccess
          */
-        addressPatchAjaxCallbackError: function() {
-            var me = this;
+        addressPatchAjaxCallbackError: function () {
+            var me = this,
+                redirectUrl = me.opts.paypalErrorPage;
 
             $.publish('plugin/swagPayPalUnifiedPaymentWall/afterPatchAddress', me);
 
-            $(location).attr('href', me.opts.paypalErrorPage);
+            /**
+             * We need to call 2 different error pages. One for a validation error
+             * and the other for general errors. The default error code 2 comes from the template.
+             */
+            if (arguments[2] === 'Unprocessable Entity') {
+                redirectUrl = me.stripErrorCodeFromUrl(redirectUrl) + '7';
+                $(location).attr('href', redirectUrl);
+            }
+
+            $(location).attr('href', redirectUrl);
         },
 
         /**
@@ -159,6 +169,12 @@
             $.unsubscribe(me.getEventName('plugin/swagPayPalUnifiedPaymentWall/init'));
 
             me._destroy();
+        },
+
+        stripErrorCodeFromUrl: function (url) {
+            var index = url.lastIndexOf('/');
+
+            return url.slice(0, index + 1);
         }
     });
 

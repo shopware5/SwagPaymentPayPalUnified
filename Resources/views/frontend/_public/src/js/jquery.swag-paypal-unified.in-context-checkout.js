@@ -110,7 +110,14 @@
              *
              * @type string
              */
-            paypalScriptLoadedSelector: 'paypal-checkout-js-loaded'
+            paypalScriptLoadedSelector: 'paypal-checkout-js-loaded',
+
+            /**
+             * This page will be opened when the payment creation fails.
+             *
+             * @type string
+             */
+            paypalErrorPage: ''
         },
 
         /**
@@ -323,7 +330,8 @@
          * @return {string}
          */
         onPayPalPayment: function() {
-            var me = this;
+            var me = this,
+                redirectUrl = me.opts.paypalErrorPage;
 
             $('<input>', {
                 type: 'hidden',
@@ -334,6 +342,10 @@
             $.publish('plugin/swagPayPalUnifiedInContextCheckout/beforeCreatePayment', [me, me.$form]);
 
             return me.processPayment().then(function(response) {
+                if (response.addressValidation === false) {
+                    redirectUrl = me.stripErrorCodeFromUrl(redirectUrl) + '7';
+                    $(location).attr('href', redirectUrl);
+                }
                 $.publish('plugin/swagPayPalUnifiedInContextCheckout/paymentCreated', [me, response]);
                 return response.paymentId;
             });
@@ -356,8 +368,18 @@
             return $.ajax({
                 url: url,
                 method: method,
-                data: data
+                data: data,
+                error: $.proxy(me.onProcessPaymentError, me)
             }).promise();
+        },
+
+        /**
+         * Redirects the user to the standard error page.
+         */
+        onProcessPaymentError: function() {
+            var me = this;
+
+            $(location).attr('href', me.opts.paypalErrorPage);
         },
 
         /**
@@ -385,6 +407,12 @@
             timeout = timeout || 100;
 
             return window.setTimeout(fn.bind(me), timeout);
+        },
+
+        stripErrorCodeFromUrl: function (url) {
+            var index = url.lastIndexOf('/');
+
+            return url.slice(0, index + 1);
         }
     });
 

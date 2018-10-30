@@ -9,6 +9,7 @@
                  data-shape="{$paypalUnifiedEcButtonStyleShape}"
                  data-size="{$paypalUnifiedEcButtonStyleSize}"
                  data-paypalLanguage="{$paypalUnifiedLanguageIso}"
+                 data-paypalErrorPage="{url controller=checkout action=shippingPayment paypal_unified_error_code=2}"
                 {block name='frontend_checkout_confirm_paypal_unified_in_context_button_data'}{/block}>
             </div>
         {/block}

@@ -140,7 +140,28 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
         $addressPatch = new PaymentAddressPatch($addressService->getShippingAddress($userData));
         $payerInfoPatch = new PayerInfoPatch($addressService->getPayerInfo($userData));
 
-        $this->paymentResource->patch($responseStruct->getId(), [$addressPatch, $payerInfoPatch]);
+        try {
+            $this->paymentResource->patch($responseStruct->getId(), [
+                $addressPatch,
+                $payerInfoPatch,
+            ]);
+        } catch (\Exception $exception) {
+            /*
+             * The field addressValidation gets checked via JavaScript to ensure the redirect to the right error page,
+             * if the user uses the In-Context mode.
+             */
+            if ($this->Request()->getParam('useInContext')) {
+                $this->Front()->Plugins()->Json()->setRenderer();
+
+                $this->View()->assign('addressValidation', false);
+
+                return;
+            }
+
+            $this->handleError(ErrorCodes::ADDRESS_VALIDATION_ERROR, $exception);
+
+            return;
+        }
 
         if ($this->Request()->getParam('useInContext')) {
             $this->Front()->Plugins()->Json()->setRenderer();
@@ -314,8 +335,17 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
             $this->client->setPartnerAttributionId(PartnerAttributionId::PAYPAL_PLUS);
             $this->paymentResource->patch($paymentId, [$addressPatch, $payerInfoPatch, $itemsPatch, $amountPatch]);
         } catch (Exception $e) {
-            $this->get('paypal_unified.exception_handler_service')->handle($e, 'patch address, payer info, item list and amount');
-            // trigger error callback method of ajax call
+            $response = $this->get('paypal_unified.exception_handler_service')->handle($e, 'patch address, payer info, item list and amount');
+
+            /*
+             * The two response codes are used to differ the error via the ajax call.
+             */
+            if ($response->getName() === 'VALIDATION_ERROR') {
+                $this->Response()->setHttpResponseCode(422);
+
+                return;
+            }
+
             $this->Response()->setHttpResponseCode(400);
         }
     }
