@@ -17,4 +17,5 @@ class ErrorCodes
     const UNKNOWN = 4;
     const INSTALLMENTS_ERROR = 5;
     const BASKET_VALIDATION_ERROR = 6;
+    const ADDRESS_VALIDATION_ERROR = 7;
 }

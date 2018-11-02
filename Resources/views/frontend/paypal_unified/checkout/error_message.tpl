@@ -19,6 +19,9 @@
         {elseif $paypalUnifiedErrorCode == 6}
             {* Basket validation error *}
             {include file='frontend/_includes/messages.tpl' type='error' content="{s name="error/basket"}The basket has been changed during payment process. Please proceed the payment again.{/s}"}
+        {elseif $paypalUnifiedErrorCode == 7}
+            {* Address validation error *}
+            {include file='frontend/_includes/messages.tpl' type='error' content="{s name="error/address"}PayPal was unable to validate the provided address. Please check your input data.{/s}"}
         {else}
             {* Unknown error *}
             {include file='frontend/_includes/messages.tpl' type='error' content="{s name="error/unkown"}An unknown error occurred while processing the payment.{/s}"}
