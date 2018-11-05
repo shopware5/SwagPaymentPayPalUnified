@@ -5,12 +5,27 @@
     <label lang="de">PayPal</label>
     <label lang="en">PayPal</label>
 
-    <version>1.1.1</version>
+    <version>2.0.0</version>
     <copyright>(c) by shopware AG</copyright>
     <license>MIT</license>
     <link>http://store.shopware.com</link>
     <author>shopware AG</author>
     <compatibility minVersion="5.2.0"/>
+
+    <changelog version="2.0.0">
+        <changes lang="de">
+            PT-9704 - Paypal Expresscheckout Konfiguration optimiert
+            PT-9705 - Google Pagespeed Kritieren optimiert
+            PT-9738 - Fehler in der Suche der Paypal Bestellübersicht behoben
+            PT-9752 - Bessere Fehlermeldungen bei der Übermittlung von inkorrekten Adressdaten
+        </changes>
+        <changes lang="en">
+            PT-9704 - Optimized Paypal expresscheckout configuration
+            PT-9705 - Optimization for Google pagespeed
+            PT-9738 - Fixed an error in order overview search
+            PT-9752 - Optimized error messages when submitting incorrect address data
+        </changes>
+    </changelog>
 
     <changelog version="1.1.1">
         <changes lang="de">
