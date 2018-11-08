@@ -87,6 +87,7 @@ class ExpressCheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
             'subject' => new DummyController($request, $view, null),
+            'request' => $request,
         ]);
 
         $this->importSettings(true, false, true);
@@ -533,13 +534,15 @@ class ExpressCheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
      * @param bool $ecDetailActive
      * @param bool $sandboxMode
      * @param bool $ecLoginActive
+     * @param bool $ecOffCanvasActive
      */
     private function importSettings(
         $active = false,
         $ecCartActive = false,
         $ecDetailActive = false,
         $sandboxMode = false,
-        $ecLoginActive = false
+        $ecLoginActive = false,
+        $ecOffCanvasActive = false
     ) {
         $this->insertGeneralSettingsFromArray([
             'active' => $active,
@@ -551,6 +554,7 @@ class ExpressCheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
             'cartActive' => $ecCartActive,
             'detailActive' => $ecDetailActive,
             'loginActive' => $ecLoginActive,
+            'offCanvasActive' => $ecOffCanvasActive,
         ]);
     }
 
