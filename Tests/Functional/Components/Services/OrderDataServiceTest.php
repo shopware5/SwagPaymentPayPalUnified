@@ -24,7 +24,6 @@ class OrderDataServiceTest extends \PHPUnit_Framework_TestCase
     use SettingsHelperTrait;
 
     const ORDER_NUMBER = 99999;
-    const PAYMENT_STATUS_APPROVED = 12;
     const TEST_TRANSACTION_ID = 'FAKE-PAYPAL-TRANSACTION-ID';
 
     public function test_order_data_service_test_is_available()
@@ -32,6 +31,19 @@ class OrderDataServiceTest extends \PHPUnit_Framework_TestCase
         $orderDataService = $this->getOrderDataService();
 
         $this->assertInstanceOf(OrderDataService::class, $orderDataService);
+    }
+
+    public function test_order_cleared_date_is_set()
+    {
+        $orderDataService = $this->getOrderDataService();
+
+        $orderDataService->setClearedDate(self::ORDER_NUMBER);
+
+        /** @var Connection $dbalConnection */
+        $dbalConnection = Shopware()->Container()->get('dbal_connection');
+        $orderCleared = (bool) $dbalConnection->executeQuery('SELECT * FROM s_order AS o WHERE o.cleareddate IS NOT NULL AND o.ordernumber="' . self::ORDER_NUMBER . '"')->fetchAll();
+
+        $this->assertTrue($orderCleared);
     }
 
     public function test_should_update_transaction_id()
