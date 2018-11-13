@@ -254,22 +254,19 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
             /** @var RelatedResource $responseSale */
             $responseSale = $response->getTransactions()->getRelatedResources()->getResources()[0];
 
-            // apply the payment status if its completed by PayPal
-            $paymentState = $responseSale->getState();
-            if ($paymentState === PaymentStatus::PAYMENT_COMPLETED &&
-                !$orderDataService->applyPaymentStatus($orderNumber, PaymentStatus::PAYMENT_STATUS_APPROVED)
-            ) {
-                $this->handleError(ErrorCodes::NO_ORDER_TO_PROCESS);
-
-                return;
-            }
-
             //Use TXN-ID instead of the PaymentId
             $saleId = $responseSale->getId();
             if (!$orderDataService->applyTransactionId($orderNumber, $saleId)) {
                 $this->handleError(ErrorCodes::NO_ORDER_TO_PROCESS);
 
                 return;
+            }
+
+            // apply the payment status if its completed by PayPal
+            $paymentState = $responseSale->getState();
+            if ($paymentState === PaymentStatus::PAYMENT_COMPLETED) {
+                $this->savePaymentStatus($saleId, $paymentId, PaymentStatus::PAYMENT_STATUS_APPROVED);
+                $orderDataService->setClearedDate($orderNumber);
             }
 
             // Save payment instructions from PayPal to database.

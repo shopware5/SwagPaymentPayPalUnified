@@ -44,6 +44,9 @@ class OrderDataService
      * @param int    $paymentStatusId
      *
      * @return bool
+     *
+     * @deprecated Deprecated since 2.0.1, will be removed in 3.0.0, no replacement implemented.
+     * Core functionality will be used from now on.
      */
     public function applyPaymentStatus($orderNumber, $paymentStatusId)
     {
@@ -61,6 +64,19 @@ class OrderDataService
         }
 
         return $builder->execute() === 1;
+    }
+
+    /**
+     * @param string $orderNumber
+     */
+    public function setClearedDate($orderNumber)
+    {
+        $builder = $this->dbalConnection->createQueryBuilder();
+        $builder->update('s_order', 'o')
+            ->set('o.cleareddate', 'NOW()')
+            ->where('o.ordernumber = :orderNumber')
+            ->setParameter(':orderNumber', $orderNumber)
+            ->execute();
     }
 
     /**
