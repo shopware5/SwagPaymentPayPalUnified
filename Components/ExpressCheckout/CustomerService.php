@@ -9,6 +9,7 @@
 namespace SwagPaymentPayPalUnified\Components\ExpressCheckout;
 
 use Doctrine\DBAL\Connection;
+use Enlight_Controller_Front;
 use sAdmin;
 use Shopware\Bundle\AccountBundle\Form\Account\AddressFormType;
 use Shopware\Bundle\AccountBundle\Form\Account\PersonalFormType;
@@ -57,7 +58,7 @@ class CustomerService
     private $paymentMethodProvider;
 
     /**
-     * @var \Enlight_Controller_Front
+     * @var Enlight_Controller_Front
      */
     private $front;
 
@@ -72,13 +73,13 @@ class CustomerService
     private $adminModule;
 
     /**
-     * @param ShopwareConfig            $shopwareConfig
-     * @param Connection                $connection
-     * @param FormFactoryInterface      $formFactory
-     * @param ContextServiceInterface   $contextService
-     * @param RegisterServiceInterface  $registerService
-     * @param \Enlight_Controller_Front $front
-     * @param DependencyProvider        $dependencyProvider
+     * @param ShopwareConfig           $shopwareConfig
+     * @param Connection               $connection
+     * @param FormFactoryInterface     $formFactory
+     * @param ContextServiceInterface  $contextService
+     * @param RegisterServiceInterface $registerService
+     * @param Enlight_Controller_Front $front
+     * @param DependencyProvider       $dependencyProvider
      */
     public function __construct(
         ShopwareConfig $shopwareConfig,
@@ -86,7 +87,7 @@ class CustomerService
         FormFactoryInterface $formFactory,
         ContextServiceInterface $contextService,
         RegisterServiceInterface $registerService,
-        \Enlight_Controller_Front $front,
+        Enlight_Controller_Front $front,
         DependencyProvider $dependencyProvider
     ) {
         $this->shopwareConfig = $shopwareConfig;
@@ -210,5 +211,12 @@ class CustomerService
         $request->setPost('email', $customerModel->getEmail());
         $request->setPost('passwordMD5', $customerModel->getPassword());
         $this->adminModule->sLogin(true);
+
+        // Set country and area to session, so the cart will be calculated correctly,
+        // e.g. the country changed and has different taxes
+        $session = $this->dependencyProvider->getSession();
+        $customerShippingCountry = $customerModel->getDefaultShippingAddress()->getCountry();
+        $session->offsetSet('sCountry', $customerShippingCountry->getId());
+        $session->offsetSet('sArea', $customerShippingCountry->getArea()->getId());
     }
 }
