@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\Components;
 
+use Enlight_Components_Session_Namespace as ShopwareSession;
 use Shopware\Components\DependencyInjection\Container as DIContainer;
 use Shopware\Models\Shop\DetachedShop;
 
@@ -51,5 +52,13 @@ class DependencyProvider
         $modules = $this->container->get('modules');
 
         return $modules->getModule($moduleName);
+    }
+
+    /**
+     * @return ShopwareSession
+     */
+    public function getSession()
+    {
+        return $this->container->get('session');
     }
 }

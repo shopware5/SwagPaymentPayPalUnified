@@ -12,6 +12,7 @@ use Doctrine\DBAL\Connection;
 use Enlight\Event\SubscriberInterface;
 use Enlight_Components_Session_Namespace as Session;
 use Enlight_Controller_ActionEventArgs as ActionEventArgs;
+use Exception;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\ExceptionHandlerServiceInterface;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderInterface;
@@ -210,7 +211,7 @@ class ExpressCheckout implements SubscriberInterface
         $request = $args->getRequest();
 
         if (strtolower($request->getActionName()) === 'payment' &&
-            $request->getParam('expressCheckout') &&
+            $request->getParam('expressCheckout', false) &&
             $args->getResponse()->isRedirect()
         ) {
             $paymentId = $request->getParam('paymentId');
@@ -305,7 +306,7 @@ class ExpressCheckout implements SubscriberInterface
      *
      * @param string $paymentId
      *
-     * @throws \Exception
+     * @throws Exception
      */
     private function patchAddressAndAmount($paymentId)
     {
@@ -334,7 +335,7 @@ class ExpressCheckout implements SubscriberInterface
             }
 
             $this->paymentResource->patch($paymentId, [$addressPatch, $amountPatch]);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             $this->exceptionHandlerService->handle($exception, 'patch the payment for express checkout');
             throw $exception;
         }

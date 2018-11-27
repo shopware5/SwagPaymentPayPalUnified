@@ -5,7 +5,6 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 use Shopware\Components\HttpClient\RequestException;
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
 use SwagPaymentPayPalUnified\Components\ExceptionHandlerServiceInterface;
@@ -219,7 +218,9 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
             }
 
             //Basket validation with shopware 5.2 support
-            if (in_array($basketId, BasketIdWhitelist::WHITELIST_IDS, true) || version_compare($this->shopwareConfig->get('version'), '5.3.0', '<')) {
+            if (in_array($basketId, BasketIdWhitelist::WHITELIST_IDS, true) ||
+                version_compare($this->shopwareConfig->get('version'), '5.3.0', '<')
+            ) {
                 //For shopware < 5.3 and for whitelisted basket ids
                 $payment = $this->paymentResource->get($paymentId);
                 $basketValid = $this->validateBasketSimple(Payment::fromArray($payment));
