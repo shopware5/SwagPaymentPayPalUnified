@@ -132,7 +132,7 @@ class Plus implements SubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            'Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout' => 'onPostDispatchCheckout',
+            'Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout' => ['onPostDispatchCheckout', -10],
             'Shopware_Modules_Admin_GetPaymentMeans_DataFilter' => 'addPaymentMethodsAttributes',
         ];
     }
