@@ -16,8 +16,8 @@ class SimpleBasketValidatorTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider test_is_valid_dataProvider
      *
-     * @param float $amountNumeric
-     * @param float amountNetNumeric
+     * @param float    $amountNumeric
+     * @param float    $amountNetNumeric
      * @param int|null $chargeVat
      * @param float    $totalAmount
      * @param bool     $expectedResult
@@ -30,8 +30,9 @@ class SimpleBasketValidatorTest extends \PHPUnit_Framework_TestCase
         ];
         $userData = [
             'additional' => [
-            'charge_vat' => $chargeVat,
-        ], ];
+                'charge_vat' => $chargeVat,
+            ],
+        ];
 
         $payment = new Payment();
         $transactions = new Payment\Transactions();
