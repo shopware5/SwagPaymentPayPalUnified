@@ -33,7 +33,7 @@ class PlusSubscriberTest extends \PHPUnit_Framework_TestCase
     public function test_getSubscribedEvents_has_correct_events()
     {
         $events = Plus::getSubscribedEvents();
-        $this->assertEquals('onPostDispatchCheckout', $events['Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout']);
+        $this->assertEquals(['onPostDispatchCheckout', -10], $events['Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout']);
     }
 
     public function test_onPostDispatchCheckout_should_return_payment_method_inactive()
