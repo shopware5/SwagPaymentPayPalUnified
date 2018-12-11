@@ -346,12 +346,6 @@ class ExpressCheckout implements SubscriberInterface
      */
     private function getExpressCheckoutButtonLanguage()
     {
-        $languageIso = $this->dependencyProvider->getShop()->getLocale()->getLocale();
-
-        if (strncmp($languageIso, 'de_', 3) === 0) {
-            $languageIso = 'de_DE';
-        }
-
-        return $languageIso;
+        return $this->dependencyProvider->getShop()->getLocale()->getLocale();
     }
 }

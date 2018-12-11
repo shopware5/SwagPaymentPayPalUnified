@@ -105,7 +105,7 @@ class InContext implements SubscriberInterface
         $view->assign('paypalUnifiedEcButtonStyleColor', $expressSettings->getButtonStyleColor());
         $view->assign('paypalUnifiedEcButtonStyleShape', $expressSettings->getButtonStyleShape());
         $view->assign('paypalUnifiedEcButtonStyleSize', $expressSettings->getButtonStyleSize());
-        $view->assign('paypalUnifiedLanguageIso', $this->getExpressCheckoutButtonLanguage());
+        $view->assign('paypalUnifiedLanguageIso', $this->dependencyProvider->getShop()->getLocale()->getLocale());
     }
 
     /**
@@ -124,19 +124,5 @@ class InContext implements SubscriberInterface
                 'useInContext' => true,
             ]);
         }
-    }
-
-    /**
-     * @return string
-     */
-    private function getExpressCheckoutButtonLanguage()
-    {
-        $languageIso = $this->dependencyProvider->getShop()->getLocale()->getLocale();
-
-        if (strpos($languageIso, 'de_') === 0) {
-            $languageIso = 'de_DE';
-        }
-
-        return $languageIso;
     }
 }

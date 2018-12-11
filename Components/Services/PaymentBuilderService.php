@@ -357,7 +357,7 @@ class PaymentBuilderService implements PaymentBuilderInterface
         $applicationContext = new ApplicationContext();
 
         $applicationContext->setBrandName($this->getBrandName());
-        $applicationContext->setLocale($this->getLocale());
+        $applicationContext->setLocale($this->dependencyProvider->getShop()->getLocale()->getLocale());
         $applicationContext->setLandingPage($this->getLandingPage());
 
         if ($paymentType === PaymentType::PAYPAL_EXPRESS) {
@@ -365,22 +365,6 @@ class PaymentBuilderService implements PaymentBuilderInterface
         }
 
         return $applicationContext;
-    }
-
-    /**
-     * Returns the locale as a 5 digit ISO code
-     *
-     * @return string
-     */
-    private function getLocale()
-    {
-        $locale = $this->dependencyProvider->getShop()->getLocale()->getLocale();
-
-        if (strpos($locale, 'de_') === 0) {
-            $locale = 'de_DE';
-        }
-
-        return $locale;
     }
 
     /**
