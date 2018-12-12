@@ -78,9 +78,14 @@
 
             $.publish('plugin/swagPayPalUnifiedPaymentWall/beforePatchAddress', me);
 
+            var $customerCommentField = $(".user-comment--hidden");
+
             $.ajax({
                 url: me.opts.paypalAddressPatchUrl,
-                data: { paymentId: me.opts.paypalRemotePaymentId },
+                data: {
+                    paymentId: me.opts.paypalRemotePaymentId,
+                    sComment: $customerCommentField.val()
+                },
                 method: 'POST',
                 success: $.proxy(me.addressPatchAjaxCallbackSuccess, me),
                 error: $.proxy(me.addressPatchAjaxCallbackError, me)
