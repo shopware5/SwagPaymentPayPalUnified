@@ -44,7 +44,14 @@
              *
              * @type string
              */
-            paypalErrorPage: ''
+            paypalErrorPage: '',
+
+            /**
+             * Selector for the input field for the customer comment
+             *
+             * @type string
+             */
+            customerCommentSelector: '.user-comment--hidden'
         },
 
         init: function() {
@@ -74,17 +81,16 @@
          * Patches the customer's address into the payment object.
          */
         patchPaymentAddress: function() {
-            var me = this;
+            var me = this,
+                customerComment = $(me.opts.customerCommentSelector).val();
 
             $.publish('plugin/swagPayPalUnifiedPaymentWall/beforePatchAddress', me);
-
-            var $customerCommentField = $(".user-comment--hidden");
 
             $.ajax({
                 url: me.opts.paypalAddressPatchUrl,
                 data: {
                     paymentId: me.opts.paypalRemotePaymentId,
-                    sComment: $customerCommentField.val()
+                    customerComment: customerComment
                 },
                 method: 'POST',
                 success: $.proxy(me.addressPatchAjaxCallbackSuccess, me),

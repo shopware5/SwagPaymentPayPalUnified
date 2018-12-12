@@ -293,8 +293,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
                 $redirectParameter['expressCheckout'] = true;
             }
 
-            // Reset the sComment Session for a new basket
-            $this->get('session')['sComment'] = null;
+            $this->get('session')->offsetUnset('sComment');
 
             // Done, redirect to the finish page
             $this->redirect($redirectParameter);
@@ -314,14 +313,17 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
     {
         $this->Front()->Plugins()->ViewRenderer()->setNoRender();
 
-        $paymentId = $this->Request()->getParam('paymentId');
-        $orderData = $this->get('session')->get('sOrderVariables');
+        $request = $this->Request();
+        $session = $this->get('session');
+
+        $paymentId = $request->getParam('paymentId');
+        $orderData = $session->get('sOrderVariables');
         $userData = $orderData['sUserData'];
         $basketData = $orderData['sBasket'];
 
-        $customerComment = $this->Request()->getParam('sComment');
-        if ($customerComment) {
-            $this->get('session')['sComment'] = $customerComment;
+        $customerComment = (string) $request->getParam('customerComment', '');
+        if ($customerComment !== '') {
+            $session->offsetSet('sComment', $customerComment);
         }
 
         /** @var PaymentAddressService $addressService */
