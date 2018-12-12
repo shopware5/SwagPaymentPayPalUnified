@@ -293,6 +293,9 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
                 $redirectParameter['expressCheckout'] = true;
             }
 
+            // Reset the sComment Session for a new basket
+            $this->get('session')['sComment'] = null;
+
             // Done, redirect to the finish page
             $this->redirect($redirectParameter);
         } catch (RequestException $exception) {
@@ -315,6 +318,11 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
         $orderData = $this->get('session')->get('sOrderVariables');
         $userData = $orderData['sUserData'];
         $basketData = $orderData['sBasket'];
+
+        $customerComment = $this->Request()->getParam('sComment');
+        if ($customerComment) {
+            $this->get('session')['sComment'] = $customerComment;
+        }
 
         /** @var PaymentAddressService $addressService */
         $addressService = $this->get('paypal_unified.payment_address_service');
