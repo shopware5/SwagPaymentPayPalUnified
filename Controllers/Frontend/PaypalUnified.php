@@ -293,6 +293,8 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
                 $redirectParameter['expressCheckout'] = true;
             }
 
+            $this->get('session')->offsetUnset('sComment');
+
             // Done, redirect to the finish page
             $this->redirect($redirectParameter);
         } catch (RequestException $exception) {
@@ -311,10 +313,18 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
     {
         $this->Front()->Plugins()->ViewRenderer()->setNoRender();
 
-        $paymentId = $this->Request()->getParam('paymentId');
-        $orderData = $this->get('session')->get('sOrderVariables');
+        $request = $this->Request();
+        $session = $this->get('session');
+
+        $paymentId = $request->getParam('paymentId');
+        $orderData = $session->get('sOrderVariables');
         $userData = $orderData['sUserData'];
         $basketData = $orderData['sBasket'];
+
+        $customerComment = (string) $request->getParam('customerComment', '');
+        if ($customerComment !== '') {
+            $session->offsetSet('sComment', $customerComment);
+        }
 
         /** @var PaymentAddressService $addressService */
         $addressService = $this->get('paypal_unified.payment_address_service');
