@@ -23,12 +23,17 @@ class ApplicationContext
     /**
      * @var string
      */
-    private $userAction = 'commit';
+    private $landingPage;
 
     /**
      * @var string
      */
-    private $landingPage;
+    private $shippingPreference = 'SET_PROVIDED_ADDRESS';
+
+    /**
+     * @var string
+     */
+    private $userAction = 'commit';
 
     /**
      * @return string
@@ -65,22 +70,6 @@ class ApplicationContext
     /**
      * @return string
      */
-    public function getUserAction()
-    {
-        return $this->userAction;
-    }
-
-    /**
-     * @param string $userAction
-     */
-    public function setUserAction($userAction)
-    {
-        $this->userAction = $userAction;
-    }
-
-    /**
-     * @return string
-     */
     public function getLandingPage()
     {
         return $this->landingPage;
@@ -95,6 +84,38 @@ class ApplicationContext
     }
 
     /**
+     * @return string
+     */
+    public function getShippingPreference()
+    {
+        return $this->shippingPreference;
+    }
+
+    /**
+     * @param string $shippingPreference
+     */
+    public function setShippingPreference($shippingPreference)
+    {
+        $this->shippingPreference = $shippingPreference;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUserAction()
+    {
+        return $this->userAction;
+    }
+
+    /**
+     * @param string $userAction
+     */
+    public function setUserAction($userAction)
+    {
+        $this->userAction = $userAction;
+    }
+
+    /**
      * @return array
      */
     public function toArray()
@@ -102,8 +123,9 @@ class ApplicationContext
         return [
             'brand_name' => $this->getBrandName(),
             'locale' => $this->getLocale(),
-            'user_action' => $this->getUserAction(),
             'landing_page' => $this->getLandingPage(),
+            'shipping_preference' => $this->getShippingPreference(),
+            'user_action' => $this->getUserAction(),
         ];
     }
 }
