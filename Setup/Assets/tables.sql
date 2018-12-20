@@ -39,6 +39,7 @@ CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_settings_express (
     `cart_active`        TINYINT(1) NOT NULL,
     `off_canvas_active`  TINYINT(1) NOT NULL,
     `login_active`       TINYINT(1) NOT NULL,
+    `listing_active`     TINYINT(1) NOT NULL,
     `button_style_color` VARCHAR(255),
     `button_style_shape` VARCHAR(255),
     `button_style_size`  VARCHAR(255),

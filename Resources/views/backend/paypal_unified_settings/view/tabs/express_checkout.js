@@ -44,6 +44,11 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.ExpressCheckout', {
     ecLoginActivate: null,
 
     /**
+     * @type { Ext.form.field.Checkbox }
+     */
+    ecListingActivate: null,
+
+    /**
      * @type { Ext.form.field.ComboBox }
      */
     ecButtonStyleColor: null,
@@ -82,6 +87,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.ExpressCheckout', {
         me.ecCartActivate = me.createEcCartActivate();
         me.ecOffCanvasActivate = me.createEcOffCanvasActivate();
         me.ecLoginActivate = me.createEcLoginActivate();
+        me.ecListingActivate = me.createEcListingActivate();
         me.ecButtonStyleColor = me.createEcButtonStyleColor();
         me.ecButtonStyleShape = me.createEcButtonStyleShape();
         me.ecButtonStyleSize = me.createEcButtonStyleSize();
@@ -95,6 +101,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.ExpressCheckout', {
             me.ecCartActivate,
             me.ecOffCanvasActivate,
             me.ecLoginActivate,
+            me.ecListingActivate,
             me.ecButtonStyleColor,
             me.ecButtonStyleShape,
             me.ecButtonStyleSize,
@@ -193,6 +200,19 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.ExpressCheckout', {
             name: 'loginActive',
             fieldLabel: '{s name=field/ecLoginActivate}\'Pay now\' on login page{/s}',
             boxLabel: '{s name=field/ecLoginActivate/help}If this option is active, the Express Checkout button will be shown on the login and register page.{/s}',
+            inputValue: true,
+            uncheckedValue: false
+        });
+    },
+
+    /**
+     * @returns { Ext.form.field.Checkbox }
+     */
+    createEcListingActivate: function() {
+        return Ext.create('Ext.form.field.Checkbox', {
+            name: 'listingActive',
+            fieldLabel: '{s name=field/ecListingActivate}\'Pay now\' on listing pages{/s}',
+            boxLabel: '{s name=field/ecListingActivate/help}If this option is active, the Express Checkout button will be shown on listing pages.{/s}',
             inputValue: true,
             uncheckedValue: false
         });

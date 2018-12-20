@@ -225,6 +225,7 @@ class SettingsServiceTest extends \PHPUnit_Framework_TestCase
             'detailActive' => true,
             'cartActive' => true,
             'loginActive' => true,
+            'listingActive' => false,
             'offCanvasActive' => true,
         ]);
     }

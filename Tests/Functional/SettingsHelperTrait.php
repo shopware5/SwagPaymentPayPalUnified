@@ -31,31 +31,31 @@ trait SettingsHelperTrait
      */
     public function insertGeneralSettingsFromArray(array $data)
     {
-        if (empty($data['showSidebarLogo'])) {
+        if (!isset($data['showSidebarLogo'])) {
             $data['showSidebarLogo'] = false;
         }
 
-        if (empty($data['useInContext'])) {
+        if (!isset($data['useInContext'])) {
             $data['useInContext'] = false;
         }
 
-        if (empty($data['sendOrderNumber'])) {
+        if (!isset($data['sendOrderNumber'])) {
             $data['sendOrderNumber'] = false;
         }
 
-        if (empty($data['logLevel'])) {
+        if (!isset($data['logLevel'])) {
             $data['logLevel'] = 1;
         }
 
-        if (empty($data['displayErrors'])) {
+        if (!isset($data['displayErrors'])) {
             $data['displayErrors'] = false;
         }
 
-        if (empty($data['advertiseReturns'])) {
+        if (!isset($data['advertiseReturns'])) {
             $data['advertiseReturns'] = false;
         }
 
-        if (empty($data['brandName'])) {
+        if (!isset($data['brandName'])) {
             $data['brandName'] = 'TestBrandName';
         }
 
@@ -80,15 +80,15 @@ trait SettingsHelperTrait
      */
     public function insertInstallmentsSettingsFromArray(array $data)
     {
-        if (empty($data['shopId'])) {
+        if (!isset($data['shopId'])) {
             $data['shopId'] = 1;
         }
 
-        if (empty($data['showLogo'])) {
+        if (!isset($data['showLogo'])) {
             $data['showLogo'] = 0;
         }
 
-        if (empty($data['intent'])) {
+        if (!isset($data['intent'])) {
             $data['intent'] = 0;
         }
 
@@ -111,15 +111,15 @@ trait SettingsHelperTrait
      */
     public function insertPlusSettingsFromArray(array $data)
     {
-        if (empty($data['shopId'])) {
+        if (!isset($data['shopId'])) {
             $data['shopId'] = 1;
         }
 
-        if (empty($data['restyle'])) {
+        if (!isset($data['restyle'])) {
             $data['restyle'] = 0;
         }
 
-        if (empty($data['integrateThirdPartyMethods'])) {
+        if (!isset($data['integrateThirdPartyMethods'])) {
             $data['integrateThirdPartyMethods'] = 0;
         }
 
@@ -142,32 +142,36 @@ trait SettingsHelperTrait
      */
     public function insertExpressCheckoutSettingsFromArray(array $data)
     {
-        if (empty($data['shopId'])) {
+        if (!isset($data['shopId'])) {
             $data['shopId'] = 1;
         }
 
-        if (empty($data['detailActive'])) {
+        if (!isset($data['detailActive'])) {
             $data['detailActive'] = false;
         }
 
-        if (empty($data['cartActive'])) {
+        if (!isset($data['cartActive'])) {
             $data['cartActive'] = false;
         }
 
-        if (empty($data['loginActive'])) {
+        if (!isset($data['loginActive'])) {
             $data['loginActive'] = false;
         }
 
-        if (empty($data['submitCart'])) {
+        if (!isset($data['submitCart'])) {
             $data['submitCart'] = false;
         }
 
-        if (empty($data['intent'])) {
+        if (!isset($data['intent'])) {
             $data['intent'] = 0;
         }
 
-        if (empty($data['offCanvasActive'])) {
+        if (!isset($data['offCanvasActive'])) {
             $data['offCanvasActive'] = 0;
+        }
+
+        if (!isset($data['listingActive'])) {
+            $data['listingActive'] = 0;
         }
 
         $model = new ExpressSettingsModel();
