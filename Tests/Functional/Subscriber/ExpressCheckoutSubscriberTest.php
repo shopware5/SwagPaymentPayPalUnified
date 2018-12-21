@@ -34,7 +34,7 @@ class ExpressCheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
     {
         $events = ExpressCheckoutSubscriber::getSubscribedEvents();
 
-        $this->assertCount(4, $events);
+        $this->assertCount(6, $events);
 
         $this->assertEquals('addExpressCheckoutButtonCart', $events['Enlight_Controller_Action_PostDispatchSecure_Frontend']);
         $this->assertCount(2, $events['Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout']);

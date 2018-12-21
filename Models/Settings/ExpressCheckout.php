@@ -58,9 +58,9 @@ class ExpressCheckout extends ModelEntity
 
     /**
      * @var bool
-     * @ORM\Column(name="submit_cart", type="boolean", nullable=false)
+     * @ORM\Column(name="listing_active", type="boolean", nullable=false)
      */
-    private $submitCart;
+    private $listingActive;
 
     /**
      * @var string
@@ -79,6 +79,12 @@ class ExpressCheckout extends ModelEntity
      * @ORM\Column(name="button_style_size", type="string")
      */
     private $buttonStyleSize;
+
+    /**
+     * @var bool
+     * @ORM\Column(name="submit_cart", type="boolean", nullable=false)
+     */
+    private $submitCart;
 
     /**
      * @var int
@@ -185,17 +191,17 @@ class ExpressCheckout extends ModelEntity
     /**
      * @return bool
      */
-    public function getSubmitCart()
+    public function getListingActive()
     {
-        return $this->submitCart;
+        return $this->listingActive;
     }
 
     /**
-     * @param bool $submitCart
+     * @param bool $listingActive
      */
-    public function setSubmitCart($submitCart)
+    public function setListingActive($listingActive)
     {
-        $this->submitCart = $submitCart;
+        $this->listingActive = $listingActive;
     }
 
     /**
@@ -244,6 +250,22 @@ class ExpressCheckout extends ModelEntity
     public function setButtonStyleSize($buttonStyleSize)
     {
         $this->buttonStyleSize = $buttonStyleSize;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getSubmitCart()
+    {
+        return $this->submitCart;
+    }
+
+    /**
+     * @param bool $submitCart
+     */
+    public function setSubmitCart($submitCart)
+    {
+        $this->submitCart = $submitCart;
     }
 
     /**

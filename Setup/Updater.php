@@ -61,6 +61,10 @@ class Updater
         if (version_compare($oldVersion, '1.1.1', '<=')) {
             $this->updateTo112();
         }
+
+        if (version_compare($oldVersion, '2.0.3', '<=')) {
+            $this->updateTo210();
+        }
     }
 
     private function updateTo103()
@@ -108,7 +112,19 @@ class Updater
             $sql = 'ALTER TABLE `swag_payment_paypal_unified_settings_express` 
                 ADD `off_canvas_active`  TINYINT(1) NOT NULL; 
                 UPDATE `swag_payment_paypal_unified_settings_express` 
-                SET `off_canvas_active` = true;';
+                SET `off_canvas_active` = 1;';
+
+            $this->connection->executeQuery($sql);
+        }
+    }
+
+    private function updateTo210()
+    {
+        if (!$this->checkIfColumnExist('swag_payment_paypal_unified_settings_express', 'listing_active')) {
+            $sql = 'ALTER TABLE `swag_payment_paypal_unified_settings_express` 
+                ADD `listing_active`  TINYINT(1) NOT NULL; 
+                UPDATE `swag_payment_paypal_unified_settings_express` 
+                SET `listing_active` = 0;';
 
             $this->connection->executeQuery($sql);
         }

@@ -12,6 +12,7 @@ use Doctrine\DBAL\Connection;
 use Enlight\Event\SubscriberInterface;
 use Enlight_Components_Session_Namespace as Session;
 use Enlight_Controller_ActionEventArgs as ActionEventArgs;
+use Enlight_View_Default as ViewEngine;
 use Exception;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\ExceptionHandlerServiceInterface;
@@ -128,6 +129,8 @@ class ExpressCheckout implements SubscriberInterface
                 ['addPaymentInfoToRequest', 100],
             ],
             'Enlight_Controller_Action_PostDispatchSecure_Frontend_Detail' => 'addExpressCheckoutButtonDetail',
+            'Enlight_Controller_Action_PostDispatchSecure_Frontend_Listing' => 'addExpressCheckoutButtonListing',
+            'Enlight_Controller_Action_PreDispatch_Widgets_Listing' => 'addExpressCheckoutButtonListing',
             'Enlight_Controller_Action_PostDispatch_Frontend_Register' => 'addExpressCheckoutButtonLogin', // cannot use "secure" here, because it's forwarded call from checkout/confirm
         ];
     }
@@ -180,10 +183,7 @@ class ExpressCheckout implements SubscriberInterface
 
         if ((isset($cart['content']) || $product) && !$view->getAssign('sUserLoggedIn')) {
             $view->assign('paypalUnifiedUseInContext', $generalSettings->getUseInContext());
-            $view->assign('paypalUnifiedEcButtonStyleColor', $expressSettings->getButtonStyleColor());
-            $view->assign('paypalUnifiedEcButtonStyleShape', $expressSettings->getButtonStyleShape());
-            $view->assign('paypalUnifiedEcButtonStyleSize', $expressSettings->getButtonStyleSize());
-            $view->assign('paypalUnifiedLanguageIso', $this->getExpressCheckoutButtonLanguage());
+            $this->addEcButtonStyleInfo($view, $expressSettings);
         }
     }
 
@@ -255,12 +255,37 @@ class ExpressCheckout implements SubscriberInterface
 
         if (!$view->getAssign('userLoggedIn')) {
             $view->assign('paypalUnifiedEcDetailActive', true);
-            $view->assign('paypalUnifiedModeSandbox', $generalSettings->getSandbox());
-            $view->assign('paypalUnifiedUseInContext', $generalSettings->getUseInContext());
-            $view->assign('paypalUnifiedEcButtonStyleColor', $expressSettings->getButtonStyleColor());
-            $view->assign('paypalUnifiedEcButtonStyleShape', $expressSettings->getButtonStyleShape());
-            $view->assign('paypalUnifiedEcButtonStyleSize', $expressSettings->getButtonStyleSize());
-            $view->assign('paypalUnifiedLanguageIso', $this->getExpressCheckoutButtonLanguage());
+            $this->addEcButtonBehaviour($view, $generalSettings);
+            $this->addEcButtonStyleInfo($view, $expressSettings);
+        }
+    }
+
+    public function addExpressCheckoutButtonListing(ActionEventArgs $args)
+    {
+        $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag($this->connection);
+        if (!$swUnifiedActive) {
+            return;
+        }
+
+        /** @var GeneralSettingsModel $generalSettings */
+        $generalSettings = $this->settingsService->getSettings();
+        if (!$generalSettings || !$generalSettings->getActive()) {
+            return;
+        }
+
+        /** @var ExpressSettingsModel $expressSettings */
+        $expressSettings = $this->settingsService->getSettings(null, SettingsTable::EXPRESS_CHECKOUT);
+        if (!$expressSettings || !$expressSettings->getListingActive()) {
+            return;
+        }
+
+        $view = $args->getSubject()->View();
+
+        if (!$view->getAssign('userLoggedIn')) {
+            $view->assign('paypalUnifiedEcListingActive', true);
+            $this->addEcButtonBehaviour($view, $generalSettings);
+            $this->addEcButtonStyleInfo($view, $expressSettings);
+            $view->assign('paypalUnifiedEcButtonStyleSize', 'small');
         }
     }
 
@@ -291,12 +316,8 @@ class ExpressCheckout implements SubscriberInterface
 
         if ($requestParams['sTarget'] === 'checkout' && $requestParams['sTargetAction'] === 'confirm') {
             $view->assign('paypalUnifiedEcLoginActive', true);
-            $view->assign('paypalUnifiedModeSandbox', $generalSettings->getSandbox());
-            $view->assign('paypalUnifiedUseInContext', $generalSettings->getUseInContext());
-            $view->assign('paypalUnifiedEcButtonStyleColor', $expressSettings->getButtonStyleColor());
-            $view->assign('paypalUnifiedEcButtonStyleShape', $expressSettings->getButtonStyleShape());
-            $view->assign('paypalUnifiedEcButtonStyleSize', $expressSettings->getButtonStyleSize());
-            $view->assign('paypalUnifiedLanguageIso', $this->getExpressCheckoutButtonLanguage());
+            $this->addEcButtonBehaviour($view, $generalSettings);
+            $this->addEcButtonStyleInfo($view, $expressSettings);
         }
     }
 
@@ -347,5 +368,27 @@ class ExpressCheckout implements SubscriberInterface
     private function getExpressCheckoutButtonLanguage()
     {
         return $this->dependencyProvider->getShop()->getLocale()->getLocale();
+    }
+
+    /**
+     * @param ViewEngine           $view
+     * @param GeneralSettingsModel $generalSettings
+     */
+    private function addEcButtonBehaviour(ViewEngine $view, GeneralSettingsModel $generalSettings)
+    {
+        $view->assign('paypalUnifiedModeSandbox', $generalSettings->getSandbox());
+        $view->assign('paypalUnifiedUseInContext', $generalSettings->getUseInContext());
+    }
+
+    /**
+     * @param ViewEngine           $view
+     * @param ExpressSettingsModel $expressSettings
+     */
+    private function addEcButtonStyleInfo(ViewEngine $view, ExpressSettingsModel $expressSettings)
+    {
+        $view->assign('paypalUnifiedEcButtonStyleColor', $expressSettings->getButtonStyleColor());
+        $view->assign('paypalUnifiedEcButtonStyleShape', $expressSettings->getButtonStyleShape());
+        $view->assign('paypalUnifiedEcButtonStyleSize', $expressSettings->getButtonStyleSize());
+        $view->assign('paypalUnifiedLanguageIso', $this->getExpressCheckoutButtonLanguage());
     }
 }
