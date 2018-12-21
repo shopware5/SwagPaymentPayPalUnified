@@ -314,7 +314,8 @@ class ExpressCheckout implements SubscriberInterface
         $view = $args->getSubject()->View();
         $requestParams = $args->getRequest()->getParams();
 
-        if ($requestParams['sTarget'] === 'checkout' && $requestParams['sTargetAction'] === 'confirm') {
+        $targetAction = $requestParams['sTargetAction'];
+        if ($requestParams['sTarget'] === 'checkout' && ($targetAction === 'confirm' || $targetAction === 'shippingPayment')) {
             $view->assign('paypalUnifiedEcLoginActive', true);
             $this->addEcButtonBehaviour($view, $generalSettings);
             $this->addEcButtonStyleInfo($view, $expressSettings);
