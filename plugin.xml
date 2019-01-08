@@ -5,12 +5,27 @@
     <label lang="de">PayPal</label>
     <label lang="en">PayPal</label>
 
-    <version>2.0.3</version>
+    <version>2.1.0</version>
     <copyright>(c) by shopware AG</copyright>
     <license>MIT</license>
     <link>http://store.shopware.com</link>
     <author>shopware AG</author>
     <compatibility minVersion="5.2.0"/>
+
+    <changelog version="2.1.0">
+        <changes lang="de">
+            PT-9419 - Der Express-Checkout Button kann nun optional auf Kategorieseiten angezeigt werden. Die Shopware-Einstellung "Kaufenbutton im Listing anzeigen" muss aktiviert sein;
+            PT-9754 - Verbessert die Kompatibilität mit anderen Plugins in der PDF-Belegerstellung;
+            PT-9965 - Verhalten Express Checkout Button auf der Registrierungsseite verbessert;
+            PT-9989 - Der Kunde hat nun nicht mehr die Möglichkeit auf der PayPal Seite seine Lieferadresse zu ändern;
+        </changes>
+        <changes lang="en">
+            PT-9419 - The Express-Checkout button can now be displayed optionally on category pages. The Shopware setting "Display buy button in listing" must be activated;
+            PT-9754 - Improve compatibility with other plugins in PDF document creation;
+            PT-9965 - Improve behaviour of Express Checkout button on registration page;
+            PT-9989 - The customer has no longer the option to change the shipping address on the PayPal page;
+        </changes>
+    </changelog>
 
     <changelog version="2.0.3">
         <changes lang="de">PT-9990 - Kundenkommentare werden bei Zahlungen über Plus wieder korrekt gespeichert;</changes>
