@@ -195,6 +195,10 @@ class Plus implements SubscriberInterface
         }
 
         $unifiedPaymentId = $this->paymentMethodProvider->getPaymentId($this->connection);
+        if (!array_key_exists($unifiedPaymentId, $view->getAssign('sPayments'))) {
+            return;
+        }
+
         $isUnifiedSelected = $unifiedPaymentId === (int) $view->getAssign('sPayment')['id'];
 
         $this->overwritePaymentName($view);
@@ -328,8 +332,10 @@ class Plus implements SubscriberInterface
      * @param \Enlight_View_Default                 $view
      * @param \Enlight_Components_Session_Namespace $session
      */
-    private function handleShippingPaymentDispatch(\Enlight_View_Default $view, \Enlight_Components_Session_Namespace $session)
-    {
+    private function handleShippingPaymentDispatch(
+        \Enlight_View_Default $view,
+        \Enlight_Components_Session_Namespace $session
+    ) {
         $session->offsetSet('paypalUnifiedCameFromPaymentSelection', true);
         $paymentStruct = $this->createPayment($view->getAssign('sBasket'), $view->getAssign('sUserData'));
 
