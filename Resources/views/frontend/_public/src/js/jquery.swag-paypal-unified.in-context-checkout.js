@@ -133,6 +133,7 @@
 
             me.$form = $(me.opts.confirmFormSelector);
             me.hideConfirmButton();
+            me.disableConfirmButton();
             me.createButton();
 
             $.publish('plugin/swagPayPalUnifiedInContextCheckout/init', me);
@@ -149,6 +150,23 @@
             me.$confirmButton.addClass('is--hidden');
 
             $.publish('plugin/swagPayPalUnifiedInContextCheckout/hideConfirmButton', [me, me.$confirmButton]);
+        },
+
+        /**
+         * Disables the submit function, because in some browsers the submit event is triggered,
+         * even though the form is not valid
+         */
+        disableConfirmButton: function() {
+            var me = this;
+
+            me._on(me.$form, 'submit', $.proxy(me.onConfirmCheckout, me));
+        },
+
+        /**
+         * @param {Event} event
+         */
+        onConfirmCheckout: function(event) {
+            event.preventDefault();
         },
 
         /**

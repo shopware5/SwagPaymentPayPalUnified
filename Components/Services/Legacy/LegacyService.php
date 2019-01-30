@@ -30,6 +30,12 @@ class LegacyService
      */
     public function getClassicPaymentIds()
     {
-        return $this->dbConnection->createQueryBuilder()->select('id')->from('s_core_paymentmeans', 'pm')->where("pm.name = 'paypal'")->orWhere("pm.name = 'payment_paypal_installments'")->execute()->fetchAll(\PDO::FETCH_COLUMN);
+        return $this->dbConnection->createQueryBuilder()
+            ->select('id')
+            ->from('s_core_paymentmeans', 'pm')
+            ->where("pm.name = 'paypal'")
+            ->orWhere("pm.name = 'payment_paypal_installments'")
+            ->execute()
+            ->fetchAll(\PDO::FETCH_COLUMN);
     }
 }

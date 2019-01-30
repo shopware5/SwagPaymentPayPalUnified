@@ -120,7 +120,7 @@
          *
          * @private
          * @method onConfirmCheckout
-         * @param {Object} event
+         * @param {Event} event
          */
         onConfirmCheckout: function(event) {
             var me = this;
@@ -128,6 +128,9 @@
             $.publish('plugin/swagPayPalUnifiedPaymentWallConfirm/confirmCheckout', me);
 
             event.preventDefault();
+            if (!event.target.checkValidity()) {
+                return;
+            }
 
             me.patchPaymentAddress();
         },
@@ -151,7 +154,7 @@
          * Will be triggered when the ajax patch failed.
          *
          * @private
-         * @method addressPatchAjaxCallbackSuccess
+         * @method addressPatchAjaxCallbackError
          */
         addressPatchAjaxCallbackError: function () {
             var me = this,
