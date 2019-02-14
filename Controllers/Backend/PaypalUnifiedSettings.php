@@ -5,6 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 use SwagPaymentPayPalUnified\Components\ExceptionHandlerServiceInterface;
 use SwagPaymentPayPalUnified\Models\Settings\General as GeneralSettingsModel;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
@@ -14,6 +15,8 @@ use SwagPaymentPayPalUnified\PayPalBundle\Structs\Installments\FinancingResponse
 
 class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Controllers_Backend_Application
 {
+    const WEBHOOK_ALREADY_EXISTS_ERROR = 'WEBHOOK_URL_ALREADY_EXISTS';
+
     /**
      * {@inheritdoc}
      */
@@ -77,7 +80,7 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
         } catch (Exception $e) {
             $error = $this->exceptionHandler->handle($e, 'register webhooks');
 
-            if ($error->getName() === 'WEBHOOK_URL_ALREADY_EXISTS') {
+            if ($error->getName() === self::WEBHOOK_ALREADY_EXISTS_ERROR) {
                 $this->View()->assign([
                     'success' => true,
                     'url' => $url,

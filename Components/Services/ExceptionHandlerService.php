@@ -10,6 +10,7 @@ namespace SwagPaymentPayPalUnified\Components\Services;
 
 use GuzzleHttp\Exception\ClientException;
 use Shopware\Components\HttpClient\RequestException;
+use Shopware_Controllers_Backend_PaypalUnifiedSettings as SettingsController;
 use SwagPaymentPayPalUnified\Components\ExceptionHandlerServiceInterface;
 use SwagPaymentPayPalUnified\Components\PayPalApiException;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
@@ -61,10 +62,12 @@ class ExceptionHandlerService implements ExceptionHandlerServiceInterface
             }
         }
 
-        $this->loggerService->error(sprintf(self::LOG_MESSAGE, $currentAction), [
-            'message' => $exceptionMessage,
-            'payload' => $requestBody,
-        ]);
+        if (strpos($requestBody, SettingsController::WEBHOOK_ALREADY_EXISTS_ERROR) === false) {
+            $this->loggerService->error(sprintf(self::LOG_MESSAGE, $currentAction), [
+                'message' => $exceptionMessage,
+                'payload' => $requestBody,
+            ]);
+        }
 
         if (!$requestBody) {
             return new PayPalApiException(
