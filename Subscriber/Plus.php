@@ -195,7 +195,8 @@ class Plus implements SubscriberInterface
         }
 
         $unifiedPaymentId = $this->paymentMethodProvider->getPaymentId($this->connection);
-        if (!array_key_exists($unifiedPaymentId, $view->getAssign('sPayments'))) {
+        $paymentIds = array_column($view->getAssign('sPayments'), 'id');
+        if (!in_array($unifiedPaymentId, $paymentIds)) {
             return;
         }
 

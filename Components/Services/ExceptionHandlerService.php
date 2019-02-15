@@ -10,7 +10,6 @@ namespace SwagPaymentPayPalUnified\Components\Services;
 
 use GuzzleHttp\Exception\ClientException;
 use Shopware\Components\HttpClient\RequestException;
-use Shopware_Controllers_Backend_PaypalUnifiedSettings as SettingsController;
 use SwagPaymentPayPalUnified\Components\ExceptionHandlerServiceInterface;
 use SwagPaymentPayPalUnified\Components\PayPalApiException;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
@@ -21,6 +20,7 @@ class ExceptionHandlerService implements ExceptionHandlerServiceInterface
 {
     const DEFAULT_MESSAGE = 'An error occurred: ';
     const LOG_MESSAGE = 'Could not %s due to a communication failure';
+    const WEBHOOK_ALREADY_EXISTS_ERROR = 'WEBHOOK_URL_ALREADY_EXISTS';
 
     /**
      * @var LoggerServiceInterface
@@ -62,7 +62,7 @@ class ExceptionHandlerService implements ExceptionHandlerServiceInterface
             }
         }
 
-        if (strpos($requestBody, SettingsController::WEBHOOK_ALREADY_EXISTS_ERROR) === false) {
+        if (strpos($requestBody, self::WEBHOOK_ALREADY_EXISTS_ERROR) === false) {
             $this->loggerService->error(sprintf(self::LOG_MESSAGE, $currentAction), [
                 'message' => $exceptionMessage,
                 'payload' => $requestBody,
