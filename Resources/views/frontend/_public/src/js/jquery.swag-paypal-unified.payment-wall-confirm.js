@@ -155,19 +155,21 @@
          *
          * @private
          * @method addressPatchAjaxCallbackError
+         * @param {Object} response
          */
-        addressPatchAjaxCallbackError: function () {
+        addressPatchAjaxCallbackError: function (response) {
             var me = this,
-                redirectUrl = me.opts.paypalErrorPage;
+                redirectUrl = me.opts.paypalErrorPage,
+                errorCode = response.responseText;
 
             $.publish('plugin/swagPayPalUnifiedPaymentWall/afterPatchAddress', me);
 
             /**
-             * We need to call 2 different error pages. One for a validation error
-             * and the other for general errors. The default error code 2 comes from the template.
+             * If the response text is empty, we display the standard error.
+             * Or the response text contains the error code, then we display the specific error page.
              */
-            if (arguments[2] === 'Unprocessable Entity') {
-                redirectUrl = me.stripErrorCodeFromUrl(redirectUrl) + '7';
+            if (errorCode !== '') {
+                redirectUrl = me.stripErrorCodeFromUrl(redirectUrl) + errorCode;
                 $(location).attr('href', redirectUrl);
             }
 

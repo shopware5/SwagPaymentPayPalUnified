@@ -22,6 +22,9 @@
         {elseif $paypalUnifiedErrorCode == 7}
             {* Address validation error *}
             {include file='frontend/_includes/messages.tpl' type='error' content="{s name="error/address"}PayPal was unable to validate the provided address. Please check your input data.{/s}"}
+        {elseif $paypalUnifiedErrorCode == 8}
+            {* No dispatch for order error *}
+            {include file='frontend/_includes/messages.tpl' type='error' content="{s name="error/dispatch"}The payment could not be processed because there was no shipping method for your order.{/s}"}
         {else}
             {* Unknown error *}
             {include file='frontend/_includes/messages.tpl' type='error' content="{s name="error/unkown"}An unknown error occurred while processing the payment.{/s}"}
