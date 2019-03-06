@@ -360,8 +360,8 @@
             $.publish('plugin/swagPayPalUnifiedInContextCheckout/beforeCreatePayment', [me, me.$form]);
 
             return me.processPayment().then(function(response) {
-                if (response.addressValidation === false) {
-                    redirectUrl = me.stripErrorCodeFromUrl(redirectUrl) + '7';
+                if (response.errorCode) {
+                    redirectUrl = me.stripErrorCodeFromUrl(redirectUrl) + response.errorCode;
                     $(location).attr('href', redirectUrl);
                 }
                 $.publish('plugin/swagPayPalUnifiedInContextCheckout/paymentCreated', [me, response]);

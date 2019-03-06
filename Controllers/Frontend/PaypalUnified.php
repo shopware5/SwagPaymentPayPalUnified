@@ -5,6 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 use Shopware\Components\HttpClient\RequestException;
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
 use SwagPaymentPayPalUnified\Components\ExceptionHandlerServiceInterface;
@@ -30,6 +31,7 @@ use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Instruction\PaymentInstructionType;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\RelatedResources\RelatedResource;
+use Symfony\Component\HttpFoundation\Response;
 
 class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_Frontend_Payment
 {
@@ -85,6 +87,12 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
 
         if ($orderData === null) {
             $this->handleError(ErrorCodes::NO_ORDER_TO_PROCESS);
+
+            return;
+        }
+
+        if ($this->noDispatchForOrder()) {
+            $this->handleError(ErrorCodes::NO_DISPATCH_FOR_ORDER);
 
             return;
         }
@@ -313,6 +321,13 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
     {
         $this->Front()->Plugins()->ViewRenderer()->setNoRender();
 
+        if ($this->noDispatchForOrder()) {
+            $this->Response()->setHttpResponseCode(Response::HTTP_BAD_REQUEST);
+            $this->Response()->setBody(ErrorCodes::NO_DISPATCH_FOR_ORDER);
+
+            return;
+        }
+
         $request = $this->Request();
         $session = $this->get('session');
 
@@ -345,16 +360,14 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
         } catch (Exception $e) {
             $response = $this->get('paypal_unified.exception_handler_service')->handle($e, 'patch address, payer info, item list and amount');
 
+            $this->Response()->setHttpResponseCode(Response::HTTP_BAD_REQUEST);
+
             /*
              * The two response codes are used to differ the error via the ajax call.
              */
             if ($response->getName() === 'VALIDATION_ERROR') {
-                $this->Response()->setHttpResponseCode(422);
-
-                return;
+                $this->Response()->setBody(ErrorCodes::ADDRESS_VALIDATION_ERROR);
             }
-
-            $this->Response()->setHttpResponseCode(400);
         }
     }
 
@@ -378,6 +391,13 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
      */
     private function handleError($code, Exception $exception = null)
     {
+        if ($this->Request()->isXmlHttpRequest()) {
+            $this->Front()->Plugins()->Json()->setRenderer();
+            $this->View()->assign('errorCode', $code);
+
+            return;
+        }
+
         /** @var string $message */
         $message = null;
         $name = null;
@@ -441,5 +461,15 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
         $legacyValidator = $this->get('paypal_unified.simple_basket_validator');
 
         return $legacyValidator->validate($this->getBasket(), $this->getUser(), $payment);
+    }
+
+    /**
+     * @return bool
+     */
+    private function noDispatchForOrder()
+    {
+        $session = $this->get('session');
+
+        return !empty($this->shopwareConfig->get('premiumShippingNoOrder')) && (empty($session['sDispatch']) || empty($session['sCountry']));
     }
 }
