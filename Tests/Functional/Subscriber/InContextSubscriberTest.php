@@ -24,17 +24,17 @@ class InContextSubscriberTest extends \PHPUnit_Framework_TestCase
     {
         $subscriber = $this->getSubscriber();
 
-        $this->assertNotNull($subscriber);
+        static::assertNotNull($subscriber);
     }
 
     public function test_getSubscribedEvents()
     {
         $events = InContext::getSubscribedEvents();
 
-        $this->assertCount(2, $events['Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout']);
+        static::assertCount(2, $events['Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout']);
 
-        $this->assertEquals('addInContextButton', $events['Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout'][0][0]);
-        $this->assertEquals('addInContextInfoToRequest', $events['Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout'][1][0]);
+        static::assertEquals('addInContextButton', $events['Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout'][0][0]);
+        static::assertEquals('addInContextInfoToRequest', $events['Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout'][1][0]);
     }
 
     public function test_addInContextButton_return_wrong_action()
@@ -50,7 +50,7 @@ class InContextSubscriberTest extends \PHPUnit_Framework_TestCase
         $subscriber = $this->getSubscriber();
         $subscriber->addInContextButton($enlightEventArgs);
 
-        $this->assertNull($view->getAssign('paypalUnifiedPaymentId'));
+        static::assertNull($view->getAssign('paypalUnifiedPaymentId'));
     }
 
     public function test_addInContextButton_return_unified_inactive()
@@ -71,7 +71,7 @@ class InContextSubscriberTest extends \PHPUnit_Framework_TestCase
         $subscriber = $this->getSubscriber();
         $subscriber->addInContextButton($enlightEventArgs);
 
-        $this->assertNull($view->getAssign('paypalUnifiedPaymentId'));
+        static::assertNull($view->getAssign('paypalUnifiedPaymentId'));
 
         $paymentMethodProvider->setPaymentMethodActiveFlag(true);
     }
@@ -91,7 +91,7 @@ class InContextSubscriberTest extends \PHPUnit_Framework_TestCase
         $subscriber = $this->getSubscriber();
         $subscriber->addInContextButton($enlightEventArgs);
 
-        $this->assertNull($view->getAssign('paypalUnifiedPaymentId'));
+        static::assertNull($view->getAssign('paypalUnifiedPaymentId'));
     }
 
     public function test_addInContextButton_return_not_use_in_context()
@@ -109,7 +109,7 @@ class InContextSubscriberTest extends \PHPUnit_Framework_TestCase
         $subscriber = $this->getSubscriber();
         $subscriber->addInContextButton($enlightEventArgs);
 
-        $this->assertNull($view->getAssign('paypalUnifiedPaymentId'));
+        static::assertNull($view->getAssign('paypalUnifiedPaymentId'));
     }
 
     public function test_addInContextButton_return_no_ec_settings()
@@ -127,7 +127,7 @@ class InContextSubscriberTest extends \PHPUnit_Framework_TestCase
         $subscriber = $this->getSubscriber();
         $subscriber->addInContextButton($enlightEventArgs);
 
-        $this->assertNull($view->getAssign('paypalUnifiedPaymentId'));
+        static::assertNull($view->getAssign('paypalUnifiedPaymentId'));
     }
 
     public function test_addInContextButton_right_template_assigns()
@@ -145,8 +145,8 @@ class InContextSubscriberTest extends \PHPUnit_Framework_TestCase
         $subscriber = $this->getSubscriber();
         $subscriber->addInContextButton($enlightEventArgs);
 
-        $this->assertTrue($view->getAssign('paypalUnifiedModeSandbox'));
-        $this->assertTrue($view->getAssign('paypalUnifiedUseInContext'));
+        static::assertTrue($view->getAssign('paypalUnifiedModeSandbox'));
+        static::assertTrue($view->getAssign('paypalUnifiedUseInContext'));
     }
 
     public function test_addInContextInfoToRequest_returns_because_wrong_action()
@@ -162,7 +162,7 @@ class InContextSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $subscriber = $this->getSubscriber();
 
-        $this->assertNull($subscriber->addInContextInfoToRequest($enlightEventArgs));
+        static::assertNull($subscriber->addInContextInfoToRequest($enlightEventArgs));
     }
 
     public function test_addInContextInfoToRequest_returns_because_wrong_param()
@@ -178,7 +178,7 @@ class InContextSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $subscriber = $this->getSubscriber();
 
-        $this->assertNull($subscriber->addInContextInfoToRequest($enlightEventArgs));
+        static::assertNull($subscriber->addInContextInfoToRequest($enlightEventArgs));
     }
 
     public function test_addInContextInfoToRequest_returns_because_no_redirect()
@@ -198,7 +198,7 @@ class InContextSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $subscriber = $this->getSubscriber();
 
-        $this->assertNull($subscriber->addInContextInfoToRequest($enlightEventArgs));
+        static::assertNull($subscriber->addInContextInfoToRequest($enlightEventArgs));
     }
 
     public function test_addInContextInfoToRequest_returns_because_redirect()
@@ -225,8 +225,8 @@ class InContextSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $subscriber->addInContextInfoToRequest($enlightEventArgs);
 
-        $this->assertContains('/PaypalUnified/gateway/useInContext/1', $response->getHeader('Location'));
-        $this->assertEquals(302, $response->getHttpResponseCode());
+        static::assertContains('/PaypalUnified/gateway/useInContext/1', $response->getHeader('Location'));
+        static::assertEquals(302, $response->getHttpResponseCode());
     }
 
     /**

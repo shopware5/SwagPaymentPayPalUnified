@@ -20,13 +20,13 @@ class AddressValidatorDecoratorTest extends \PHPUnit_Framework_TestCase
     public function test_construct()
     {
         $validator = new AddressDecorator(new AddressValidatorMock(), Shopware()->Container()->get('front'));
-        $this->assertNotNull($validator);
+        static::assertNotNull($validator);
     }
 
     public function test_isValid_inner_validator()
     {
         $validator = new AddressDecorator(new AddressValidatorMock(), Shopware()->Container()->get('front'));
-        $this->assertTrue($validator->isValid(new Address()));
+        static::assertTrue($validator->isValid(new Address()));
     }
 
     public function test_validate_return_without_request()
@@ -34,7 +34,7 @@ class AddressValidatorDecoratorTest extends \PHPUnit_Framework_TestCase
         $front = new FrontMock();
 
         $validator = new AddressDecorator(new AddressValidatorMock(), $front);
-        $this->assertNull($validator->validate(new Address()));
+        static::assertNull($validator->validate(new Address()));
     }
 
     public function test_validate_return_with_wrong_controller_name()
@@ -45,7 +45,7 @@ class AddressValidatorDecoratorTest extends \PHPUnit_Framework_TestCase
         $front->setRequest($request);
 
         $validator = new AddressDecorator(new AddressValidatorMock(), $front);
-        $this->assertNull($validator->validate(new Address()));
+        static::assertNull($validator->validate(new Address()));
     }
 
     public function test_validate_throw_validation_exception_country()
@@ -70,7 +70,7 @@ class AddressValidatorDecoratorTest extends \PHPUnit_Framework_TestCase
 
         $validator = new AddressDecorator(new AddressValidatorMock(), $front);
 
-        $this->assertNull($validator->validate(new Address()));
+        static::assertNull($validator->validate(new Address()));
     }
 }
 

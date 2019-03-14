@@ -19,14 +19,14 @@ class LegacyServiceTest extends \PHPUnit_Framework_TestCase
     {
         $service = new LegacyService(Shopware()->Container()->get('dbal_connection'));
 
-        $this->assertInstanceOf(LegacyService::class, $service);
+        static::assertInstanceOf(LegacyService::class, $service);
     }
 
     public function test_getClassicPaymentIds_returns_false_without_legacy_payment_methods()
     {
         $service = Shopware()->Container()->get('paypal_unified.legacy_service');
 
-        $this->assertEmpty($service->getClassicPaymentIds());
+        static::assertEmpty($service->getClassicPaymentIds());
     }
 
     public function test_getClassicPaymentIds_returns_correct_id()
@@ -37,8 +37,8 @@ class LegacyServiceTest extends \PHPUnit_Framework_TestCase
 
         $result = $service->getClassicPaymentIds();
 
-        $this->assertNotFalse($result);
-        $this->assertCount(2, $result);
+        static::assertNotFalse($result);
+        static::assertCount(2, $result);
     }
 
     private function insertClassicPayment()

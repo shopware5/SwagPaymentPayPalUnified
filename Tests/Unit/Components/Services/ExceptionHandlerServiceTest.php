@@ -31,13 +31,13 @@ class ExceptionHandlerServiceTest extends \PHPUnit_Framework_TestCase
 
         $error = $handler->handle($e, 'testing');
 
-        $this->assertEquals(123, $error->getName());
-        $this->assertEquals('An error occurred: test message', $error->getMessage());
+        static::assertEquals(123, $error->getName());
+        static::assertEquals('An error occurred: test message', $error->getMessage());
 
         $logErrors = $loggerMock->getErrors();
 
-        $this->assertArrayHasKey('Could not testing due to a communication failure', $logErrors);
-        $this->assertArraySubset(['message' => 'test message'], $logErrors['Could not testing due to a communication failure']);
+        static::assertArrayHasKey('Could not testing due to a communication failure', $logErrors);
+        static::assertArraySubset(['message' => 'test message'], $logErrors['Could not testing due to a communication failure']);
     }
 
     public function test_requestException_without_body()
@@ -51,13 +51,13 @@ class ExceptionHandlerServiceTest extends \PHPUnit_Framework_TestCase
 
         $error = $handler->handle($e, 'testing');
 
-        $this->assertEquals(123, $error->getName());
-        $this->assertEquals('An error occurred: test message', $error->getMessage());
+        static::assertEquals(123, $error->getName());
+        static::assertEquals('An error occurred: test message', $error->getMessage());
 
         $logErrors = $loggerMock->getErrors();
 
-        $this->assertArrayHasKey('Could not testing due to a communication failure', $logErrors);
-        $this->assertArraySubset(['message' => 'test message'], $logErrors['Could not testing due to a communication failure']);
+        static::assertArrayHasKey('Could not testing due to a communication failure', $logErrors);
+        static::assertArraySubset(['message' => 'test message'], $logErrors['Could not testing due to a communication failure']);
     }
 
     public function test_requestException_with_body_but_no_array()
@@ -73,14 +73,14 @@ class ExceptionHandlerServiceTest extends \PHPUnit_Framework_TestCase
 
         $error = $handler->handle($e, 'testing');
 
-        $this->assertEquals(123, $error->getName());
-        $this->assertEquals('An error occurred: test message', $error->getMessage());
+        static::assertEquals(123, $error->getName());
+        static::assertEquals('An error occurred: test message', $error->getMessage());
 
         $logErrors = $loggerMock->getErrors();
 
-        $this->assertArrayHasKey('Could not testing due to a communication failure', $logErrors);
+        static::assertArrayHasKey('Could not testing due to a communication failure', $logErrors);
         $logError = $logErrors['Could not testing due to a communication failure'];
-        $this->assertArraySubset(['message' => 'test message', 'payload' => 'test'], $logError);
+        static::assertArraySubset(['message' => 'test message', 'payload' => 'test'], $logError);
     }
 
     public function test_requestException_generic_error()
@@ -96,14 +96,14 @@ class ExceptionHandlerServiceTest extends \PHPUnit_Framework_TestCase
 
         $error = $handler->handle($e, 'testing');
 
-        $this->assertEquals('test error', $error->getName());
-        $this->assertEquals('An error occurred: test error description', $error->getMessage());
+        static::assertEquals('test error', $error->getName());
+        static::assertEquals('An error occurred: test error description', $error->getMessage());
 
         $logErrors = $loggerMock->getErrors();
 
-        $this->assertArrayHasKey('Could not testing due to a communication failure', $logErrors);
+        static::assertArrayHasKey('Could not testing due to a communication failure', $logErrors);
         $logError = $logErrors['Could not testing due to a communication failure'];
-        $this->assertArraySubset(
+        static::assertArraySubset(
             [
                 'message' => 'test message',
                 'payload' => '{"error":"test error","error_description":"test error description"}',
@@ -125,14 +125,14 @@ class ExceptionHandlerServiceTest extends \PHPUnit_Framework_TestCase
 
         $error = $handler->handle($e, 'testing');
 
-        $this->assertEquals(123, $error->getName());
-        $this->assertEquals('An error occurred: test message', $error->getMessage());
+        static::assertEquals(123, $error->getName());
+        static::assertEquals('An error occurred: test message', $error->getMessage());
 
         $logErrors = $loggerMock->getErrors();
 
-        $this->assertArrayHasKey('Could not testing due to a communication failure', $logErrors);
+        static::assertArrayHasKey('Could not testing due to a communication failure', $logErrors);
         $logError = $logErrors['Could not testing due to a communication failure'];
-        $this->assertArraySubset(['message' => 'test message', 'payload' => '[]'], $logError);
+        static::assertArraySubset(['message' => 'test message', 'payload' => '[]'], $logError);
     }
 
     public function test_requestException_error_response()
@@ -152,14 +152,14 @@ class ExceptionHandlerServiceTest extends \PHPUnit_Framework_TestCase
 
         $error = $handler->handle($e, 'testing');
 
-        $this->assertEquals('error name', $error->getName());
-        $this->assertEquals('An error occurred: error message', $error->getMessage());
+        static::assertEquals('error name', $error->getName());
+        static::assertEquals('An error occurred: error message', $error->getMessage());
 
         $logErrors = $loggerMock->getErrors();
 
-        $this->assertArrayHasKey('Could not testing due to a communication failure', $logErrors);
+        static::assertArrayHasKey('Could not testing due to a communication failure', $logErrors);
         $logError = $logErrors['Could not testing due to a communication failure'];
-        $this->assertArraySubset(
+        static::assertArraySubset(
             [
                 'message' => 'test message',
                 'payload' => '{"name":"error name","message":"error message","information_link":"error link"}',
@@ -189,14 +189,14 @@ class ExceptionHandlerServiceTest extends \PHPUnit_Framework_TestCase
 
         $error = $handler->handle($e, 'testing');
 
-        $this->assertEquals('error name', $error->getName());
-        $this->assertEquals('An error occurred: error message: error issue "error field" ', $error->getMessage());
+        static::assertEquals('error name', $error->getName());
+        static::assertEquals('An error occurred: error message: error issue "error field" ', $error->getMessage());
 
         $logErrors = $loggerMock->getErrors();
 
-        $this->assertArrayHasKey('Could not testing due to a communication failure', $logErrors);
+        static::assertArrayHasKey('Could not testing due to a communication failure', $logErrors);
         $logError = $logErrors['Could not testing due to a communication failure'];
-        $this->assertArraySubset(
+        static::assertArraySubset(
             [
                 'message' => 'test message',
                 'payload' => '{"name":"error name","message":"error message","information_link":"error link","details":[{"field":"error field","issue":"error issue"}]}',

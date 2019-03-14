@@ -24,16 +24,16 @@ class FrontendSubscriberTest extends \PHPUnit_Framework_TestCase
     public function test_can_be_created()
     {
         $subscriber = $this->getSubscriber();
-        $this->assertNotNull($subscriber);
+        static::assertNotNull($subscriber);
     }
 
     public function test_getSubscribedEvents_has_correct_events()
     {
         $events = Frontend::getSubscribedEvents();
-        $this->assertCount(3, $events);
-        $this->assertEquals('onCollectJavascript', $events['Theme_Compiler_Collect_Plugin_Javascript']);
-        $this->assertEquals('onPostDispatchSecure', $events['Enlight_Controller_Action_PostDispatchSecure_Frontend']);
-        $this->assertEquals('onCollectTemplateDir', $events['Theme_Inheritance_Template_Directories_Collected']);
+        static::assertCount(3, $events);
+        static::assertEquals('onCollectJavascript', $events['Theme_Compiler_Collect_Plugin_Javascript']);
+        static::assertEquals('onPostDispatchSecure', $events['Enlight_Controller_Action_PostDispatchSecure_Frontend']);
+        static::assertEquals('onCollectTemplateDir', $events['Theme_Inheritance_Template_Directories_Collected']);
     }
 
     public function test_onCollectJavascript()
@@ -42,10 +42,10 @@ class FrontendSubscriberTest extends \PHPUnit_Framework_TestCase
         $javascripts = $subscriber->onCollectJavascript();
 
         foreach ($javascripts as $script) {
-            $this->assertFileExists($script);
+            static::assertFileExists($script);
         }
 
-        $this->assertCount(9, $javascripts);
+        static::assertCount(9, $javascripts);
     }
 
     public function test_onPostDistpatchSecure_without_any_setttings()
@@ -60,7 +60,7 @@ class FrontendSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $result = $subscriber->onPostDispatchSecure($enlightEventArgs);
 
-        $this->assertNull($result);
+        static::assertNull($result);
     }
 
     public function test_onPostDispatchSecure_return_setting_inactive()
@@ -76,7 +76,7 @@ class FrontendSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $subscriber->onPostDispatchSecure($enlightEventArgs);
 
-        $this->assertNull($view->getAssign('paypalUnifiedShowLogo'));
+        static::assertNull($view->getAssign('paypalUnifiedShowLogo'));
     }
 
     public function test_onPostDispatchSecure_payment_method_inactive()
@@ -94,7 +94,7 @@ class FrontendSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $subscriber->onPostDispatchSecure($enlightEventArgs);
 
-        $this->assertFalse($view->getAssign('paypalUnifiedShowLogo'));
+        static::assertFalse($view->getAssign('paypalUnifiedShowLogo'));
 
         $paymentMethodProvider->setPaymentMethodActiveFlag(true);
     }
@@ -112,9 +112,9 @@ class FrontendSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $subscriber->onPostDispatchSecure($enlightEventArgs);
 
-        $this->assertTrue((bool) $view->getAssign('paypalUnifiedShowLogo'));
-        $this->assertTrue((bool) $view->getAssign('paypalUnifiedShowInstallmentsLogo'));
-        $this->assertTrue((bool) $view->getAssign('paypalUnifiedAdvertiseReturns'));
+        static::assertTrue((bool) $view->getAssign('paypalUnifiedShowLogo'));
+        static::assertTrue((bool) $view->getAssign('paypalUnifiedShowInstallmentsLogo'));
+        static::assertTrue((bool) $view->getAssign('paypalUnifiedAdvertiseReturns'));
     }
 
     public function test_onCollectTemplateDir()
@@ -130,7 +130,7 @@ class FrontendSubscriberTest extends \PHPUnit_Framework_TestCase
         $subscriber->onCollectTemplateDir($enlightEventArgs);
         $returnValue = $enlightEventArgs->getReturn();
 
-        $this->assertDirectoryExists($returnValue[0]);
+        static::assertDirectoryExists($returnValue[0]);
     }
 
     /**

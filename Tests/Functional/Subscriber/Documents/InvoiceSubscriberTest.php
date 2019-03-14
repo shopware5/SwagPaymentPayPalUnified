@@ -36,15 +36,15 @@ class InvoiceSubscriberTest extends \PHPUnit_Framework_TestCase
             Shopware()->Container()->get('dbal_connection'),
             Shopware()->Container()->get('snippets')
         );
-        $this->assertNotNull($subscriber);
+        static::assertNotNull($subscriber);
     }
 
     public function test_getSubscribedEvents()
     {
         $events = Invoice::getSubscribedEvents();
 
-        $this->assertCount(1, $events);
-        $this->assertEquals('onBeforeRenderDocument', $events['Shopware_Components_Document::assignValues::after']);
+        static::assertCount(1, $events);
+        static::assertEquals('onBeforeRenderDocument', $events['Shopware_Components_Document::assignValues::after']);
     }
 
     public function test_onBeforeRenderDocument_returns_when_no_document_was_given()
@@ -56,7 +56,7 @@ class InvoiceSubscriberTest extends \PHPUnit_Framework_TestCase
         );
         $hookArgs = new HookArgsWithoutSubject();
 
-        $this->assertNull($subscriber->onBeforeRenderDocument($hookArgs));
+        static::assertNull($subscriber->onBeforeRenderDocument($hookArgs));
     }
 
     public function test_onBeforeRenderDocument_returns_when_wrong_payment_id_was_given()
@@ -69,7 +69,7 @@ class InvoiceSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $hookArgs = new HookArgsWithWrongPaymentId();
 
-        $this->assertNull($subscriber->onBeforeRenderDocument($hookArgs));
+        static::assertNull($subscriber->onBeforeRenderDocument($hookArgs));
     }
 
     public function test_onBeforeRenderDocument_returns_when_wrong_payment_type()
@@ -83,7 +83,7 @@ class InvoiceSubscriberTest extends \PHPUnit_Framework_TestCase
         $this->updateOrderPaymentId(15, $this->getUnifiedPaymentId());
         $hookArgs = new HookArgsWithCorrectPaymentId(Shopware()->Container()->has('shopware.benchmark_bundle.collector'));
 
-        $this->assertNull($subscriber->onBeforeRenderDocument($hookArgs));
+        static::assertNull($subscriber->onBeforeRenderDocument($hookArgs));
     }
 
     public function test_onBeforeRenderDocument_handleDocument()
@@ -104,7 +104,7 @@ class InvoiceSubscriberTest extends \PHPUnit_Framework_TestCase
         /** @var \Enlight_Template_Manager $view */
         $view = $hookArgs->getTemplate();
 
-        $this->assertNotNull($view->getVariable('PayPalUnifiedInvoiceInstruction'));
+        static::assertNotNull($view->getVariable('PayPalUnifiedInvoiceInstruction'));
     }
 
     private function insertTestData()

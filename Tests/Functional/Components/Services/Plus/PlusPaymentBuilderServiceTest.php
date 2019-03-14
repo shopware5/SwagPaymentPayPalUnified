@@ -20,14 +20,14 @@ class PlusPaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
     public function test_serviceIsAvailable()
     {
         $service = Shopware()->Container()->get('paypal_unified.plus.payment_builder_service');
-        $this->assertEquals(PlusPaymentBuilderService::class, get_class($service));
+        static::assertEquals(PlusPaymentBuilderService::class, get_class($service));
     }
 
     public function test_getPayment_has_plus_basketId()
     {
         $request = $this->getRequestData();
 
-        $this->assertStringEndsWith('basketId/' . BasketIdWhitelist::WHITELIST_IDS['PayPalPlus'], $request->getRedirectUrls()->getReturnUrl());
+        static::assertStringEndsWith('basketId/' . BasketIdWhitelist::WHITELIST_IDS['PayPalPlus'], $request->getRedirectUrls()->getReturnUrl());
     }
 
     public function test_estimated_delivery_date_attribute_exists_but_not_set()
@@ -36,7 +36,7 @@ class PlusPaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
 
         $request = $this->getRequestData();
 
-        $this->assertNull($request->getTransactions()->getShipmentDetails());
+        static::assertNull($request->getTransactions()->getShipmentDetails());
 
         $this->deleteEddAttribute();
     }
@@ -51,7 +51,7 @@ class PlusPaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
 
         $request = $this->getRequestData($eddDays);
 
-        $this->assertSame($expectedDate, $request->getTransactions()->getShipmentDetails()->getEstimatedDeliveryDate());
+        static::assertSame($expectedDate, $request->getTransactions()->getShipmentDetails()->getEstimatedDeliveryDate());
 
         $this->deleteEddAttribute();
     }

@@ -34,39 +34,39 @@ class SaleCompleteTest extends \PHPUnit_Framework_TestCase
     {
         $instance = new SaleComplete(Shopware()->Container()->get('paypal_unified.logger_service'), Shopware()->Container()->get('models'));
 
-        $this->assertInstanceOf(SaleComplete::class, $instance);
+        static::assertInstanceOf(SaleComplete::class, $instance);
     }
 
     public function test_invoke_returns_true_because_the_order_status_has_been_updated()
     {
         $instance = new SaleComplete(Shopware()->Container()->get('paypal_unified.logger_service'), Shopware()->Container()->get('models'));
 
-        $this->assertTrue($instance->invoke($this->getWebhookStruct()));
+        static::assertTrue($instance->invoke($this->getWebhookStruct()));
 
         $sql = 'SELECT cleared FROM s_order WHERE id=' . self::TEST_ORDER_ID;
 
         $status = Shopware()->Db()->fetchOne($sql);
-        $this->assertEquals(PaymentStatus::PAYMENT_STATUS_APPROVED, $status);
+        static::assertEquals(PaymentStatus::PAYMENT_STATUS_APPROVED, $status);
     }
 
     public function test_invoke_returns_false_because_the_order_does_not_exist()
     {
         $instance = new SaleComplete(Shopware()->Container()->get('paypal_unified.logger_service'), Shopware()->Container()->get('models'));
 
-        $this->assertFalse($instance->invoke($this->getWebhookStruct('ORDER_NOT_AVAILABLE')));
+        static::assertFalse($instance->invoke($this->getWebhookStruct('ORDER_NOT_AVAILABLE')));
     }
 
     public function test_getEventType_is_correct()
     {
         $instance = new SaleComplete(Shopware()->Container()->get('paypal_unified.logger_service'), Shopware()->Container()->get('models'));
-        $this->assertEquals(WebhookEventTypes::PAYMENT_SALE_COMPLETED, $instance->getEventType());
+        static::assertEquals(WebhookEventTypes::PAYMENT_SALE_COMPLETED, $instance->getEventType());
     }
 
     public function test_invoke_will_return_false_without_active_entity_manager()
     {
         $instance = new SaleComplete(Shopware()->Container()->get('paypal_unified.logger_service'), new EntityManagerMock());
 
-        $this->assertFalse($instance->invoke($this->getWebhookStruct(self::TEST_ORDER_ID)));
+        static::assertFalse($instance->invoke($this->getWebhookStruct(self::TEST_ORDER_ID)));
     }
 
     /**

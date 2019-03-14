@@ -15,7 +15,7 @@ class LessSubscriberTest extends \PHPUnit_Framework_TestCase
     public function test_can_be_created()
     {
         $subscriber = new Less(__DIR__ . '../../../');
-        $this->assertNotNull($subscriber);
+        static::assertNotNull($subscriber);
     }
 
     public function test_onCollectLessFiles()
@@ -23,13 +23,13 @@ class LessSubscriberTest extends \PHPUnit_Framework_TestCase
         $subscriber = new Less(__DIR__ . '../../../');
         $lessDefinitions = $subscriber->onCollectLessFiles();
 
-        $this->assertCount(1, $lessDefinitions);
+        static::assertCount(1, $lessDefinitions);
     }
 
     public function test_getSubscribedEvents()
     {
         $events = Less::getSubscribedEvents();
-        $this->assertCount(1, $events);
-        $this->assertEquals('onCollectLessFiles', $events['Theme_Compiler_Collect_Plugin_Less']);
+        static::assertCount(1, $events);
+        static::assertEquals('onCollectLessFiles', $events['Theme_Compiler_Collect_Plugin_Less']);
     }
 }

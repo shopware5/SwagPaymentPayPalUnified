@@ -22,42 +22,42 @@ class PaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
 
         $requestService = $this->getRequestService($settingService);
 
-        $this->assertNotNull($requestService);
+        static::assertNotNull($requestService);
     }
 
     public function test_getPayment_return_plus_intent()
     {
         $requestParameters = $this->getRequestData(PaymentType::PAYPAL_PLUS);
 
-        $this->assertEquals('sale', $requestParameters['intent']);
+        static::assertEquals('sale', $requestParameters['intent']);
     }
 
     public function test_getPayment_return_sale_intent_without_plus()
     {
         $requestParameters = $this->getRequestData();
 
-        $this->assertEquals('sale', $requestParameters['intent']);
+        static::assertEquals('sale', $requestParameters['intent']);
     }
 
     public function test_getPayment_return_authorize_intent_without_plus()
     {
         $requestParameters = $this->getRequestData(PaymentType::PAYPAL_CLASSIC, 1);
 
-        $this->assertEquals('authorize', $requestParameters['intent']);
+        static::assertEquals('authorize', $requestParameters['intent']);
     }
 
     public function test_getPayment_return_order_intent_without_plus()
     {
         $requestParameters = $this->getRequestData(PaymentType::PAYPAL_CLASSIC, 2);
 
-        $this->assertEquals('order', $requestParameters['intent']);
+        static::assertEquals('order', $requestParameters['intent']);
     }
 
     public function test_getPayment_return_valid_payer()
     {
         $requestParameters = $this->getRequestData();
 
-        $this->assertEquals('paypal', $requestParameters['payer']['payment_method']);
+        static::assertEquals('paypal', $requestParameters['payer']['payment_method']);
     }
 
     public function test_getPayment_return_valid_transactions()
@@ -65,12 +65,12 @@ class PaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
         $requestParameters = $this->getRequestData();
 
         // test the amount sub array
-        $this->assertEquals('EUR', $requestParameters['transactions'][0]['amount']['currency']);
-        $this->assertEquals('114.99', $requestParameters['transactions'][0]['amount']['total']);
+        static::assertEquals('EUR', $requestParameters['transactions'][0]['amount']['currency']);
+        static::assertEquals('114.99', $requestParameters['transactions'][0]['amount']['total']);
         // test the amount details
-        $this->assertEquals(55, $requestParameters['transactions'][0]['amount']['details']['shipping']);
-        $this->assertEquals('59.99', $requestParameters['transactions'][0]['amount']['details']['subtotal']);
-        $this->assertEquals('0.00', $requestParameters['transactions'][0]['amount']['details']['tax']);
+        static::assertEquals(55, $requestParameters['transactions'][0]['amount']['details']['shipping']);
+        static::assertEquals('59.99', $requestParameters['transactions'][0]['amount']['details']['subtotal']);
+        static::assertEquals('0.00', $requestParameters['transactions'][0]['amount']['details']['tax']);
     }
 
     public function test_getPayment_with_show_gross()
@@ -90,10 +90,10 @@ class PaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
         $requestParameters = $requestService->getPayment($params);
         $requestParameters = $requestParameters->toArray();
 
-        $this->assertEquals('136.84', $requestParameters['transactions'][0]['amount']['total']);
-        $this->assertEquals(46.22, $requestParameters['transactions'][0]['amount']['details']['shipping']);
-        $this->assertEquals('50.41', $requestParameters['transactions'][0]['amount']['details']['subtotal']);
-        $this->assertEquals(18.36, $requestParameters['transactions'][0]['amount']['details']['tax']);
+        static::assertEquals('136.84', $requestParameters['transactions'][0]['amount']['total']);
+        static::assertEquals(46.22, $requestParameters['transactions'][0]['amount']['details']['shipping']);
+        static::assertEquals('50.41', $requestParameters['transactions'][0]['amount']['details']['subtotal']);
+        static::assertEquals(18.36, $requestParameters['transactions'][0]['amount']['details']['tax']);
     }
 
     public function test_getPayment_with_basket_unique_id()
@@ -113,7 +113,7 @@ class PaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
 
         $requestParameters = $requestService->getPayment($params);
 
-        $this->assertStringEndsWith('basketId/MyUniqueBasketId', $requestParameters->getRedirectUrls()->getReturnUrl());
+        static::assertStringEndsWith('basketId/MyUniqueBasketId', $requestParameters->getRedirectUrls()->getReturnUrl());
     }
 
     public function test_getPayment_with_tax_free_country()
@@ -133,10 +133,10 @@ class PaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
         $requestParameters = $requestService->getPayment($params);
         $requestParameters = $requestParameters->toArray();
 
-        $this->assertEquals('96.63', $requestParameters['transactions'][0]['amount']['total']);
-        $this->assertEquals(46.22, $requestParameters['transactions'][0]['amount']['details']['shipping']);
-        $this->assertEquals('50.41', $requestParameters['transactions'][0]['amount']['details']['subtotal']);
-        $this->assertNull($requestParameters['transactions'][0]['amount']['details']['tax']);
+        static::assertEquals('96.63', $requestParameters['transactions'][0]['amount']['total']);
+        static::assertEquals(46.22, $requestParameters['transactions'][0]['amount']['details']['shipping']);
+        static::assertEquals('50.41', $requestParameters['transactions'][0]['amount']['details']['subtotal']);
+        static::assertNull($requestParameters['transactions'][0]['amount']['details']['tax']);
     }
 
     public function test_getPayment_with_tax_free_companies_without_vat_id()
@@ -156,10 +156,10 @@ class PaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
         $requestParameters = $requestService->getPayment($params);
         $requestParameters = $requestParameters->toArray();
 
-        $this->assertEquals('114.99', $requestParameters['transactions'][0]['amount']['total']);
-        $this->assertEquals(55, $requestParameters['transactions'][0]['amount']['details']['shipping']);
-        $this->assertEquals('59.99', $requestParameters['transactions'][0]['amount']['details']['subtotal']);
-        $this->assertEquals('0.00', $requestParameters['transactions'][0]['amount']['details']['tax']);
+        static::assertEquals('114.99', $requestParameters['transactions'][0]['amount']['total']);
+        static::assertEquals(55, $requestParameters['transactions'][0]['amount']['details']['shipping']);
+        static::assertEquals('59.99', $requestParameters['transactions'][0]['amount']['details']['subtotal']);
+        static::assertEquals('0.00', $requestParameters['transactions'][0]['amount']['details']['tax']);
     }
 
     public function test_getPayment_with_tax_free_companies_with_vat_id()
@@ -180,10 +180,10 @@ class PaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
         $requestParameters = $requestService->getPayment($params);
         $requestParameters = $requestParameters->toArray();
 
-        $this->assertEquals('96.63', $requestParameters['transactions'][0]['amount']['total']);
-        $this->assertEquals(46.22, $requestParameters['transactions'][0]['amount']['details']['shipping']);
-        $this->assertEquals('50.41', $requestParameters['transactions'][0]['amount']['details']['subtotal']);
-        $this->assertNull($requestParameters['transactions'][0]['amount']['details']['tax']);
+        static::assertEquals('96.63', $requestParameters['transactions'][0]['amount']['total']);
+        static::assertEquals(46.22, $requestParameters['transactions'][0]['amount']['details']['shipping']);
+        static::assertEquals('50.41', $requestParameters['transactions'][0]['amount']['details']['subtotal']);
+        static::assertNull($requestParameters['transactions'][0]['amount']['details']['tax']);
     }
 
     public function test_getPayment_with_tax_free_companies_with_vat_id_billing()
@@ -205,18 +205,18 @@ class PaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
         $requestParameters = $requestService->getPayment($params);
         $requestParameters = $requestParameters->toArray();
 
-        $this->assertEquals('96.63', $requestParameters['transactions'][0]['amount']['total']);
-        $this->assertEquals(46.22, $requestParameters['transactions'][0]['amount']['details']['shipping']);
-        $this->assertEquals('50.41', $requestParameters['transactions'][0]['amount']['details']['subtotal']);
-        $this->assertNull($requestParameters['transactions'][0]['amount']['details']['tax']);
+        static::assertEquals('96.63', $requestParameters['transactions'][0]['amount']['total']);
+        static::assertEquals(46.22, $requestParameters['transactions'][0]['amount']['details']['shipping']);
+        static::assertEquals('50.41', $requestParameters['transactions'][0]['amount']['details']['subtotal']);
+        static::assertNull($requestParameters['transactions'][0]['amount']['details']['tax']);
     }
 
     public function test_getPayment_return_valid_redirect_urls()
     {
         $requestParameters = $this->getRequestData();
 
-        $this->assertNotFalse(stristr($requestParameters['redirect_urls']['return_url'], 'return'));
-        $this->assertNotFalse(stristr($requestParameters['redirect_urls']['cancel_url'], 'cancel'));
+        static::assertNotFalse(stristr($requestParameters['redirect_urls']['return_url'], 'return'));
+        static::assertNotFalse(stristr($requestParameters['redirect_urls']['cancel_url'], 'cancel'));
     }
 
     public function test_getPayment_with_custom_products()
@@ -226,7 +226,7 @@ class PaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
         $customProductsOption = $requestParameters['transactions'][0]['item_list']['items'][0];
 
         // summed up price -> product price and configurations
-        $this->assertEquals(round(2 * 59.99 + 1 * 1 + 2 * 2 + 1 * 3, 2), (float) $customProductsOption['price']);
+        static::assertEquals(round(2 * 59.99 + 1 * 1 + 2 * 2 + 1 * 3, 2), (float) $customProductsOption['price']);
     }
 
     public function test_getPayment_express_checkout_without_cart()
@@ -242,7 +242,7 @@ class PaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
         $params->setUserData($userData);
         $params->setPaymentType(PaymentType::PAYPAL_EXPRESS);
 
-        $this->assertEmpty($requestService->getPayment($params)->getTransactions()->getItemList());
+        static::assertEmpty($requestService->getPayment($params)->getTransactions()->getItemList());
     }
 
     public function test_getPayment_express_checkout_with_cart()
@@ -258,7 +258,7 @@ class PaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
         $params->setUserData($userData);
         $params->setPaymentType(PaymentType::PAYPAL_EXPRESS);
 
-        $this->assertNotEmpty($requestService->getPayment($params)->getTransactions()->getItemList());
+        static::assertNotEmpty($requestService->getPayment($params)->getTransactions()->getItemList());
     }
 
     public function test_getIntentAsString_throws_exception()
@@ -292,7 +292,7 @@ class PaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
         $params->setPaymentType(PaymentType::PAYPAL_INSTALLMENTS);
 
         $payment = $requestService->getPayment($params);
-        $this->assertEquals('order', $payment->getIntent());
+        static::assertEquals('order', $payment->getIntent());
     }
 
     /**

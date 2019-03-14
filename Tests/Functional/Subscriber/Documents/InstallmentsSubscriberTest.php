@@ -26,15 +26,15 @@ class InstallmentsSubscriberTest extends \PHPUnit_Framework_TestCase
             Shopware()->Container()->get('paypal_unified.installments.order_credit_info_service'),
             Shopware()->Container()->get('dbal_connection')
         );
-        $this->assertNotNull($subscriber);
+        static::assertNotNull($subscriber);
     }
 
     public function test_getSubscribedEvents()
     {
         $events = Installments::getSubscribedEvents();
 
-        $this->assertCount(1, $events);
-        $this->assertEquals('onBeforeRenderDocument', $events['Shopware_Components_Document::assignValues::after']);
+        static::assertCount(1, $events);
+        static::assertEquals('onBeforeRenderDocument', $events['Shopware_Components_Document::assignValues::after']);
     }
 
     public function test_onBeforeRenderDocument_returns_when_no_document_was_given()
@@ -46,7 +46,7 @@ class InstallmentsSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $hookArgs = new HookArgsWithoutSubject(Shopware()->Container()->has('shopware.benchmark_bundle.collector'));
 
-        $this->assertNull($subscriber->onBeforeRenderDocument($hookArgs));
+        static::assertNull($subscriber->onBeforeRenderDocument($hookArgs));
     }
 
     public function test_onBeforeRenderDocument_returns_when_wrong_payment_id_was_given()
@@ -58,7 +58,7 @@ class InstallmentsSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $hookArgs = new HookArgsWithWrongPaymentId(Shopware()->Container()->has('shopware.benchmark_bundle.collector'));
 
-        $this->assertNull($subscriber->onBeforeRenderDocument($hookArgs));
+        static::assertNull($subscriber->onBeforeRenderDocument($hookArgs));
     }
 
     public function test_onBeforeRenderDocument_handleDocument()
@@ -76,7 +76,7 @@ class InstallmentsSubscriberTest extends \PHPUnit_Framework_TestCase
         $subscriber->onBeforeRenderDocument($hookArgs);
         $view = $hookArgs->getView();
 
-        $this->assertNotNull($view->getVariable('paypalInstallmentsCredit')->value);
+        static::assertNotNull($view->getVariable('paypalInstallmentsCredit')->value);
     }
 
     private function insertTestData()

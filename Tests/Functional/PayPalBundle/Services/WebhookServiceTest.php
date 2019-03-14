@@ -18,7 +18,7 @@ class WebhookServiceTest extends \PHPUnit_Framework_TestCase
     {
         $service = Shopware()->Container()->get('paypal_unified.webhook_service');
 
-        $this->assertNotNull($service);
+        static::assertNotNull($service);
     }
 
     public function test_register_webhook()
@@ -28,7 +28,7 @@ class WebhookServiceTest extends \PHPUnit_Framework_TestCase
 
         $service->registerWebhooks([$webhook]);
 
-        $this->assertEquals($webhook->getEventType(), $service->getWebhookHandler($webhook->getEventType())->getEventType());
+        static::assertEquals($webhook->getEventType(), $service->getWebhookHandler($webhook->getEventType())->getEventType());
     }
 
     public function test_register_webhook_exception()
@@ -49,7 +49,7 @@ class WebhookServiceTest extends \PHPUnit_Framework_TestCase
 
         $service->registerWebhook($webhook);
 
-        $this->assertTrue($service->handlerExists($webhook->getEventType()));
+        static::assertTrue($service->handlerExists($webhook->getEventType()));
     }
 
     public function test_webhook_not_exist()
@@ -59,7 +59,7 @@ class WebhookServiceTest extends \PHPUnit_Framework_TestCase
 
         $service->registerWebhook($webhook);
 
-        $this->assertFalse($service->handlerExists('SHOULD_NOT_EXIST'));
+        static::assertFalse($service->handlerExists('SHOULD_NOT_EXIST'));
     }
 
     public function test_get_webhook_exception()
@@ -77,6 +77,6 @@ class WebhookServiceTest extends \PHPUnit_Framework_TestCase
 
         $service->registerWebhook($webhook);
 
-        $this->assertCount(1, $service->getWebhookHandlers());
+        static::assertCount(1, $service->getWebhookHandlers());
     }
 }

@@ -119,7 +119,7 @@ class InstallerTest extends \PHPUnit_Framework_TestCase
         );
 
         $result = $installer->install();
-        $this->assertTrue($result);
+        static::assertTrue($result);
     }
 
     public function test_order_attribute_available()
@@ -133,42 +133,42 @@ class InstallerTest extends \PHPUnit_Framework_TestCase
         $connection = Shopware()->Container()->get('dbal_connection');
         $columnAvailable = (bool) $connection->executeQuery($query)->fetch(\PDO::FETCH_COLUMN);
 
-        $this->assertTrue($columnAvailable);
+        static::assertTrue($columnAvailable);
     }
 
     public function test_instructions_table_exists()
     {
         $query = "SHOW TABLES LIKE 'swag_payment_paypal_unified_payment_instruction'";
 
-        $this->assertCount(1, Shopware()->Db()->fetchAll($query));
+        static::assertCount(1, Shopware()->Db()->fetchAll($query));
     }
 
     public function test_document_footer_template_exists()
     {
         $query = "SELECT id FROM s_core_documents_box WHERE `name` = 'PayPal_Unified_Instructions_Footer'";
 
-        $this->assertCount(1, Shopware()->Db()->fetchRow($query));
+        static::assertCount(1, Shopware()->Db()->fetchRow($query));
     }
 
     public function test_document_content_template_exists()
     {
         $query = "SELECT id FROM s_core_documents_box WHERE `name` = 'PayPal_Unified_Instructions_Content'";
 
-        $this->assertCount(1, Shopware()->Db()->fetchRow($query));
+        static::assertCount(1, Shopware()->Db()->fetchRow($query));
     }
 
     public function test_settings_tables_exists()
     {
         $query = "SHOW TABLES LIKE 'swag_payment_paypal_unified_settings_express';";
-        $this->assertCount(1, Shopware()->Db()->fetchAll($query));
+        static::assertCount(1, Shopware()->Db()->fetchAll($query));
 
         $query = "SHOW TABLES LIKE 'swag_payment_paypal_unified_settings_installments';";
-        $this->assertCount(1, Shopware()->Db()->fetchAll($query));
+        static::assertCount(1, Shopware()->Db()->fetchAll($query));
 
         $query = "SHOW TABLES LIKE 'swag_payment_paypal_unified_settings_plus';";
-        $this->assertCount(1, Shopware()->Db()->fetchAll($query));
+        static::assertCount(1, Shopware()->Db()->fetchAll($query));
 
         $query = "SHOW TABLES LIKE 'swag_payment_paypal_unified_settings_general';";
-        $this->assertCount(1, Shopware()->Db()->fetchAll($query));
+        static::assertCount(1, Shopware()->Db()->fetchAll($query));
     }
 }

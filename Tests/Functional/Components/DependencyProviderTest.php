@@ -16,35 +16,35 @@ class DependencyProviderTest extends \PHPUnit_Framework_TestCase
 {
     public function test_service_available()
     {
-        $this->assertEquals(DependencyProvider::class, get_class(Shopware()->Container()->get('paypal_unified.dependency_provider')));
+        static::assertEquals(DependencyProvider::class, get_class(Shopware()->Container()->get('paypal_unified.dependency_provider')));
     }
 
     public function test_can_be_constructed()
     {
         $dp = new DependencyProvider(Shopware()->Container());
 
-        $this->assertNotNull($dp);
+        static::assertNotNull($dp);
     }
 
     public function test_getShop_return_shop()
     {
         $dp = new DependencyProvider(Shopware()->Container());
 
-        $this->assertEquals(DetachedShop::class, get_class($dp->getShop()));
+        static::assertEquals(DetachedShop::class, get_class($dp->getShop()));
     }
 
     public function test_getShop_return_null()
     {
         $dp = new DependencyProvider(new ContainerMockWithNoShop());
 
-        $this->assertNull($dp->getShop());
+        static::assertNull($dp->getShop());
     }
 
     public function test_getModule_has_module()
     {
         $dp = new DependencyProvider(Shopware()->Container());
 
-        $this->assertNotNull($dp->getModule('basket'));
+        static::assertNotNull($dp->getModule('basket'));
     }
 }
 

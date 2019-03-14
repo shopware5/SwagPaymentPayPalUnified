@@ -18,15 +18,15 @@ class BackendSubscriberTest extends \PHPUnit_Framework_TestCase
     public function test_can_be_created()
     {
         $subscriber = new Backend(__DIR__);
-        $this->assertNotNull($subscriber);
+        static::assertNotNull($subscriber);
     }
 
     public function test_getSubscribedEvents_has_correct_events()
     {
         $events = Backend::getSubscribedEvents();
-        $this->assertEquals('onLoadBackendIndex', $events['Enlight_Controller_Action_PostDispatchSecure_Backend_Index']);
-        $this->assertEquals('onPostDispatchConfig', $events['Enlight_Controller_Action_PostDispatchSecure_Backend_Config']);
-        $this->assertCount(2, $events);
+        static::assertEquals('onLoadBackendIndex', $events['Enlight_Controller_Action_PostDispatchSecure_Backend_Index']);
+        static::assertEquals('onPostDispatchConfig', $events['Enlight_Controller_Action_PostDispatchSecure_Backend_Config']);
+        static::assertCount(2, $events);
     }
 
     public function test_onLoadBackendIndex_extends_template()
@@ -46,7 +46,7 @@ class BackendSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $subscriber->onLoadBackendIndex($enlightEventArgs);
 
-        $this->assertCount(1, $view->getTemplateDir());
+        static::assertCount(1, $view->getTemplateDir());
     }
 
     public function test_onPostDispatchConfig_extends_template()
@@ -67,6 +67,6 @@ class BackendSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $subscriber->onPostDispatchConfig($enlightEventArgs);
 
-        $this->assertCount(1, $view->getTemplateDir());
+        static::assertCount(1, $view->getTemplateDir());
     }
 }

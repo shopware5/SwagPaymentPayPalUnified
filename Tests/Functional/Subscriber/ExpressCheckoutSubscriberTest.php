@@ -27,19 +27,19 @@ class ExpressCheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
     {
         $subscriber = $this->getSubscriber();
 
-        $this->assertNotNull($subscriber);
+        static::assertNotNull($subscriber);
     }
 
     public function test_getSubscribedEvents()
     {
         $events = ExpressCheckoutSubscriber::getSubscribedEvents();
 
-        $this->assertCount(6, $events);
+        static::assertCount(6, $events);
 
-        $this->assertEquals('addExpressCheckoutButtonCart', $events['Enlight_Controller_Action_PostDispatchSecure_Frontend']);
-        $this->assertCount(2, $events['Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout']);
-        $this->assertEquals('addExpressCheckoutButtonDetail', $events['Enlight_Controller_Action_PostDispatchSecure_Frontend_Detail']);
-        $this->assertEquals('addExpressCheckoutButtonLogin', $events['Enlight_Controller_Action_PostDispatch_Frontend_Register']);
+        static::assertEquals('addExpressCheckoutButtonCart', $events['Enlight_Controller_Action_PostDispatchSecure_Frontend']);
+        static::assertCount(2, $events['Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout']);
+        static::assertEquals('addExpressCheckoutButtonDetail', $events['Enlight_Controller_Action_PostDispatchSecure_Frontend_Detail']);
+        static::assertEquals('addExpressCheckoutButtonLogin', $events['Enlight_Controller_Action_PostDispatch_Frontend_Register']);
     }
 
     public function test_addExpressCheckoutButtonCart_return_payment_method_inactive()
@@ -59,7 +59,7 @@ class ExpressCheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
         $subscriber = $this->getSubscriber();
         $subscriber->addExpressCheckoutButtonCart($enlightEventArgs);
 
-        $this->assertNull($view->getAssign('paypalUnifiedUseInContext'));
+        static::assertNull($view->getAssign('paypalUnifiedUseInContext'));
         $paymentMethodProvider->setPaymentMethodActiveFlag(true);
     }
 
@@ -77,7 +77,7 @@ class ExpressCheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
         $subscriber = $this->getSubscriber();
         $subscriber->addExpressCheckoutButtonCart($enlightEventArgs);
 
-        $this->assertNull($view->getAssign('paypalUnifiedUseInContext'));
+        static::assertNull($view->getAssign('paypalUnifiedUseInContext'));
     }
 
     public function test_addExpressCheckoutButtonCart_return_ec_inactive()
@@ -95,7 +95,7 @@ class ExpressCheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
         $subscriber = $this->getSubscriber();
         $subscriber->addExpressCheckoutButtonCart($enlightEventArgs);
 
-        $this->assertNull($view->getAssign('paypalUnifiedUseInContext'));
+        static::assertNull($view->getAssign('paypalUnifiedUseInContext'));
     }
 
     public function test_addExpressCheckoutButtonCart_return_wrongController()
@@ -114,7 +114,7 @@ class ExpressCheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
         $subscriber = $this->getSubscriber();
         $subscriber->addExpressCheckoutButtonCart($enlightEventArgs);
 
-        $this->assertNull($view->getAssign('paypalUnifiedUseInContext'));
+        static::assertNull($view->getAssign('paypalUnifiedUseInContext'));
     }
 
     public function test_addExpressCheckoutButtonCart_return_wrongAction()
@@ -134,7 +134,7 @@ class ExpressCheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
         $subscriber = $this->getSubscriber();
         $subscriber->addExpressCheckoutButtonCart($enlightEventArgs);
 
-        $this->assertNull($view->getAssign('paypalUnifiedUseInContext'));
+        static::assertNull($view->getAssign('paypalUnifiedUseInContext'));
     }
 
     public function test_addExpressCheckoutButtonCart_assigns_value_to_cart()
@@ -155,7 +155,7 @@ class ExpressCheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
         $subscriber = $this->getSubscriber();
         $subscriber->addExpressCheckoutButtonCart($enlightEventArgs);
 
-        $this->assertTrue($view->getAssign('paypalUnifiedModeSandbox'));
+        static::assertTrue($view->getAssign('paypalUnifiedModeSandbox'));
     }
 
     public function test_addExpressCheckoutButtonCart_assigns_value_to_ajax_cart()
@@ -176,7 +176,7 @@ class ExpressCheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
         $subscriber = $this->getSubscriber();
         $subscriber->addExpressCheckoutButtonCart($enlightEventArgs);
 
-        $this->assertTrue($view->getAssign('paypalUnifiedModeSandbox'));
+        static::assertTrue($view->getAssign('paypalUnifiedModeSandbox'));
     }
 
     public function test_addEcInfoOnConfirm_return_wrong_action()
@@ -193,7 +193,7 @@ class ExpressCheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
         $subscriber = $this->getSubscriber();
         $subscriber->addEcInfoOnConfirm($enlightEventArgs);
 
-        $this->assertNull($view->getAssign('paypalUnifiedExpressPaymentId'));
+        static::assertNull($view->getAssign('paypalUnifiedExpressPaymentId'));
     }
 
     public function test_addEcInfoOnConfirm_return_no_ec()
@@ -210,7 +210,7 @@ class ExpressCheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
         $subscriber = $this->getSubscriber();
         $subscriber->addEcInfoOnConfirm($enlightEventArgs);
 
-        $this->assertNull($view->getAssign('paypalUnifiedExpressPaymentId'));
+        static::assertNull($view->getAssign('paypalUnifiedExpressPaymentId'));
     }
 
     public function test_addEcInfoOnConfirm_assigns_correct_values_on_confirm_action()
@@ -231,9 +231,9 @@ class ExpressCheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
         $subscriber = $this->getSubscriber();
         $subscriber->addEcInfoOnConfirm($enlightEventArgs);
 
-        $this->assertEquals('TEST_PAYMENT_ID', $view->getAssign('paypalUnifiedExpressPaymentId'));
-        $this->assertEquals('TEST_PAYER_ID', $view->getAssign('paypalUnifiedExpressPayerId'));
-        $this->assertTrue($view->getAssign('paypalUnifiedExpressCheckout'));
+        static::assertEquals('TEST_PAYMENT_ID', $view->getAssign('paypalUnifiedExpressPaymentId'));
+        static::assertEquals('TEST_PAYER_ID', $view->getAssign('paypalUnifiedExpressPayerId'));
+        static::assertTrue($view->getAssign('paypalUnifiedExpressCheckout'));
     }
 
     public function test_addPaymentInfoToRequest_return_wrong_action()
@@ -249,7 +249,7 @@ class ExpressCheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $subscriber = $this->getSubscriber();
 
-        $this->assertNull($subscriber->addPaymentInfoToRequest($enlightEventArgs));
+        static::assertNull($subscriber->addPaymentInfoToRequest($enlightEventArgs));
     }
 
     public function test_addPaymentInfoToRequest_return_wrong_param()
@@ -265,7 +265,7 @@ class ExpressCheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $subscriber = $this->getSubscriber();
 
-        $this->assertNull($subscriber->addPaymentInfoToRequest($enlightEventArgs));
+        static::assertNull($subscriber->addPaymentInfoToRequest($enlightEventArgs));
     }
 
     public function test_addPaymentInfoToRequest_return_no_redirect()
@@ -285,7 +285,7 @@ class ExpressCheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $subscriber = $this->getSubscriber();
 
-        $this->assertNull($subscriber->addPaymentInfoToRequest($enlightEventArgs));
+        static::assertNull($subscriber->addPaymentInfoToRequest($enlightEventArgs));
     }
 
     public function test_addPaymentInfoToRequest_throws_exception()
@@ -343,8 +343,8 @@ class ExpressCheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $subscriber->addPaymentInfoToRequest($enlightEventArgs);
 
-        $this->assertContains('/PaypalUnified/return/expressCheckout/1/paymentId//PayerID//basketId/', $response->getHeader('Location'));
-        $this->assertEquals(302, $response->getHttpResponseCode());
+        static::assertContains('/PaypalUnified/return/expressCheckout/1/paymentId//PayerID//basketId/', $response->getHeader('Location'));
+        static::assertEquals(302, $response->getHttpResponseCode());
     }
 
     public function test_addExpressCheckoutButtonDetail_return_payment_method_inactive()
@@ -364,7 +364,7 @@ class ExpressCheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
         $subscriber = $this->getSubscriber();
         $subscriber->addExpressCheckoutButtonDetail($enlightEventArgs);
 
-        $this->assertNull($view->getAssign('paypalUnifiedEcDetailActive'));
+        static::assertNull($view->getAssign('paypalUnifiedEcDetailActive'));
         $paymentMethodProvider->setPaymentMethodActiveFlag(true);
     }
 
@@ -382,7 +382,7 @@ class ExpressCheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
         $subscriber = $this->getSubscriber();
         $subscriber->addExpressCheckoutButtonDetail($enlightEventArgs);
 
-        $this->assertNull($view->getAssign('paypalUnifiedEcDetailActive'));
+        static::assertNull($view->getAssign('paypalUnifiedEcDetailActive'));
     }
 
     public function test_addExpressCheckoutButtonDetail_returns_because_ec_inactive()
@@ -399,7 +399,7 @@ class ExpressCheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
         $subscriber = $this->getSubscriber();
         $subscriber->addExpressCheckoutButtonDetail($enlightEventArgs);
 
-        $this->assertNull($view->getAssign('paypalUnifiedEcDetailActive'));
+        static::assertNull($view->getAssign('paypalUnifiedEcDetailActive'));
     }
 
     public function test_addExpressCheckoutButtonDetail_return_ec_detail_inactive()
@@ -416,7 +416,7 @@ class ExpressCheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
         $subscriber = $this->getSubscriber();
         $subscriber->addExpressCheckoutButtonDetail($enlightEventArgs);
 
-        $this->assertNull($view->getAssign('paypalUnifiedEcDetailActive'));
+        static::assertNull($view->getAssign('paypalUnifiedEcDetailActive'));
     }
 
     public function test_addExpressCheckoutButtonDetail_assigns_correct_values()
@@ -433,7 +433,7 @@ class ExpressCheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
         $subscriber = $this->getSubscriber();
         $subscriber->addExpressCheckoutButtonDetail($enlightEventArgs);
 
-        $this->assertTrue($view->getAssign('paypalUnifiedEcDetailActive'));
+        static::assertTrue($view->getAssign('paypalUnifiedEcDetailActive'));
     }
 
     public function test_addExpressCheckoutButtonLogin_return_payment_method_inactive()
@@ -453,7 +453,7 @@ class ExpressCheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
         $subscriber = $this->getSubscriber();
         $subscriber->addExpressCheckoutButtonLogin($enlightEventArgs);
 
-        $this->assertNull($view->getAssign('paypalUnifiedEcLoginActive'));
+        static::assertNull($view->getAssign('paypalUnifiedEcLoginActive'));
         $paymentMethodProvider->setPaymentMethodActiveFlag(true);
     }
 
@@ -471,7 +471,7 @@ class ExpressCheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
         $subscriber = $this->getSubscriber();
         $subscriber->addExpressCheckoutButtonLogin($enlightEventArgs);
 
-        $this->assertNull($view->getAssign('paypalUnifiedEcLoginActive'));
+        static::assertNull($view->getAssign('paypalUnifiedEcLoginActive'));
     }
 
     public function test_addExpressCheckoutButtonLogin_returns_because_ec_inactive()
@@ -488,7 +488,7 @@ class ExpressCheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
         $subscriber = $this->getSubscriber();
         $subscriber->addExpressCheckoutButtonLogin($enlightEventArgs);
 
-        $this->assertNull($view->getAssign('paypalUnifiedEcLoginActive'));
+        static::assertNull($view->getAssign('paypalUnifiedEcLoginActive'));
     }
 
     public function test_addExpressCheckoutButtonLogin_return_ec_detail_inactive()
@@ -505,7 +505,7 @@ class ExpressCheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
         $subscriber = $this->getSubscriber();
         $subscriber->addExpressCheckoutButtonLogin($enlightEventArgs);
 
-        $this->assertNull($view->getAssign('paypalUnifiedEcLoginActive'));
+        static::assertNull($view->getAssign('paypalUnifiedEcLoginActive'));
     }
 
     public function test_addExpressCheckoutButtonLogin_assigns_correct_values()
@@ -525,7 +525,7 @@ class ExpressCheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
         $subscriber = $this->getSubscriber();
         $subscriber->addExpressCheckoutButtonLogin($enlightEventArgs);
 
-        $this->assertTrue($view->getAssign('paypalUnifiedEcLoginActive'));
+        static::assertTrue($view->getAssign('paypalUnifiedEcLoginActive'));
     }
 
     /**

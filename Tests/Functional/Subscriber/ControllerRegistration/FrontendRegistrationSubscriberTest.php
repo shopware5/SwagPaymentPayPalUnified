@@ -15,16 +15,16 @@ class FrontendRegistrationSubscriberTest extends \PHPUnit_Framework_TestCase
     public function test_can_be_created()
     {
         $subscriber = new Frontend(Shopware()->Container()->getParameter('paypal_unified.plugin_dir'));
-        $this->assertNotNull($subscriber);
+        static::assertNotNull($subscriber);
     }
 
     public function test_getSubscribedEvents()
     {
         $events = Frontend::getSubscribedEvents();
-        $this->assertCount(3, $events);
-        $this->assertEquals('onGetWebhookControllerPath', $events['Enlight_Controller_Dispatcher_ControllerPath_Frontend_PaypalUnifiedWebhook']);
-        $this->assertEquals('onGetUnifiedControllerPath', $events['Enlight_Controller_Dispatcher_ControllerPath_Frontend_PaypalUnified']);
-        $this->assertEquals('onGetInstallmentsPaymentControllerPath', $events['Enlight_Controller_Dispatcher_ControllerPath_Frontend_PaypalUnifiedInstallments']);
+        static::assertCount(3, $events);
+        static::assertEquals('onGetWebhookControllerPath', $events['Enlight_Controller_Dispatcher_ControllerPath_Frontend_PaypalUnifiedWebhook']);
+        static::assertEquals('onGetUnifiedControllerPath', $events['Enlight_Controller_Dispatcher_ControllerPath_Frontend_PaypalUnified']);
+        static::assertEquals('onGetInstallmentsPaymentControllerPath', $events['Enlight_Controller_Dispatcher_ControllerPath_Frontend_PaypalUnifiedInstallments']);
     }
 
     public function test_onGetWebhookControllerPath()
@@ -32,7 +32,7 @@ class FrontendRegistrationSubscriberTest extends \PHPUnit_Framework_TestCase
         $subscriber = new Frontend(Shopware()->Container()->getParameter('paypal_unified.plugin_dir'));
         $path = $subscriber->onGetWebhookControllerPath();
 
-        $this->assertFileExists($path);
+        static::assertFileExists($path);
     }
 
     public function test_onGetFrontendControllerPath()
@@ -40,7 +40,7 @@ class FrontendRegistrationSubscriberTest extends \PHPUnit_Framework_TestCase
         $subscriber = new Frontend(Shopware()->Container()->getParameter('paypal_unified.plugin_dir'));
         $path = $subscriber->onGetUnifiedControllerPath();
 
-        $this->assertFileExists($path);
+        static::assertFileExists($path);
     }
 
     public function test_onGetInstallmentsPaymentControllerPath()
@@ -48,6 +48,6 @@ class FrontendRegistrationSubscriberTest extends \PHPUnit_Framework_TestCase
         $subscriber = new Frontend(Shopware()->Container()->getParameter('paypal_unified.plugin_dir'));
         $path = $subscriber->onGetInstallmentsPaymentControllerPath();
 
-        $this->assertFileExists($path);
+        static::assertFileExists($path);
     }
 }

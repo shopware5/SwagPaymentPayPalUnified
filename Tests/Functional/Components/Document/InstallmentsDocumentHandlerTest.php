@@ -23,7 +23,7 @@ class InstallmentsDocumentHandlerTest extends \PHPUnit_Framework_TestCase
             Shopware()->Container()->get('paypal_unified.installments.order_credit_info_service')
         );
 
-        $this->assertNotNull($class);
+        static::assertNotNull($class);
     }
 
     public function test_handleDocument()
@@ -41,11 +41,11 @@ class InstallmentsDocumentHandlerTest extends \PHPUnit_Framework_TestCase
         $handler->handleDocument($orderNumber, $document);
 
         $creditInfo = $document->_view->getVariable('paypalInstallmentsCredit')->value;
-        $this->assertEquals('TEST_PAYMENT_ID', $creditInfo['paymentId']);
-        $this->assertEquals(10.01, $creditInfo['feeAmount']);
-        $this->assertEquals(1400.04, $creditInfo['totalCost']);
-        $this->assertEquals(67.68, $creditInfo['monthlyPayment']);
-        $this->assertEquals(12, $creditInfo['term']);
+        static::assertEquals('TEST_PAYMENT_ID', $creditInfo['paymentId']);
+        static::assertEquals(10.01, $creditInfo['feeAmount']);
+        static::assertEquals(1400.04, $creditInfo['totalCost']);
+        static::assertEquals(67.68, $creditInfo['monthlyPayment']);
+        static::assertEquals(12, $creditInfo['term']);
     }
 
     private function insertTestData()

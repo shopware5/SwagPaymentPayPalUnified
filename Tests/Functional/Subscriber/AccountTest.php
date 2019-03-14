@@ -23,14 +23,14 @@ class AccountTest extends \PHPUnit_Framework_TestCase
     public function test_can_be_created()
     {
         $subscriber = $this->getSubscriber();
-        $this->assertNotNull($subscriber);
+        static::assertNotNull($subscriber);
     }
 
     public function test_getSubscribedEvents_has_correct_events()
     {
         $events = Account::getSubscribedEvents();
-        $this->assertCount(1, $events);
-        $this->assertSame('onPostDispatchAccount', $events['Enlight_Controller_Action_PostDispatchSecure_Frontend_Account']);
+        static::assertCount(1, $events);
+        static::assertSame('onPostDispatchAccount', $events['Enlight_Controller_Action_PostDispatchSecure_Frontend_Account']);
     }
 
     public function test_onPostDispatchAccount_is_wrong_action()
@@ -51,7 +51,7 @@ class AccountTest extends \PHPUnit_Framework_TestCase
 
         $subscriber->onPostDispatchAccount($eventArgs);
         $customerData = $view->getAssign('sUserData');
-        $this->assertSame('PayPal', $customerData['additional']['payment']['description']);
+        static::assertSame('PayPal', $customerData['additional']['payment']['description']);
     }
 
     public function test_onPostDispatchAccount_no_shop()
@@ -75,7 +75,7 @@ class AccountTest extends \PHPUnit_Framework_TestCase
 
         $subscriber->onPostDispatchAccount($eventArgs);
         $customerData = $view->getAssign('sUserData');
-        $this->assertSame('PayPal', $customerData['additional']['payment']['description']);
+        static::assertSame('PayPal', $customerData['additional']['payment']['description']);
         Shopware()->Container()->set('shop', $shop);
     }
 
@@ -99,7 +99,7 @@ class AccountTest extends \PHPUnit_Framework_TestCase
 
         $subscriber->onPostDispatchAccount($eventArgs);
         $customerData = $view->getAssign('sUserData');
-        $this->assertSame('PayPal', $customerData['additional']['payment']['description']);
+        static::assertSame('PayPal', $customerData['additional']['payment']['description']);
 
         $paymentMethodProvider->setPaymentMethodActiveFlag(true);
     }
@@ -122,7 +122,7 @@ class AccountTest extends \PHPUnit_Framework_TestCase
 
         $subscriber->onPostDispatchAccount($eventArgs);
         $customerData = $view->getAssign('sUserData');
-        $this->assertSame('PayPal', $customerData['additional']['payment']['description']);
+        static::assertSame('PayPal', $customerData['additional']['payment']['description']);
     }
 
     public function test_onPostDispatchAccount_plus_not_active()
@@ -145,7 +145,7 @@ class AccountTest extends \PHPUnit_Framework_TestCase
 
         $subscriber->onPostDispatchAccount($eventArgs);
         $customerData = $view->getAssign('sUserData');
-        $this->assertSame('PayPal', $customerData['additional']['payment']['description']);
+        static::assertSame('PayPal', $customerData['additional']['payment']['description']);
     }
 
     public function test_onPostDispatchAccount_empty_string()
@@ -168,7 +168,7 @@ class AccountTest extends \PHPUnit_Framework_TestCase
 
         $subscriber->onPostDispatchAccount($eventArgs);
         $customerData = $view->getAssign('sUserData');
-        $this->assertSame('PayPal', $customerData['additional']['payment']['description']);
+        static::assertSame('PayPal', $customerData['additional']['payment']['description']);
     }
 
     public function test_onPostDispatchAccount_customer_payment()
@@ -192,8 +192,8 @@ class AccountTest extends \PHPUnit_Framework_TestCase
         $subscriber->onPostDispatchAccount($eventArgs);
         $customerData = $view->getAssign('sUserData');
 
-        $this->assertSame('PayPal, Lastschrift oder Kreditkarte', $customerData['additional']['payment']['description']);
-        $this->assertContains('<br>Zahlung per Lastschrift oder Kreditkarte ist auch ohne PayPal Konto möglich', $customerData['additional']['payment']['additionaldescription']);
+        static::assertSame('PayPal, Lastschrift oder Kreditkarte', $customerData['additional']['payment']['description']);
+        static::assertContains('<br>Zahlung per Lastschrift oder Kreditkarte ist auch ohne PayPal Konto möglich', $customerData['additional']['payment']['additionaldescription']);
     }
 
     public function test_onPostDispatchAccount_payment_methods()
@@ -225,9 +225,9 @@ class AccountTest extends \PHPUnit_Framework_TestCase
             }
         }
 
-        $this->assertNotNull($unifiedPayment);
-        $this->assertSame('PayPal, Lastschrift oder Kreditkarte', $unifiedPayment['description']);
-        $this->assertContains('<br>Zahlung per Lastschrift oder Kreditkarte ist auch ohne PayPal Konto möglich', $unifiedPayment['additionaldescription']);
+        static::assertNotNull($unifiedPayment);
+        static::assertSame('PayPal, Lastschrift oder Kreditkarte', $unifiedPayment['description']);
+        static::assertContains('<br>Zahlung per Lastschrift oder Kreditkarte ist auch ohne PayPal Konto möglich', $unifiedPayment['additionaldescription']);
     }
 
     /**

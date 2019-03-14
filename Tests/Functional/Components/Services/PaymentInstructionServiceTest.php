@@ -30,7 +30,7 @@ class PaymentInstructionServiceTest extends \PHPUnit_Framework_TestCase
 
     public function test_service_is_available()
     {
-        $this->assertNotNull(Shopware()->Container()->get('paypal_unified.payment_instruction_service'));
+        static::assertNotNull(Shopware()->Container()->get('paypal_unified.payment_instruction_service'));
     }
 
     public function test_getInstruction()
@@ -41,14 +41,14 @@ class PaymentInstructionServiceTest extends \PHPUnit_Framework_TestCase
 
         $testInstructions = $instructionsService->getInstructions(self::TEST_ORDER_NUMBER);
 
-        $this->assertNotNull($testInstructions);
-        $this->assertEquals(self::TEST_DUE_DATE, $testInstructions->getDueDate());
-        $this->assertEquals(self::TEST_REFERENCE, $testInstructions->getReference());
-        $this->assertEquals(self::TEST_BANK_BANK_NAME, $testInstructions->getBankName());
-        $this->assertEquals(self::TEST_BANK_ACCOUNT_HOLDER, $testInstructions->getAccountHolder());
-        $this->assertEquals(self::TEST_BANK_BIC, $testInstructions->getBic());
-        $this->assertEquals(self::TEST_BANK_IBAN, $testInstructions->getIban());
-        $this->assertEquals(self::TEST_BANK_IBAN, $testInstructions->getIban());
+        static::assertNotNull($testInstructions);
+        static::assertEquals(self::TEST_DUE_DATE, $testInstructions->getDueDate());
+        static::assertEquals(self::TEST_REFERENCE, $testInstructions->getReference());
+        static::assertEquals(self::TEST_BANK_BANK_NAME, $testInstructions->getBankName());
+        static::assertEquals(self::TEST_BANK_ACCOUNT_HOLDER, $testInstructions->getAccountHolder());
+        static::assertEquals(self::TEST_BANK_BIC, $testInstructions->getBic());
+        static::assertEquals(self::TEST_BANK_IBAN, $testInstructions->getIban());
+        static::assertEquals(self::TEST_BANK_IBAN, $testInstructions->getIban());
 
         /** @var QueryBuilder $query */
         $query = Shopware()->Container()->get('dbal_connection')->createQueryBuilder();
@@ -64,7 +64,7 @@ class PaymentInstructionServiceTest extends \PHPUnit_Framework_TestCase
 {"jsonDescription":"Pay Upon Invoice Payment Instructions","orderNumber":20001,"bankName":"TEST_BANK","accountHolder":"TEST_ACCOUNT_HOLDER","iban":"TEST_IBAN","bic":"TEST_BIC","amount":50.5,"dueDate":"01-01-2000","reference":"TEST_REFERENCE_NUMBER"}
 ';
 
-        $this->assertContains($expected, $internalComment);
+        static::assertContains($expected, $internalComment);
     }
 
     /**
