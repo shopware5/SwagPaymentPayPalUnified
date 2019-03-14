@@ -199,11 +199,26 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
         $isPlus = (bool) $request->getParam('plus', false);
         $isInstallments = (bool) $request->getParam('installments', false);
 
+        //Basket validation with shopware 5.2 support
+        if (in_array($basketId, BasketIdWhitelist::WHITELIST_IDS, true) ||
+            version_compare($this->shopwareConfig->get('version'), '5.3.0', '<')
+        ) {
+            //For shopware < 5.3 and for whitelisted basket ids
+            $payment = $this->paymentResource->get($paymentId);
+            $basketValid = $this->validateBasketSimple(Payment::fromArray($payment));
+        } else {
+            //For shopware > 5.3
+            $basketValid = $this->validateBasketExtended($basketId);
+        }
+
+        if (!$basketValid) {
+            $this->handleError(ErrorCodes::BASKET_VALIDATION_ERROR);
+
+            return;
+        }
+
         try {
             $orderNumber = '';
-
-            /** @var OrderDataService $orderDataService */
-            $orderDataService = $this->get('paypal_unified.order_data_service');
             $sendOrderNumber = (bool) $this->settingsService->get('send_order_number');
 
             if ($isPlus) {
@@ -225,24 +240,6 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
                 $this->paymentResource->patch($paymentId, [$paymentPatch]);
             }
 
-            //Basket validation with shopware 5.2 support
-            if (in_array($basketId, BasketIdWhitelist::WHITELIST_IDS, true) ||
-                version_compare($this->shopwareConfig->get('version'), '5.3.0', '<')
-            ) {
-                //For shopware < 5.3 and for whitelisted basket ids
-                $payment = $this->paymentResource->get($paymentId);
-                $basketValid = $this->validateBasketSimple(Payment::fromArray($payment));
-            } else {
-                //For shopware > 5.3
-                $basketValid = $this->validateBasketExtended($basketId);
-            }
-
-            if (!$basketValid) {
-                $this->handleError(ErrorCodes::BASKET_VALIDATION_ERROR);
-
-                return;
-            }
-
             // execute the payment to the PayPal API
             $executionResponse = $this->paymentResource->execute($payerId, $paymentId);
             if ($executionResponse === null) {
@@ -260,6 +257,8 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
                 $orderNumber = $this->saveOrder($paymentId, $paymentId, PaymentStatus::PAYMENT_STATUS_OPEN);
             }
 
+            /** @var OrderDataService $orderDataService */
+            $orderDataService = $this->get('paypal_unified.order_data_service');
             /** @var RelatedResource $responseSale */
             $responseSale = $response->getTransactions()->getRelatedResources()->getResources()[0];
 
