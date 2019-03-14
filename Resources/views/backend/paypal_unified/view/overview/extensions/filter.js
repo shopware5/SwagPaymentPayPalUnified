@@ -17,17 +17,17 @@ Ext.define('Shopware.apps.PaypalUnified.view.overview.extensions.Filter', {
                     fieldLabel: '{s name="filter/paymentstatus"}{/s}',
                     displayField: 'description',
                     valueField: 'id',
-                    store: orderStatusStore,
+                    store: orderStatusStore
                 },
                 status: {
                     xtype: 'combobox',
                     fieldLabel: '{s name="filter/orderstatus"}{/s}',
                     displayField: 'description',
                     valueField: 'id',
-                    store: paymentStatusStore,
+                    store: paymentStatusStore
                 }
             }
         };
-    },
+    }
 });
 // {/block}

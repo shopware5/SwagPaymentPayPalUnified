@@ -38,8 +38,7 @@ class FrontendSubscriberTest extends \PHPUnit_Framework_TestCase
 
     public function test_onCollectJavascript()
     {
-        $subscriber = $this->getSubscriber();
-        $javascripts = $subscriber->onCollectJavascript();
+        $javascripts = $this->getSubscriber()->onCollectJavascript();
 
         foreach ($javascripts as $script) {
             static::assertFileExists($script);

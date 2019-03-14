@@ -20,8 +20,7 @@ class LessSubscriberTest extends \PHPUnit_Framework_TestCase
 
     public function test_onCollectLessFiles()
     {
-        $subscriber = new Less(__DIR__ . '../../../');
-        $lessDefinitions = $subscriber->onCollectLessFiles();
+        $lessDefinitions = (new Less(__DIR__ . '../../../'))->onCollectLessFiles();
 
         static::assertCount(1, $lessDefinitions);
     }

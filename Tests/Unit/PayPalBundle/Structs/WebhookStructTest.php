@@ -67,8 +67,7 @@ class WebhookStructTest extends \PHPUnit_Framework_TestCase
             ],
         ];
 
-        $struct = Webhook::fromArray($data);
-        $data = $struct->toArray();
+        $data = Webhook::fromArray($data)->toArray();
 
         static::assertEquals('01-01-1970', $data['creationTime']);
         static::assertEquals('Test object', $data['summary']);

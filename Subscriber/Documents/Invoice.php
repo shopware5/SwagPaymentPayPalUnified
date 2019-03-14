@@ -62,8 +62,7 @@ class Invoice implements SubscriberInterface
             return;
         }
 
-        $paymentMethodProvider = new PaymentMethodProvider();
-        $unifiedPaymentId = $paymentMethodProvider->getPaymentId($this->dbalConnection);
+        $unifiedPaymentId = (new PaymentMethodProvider())->getPaymentId($this->dbalConnection);
 
         $orderPaymentMethodId = (int) $document->_order->payment['id'];
 

@@ -71,8 +71,7 @@ class FinancingOptionsHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function test_finalizeList_without_data()
     {
-        $service = new FinancingOptionsHandler(FinancingResponse::fromArray());
-        $data = $service->finalizeList();
+        $data = (new FinancingOptionsHandler(FinancingResponse::fromArray()))->finalizeList();
 
         static::assertCount(0, $data);
     }

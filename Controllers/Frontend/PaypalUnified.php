@@ -321,8 +321,9 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
         $this->Front()->Plugins()->ViewRenderer()->setNoRender();
 
         if ($this->noDispatchForOrder()) {
-            $this->Response()->setHttpResponseCode(Response::HTTP_BAD_REQUEST);
-            $this->Response()->setBody(ErrorCodes::NO_DISPATCH_FOR_ORDER);
+            $response = $this->Response();
+            $response->setHttpResponseCode(Response::HTTP_BAD_REQUEST);
+            $response->setBody(ErrorCodes::NO_DISPATCH_FOR_ORDER);
 
             return;
         }

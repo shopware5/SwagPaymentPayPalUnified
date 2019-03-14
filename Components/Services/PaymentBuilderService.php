@@ -8,7 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\Components\Services;
 
-use Shopware\Components\Routing\Router;
+use Shopware\Components\Routing\RouterInterface;
 use Shopware_Components_Snippet_Manager as SnippetManager;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderInterface;
@@ -29,7 +29,7 @@ use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Transactions\ItemList\
 class PaymentBuilderService implements PaymentBuilderInterface
 {
     /**
-     * @var Router
+     * @var RouterInterface
      */
     protected $router;
 
@@ -64,7 +64,7 @@ class PaymentBuilderService implements PaymentBuilderInterface
     private $dependencyProvider;
 
     public function __construct(
-        Router $router,
+        RouterInterface $router,
         SettingsServiceInterface $settingsService,
         SnippetManager $snippetManager,
         DependencyProvider $dependencyProvider
@@ -366,7 +366,7 @@ class PaymentBuilderService implements PaymentBuilderInterface
      */
     private function getBrandName()
     {
-        $brandName = (string) $this->settings->get('brand_name', SettingsTable::GENERAL);
+        $brandName = (string) $this->settings->get('brand_name');
 
         if (strlen($brandName) > 127) {
             $brandName = substr($brandName, 0, 127);
@@ -380,6 +380,6 @@ class PaymentBuilderService implements PaymentBuilderInterface
      */
     private function getLandingPage()
     {
-        return (string) $this->settings->get('landing_page_type', SettingsTable::GENERAL);
+        return (string) $this->settings->get('landing_page_type');
     }
 }

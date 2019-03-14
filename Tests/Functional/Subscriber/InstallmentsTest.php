@@ -495,8 +495,10 @@ class InstallmentsTest extends UnifiedControllerTestCase
     public function test_OnPostDispatchCheckout_confirm_action_with_selected_payment_method_installments()
     {
         $this->Request()->setActionName('confirm');
-        $paymentMethodProvider = new PaymentMethodProvider();
-        $installmentsPaymentId = $paymentMethodProvider->getPaymentId(Shopware()->Container()->get('dbal_connection'), PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME);
+        $installmentsPaymentId = (new PaymentMethodProvider())->getPaymentId(
+            Shopware()->Container()->get('dbal_connection'),
+            PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME
+        );
 
         $actionEventArgs = $this->getActionEventArgs();
         $actionEventArgs->getSubject()->View()->assign('sBasket', [

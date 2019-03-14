@@ -96,8 +96,9 @@ class Shopware_Controllers_Widgets_PaypalUnifiedInstallments extends Enlight_Con
         }
 
         // The result must be sorted to get the cheapest rate, since it's being delivered unsorted from PayPal
-        $optionsHandler = new FinancingOptionsHandler($financingResponseStruct);
-        $financingResponseStruct = $optionsHandler->sortOptionsBy(FinancingOptionsHandler::SORT_BY_MONTHLY_PAYMENT);
+        $financingResponseStruct = (new FinancingOptionsHandler($financingResponseStruct))->sortOptionsBy(
+            FinancingOptionsHandler::SORT_BY_MONTHLY_PAYMENT
+        );
         $qualifyingFinancingOptions = $financingResponseStruct->toArray()['qualifyingFinancingOptions'];
 
         //The cheapest rate is now the first entry in the struct.
@@ -133,8 +134,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedInstallments extends Enlight_Con
             return;
         }
 
-        $optionsHandler = new FinancingOptionsHandler($financingResponseStruct);
-        $qualifyingFinancingOptions = $optionsHandler->finalizeList();
+        $qualifyingFinancingOptions = (new FinancingOptionsHandler($financingResponseStruct))->finalizeList();
 
         $view = $this->View();
         $view->assign('paypalInstallmentsOptions', $qualifyingFinancingOptions);

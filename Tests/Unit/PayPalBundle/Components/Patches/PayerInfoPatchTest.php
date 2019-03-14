@@ -30,9 +30,7 @@ class PayerInfoPatchTest extends \PHPUnit_Framework_TestCase
 
     public function test_getValue()
     {
-        $patch = new PayerInfoPatch($this->getPayerInfo());
-
-        $value = $patch->getValue();
+        $value = (new PayerInfoPatch($this->getPayerInfo()))->getValue();
 
         //Payer info
         static::assertCount(7, $value);

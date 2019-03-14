@@ -81,7 +81,8 @@ trait SettingsHelperTrait
         }
 
         $model = new InstallmentsSettingsModel();
-        $this->insertInstallmentsSettings($model->fromArray($data));
+        $model->fromArray($data);
+        $this->insertInstallmentsSettings($model);
     }
 
     public function insertPlusSettings(PlusSettingsModel $model)
@@ -106,7 +107,8 @@ trait SettingsHelperTrait
         }
 
         $model = new PlusSettingsModel();
-        $this->insertPlusSettings($model->fromArray($data));
+        $model->fromArray($data);
+        $this->insertPlusSettings($model);
     }
 
     public function insertExpressCheckoutSettings(ExpressSettingsModel $model)

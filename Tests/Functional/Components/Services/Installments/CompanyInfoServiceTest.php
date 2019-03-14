@@ -28,8 +28,7 @@ class CompanyInfoServiceTest extends \PHPUnit_Framework_TestCase
 
     public function test_getCompanyInfo()
     {
-        $service = new CompanyInfoService(new ShopwareAddressConfigMock());
-        $result = $service->getCompanyInfo();
+        $result = (new CompanyInfoService(new ShopwareAddressConfigMock()))->getCompanyInfo();
 
         static::assertCount(2, $result);
         static::assertEquals('Test address', $result['address']);

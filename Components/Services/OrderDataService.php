@@ -83,8 +83,7 @@ class OrderDataService
      */
     public function applyTransactionId($orderNumber, $transactionId)
     {
-        $builder = $this->dbalConnection->createQueryBuilder();
-        $result = $builder->update('s_order', 'o')
+        $result = $this->dbalConnection->createQueryBuilder()->update('s_order', 'o')
             ->set('o.transactionID', ':transactionId')
             ->where('o.ordernumber = :orderNumber')
             ->setParameters([

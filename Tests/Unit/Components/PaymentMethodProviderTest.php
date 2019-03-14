@@ -84,16 +84,19 @@ class PaymentMethodProviderTest extends \PHPUnit_Framework_TestCase
 
     public function test_get_payment_active()
     {
-        $provider = new PaymentMethodProvider(Shopware()->Models());
-        $activeFlag = $provider->getPaymentMethodActiveFlag(Shopware()->Container()->get('dbal_connection'));
+        $activeFlag = (new PaymentMethodProvider(Shopware()->Models()))->getPaymentMethodActiveFlag(
+            Shopware()->Container()->get('dbal_connection')
+        );
 
         static::assertTrue($activeFlag);
     }
 
     public function test_get_payment_active_installments()
     {
-        $provider = new PaymentMethodProvider(Shopware()->Models());
-        $activeFlag = $provider->getPaymentMethodActiveFlag(Shopware()->Container()->get('dbal_connection'), PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME);
+        $activeFlag = (new PaymentMethodProvider(Shopware()->Models()))->getPaymentMethodActiveFlag(
+            Shopware()->Container()->get('dbal_connection'),
+            PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME
+        );
 
         static::assertTrue($activeFlag);
     }

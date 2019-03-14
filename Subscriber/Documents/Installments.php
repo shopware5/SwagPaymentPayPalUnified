@@ -54,8 +54,10 @@ class Installments implements SubscriberInterface
             return;
         }
 
-        $paymentMethodProvider = new PaymentMethodProvider();
-        $installmentsPaymentId = $paymentMethodProvider->getPaymentId($this->dbalConnection, PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME);
+        $installmentsPaymentId = (new PaymentMethodProvider())->getPaymentId(
+            $this->dbalConnection,
+            PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME
+        );
         $orderPaymentMethodId = (int) $document->_order->payment['id'];
 
         //This order has not been payed with paypal unified.

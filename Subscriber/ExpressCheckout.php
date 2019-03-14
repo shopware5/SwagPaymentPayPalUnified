@@ -155,12 +155,8 @@ class ExpressCheckout implements SubscriberInterface
         }
 
         $action = strtolower($request->getActionName());
-        if ($action !== 'cart' &&
-            $action !== 'ajaxcart' &&
-            $action !== 'ajax_cart' &&
-            $action !== 'ajax_add_article' &&
-            $action !== 'ajaxaddarticle'
-        ) {
+        $allowedActions = ['cart', 'ajaxcart', 'ajax_cart', 'ajax_add_article', 'ajaxaddarticle'];
+        if (!in_array($action, $allowedActions, true)) {
             return;
         }
 

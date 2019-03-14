@@ -9,7 +9,7 @@
 namespace SwagPaymentPayPalUnified\Components\Services\Plus;
 
 use Shopware\Bundle\AttributeBundle\Service\CrudService;
-use Shopware\Components\Routing\Router;
+use Shopware\Components\Routing\RouterInterface;
 use Shopware_Components_Snippet_Manager as SnippetManager;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
@@ -28,7 +28,7 @@ class PlusPaymentBuilderService extends PaymentBuilderService
     private $attributeService;
 
     public function __construct(
-        Router $router,
+        RouterInterface $router,
         SettingsServiceInterface $settingsService,
         CrudService $crudService,
         SnippetManager $snippetManager,

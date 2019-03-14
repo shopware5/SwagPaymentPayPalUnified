@@ -176,12 +176,15 @@ class Installments implements SubscriberInterface
 
         $view = $args->getSubject()->View();
         $selectedPaymentMethodId = (int) $view->getAssign('sPayment')['id'];
-        $paymentMethodProvider = new PaymentMethodProvider();
-        $installmentsPaymentId = $paymentMethodProvider->getPaymentId($this->connection, PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME);
+        $installmentsPaymentId = (new PaymentMethodProvider())->getPaymentId(
+            $this->connection,
+            PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME
+        );
 
         $installmentsDisplayKind = $installmentsSettings->getPresentmentTypeCart();
 
-        //If the selected payment method is Installments, we can not return here, because in any case, the complete financing list should be displayed.
+        // If the selected payment method is Installments, we can not return here,
+        // because in any case, the complete financing list should be displayed.
         if ($installmentsDisplayKind === 0 && $selectedPaymentMethodId !== $installmentsPaymentId) {
             return;
         }
