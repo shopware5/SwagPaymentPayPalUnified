@@ -60,7 +60,7 @@ class AddressValidatorDecorator implements AddressValidatorInterface
             // the customer will have to adjust his address on the confirm page, per default Shopware shows a hint
             $allowedViolations = ['state', 'phone', 'additionalAddressLine1', 'additionalAddressLine2'];
 
-            /** @var $violation ConstraintViolationInterface */
+            /** @var ConstraintViolationInterface $violation */
             foreach ($violations->getIterator() as $violation) {
                 if (!in_array($violation->getPropertyPath(), $allowedViolations, true)) {
                     throw $exception;

@@ -28,7 +28,7 @@ class CompanyInfoServiceTest extends \PHPUnit_Framework_TestCase
 
     public function test_getCompanyInfo()
     {
-        $service = new CompanyInfoService(new ShopwareAddressConfigMock([]));
+        $service = new CompanyInfoService(new ShopwareAddressConfigMock());
         $result = $service->getCompanyInfo();
 
         $this->assertCount(2, $result);
@@ -39,7 +39,7 @@ class CompanyInfoServiceTest extends \PHPUnit_Framework_TestCase
 
 class ShopwareAddressConfigMock extends \Shopware_Components_Config
 {
-    public function __construct(array $config)
+    public function __construct()
     {
     }
 

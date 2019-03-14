@@ -55,7 +55,7 @@ class Invoice implements SubscriberInterface
 
     public function onBeforeRenderDocument(\Enlight_Hook_HookArgs $args)
     {
-        /** @var \Shopware_Components_Document $document */
+        /** @var \Shopware_Components_Document|null $document */
         $document = $args->getSubject();
 
         if (!$document) {

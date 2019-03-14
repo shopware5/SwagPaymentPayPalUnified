@@ -62,7 +62,7 @@ class PaymentResource
     }
 
     /**
-     * @param $paymentId
+     * @param string           $paymentId
      * @param PatchInterface[] $patches
      */
     public function patch($paymentId, array $patches)

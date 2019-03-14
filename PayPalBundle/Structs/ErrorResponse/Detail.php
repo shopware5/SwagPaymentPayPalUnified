@@ -53,7 +53,7 @@ class Detail
     }
 
     /**
-     * @param $detail
+     * @param array $detail
      *
      * @return Detail
      */

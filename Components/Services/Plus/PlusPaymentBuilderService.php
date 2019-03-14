@@ -66,7 +66,7 @@ class PlusPaymentBuilderService extends PaymentBuilderService
     }
 
     /**
-     * @return ShipmentDetails
+     * @return ShipmentDetails|null
      */
     private function getShipmentDetails(array $basketData)
     {

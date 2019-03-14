@@ -97,13 +97,12 @@ class OrderDataService
     }
 
     /**
-     * @param int     $orderNumber
-     * @param Payment $payment
-     * @param bool    $expressCheckout
+     * @param int  $orderNumber
+     * @param bool $expressCheckout
      *
      * @see PaymentType
      */
-    public function applyPaymentTypeAttribute($orderNumber, $payment, $expressCheckout = false)
+    public function applyPaymentTypeAttribute($orderNumber, Payment $payment, $expressCheckout = false)
     {
         $paymentType = PaymentType::PAYPAL_CLASSIC;
         $payer = $payment->getPayer();

@@ -296,8 +296,8 @@ class PaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param string
-     * @param $intent
+     * @param string $paymentType
+     * @param int    $intent
      *
      * @return array
      */

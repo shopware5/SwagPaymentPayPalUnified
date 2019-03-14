@@ -31,7 +31,12 @@ class OrderCreditInfoService
      */
     public function getCreditInfo($paymentId)
     {
-        return $this->modelManager->getRepository(FinancingInformation::class)->findOneBy(['paymentId' => $paymentId]);
+        /** @var FinancingInformation|null $financingInformation */
+        $financingInformation = $this->modelManager->getRepository(FinancingInformation::class)->findOneBy(
+            ['paymentId' => $paymentId]
+        );
+
+        return $financingInformation;
     }
 
     /**

@@ -82,7 +82,7 @@ class Account implements SubscriberInterface
         }
 
         $shopId = $shop->getId();
-        /** @var Plus $plusSettings */
+        /** @var Plus|null $plusSettings */
         $plusSettings = $this->settingsService->getSettings($shopId, SettingsTable::PLUS);
 
         if ($plusSettings === null || !$plusSettings->getActive()) {

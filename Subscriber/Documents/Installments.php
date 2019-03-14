@@ -47,7 +47,7 @@ class Installments implements SubscriberInterface
 
     public function onBeforeRenderDocument(HookArgs $args)
     {
-        /** @var \Shopware_Components_Document $document */
+        /** @var \Shopware_Components_Document|null $document */
         $document = $args->getSubject();
 
         if (!$document) {

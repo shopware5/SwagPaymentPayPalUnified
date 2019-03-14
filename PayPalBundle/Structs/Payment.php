@@ -24,7 +24,7 @@ class Payment
     private $intent;
 
     /**
-     * @var Payer
+     * @var Payer|null
      */
     private $payer;
 
@@ -100,7 +100,7 @@ class Payment
     }
 
     /**
-     * @return Payer
+     * @return Payer|null
      */
     public function getPayer()
     {

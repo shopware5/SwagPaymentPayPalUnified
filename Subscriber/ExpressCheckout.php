@@ -131,13 +131,13 @@ class ExpressCheckout implements SubscriberInterface
             return;
         }
 
-        /** @var GeneralSettingsModel $generalSettings */
+        /** @var GeneralSettingsModel|null $generalSettings */
         $generalSettings = $this->settingsService->getSettings();
         if (!$generalSettings || !$generalSettings->getActive()) {
             return;
         }
 
-        /** @var ExpressSettingsModel $expressSettings */
+        /** @var ExpressSettingsModel|null $expressSettings */
         $expressSettings = $this->settingsService->getSettings(null, SettingsTable::EXPRESS_CHECKOUT);
         if (!($expressSettings instanceof ExpressSettingsModel)) {
             return;
@@ -216,13 +216,13 @@ class ExpressCheckout implements SubscriberInterface
             return;
         }
 
-        /** @var GeneralSettingsModel $generalSettings */
+        /** @var GeneralSettingsModel|null $generalSettings */
         $generalSettings = $this->settingsService->getSettings();
         if (!$generalSettings || !$generalSettings->getActive()) {
             return;
         }
 
-        /** @var ExpressSettingsModel $expressSettings */
+        /** @var ExpressSettingsModel|null $expressSettings */
         $expressSettings = $this->settingsService->getSettings(null, SettingsTable::EXPRESS_CHECKOUT);
         if (!$expressSettings || !$expressSettings->getDetailActive()) {
             return;
@@ -244,13 +244,13 @@ class ExpressCheckout implements SubscriberInterface
             return;
         }
 
-        /** @var GeneralSettingsModel $generalSettings */
+        /** @var GeneralSettingsModel|null $generalSettings */
         $generalSettings = $this->settingsService->getSettings();
         if (!$generalSettings || !$generalSettings->getActive()) {
             return;
         }
 
-        /** @var ExpressSettingsModel $expressSettings */
+        /** @var ExpressSettingsModel|null $expressSettings */
         $expressSettings = $this->settingsService->getSettings(null, SettingsTable::EXPRESS_CHECKOUT);
         if (!$expressSettings || !$expressSettings->getListingActive()) {
             return;
@@ -273,13 +273,13 @@ class ExpressCheckout implements SubscriberInterface
             return;
         }
 
-        /** @var GeneralSettingsModel $generalSettings */
+        /** @var GeneralSettingsModel|null $generalSettings */
         $generalSettings = $this->settingsService->getSettings();
         if (!$generalSettings || !$generalSettings->getActive()) {
             return;
         }
 
-        /** @var ExpressSettingsModel $expressSettings */
+        /** @var ExpressSettingsModel|null $expressSettings */
         $expressSettings = $this->settingsService->getSettings(null, SettingsTable::EXPRESS_CHECKOUT);
         if (!$expressSettings || !$expressSettings->getLoginActive()) {
             return;

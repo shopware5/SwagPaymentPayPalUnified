@@ -122,7 +122,10 @@ class FrontMock extends \Enlight_Controller_Front
     {
     }
 
-    public function setRequest(\Enlight_Controller_Request_RequestTestCase $request)
+    /**
+     * @param \Enlight_Controller_Request_RequestTestCase $request
+     */
+    public function setRequest($request)
     {
         $this->request = $request;
     }

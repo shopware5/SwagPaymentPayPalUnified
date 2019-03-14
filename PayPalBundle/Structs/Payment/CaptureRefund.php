@@ -13,7 +13,7 @@ use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Transactions\Amount;
 class CaptureRefund
 {
     /**
-     * @var Amount
+     * @var Amount|null
      */
     private $amount;
 
@@ -23,7 +23,7 @@ class CaptureRefund
     private $description;
 
     /**
-     * @return Amount
+     * @return Amount|null
      */
     public function getAmount()
     {

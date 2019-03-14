@@ -53,7 +53,7 @@ class Item
      */
     public function setTax($tax)
     {
-        $this->tax = (string) $tax;
+        $this->tax = $tax;
     }
 
     /**
@@ -129,7 +129,7 @@ class Item
     }
 
     /**
-     * @param string $quantity
+     * @param int $quantity
      */
     public function setQuantity($quantity)
     {
@@ -147,7 +147,7 @@ class Item
         $result->setSku($data['sku']);
         $result->setPrice((float) $data['price']);
         $result->setCurrency($data['currency']);
-        $result->setTax($data['tax']);
+        $result->setTax((string) $data['tax']);
         $result->setQuantity((int) $data['quantity']);
 
         return $result;

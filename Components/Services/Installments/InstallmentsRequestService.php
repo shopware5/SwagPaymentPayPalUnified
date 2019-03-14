@@ -57,7 +57,7 @@ class InstallmentsRequestService
                 ]
             );
 
-            return null;
+            return [];
         }
     }
 

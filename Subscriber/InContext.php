@@ -78,13 +78,13 @@ class InContext implements SubscriberInterface
             return;
         }
 
-        /** @var GeneralSettingsModel $settings */
+        /** @var GeneralSettingsModel|null $settings */
         $settings = $this->settingsService->getSettings();
         if (!$settings || !$settings->getActive() || !$settings->getUseInContext()) {
             return;
         }
 
-        /** @var ExpressSettingsModel $expressSettings */
+        /** @var ExpressSettingsModel|null $expressSettings */
         $expressSettings = $this->settingsService->getSettings(null, SettingsTable::EXPRESS_CHECKOUT);
         if (!$expressSettings) {
             return;

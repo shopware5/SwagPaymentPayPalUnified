@@ -48,7 +48,7 @@ class TokenService
     /**
      * @param int $shopId
      *
-     * @return Token
+     * @return Token|false
      */
     private function getTokenFromCache($shopId)
     {

@@ -48,14 +48,20 @@ class PaymentMethodProvider
     public function getPaymentMethodModel($name = self::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME)
     {
         if ($name === self::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME) {
-            return $this->modelManager->getRepository(Payment::class)->findOneBy([
+            /** @var Payment|null $payment */
+            $payment = $this->modelManager->getRepository(Payment::class)->findOneBy([
                 'name' => self::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME,
             ]);
+
+            return $payment;
         }
 
-        return $this->modelManager->getRepository(Payment::class)->findOneBy([
+        /** @var Payment|null $payment */
+        $payment = $this->modelManager->getRepository(Payment::class)->findOneBy([
             'name' => self::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME,
         ]);
+
+        return $payment;
     }
 
     /**

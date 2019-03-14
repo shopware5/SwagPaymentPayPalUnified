@@ -21,7 +21,7 @@ class Transactions
     private $amount;
 
     /**
-     * @var ItemList
+     * @var ItemList|null
      */
     private $itemList;
 
@@ -49,7 +49,7 @@ class Transactions
     }
 
     /**
-     * @return ItemList
+     * @return ItemList|null
      */
     public function getItemList()
     {
@@ -57,7 +57,7 @@ class Transactions
     }
 
     /**
-     * @param $itemList
+     * @param ItemList $itemList
      */
     public function setItemList($itemList)
     {

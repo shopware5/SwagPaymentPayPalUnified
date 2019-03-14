@@ -103,10 +103,9 @@ class ClientService
      * Sends a request and returns the response.
      * The type can be obtained from RequestType.php
      *
-     * @param string       $type
-     * @param string       $resourceUri
-     * @param array|string $data
-     * @param bool         $jsonPayload
+     * @param string $type
+     * @param string $resourceUri
+     * @param bool   $jsonPayload
      *
      * @throws \Exception
      *
