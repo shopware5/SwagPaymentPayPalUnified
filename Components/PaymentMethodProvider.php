@@ -43,7 +43,7 @@ class PaymentMethodProvider
      *
      * @param string $name
      *
-     * @return null|Payment
+     * @return Payment|null
      */
     public function getPaymentMethodModel($name = self::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME)
     {
@@ -80,8 +80,7 @@ class PaymentMethodProvider
      * @see PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME
      * @see PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME
      *
-     * @param Connection $connection
-     * @param string     $name
+     * @param string $name
      *
      * @return bool
      */
@@ -100,8 +99,7 @@ class PaymentMethodProvider
      * @see PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME
      * @see PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME
      *
-     * @param Connection $connection
-     * @param string     $name
+     * @param string $name
      *
      * @return int
      */

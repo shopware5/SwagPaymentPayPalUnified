@@ -32,8 +32,6 @@ class Refund extends RelatedResource
     }
 
     /**
-     * @param array $data
-     *
      * @return Refund
      */
     public static function fromArray(array $data)

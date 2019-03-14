@@ -39,11 +39,6 @@ class Account implements SubscriberInterface
      */
     private $paymentMethodProvider;
 
-    /**
-     * @param Connection               $connection
-     * @param SettingsServiceInterface $settingsService
-     * @param DependencyProvider       $dependencyProvider
-     */
     public function __construct(
         Connection $connection,
         SettingsServiceInterface $settingsService,
@@ -65,9 +60,6 @@ class Account implements SubscriberInterface
         ];
     }
 
-    /**
-     * @param ActionEventArgs $args
-     */
     public function onPostDispatchAccount(ActionEventArgs $args)
     {
         /** @var \Shopware_Controllers_Frontend_Account $controller */

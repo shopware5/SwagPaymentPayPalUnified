@@ -53,8 +53,6 @@ class GenericErrorResponse
     }
 
     /**
-     * @param array $data
-     *
      * @return GenericErrorResponse
      */
     public static function fromArray(array $data)

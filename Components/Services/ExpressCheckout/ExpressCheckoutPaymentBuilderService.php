@@ -16,8 +16,7 @@ use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
 class ExpressCheckoutPaymentBuilderService extends PaymentBuilderService
 {
     /**
-     * @param PaymentBuilderParameters $params
-     * @param string|null              $currency
+     * @param string|null $currency
      *
      * @return Payment
      */

@@ -155,8 +155,6 @@ class FinancingOption
     }
 
     /**
-     * @param array $data
-     *
      * @return FinancingOption
      */
     public static function fromArray(array $data = [])

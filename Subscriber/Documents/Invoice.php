@@ -33,11 +33,6 @@ class Invoice implements SubscriberInterface
      */
     private $snippetManager;
 
-    /**
-     * @param PaymentInstructionService $paymentInstructionService
-     * @param Connection                $dbalConnection
-     * @param SnippetManager            $snippetManager
-     */
     public function __construct(
         PaymentInstructionService $paymentInstructionService,
         Connection $dbalConnection,
@@ -58,9 +53,6 @@ class Invoice implements SubscriberInterface
         ];
     }
 
-    /**
-     * @param \Enlight_Hook_HookArgs $args
-     */
     public function onBeforeRenderDocument(\Enlight_Hook_HookArgs $args)
     {
         /** @var \Shopware_Components_Document $document */

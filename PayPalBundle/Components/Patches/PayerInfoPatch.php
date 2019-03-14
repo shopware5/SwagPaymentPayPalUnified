@@ -19,9 +19,6 @@ class PayerInfoPatch implements PatchInterface
      */
     private $payerInfo;
 
-    /**
-     * @param PayerInfo $payerInfo
-     */
     public function __construct(PayerInfo $payerInfo)
     {
         $this->payerInfo = $payerInfo;

@@ -160,8 +160,6 @@ class PayerInfo
     }
 
     /**
-     * @param array|null $data
-     *
      * @return PayerInfo
      */
     public static function fromArray(array $data = null)

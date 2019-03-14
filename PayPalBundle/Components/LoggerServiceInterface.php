@@ -14,7 +14,6 @@ interface LoggerServiceInterface
      * Adds a notification to the logfile.
      *
      * @param string $message
-     * @param array  $context
      */
     public function notify($message, array $context = []);
 
@@ -22,7 +21,6 @@ interface LoggerServiceInterface
      * Adds a warning to the logfile.
      *
      * @param string $message
-     * @param array  $context
      */
     public function warning($message, array $context = []);
 
@@ -30,7 +28,6 @@ interface LoggerServiceInterface
      * Adds an error to the logfile.
      *
      * @param string $message
-     * @param array  $context
      */
     public function error($message, array $context = []);
 }

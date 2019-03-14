@@ -20,9 +20,6 @@ class SaleResource
      */
     private $clientService;
 
-    /**
-     * @param ClientService $clientService
-     */
     public function __construct(ClientService $clientService)
     {
         $this->clientService = $clientService;
@@ -39,8 +36,7 @@ class SaleResource
     }
 
     /**
-     * @param string     $saleId
-     * @param SaleRefund $refund
+     * @param string $saleId
      *
      * @return array
      */

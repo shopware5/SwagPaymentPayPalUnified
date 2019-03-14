@@ -63,12 +63,6 @@ class PaymentBuilderService implements PaymentBuilderInterface
      */
     private $dependencyProvider;
 
-    /**
-     * @param Router                   $router
-     * @param SettingsServiceInterface $settingsService
-     * @param SnippetManager           $snippetManager
-     * @param DependencyProvider       $dependencyProvider
-     */
     public function __construct(
         Router $router,
         SettingsServiceInterface $settingsService,

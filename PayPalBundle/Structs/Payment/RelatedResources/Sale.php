@@ -139,8 +139,6 @@ class Sale extends RelatedResource
     }
 
     /**
-     * @param array $data
-     *
      * @return Sale
      */
     public static function fromArray(array $data)

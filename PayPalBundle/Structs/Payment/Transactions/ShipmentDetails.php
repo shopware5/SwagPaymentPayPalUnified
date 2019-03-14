@@ -32,8 +32,6 @@ class ShipmentDetails
     }
 
     /**
-     * @param array $data
-     *
      * @return ShipmentDetails
      */
     public static function fromArray(array $data = [])

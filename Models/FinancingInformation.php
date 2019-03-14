@@ -81,8 +81,6 @@ class FinancingInformation extends ModelEntity
 
     /**
      * Returns the paymentID of the payment
-     *
-     * @return mixed
      */
     public function getPaymentId()
     {
@@ -91,8 +89,6 @@ class FinancingInformation extends ModelEntity
 
     /**
      * Returns the fee amount of the payment
-     *
-     * @return mixed
      */
     public function getFeeAmount()
     {
@@ -101,8 +97,6 @@ class FinancingInformation extends ModelEntity
 
     /**
      * Returns the total cost of the payment
-     *
-     * @return mixed
      */
     public function getTotalCost()
     {
@@ -111,8 +105,6 @@ class FinancingInformation extends ModelEntity
 
     /**
      * Returns the term of this payment
-     *
-     * @return mixed
      */
     public function getTerm()
     {

@@ -76,8 +76,6 @@ class FinancingResponse
     }
 
     /**
-     * @param array $data
-     *
      * @return FinancingResponse
      */
     public static function fromArray(array $data = [])

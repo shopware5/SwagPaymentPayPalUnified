@@ -57,7 +57,7 @@ class PlusPaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param null|int $edd
+     * @param int|null $edd
      *
      * @return Payment
      */
@@ -78,8 +78,6 @@ class PlusPaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param SettingsServiceInterface $settingService
-     *
      * @return PlusPaymentBuilderService
      */
     private function getPlusPaymentBuilder(SettingsServiceInterface $settingService)
@@ -93,7 +91,7 @@ class PlusPaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param null|int $edd
+     * @param int|null $edd
      *
      * @return array
      */

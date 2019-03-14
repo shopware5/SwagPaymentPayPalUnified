@@ -137,8 +137,6 @@ class Item
     }
 
     /**
-     * @param array $data
-     *
      * @return Item
      */
     public static function fromArray(array $data)

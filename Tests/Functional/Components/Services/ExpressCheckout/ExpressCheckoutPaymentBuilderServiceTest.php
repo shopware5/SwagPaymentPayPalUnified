@@ -61,8 +61,6 @@ class ExpressCheckoutPaymentBuilderServiceTest extends \PHPUnit_Framework_TestCa
     }
 
     /**
-     * @param SettingsServiceInterface $settingService
-     *
      * @return ExpressCheckoutPaymentBuilderService
      */
     private function getExpressCheckoutRequestBuilder(SettingsServiceInterface $settingService)

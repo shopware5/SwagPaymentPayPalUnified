@@ -174,7 +174,6 @@ abstract class RelatedResource
     }
 
     /**
-     * @param RelatedResource       $resource
      * @param array|RelatedResource $data
      * @param string                $type
      *

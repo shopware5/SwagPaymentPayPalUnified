@@ -24,8 +24,6 @@ interface WebhookHandler
     /**
      * Invokes the webhook using the provided data.
      *
-     * @param Webhook $webhook
-     *
      * @return bool
      */
     public function invoke(Webhook $webhook);

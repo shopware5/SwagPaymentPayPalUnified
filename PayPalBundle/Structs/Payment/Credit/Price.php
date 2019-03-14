@@ -53,8 +53,6 @@ class Price
     }
 
     /**
-     * @param array $data
-     *
      * @return Price
      */
     public static function fromArray(array $data)

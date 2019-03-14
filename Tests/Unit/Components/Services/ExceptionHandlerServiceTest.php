@@ -206,8 +206,6 @@ class ExceptionHandlerServiceTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param LoggerMock $loggerMock
-     *
      * @return ExceptionHandlerService
      */
     private function getHandler(LoggerMock $loggerMock)

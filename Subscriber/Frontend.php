@@ -39,9 +39,7 @@ class Frontend implements SubscriberInterface
     private $paymentMethodProvider;
 
     /**
-     * @param string                   $pluginDir
-     * @param SettingsServiceInterface $settingsService
-     * @param Connection               $connection
+     * @param string $pluginDir
      */
     public function __construct(
         $pluginDir,
@@ -89,8 +87,6 @@ class Frontend implements SubscriberInterface
     /**
      * Handles the Enlight_Controller_Action_PostDispatchSecure_Frontend.
      * Adds the template directory to the TemplateManager
-     *
-     * @param \Enlight_Controller_ActionEventArgs $args
      */
     public function onPostDispatchSecure(\Enlight_Controller_ActionEventArgs $args)
     {
@@ -122,9 +118,6 @@ class Frontend implements SubscriberInterface
         $view->assign('paypalUnifiedShowInstallmentsLogo', $showInstallmentsLogo);
     }
 
-    /**
-     * @param \Enlight_Event_EventArgs $args
-     */
     public function onCollectTemplateDir(\Enlight_Event_EventArgs $args)
     {
         $dirs = $args->getReturn();

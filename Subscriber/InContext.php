@@ -39,11 +39,6 @@ class InContext implements SubscriberInterface
      */
     private $dependencyProvider;
 
-    /**
-     * @param Connection               $connection
-     * @param SettingsServiceInterface $settingsService
-     * @param DependencyProvider       $dependencyProvider
-     */
     public function __construct(
         Connection $connection,
         SettingsServiceInterface $settingsService,
@@ -68,9 +63,6 @@ class InContext implements SubscriberInterface
         ];
     }
 
-    /**
-     * @param \Enlight_Controller_ActionEventArgs $args
-     */
     public function addInContextButton(\Enlight_Controller_ActionEventArgs $args)
     {
         /** @var \Shopware_Controllers_Frontend_Checkout $controller */
@@ -108,9 +100,6 @@ class InContext implements SubscriberInterface
         $view->assign('paypalUnifiedLanguageIso', $this->dependencyProvider->getShop()->getLocale()->getLocale());
     }
 
-    /**
-     * @param \Enlight_Controller_ActionEventArgs $args
-     */
     public function addInContextInfoToRequest(\Enlight_Controller_ActionEventArgs $args)
     {
         $request = $args->getRequest();

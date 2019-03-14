@@ -450,8 +450,6 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
     }
 
     /**
-     * @param Payment $payment
-     *
      * @return bool
      */
     private function validateBasketSimple(Payment $payment)

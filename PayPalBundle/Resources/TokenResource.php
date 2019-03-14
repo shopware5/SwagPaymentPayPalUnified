@@ -20,17 +20,12 @@ class TokenResource
      */
     private $client;
 
-    /**
-     * @param ClientService $client
-     */
     public function __construct(ClientService $client)
     {
         $this->client = $client;
     }
 
     /**
-     * @param OAuthCredentials $credentials
-     *
      * @return array
      */
     public function get(OAuthCredentials $credentials)

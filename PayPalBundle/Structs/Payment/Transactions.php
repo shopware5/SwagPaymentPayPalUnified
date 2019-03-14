@@ -43,9 +43,6 @@ class Transactions
         return $this->amount;
     }
 
-    /**
-     * @param Amount $amount
-     */
     public function setAmount(Amount $amount)
     {
         $this->amount = $amount;
@@ -75,9 +72,6 @@ class Transactions
         return $this->relatedResources;
     }
 
-    /**
-     * @param RelatedResources $relatedResources
-     */
     public function setRelatedResources(RelatedResources $relatedResources)
     {
         $this->relatedResources = $relatedResources;
@@ -100,8 +94,6 @@ class Transactions
     }
 
     /**
-     * @param array $data
-     *
      * @return Transactions
      */
     public static function fromArray(array $data = [])

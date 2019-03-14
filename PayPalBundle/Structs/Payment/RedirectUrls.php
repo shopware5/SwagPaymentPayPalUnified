@@ -53,8 +53,6 @@ class RedirectUrls
     }
 
     /**
-     * @param array|null $data
-     *
      * @return RedirectUrls
      */
     public static function fromArray(array $data = null)

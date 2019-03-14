@@ -25,12 +25,6 @@ class AddressValidatorDecorator implements AddressValidatorInterface
      */
     private $front;
 
-    /**
-     * PaypalAddressValidator constructor.
-     *
-     * @param AddressValidatorInterface $innerValidator
-     * @param \Enlight_Controller_Front $front
-     */
     public function __construct(AddressValidatorInterface $innerValidator, \Enlight_Controller_Front $front)
     {
         $this->innerValidator = $innerValidator;

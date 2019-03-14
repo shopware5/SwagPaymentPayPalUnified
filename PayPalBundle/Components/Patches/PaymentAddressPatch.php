@@ -19,9 +19,6 @@ class PaymentAddressPatch implements PatchInterface
      */
     private $address;
 
-    /**
-     * @param ShippingAddress $address
-     */
     public function __construct(ShippingAddress $address)
     {
         $this->address = $address;

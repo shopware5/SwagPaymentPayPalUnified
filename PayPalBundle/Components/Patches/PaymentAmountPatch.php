@@ -19,9 +19,6 @@ class PaymentAmountPatch implements PatchInterface
      */
     private $amount;
 
-    /**
-     * @param Amount $amount
-     */
     public function __construct(Amount $amount)
     {
         $this->amount = $amount;

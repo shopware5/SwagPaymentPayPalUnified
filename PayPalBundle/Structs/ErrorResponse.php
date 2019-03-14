@@ -118,9 +118,7 @@ class ErrorResponse
     }
 
     /**
-     * @param array $data
-     *
-     * @return null|ErrorResponse
+     * @return ErrorResponse|null
      */
     public static function fromArray(array $data)
     {

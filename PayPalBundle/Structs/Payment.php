@@ -107,9 +107,6 @@ class Payment
         return $this->payer;
     }
 
-    /**
-     * @param Payer $payer
-     */
     public function setPayer(Payer $payer)
     {
         $this->payer = $payer;
@@ -123,9 +120,6 @@ class Payment
         return $this->transactions;
     }
 
-    /**
-     * @param Transactions $transactions
-     */
     public function setTransactions(Transactions $transactions)
     {
         $this->transactions = $transactions;
@@ -139,9 +133,6 @@ class Payment
         return $this->redirectUrls;
     }
 
-    /**
-     * @param RedirectUrls $redirectUrls
-     */
     public function setRedirectUrls(RedirectUrls $redirectUrls)
     {
         $this->redirectUrls = $redirectUrls;
@@ -251,9 +242,6 @@ class Payment
         return $this->paymentInstruction;
     }
 
-    /**
-     * @param PaymentInstruction $paymentInstruction
-     */
     public function setPaymentInstruction(PaymentInstruction $paymentInstruction)
     {
         $this->paymentInstruction = $paymentInstruction;
@@ -283,17 +271,12 @@ class Payment
         return $this->applicationContext;
     }
 
-    /**
-     * @param ApplicationContext $applicationContext
-     */
     public function setApplicationContext(ApplicationContext $applicationContext)
     {
         $this->applicationContext = $applicationContext;
     }
 
     /**
-     * @param array $data
-     *
      * @return Payment
      */
     public static function fromArray(array $data = [])

@@ -30,11 +30,6 @@ class InvoiceDocumentHandler
      */
     private $snippetManager;
 
-    /**
-     * @param PaymentInstructionService $instructionService
-     * @param Connection                $dbalConnection
-     * @param SnippetManager            $snippetManager
-     */
     public function __construct(
         PaymentInstructionService $instructionService,
         Connection $dbalConnection,
@@ -46,8 +41,7 @@ class InvoiceDocumentHandler
     }
 
     /**
-     * @param int      $orderNumber
-     * @param Document $document
+     * @param int $orderNumber
      */
     public function handleDocument($orderNumber, Document $document)
     {
@@ -106,8 +100,6 @@ class InvoiceDocumentHandler
     }
 
     /**
-     * @param array $orderData
-     *
      * @return array
      */
     private function overwritePaymentName(array $orderData)

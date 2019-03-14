@@ -47,12 +47,6 @@ class PaymentMeans implements SubscriberInterface
      */
     private $connection;
 
-    /**
-     * @param Connection                            $connection
-     * @param SettingsServiceInterface              $settingsService
-     * @param ValidationService                     $installmentsValidationService
-     * @param \Enlight_Components_Session_Namespace $session
-     */
     public function __construct(
         Connection $connection,
         SettingsServiceInterface $settingsService,
@@ -78,9 +72,6 @@ class PaymentMeans implements SubscriberInterface
         ];
     }
 
-    /**
-     * @param \Enlight_Event_EventArgs $args
-     */
     public function onFilterPaymentMeans(\Enlight_Event_EventArgs $args)
     {
         /** @var array $availableMethods */

@@ -19,9 +19,6 @@ class OrderCreditInfoService
      */
     private $modelManager;
 
-    /**
-     * @param ModelManager $modelManager
-     */
     public function __construct(ModelManager $modelManager)
     {
         $this->modelManager = $modelManager;
@@ -30,7 +27,7 @@ class OrderCreditInfoService
     /**
      * @param string $paymentId
      *
-     * @return null|FinancingInformation
+     * @return FinancingInformation|null
      */
     public function getCreditInfo($paymentId)
     {
@@ -38,7 +35,6 @@ class OrderCreditInfoService
     }
 
     /**
-     * @param Credit $credit
      * @param string $paymentId
      */
     public function saveCreditInfo(Credit $credit, $paymentId)

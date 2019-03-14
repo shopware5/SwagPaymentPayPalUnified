@@ -95,8 +95,6 @@ class Authorization extends RelatedResource
     }
 
     /**
-     * @param array $data
-     *
      * @return Authorization
      */
     public static function fromArray(array $data)

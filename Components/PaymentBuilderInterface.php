@@ -15,8 +15,6 @@ interface PaymentBuilderInterface
     /**
      * The function returns an array with all parameters that are expected by the PayPal API.
      *
-     * @param PaymentBuilderParameters $params
-     *
      * @return Payment
      */
     public function getPayment(PaymentBuilderParameters $params);

@@ -15,8 +15,6 @@ use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Transactions\ItemList\
 class PaymentAddressService
 {
     /**
-     * @param array $userData
-     *
      * @return ShippingAddress
      */
     public function getShippingAddress(array $userData)
@@ -37,8 +35,6 @@ class PaymentAddressService
     }
 
     /**
-     * @param array $userData
-     *
      * @return PayerInfo
      */
     public function getPayerInfo(array $userData)
@@ -55,8 +51,6 @@ class PaymentAddressService
     }
 
     /**
-     * @param array $userData
-     *
      * @return Address
      */
     private function getBillingAddress(array $userData)

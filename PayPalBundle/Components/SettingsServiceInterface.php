@@ -18,7 +18,7 @@ interface SettingsServiceInterface
      * @param int|null $shopId
      * @param string   $settingsTable
      *
-     * @return null|ModelEntity
+     * @return ModelEntity|null
      *
      * @see SettingsTable
      */
@@ -29,8 +29,6 @@ interface SettingsServiceInterface
      *
      * @param string $column
      * @param string $settingsTable
-     *
-     * @return mixed
      *
      * @see SettingsTable
      */

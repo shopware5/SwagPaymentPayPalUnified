@@ -27,10 +27,6 @@ class Installments implements SubscriberInterface
      */
     private $dbalConnection;
 
-    /**
-     * @param OrderCreditInfoService $creditInfoService
-     * @param Connection             $dbalConnection
-     */
     public function __construct(
         OrderCreditInfoService $creditInfoService,
         Connection $dbalConnection
@@ -49,9 +45,6 @@ class Installments implements SubscriberInterface
         ];
     }
 
-    /**
-     * @param HookArgs $args
-     */
     public function onBeforeRenderDocument(HookArgs $args)
     {
         /** @var \Shopware_Components_Document $document */

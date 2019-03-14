@@ -27,13 +27,6 @@ class PlusPaymentBuilderService extends PaymentBuilderService
      */
     private $attributeService;
 
-    /**
-     * @param Router                   $router
-     * @param SettingsServiceInterface $settingsService
-     * @param CrudService              $crudService
-     * @param SnippetManager           $snippetManager
-     * @param DependencyProvider       $dependencyProvider
-     */
     public function __construct(
         Router $router,
         SettingsServiceInterface $settingsService,
@@ -47,8 +40,6 @@ class PlusPaymentBuilderService extends PaymentBuilderService
     }
 
     /**
-     * @param PaymentBuilderParameters $params
-     *
      * @return Payment
      */
     public function getPayment(PaymentBuilderParameters $params)
@@ -75,8 +66,6 @@ class PlusPaymentBuilderService extends PaymentBuilderService
     }
 
     /**
-     * @param array $basketData
-     *
      * @return ShipmentDetails
      */
     private function getShipmentDetails(array $basketData)
@@ -93,9 +82,7 @@ class PlusPaymentBuilderService extends PaymentBuilderService
     }
 
     /**
-     * @param array $basketData
-     *
-     * @return null|string
+     * @return string|null
      */
     private function getEddValue(array $basketData)
     {

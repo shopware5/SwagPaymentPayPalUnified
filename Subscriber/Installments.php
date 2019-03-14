@@ -74,16 +74,6 @@ class Installments implements SubscriberInterface
      */
     private $clientService;
 
-    /**
-     * @param SettingsServiceInterface         $settingsService
-     * @param ValidationService                $validationService
-     * @param Connection                       $connection
-     * @param PaymentBuilderInterface          $installmentsPaymentBuilder
-     * @param ExceptionHandlerServiceInterface $exceptionHandlerService
-     * @param PaymentResource                  $paymentResource
-     * @param OrderCreditInfoService           $orderCreditInfoService
-     * @param ClientService                    $clientService
-     */
     public function __construct(
         SettingsServiceInterface $settingsService,
         ValidationService $validationService,
@@ -116,9 +106,6 @@ class Installments implements SubscriberInterface
         ];
     }
 
-    /**
-     * @param ActionEventArgs $args
-     */
     public function onPostDispatchDetail(ActionEventArgs $args)
     {
         $swUnifiedInstallmentsActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag($this->connection, PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME);
@@ -158,9 +145,6 @@ class Installments implements SubscriberInterface
         $view->assign('paypalInstallmentsPageType', 'detail');
     }
 
-    /**
-     * @param ActionEventArgs $args
-     */
     public function onPostDispatchCheckout(ActionEventArgs $args)
     {
         $request = $args->getRequest();
@@ -228,8 +212,6 @@ class Installments implements SubscriberInterface
 
     /**
      * Fetches data for the installments finishing process.
-     *
-     * @param ActionEventArgs $args
      */
     public function onConfirmInstallments(ActionEventArgs $args)
     {

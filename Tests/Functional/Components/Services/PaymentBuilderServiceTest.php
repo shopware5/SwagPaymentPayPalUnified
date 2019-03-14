@@ -318,8 +318,6 @@ class PaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param SettingsServiceInterface $settingService
-     *
      * @return PaymentBuilderService
      */
     private function getRequestService(SettingsServiceInterface $settingService)

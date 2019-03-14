@@ -24,10 +24,6 @@ class LoggerService implements LoggerServiceInterface
      */
     private $settings;
 
-    /**
-     * @param Logger                   $baseLogger
-     * @param SettingsServiceInterface $settings
-     */
     public function __construct(Logger $baseLogger, SettingsServiceInterface $settings)
     {
         $this->logger = $baseLogger;
@@ -36,7 +32,6 @@ class LoggerService implements LoggerServiceInterface
 
     /**
      * @param string $message
-     * @param array  $context
      */
     public function warning($message, array $context = [])
     {
@@ -52,7 +47,6 @@ class LoggerService implements LoggerServiceInterface
 
     /**
      * @param string $message
-     * @param array  $context
      */
     public function notify($message, array $context = [])
     {
@@ -68,7 +62,6 @@ class LoggerService implements LoggerServiceInterface
 
     /**
      * @param string $message
-     * @param array  $context
      */
     public function error($message, array $context = [])
     {

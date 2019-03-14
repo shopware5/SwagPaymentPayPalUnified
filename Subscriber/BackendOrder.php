@@ -18,9 +18,6 @@ class BackendOrder implements SubscriberInterface
      */
     private $connection;
 
-    /**
-     * @param Connection $connection
-     */
     public function __construct(Connection $connection)
     {
         $this->connection = $connection;
@@ -38,8 +35,6 @@ class BackendOrder implements SubscriberInterface
 
     /**
      * change the payment name to show which PayPal payment was selected by the customer
-     *
-     * @param \Enlight_Controller_ActionEventArgs $args
      */
     public function onPostDispatchOrder(\Enlight_Controller_ActionEventArgs $args)
     {

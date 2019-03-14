@@ -97,8 +97,6 @@ class Webhook
     }
 
     /**
-     * @param array $data
-     *
      * @return Webhook
      */
     public static function fromArray(array $data)

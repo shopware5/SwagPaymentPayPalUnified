@@ -74,8 +74,6 @@ class Details
     }
 
     /**
-     * @param array $data
-     *
      * @return Details
      */
     public static function fromArray(array $data = [])

@@ -19,8 +19,6 @@ class WebhookService
     private $registeredWebhooks;
 
     /**
-     * @param WebhookHandler $webhook
-     *
      * @throws WebhookException
      */
     public function registerWebhook(WebhookHandler $webhook)

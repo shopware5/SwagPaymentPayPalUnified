@@ -139,9 +139,7 @@ class Credit
     }
 
     /**
-     * @param array|null $data
-     *
-     * @return null|Credit
+     * @return Credit|null
      */
     public static function fromArray(array $data = null)
     {

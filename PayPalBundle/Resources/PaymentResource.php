@@ -21,17 +21,12 @@ class PaymentResource
      */
     private $clientService;
 
-    /**
-     * @param ClientService $clientService
-     */
     public function __construct(ClientService $clientService)
     {
         $this->clientService = $clientService;
     }
 
     /**
-     * @param Payment $payment
-     *
      * @return array
      */
     public function create(Payment $payment)
@@ -43,7 +38,7 @@ class PaymentResource
      * @param string $payerId
      * @param string $paymentId
      *
-     * @return null|array
+     * @return array|null
      */
     public function execute($payerId, $paymentId)
     {

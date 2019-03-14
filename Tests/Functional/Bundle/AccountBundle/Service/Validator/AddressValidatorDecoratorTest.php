@@ -76,16 +76,11 @@ class AddressValidatorDecoratorTest extends \PHPUnit_Framework_TestCase
 
 class AddressValidatorMock implements AddressValInterface
 {
-    /**
-     * @param Address $address
-     */
     public function validate(Address $address)
     {
     }
 
     /**
-     * @param Address $address
-     *
      * @return bool
      */
     public function isValid(Address $address)
@@ -97,8 +92,6 @@ class AddressValidatorMock implements AddressValInterface
 class AddressValidatorWithStateException implements AddressValInterface
 {
     /**
-     * @param Address $address
-     *
      * @throws ValidationException
      */
     public function validate(Address $address)
@@ -110,8 +103,6 @@ class AddressValidatorWithStateException implements AddressValInterface
     }
 
     /**
-     * @param Address $address
-     *
      * @return bool
      */
     public function isValid(Address $address)

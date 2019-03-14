@@ -630,8 +630,6 @@ class InstallmentsTest extends UnifiedControllerTestCase
     }
 
     /**
-     * @param SettingsServiceInterface $settingService
-     *
      * @return Installments
      */
     private function getInstallmentsSubscriber(SettingsServiceInterface $settingService)

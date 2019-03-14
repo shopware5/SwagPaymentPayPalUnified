@@ -20,8 +20,6 @@ class TransactionHistoryBuilderService
      * A helper method that parses a payment into a sales history, that can be directly used
      * in an custom model.
      *
-     * @param array $paymentDetails
-     *
      * @throws \Exception
      *
      * @return array
@@ -44,8 +42,6 @@ class TransactionHistoryBuilderService
     }
 
     /**
-     * @param Sale $sale
-     *
      * @return array
      */
     public function getLegacyHistory(Sale $sale)
@@ -73,8 +69,6 @@ class TransactionHistoryBuilderService
      * A helper method that parses a payment into a sales history, that can be directly used
      * in an custom model. Additionally, this calculates and adds the maxRefundableAmount to
      * the result, which can be used as a limit for any refund in the future.
-     *
-     * @param Payment $payment
      *
      * @return array
      */
@@ -111,8 +105,6 @@ class TransactionHistoryBuilderService
      * in an custom model. Additionally, this calculates and adds the maxRefundableAmount to
      * the result, which can be used as a limit for any refund in the future. Furthermore, it adds the maxAuthorizableAmount
      * to the result, which indicates the maximum amount that can be authorized in the future.
-     *
-     * @param Payment $payment
      *
      * @return array
      */

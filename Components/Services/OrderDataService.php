@@ -27,10 +27,6 @@ class OrderDataService
      */
     private $settingsService;
 
-    /**
-     * @param Connection               $dbalConnection
-     * @param SettingsServiceInterface $settingsService
-     */
     public function __construct(
         Connection $dbalConnection,
         SettingsServiceInterface $settingsService

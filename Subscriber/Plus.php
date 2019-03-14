@@ -89,18 +89,6 @@ class Plus implements SubscriberInterface
      */
     private static $allowedActions = ['shippingPayment', 'confirm', 'finish'];
 
-    /**
-     * @param SettingsServiceInterface         $settingsService
-     * @param DependencyProvider               $dependencyProvider
-     * @param SnippetManager                   $snippetManager
-     * @param Connection                       $connection
-     * @param PaymentInstructionService        $paymentInstructionService
-     * @param OrderDataService                 $orderDataService
-     * @param PaymentBuilderInterface          $paymentBuilderService
-     * @param ClientService                    $clientService
-     * @param PaymentResource                  $paymentResource
-     * @param ExceptionHandlerServiceInterface $exceptionHandlerService
-     */
     public function __construct(
         SettingsServiceInterface $settingsService,
         DependencyProvider $dependencyProvider,
@@ -139,8 +127,6 @@ class Plus implements SubscriberInterface
 
     /**
      * Checks the requirements for the payment wall and assigns the data to the view if the payment wall is displayed.
-     *
-     * @param \Enlight_Controller_ActionEventArgs $args
      */
     public function onPostDispatchCheckout(\Enlight_Controller_ActionEventArgs $args)
     {
@@ -216,8 +202,6 @@ class Plus implements SubscriberInterface
     }
 
     /**
-     * @param \Enlight_Event_EventArgs $args
-     *
      * @return array
      */
     public function addPaymentMethodsAttributes(\Enlight_Event_EventArgs $args)
@@ -272,8 +256,6 @@ class Plus implements SubscriberInterface
 
     /**
      * Handles the finish dispatch and assigns the payment instructions to the template.
-     *
-     * @param \Enlight_View_Default $view
      */
     private function handleFinishDispatch(\Enlight_View_Default $view)
     {
@@ -293,10 +275,6 @@ class Plus implements SubscriberInterface
         }
     }
 
-    /**
-     * @param \Enlight_View_Default                 $view
-     * @param \Enlight_Components_Session_Namespace $session
-     */
     private function handleConfirmDispatch(\Enlight_View_Default $view, \Enlight_Components_Session_Namespace $session)
     {
         // Check if the user is coming from checkout step 2 (payment & shipping)
@@ -329,10 +307,6 @@ class Plus implements SubscriberInterface
         $view->assign('paypalUnifiedLanguageIso', $this->getPaymentWallLanguage());
     }
 
-    /**
-     * @param \Enlight_View_Default                 $view
-     * @param \Enlight_Components_Session_Namespace $session
-     */
     private function handleShippingPaymentDispatch(
         \Enlight_View_Default $view,
         \Enlight_Components_Session_Namespace $session
@@ -366,9 +340,6 @@ class Plus implements SubscriberInterface
     }
 
     /**
-     * @param array $basketData
-     * @param array $userData
-     *
      * @return Payment|null
      */
     private function createPayment(array $basketData, array $userData)
@@ -409,9 +380,6 @@ class Plus implements SubscriberInterface
         return $plusLanguage;
     }
 
-    /**
-     * @param \Enlight_View_Default $view
-     */
     private function overwritePaymentName(\Enlight_View_Default $view)
     {
         $unifiedPaymentId = $this->paymentMethodProvider->getPaymentId($this->connection);
@@ -452,9 +420,6 @@ class Plus implements SubscriberInterface
         }
     }
 
-    /**
-     * @param \Enlight_View_Default $view
-     */
     private function handleIntegratingThirdPartyMethods(\Enlight_View_Default $view)
     {
         $paymentMethods = $view->getAssign('sPayments');

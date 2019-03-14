@@ -158,8 +158,6 @@ class Address
     }
 
     /**
-     * @param array|null $data
-     *
      * @return Address
      */
     public static function fromArray(array $data = null)

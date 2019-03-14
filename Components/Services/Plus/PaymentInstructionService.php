@@ -21,8 +21,6 @@ class PaymentInstructionService
 
     /**
      * PaymentInstructionService constructor.
-     *
-     * @param ModelManager $modelManager
      */
     public function __construct(ModelManager $modelManager)
     {
@@ -32,7 +30,7 @@ class PaymentInstructionService
     /**
      * @param string $orderNumber
      *
-     * @return null|PaymentInstructionModel
+     * @return PaymentInstructionModel|null
      */
     public function getInstructions($orderNumber)
     {
@@ -44,8 +42,7 @@ class PaymentInstructionService
     }
 
     /**
-     * @param string             $orderNumber
-     * @param PaymentInstruction $paymentInstruction
+     * @param string $orderNumber
      */
     public function createInstructions($orderNumber, PaymentInstruction $paymentInstruction)
     {
@@ -66,8 +63,7 @@ class PaymentInstructionService
     }
 
     /**
-     * @param string                  $orderNumber
-     * @param PaymentInstructionModel $model
+     * @param string $orderNumber
      */
     private function setInstructionToInternalComment($orderNumber, PaymentInstructionModel $model)
     {
@@ -86,8 +82,6 @@ class PaymentInstructionService
     }
 
     /**
-     * @param PaymentInstructionModel $model
-     *
      * @return string
      */
     private function getInstructionString(PaymentInstructionModel $model)

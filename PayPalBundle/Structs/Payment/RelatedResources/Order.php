@@ -11,8 +11,6 @@ namespace SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\RelatedResources
 class Order extends RelatedResource
 {
     /**
-     * @param array $data
-     *
      * @return Order
      */
     public static function fromArray(array $data)
