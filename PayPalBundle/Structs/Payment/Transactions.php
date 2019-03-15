@@ -26,7 +26,7 @@ class Transactions
     private $itemList;
 
     /**
-     * @var RelatedResources
+     * @var RelatedResources|null
      */
     private $relatedResources;
 
@@ -65,7 +65,7 @@ class Transactions
     }
 
     /**
-     * @return RelatedResources
+     * @return RelatedResources|null
      */
     public function getRelatedResources()
     {

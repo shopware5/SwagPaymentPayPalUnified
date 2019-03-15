@@ -77,20 +77,24 @@ class TransactionHistoryBuilderService
         $result = [];
         $maxAmount = $payment->getTransactions()->getAmount()->getTotal();
 
-        /** @var RelatedResource $sale */
-        foreach ($payment->getTransactions()->getRelatedResources()->getResources() as $sale) {
-            $result[] = [
-                'id' => $sale->getId(),
-                'state' => $sale->getState(),
-                'amount' => $sale->getType() === ResourceType::SALE ? $sale->getAmount()->getTotal() : ($sale->getAmount()->getTotal() * -1),
-                'create_time' => $sale->getCreateTime(),
-                'update_time' => $sale->getUpdateTime(),
-                'currency' => $sale->getAmount()->getCurrency(),
-                'type' => $sale->getType(),
-            ];
+        $relatedResource = $payment->getTransactions()->getRelatedResources();
 
-            if ($sale->getType() === ResourceType::REFUND) {
-                $maxAmount -= (float) $sale->getAmount()->getTotal();
+        if ($relatedResource !== null) {
+            /** @var RelatedResource $sale */
+            foreach ($relatedResource->getResources() as $sale) {
+                $result[] = [
+                    'id' => $sale->getId(),
+                    'state' => $sale->getState(),
+                    'amount' => $sale->getType() === ResourceType::SALE ? $sale->getAmount()->getTotal() : ($sale->getAmount()->getTotal() * -1),
+                    'create_time' => $sale->getCreateTime(),
+                    'update_time' => $sale->getUpdateTime(),
+                    'currency' => $sale->getAmount()->getCurrency(),
+                    'type' => $sale->getType(),
+                ];
+
+                if ($sale->getType() === ResourceType::REFUND) {
+                    $maxAmount -= (float) $sale->getAmount()->getTotal();
+                }
             }
         }
 
