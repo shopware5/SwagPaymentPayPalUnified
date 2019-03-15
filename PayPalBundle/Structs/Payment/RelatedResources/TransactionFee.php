@@ -53,8 +53,6 @@ class TransactionFee
     }
 
     /**
-     * @param array $data
-     *
      * @return TransactionFee
      */
     public static function fromArray(array $data)

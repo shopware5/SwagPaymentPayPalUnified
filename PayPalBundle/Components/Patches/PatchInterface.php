@@ -29,8 +29,6 @@ interface PatchInterface
 
     /**
      * Returns the value that should be transferred to PayPal
-     *
-     * @return mixed
      */
     public function getValue();
 }

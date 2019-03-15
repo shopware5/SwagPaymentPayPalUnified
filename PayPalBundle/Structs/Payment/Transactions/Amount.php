@@ -67,17 +67,12 @@ class Amount
         return $this->details;
     }
 
-    /**
-     * @param Details $details
-     */
     public function setDetails(Details $details)
     {
         $this->details = $details;
     }
 
     /**
-     * @param array $data
-     *
      * @return Amount
      */
     public static function fromArray(array $data)

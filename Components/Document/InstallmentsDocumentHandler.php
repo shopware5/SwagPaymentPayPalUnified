@@ -25,10 +25,6 @@ class InstallmentsDocumentHandler
      */
     private $creditInfoService;
 
-    /**
-     * @param Connection             $dbalConnection
-     * @param OrderCreditInfoService $creditInfoService
-     */
     public function __construct(Connection $dbalConnection, OrderCreditInfoService $creditInfoService)
     {
         $this->dbalConnection = $dbalConnection;
@@ -36,8 +32,7 @@ class InstallmentsDocumentHandler
     }
 
     /**
-     * @param int      $orderNumber
-     * @param Document $document
+     * @param int $orderNumber
      */
     public function handleDocument($orderNumber, Document $document)
     {
@@ -50,9 +45,9 @@ class InstallmentsDocumentHandler
     }
 
     /**
-     * @param $orderNumber
+     * @param string $orderNumber
      *
-     * @return null|FinancingInformation
+     * @return FinancingInformation|null
      */
     private function getCreditInformation($orderNumber)
     {

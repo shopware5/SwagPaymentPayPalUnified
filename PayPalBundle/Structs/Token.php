@@ -91,8 +91,6 @@ class Token
     }
 
     /**
-     * @param array $data
-     *
      * @return Token
      */
     public static function fromArray(array $data)

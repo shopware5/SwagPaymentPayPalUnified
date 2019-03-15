@@ -15,15 +15,15 @@ class WidgetsRegistrationSubscriberTest extends \PHPUnit_Framework_TestCase
     public function test_can_be_created()
     {
         $subscriber = new Widgets(Shopware()->Container()->getParameter('paypal_unified.plugin_dir'));
-        $this->assertNotNull($subscriber);
+        static::assertNotNull($subscriber);
     }
 
     public function test_getSubscribedEvents()
     {
         $events = Widgets::getSubscribedEvents();
-        $this->assertCount(2, $events);
-        $this->assertEquals('onGetInstallmentsControllerPath', $events['Enlight_Controller_Dispatcher_ControllerPath_Widgets_PaypalUnifiedInstallments']);
-        $this->assertEquals('onGetEcControllerPath', $events['Enlight_Controller_Dispatcher_ControllerPath_Widgets_PaypalUnifiedExpressCheckout']);
+        static::assertCount(2, $events);
+        static::assertEquals('onGetInstallmentsControllerPath', $events['Enlight_Controller_Dispatcher_ControllerPath_Widgets_PaypalUnifiedInstallments']);
+        static::assertEquals('onGetEcControllerPath', $events['Enlight_Controller_Dispatcher_ControllerPath_Widgets_PaypalUnifiedExpressCheckout']);
     }
 
     public function test_onGetInstallmentsControllerPath()
@@ -31,7 +31,7 @@ class WidgetsRegistrationSubscriberTest extends \PHPUnit_Framework_TestCase
         $subscriber = new Widgets(Shopware()->Container()->getParameter('paypal_unified.plugin_dir'));
         $path = $subscriber->onGetInstallmentsControllerPath();
 
-        $this->assertFileExists($path);
+        static::assertFileExists($path);
     }
 
     public function test_onGetEcControllerPath()
@@ -39,6 +39,6 @@ class WidgetsRegistrationSubscriberTest extends \PHPUnit_Framework_TestCase
         $subscriber = new Widgets(Shopware()->Container()->getParameter('paypal_unified.plugin_dir'));
         $path = $subscriber->onGetEcControllerPath();
 
-        $this->assertFileExists($path);
+        static::assertFileExists($path);
     }
 }

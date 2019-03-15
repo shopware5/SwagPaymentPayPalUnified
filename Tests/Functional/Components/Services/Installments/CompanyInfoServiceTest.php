@@ -16,30 +16,29 @@ class CompanyInfoServiceTest extends \PHPUnit_Framework_TestCase
     {
         $service = new CompanyInfoService(Shopware()->Container()->get('config'));
 
-        $this->assertNotNull($service);
+        static::assertNotNull($service);
     }
 
     public function test_is_available()
     {
         $service = Shopware()->Container()->get('paypal_unified.installments.company_info_service');
 
-        $this->assertEquals(CompanyInfoService::class, get_class($service));
+        static::assertEquals(CompanyInfoService::class, get_class($service));
     }
 
     public function test_getCompanyInfo()
     {
-        $service = new CompanyInfoService(new ShopwareAddressConfigMock([]));
-        $result = $service->getCompanyInfo();
+        $result = (new CompanyInfoService(new ShopwareAddressConfigMock()))->getCompanyInfo();
 
-        $this->assertCount(2, $result);
-        $this->assertEquals('Test address', $result['address']);
-        $this->assertEquals('Test company', $result['name']);
+        static::assertCount(2, $result);
+        static::assertEquals('Test address', $result['address']);
+        static::assertEquals('Test company', $result['name']);
     }
 }
 
 class ShopwareAddressConfigMock extends \Shopware_Components_Config
 {
-    public function __construct(array $config)
+    public function __construct()
     {
     }
 

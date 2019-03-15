@@ -83,17 +83,6 @@ class ExpressCheckout implements SubscriberInterface
      */
     private $dependencyProvider;
 
-    /**
-     * @param SettingsServiceInterface         $settingsService
-     * @param Session                          $session
-     * @param PaymentResource                  $paymentResource
-     * @param PaymentAddressService            $addressRequestService
-     * @param PaymentBuilderInterface          $paymentBuilder
-     * @param ExceptionHandlerServiceInterface $exceptionHandlerService
-     * @param Connection                       $connection
-     * @param ClientService                    $clientService
-     * @param DependencyProvider               $dependencyProvider
-     */
     public function __construct(
         SettingsServiceInterface $settingsService,
         Session $session,
@@ -135,9 +124,6 @@ class ExpressCheckout implements SubscriberInterface
         ];
     }
 
-    /**
-     * @param ActionEventArgs $args
-     */
     public function addExpressCheckoutButtonCart(ActionEventArgs $args)
     {
         $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag($this->connection);
@@ -145,13 +131,13 @@ class ExpressCheckout implements SubscriberInterface
             return;
         }
 
-        /** @var GeneralSettingsModel $generalSettings */
+        /** @var GeneralSettingsModel|null $generalSettings */
         $generalSettings = $this->settingsService->getSettings();
         if (!$generalSettings || !$generalSettings->getActive()) {
             return;
         }
 
-        /** @var ExpressSettingsModel $expressSettings */
+        /** @var ExpressSettingsModel|null $expressSettings */
         $expressSettings = $this->settingsService->getSettings(null, SettingsTable::EXPRESS_CHECKOUT);
         if (!($expressSettings instanceof ExpressSettingsModel)) {
             return;
@@ -169,12 +155,8 @@ class ExpressCheckout implements SubscriberInterface
         }
 
         $action = strtolower($request->getActionName());
-        if ($action !== 'cart' &&
-            $action !== 'ajaxcart' &&
-            $action !== 'ajax_cart' &&
-            $action !== 'ajax_add_article' &&
-            $action !== 'ajaxaddarticle'
-        ) {
+        $allowedActions = ['cart', 'ajaxcart', 'ajax_cart', 'ajax_add_article', 'ajaxaddarticle'];
+        if (!in_array($action, $allowedActions, true)) {
             return;
         }
 
@@ -187,9 +169,6 @@ class ExpressCheckout implements SubscriberInterface
         }
     }
 
-    /**
-     * @param ActionEventArgs $args
-     */
     public function addEcInfoOnConfirm(ActionEventArgs $args)
     {
         $request = $args->getRequest();
@@ -203,9 +182,6 @@ class ExpressCheckout implements SubscriberInterface
         }
     }
 
-    /**
-     * @param ActionEventArgs $args
-     */
     public function addPaymentInfoToRequest(ActionEventArgs $args)
     {
         $request = $args->getRequest();
@@ -229,9 +205,6 @@ class ExpressCheckout implements SubscriberInterface
         }
     }
 
-    /**
-     * @param ActionEventArgs $args
-     */
     public function addExpressCheckoutButtonDetail(ActionEventArgs $args)
     {
         $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag($this->connection);
@@ -239,13 +212,13 @@ class ExpressCheckout implements SubscriberInterface
             return;
         }
 
-        /** @var GeneralSettingsModel $generalSettings */
+        /** @var GeneralSettingsModel|null $generalSettings */
         $generalSettings = $this->settingsService->getSettings();
         if (!$generalSettings || !$generalSettings->getActive()) {
             return;
         }
 
-        /** @var ExpressSettingsModel $expressSettings */
+        /** @var ExpressSettingsModel|null $expressSettings */
         $expressSettings = $this->settingsService->getSettings(null, SettingsTable::EXPRESS_CHECKOUT);
         if (!$expressSettings || !$expressSettings->getDetailActive()) {
             return;
@@ -267,13 +240,13 @@ class ExpressCheckout implements SubscriberInterface
             return;
         }
 
-        /** @var GeneralSettingsModel $generalSettings */
+        /** @var GeneralSettingsModel|null $generalSettings */
         $generalSettings = $this->settingsService->getSettings();
         if (!$generalSettings || !$generalSettings->getActive()) {
             return;
         }
 
-        /** @var ExpressSettingsModel $expressSettings */
+        /** @var ExpressSettingsModel|null $expressSettings */
         $expressSettings = $this->settingsService->getSettings(null, SettingsTable::EXPRESS_CHECKOUT);
         if (!$expressSettings || !$expressSettings->getListingActive()) {
             return;
@@ -289,9 +262,6 @@ class ExpressCheckout implements SubscriberInterface
         }
     }
 
-    /**
-     * @param ActionEventArgs $args
-     */
     public function addExpressCheckoutButtonLogin(ActionEventArgs $args)
     {
         $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag($this->connection);
@@ -299,13 +269,13 @@ class ExpressCheckout implements SubscriberInterface
             return;
         }
 
-        /** @var GeneralSettingsModel $generalSettings */
+        /** @var GeneralSettingsModel|null $generalSettings */
         $generalSettings = $this->settingsService->getSettings();
         if (!$generalSettings || !$generalSettings->getActive()) {
             return;
         }
 
-        /** @var ExpressSettingsModel $expressSettings */
+        /** @var ExpressSettingsModel|null $expressSettings */
         $expressSettings = $this->settingsService->getSettings(null, SettingsTable::EXPRESS_CHECKOUT);
         if (!$expressSettings || !$expressSettings->getLoginActive()) {
             return;
@@ -371,20 +341,12 @@ class ExpressCheckout implements SubscriberInterface
         return $this->dependencyProvider->getShop()->getLocale()->getLocale();
     }
 
-    /**
-     * @param ViewEngine           $view
-     * @param GeneralSettingsModel $generalSettings
-     */
     private function addEcButtonBehaviour(ViewEngine $view, GeneralSettingsModel $generalSettings)
     {
         $view->assign('paypalUnifiedModeSandbox', $generalSettings->getSandbox());
         $view->assign('paypalUnifiedUseInContext', $generalSettings->getUseInContext());
     }
 
-    /**
-     * @param ViewEngine           $view
-     * @param ExpressSettingsModel $expressSettings
-     */
     private function addEcButtonStyleInfo(ViewEngine $view, ExpressSettingsModel $expressSettings)
     {
         $view->assign('paypalUnifiedEcButtonStyleColor', $expressSettings->getButtonStyleColor());

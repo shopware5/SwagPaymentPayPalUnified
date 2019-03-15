@@ -9,7 +9,7 @@
 namespace SwagPaymentPayPalUnified\Components\Services\Plus;
 
 use Shopware\Bundle\AttributeBundle\Service\CrudService;
-use Shopware\Components\Routing\Router;
+use Shopware\Components\Routing\RouterInterface;
 use Shopware_Components_Snippet_Manager as SnippetManager;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
@@ -27,15 +27,8 @@ class PlusPaymentBuilderService extends PaymentBuilderService
      */
     private $attributeService;
 
-    /**
-     * @param Router                   $router
-     * @param SettingsServiceInterface $settingsService
-     * @param CrudService              $crudService
-     * @param SnippetManager           $snippetManager
-     * @param DependencyProvider       $dependencyProvider
-     */
     public function __construct(
-        Router $router,
+        RouterInterface $router,
         SettingsServiceInterface $settingsService,
         CrudService $crudService,
         SnippetManager $snippetManager,
@@ -47,8 +40,6 @@ class PlusPaymentBuilderService extends PaymentBuilderService
     }
 
     /**
-     * @param PaymentBuilderParameters $params
-     *
      * @return Payment
      */
     public function getPayment(PaymentBuilderParameters $params)
@@ -75,9 +66,7 @@ class PlusPaymentBuilderService extends PaymentBuilderService
     }
 
     /**
-     * @param array $basketData
-     *
-     * @return ShipmentDetails
+     * @return ShipmentDetails|null
      */
     private function getShipmentDetails(array $basketData)
     {
@@ -93,9 +82,7 @@ class PlusPaymentBuilderService extends PaymentBuilderService
     }
 
     /**
-     * @param array $basketData
-     *
-     * @return null|string
+     * @return string|null
      */
     private function getEddValue(array $basketData)
     {

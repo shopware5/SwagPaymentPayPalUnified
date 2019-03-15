@@ -38,10 +38,6 @@ class SettingsService implements SettingsServiceInterface
      */
     private $dependencyProvider;
 
-    /**
-     * @param ModelManager       $modelManager
-     * @param DependencyProvider $dependencyProvider
-     */
     public function __construct(
         ModelManager $modelManager,
         DependencyProvider $dependencyProvider
@@ -73,13 +69,33 @@ class SettingsService implements SettingsServiceInterface
 
         switch ($settingsType) {
             case SettingsTable::GENERAL:
-                return $this->modelManager->getRepository(Settings\General::class)->findOneBy(['shopId' => $shopId]);
+                /** @var Settings\General|null $generalSettings */
+                $generalSettings = $this->modelManager->getRepository(Settings\General::class)->findOneBy(
+                    ['shopId' => $shopId]
+                );
+
+                return $generalSettings;
             case SettingsTable::EXPRESS_CHECKOUT:
-                return $this->modelManager->getRepository(Settings\ExpressCheckout::class)->findOneBy(['shopId' => $shopId]);
+                /** @var Settings\ExpressCheckout|null $expressSettings */
+                $expressSettings = $this->modelManager->getRepository(Settings\ExpressCheckout::class)->findOneBy(
+                    ['shopId' => $shopId]
+                );
+
+                return $expressSettings;
             case SettingsTable::INSTALLMENTS:
-                return $this->modelManager->getRepository(Settings\Installments::class)->findOneBy(['shopId' => $shopId]);
+                /** @var Settings\Installments|null $installmentsSettings */
+                $installmentsSettings = $this->modelManager->getRepository(Settings\Installments::class)->findOneBy(
+                    ['shopId' => $shopId]
+                );
+
+                return $installmentsSettings;
             case SettingsTable::PLUS:
-                return $this->modelManager->getRepository(Settings\Plus::class)->findOneBy(['shopId' => $shopId]);
+                /** @var Settings\Plus|null $plusSettings */
+                $plusSettings = $this->modelManager->getRepository(Settings\Plus::class)->findOneBy(
+                    ['shopId' => $shopId]
+                );
+
+                return $plusSettings;
         }
 
         return null;

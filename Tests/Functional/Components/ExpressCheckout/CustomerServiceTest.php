@@ -23,7 +23,7 @@ class CustomerServiceTest extends \PHPUnit_Framework_TestCase
     public function test_service_is_available()
     {
         $service = Shopware()->Container()->get('paypal_unified.express_checkout.customer_service');
-        $this->assertEquals(CustomerService::class, get_class($service));
+        static::assertEquals(CustomerService::class, get_class($service));
     }
 
     public function test_construct()
@@ -38,7 +38,7 @@ class CustomerServiceTest extends \PHPUnit_Framework_TestCase
             Shopware()->Container()->get('paypal_unified.dependency_provider')
         );
 
-        $this->assertNotNull($service);
+        static::assertNotNull($service);
     }
 
     public function test_createNewCustomer()
@@ -73,12 +73,12 @@ class CustomerServiceTest extends \PHPUnit_Framework_TestCase
 
         $user = $this->getUserByMail()[0];
 
-        $this->assertNotNull($user);
-        $this->assertEquals('1', $user['accountmode']);
-        $this->assertEquals('Shopware', $user['firstname']);
-        $this->assertEquals('PHPUnit', $user['lastname']);
+        static::assertNotNull($user);
+        static::assertEquals('1', $user['accountmode']);
+        static::assertEquals('Shopware', $user['firstname']);
+        static::assertEquals('PHPUnit', $user['lastname']);
 
-        $this->assertNotNull(Shopware()->Container()->get('session')->offsetGet('sUserId'));
+        static::assertNotNull(Shopware()->Container()->get('session')->offsetGet('sUserId'));
     }
 
     private function getUserByMail($mail = 'phpunit@test.com')

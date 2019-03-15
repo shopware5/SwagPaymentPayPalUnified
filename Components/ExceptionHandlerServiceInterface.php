@@ -11,8 +11,7 @@ namespace SwagPaymentPayPalUnified\Components;
 interface ExceptionHandlerServiceInterface
 {
     /**
-     * @param \Exception $e
-     * @param string     $currentAction
+     * @param string $currentAction
      *
      * @return PayPalApiException The error message and name extracted from the exception
      */

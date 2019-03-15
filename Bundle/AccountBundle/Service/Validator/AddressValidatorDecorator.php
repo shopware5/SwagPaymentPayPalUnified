@@ -25,12 +25,6 @@ class AddressValidatorDecorator implements AddressValidatorInterface
      */
     private $front;
 
-    /**
-     * PaypalAddressValidator constructor.
-     *
-     * @param AddressValidatorInterface $innerValidator
-     * @param \Enlight_Controller_Front $front
-     */
     public function __construct(AddressValidatorInterface $innerValidator, \Enlight_Controller_Front $front)
     {
         $this->innerValidator = $innerValidator;
@@ -66,7 +60,7 @@ class AddressValidatorDecorator implements AddressValidatorInterface
             // the customer will have to adjust his address on the confirm page, per default Shopware shows a hint
             $allowedViolations = ['state', 'phone', 'additionalAddressLine1', 'additionalAddressLine2'];
 
-            /** @var $violation ConstraintViolationInterface */
+            /** @var ConstraintViolationInterface $violation */
             foreach ($violations->getIterator() as $violation) {
                 if (!in_array($violation->getPropertyPath(), $allowedViolations, true)) {
                     throw $exception;

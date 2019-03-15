@@ -14,7 +14,7 @@ class TransactionsHistoryBuilderServiceTest extends \PHPUnit_Framework_TestCase
 {
     public function test_service_available()
     {
-        $this->assertNotNull(Shopware()->Container()->get('paypal_unified.transaction_history_builder_service'));
+        static::assertNotNull(Shopware()->Container()->get('paypal_unified.transaction_history_builder_service'));
     }
 
     public function test_getSalesHistory_maxAmount()
@@ -24,7 +24,7 @@ class TransactionsHistoryBuilderServiceTest extends \PHPUnit_Framework_TestCase
         $testPaymentData = $this->getTestSalePaymentDetails();
 
         $testHistory = $historyBuilderService->getTransactionHistory($testPaymentData);
-        $this->assertEquals(16.939999999999998, $testHistory['maxRefundableAmount']);
+        static::assertEquals(16.939999999999998, $testHistory['maxRefundableAmount']);
     }
 
     public function test_getSalesHistory_count()
@@ -34,7 +34,7 @@ class TransactionsHistoryBuilderServiceTest extends \PHPUnit_Framework_TestCase
         $testPaymentData = $this->getTestSalePaymentDetails();
 
         $testHistory = $historyBuilderService->getTransactionHistory($testPaymentData);
-        $this->assertCount(4, $testHistory);
+        static::assertCount(4, $testHistory);
     }
 
     public function test_getSalesHistory_first_entry()
@@ -44,12 +44,12 @@ class TransactionsHistoryBuilderServiceTest extends \PHPUnit_Framework_TestCase
         $testPaymentData = $this->getTestSalePaymentDetails();
 
         $testSale = $historyBuilderService->getTransactionHistory($testPaymentData)[0];
-        $this->assertEquals(45.94, $testSale['amount']);
-        $this->assertEquals('TEST1', $testSale['id']);
-        $this->assertEquals('partially_refunded', $testSale['state']);
-        $this->assertEquals('2017-01-31T09:53:36Z', $testSale['create_time']);
-        $this->assertEquals('2017-01-31T13:07:06Z', $testSale['update_time']);
-        $this->assertEquals('EUR', $testSale['currency']);
+        static::assertEquals(45.94, $testSale['amount']);
+        static::assertEquals('TEST1', $testSale['id']);
+        static::assertEquals('partially_refunded', $testSale['state']);
+        static::assertEquals('2017-01-31T09:53:36Z', $testSale['create_time']);
+        static::assertEquals('2017-01-31T13:07:06Z', $testSale['update_time']);
+        static::assertEquals('EUR', $testSale['currency']);
     }
 
     public function test_getAuthenticationHistory_count()
@@ -59,7 +59,7 @@ class TransactionsHistoryBuilderServiceTest extends \PHPUnit_Framework_TestCase
         $testPaymentData = $this->getTestAuthenticationPaymentDetails();
 
         $history = $historyBuilderService->getTransactionHistory($testPaymentData);
-        $this->assertCount(11, $history);
+        static::assertCount(11, $history);
     }
 
     public function test_getOrderHistory_count()
@@ -69,7 +69,7 @@ class TransactionsHistoryBuilderServiceTest extends \PHPUnit_Framework_TestCase
         $testPaymentData = $this->getTestOrderPaymentDetails();
 
         $history = $historyBuilderService->getTransactionHistory($testPaymentData);
-        $this->assertCount(5, $history);
+        static::assertCount(5, $history);
     }
 
     public function test_getTransactionHistory_exception()
@@ -91,12 +91,12 @@ class TransactionsHistoryBuilderServiceTest extends \PHPUnit_Framework_TestCase
         $testPaymentData = $this->getTestSalePaymentDetails();
 
         $testSale = $historyBuilderService->getTransactionHistory($testPaymentData)[2];
-        $this->assertEquals(-24.00, $testSale['amount']);
-        $this->assertEquals('TEST3', $testSale['id']);
-        $this->assertEquals('completed', $testSale['state']);
-        $this->assertEquals('2017-01-31T13:06:44Z', $testSale['create_time']);
-        $this->assertEquals('2017-01-31T13:07:06Z', $testSale['update_time']);
-        $this->assertEquals('EUR', $testSale['currency']);
+        static::assertEquals(-24.00, $testSale['amount']);
+        static::assertEquals('TEST3', $testSale['id']);
+        static::assertEquals('completed', $testSale['state']);
+        static::assertEquals('2017-01-31T13:06:44Z', $testSale['create_time']);
+        static::assertEquals('2017-01-31T13:07:06Z', $testSale['update_time']);
+        static::assertEquals('EUR', $testSale['currency']);
     }
 
     /**

@@ -40,8 +40,6 @@ class RelatedResources
     }
 
     /**
-     * @param array $data
-     *
      * @return RelatedResources
      */
     public static function fromArray(array $data)

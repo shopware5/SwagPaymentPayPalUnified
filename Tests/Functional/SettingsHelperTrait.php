@@ -16,9 +16,6 @@ use SwagPaymentPayPalUnified\Models\Settings\Plus as PlusSettingsModel;
 
 trait SettingsHelperTrait
 {
-    /**
-     * @param GeneralSettingsModel $model
-     */
     public function insertGeneralSettings(GeneralSettingsModel $model)
     {
         $em = $this->getEntityManager();
@@ -26,9 +23,6 @@ trait SettingsHelperTrait
         $em->flush();
     }
 
-    /**
-     * @param array $data
-     */
     public function insertGeneralSettingsFromArray(array $data)
     {
         if (!isset($data['showSidebarLogo'])) {
@@ -65,9 +59,6 @@ trait SettingsHelperTrait
         $this->insertGeneralSettings($model);
     }
 
-    /**
-     * @param InstallmentsSettingsModel $model
-     */
     public function insertInstallmentsSettings(InstallmentsSettingsModel $model)
     {
         $em = $this->getEntityManager();
@@ -75,9 +66,6 @@ trait SettingsHelperTrait
         $em->flush();
     }
 
-    /**
-     * @param array $data
-     */
     public function insertInstallmentsSettingsFromArray(array $data)
     {
         if (!isset($data['shopId'])) {
@@ -93,12 +81,10 @@ trait SettingsHelperTrait
         }
 
         $model = new InstallmentsSettingsModel();
-        $this->insertInstallmentsSettings($model->fromArray($data));
+        $model->fromArray($data);
+        $this->insertInstallmentsSettings($model);
     }
 
-    /**
-     * @param PlusSettingsModel $model
-     */
     public function insertPlusSettings(PlusSettingsModel $model)
     {
         $em = $this->getEntityManager();
@@ -106,9 +92,6 @@ trait SettingsHelperTrait
         $em->flush();
     }
 
-    /**
-     * @param array $data
-     */
     public function insertPlusSettingsFromArray(array $data)
     {
         if (!isset($data['shopId'])) {
@@ -124,12 +107,10 @@ trait SettingsHelperTrait
         }
 
         $model = new PlusSettingsModel();
-        $this->insertPlusSettings($model->fromArray($data));
+        $model->fromArray($data);
+        $this->insertPlusSettings($model);
     }
 
-    /**
-     * @param ExpressSettingsModel $model
-     */
     public function insertExpressCheckoutSettings(ExpressSettingsModel $model)
     {
         $em = $this->getEntityManager();
@@ -137,9 +118,6 @@ trait SettingsHelperTrait
         $em->flush();
     }
 
-    /**
-     * @param array $data
-     */
     public function insertExpressCheckoutSettingsFromArray(array $data)
     {
         if (!isset($data['shopId'])) {

@@ -57,13 +57,6 @@ class ClientService
      */
     private $settingsService;
 
-    /**
-     * @param SettingsServiceInterface $settingsService
-     * @param TokenService             $tokenService
-     * @param LoggerServiceInterface   $logger
-     * @param GuzzleFactory            $factory
-     * @param DependencyProvider       $dependencyProvider
-     */
     public function __construct(
         SettingsServiceInterface $settingsService,
         TokenService $tokenService,
@@ -93,9 +86,6 @@ class ClientService
         $this->setPartnerAttributionId(PartnerAttributionId::PAYPAL_CLASSIC); //Default
     }
 
-    /**
-     * @param array $settings
-     */
     public function configure(array $settings)
     {
         $this->shopId = $settings['shopId'];
@@ -113,10 +103,9 @@ class ClientService
      * Sends a request and returns the response.
      * The type can be obtained from RequestType.php
      *
-     * @param string       $type
-     * @param string       $resourceUri
-     * @param array|string $data
-     * @param bool         $jsonPayload
+     * @param string $type
+     * @param string $resourceUri
+     * @param bool   $jsonPayload
      *
      * @throws \Exception
      *
@@ -210,8 +199,6 @@ class ClientService
     /**
      * Creates the authentication header for the PayPal API.
      * If there is no cached token yet, it will be generated on the fly.
-     *
-     * @param OAuthCredentials $credentials
      *
      * @throws RequestException
      */

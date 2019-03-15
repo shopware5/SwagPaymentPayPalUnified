@@ -32,8 +32,6 @@ class Amount
     }
 
     /**
-     * @param array $data
-     *
      * @return Amount
      */
     public static function fromArray(array $data = [])

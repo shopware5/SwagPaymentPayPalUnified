@@ -41,8 +41,6 @@ class Backend implements SubscriberInterface
     /**
      * Handles the Enlight_Controller_Action_PostDispatchSecure_Backend_Index event.
      * Extends the backend icon set by the paypal icon.
-     *
-     * @param ActionEventArgs $args
      */
     public function onLoadBackendIndex(ActionEventArgs $args)
     {
@@ -52,9 +50,6 @@ class Backend implements SubscriberInterface
         $view->extendsTemplate('backend/paypal_unified/menu_icon.tpl');
     }
 
-    /**
-     * @param ActionEventArgs $arguments
-     */
     public function onPostDispatchConfig(ActionEventArgs $arguments)
     {
         /* @var Enlight_View_Default $view */

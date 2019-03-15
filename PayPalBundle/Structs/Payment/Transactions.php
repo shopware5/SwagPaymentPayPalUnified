@@ -21,12 +21,12 @@ class Transactions
     private $amount;
 
     /**
-     * @var ItemList
+     * @var ItemList|null
      */
     private $itemList;
 
     /**
-     * @var RelatedResources
+     * @var RelatedResources|null
      */
     private $relatedResources;
 
@@ -43,16 +43,13 @@ class Transactions
         return $this->amount;
     }
 
-    /**
-     * @param Amount $amount
-     */
     public function setAmount(Amount $amount)
     {
         $this->amount = $amount;
     }
 
     /**
-     * @return ItemList
+     * @return ItemList|null
      */
     public function getItemList()
     {
@@ -60,7 +57,7 @@ class Transactions
     }
 
     /**
-     * @param $itemList
+     * @param ItemList $itemList
      */
     public function setItemList($itemList)
     {
@@ -68,16 +65,13 @@ class Transactions
     }
 
     /**
-     * @return RelatedResources
+     * @return RelatedResources|null
      */
     public function getRelatedResources()
     {
         return $this->relatedResources;
     }
 
-    /**
-     * @param RelatedResources $relatedResources
-     */
     public function setRelatedResources(RelatedResources $relatedResources)
     {
         $this->relatedResources = $relatedResources;
@@ -100,8 +94,6 @@ class Transactions
     }
 
     /**
-     * @param array $data
-     *
      * @return Transactions
      */
     public static function fromArray(array $data = [])

@@ -51,7 +51,7 @@ class Plus extends ModelEntity
     private $integrateThirdPartyMethods;
 
     /**
-     * @var string
+     * @var string|null
      * @ORM\Column(name="payment_name", type="string")
      */
     private $paymentName;
@@ -135,7 +135,7 @@ class Plus extends ModelEntity
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getPaymentName()
     {

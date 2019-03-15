@@ -225,8 +225,6 @@ class CreditFinancing
     }
 
     /**
-     * @param array $data
-     *
      * @return CreditFinancing
      */
     public static function fromArray(array $data = [])

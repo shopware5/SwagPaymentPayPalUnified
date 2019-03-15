@@ -20,9 +20,6 @@ class CaptureResource
      */
     private $clientService;
 
-    /**
-     * @param ClientService $clientService
-     */
     public function __construct(ClientService $clientService)
     {
         $this->clientService = $clientService;
@@ -39,8 +36,7 @@ class CaptureResource
     }
 
     /**
-     * @param string        $id
-     * @param CaptureRefund $refund
+     * @param string $id
      *
      * @return array
      */

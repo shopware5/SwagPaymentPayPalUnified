@@ -86,8 +86,6 @@ class Link
     }
 
     /**
-     * @param array $data
-     *
      * @return Link
      */
     public static function fromArray(array $data)

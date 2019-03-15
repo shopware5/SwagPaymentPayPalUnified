@@ -30,11 +30,6 @@ class Uninstaller
      */
     private $connection;
 
-    /**
-     * @param CrudService  $attributeCrudService
-     * @param ModelManager $modelManager
-     * @param Connection   $connection
-     */
     public function __construct(CrudService $attributeCrudService, ModelManager $modelManager, Connection $connection)
     {
         $this->attributeCrudService = $attributeCrudService;

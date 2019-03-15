@@ -17,9 +17,6 @@ class LegacyService
      */
     private $dbConnection;
 
-    /**
-     * @param Connection $dbConnection
-     */
     public function __construct(Connection $dbConnection)
     {
         $this->dbConnection = $dbConnection;

@@ -24,9 +24,6 @@ class ClientService extends \SwagPaymentPayPalUnified\PayPalBundle\Services\Clie
         return $this->expectedResult;
     }
 
-    /**
-     * @param array $data
-     */
     public function setExpectedResult(array $data)
     {
         $this->expectedResult = $data;

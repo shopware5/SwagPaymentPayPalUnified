@@ -5,6 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 use Doctrine\DBAL\Connection;
 use Shopware\Components\Model\QueryBuilder;
 use Shopware\Models\Order\Order;
@@ -524,8 +525,6 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
     }
 
     /**
-     * @param QueryBuilder $builder
-     *
      * @return QueryBuilder
      */
     private function prepareOrderQueryBuilder(QueryBuilder $builder)
@@ -630,9 +629,6 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
         $view->assign('success', true);
     }
 
-    /**
-     * @param array $refundData
-     */
     private function updatePaymentStatus(array $refundData)
     {
         /** @var Order $orderModel */
@@ -652,8 +648,6 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
 
     /**
      * Checks if one of the filter conditions is "search". If not, the filters were set by the filter panel
-     *
-     * @param array $filters
      *
      * @return bool
      */

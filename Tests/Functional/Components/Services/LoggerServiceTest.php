@@ -30,7 +30,7 @@ class LoggerServiceTest extends \PHPUnit_Framework_TestCase
         $loggerService->warning('Test message');
 
         $lastLine = $this->getLastLine($fileName);
-        $this->assertEmpty($lastLine);
+        static::assertEmpty($lastLine);
     }
 
     public function test_warning_returns_without_required_log_level()
@@ -48,7 +48,7 @@ class LoggerServiceTest extends \PHPUnit_Framework_TestCase
         $loggerService->warning('Test message');
 
         $lastLine = $this->getLastLine($fileName);
-        $this->assertEmpty($lastLine);
+        static::assertEmpty($lastLine);
     }
 
     public function test_warning_adds_line()
@@ -66,7 +66,7 @@ class LoggerServiceTest extends \PHPUnit_Framework_TestCase
         $loggerService->warning('Test message');
 
         $lastLine = $this->getLastLine($fileName);
-        $this->assertContains('Test message', $lastLine);
+        static::assertContains('Test message', $lastLine);
     }
 
     public function test_notify_returns_without_settings()
@@ -82,7 +82,7 @@ class LoggerServiceTest extends \PHPUnit_Framework_TestCase
         $loggerService->notify('Test message');
 
         $lastLine = $this->getLastLine($fileName);
-        $this->assertEmpty($lastLine);
+        static::assertEmpty($lastLine);
     }
 
     public function test_notify_returns_without_required_log_level()
@@ -100,7 +100,7 @@ class LoggerServiceTest extends \PHPUnit_Framework_TestCase
         $loggerService->notify('Test message');
 
         $lastLine = $this->getLastLine($fileName);
-        $this->assertEmpty($lastLine);
+        static::assertEmpty($lastLine);
     }
 
     public function test_notify_adds_line()
@@ -118,7 +118,7 @@ class LoggerServiceTest extends \PHPUnit_Framework_TestCase
         $loggerService->notify('Test message');
 
         $lastLine = $this->getLastLine($fileName);
-        $this->assertContains('Test message', $lastLine);
+        static::assertContains('Test message', $lastLine);
     }
 
     public function test_error_adds_line()
@@ -134,7 +134,7 @@ class LoggerServiceTest extends \PHPUnit_Framework_TestCase
         $loggerService->error('A very fatal error');
 
         $lastLine = $this->getLastLine($fileName);
-        $this->assertContains('A very fatal error', $lastLine);
+        static::assertContains('A very fatal error', $lastLine);
     }
 
     /**

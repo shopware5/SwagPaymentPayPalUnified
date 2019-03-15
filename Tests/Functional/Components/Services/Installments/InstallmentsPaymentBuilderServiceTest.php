@@ -19,25 +19,25 @@ class InstallmentsPaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
     public function test_serviceIsAvailable()
     {
         $service = Shopware()->Container()->get('paypal_unified.installments.payment_builder_service');
-        $this->assertEquals(InstallmentsPaymentBuilderService::class, get_class($service));
+        static::assertEquals(InstallmentsPaymentBuilderService::class, get_class($service));
     }
 
     public function test_getPayment_has_correct_intent_order_fallback()
     {
         $requestParameters = $this->getRequestData(true, 1);
-        $this->assertEquals('order', $requestParameters['intent']);
+        static::assertEquals('order', $requestParameters['intent']);
     }
 
     public function test_getPayment_has_correct_intent_sale()
     {
         $requestParameters = $this->getRequestData(true);
-        $this->assertEquals('sale', $requestParameters['intent']);
+        static::assertEquals('sale', $requestParameters['intent']);
     }
 
     public function test_getPayment_has_correct_intent_order()
     {
         $requestParameters = $this->getRequestData(true, 2);
-        $this->assertEquals('order', $requestParameters['intent']);
+        static::assertEquals('order', $requestParameters['intent']);
     }
 
     public function test_getPayment_returns_url_with_basket_id()
@@ -45,7 +45,7 @@ class InstallmentsPaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
         $requestParameters = $this->getRequestData(true, 2, true);
         $returnUrl = $requestParameters['redirect_urls']['return_url'];
 
-        $this->assertStringEndsWith('PaypalUnifiedInstallments/return/basketId/test-test-test', $returnUrl);
+        static::assertStringEndsWith('PaypalUnifiedInstallments/return/basketId/test-test-test', $returnUrl);
     }
 
     /**
@@ -122,8 +122,6 @@ class InstallmentsPaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param SettingsServiceInterface $settingService
-     *
      * @return PaymentBuilderService
      */
     private function getInstallmentsPaymentBuilderService(SettingsServiceInterface $settingService)

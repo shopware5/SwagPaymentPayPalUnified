@@ -22,18 +22,13 @@ class TokenService
      */
     private $cacheManager;
 
-    /**
-     * @param CacheManager $cacheManager
-     */
     public function __construct(CacheManager $cacheManager)
     {
         $this->cacheManager = $cacheManager;
     }
 
     /**
-     * @param ClientService    $client
-     * @param OAuthCredentials $credentials
-     * @param int              $shopId
+     * @param int $shopId
      *
      * @return Token
      */
@@ -53,7 +48,7 @@ class TokenService
     /**
      * @param int $shopId
      *
-     * @return Token
+     * @return Token|false
      */
     private function getTokenFromCache($shopId)
     {
@@ -61,8 +56,7 @@ class TokenService
     }
 
     /**
-     * @param Token $token
-     * @param int   $shopId
+     * @param int $shopId
      */
     private function setToken(Token $token, $shopId)
     {
@@ -70,8 +64,6 @@ class TokenService
     }
 
     /**
-     * @param Token $token
-     *
      * @return bool
      */
     private function isTokenValid(Token $token)

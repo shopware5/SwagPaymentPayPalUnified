@@ -24,8 +24,7 @@ class Backend implements SubscriberInterface
     private $template;
 
     /**
-     * @param string                   $pluginDirectory
-     * @param Enlight_Template_Manager $template
+     * @param string $pluginDirectory
      */
     public function __construct($pluginDirectory, Enlight_Template_Manager $template)
     {

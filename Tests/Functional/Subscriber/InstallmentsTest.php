@@ -38,15 +38,15 @@ class InstallmentsTest extends UnifiedControllerTestCase
             Shopware()->Container()->get('paypal_unified.client_service')
         );
 
-        $this->assertNotNull($subscriber);
+        static::assertNotNull($subscriber);
     }
 
     public function test_getSubscribedEvents()
     {
         $events = Installments::getSubscribedEvents();
-        $this->assertCount(2, $events);
-        $this->assertEquals('onPostDispatchDetail', $events['Enlight_Controller_Action_PostDispatchSecure_Frontend_Detail']);
-        $this->assertEquals([['onPostDispatchCheckout'], ['onConfirmInstallments']], $events['Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout']);
+        static::assertCount(2, $events);
+        static::assertEquals('onPostDispatchDetail', $events['Enlight_Controller_Action_PostDispatchSecure_Frontend_Detail']);
+        static::assertEquals([['onPostDispatchCheckout'], ['onConfirmInstallments']], $events['Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout']);
     }
 
     public function test_post_dispatch_detail_no_settings()
@@ -55,7 +55,7 @@ class InstallmentsTest extends UnifiedControllerTestCase
 
         $settingService = new SettingsServiceInstallmentsMock(null);
 
-        $this->assertNull($this->getInstallmentsSubscriber($settingService)->onPostDispatchDetail($actionEventArgs));
+        static::assertNull($this->getInstallmentsSubscriber($settingService)->onPostDispatchDetail($actionEventArgs));
     }
 
     public function test_post_dispatch_detail_payment_method_inactive()
@@ -69,7 +69,7 @@ class InstallmentsTest extends UnifiedControllerTestCase
         $settings->setActive(true);
         $settingService = new SettingsServiceInstallmentsMock($settings);
 
-        $this->assertNull($this->getInstallmentsSubscriber($settingService)->onPostDispatchDetail($actionEventArgs));
+        static::assertNull($this->getInstallmentsSubscriber($settingService)->onPostDispatchDetail($actionEventArgs));
 
         $paymentMethodProvider->setPaymentMethodActiveFlag(true, PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME);
     }
@@ -82,7 +82,7 @@ class InstallmentsTest extends UnifiedControllerTestCase
         $settings->setActive(false);
         $settingService = new SettingsServiceInstallmentsMock($settings);
 
-        $this->assertNull($this->getInstallmentsSubscriber($settingService)->onPostDispatchDetail($actionEventArgs));
+        static::assertNull($this->getInstallmentsSubscriber($settingService)->onPostDispatchDetail($actionEventArgs));
     }
 
     public function test_post_dispatch_detail_installments_inactive()
@@ -97,7 +97,7 @@ class InstallmentsTest extends UnifiedControllerTestCase
 
         $settingService = new SettingsServiceInstallmentsMock($settings, $instSettings);
 
-        $this->assertNull($this->getInstallmentsSubscriber($settingService)->onPostDispatchDetail($actionEventArgs));
+        static::assertNull($this->getInstallmentsSubscriber($settingService)->onPostDispatchDetail($actionEventArgs));
     }
 
     public function test_post_dispatch_detail_installments_no_detail_presentment()
@@ -112,7 +112,7 @@ class InstallmentsTest extends UnifiedControllerTestCase
         $instSettings->setPresentmentTypeDetail(0);
         $settingService = new SettingsServiceInstallmentsMock($settings, $instSettings);
 
-        $this->assertNull($this->getInstallmentsSubscriber($settingService)->onPostDispatchDetail($actionEventArgs));
+        static::assertNull($this->getInstallmentsSubscriber($settingService)->onPostDispatchDetail($actionEventArgs));
     }
 
     public function test_post_dispatch_detail_installments_product_price_mismatch()
@@ -130,7 +130,7 @@ class InstallmentsTest extends UnifiedControllerTestCase
 
         $this->getInstallmentsSubscriber($settingService)->onPostDispatchDetail($actionEventArgs);
 
-        $this->assertTrue($actionEventArgs->getSubject()->View()->getAssign('paypalInstallmentsNotAvailable'));
+        static::assertTrue($actionEventArgs->getSubject()->View()->getAssign('paypalInstallmentsNotAvailable'));
     }
 
     public function test_post_dispatch_detail_installments_missing_finance_response()
@@ -151,7 +151,7 @@ class InstallmentsTest extends UnifiedControllerTestCase
 
         $result = $this->getInstallmentsSubscriber($settingService)->onPostDispatchDetail($actionEventArgs);
 
-        $this->assertNull($result);
+        static::assertNull($result);
     }
 
     public function test_post_dispatch_detail_installments_get_financing_response_throws_exception()
@@ -173,7 +173,7 @@ class InstallmentsTest extends UnifiedControllerTestCase
 
         $result = $this->getInstallmentsSubscriber($settingService)->onPostDispatchDetail($actionEventArgs);
 
-        $this->assertNull($result);
+        static::assertNull($result);
     }
 
     public function test_post_dispatch_detail_installments_product_price_match_displayKind_simple()
@@ -196,7 +196,7 @@ class InstallmentsTest extends UnifiedControllerTestCase
 
         $displayKind = $actionEventArgs->getSubject()->View()->getAssign('paypalInstallmentsMode');
 
-        $this->assertEquals('simple', $displayKind);
+        static::assertEquals('simple', $displayKind);
     }
 
     public function test_post_dispatch_detail_installments_product_price_match_displayKind_cheapest()
@@ -220,7 +220,7 @@ class InstallmentsTest extends UnifiedControllerTestCase
 
         $displayKind = $actionEventArgs->getSubject()->View()->getAssign('paypalInstallmentsMode');
 
-        $this->assertEquals('cheapest', $displayKind);
+        static::assertEquals('cheapest', $displayKind);
     }
 
     public function test_OnPostDispatchCheckout_with_wrong_action()
@@ -233,7 +233,7 @@ class InstallmentsTest extends UnifiedControllerTestCase
         $settingService = new SettingsServiceInstallmentsMock($settings);
         $result = $this->getInstallmentsSubscriber($settingService)->onPostDispatchCheckout($actionEventArgs);
 
-        $this->assertNull($result);
+        static::assertNull($result);
     }
 
     public function test_OnPostDispatchCheckout_express_checkout()
@@ -246,7 +246,7 @@ class InstallmentsTest extends UnifiedControllerTestCase
         $settingService = new SettingsServiceInstallmentsMock($settings);
         $result = $this->getInstallmentsSubscriber($settingService)->onPostDispatchCheckout($actionEventArgs);
 
-        $this->assertNull($result);
+        static::assertNull($result);
     }
 
     public function test_OnPostDispatchCheckout_payment_method_inactive()
@@ -265,7 +265,7 @@ class InstallmentsTest extends UnifiedControllerTestCase
 
         $result = $this->getInstallmentsSubscriber($settingService)->onPostDispatchCheckout($actionEventArgs);
 
-        $this->assertNull($result);
+        static::assertNull($result);
 
         $paymentMethodProvider->setPaymentMethodActiveFlag(true, PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME);
     }
@@ -286,7 +286,7 @@ class InstallmentsTest extends UnifiedControllerTestCase
 
         $result = $this->getInstallmentsSubscriber($settingService)->onPostDispatchCheckout($actionEventArgs);
 
-        $this->assertNull($result);
+        static::assertNull($result);
     }
 
     public function test_OnPostDispatchCheckout_without_active_global_settings()
@@ -305,7 +305,7 @@ class InstallmentsTest extends UnifiedControllerTestCase
 
         $result = $this->getInstallmentsSubscriber($settingService)->onPostDispatchCheckout($actionEventArgs);
 
-        $this->assertNull($result);
+        static::assertNull($result);
     }
 
     public function test_OnPostDispatchCheckout_without_display_kind()
@@ -325,7 +325,7 @@ class InstallmentsTest extends UnifiedControllerTestCase
 
         $result = $this->getInstallmentsSubscriber($settingService)->onPostDispatchCheckout($actionEventArgs);
 
-        $this->assertNull($result);
+        static::assertNull($result);
     }
 
     public function test_OnPostDispatchCheckout_without_valid_price()
@@ -352,7 +352,7 @@ class InstallmentsTest extends UnifiedControllerTestCase
 
         $result = $this->getInstallmentsSubscriber($settingService)->onPostDispatchCheckout($actionEventArgs);
 
-        $this->assertNull($result);
+        static::assertNull($result);
     }
 
     public function test_OnPostDispatchCheckout_display_kind_is_simple()
@@ -379,7 +379,7 @@ class InstallmentsTest extends UnifiedControllerTestCase
         $this->getInstallmentsSubscriber($settingService)->onPostDispatchCheckout($actionEventArgs);
         $displayKind = $actionEventArgs->getSubject()->View()->getAssign('paypalInstallmentsMode');
 
-        $this->assertEquals('simple', $displayKind);
+        static::assertEquals('simple', $displayKind);
     }
 
     public function test_OnPostDispatchCheckout_display_kind_is_cheapest()
@@ -407,7 +407,7 @@ class InstallmentsTest extends UnifiedControllerTestCase
         $this->getInstallmentsSubscriber($settingService)->onPostDispatchCheckout($actionEventArgs);
         $displayKind = $actionEventArgs->getSubject()->View()->getAssign('paypalInstallmentsMode');
 
-        $this->assertEquals('cheapest', $displayKind);
+        static::assertEquals('cheapest', $displayKind);
     }
 
     public function test_OnPostDispatchCheckout_has_correct_product_price()
@@ -434,7 +434,7 @@ class InstallmentsTest extends UnifiedControllerTestCase
         $this->getInstallmentsSubscriber($settingService)->onPostDispatchCheckout($actionEventArgs);
         $price = $actionEventArgs->getSubject()->View()->getAssign('paypalInstallmentsProductPrice');
 
-        $this->assertEquals(444.44, $price);
+        static::assertEquals(444.44, $price);
     }
 
     public function test_OnPostDispatchCheckout_has_correct_product_net_price()
@@ -461,7 +461,7 @@ class InstallmentsTest extends UnifiedControllerTestCase
         $this->getInstallmentsSubscriber($settingService)->onPostDispatchCheckout($actionEventArgs);
         $price = $actionEventArgs->getSubject()->View()->getAssign('paypalInstallmentsProductPrice');
 
-        $this->assertEquals(399.99, $price);
+        static::assertEquals(399.99, $price);
     }
 
     public function test_OnPostDispatchCheckout_has_correct_page_type()
@@ -489,14 +489,16 @@ class InstallmentsTest extends UnifiedControllerTestCase
         $this->getInstallmentsSubscriber($settingService)->onPostDispatchCheckout($actionEventArgs);
         $pageType = $actionEventArgs->getSubject()->View()->getAssign('paypalInstallmentsPageType');
 
-        $this->assertEquals('cart', $pageType);
+        static::assertEquals('cart', $pageType);
     }
 
     public function test_OnPostDispatchCheckout_confirm_action_with_selected_payment_method_installments()
     {
         $this->Request()->setActionName('confirm');
-        $paymentMethodProvider = new PaymentMethodProvider();
-        $installmentsPaymentId = $paymentMethodProvider->getPaymentId(Shopware()->Container()->get('dbal_connection'), PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME);
+        $installmentsPaymentId = (new PaymentMethodProvider())->getPaymentId(
+            Shopware()->Container()->get('dbal_connection'),
+            PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME
+        );
 
         $actionEventArgs = $this->getActionEventArgs();
         $actionEventArgs->getSubject()->View()->assign('sBasket', [
@@ -520,7 +522,7 @@ class InstallmentsTest extends UnifiedControllerTestCase
         $this->getInstallmentsSubscriber($settingService)->onPostDispatchCheckout($actionEventArgs);
         $requestCompleteList = $actionEventArgs->getSubject()->View()->getAssign('paypalInstallmentsRequestCompleteList');
 
-        $this->assertTrue($requestCompleteList);
+        static::assertTrue($requestCompleteList);
     }
 
     public function test_OnPostDispatchCheckout_confirm_action_with_selected_payment_method_not_installments()
@@ -549,7 +551,7 @@ class InstallmentsTest extends UnifiedControllerTestCase
         $this->getInstallmentsSubscriber($settingService)->onPostDispatchCheckout($actionEventArgs);
         $requestCompleteList = $actionEventArgs->getSubject()->View()->getAssign('paypalInstallmentsRequestCompleteList');
 
-        $this->assertNull($requestCompleteList);
+        static::assertNull($requestCompleteList);
     }
 
     public function test_onConfirmInstallments_wrong_action()
@@ -591,8 +593,8 @@ class InstallmentsTest extends UnifiedControllerTestCase
 
         $this->getInstallmentsSubscriber($settingService)->onConfirmInstallments($actionEventArgs);
         $header = $this->Response()->getHeaders()[0];
-        $this->assertContains('checkout/shippingPayment/paypal_unified_error_code/5/paypal_unified_error_name/0/paypal_unified_error_message', $header['value']);
-        $this->assertTrue($this->Response()->isRedirect());
+        static::assertContains('checkout/shippingPayment/paypal_unified_error_code/5/paypal_unified_error_name/0/paypal_unified_error_message', $header['value']);
+        static::assertTrue($this->Response()->isRedirect());
     }
 
     public function test_onConfirmInstallments_success()
@@ -607,8 +609,8 @@ class InstallmentsTest extends UnifiedControllerTestCase
         $this->getInstallmentsSubscriber($settingService)->onConfirmInstallments($actionEventArgs);
         $viewAssignments = $actionEventArgs->getSubject()->View()->getAssign();
 
-        $this->assertEquals(self::INSTALLMENTS_PAYMENT_ID, $viewAssignments['paypalInstallmentsPaymentId']);
-        $this->assertEquals('payerId', $viewAssignments['paypalInstallmentsPayerId']);
+        static::assertEquals(self::INSTALLMENTS_PAYMENT_ID, $viewAssignments['paypalInstallmentsPaymentId']);
+        static::assertEquals('payerId', $viewAssignments['paypalInstallmentsPayerId']);
     }
 
     /**
@@ -630,8 +632,6 @@ class InstallmentsTest extends UnifiedControllerTestCase
     }
 
     /**
-     * @param SettingsServiceInterface $settingService
-     *
      * @return Installments
      */
     private function getInstallmentsSubscriber(SettingsServiceInterface $settingService)

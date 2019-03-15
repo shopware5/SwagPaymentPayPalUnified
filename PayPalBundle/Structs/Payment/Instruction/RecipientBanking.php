@@ -116,8 +116,6 @@ class RecipientBanking
     }
 
     /**
-     * @param array $data
-     *
      * @return RecipientBanking
      */
     public static function fromArray(array $data = [])

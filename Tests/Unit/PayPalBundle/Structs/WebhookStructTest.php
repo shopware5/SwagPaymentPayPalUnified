@@ -16,42 +16,42 @@ class WebhookStructTest extends \PHPUnit_Framework_TestCase
     {
         $struct = Webhook::fromArray(['id' => 10]);
 
-        $this->assertEquals(10, $struct->getId());
+        static::assertEquals(10, $struct->getId());
     }
 
     public function test_getCreationTime()
     {
         $struct = Webhook::fromArray(['create_time' => '01-01-1970']);
 
-        $this->assertEquals('01-01-1970', $struct->getCreationTime());
+        static::assertEquals('01-01-1970', $struct->getCreationTime());
     }
 
     public function test_getResourceType()
     {
         $struct = Webhook::fromArray(['resource_type' => 'Test']);
 
-        $this->assertEquals('Test', $struct->getResourceType());
+        static::assertEquals('Test', $struct->getResourceType());
     }
 
     public function test_getEventType()
     {
         $struct = Webhook::fromArray(['event_type' => 'Test-Event']);
 
-        $this->assertEquals('Test-Event', $struct->getEventType());
+        static::assertEquals('Test-Event', $struct->getEventType());
     }
 
     public function test_getSummary()
     {
         $struct = Webhook::fromArray(['summary' => 'Test notification triggered in PHPUnit']);
 
-        $this->assertEquals('Test notification triggered in PHPUnit', $struct->getSummary());
+        static::assertEquals('Test notification triggered in PHPUnit', $struct->getSummary());
     }
 
     public function test_getResource()
     {
         $struct = Webhook::fromArray(['resource' => ['name' => 'test']]);
 
-        $this->assertEquals('test', $struct->getResource()['name']);
+        static::assertEquals('test', $struct->getResource()['name']);
     }
 
     public function test_toArray()
@@ -67,14 +67,13 @@ class WebhookStructTest extends \PHPUnit_Framework_TestCase
             ],
         ];
 
-        $struct = Webhook::fromArray($data);
-        $data = $struct->toArray();
+        $data = Webhook::fromArray($data)->toArray();
 
-        $this->assertEquals('01-01-1970', $data['creationTime']);
-        $this->assertEquals('Test object', $data['summary']);
-        $this->assertEquals('Test', $data['resourceType']);
-        $this->assertEquals('Test event', $data['eventType']);
-        $this->assertEquals('Test id', $data['id']);
-        $this->assertEquals('Test Resource', $data['resource']['name']);
+        static::assertEquals('01-01-1970', $data['creationTime']);
+        static::assertEquals('Test object', $data['summary']);
+        static::assertEquals('Test', $data['resourceType']);
+        static::assertEquals('Test event', $data['eventType']);
+        static::assertEquals('Test id', $data['id']);
+        static::assertEquals('Test Resource', $data['resource']['name']);
     }
 }

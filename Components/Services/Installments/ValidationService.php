@@ -21,8 +21,6 @@ class ValidationService
     }
 
     /**
-     * @param array $customerData
-     *
      * @return bool
      */
     public function validateCustomer(array $customerData)

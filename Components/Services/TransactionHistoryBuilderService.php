@@ -20,8 +20,6 @@ class TransactionHistoryBuilderService
      * A helper method that parses a payment into a sales history, that can be directly used
      * in an custom model.
      *
-     * @param array $paymentDetails
-     *
      * @throws \Exception
      *
      * @return array
@@ -44,8 +42,6 @@ class TransactionHistoryBuilderService
     }
 
     /**
-     * @param Sale $sale
-     *
      * @return array
      */
     public function getLegacyHistory(Sale $sale)
@@ -74,8 +70,6 @@ class TransactionHistoryBuilderService
      * in an custom model. Additionally, this calculates and adds the maxRefundableAmount to
      * the result, which can be used as a limit for any refund in the future.
      *
-     * @param Payment $payment
-     *
      * @return array
      */
     private function getSalesHistory(Payment $payment)
@@ -83,20 +77,24 @@ class TransactionHistoryBuilderService
         $result = [];
         $maxAmount = $payment->getTransactions()->getAmount()->getTotal();
 
-        /** @var RelatedResource $sale */
-        foreach ($payment->getTransactions()->getRelatedResources()->getResources() as $sale) {
-            $result[] = [
-                'id' => $sale->getId(),
-                'state' => $sale->getState(),
-                'amount' => $sale->getType() === ResourceType::SALE ? $sale->getAmount()->getTotal() : ($sale->getAmount()->getTotal() * -1),
-                'create_time' => $sale->getCreateTime(),
-                'update_time' => $sale->getUpdateTime(),
-                'currency' => $sale->getAmount()->getCurrency(),
-                'type' => $sale->getType(),
-            ];
+        $relatedResource = $payment->getTransactions()->getRelatedResources();
 
-            if ($sale->getType() === ResourceType::REFUND) {
-                $maxAmount -= (float) $sale->getAmount()->getTotal();
+        if ($relatedResource !== null) {
+            /** @var RelatedResource $sale */
+            foreach ($relatedResource->getResources() as $sale) {
+                $result[] = [
+                    'id' => $sale->getId(),
+                    'state' => $sale->getState(),
+                    'amount' => $sale->getType() === ResourceType::SALE ? $sale->getAmount()->getTotal() : ($sale->getAmount()->getTotal() * -1),
+                    'create_time' => $sale->getCreateTime(),
+                    'update_time' => $sale->getUpdateTime(),
+                    'currency' => $sale->getAmount()->getCurrency(),
+                    'type' => $sale->getType(),
+                ];
+
+                if ($sale->getType() === ResourceType::REFUND) {
+                    $maxAmount -= (float) $sale->getAmount()->getTotal();
+                }
             }
         }
 
@@ -111,8 +109,6 @@ class TransactionHistoryBuilderService
      * in an custom model. Additionally, this calculates and adds the maxRefundableAmount to
      * the result, which can be used as a limit for any refund in the future. Furthermore, it adds the maxAuthorizableAmount
      * to the result, which indicates the maximum amount that can be authorized in the future.
-     *
-     * @param Payment $payment
      *
      * @return array
      */

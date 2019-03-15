@@ -27,10 +27,6 @@ class OrderDataService
      */
     private $settingsService;
 
-    /**
-     * @param Connection               $dbalConnection
-     * @param SettingsServiceInterface $settingsService
-     */
     public function __construct(
         Connection $dbalConnection,
         SettingsServiceInterface $settingsService
@@ -87,8 +83,7 @@ class OrderDataService
      */
     public function applyTransactionId($orderNumber, $transactionId)
     {
-        $builder = $this->dbalConnection->createQueryBuilder();
-        $result = $builder->update('s_order', 'o')
+        $result = $this->dbalConnection->createQueryBuilder()->update('s_order', 'o')
             ->set('o.transactionID', ':transactionId')
             ->where('o.ordernumber = :orderNumber')
             ->setParameters([
@@ -101,13 +96,12 @@ class OrderDataService
     }
 
     /**
-     * @param int     $orderNumber
-     * @param Payment $payment
-     * @param bool    $expressCheckout
+     * @param int  $orderNumber
+     * @param bool $expressCheckout
      *
      * @see PaymentType
      */
-    public function applyPaymentTypeAttribute($orderNumber, $payment, $expressCheckout = false)
+    public function applyPaymentTypeAttribute($orderNumber, Payment $payment, $expressCheckout = false)
     {
         $paymentType = PaymentType::PAYPAL_CLASSIC;
         $payer = $payment->getPayer();

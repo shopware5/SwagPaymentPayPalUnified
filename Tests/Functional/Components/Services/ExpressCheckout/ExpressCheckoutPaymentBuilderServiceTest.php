@@ -20,17 +20,17 @@ class ExpressCheckoutPaymentBuilderServiceTest extends \PHPUnit_Framework_TestCa
     public function test_serviceIsAvailable()
     {
         $service = Shopware()->Container()->get('paypal_unified.express_checkout.payment_builder_service');
-        $this->assertEquals(ExpressCheckoutPaymentBuilderService::class, get_class($service));
+        static::assertEquals(ExpressCheckoutPaymentBuilderService::class, get_class($service));
     }
 
     public function test_getPayment_has_currency()
     {
         $request = $this->getRequestData();
 
-        $this->assertEquals('EUR', $request->getTransactions()->getAmount()->getCurrency());
+        static::assertEquals('EUR', $request->getTransactions()->getAmount()->getCurrency());
 
         foreach ($request->getTransactions()->getItemList()->getItems() as $item) {
-            $this->assertEquals('EUR', $item->getCurrency());
+            static::assertEquals('EUR', $item->getCurrency());
         }
     }
 
@@ -38,7 +38,7 @@ class ExpressCheckoutPaymentBuilderServiceTest extends \PHPUnit_Framework_TestCa
     {
         $request = $this->getRequestData();
 
-        $this->assertStringEndsWith('basketId/' . BasketIdWhitelist::WHITELIST_IDS['PayPalExpress'], $request->getRedirectUrls()->getReturnUrl());
+        static::assertStringEndsWith('basketId/' . BasketIdWhitelist::WHITELIST_IDS['PayPalExpress'], $request->getRedirectUrls()->getReturnUrl());
     }
 
     /**
@@ -61,8 +61,6 @@ class ExpressCheckoutPaymentBuilderServiceTest extends \PHPUnit_Framework_TestCa
     }
 
     /**
-     * @param SettingsServiceInterface $settingService
-     *
      * @return ExpressCheckoutPaymentBuilderService
      */
     private function getExpressCheckoutRequestBuilder(SettingsServiceInterface $settingService)

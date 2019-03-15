@@ -32,8 +32,6 @@ class Capture extends RelatedResource
     }
 
     /**
-     * @param array $data
-     *
      * @return Capture
      */
     public static function fromArray(array $data)

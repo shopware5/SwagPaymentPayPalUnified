@@ -56,8 +56,6 @@ class ItemList
     }
 
     /**
-     * @param array $data
-     *
      * @return ItemList
      */
     public static function fromArray(array $data)

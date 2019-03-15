@@ -27,10 +27,6 @@ class Installments implements SubscriberInterface
      */
     private $dbalConnection;
 
-    /**
-     * @param OrderCreditInfoService $creditInfoService
-     * @param Connection             $dbalConnection
-     */
     public function __construct(
         OrderCreditInfoService $creditInfoService,
         Connection $dbalConnection
@@ -49,20 +45,19 @@ class Installments implements SubscriberInterface
         ];
     }
 
-    /**
-     * @param HookArgs $args
-     */
     public function onBeforeRenderDocument(HookArgs $args)
     {
-        /** @var \Shopware_Components_Document $document */
+        /** @var \Shopware_Components_Document|null $document */
         $document = $args->getSubject();
 
         if (!$document) {
             return;
         }
 
-        $paymentMethodProvider = new PaymentMethodProvider();
-        $installmentsPaymentId = $paymentMethodProvider->getPaymentId($this->dbalConnection, PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME);
+        $installmentsPaymentId = (new PaymentMethodProvider())->getPaymentId(
+            $this->dbalConnection,
+            PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME
+        );
         $orderPaymentMethodId = (int) $document->_order->payment['id'];
 
         //This order has not been payed with paypal unified.

@@ -46,9 +46,6 @@ class FinancingRequest
         return $this->transactionAmount;
     }
 
-    /**
-     * @param TransactionAmount $transactionAmount
-     */
     public function setTransactionAmount(TransactionAmount $transactionAmount)
     {
         $this->transactionAmount = $transactionAmount;

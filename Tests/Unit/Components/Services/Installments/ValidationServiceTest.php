@@ -18,7 +18,7 @@ class ValidationServiceTest extends \PHPUnit_Framework_TestCase
 
         $priceValid = $this->getValidationService()->validatePrice($productPrice);
 
-        $this->assertTrue($priceValid);
+        static::assertTrue($priceValid);
     }
 
     public function test_invalid_product_price()
@@ -27,7 +27,7 @@ class ValidationServiceTest extends \PHPUnit_Framework_TestCase
 
         $priceValid = $this->getValidationService()->validatePrice($productPrice);
 
-        $this->assertFalse($priceValid);
+        static::assertFalse($priceValid);
     }
 
     /**

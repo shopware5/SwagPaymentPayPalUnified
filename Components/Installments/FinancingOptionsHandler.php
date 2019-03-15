@@ -28,9 +28,6 @@ class FinancingOptionsHandler
      */
     private $financingResponse;
 
-    /**
-     * @param FinancingResponse $financingResponse
-     */
     public function __construct(FinancingResponse $financingResponse)
     {
         $this->financingResponse = $financingResponse;

@@ -25,7 +25,7 @@ class WebhookException extends \Exception
      *
      * @see WebhookEventTypes
      *
-     * @param $eventType
+     * @param string $eventType
      */
     public function setEventType($eventType)
     {

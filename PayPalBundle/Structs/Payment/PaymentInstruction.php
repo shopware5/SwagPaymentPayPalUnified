@@ -65,9 +65,6 @@ class PaymentInstruction
         return $this->recipientBanking;
     }
 
-    /**
-     * @param RecipientBanking $recipientBanking
-     */
     public function setRecipientBanking(RecipientBanking $recipientBanking)
     {
         $this->recipientBanking = $recipientBanking;
@@ -81,9 +78,6 @@ class PaymentInstruction
         return $this->amount;
     }
 
-    /**
-     * @param Amount $amount
-     */
     public function setAmount(Amount $amount)
     {
         $this->amount = $amount;
@@ -122,8 +116,6 @@ class PaymentInstruction
     }
 
     /**
-     * @param array $data
-     *
      * @return PaymentInstruction
      */
     public static function fromArray(array $data = [])

@@ -29,10 +29,6 @@ class AuthorizationVoided implements WebhookHandler
      */
     private $modelManager;
 
-    /**
-     * @param LoggerServiceInterface $logger
-     * @param ModelManager           $modelManager
-     */
     public function __construct(LoggerServiceInterface $logger, ModelManager $modelManager)
     {
         $this->logger = $logger;

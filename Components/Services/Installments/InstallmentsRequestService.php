@@ -25,10 +25,6 @@ class InstallmentsRequestService
      */
     private $resource;
 
-    /**
-     * @param InstallmentsResource   $resource
-     * @param LoggerServiceInterface $logger
-     */
     public function __construct(InstallmentsResource $resource, LoggerServiceInterface $logger)
     {
         $this->resource = $resource;
@@ -61,7 +57,7 @@ class InstallmentsRequestService
                 ]
             );
 
-            return null;
+            return [];
         }
     }
 

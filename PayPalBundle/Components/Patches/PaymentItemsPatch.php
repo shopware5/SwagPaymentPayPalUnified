@@ -19,9 +19,6 @@ class PaymentItemsPatch implements PatchInterface
      */
     private $items;
 
-    /**
-     * @param array $items
-     */
     public function __construct(array $items)
     {
         $this->items = $items;

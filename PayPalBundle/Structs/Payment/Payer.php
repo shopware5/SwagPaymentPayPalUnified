@@ -99,8 +99,6 @@ class Payer
     }
 
     /**
-     * @param array $data
-     *
      * @return Payer
      */
     public static function fromArray(array $data = [])

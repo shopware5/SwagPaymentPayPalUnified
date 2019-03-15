@@ -24,14 +24,14 @@ class PaymentMeansSubscriberTest extends \PHPUnit_Framework_TestCase
     public function test_can_be_created()
     {
         $subscriber = $this->getSubscriber();
-        $this->assertEquals(PaymentMeans::class, get_class($subscriber));
+        static::assertEquals(PaymentMeans::class, get_class($subscriber));
     }
 
     public function test_getSubscribedEvents()
     {
         $events = PaymentMeans::getSubscribedEvents();
-        $this->assertCount(1, $events);
-        $this->assertEquals('onFilterPaymentMeans', $events['Shopware_Modules_Admin_GetPaymentMeans_DataFilter']);
+        static::assertCount(1, $events);
+        static::assertEquals('onFilterPaymentMeans', $events['Shopware_Modules_Admin_GetPaymentMeans_DataFilter']);
     }
 
     public function test_onFilterPaymentMeans_without_available_methods()
@@ -41,7 +41,7 @@ class PaymentMeansSubscriberTest extends \PHPUnit_Framework_TestCase
         $args = new EventArgsMockWithoutReturn();
         $subscriber->onFilterPaymentMeans($args);
 
-        $this->assertCount(0, $args->result);
+        static::assertCount(0, $args->result);
     }
 
     public function test_onFilterPaymentMeans_without_unified_method()
@@ -51,7 +51,7 @@ class PaymentMeansSubscriberTest extends \PHPUnit_Framework_TestCase
         $args = new EventArgsMockWithoutUnifiedReturn();
         $subscriber->onFilterPaymentMeans($args);
 
-        $this->assertCount(5, $args->result);
+        static::assertCount(5, $args->result);
     }
 
     public function test_onFilterPaymentMeans_has_unified_method()
@@ -63,8 +63,8 @@ class PaymentMeansSubscriberTest extends \PHPUnit_Framework_TestCase
         $subscriber->onFilterPaymentMeans($args);
         $result = $args->result;
 
-        $this->assertCount(6, $result);
-        $this->assertEquals($this->getUnifiedPaymentId(), $result[5]['id']);
+        static::assertCount(6, $result);
+        static::assertEquals($this->getUnifiedPaymentId(), $result[5]['id']);
     }
 
     public function test_onFilterPaymentMeans_has_no_unified_method_because_the_settings_dont_exist()
@@ -76,8 +76,8 @@ class PaymentMeansSubscriberTest extends \PHPUnit_Framework_TestCase
         $subscriber->onFilterPaymentMeans($args);
         $result = $args->result;
 
-        $this->assertCount(5, $result);
-        $this->assertNotContains($this->getUnifiedPaymentId(), $result);
+        static::assertCount(5, $result);
+        static::assertNotContains($this->getUnifiedPaymentId(), $result);
     }
 
     public function test_onFilterPaymentMeans_has_no_installments_method_because_the_settings_dont_exist()
@@ -89,8 +89,8 @@ class PaymentMeansSubscriberTest extends \PHPUnit_Framework_TestCase
         $subscriber->onFilterPaymentMeans($args);
         $result = $args->result;
 
-        $this->assertCount(5, $result);
-        $this->assertNotContains($this->getInstallmentsPaymentId(), $result);
+        static::assertCount(5, $result);
+        static::assertNotContains($this->getInstallmentsPaymentId(), $result);
     }
 
     public function test_onFilterPaymentMeans_installments_with_sOrderVariables_null()
@@ -102,8 +102,8 @@ class PaymentMeansSubscriberTest extends \PHPUnit_Framework_TestCase
         $subscriber->onFilterPaymentMeans($args);
         $result = $args->result;
 
-        $this->assertCount(5, $result);
-        $this->assertNotContains($this->getInstallmentsPaymentId(), $result);
+        static::assertCount(5, $result);
+        static::assertNotContains($this->getInstallmentsPaymentId(), $result);
     }
 
     public function test_onFilterPaymentMeans_installments_with_sOrderVariables_null_but_with_register()
@@ -123,7 +123,7 @@ class PaymentMeansSubscriberTest extends \PHPUnit_Framework_TestCase
         $subscriber->onFilterPaymentMeans($args);
         $result = $args->result;
 
-        $this->assertCount(6, $result);
+        static::assertCount(6, $result);
     }
 
     public function test_onFilterPaymentMeans_installments_with_sOrderVariables_null_but_with_register_with_company()
@@ -144,8 +144,8 @@ class PaymentMeansSubscriberTest extends \PHPUnit_Framework_TestCase
         $subscriber->onFilterPaymentMeans($args);
         $result = $args->result;
 
-        $this->assertCount(5, $result);
-        $this->assertNotContains($this->getInstallmentsPaymentId(), $result);
+        static::assertCount(5, $result);
+        static::assertNotContains($this->getInstallmentsPaymentId(), $result);
     }
 
     public function test_onFilterPaymentMeans_has_no_installments_because_the_price_is_less_99()
@@ -173,7 +173,7 @@ class PaymentMeansSubscriberTest extends \PHPUnit_Framework_TestCase
         $subscriber->onFilterPaymentMeans($args);
         $result = $args->result;
 
-        $this->assertCount(5, $result);
+        static::assertCount(5, $result);
     }
 
     public function test_onFilterPaymentMeans_has_no_installments_because_the_price_is_higher_than_5000()
@@ -201,7 +201,7 @@ class PaymentMeansSubscriberTest extends \PHPUnit_Framework_TestCase
         $subscriber->onFilterPaymentMeans($args);
         $result = $args->result;
 
-        $this->assertCount(5, $result);
+        static::assertCount(5, $result);
     }
 
     public function test_onFilterPaymentMeans_has_no_installments_because_business_customer()
@@ -232,7 +232,7 @@ class PaymentMeansSubscriberTest extends \PHPUnit_Framework_TestCase
         $subscriber->onFilterPaymentMeans($args);
         $result = $args->result;
 
-        $this->assertCount(5, $result);
+        static::assertCount(5, $result);
     }
 
     public function test_onFilterPaymentMeans_has_no_installments_because_country_is_not_DE()
@@ -260,7 +260,7 @@ class PaymentMeansSubscriberTest extends \PHPUnit_Framework_TestCase
         $subscriber->onFilterPaymentMeans($args);
         $result = $args->result;
 
-        $this->assertCount(5, $result);
+        static::assertCount(5, $result);
     }
 
     public function test_onFilterPaymentMeans_has_installments()
@@ -287,7 +287,7 @@ class PaymentMeansSubscriberTest extends \PHPUnit_Framework_TestCase
         $subscriber->onFilterPaymentMeans($args);
         $result = $args->result;
 
-        $this->assertCount(6, $result);
+        static::assertCount(6, $result);
     }
 
     private function getSubscriber($mockSettings = true)

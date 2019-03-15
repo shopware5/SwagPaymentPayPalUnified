@@ -19,9 +19,6 @@ class WebhookResource
      */
     private $client;
 
-    /**
-     * @param ClientService $client
-     */
     public function __construct(ClientService $client)
     {
         $this->client = $client;
@@ -37,7 +34,6 @@ class WebhookResource
 
     /**
      * @param string $url
-     * @param array  $events
      *
      * @return array
      */

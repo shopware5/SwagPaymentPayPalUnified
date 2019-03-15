@@ -20,9 +20,6 @@ class AuthorizationResource
      */
     private $clientService;
 
-    /**
-     * @param ClientService $clientService
-     */
     public function __construct(ClientService $clientService)
     {
         $this->clientService = $clientService;
@@ -49,8 +46,7 @@ class AuthorizationResource
     }
 
     /**
-     * @param string  $id
-     * @param Capture $capture
+     * @param string $id
      *
      * @return array
      */

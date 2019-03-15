@@ -17,9 +17,6 @@ class CompanyInfoService
      */
     private $shopwareConfig;
 
-    /**
-     * @param Shopware_Components_Config $shopwareConfig
-     */
     public function __construct(Shopware_Components_Config $shopwareConfig)
     {
         $this->shopwareConfig = $shopwareConfig;

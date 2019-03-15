@@ -19,16 +19,13 @@ class DependencyProvider
      */
     private $container;
 
-    /**
-     * @param DIContainer $container
-     */
     public function __construct(DIContainer $container)
     {
         $this->container = $container;
     }
 
     /**
-     * @return null|DetachedShop
+     * @return DetachedShop|null
      */
     public function getShop()
     {
@@ -43,8 +40,6 @@ class DependencyProvider
      * Returns the module with the given name, if any exists.
      *
      * @param string $moduleName
-     *
-     * @return mixed
      */
     public function getModule($moduleName)
     {

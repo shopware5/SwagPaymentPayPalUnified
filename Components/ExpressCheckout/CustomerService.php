@@ -72,15 +72,6 @@ class CustomerService
      */
     private $adminModule;
 
-    /**
-     * @param ShopwareConfig           $shopwareConfig
-     * @param Connection               $connection
-     * @param FormFactoryInterface     $formFactory
-     * @param ContextServiceInterface  $contextService
-     * @param RegisterServiceInterface $registerService
-     * @param Enlight_Controller_Front $front
-     * @param DependencyProvider       $dependencyProvider
-     */
     public function __construct(
         ShopwareConfig $shopwareConfig,
         Connection $connection,
@@ -100,9 +91,6 @@ class CustomerService
         $this->dependencyProvider = $dependencyProvider;
     }
 
-    /**
-     * @param Payment $paymentStruct
-     */
     public function createNewCustomer(Payment $paymentStruct)
     {
         $this->adminModule = $this->dependencyProvider->getModule('admin');
@@ -163,8 +151,6 @@ class CustomerService
     }
 
     /**
-     * @param array $customerData
-     *
      * @return Customer
      */
     private function registerCustomer(array $customerData)
@@ -202,9 +188,6 @@ class CustomerService
         return isset($possibleSalutations[0]) ? $possibleSalutations[0] : 'mr';
     }
 
-    /**
-     * @param Customer $customerModel
-     */
     private function loginCustomer(Customer $customerModel)
     {
         $request = $this->front->Request();

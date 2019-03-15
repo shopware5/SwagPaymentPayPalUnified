@@ -61,9 +61,11 @@ class ViewMock extends Enlight_View_Default
         if (is_array($spec)) {
             $this->assigns = $spec;
 
-            return;
+            return $this;
         }
         $this->assigns[$spec] = $value;
+
+        return $this;
     }
 
     /**

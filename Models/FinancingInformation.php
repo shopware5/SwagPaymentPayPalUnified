@@ -27,6 +27,7 @@ class FinancingInformation extends ModelEntity
      * @var \Shopware\Models\Order\Order
      */
     protected $order;
+
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")
@@ -81,8 +82,6 @@ class FinancingInformation extends ModelEntity
 
     /**
      * Returns the paymentID of the payment
-     *
-     * @return mixed
      */
     public function getPaymentId()
     {
@@ -91,8 +90,6 @@ class FinancingInformation extends ModelEntity
 
     /**
      * Returns the fee amount of the payment
-     *
-     * @return mixed
      */
     public function getFeeAmount()
     {
@@ -101,8 +98,6 @@ class FinancingInformation extends ModelEntity
 
     /**
      * Returns the total cost of the payment
-     *
-     * @return mixed
      */
     public function getTotalCost()
     {
@@ -111,8 +106,6 @@ class FinancingInformation extends ModelEntity
 
     /**
      * Returns the term of this payment
-     *
-     * @return mixed
      */
     public function getTerm()
     {
@@ -152,7 +145,7 @@ class FinancingInformation extends ModelEntity
     /**
      * Sets the fee amount of this payment
      *
-     * @param $feeAmount
+     * @param float $feeAmount
      */
     public function setFeeAmount($feeAmount)
     {
@@ -162,7 +155,7 @@ class FinancingInformation extends ModelEntity
     /**
      * Sets the total cost of this payment
      *
-     * @param $totalCost
+     * @param float $totalCost
      */
     public function setTotalCost($totalCost)
     {
@@ -172,7 +165,7 @@ class FinancingInformation extends ModelEntity
     /**
      * Sets the term of this payment
      *
-     * @param $term
+     * @param int $term
      */
     public function setTerm($term)
     {
@@ -182,7 +175,7 @@ class FinancingInformation extends ModelEntity
     /**
      * Sets the monthly payment for this payment
      *
-     * @param $monthlyPayment
+     * @param float $monthlyPayment
      */
     public function setMonthlyPayment($monthlyPayment)
     {

@@ -20,14 +20,14 @@ class BackendOrderSubscriberTest extends \PHPUnit_Framework_TestCase
     public function test_can_be_created()
     {
         $subscriber = $this->getBackendOrderSubscriber();
-        $this->assertNotNull($subscriber);
+        static::assertNotNull($subscriber);
     }
 
     public function test_getSubscribedEvents_has_correct_events()
     {
         $events = BackendOrder::getSubscribedEvents();
-        $this->assertCount(1, $events);
-        $this->assertSame('onPostDispatchOrder', $events['Enlight_Controller_Action_PostDispatchSecure_Backend_Order']);
+        static::assertCount(1, $events);
+        static::assertSame('onPostDispatchOrder', $events['Enlight_Controller_Action_PostDispatchSecure_Backend_Order']);
     }
 
     public function test_onPostDispatchOrder_wrong_action()
@@ -42,7 +42,7 @@ class BackendOrderSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $result = $this->getBackendOrderSubscriber()->onPostDispatchOrder($enlightEventArgs);
 
-        $this->assertNull($result);
+        static::assertNull($result);
     }
 
     public function test_onPostDispatchOrder_getList()
@@ -63,7 +63,7 @@ class BackendOrderSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $result = $view->getAssign('data');
 
-        $this->assertSame($result[0]['payment']['description'], 'PayPalPlus');
+        static::assertSame($result[0]['payment']['description'], 'PayPalPlus');
     }
 
     /**

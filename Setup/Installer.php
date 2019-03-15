@@ -41,10 +41,7 @@ class Installer
     /**
      * Installer constructor.
      *
-     * @param ModelManager $modelManager
-     * @param Connection   $connection
-     * @param CrudService  $attributeCrudService
-     * @param string       $bootstrapPath
+     * @param string $bootstrapPath
      */
     public function __construct(
         ModelManager $modelManager,

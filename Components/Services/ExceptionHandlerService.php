@@ -27,9 +27,6 @@ class ExceptionHandlerService implements ExceptionHandlerServiceInterface
      */
     private $loggerService;
 
-    /**
-     * @param LoggerServiceInterface $loggerService
-     */
     public function __construct(LoggerServiceInterface $loggerService)
     {
         $this->loggerService = $loggerService;

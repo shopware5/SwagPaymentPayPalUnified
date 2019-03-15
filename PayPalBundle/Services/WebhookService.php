@@ -14,13 +14,11 @@ use SwagPaymentPayPalUnified\PayPalBundle\Components\Webhook\WebhookHandler;
 class WebhookService
 {
     /**
-     * @var WebhookHandler[]
+     * @var (WebhookHandler|null)[]
      */
     private $registeredWebhooks;
 
     /**
-     * @param WebhookHandler $webhook
-     *
      * @throws WebhookException
      */
     public function registerWebhook(WebhookHandler $webhook)

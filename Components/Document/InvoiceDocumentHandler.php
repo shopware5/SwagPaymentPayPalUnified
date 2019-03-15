@@ -30,11 +30,6 @@ class InvoiceDocumentHandler
      */
     private $snippetManager;
 
-    /**
-     * @param PaymentInstructionService $instructionService
-     * @param Connection                $dbalConnection
-     * @param SnippetManager            $snippetManager
-     */
     public function __construct(
         PaymentInstructionService $instructionService,
         Connection $dbalConnection,
@@ -46,12 +41,12 @@ class InvoiceDocumentHandler
     }
 
     /**
-     * @param int      $orderNumber
-     * @param Document $document
+     * @param int $orderNumber
      */
     public function handleDocument($orderNumber, Document $document)
     {
         //Collect all available containers in order to work with some of them later.
+        /** @var array $templateContainers */
         $templateContainers = $document->_view->getTemplateVars('Containers');
         /** @var \Smarty_Data $view */
         $view = $document->_view;
@@ -91,8 +86,11 @@ class InvoiceDocumentHandler
     public function getInvoiceContainer($containers, $orderData)
     {
         $footer = $containers['PayPal_Unified_Instructions_Content'];
-        $translationComp = new \Shopware_Components_Translation();
-        $translation = $translationComp->read($orderData['_order']['language'], 'documents', $footer['id']);
+        $translation = (new \Shopware_Components_Translation())->read(
+            $orderData['_order']['language'],
+            'documents',
+            $footer['id']
+        );
 
         $query = 'SELECT * FROM s_core_documents_box WHERE id = ?';
 
@@ -106,8 +104,6 @@ class InvoiceDocumentHandler
     }
 
     /**
-     * @param array $orderData
-     *
      * @return array
      */
     private function overwritePaymentName(array $orderData)

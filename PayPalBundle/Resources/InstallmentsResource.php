@@ -21,17 +21,12 @@ class InstallmentsResource
      */
     private $clientService;
 
-    /**
-     * @param ClientService $clientService
-     */
     public function __construct(ClientService $clientService)
     {
         $this->clientService = $clientService;
     }
 
     /**
-     * @param FinancingRequest $financingRequest
-     *
      * @return array
      */
     public function getFinancingOptions(FinancingRequest $financingRequest)
