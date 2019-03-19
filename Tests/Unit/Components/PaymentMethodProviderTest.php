@@ -6,7 +6,7 @@
  * file that was distributed with this source code.
  */
 
-namespace SwagPaymentPayPalUnified\Tests\Functional\Components;
+namespace SwagPaymentPayPalUnified\Tests\Unit\Components;
 
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 

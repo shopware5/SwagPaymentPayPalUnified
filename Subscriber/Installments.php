@@ -113,13 +113,13 @@ class Installments implements SubscriberInterface
             return;
         }
 
-        /** @var GeneralSettingsModel $generalSettings */
+        /** @var GeneralSettingsModel|null $generalSettings */
         $generalSettings = $this->settingsService->getSettings();
         if (!$generalSettings || !$generalSettings->getActive()) {
             return;
         }
 
-        /** @var InstallmentsSettingsModel $installmentsSettings */
+        /** @var InstallmentsSettingsModel|null $installmentsSettings */
         $installmentsSettings = $this->settingsService->getSettings(null, SettingsTable::INSTALLMENTS);
         if (!$installmentsSettings || !$installmentsSettings->getActive()) {
             return;
@@ -162,13 +162,13 @@ class Installments implements SubscriberInterface
             return;
         }
 
-        /** @var GeneralSettingsModel $generalSettings */
+        /** @var GeneralSettingsModel|null $generalSettings */
         $generalSettings = $this->settingsService->getSettings();
         if (!$generalSettings || !$generalSettings->getActive()) {
             return;
         }
 
-        /** @var InstallmentsSettingsModel $installmentsSettings */
+        /** @var InstallmentsSettingsModel|null $installmentsSettings */
         $installmentsSettings = $this->settingsService->getSettings(null, SettingsTable::INSTALLMENTS);
         if (!$installmentsSettings || !$installmentsSettings->getActive()) {
             return;

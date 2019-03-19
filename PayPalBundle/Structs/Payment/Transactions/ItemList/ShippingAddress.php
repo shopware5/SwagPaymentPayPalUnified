@@ -45,7 +45,7 @@ class ShippingAddress extends Address
     }
 
     /**
-     * {@inheritdoc}
+     * @return ShippingAddress
      */
     public static function fromArray(array $data = null)
     {

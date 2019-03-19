@@ -83,7 +83,6 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
     public function gatewayAction()
     {
         $orderData = $this->get('session')->get('sOrderVariables');
-        $userData = $orderData['sUserData'];
 
         if ($orderData === null) {
             $this->handleError(ErrorCodes::NO_ORDER_TO_PROCESS);
@@ -96,6 +95,8 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
 
             return;
         }
+
+        $userData = $orderData['sUserData'];
 
         try {
             //Query all information
@@ -147,6 +148,8 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
         $addressPatch = new PaymentAddressPatch($addressService->getShippingAddress($userData));
         $payerInfoPatch = new PayerInfoPatch($addressService->getPayerInfo($userData));
 
+        $useInContext = (bool) $this->Request()->getParam('useInContext', false);
+
         try {
             $this->paymentResource->patch($responseStruct->getId(), [
                 $addressPatch,
@@ -157,7 +160,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
              * The field addressValidation gets checked via JavaScript to ensure the redirect to the right error page,
              * if the user uses the In-Context mode.
              */
-            if ($this->Request()->getParam('useInContext')) {
+            if ($useInContext) {
                 $this->Front()->Plugins()->Json()->setRenderer();
 
                 $this->View()->assign('addressValidation', false);
@@ -170,7 +173,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
             return;
         }
 
-        if ($this->Request()->getParam('useInContext')) {
+        if ($useInContext) {
             $this->Front()->Plugins()->Json()->setRenderer();
 
             $this->View()->assign('paymentId', $responseStruct->getId());
@@ -259,21 +262,21 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
 
             /** @var OrderDataService $orderDataService */
             $orderDataService = $this->get('paypal_unified.order_data_service');
-            /** @var RelatedResource $responseSale */
-            $responseSale = $response->getTransactions()->getRelatedResources()->getResources()[0];
+            /** @var RelatedResource $relatedResource */
+            $relatedResource = $response->getTransactions()->getRelatedResources()->getResources()[0];
 
             //Use TXN-ID instead of the PaymentId
-            $saleId = $responseSale->getId();
-            if (!$orderDataService->applyTransactionId($orderNumber, $saleId)) {
+            $relatedResourceId = $relatedResource->getId();
+            if (!$orderDataService->applyTransactionId($orderNumber, $relatedResourceId)) {
                 $this->handleError(ErrorCodes::NO_ORDER_TO_PROCESS);
 
                 return;
             }
 
             // apply the payment status if its completed by PayPal
-            $paymentState = $responseSale->getState();
+            $paymentState = $relatedResource->getState();
             if ($paymentState === PaymentStatus::PAYMENT_COMPLETED) {
-                $this->savePaymentStatus($saleId, $paymentId, PaymentStatus::PAYMENT_STATUS_APPROVED);
+                $this->savePaymentStatus($relatedResourceId, $paymentId, PaymentStatus::PAYMENT_STATUS_APPROVED);
                 $orderDataService->setClearedDate($orderNumber);
             }
 

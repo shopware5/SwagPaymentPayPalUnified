@@ -44,7 +44,7 @@ class Payment
     private $links;
 
     /**
-     * @var PaymentInstruction
+     * @var PaymentInstruction|null
      */
     private $paymentInstruction;
 
@@ -235,7 +235,7 @@ class Payment
     }
 
     /**
-     * @return PaymentInstruction
+     * @return PaymentInstruction|null
      */
     public function getPaymentInstruction()
     {
@@ -300,7 +300,9 @@ class Payment
             $result->setPaymentInstruction(PaymentInstruction::fromArray($data['payment_instruction']));
         }
 
-        $result->setPayer(Payer::fromArray($data['payer']));
+        if (array_key_exists('payer', $data)) {
+            $result->setPayer(Payer::fromArray($data['payer']));
+        }
 
         $links = [];
         foreach ($data['links'] as $link) {
@@ -310,7 +312,7 @@ class Payment
 
         $result->setRedirectUrls(RedirectUrls::fromArray($data['redirect_urls']));
 
-        if ($data['credit_financing_offered']) {
+        if (array_key_exists('credit_financing_offered', $data)) {
             $result->setCreditFinancingOffered(Credit::fromArray($data['credit_financing_offered']));
         }
 

@@ -6,7 +6,7 @@
  * file that was distributed with this source code.
  */
 
-namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services\Validation;
+namespace SwagPaymentPayPalUnified\Tests\Unit\Components\Services\Validation;
 
 use SwagPaymentPayPalUnified\Components\Services\Validation\SimpleBasketValidator;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;

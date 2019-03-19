@@ -14,18 +14,21 @@ use Enlight_Controller_Response_ResponseTestCase as ResponseTestCase;
 class UnifiedControllerTestCase extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var RequestTestCase
+     * @var RequestTestCase|null
      */
     private $request;
 
     /**
-     * @var ResponseTestCase
+     * @var ResponseTestCase|null
      */
     private $response;
 
+    /**
+     * @return RequestTestCase
+     */
     public function Request()
     {
-        if (!$this->request) {
+        if ($this->request === null) {
             $this->request = new RequestTestCase();
         }
 
@@ -37,7 +40,7 @@ class UnifiedControllerTestCase extends \PHPUnit_Framework_TestCase
      */
     public function Response()
     {
-        if (!$this->response) {
+        if ($this->response === null) {
             $this->response = new ResponseTestCase();
         }
 

@@ -6,7 +6,7 @@
  * file that was distributed with this source code.
  */
 
-namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services\Installments;
+namespace SwagPaymentPayPalUnified\Tests\Unit\Components\Services\Installments;
 
 use SwagPaymentPayPalUnified\Components\Services\Installments\ValidationService;
 

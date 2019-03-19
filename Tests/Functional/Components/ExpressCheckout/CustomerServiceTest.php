@@ -78,7 +78,7 @@ class CustomerServiceTest extends \PHPUnit_Framework_TestCase
         static::assertEquals('Shopware', $user['firstname']);
         static::assertEquals('PHPUnit', $user['lastname']);
 
-        static::assertNotNull(Shopware()->Container()->get('session')->offsetGet('sUserId'));
+        static::assertNotNull(Shopware()->Container()->get('session')->get('sUserId'));
     }
 
     private function getUserByMail($mail = 'phpunit@test.com')
