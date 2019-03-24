@@ -45,36 +45,47 @@ class InvoiceDocumentHandler
      */
     public function handleDocument($orderNumber, Document $document)
     {
-        //Collect all available containers in order to work with some of them later.
-        /** @var array $templateContainers */
-        $templateContainers = $document->_view->getTemplateVars('Containers');
-        /** @var \Smarty_Data $view */
-        $view = $document->_view;
-        /** @var array $orderData */
-        $orderData = $view->getTemplateVars('Order');
-        $orderData = $this->overwritePaymentName($orderData);
+        // replace the contents only for that document types,
+        // whose really has PayPal boxes assigned to it:
+        if ($this->hasPayPalUnifiedBoxes($document)) {
 
-        //Get the new footer for the document and replace the original one
-        $rawFooter = $this->getInvoiceContainer($templateContainers, $orderData);
-        $templateContainers['PayPal_Unified_Instructions_Content']['value'] = $rawFooter['value'];
+            //Collect all available containers in order to work with some of them later.
+            /** @var array $templateContainers */
+            $templateContainers = $document->_view->getTemplateVars('Containers');
+            /** @var \Smarty_Data $view */
+            $view = $document->_view;
 
-        $view->assign('Order', $orderData);
-        $view->assign('Containers', $templateContainers);
+            /** @var array $orderData */
+            $orderData = $view->getTemplateVars('Order');
+            $orderData = $this->overwritePaymentName($orderData);
 
-        $instructions = $this->instructionService->getInstructions($orderNumber);
-        if ($instructions) {
-            $document->_template->assign('PayPalUnifiedInvoiceInstruction', $instructions->toArray());
+            //Get the new footer for the document and replace the original one
+            $rawFooter = $this->getInvoiceContainer($templateContainers, $orderData);
+            $templateContainers['PayPal_Unified_Instructions_Content']['value'] = $rawFooter['value'];
+
+            $view->assign('Order', $orderData);
+            $view->assign('Containers', $templateContainers);
+
+            $instructions = $this->instructionService->getInstructions($orderNumber);
+            if ($instructions) {
+                $document->_template->assign(
+                    'PayPalUnifiedInvoiceInstruction',
+                    $instructions->toArray()
+                );
+            }
+
+            //Reassign the complete template including the new variables.
+            /** @var array $containerData */
+            $containerData = $view->getTemplateVars('Containers');
+            $containerData['Footer'] = $containerData['PayPal_Unified_Instructions_Footer'];
+            $containerData['Content_Info'] = $containerData['PayPal_Unified_Instructions_Content'];
+            $containerData['Content_Info']['value'] = $document->_template->fetch(
+                'string:' . $containerData['Content_Info']['value']
+            );
+            $containerData['Content_Info']['style'] = '}'.$containerData['Content_Info']['style'] . ' #info {';
+
+            $view->assign('Containers', $containerData);
         }
-
-        //Reassign the complete template including the new variables.
-        /** @var array $containerData */
-        $containerData = $view->getTemplateVars('Containers');
-        $containerData['Footer'] = $containerData['PayPal_Unified_Instructions_Footer'];
-        $containerData['Content_Info'] = $containerData['PayPal_Unified_Instructions_Content'];
-        $containerData['Content_Info']['value'] = $document->_template->fetch('string:' . $containerData['Content_Info']['value']);
-        $containerData['Content_Info']['style'] = '}' . $containerData['Content_Info']['style'] . ' #info {';
-
-        $view->assign('Containers', $containerData);
     }
 
     /**
@@ -101,6 +112,24 @@ class InvoiceDocumentHandler
         }
 
         return $rawFooter;
+    }
+
+    /**
+     * Searches in a given document template for the PayPal Unified boxes.
+     *
+     * @param Document $doc
+     * @return bool
+     */
+    public function hasPayPalUnifiedBoxes(Document $doc)
+    {
+        $query = 'SELECT id FROM s_core_documents_box WHERE documentID = ? AND `name` = ?;';
+
+        $boxTest = $this->dbalConnection->fetchAssoc(
+            $query,
+            [$doc->_typID, 'PayPal_Unified_Instructions_Content']
+        );
+
+        return is_array($boxTest) && count($boxTest) > 0;
     }
 
     /**
