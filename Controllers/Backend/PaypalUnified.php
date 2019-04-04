@@ -499,7 +499,7 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
         $conditions[] = [
             'property' => 'sOrder.number',
             'expression' => '!=',
-            'value' => 0,
+            'value' => '0',
         ];
 
         return $conditions;
