@@ -152,6 +152,10 @@ trait SettingsHelperTrait
             $data['listingActive'] = 0;
         }
 
+        if (!isset($data['buttonLocale'])) {
+            $data['buttonLocale'] = 'en_US';
+        }
+
         $model = new ExpressSettingsModel();
         $this->insertExpressCheckoutSettings($model->fromArray($data));
     }

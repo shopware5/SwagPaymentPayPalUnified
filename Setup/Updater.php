@@ -60,6 +60,10 @@ class Updater
         if (version_compare($oldVersion, '2.0.3', '<=')) {
             $this->updateTo210();
         }
+
+        if (version_compare($oldVersion, '2.1.3', '<=')) {
+            $this->updateTo220();
+        }
     }
 
     private function updateTo103()
@@ -105,7 +109,7 @@ class Updater
     {
         if (!$this->checkIfColumnExist('swag_payment_paypal_unified_settings_express', 'off_canvas_active')) {
             $sql = 'ALTER TABLE `swag_payment_paypal_unified_settings_express` 
-                ADD `off_canvas_active`  TINYINT(1) NOT NULL; 
+                ADD `off_canvas_active` TINYINT(1) NOT NULL; 
                 UPDATE `swag_payment_paypal_unified_settings_express` 
                 SET `off_canvas_active` = 1;';
 
@@ -117,9 +121,21 @@ class Updater
     {
         if (!$this->checkIfColumnExist('swag_payment_paypal_unified_settings_express', 'listing_active')) {
             $sql = 'ALTER TABLE `swag_payment_paypal_unified_settings_express` 
-                ADD `listing_active`  TINYINT(1) NOT NULL; 
+                ADD `listing_active` TINYINT(1) NOT NULL; 
                 UPDATE `swag_payment_paypal_unified_settings_express` 
                 SET `listing_active` = 0;';
+
+            $this->connection->executeQuery($sql);
+        }
+    }
+
+    private function updateTo220()
+    {
+        if (!$this->checkIfColumnExist('swag_payment_paypal_unified_settings_express', 'button_locale')) {
+            $sql = "ALTER TABLE `swag_payment_paypal_unified_settings_express` 
+                ADD `button_locale` VARCHAR(5) NOT NULL; 
+                UPDATE `swag_payment_paypal_unified_settings_express` 
+                SET `button_locale` = '';";
 
             $this->connection->executeQuery($sql);
         }
@@ -143,7 +159,10 @@ WHERE table_name = :tableName
     AND table_schema = DATABASE();
 SQL;
 
-        $columnNameInDb = $this->connection->executeQuery($sql, ['tableName' => $tableName, 'columnName' => $columnName])->fetchColumn();
+        $columnNameInDb = $this->connection->executeQuery(
+            $sql,
+            ['tableName' => $tableName, 'columnName' => $columnName]
+        )->fetchColumn();
 
         return $columnNameInDb === $columnName;
     }
