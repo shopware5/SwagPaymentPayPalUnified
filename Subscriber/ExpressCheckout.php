@@ -336,9 +336,16 @@ class ExpressCheckout implements SubscriberInterface
     /**
      * @return string
      */
-    private function getExpressCheckoutButtonLanguage()
+    private function getExpressCheckoutButtonLanguage(ExpressSettingsModel $expressSettings)
     {
-        return $this->dependencyProvider->getShop()->getLocale()->getLocale();
+        $locale = $this->dependencyProvider->getShop()->getLocale()->getLocale();
+        $buttonLocaleFromSetting = (string) $expressSettings->getButtonLocale();
+
+        if ($buttonLocaleFromSetting !== '') {
+            $locale = $buttonLocaleFromSetting;
+        }
+
+        return $locale;
     }
 
     private function addEcButtonBehaviour(ViewEngine $view, GeneralSettingsModel $generalSettings)
@@ -352,6 +359,6 @@ class ExpressCheckout implements SubscriberInterface
         $view->assign('paypalUnifiedEcButtonStyleColor', $expressSettings->getButtonStyleColor());
         $view->assign('paypalUnifiedEcButtonStyleShape', $expressSettings->getButtonStyleShape());
         $view->assign('paypalUnifiedEcButtonStyleSize', $expressSettings->getButtonStyleSize());
-        $view->assign('paypalUnifiedLanguageIso', $this->getExpressCheckoutButtonLanguage());
+        $view->assign('paypalUnifiedLanguageIso', $this->getExpressCheckoutButtonLanguage($expressSettings));
     }
 }

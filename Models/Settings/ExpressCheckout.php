@@ -81,6 +81,12 @@ class ExpressCheckout extends ModelEntity
     private $buttonStyleSize;
 
     /**
+     * @var string
+     * @ORM\Column(name="button_locale", type="string", length=5)
+     */
+    private $buttonLocale = '';
+
+    /**
      * @var bool
      * @ORM\Column(name="submit_cart", type="boolean", nullable=false)
      */
@@ -250,6 +256,22 @@ class ExpressCheckout extends ModelEntity
     public function setButtonStyleSize($buttonStyleSize)
     {
         $this->buttonStyleSize = $buttonStyleSize;
+    }
+
+    /**
+     * @return string
+     */
+    public function getButtonLocale()
+    {
+        return $this->buttonLocale;
+    }
+
+    /**
+     * @param string $buttonLocale
+     */
+    public function setButtonLocale($buttonLocale)
+    {
+        $this->buttonLocale = $buttonLocale;
     }
 
     /**

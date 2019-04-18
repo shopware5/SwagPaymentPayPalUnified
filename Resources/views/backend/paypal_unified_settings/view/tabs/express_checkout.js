@@ -64,6 +64,11 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.ExpressCheckout', {
     ecButtonStyleSize: null,
 
     /**
+     * @type { Ext.form.field.Text }
+     */
+    buttonLocale: null,
+
+    /**
      * @type { Ext.form.field.Checkbox }
      */
     ecSubmitCart: null,
@@ -91,6 +96,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.ExpressCheckout', {
         me.ecButtonStyleColor = me.createEcButtonStyleColor();
         me.ecButtonStyleShape = me.createEcButtonStyleShape();
         me.ecButtonStyleSize = me.createEcButtonStyleSize();
+        me.buttonLocale = me.createEcButtonLocale();
         me.ecSubmitCart = me.createEcSubmitCart();
 
         return [
@@ -105,7 +111,8 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.ExpressCheckout', {
             me.ecButtonStyleColor,
             me.ecButtonStyleShape,
             me.ecButtonStyleSize,
-            me.ecSubmitCart
+            me.ecSubmitCart,
+            me.buttonLocale
         ];
     },
 
@@ -264,6 +271,22 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.ExpressCheckout', {
             fieldLabel: '{s name=field/ecButtonStyleSize}Button size{/s}',
             store: Ext.create('Shopware.apps.PaypalUnifiedSettings.store.EcButtonStyleSize'),
             valueField: 'id'
+        });
+    },
+
+    /**
+     * @returns { Ext.form.field.Text }
+     */
+    createEcButtonLocale: function() {
+        return Ext.create('Ext.form.field.Text', {
+            name: 'buttonLocale',
+            fieldLabel: '{s name=field/ecButtonLocale}Button locale{/s}',
+            supportText: '{s name=field/ecButtonLocale/help}If not set, the shop locale will be used. Valid values could be found <a href="https://developer.paypal.com/docs/api/reference/locale-codes/" target="_blank">here</a>.{/s}',
+            maxLength: 5,
+            // {literal}
+            regex: /[a-z]{2}_[A-Z]{2}/,
+            // {/literal}
+            invalidText: '{s name=field/ecButtonLocale/invalid}The locale code must be exact five chars long and must have a format like "en_US"{/s}'
         });
     }
 });

@@ -199,7 +199,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
             installmentsSettings = me.getInstallmentsTab().getForm().getValues(),
             ecSettings = me.getEcTab().getForm().getValues();
 
-        if (!me.getGeneralTab().getForm().isValid()) {
+        if (!me.getGeneralTab().getForm().isValid() || !me.getEcTab().getForm().isValid()) {
             Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal{/s}', '{s name=growl/formValidationError}Please fill out all fields marked in red.{/s}', me.window.title);
             return;
         }

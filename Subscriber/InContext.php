@@ -97,7 +97,7 @@ class InContext implements SubscriberInterface
         $view->assign('paypalUnifiedEcButtonStyleColor', $expressSettings->getButtonStyleColor());
         $view->assign('paypalUnifiedEcButtonStyleShape', $expressSettings->getButtonStyleShape());
         $view->assign('paypalUnifiedEcButtonStyleSize', $expressSettings->getButtonStyleSize());
-        $view->assign('paypalUnifiedLanguageIso', $this->dependencyProvider->getShop()->getLocale()->getLocale());
+        $view->assign('paypalUnifiedLanguageIso', $this->getInContextButtonLanguage($expressSettings));
     }
 
     public function addInContextInfoToRequest(\Enlight_Controller_ActionEventArgs $args)
@@ -113,5 +113,20 @@ class InContext implements SubscriberInterface
                 'useInContext' => true,
             ]);
         }
+    }
+
+    /**
+     * @return string
+     */
+    private function getInContextButtonLanguage(ExpressSettingsModel $expressSettings)
+    {
+        $locale = $this->dependencyProvider->getShop()->getLocale()->getLocale();
+        $buttonLocaleFromSetting = (string) $expressSettings->getButtonLocale();
+
+        if ($buttonLocaleFromSetting !== '') {
+            $locale = $buttonLocaleFromSetting;
+        }
+
+        return $locale;
     }
 }
