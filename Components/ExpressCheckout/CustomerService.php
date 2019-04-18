@@ -116,7 +116,7 @@ class CustomerService
             'zipcode' => $address->getPostalCode(),
             'city' => $address->getCity(),
             'country' => $countryId,
-            'stateID' => $stateId,
+            'state' => $stateId,
             'phone' => $payerInfo->getPhone(),
         ];
 
