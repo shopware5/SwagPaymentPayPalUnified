@@ -60,6 +60,15 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
      */
     private $shopwareConfig;
 
+    public function dispatch($action)
+    {
+        $useInContext = (bool) $this->Request()->getParam('useInContext', false);
+        if ($useInContext && $this->Request()->getActionName() === 'gateway') {
+            $this->Front()->Plugins()->Json()->setRenderer();
+        }
+        parent::dispatch($action);
+    }
+
     public function preDispatch()
     {
         $this->paymentResource = $this->get('paypal_unified.payment_resource');
