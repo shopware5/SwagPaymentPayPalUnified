@@ -162,6 +162,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
              */
             if ($useInContext) {
                 $this->Front()->Plugins()->Json()->setRenderer();
+                $this->View()->setTemplate();
 
                 $this->View()->assign('addressValidation', false);
 
@@ -175,6 +176,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
 
         if ($useInContext) {
             $this->Front()->Plugins()->Json()->setRenderer();
+            $this->View()->setTemplate();
 
             $this->View()->assign('paymentId', $responseStruct->getId());
 
@@ -396,6 +398,8 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
     {
         if ($this->Request()->isXmlHttpRequest()) {
             $this->Front()->Plugins()->Json()->setRenderer();
+            $this->View()->setTemplate();
+
             $this->View()->assign('errorCode', $code);
 
             return;
