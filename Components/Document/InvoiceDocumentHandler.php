@@ -45,11 +45,18 @@ class InvoiceDocumentHandler
      */
     public function handleDocument($orderNumber, Document $document)
     {
+        // Replace the contents only for document types,
+        // which really has PayPal boxes assigned to
+        if (!$this->hasPayPalUnifiedBoxes($document)) {
+            return;
+        }
+
         //Collect all available containers in order to work with some of them later.
         /** @var array $templateContainers */
         $templateContainers = $document->_view->getTemplateVars('Containers');
         /** @var \Smarty_Data $view */
         $view = $document->_view;
+
         /** @var array $orderData */
         $orderData = $view->getTemplateVars('Order');
         $orderData = $this->overwritePaymentName($orderData);
@@ -104,11 +111,27 @@ class InvoiceDocumentHandler
     }
 
     /**
+     * Searches in a given document template for the PayPal Unified boxes.
+     *
+     * @return bool
+     */
+    private function hasPayPalUnifiedBoxes(Document $doc)
+    {
+        $query = 'SELECT id FROM s_core_documents_box WHERE documentID = ? AND `name` = ?;';
+
+        return (bool) $this->dbalConnection->fetchColumn(
+            $query,
+            [$doc->_typID, 'PayPal_Unified_Instructions_Content']
+        );
+    }
+
+    /**
      * @return array
      */
     private function overwritePaymentName(array $orderData)
     {
-        $invoicePaymentName = $this->snippetManager->getNamespace('frontend/paypal_unified/checkout/finish')->get('paymentName/PayPalPlusInvoice');
+        $invoicePaymentName = $this->snippetManager->getNamespace('frontend/paypal_unified/checkout/finish')
+            ->get('paymentName/PayPalPlusInvoice');
         $orderData['_payment']['description'] = $invoicePaymentName;
 
         return $orderData;
