@@ -14,8 +14,18 @@
 
     <changelog version="2.2.0">
         <changes lang="de">
+            PT-10162 - Die Sprache für den Express-Checkout kann jetzt bei Bedarf individuell eingestellt werden;
+            PT-10335 - Problem mit Bestellnummern mit Prefix in der PayPal Bestellübersicht behoben;
+            PT-10349 - Das Bundesland wird nun beim Express Checkout korrekt gespeichert;
+            PT-10371 - PayPal Dokument Erweiterungen werden nur noch geladen, wenn der richtige Dokumententyp ausgewählt wurde;
+            PT-10373 - Ajax Calls des Plugins verbessert;
         </changes>
         <changes lang="en">
+            PT-10162 - If required the locale code for the express checkout can now be set individually;
+            PT-10335 - Solved problem with order numbers with prefix in PayPal order overview;
+            PT-10349 - The country state is now saved correctly during express checkout;
+            PT-10371 - PayPal document extensions are only loaded if the correct document type has been selected;
+            PT-10373 - Improve ajax calls of the plugin;
         </changes>
     </changelog>
 
