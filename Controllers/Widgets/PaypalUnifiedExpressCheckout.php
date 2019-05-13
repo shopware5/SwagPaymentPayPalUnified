@@ -112,6 +112,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedExpressCheckout extends \Shopwar
 
         if ($this->Request()->getParam('useInContext', false)) {
             $this->Front()->Plugins()->Json()->setRenderer();
+            $this->View()->setTemplate();
 
             $this->View()->assign('paymentId', $responseStruct->getId());
 
