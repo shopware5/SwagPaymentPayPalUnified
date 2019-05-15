@@ -8,9 +8,10 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services\Installments;
 
+use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\Components\Services\Installments\CompanyInfoService;
 
-class CompanyInfoServiceTest extends \PHPUnit_Framework_TestCase
+class CompanyInfoServiceTest extends TestCase
 {
     public function test_can_be_constructed()
     {

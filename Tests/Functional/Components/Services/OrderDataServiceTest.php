@@ -9,6 +9,7 @@
 namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services;
 
 use Doctrine\DBAL\Connection;
+use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\Components\Services\OrderDataService;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
@@ -17,17 +18,19 @@ use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\FixtureImportTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\SettingsHelperTrait;
 
-class OrderDataServiceTest extends \PHPUnit_Framework_TestCase
+class OrderDataServiceTest extends TestCase
 {
     use DatabaseTestCaseTrait;
-    use FixtureImportTestCaseTrait;
     use SettingsHelperTrait;
+    use FixtureImportTestCaseTrait;
 
     const ORDER_NUMBER = 99999;
     const TEST_TRANSACTION_ID = 'FAKE-PAYPAL-TRANSACTION-ID';
 
     public function test_order_data_service_test_is_available()
     {
+        $this->importFixturesBefore();
+
         $orderDataService = $this->getOrderDataService();
 
         static::assertInstanceOf(OrderDataService::class, $orderDataService);
@@ -35,6 +38,8 @@ class OrderDataServiceTest extends \PHPUnit_Framework_TestCase
 
     public function test_order_cleared_date_is_set()
     {
+        $this->importFixturesBefore();
+
         $orderDataService = $this->getOrderDataService();
 
         $orderDataService->setClearedDate(self::ORDER_NUMBER);
@@ -48,6 +53,8 @@ class OrderDataServiceTest extends \PHPUnit_Framework_TestCase
 
     public function test_should_update_transaction_id()
     {
+        $this->importFixturesBefore();
+
         $orderDataService = $this->getOrderDataService();
 
         $orderDataService->applyTransactionId(self::ORDER_NUMBER, self::TEST_TRANSACTION_ID);
@@ -61,6 +68,8 @@ class OrderDataServiceTest extends \PHPUnit_Framework_TestCase
 
     public function test_getTransactionId_returns_correct_id()
     {
+        $this->importFixturesBefore();
+
         $orderDataService = $this->getOrderDataService();
 
         $orderDataService->applyTransactionId(self::ORDER_NUMBER, self::TEST_TRANSACTION_ID);
@@ -70,6 +79,8 @@ class OrderDataServiceTest extends \PHPUnit_Framework_TestCase
 
     public function test_applyPaymentTypeAttribute_invoice()
     {
+        $this->importFixturesBefore();
+
         $orderDataService = $this->getOrderDataService();
 
         $payment = new Payment();
@@ -88,6 +99,8 @@ class OrderDataServiceTest extends \PHPUnit_Framework_TestCase
 
     public function test_applyPaymentTypeAttribute_plus()
     {
+        $this->importFixturesBefore();
+
         $orderDataService = $this->getOrderDataService();
         $this->createTestSettings();
 
@@ -102,6 +115,8 @@ class OrderDataServiceTest extends \PHPUnit_Framework_TestCase
 
     public function test_applyPaymentTypeAttribute_installments()
     {
+        $this->importFixturesBefore();
+
         $orderDataService = $this->getOrderDataService();
 
         $payment = new Payment();
@@ -120,6 +135,8 @@ class OrderDataServiceTest extends \PHPUnit_Framework_TestCase
 
     public function test_applyPaymentAttribute_classic()
     {
+        $this->importFixturesBefore();
+
         $orderDataService = $this->getOrderDataService();
         $orderDataService->applyPaymentTypeAttribute(self::ORDER_NUMBER, new Payment());
 
@@ -132,6 +149,8 @@ class OrderDataServiceTest extends \PHPUnit_Framework_TestCase
 
     public function test_applyPaymentAttribute_express_checkout()
     {
+        $this->importFixturesBefore();
+
         $orderDataService = $this->getOrderDataService();
         $orderDataService->applyPaymentTypeAttribute(self::ORDER_NUMBER, new Payment(), true);
 

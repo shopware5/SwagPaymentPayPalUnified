@@ -9,13 +9,14 @@
 namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services;
 
 use Doctrine\DBAL\Query\QueryBuilder;
+use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\Components\Services\Plus\PaymentInstructionService;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Instruction\Amount;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Instruction\RecipientBanking;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\PaymentInstruction;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 
-class PaymentInstructionServiceTest extends \PHPUnit_Framework_TestCase
+class PaymentInstructionServiceTest extends TestCase
 {
     use DatabaseTestCaseTrait;
 

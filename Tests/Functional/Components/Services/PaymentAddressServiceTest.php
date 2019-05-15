@@ -8,9 +8,10 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services;
 
+use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\Components\Services\PaymentAddressService;
 
-class PaymentAddressServiceTest extends \PHPUnit_Framework_TestCase
+class PaymentAddressServiceTest extends TestCase
 {
     const TEST_ADDRESS_CITY = 'TEST_CITY';
     const TEST_ADDRESS_STREET = 'TEST_STREET';

@@ -13,7 +13,7 @@ use Enlight_Controller_Request_RequestTestCase;
 use Enlight_Controller_Response_ResponseTestCase;
 use Enlight_Event_EventArgs;
 use Enlight_Template_Manager;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Subscriber\Plus;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
@@ -24,7 +24,7 @@ use SwagPaymentPayPalUnified\Tests\Mocks\PaymentInstructionServiceMock;
 use SwagPaymentPayPalUnified\Tests\Mocks\PaymentResourceMock;
 use SwagPaymentPayPalUnified\Tests\Mocks\ViewMock;
 
-class PlusSubscriberTest extends PHPUnit_Framework_TestCase
+class PlusSubscriberTest extends TestCase
 {
     use DatabaseTestCaseTrait;
     use SettingsHelperTrait;
@@ -385,12 +385,13 @@ class PlusSubscriberTest extends PHPUnit_Framework_TestCase
             'subject' => new DummyController($request, $view, $response),
         ]);
 
-        $this->getSubscriber()->onPostDispatchCheckout($enlightEventArgs);
-        $viewAssignments = $view->getAssign();
+        Shopware()->Container()->get('session')->offsetSet('paypalUnifiedCameFromPaymentSelection', false);
 
-        static::assertEquals('PAY-9HW62735H82101921LLK3D4I', $viewAssignments['paypalUnifiedRemotePaymentId']);
-        static::assertEquals('https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=_express-checkout&token=EC-49W9096312907153R', $viewAssignments['paypalUnifiedApprovalUrl']);
-        static::assertEquals('de_DE', $viewAssignments['paypalUnifiedLanguageIso']);
+        $this->getSubscriber()->onPostDispatchCheckout($enlightEventArgs);
+
+        static::assertEquals('PAY-9HW62735H82101921LLK3D4I', $view->getAssign('paypalUnifiedRemotePaymentId'));
+        static::assertEquals('https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=_express-checkout&token=EC-49W9096312907153R', $view->getAssign('paypalUnifiedApprovalUrl'));
+        static::assertEquals('de_DE', $view->getAssign('paypalUnifiedLanguageIso'));
     }
 
     public function test_onPostDispatchSecure_handleConfirmDispatch_should_return_because_of_no_paymentStruct()

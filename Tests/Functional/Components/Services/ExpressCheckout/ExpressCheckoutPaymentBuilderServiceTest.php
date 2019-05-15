@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services\ExpressCheckout;
 
+use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
 use SwagPaymentPayPalUnified\Components\Services\ExpressCheckout\ExpressCheckoutPaymentBuilderService;
 use SwagPaymentPayPalUnified\Components\Services\Validation\BasketIdWhitelist;
@@ -15,7 +16,7 @@ use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
 use SwagPaymentPayPalUnified\Tests\Functional\Components\Services\SettingsServicePaymentBuilderServiceMock;
 
-class ExpressCheckoutPaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
+class ExpressCheckoutPaymentBuilderServiceTest extends TestCase
 {
     public function test_serviceIsAvailable()
     {

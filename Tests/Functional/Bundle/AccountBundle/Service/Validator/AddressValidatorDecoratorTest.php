@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Bundle\AccountBundle\Service\Validator;
 
+use PHPUnit\Framework\TestCase;
 use Shopware\Bundle\AccountBundle\Service\Validator\AddressValidatorInterface as AddressValInterface;
 use Shopware\Components\Api\Exception\ValidationException;
 use Shopware\Models\Customer\Address;
@@ -15,7 +16,7 @@ use SwagPaymentPayPalUnified\Bundle\AccountBundle\Service\Validator\AddressValid
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationList;
 
-class AddressValidatorDecoratorTest extends \PHPUnit_Framework_TestCase
+class AddressValidatorDecoratorTest extends TestCase
 {
     public function test_construct()
     {

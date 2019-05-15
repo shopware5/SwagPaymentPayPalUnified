@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services;
 
+use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\Services\SettingsService;
 use SwagPaymentPayPalUnified\Models\Settings;
@@ -18,7 +19,7 @@ use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\SettingsHelperTrait;
 
-class SettingsServiceTest extends \PHPUnit_Framework_TestCase
+class SettingsServiceTest extends TestCase
 {
     use DatabaseTestCaseTrait;
     use SettingsHelperTrait;

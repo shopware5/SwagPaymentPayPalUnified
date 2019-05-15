@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Subscriber;
 
+use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Subscriber\Account;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
@@ -15,7 +16,7 @@ use SwagPaymentPayPalUnified\Tests\Functional\SettingsHelperTrait;
 use SwagPaymentPayPalUnified\Tests\Mocks\DummyController;
 use SwagPaymentPayPalUnified\Tests\Mocks\ViewMock;
 
-class AccountTest extends \PHPUnit_Framework_TestCase
+class AccountTest extends TestCase
 {
     use DatabaseTestCaseTrait;
     use SettingsHelperTrait;

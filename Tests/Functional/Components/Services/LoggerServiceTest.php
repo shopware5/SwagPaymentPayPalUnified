@@ -8,11 +8,12 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services;
 
+use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\SettingsHelperTrait;
 
-class LoggerServiceTest extends \PHPUnit_Framework_TestCase
+class LoggerServiceTest extends TestCase
 {
     use DatabaseTestCaseTrait;
     use SettingsHelperTrait;

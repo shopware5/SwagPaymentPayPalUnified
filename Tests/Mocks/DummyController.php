@@ -25,13 +25,10 @@ class DummyController extends \Enlight_Controller_Action
      */
     protected $response;
 
-    /**
-     * @param \Enlight_Controller_Response_ResponseTestCase $response
-     */
     public function __construct(
         \Enlight_Controller_Request_RequestTestCase $request,
         \Enlight_View_Default $view,
-        \Enlight_Controller_Response_ResponseTestCase $response = null
+        $response = null
     ) {
         $this->request = $request;
         $this->view = $view;

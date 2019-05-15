@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Subscriber;
 
+use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Subscriber\InContext;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
@@ -15,7 +16,7 @@ use SwagPaymentPayPalUnified\Tests\Functional\SettingsHelperTrait;
 use SwagPaymentPayPalUnified\Tests\Mocks\DummyController;
 use SwagPaymentPayPalUnified\Tests\Mocks\ViewMock;
 
-class InContextSubscriberTest extends \PHPUnit_Framework_TestCase
+class InContextSubscriberTest extends TestCase
 {
     use DatabaseTestCaseTrait;
     use SettingsHelperTrait;
@@ -209,6 +210,7 @@ class InContextSubscriberTest extends \PHPUnit_Framework_TestCase
         $request->setParam('useInContext', true);
 
         $response = new \Enlight_Controller_Response_ResponseTestCase();
+        $response->setHttpResponseCode(302);
 
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
             'subject' => new DummyController($request, $view, $response),
@@ -217,12 +219,6 @@ class InContextSubscriberTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $subscriber = $this->getSubscriber();
-
-        $reflectionClass = new \ReflectionClass(\Enlight_Controller_Response_ResponseTestCase::class);
-        $prop = $reflectionClass->getProperty('_isRedirect');
-        $prop->setAccessible(true);
-        $prop->setValue($response, true);
-
         $subscriber->addInContextInfoToRequest($enlightEventArgs);
 
         static::assertContains('/PaypalUnified/gateway/useInContext/1', $response->getHeader('Location'));

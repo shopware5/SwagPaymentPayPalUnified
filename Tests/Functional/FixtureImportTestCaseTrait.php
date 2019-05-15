@@ -8,13 +8,10 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional;
 
-use Doctrine\DBAL\Driver\DrizzlePDOMySql\Connection;
+use Doctrine\DBAL\Connection;
 
 trait FixtureImportTestCaseTrait
 {
-    /**
-     * @before
-     */
     protected function importFixturesBefore()
     {
         /** @var Connection $connection */

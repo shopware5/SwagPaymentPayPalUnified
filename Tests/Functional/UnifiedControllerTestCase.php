@@ -10,8 +10,9 @@ namespace SwagPaymentPayPalUnified\Tests\Functional;
 
 use Enlight_Controller_Request_RequestTestCase as RequestTestCase;
 use Enlight_Controller_Response_ResponseTestCase as ResponseTestCase;
+use PHPUnit\Framework\TestCase;
 
-class UnifiedControllerTestCase extends \PHPUnit_Framework_TestCase
+class UnifiedControllerTestCase extends TestCase
 {
     /**
      * @var RequestTestCase|null

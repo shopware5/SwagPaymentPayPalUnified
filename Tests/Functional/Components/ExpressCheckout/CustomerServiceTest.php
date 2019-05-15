@@ -9,6 +9,7 @@
 namespace SwagPaymentPayPalUnified\Tests\Functional\Components\ExpressCheckout;
 
 use Doctrine\DBAL\Connection;
+use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\Components\ExpressCheckout\CustomerService;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Common\Address;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
@@ -16,7 +17,7 @@ use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Payer;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Payer\PayerInfo;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 
-class CustomerServiceTest extends \PHPUnit_Framework_TestCase
+class CustomerServiceTest extends TestCase
 {
     use DatabaseTestCaseTrait;
 

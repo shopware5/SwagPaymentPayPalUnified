@@ -8,11 +8,12 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\PayPalBundle\Services;
 
+use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\Webhook\WebhookException;
 use SwagPaymentPayPalUnified\PayPalBundle\Services\WebhookService;
 use SwagPaymentPayPalUnified\WebhookHandlers\SaleComplete;
 
-class WebhookServiceTest extends \PHPUnit_Framework_TestCase
+class WebhookServiceTest extends TestCase
 {
     public function test_service_available()
     {

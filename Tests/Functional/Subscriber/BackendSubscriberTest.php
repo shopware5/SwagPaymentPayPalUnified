@@ -9,11 +9,12 @@
 namespace SwagPaymentPayPalUnified\Tests\Functional\Subscriber;
 
 use Enlight_Template_Manager;
+use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\Subscriber\Backend;
 use SwagPaymentPayPalUnified\Tests\Mocks\DummyController;
 use SwagPaymentPayPalUnified\Tests\Mocks\ViewMock;
 
-class BackendSubscriberTest extends \PHPUnit_Framework_TestCase
+class BackendSubscriberTest extends TestCase
 {
     public function test_can_be_created()
     {

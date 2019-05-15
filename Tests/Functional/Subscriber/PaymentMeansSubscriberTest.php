@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Subscriber;
 
+use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use SwagPaymentPayPalUnified\Subscriber\PaymentMeans;
@@ -15,7 +16,7 @@ use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\PayPalUnifiedPaymentIdTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\SettingsHelperTrait;
 
-class PaymentMeansSubscriberTest extends \PHPUnit_Framework_TestCase
+class PaymentMeansSubscriberTest extends TestCase
 {
     use DatabaseTestCaseTrait;
     use PayPalUnifiedPaymentIdTrait;
@@ -118,6 +119,7 @@ class PaymentMeansSubscriberTest extends \PHPUnit_Framework_TestCase
         ];
         Shopware()->Session()->offsetSet('sRegister', $registerData);
         Shopware()->Session()->offsetSet('sBasketAmount', 500);
+        Shopware()->Session()->offsetSet('sOrderVariables', ['sUserData' => null]);
 
         $args = new EventArgsMockWithInstallmentsReturn();
         $subscriber->onFilterPaymentMeans($args);
@@ -399,13 +401,15 @@ class EventArgsMockWithUnifiedReturn extends \Enlight_Event_EventArgs
 
     public function getReturn()
     {
+        $id = $this->getUnifiedPaymentId();
+
         return [
             ['id' => 0],
             ['id' => 1],
             ['id' => 2],
             ['id' => 3],
             ['id' => 4],
-            ['id' => $this->getUnifiedPaymentId()],
+            ['id' => $id],
         ];
     }
 
@@ -423,13 +427,15 @@ class EventArgsMockWithInstallmentsReturn extends \Enlight_Event_EventArgs
 
     public function getReturn()
     {
+        $id = $this->getInstallmentsPaymentId();
+
         return [
             ['id' => 0],
             ['id' => 1],
             ['id' => 2],
             ['id' => 3],
             ['id' => 4],
-            ['id' => $this->getInstallmentsPaymentId()],
+            ['id' => $id],
         ];
     }
 

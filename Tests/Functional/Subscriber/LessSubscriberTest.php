@@ -8,9 +8,10 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Subscriber;
 
+use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\Subscriber\Less;
 
-class LessSubscriberTest extends \PHPUnit_Framework_TestCase
+class LessSubscriberTest extends TestCase
 {
     public function test_can_be_created()
     {

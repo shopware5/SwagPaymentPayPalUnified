@@ -8,9 +8,10 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Unit\Components;
 
+use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 
-class PaymentMethodProviderTest extends \PHPUnit_Framework_TestCase
+class PaymentMethodProviderTest extends TestCase
 {
     public function test_get_payment_method()
     {
