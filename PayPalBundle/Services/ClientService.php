@@ -107,7 +107,7 @@ class ClientService
      * @param string $resourceUri
      * @param bool   $jsonPayload
      *
-     * @throws \Exception
+     * @throws RequestException
      *
      * @return array
      */

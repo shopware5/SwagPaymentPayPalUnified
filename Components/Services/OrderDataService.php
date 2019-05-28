@@ -76,7 +76,21 @@ class OrderDataService
     }
 
     /**
-     * @param int    $orderNumber
+     * @param string $orderNumber
+     * @param int    $orderStateId
+     */
+    public function setOrderState($orderNumber, $orderStateId)
+    {
+        $builder = $this->dbalConnection->createQueryBuilder();
+        $builder->update('s_order', 'o')
+            ->set('o.status', $orderStateId)
+            ->where('o.ordernumber = :orderNumber')
+            ->setParameter(':orderNumber', $orderNumber)
+            ->execute();
+    }
+
+    /**
+     * @param string $orderNumber
      * @param string $transactionId
      *
      * @return bool
@@ -93,6 +107,19 @@ class OrderDataService
             ->execute();
 
         return $result === 1;
+    }
+
+    /**
+     * @param string $orderNumber
+     */
+    public function removeTransactionId($orderNumber)
+    {
+        $builder = $this->dbalConnection->createQueryBuilder();
+        $builder->update('s_order', 'o')
+            ->set('o.transactionID', "''")
+            ->where('o.ordernumber = :orderNumber')
+            ->setParameter('orderNumber', $orderNumber)
+            ->execute();
     }
 
     /**

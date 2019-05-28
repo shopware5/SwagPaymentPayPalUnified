@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\PayPalBundle\Resources;
 
+use Shopware\Components\HttpClient\RequestException;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PatchInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\RequestType;
 use SwagPaymentPayPalUnified\PayPalBundle\RequestUri;
@@ -27,6 +28,8 @@ class PaymentResource
     }
 
     /**
+     * @throws RequestException
+     *
      * @return array
      */
     public function create(Payment $payment)
@@ -37,6 +40,8 @@ class PaymentResource
     /**
      * @param string $payerId
      * @param string $paymentId
+     *
+     * @throws RequestException
      *
      * @return array|null
      */
@@ -54,6 +59,8 @@ class PaymentResource
     /**
      * @param string $paymentId
      *
+     * @throws RequestException
+     *
      * @return array
      */
     public function get($paymentId)
@@ -64,6 +71,8 @@ class PaymentResource
     /**
      * @param string           $paymentId
      * @param PatchInterface[] $patches
+     *
+     * @throws RequestException
      */
     public function patch($paymentId, array $patches)
     {

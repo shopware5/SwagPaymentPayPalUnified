@@ -163,6 +163,10 @@ class Plus implements SubscriberInterface
             $view->assign('paypalUnifiedErrorMessage', $errorMessage);
         }
 
+        if (!array_key_exists('content', $view->getAssign('sBasket'))) {
+            return;
+        }
+
         $isExpressCheckout = (bool) $request->getParam('expressCheckout', false);
         if ($isExpressCheckout) {
             return;
