@@ -152,6 +152,10 @@ class Plus implements SubscriberInterface
         /** @var \Enlight_View_Default $view */
         $view = $controller->View();
 
+        if ($session->offsetGet('sBasketQuantity') === 0) {
+            return;
+        }
+
         $errorCode = $request->getParam('paypal_unified_error_code');
         $errorName = $request->getParam('paypal_unified_error_name');
         $errorMessage = $request->getParam('paypal_unified_error_message');
