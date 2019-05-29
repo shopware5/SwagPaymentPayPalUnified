@@ -11,6 +11,10 @@ namespace SwagPaymentPayPalUnified\Components;
 class PaymentStatus
 {
     /**
+     * The default status for cancelled orders
+     */
+    const ORDER_STATUS_CLARIFICATION_REQUIRED = 8;
+    /**
      * The default status for approved orders
      */
     const PAYMENT_STATUS_APPROVED = 12;
