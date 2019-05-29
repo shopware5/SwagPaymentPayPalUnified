@@ -143,6 +143,7 @@ class PlusSubscriberTest extends PHPUnit_Framework_TestCase
         $paymentMethodProvider = new PaymentMethodProvider(Shopware()->Container()->get('models'));
         $unifiedPaymentId = $paymentMethodProvider->getPaymentId(Shopware()->Container()->get('dbal_connection'));
         $view->assign('sPayments', [$unifiedPaymentId => ['id' => $unifiedPaymentId]]);
+        $view->assign('sBasket', ['content' => []]);
 
         $this->createTestSettings();
 
@@ -166,6 +167,7 @@ class PlusSubscriberTest extends PHPUnit_Framework_TestCase
         $paymentMethodProvider = new PaymentMethodProvider(Shopware()->Container()->get('models'));
         $unifiedPaymentId = $paymentMethodProvider->getPaymentId(Shopware()->Container()->get('dbal_connection'));
         $view->assign('sPayments', [$unifiedPaymentId => ['id' => $unifiedPaymentId]]);
+        $view->assign('sBasket', ['content' => []]);
 
         $this->createTestSettings();
 
@@ -188,7 +190,7 @@ class PlusSubscriberTest extends PHPUnit_Framework_TestCase
 
         $view = new ViewMock(new Enlight_Template_Manager());
         $view->assign('sPayment', ['id' => $unifiedPaymentId]);
-        $view->assign('sBasket', []);
+        $view->assign('sBasket', ['content' => []]);
         $view->assign('sUserData', ['additional' => ['payment' => ['id' => $unifiedPaymentId]]]);
         $view->assign('sPayments', [$unifiedPaymentId => ['id' => $unifiedPaymentId]]);
         $request = new Enlight_Controller_Request_RequestTestCase();
@@ -226,7 +228,7 @@ class PlusSubscriberTest extends PHPUnit_Framework_TestCase
 
         $view = new ViewMock(new Enlight_Template_Manager());
         $view->assign('sPayment', ['id' => $unifiedPaymentId]);
-        $view->assign('sBasket', ['sCurrencyName' => 'throwException']);
+        $view->assign('sBasket', ['sCurrencyName' => 'throwException', 'content' => []]);
         $view->assign('sUserData', []);
         $request = new Enlight_Controller_Request_RequestTestCase();
         $response = new Enlight_Controller_Response_ResponseTestCase();
@@ -249,7 +251,7 @@ class PlusSubscriberTest extends PHPUnit_Framework_TestCase
         $view = new ViewMock(new Enlight_Template_Manager());
         $view->assign('sPayment', ['id' => $unifiedPaymentId]);
         $view->assign('sPayments', [$unifiedPaymentId => ['id' => $unifiedPaymentId]]);
-        $view->assign('sBasket', []);
+        $view->assign('sBasket', ['content' => []]);
         $view->assign('sUserData', []);
         $request = new Enlight_Controller_Request_RequestTestCase();
         $response = new Enlight_Controller_Response_ResponseTestCase();
@@ -271,7 +273,7 @@ class PlusSubscriberTest extends PHPUnit_Framework_TestCase
 
         $view = new ViewMock(new Enlight_Template_Manager());
         $view->assign('sPayment', ['id' => $unifiedPaymentId]);
-        $view->assign('sBasket', []);
+        $view->assign('sBasket', ['content' => []]);
         $view->assign('sUserData', []);
         $request = new Enlight_Controller_Request_RequestTestCase();
         $response = new Enlight_Controller_Response_ResponseTestCase();
@@ -293,7 +295,7 @@ class PlusSubscriberTest extends PHPUnit_Framework_TestCase
 
         $view = new ViewMock(new Enlight_Template_Manager());
         $view->assign('sPayment', ['id' => $unifiedPaymentId]);
-        $view->assign('sBasket', []);
+        $view->assign('sBasket', ['content' => []]);
         $view->assign('sUserData', []);
 
         $payments = require __DIR__ . '/_fixtures/sPayments.php';
@@ -328,7 +330,7 @@ class PlusSubscriberTest extends PHPUnit_Framework_TestCase
         $view = new ViewMock(new Enlight_Template_Manager());
         $view->assign('sPayment', ['id' => $unifiedPaymentId]);
         $view->assign('sPayments', [$unifiedPaymentId => ['id' => $unifiedPaymentId]]);
-        $view->assign('sBasket', []);
+        $view->assign('sBasket', ['content' => []]);
         $view->assign('sUserData', []);
         $request = new Enlight_Controller_Request_RequestTestCase();
         $response = new Enlight_Controller_Response_ResponseTestCase();
@@ -351,7 +353,7 @@ class PlusSubscriberTest extends PHPUnit_Framework_TestCase
         $view = new ViewMock(new Enlight_Template_Manager());
         $view->assign('sPayment', ['id' => $unifiedPaymentId]);
         $view->assign('sPayments', [$unifiedPaymentId => ['id' => $unifiedPaymentId]]);
-        $view->assign('sBasket', []);
+        $view->assign('sBasket', ['content' => []]);
         $view->assign('sUserData', []);
         $view->assign('sOrderNumber', 'getPaymentInstructions');
         $request = new Enlight_Controller_Request_RequestTestCase();
@@ -376,7 +378,7 @@ class PlusSubscriberTest extends PHPUnit_Framework_TestCase
         $view = new ViewMock(new Enlight_Template_Manager());
         $view->assign('sPayment', ['id' => $unifiedPaymentId]);
         $view->assign('sPayments', [$unifiedPaymentId => ['id' => $unifiedPaymentId]]);
-        $view->assign('sBasket', []);
+        $view->assign('sBasket', ['content' => []]);
         $view->assign('sUserData', []);
         $request = new Enlight_Controller_Request_RequestTestCase();
         $response = new Enlight_Controller_Response_ResponseTestCase();
@@ -402,7 +404,7 @@ class PlusSubscriberTest extends PHPUnit_Framework_TestCase
         $view = new ViewMock(new Enlight_Template_Manager());
         $view->assign('sPayment', ['id' => $unifiedPaymentId]);
         $view->assign('sPayments', [$unifiedPaymentId => ['id' => $unifiedPaymentId]]);
-        $view->assign('sBasket', ['sCurrencyName' => 'throwException']);
+        $view->assign('sBasket', ['sCurrencyName' => 'throwException', 'content' => []]);
         $view->assign('sUserData', []);
         $request = new Enlight_Controller_Request_RequestTestCase();
         $response = new Enlight_Controller_Response_ResponseTestCase();
@@ -431,7 +433,7 @@ class PlusSubscriberTest extends PHPUnit_Framework_TestCase
         $view = new ViewMock(new Enlight_Template_Manager());
         $view->assign('sPayment', ['id' => $unifiedPaymentId]);
         $view->assign('sPayments', [$unifiedPaymentId => ['id' => $unifiedPaymentId]]);
-        $view->assign('sBasket', []);
+        $view->assign('sBasket', ['content' => []]);
         $view->assign('sUserData', []);
         $request = new Enlight_Controller_Request_RequestTestCase();
         $response = new Enlight_Controller_Response_ResponseTestCase();
