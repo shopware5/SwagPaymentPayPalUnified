@@ -16,6 +16,7 @@ use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\PaymentStatus;
 use SwagPaymentPayPalUnified\Components\Services\Legacy\LegacyService;
 use SwagPaymentPayPalUnified\Components\Services\TransactionHistoryBuilderService;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentIntent;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\AuthorizationResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\CaptureResource;
@@ -631,19 +632,25 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
 
     private function updatePaymentStatus(array $refundData)
     {
-        /** @var Order $orderModel */
-        $orderModel = $this->getModelManager()->getRepository(Order::class)->findOneBy(['temporaryId' => $refundData['parent_payment']]);
+        $settings = $this->get('paypal_unified.settings_service');
 
-        if (!($orderModel instanceof Order)) {
-            return;
+        if ($settings->get('activate_change_refund_state', SettingsTable::GENERAL) === '1') {
+            /** @var Order $orderModel */
+            $orderModel = $this->getModelManager()->getRepository(Order::class)->findOneBy(['temporaryId' => $refundData['parent_payment']]);
+
+            if (!($orderModel instanceof Order)) {
+                return;
+            }
+
+            /** @var Status $orderStatusModel */
+            $orderStatusModel = $this->getModelManager()->getRepository(Status::class)->find(
+                intval($settings->get('refund_state', SettingsTable::GENERAL))
+            );
+
+            $orderModel->setPaymentStatus($orderStatusModel);
+
+            $this->getModelManager()->flush($orderModel);
         }
-
-        /** @var Status $orderStatusModel */
-        $orderStatusModel = $this->getModelManager()->getRepository(Status::class)->find(PaymentStatus::PAYMENT_STATUS_REFUNDED);
-
-        $orderModel->setPaymentStatus($orderStatusModel);
-
-        $this->getModelManager()->flush($orderModel);
     }
 
     /**

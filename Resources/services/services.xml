@@ -82,6 +82,7 @@
                  class="SwagPaymentPayPalUnified\Components\Services\SettingsService">
             <argument type="service" id="models"/>
             <argument type="service" id="paypal_unified.dependency_provider"/>
+            <argument type="service" id="shopware.components.state_translator" />
         </service>
 
         <service id="paypal_unified.installments.validation_service" class="SwagPaymentPayPalUnified\Components\Services\Installments\ValidationService"/>

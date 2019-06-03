@@ -64,6 +64,10 @@ class Updater
         if (version_compare($oldVersion, '2.1.3', '<=')) {
             $this->updateTo220();
         }
+
+        if (version_compare($oldVersion, '2.2.0', '<=')) {
+            $this->updateTo221();
+        }
     }
 
     private function updateTo103()
@@ -136,6 +140,19 @@ class Updater
                 ADD `button_locale` VARCHAR(5) NOT NULL; 
                 UPDATE `swag_payment_paypal_unified_settings_express` 
                 SET `button_locale` = '';";
+
+            $this->connection->executeQuery($sql);
+        }
+    }
+
+    private function updateTo221()
+    {
+        if (!$this->checkIfColumnExist('swag_payment_paypal_unified_settings_general', 'refund_state')) {
+            $sql = "ALTER TABLE `swag_payment_paypal_unified_settings_general` 
+                ADD `activate_change_refund_state` TINYINT(1) NOT NULL,
+                ADD `refund_state` INT;
+                UPDATE `swag_payment_paypal_unified_settings_general`
+                SET `activate_change_refund_state` = 1, `refund_state` = 20;";
 
             $this->connection->executeQuery($sql);
         }

@@ -18,8 +18,14 @@
     </changelog>
 
     <changelog version="2.2.1">
-        <changes lang="de">PT-10471 - Ajax Calls des Plugins verbessert;</changes>
-        <changes lang="en">PT-10471 - Improve ajax calls of the plugin;</changes>
+        <changes lang="de">
+            PT-10471 - Ajax Calls des Plugins verbessert;
+            PT-10410 Rückerstattungen Statusänderungen einstellbar;
+        </changes>
+        <changes lang="en">
+            PT-10471 - Improve ajax calls of the plugin;
+            PT-10410 Refunds state are now configurable (what should happen on refunding?);
+        </changes>
     </changelog>
 
     <changelog version="2.2.0">

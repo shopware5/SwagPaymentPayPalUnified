@@ -338,6 +338,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
             me.generalRecord = Ext.create('Shopware.apps.PaypalUnifiedSettings.model.General', settings.general);
             generalTab.loadRecord(me.generalRecord);
             me.applyActivationState(me.generalRecord.get('active'));
+            generalTab.refundStateChangeContainer.child('[name=refundState]').setValue(settings.general.refundStateTranslation);
         } else if (settings.installments) {
             me.installmentsRecord = Ext.create('Shopware.apps.PaypalUnifiedSettings.model.Installments', settings.installments);
             installmentsTab.loadRecord(me.installmentsRecord);

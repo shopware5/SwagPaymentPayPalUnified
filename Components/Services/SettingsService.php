@@ -10,6 +10,7 @@ namespace SwagPaymentPayPalUnified\Components\Services;
 
 use Doctrine\DBAL\Connection;
 use Shopware\Components\Model\ModelManager;
+use Shopware\Components\StateTranslatorService;
 use Shopware\Models\Shop\DetachedShop;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Models\Settings;
@@ -38,14 +39,21 @@ class SettingsService implements SettingsServiceInterface
      */
     private $dependencyProvider;
 
+    /**
+     * @var StateTranslatorService
+     */
+    private $stateTranslator;
+
     public function __construct(
         ModelManager $modelManager,
-        DependencyProvider $dependencyProvider
+        DependencyProvider $dependencyProvider,
+        StateTranslatorService $stateTranslator
     ) {
         $this->dependencyProvider = $dependencyProvider;
 
         $this->modelManager = $modelManager;
         $this->dbalConnection = $modelManager->getConnection();
+        $this->stateTranslator = $stateTranslator;
 
         $this->refreshDependencies();
     }
@@ -72,6 +80,18 @@ class SettingsService implements SettingsServiceInterface
                 /** @var Settings\General|null $generalSettings */
                 $generalSettings = $this->modelManager->getRepository(Settings\General::class)->findOneBy(
                     ['shopId' => $shopId]
+                );
+
+                $stateTranslation = [
+                    'id' => $generalSettings->getRefundState(),
+                    'name' => $generalSettings->getRefundStateModel()->getName()
+                ];
+                $stateTranslation = $this->stateTranslator->translateState(
+                    StateTranslatorService::STATE_PAYMENT,
+                    $stateTranslation
+                );
+                $generalSettings->setRefundStateTranslation(
+                    $stateTranslation['description']
                 );
 
                 return $generalSettings;

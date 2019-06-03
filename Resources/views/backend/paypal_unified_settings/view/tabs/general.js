@@ -83,6 +83,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
             me.createActivationContainer(),
             me.createRestContainer(),
             me.createBehaviorContainer(),
+            me.createRefundStateChangeContainer(),
             me.createErrorHandlingContainer()
         ];
     },
@@ -241,6 +242,41 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
         });
 
         return me.behaviorContainer;
+    },
+
+    /**
+     * The method which creates the fieldset for changing the payment state when refunding.
+     * Or not, if not activated.
+     *
+     * @returns { Ext.form.FieldSet }
+     */
+    createRefundStateChangeContainer: function() {
+        var me = this;
+
+        me.refundStateChangeContainer = Ext.create('Ext.form.FieldSet', {
+            title: '{s name="fieldset/refundStateChange/title"}Refund payment state change{/s}',
+            items: [
+                {
+                    xtype: 'checkbox',
+                    name: 'activateChangeRefundState',
+                    helpText: '{s name="fieldset/refundStateChange/checkbox/help"}If activated, the payment state will be changed during a refund to the state below chosen.{/s}',
+                    fieldLabel: '{s name="fieldset/refundStateChange/checkbox"}Change refund payment state{/s}',
+                    inputValue: true,
+                    uncheckedValue: false
+                },
+                {
+                    xtype: 'combobox',
+                    name: 'refundState',
+                    helpText: '{s name="fieldset/refundStateChange/state/help"}The payment state that should be set when refunding a payment.{/s}',
+                    fieldLabel: '{s name="fieldset/refundStateChange/state"}Payment state to set{/s}',
+                    store: Ext.create('Shopware.apps.PaypalUnifiedSettings.store.RefundStateChange'),
+                    valueField: 'id',
+                    displayField: 'description'
+                }
+            ]
+        });
+
+        return me.refundStateChangeContainer;
     },
 
     /**

@@ -24,7 +24,9 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.model.General', {
         { name: 'landingPageType', type: 'string', defaultValue: 'Login' },
         { name: 'logLevel', type: 'int', defaultValue: 0 },
         { name: 'displayErrors', type: 'bool' },
-        { name: 'advertiseReturns', type: 'bool' }
+        { name: 'advertiseReturns', type: 'bool' },
+        { name: 'activateChangeRefundState', type: 'bool', defaultValue: true },
+        { name: 'refundState', type: 'int', defaultValue:  20 }
     ]
 });
 // {/block}
