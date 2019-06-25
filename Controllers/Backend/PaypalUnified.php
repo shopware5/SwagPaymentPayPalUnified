@@ -7,9 +7,11 @@
  */
 
 use Doctrine\DBAL\Connection;
+use Doctrine\ORM\Query\Expr\Join;
 use Shopware\Components\Model\QueryBuilder;
 use Shopware\Models\Order\Order;
 use Shopware\Models\Order\Status;
+use Shopware\Models\Shop\Repository as ShopRepository;
 use Shopware\Models\Shop\Shop;
 use SwagPaymentPayPalUnified\Components\ExceptionHandlerServiceInterface;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
@@ -463,7 +465,7 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
         $orderStatusNamespace = $this->container->get('snippets')->getNamespace('backend/static/order_status');
         $paymentStatusNamespace = $this->container->get('snippets')->getNamespace('backend/static/payment_status');
 
-        $orderList['data'] = array_map(function ($order) use ($orderStatusNamespace, $paymentStatusNamespace) {
+        $orderList['data'] = array_map(static function ($order) use ($orderStatusNamespace, $paymentStatusNamespace) {
             if (!isset($order['orderStatus']['description'])) {
                 $order['orderStatus']['description'] = $orderStatusNamespace->get($order['orderStatus']['name']);
             }
@@ -543,22 +545,22 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
         $builder->innerJoin(
             'sOrder.payment',
             'payment',
-            \Doctrine\ORM\Query\Expr\Join::WITH,
+            Join::WITH,
             'payment.id IN (:paymentIds)'
         )->setParameter('paymentIds', $paymentIds, Connection::PARAM_INT_ARRAY);
 
         $builder->leftJoin('sOrder.languageSubShop', 'languageSubShop')
-                ->leftJoin('sOrder.customer', 'customer')
-                ->leftJoin('sOrder.orderStatus', 'orderStatus')
-                ->leftJoin('sOrder.paymentStatus', 'paymentStatus')
-                ->leftJoin('sOrder.attribute', 'attribute')
-
-                ->addSelect('languageSubShop')
-                ->addSelect('payment')
-                ->addSelect('customer')
-                ->addSelect('orderStatus')
-                ->addSelect('paymentStatus')
-                ->addSelect('attribute');
+            ->leftJoin('sOrder.customer', 'customer')
+            ->leftJoin('sOrder.orderStatus', 'orderStatus')
+            ->leftJoin('sOrder.paymentStatus', 'paymentStatus')
+            ->leftJoin('sOrder.attribute', 'attribute')
+            ->addSelect('languageSubShop')
+            ->addSelect('payment')
+            ->addSelect('customer')
+            ->addSelect('orderStatus')
+            ->addSelect('paymentStatus')
+            ->addSelect('attribute')
+            ->andWhere("sOrder.transactionId != ''");
 
         return $builder;
     }
@@ -568,7 +570,7 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
      */
     private function registerShopResource($shopId = null)
     {
-        /** @var \Shopware\Models\Shop\Repository $shopRepository */
+        /** @var ShopRepository $shopRepository */
         $shopRepository = $this->get('models')->getRepository(Shop::class);
 
         if ($shopId === null) {
@@ -632,14 +634,16 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
     private function updatePaymentStatus(array $refundData)
     {
         /** @var Order $orderModel */
-        $orderModel = $this->getModelManager()->getRepository(Order::class)->findOneBy(['temporaryId' => $refundData['parent_payment']]);
+        $orderModel = $this->getModelManager()->getRepository(Order::class)
+            ->findOneBy(['temporaryId' => $refundData['parent_payment']]);
 
         if (!($orderModel instanceof Order)) {
             return;
         }
 
         /** @var Status $orderStatusModel */
-        $orderStatusModel = $this->getModelManager()->getRepository(Status::class)->find(PaymentStatus::PAYMENT_STATUS_REFUNDED);
+        $orderStatusModel = $this->getModelManager()->getRepository(Status::class)
+            ->find(PaymentStatus::PAYMENT_STATUS_REFUNDED);
 
         $orderModel->setPaymentStatus($orderStatusModel);
 

@@ -271,7 +271,6 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
         } catch (RequestException $exception) {
             $errorCode = ErrorCodes::COMMUNICATION_FAILURE;
             if ($sendOrderNumber) {
-                $session->offsetUnset('paypalUnifiedFinishOrderSendMailVariables');
                 $orderDataService->setOrderState($orderNumber, PaymentStatus::ORDER_STATUS_CLARIFICATION_REQUIRED);
                 $orderDataService->removeTransactionId($orderNumber);
                 $errorCode = ErrorCodes::COMMUNICATION_FAILURE_FINISH;
@@ -318,8 +317,6 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
         }
 
         $orderDataService->applyPaymentTypeAttribute($orderNumber, $response, $isExpressCheckout);
-
-        $this->sendOrderMail($session);
 
         $redirectParameter = [
             'module' => 'frontend',
@@ -506,20 +503,5 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
         $session = $this->get('session');
 
         return !empty($this->shopwareConfig->get('premiumShippingNoOrder')) && (empty($session['sDispatch']) || empty($session['sCountry']));
-    }
-
-    private function sendOrderMail(Enlight_Components_Session_Namespace $session)
-    {
-        if (!$session->offsetExists('paypalUnifiedFinishOrderSendMailVariables')) {
-            return;
-        }
-
-        $sendMailOrderVariables = $session->get('paypalUnifiedFinishOrderSendMailVariables');
-        $sendMailOrderVariables['paypalUnifiedSendMail'] = true;
-        /** @var sOrder $sOrder */
-        $sOrder = $this->get('paypal_unified.dependency_provider')->getModule('order');
-        $sOrder->sendMail($sendMailOrderVariables);
-
-        $session->offsetUnset('paypalUnifiedFinishOrderSendMailVariables');
     }
 }
