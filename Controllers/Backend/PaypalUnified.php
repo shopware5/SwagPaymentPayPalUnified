@@ -497,11 +497,18 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
             $whiteList
         );
 
-        //Ignore canceled or incomplete orders
+        // Ignore canceled or incomplete orders
         $conditions[] = [
             'property' => 'sOrder.number',
             'expression' => '!=',
             'value' => '0',
+        ];
+
+        // Ignore order with PayPal as payment method but without valid transaction ID
+        $conditions[] = [
+            'property' => 'sOrder.transactionId',
+            'expression' => '!=',
+            'value' => '',
         ];
 
         return $conditions;
@@ -559,8 +566,7 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
             ->addSelect('customer')
             ->addSelect('orderStatus')
             ->addSelect('paymentStatus')
-            ->addSelect('attribute')
-            ->andWhere("sOrder.transactionId != ''");
+            ->addSelect('attribute');
 
         return $builder;
     }
