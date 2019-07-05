@@ -9,6 +9,7 @@
 namespace SwagPaymentPayPalUnified\Tests\Functional\Subscriber\Documents;
 
 use Doctrine\DBAL\Connection;
+use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\Subscriber\Documents\Installments;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\PayPalUnifiedPaymentIdTrait;
@@ -16,7 +17,7 @@ use SwagPaymentPayPalUnified\Tests\Functional\Subscriber\Documents\Mock\HookArgs
 use SwagPaymentPayPalUnified\Tests\Functional\Subscriber\Documents\Mock\HookArgsWithoutSubject;
 use SwagPaymentPayPalUnified\Tests\Functional\Subscriber\Documents\Mock\HookArgsWithWrongPaymentId;
 
-class InstallmentsSubscriberTest extends \PHPUnit_Framework_TestCase
+class InstallmentsSubscriberTest extends TestCase
 {
     use DatabaseTestCaseTrait;
     use PayPalUnifiedPaymentIdTrait;

@@ -36,6 +36,7 @@
             <argument type="service" id="paypal_unified.payment_instruction_service"/>
             <argument type="service" id="dbal_connection"/>
             <argument type="service" id="snippets"/>
+            <argument type="service" id="translation" on-invalid="null"/>
             <tag name="shopware.event_subscriber"/>
         </service>
 

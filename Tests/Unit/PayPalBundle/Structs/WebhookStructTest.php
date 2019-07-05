@@ -8,9 +8,10 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Unit\PayPalBundle\Structs;
 
+use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Webhook;
 
-class WebhookStructTest extends \PHPUnit_Framework_TestCase
+class WebhookStructTest extends TestCase
 {
     public function test_getId()
     {

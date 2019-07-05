@@ -8,10 +8,11 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services\Legacy;
 
+use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\Components\Services\Legacy\LegacyService;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 
-class LegacyServiceTest extends \PHPUnit_Framework_TestCase
+class LegacyServiceTest extends TestCase
 {
     use DatabaseTestCaseTrait;
 

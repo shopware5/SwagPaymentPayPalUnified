@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Subscriber;
 
+use PHPUnit\Framework\TestCase;
 use Shopware\Components\HttpClient\RequestException;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Subscriber\ExpressCheckout as ExpressCheckoutSubscriber;
@@ -18,7 +19,7 @@ use SwagPaymentPayPalUnified\Tests\Mocks\DummyController;
 use SwagPaymentPayPalUnified\Tests\Mocks\PaymentResourceMock;
 use SwagPaymentPayPalUnified\Tests\Mocks\ViewMock;
 
-class ExpressCheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
+class ExpressCheckoutSubscriberTest extends TestCase
 {
     use DatabaseTestCaseTrait;
     use SettingsHelperTrait;
@@ -298,6 +299,7 @@ class ExpressCheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
         $request->setParam('expressCheckout', true);
 
         $response = new \Enlight_Controller_Response_ResponseTestCase();
+        $response->setHttpResponseCode(302);
 
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
             'subject' => new DummyController($request, $view, $response),
@@ -306,11 +308,6 @@ class ExpressCheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $subscriber = $this->getSubscriber(true);
-
-        $reflectionClass = new \ReflectionClass(\Enlight_Controller_Response_ResponseTestCase::class);
-        $prop = $reflectionClass->getProperty('_isRedirect');
-        $prop->setAccessible(true);
-        $prop->setValue($response, true);
 
         $this->expectException(RequestException::class);
         $this->expectExceptionMessage('patch exception');
@@ -327,6 +324,7 @@ class ExpressCheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
         $request->setParam('expressCheckout', true);
 
         $response = new \Enlight_Controller_Response_ResponseTestCase();
+        $response->setHttpResponseCode(302);
 
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
             'subject' => new DummyController($request, $view, $response),
@@ -335,11 +333,6 @@ class ExpressCheckoutSubscriberTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $subscriber = $this->getSubscriber();
-
-        $reflectionClass = new \ReflectionClass(\Enlight_Controller_Response_ResponseTestCase::class);
-        $prop = $reflectionClass->getProperty('_isRedirect');
-        $prop->setAccessible(true);
-        $prop->setValue($response, true);
 
         $subscriber->addPaymentInfoToRequest($enlightEventArgs);
 

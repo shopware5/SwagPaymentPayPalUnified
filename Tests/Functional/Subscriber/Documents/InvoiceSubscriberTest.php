@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Subscriber\Documents;
 
+use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Instruction\Amount;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Instruction\RecipientBanking;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\PaymentInstruction;
@@ -18,7 +19,7 @@ use SwagPaymentPayPalUnified\Tests\Functional\Subscriber\Documents\Mock\HookArgs
 use SwagPaymentPayPalUnified\Tests\Functional\Subscriber\Documents\Mock\HookArgsWithoutSubject;
 use SwagPaymentPayPalUnified\Tests\Functional\Subscriber\Documents\Mock\HookArgsWithWrongPaymentId;
 
-class InvoiceSubscriberTest extends \PHPUnit_Framework_TestCase
+class InvoiceSubscriberTest extends TestCase
 {
     use DatabaseTestCaseTrait;
     use PayPalUnifiedPaymentIdTrait;
@@ -37,7 +38,8 @@ class InvoiceSubscriberTest extends \PHPUnit_Framework_TestCase
         $subscriber = new Invoice(
             Shopware()->Container()->get('paypal_unified.payment_instruction_service'),
             Shopware()->Container()->get('dbal_connection'),
-            Shopware()->Container()->get('snippets')
+            Shopware()->Container()->get('snippets'),
+            $this->getTranslationService()
         );
         static::assertNotNull($subscriber);
     }
@@ -55,7 +57,8 @@ class InvoiceSubscriberTest extends \PHPUnit_Framework_TestCase
         $subscriber = new Invoice(
             Shopware()->Container()->get('paypal_unified.payment_instruction_service'),
             Shopware()->Container()->get('dbal_connection'),
-            Shopware()->Container()->get('snippets')
+            Shopware()->Container()->get('snippets'),
+            $this->getTranslationService()
         );
         $hookArgs = new HookArgsWithoutSubject();
 
@@ -67,7 +70,8 @@ class InvoiceSubscriberTest extends \PHPUnit_Framework_TestCase
         $subscriber = new Invoice(
             Shopware()->Container()->get('paypal_unified.payment_instruction_service'),
             Shopware()->Container()->get('dbal_connection'),
-            Shopware()->Container()->get('snippets')
+            Shopware()->Container()->get('snippets'),
+            $this->getTranslationService()
         );
 
         $hookArgs = new HookArgsWithWrongPaymentId();
@@ -80,7 +84,8 @@ class InvoiceSubscriberTest extends \PHPUnit_Framework_TestCase
         $subscriber = new Invoice(
             Shopware()->Container()->get('paypal_unified.payment_instruction_service'),
             Shopware()->Container()->get('dbal_connection'),
-            Shopware()->Container()->get('snippets')
+            Shopware()->Container()->get('snippets'),
+            $this->getTranslationService()
         );
 
         $this->updateOrderPaymentId(15, $this->getUnifiedPaymentId());
@@ -94,7 +99,8 @@ class InvoiceSubscriberTest extends \PHPUnit_Framework_TestCase
         $subscriber = new Invoice(
             Shopware()->Container()->get('paypal_unified.payment_instruction_service'),
             Shopware()->Container()->get('dbal_connection'),
-            Shopware()->Container()->get('snippets')
+            Shopware()->Container()->get('snippets'),
+            $this->getTranslationService()
         );
 
         $this->updateOrderPaymentId(15, $this->getUnifiedPaymentId());
@@ -148,5 +154,16 @@ class InvoiceSubscriberTest extends \PHPUnit_Framework_TestCase
             ':paymentId' => $paymentId,
             ':orderId' => $orderId,
         ]);
+    }
+
+    private function getTranslationService()
+    {
+        $container = Shopware()->Container();
+
+        if ($container->has('translation')) {
+            return $container->get('translation');
+        }
+
+        return new \Shopware_Components_Translation();
     }
 }

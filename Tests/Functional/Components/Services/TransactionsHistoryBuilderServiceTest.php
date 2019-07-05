@@ -8,9 +8,10 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services;
 
+use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\Components\Services\TransactionHistoryBuilderService;
 
-class TransactionsHistoryBuilderServiceTest extends \PHPUnit_Framework_TestCase
+class TransactionsHistoryBuilderServiceTest extends TestCase
 {
     public function test_service_available()
     {

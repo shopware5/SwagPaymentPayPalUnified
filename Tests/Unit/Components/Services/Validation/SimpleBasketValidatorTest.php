@@ -8,13 +8,14 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Unit\Components\Services\Validation;
 
+use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\Components\Services\Validation\SimpleBasketValidator;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
 
-class SimpleBasketValidatorTest extends \PHPUnit_Framework_TestCase
+class SimpleBasketValidatorTest extends TestCase
 {
     /**
-     * @dataProvider test_is_valid_dataProvider
+     * @dataProvider is_valid_test_dataProvider
      *
      * @param float    $amountNumeric
      * @param float    $amountNetNumeric
@@ -45,7 +46,7 @@ class SimpleBasketValidatorTest extends \PHPUnit_Framework_TestCase
         static::assertSame($expectedResult, $this->getBasketValidator()->validate($basketData, $userData, $payment));
     }
 
-    public function test_is_valid_dataProvider()
+    public function is_valid_test_dataProvider()
     {
         return [
             [15.00, 12.61, 1, 15.00, true],

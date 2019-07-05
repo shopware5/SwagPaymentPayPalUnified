@@ -9,12 +9,13 @@
 namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services\Installments;
 
 use Doctrine\DBAL\Connection;
+use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\Components\Services\Installments\OrderCreditInfoService;
 use SwagPaymentPayPalUnified\Models\FinancingInformation;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Credit;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 
-class OrderCreditInfoServiceTest extends \PHPUnit_Framework_TestCase
+class OrderCreditInfoServiceTest extends TestCase
 {
     use DatabaseTestCaseTrait;
 

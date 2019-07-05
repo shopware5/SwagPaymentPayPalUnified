@@ -39,6 +39,11 @@ class Installer
     private $bootstrapPath;
 
     /**
+     * @var Shopware_Components_Translation
+     */
+    private $translation;
+
+    /**
      * Installer constructor.
      *
      * @param string $bootstrapPath
@@ -47,11 +52,13 @@ class Installer
         ModelManager $modelManager,
         Connection $connection,
         CrudService $attributeCrudService,
+        Shopware_Components_Translation $translation,
         $bootstrapPath
     ) {
         $this->modelManager = $modelManager;
         $this->connection = $connection;
         $this->attributeCrudService = $attributeCrudService;
+        $this->translation = $translation;
         $this->bootstrapPath = $bootstrapPath;
     }
 
@@ -230,9 +237,7 @@ class Installer
         /** @var array $translationKeys */
         $translationKeys = $this->getTranslationKeys();
 
-        $translation = new Shopware_Components_Translation();
-
-        $translation->write(
+        $this->translation->write(
             2,
             'config_payment',
             $translationKeys['SwagPaymentPayPalUnified'],
@@ -246,7 +251,7 @@ class Installer
             true
         );
 
-        $translation->write(
+        $this->translation->write(
             2,
             'config_payment',
             $translationKeys['SwagPaymentPayPalUnifiedInstallments'],

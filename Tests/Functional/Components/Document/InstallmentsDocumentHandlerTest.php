@@ -9,10 +9,11 @@
 namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Document;
 
 use Doctrine\DBAL\Connection;
+use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\Components\Document\InstallmentsDocumentHandler;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 
-class InstallmentsDocumentHandlerTest extends \PHPUnit_Framework_TestCase
+class InstallmentsDocumentHandlerTest extends TestCase
 {
     use DatabaseTestCaseTrait;
 

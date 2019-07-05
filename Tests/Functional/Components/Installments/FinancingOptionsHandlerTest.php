@@ -8,10 +8,11 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Installments;
 
+use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\Components\Installments\FinancingOptionsHandler;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Installments\FinancingResponse;
 
-class FinancingOptionsHandlerTest extends \PHPUnit_Framework_TestCase
+class FinancingOptionsHandlerTest extends TestCase
 {
     public function test_can_be_constructed()
     {

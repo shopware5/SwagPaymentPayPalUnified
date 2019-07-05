@@ -8,9 +8,10 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Subscriber\ControllerRegistration;
 
+use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\Subscriber\ControllerRegistration\Backend;
 
-class BackendRegistrationSubscriberTest extends \PHPUnit_Framework_TestCase
+class BackendRegistrationSubscriberTest extends TestCase
 {
     public function test_can_be_created()
     {

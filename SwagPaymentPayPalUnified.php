@@ -36,10 +36,13 @@ class SwagPaymentPayPalUnified extends Plugin
      */
     public function install(InstallContext $context)
     {
+        $translation = $this->container->has('translation') ? $this->container->get('translation') : new \Shopware_Components_Translation();
+
         $installer = new Installer(
             $this->container->get('models'),
             $this->container->get('dbal_connection'),
             $this->container->get('shopware_attribute.crud_service'),
+            $translation,
             $this->getPath()
         );
 

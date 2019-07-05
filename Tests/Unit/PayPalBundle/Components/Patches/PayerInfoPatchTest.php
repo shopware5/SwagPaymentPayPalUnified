@@ -8,11 +8,12 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Unit\PayPalBundle\Components\Patches;
 
+use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PayerInfoPatch;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Common\Address;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Payer\PayerInfo;
 
-class PayerInfoPatchTest extends \PHPUnit_Framework_TestCase
+class PayerInfoPatchTest extends TestCase
 {
     public function test_getPath()
     {

@@ -9,13 +9,14 @@
 namespace SwagPaymentPayPalUnified\Tests\Functional\Setup;
 
 use Doctrine\DBAL\Connection;
+use PHPUnit\Framework\TestCase;
 use Shopware\Components\Model\ModelManager;
 use Shopware\Models\Plugin\Plugin;
 use SwagPaymentPayPalUnified\Setup\InstallationException;
 use SwagPaymentPayPalUnified\Setup\Installer;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 
-class InstallerTest extends \PHPUnit_Framework_TestCase
+class InstallerTest extends TestCase
 {
     use DatabaseTestCaseTrait;
 
@@ -29,17 +30,19 @@ class InstallerTest extends \PHPUnit_Framework_TestCase
         $entity->setSource('Community');
         $entity->setVersion('1.0.0');
 
-        /** @var ModelManager $em */
-        $em = Shopware()->Container()->get('models');
+        $container = Shopware()->Container();
 
+        /** @var ModelManager $em */
+        $em = $container->get('models');
         $em->persist($entity);
         $em->flush($entity);
 
         $installer = new Installer(
             $em,
-            Shopware()->Container()->get('dbal_connection'),
-            Shopware()->Container()->get('shopware_attribute.crud_service'),
-            Shopware()->Container()->getParameter('paypal_unified.plugin_dir')
+            $container->get('dbal_connection'),
+            $container->get('shopware_attribute.crud_service'),
+            $this->getTranslationService(),
+            $container->getParameter('paypal_unified.plugin_dir')
         );
         $this->expectException(InstallationException::class);
         $installer->install();
@@ -55,17 +58,20 @@ class InstallerTest extends \PHPUnit_Framework_TestCase
         $entity->setSource('Community');
         $entity->setVersion('1.0.0');
 
+        $container = Shopware()->Container();
+
         /** @var ModelManager $em */
-        $em = Shopware()->Container()->get('models');
+        $em = $container->get('models');
 
         $em->persist($entity);
         $em->flush($entity);
 
         $installer = new Installer(
             $em,
-            Shopware()->Container()->get('dbal_connection'),
-            Shopware()->Container()->get('shopware_attribute.crud_service'),
-            Shopware()->Container()->getParameter('paypal_unified.plugin_dir')
+            $container->get('dbal_connection'),
+            $container->get('shopware_attribute.crud_service'),
+            $this->getTranslationService(),
+            $container->getParameter('paypal_unified.plugin_dir')
         );
         $this->expectException(InstallationException::class);
         $installer->install();
@@ -81,8 +87,10 @@ class InstallerTest extends \PHPUnit_Framework_TestCase
         $entity->setSource('Community');
         $entity->setVersion('1.0.0');
 
+        $container = Shopware()->Container();
+
         /** @var ModelManager $em */
-        $em = Shopware()->Container()->get('models');
+        $em = $container->get('models');
 
         $em->persist($entity);
         $em->flush($entity);
@@ -99,9 +107,10 @@ class InstallerTest extends \PHPUnit_Framework_TestCase
 
         $installer = new Installer(
             $em,
-            Shopware()->Container()->get('dbal_connection'),
-            Shopware()->Container()->get('shopware_attribute.crud_service'),
-            Shopware()->Container()->getParameter('paypal_unified.plugin_dir')
+            $container->get('dbal_connection'),
+            $container->get('shopware_attribute.crud_service'),
+            $this->getTranslationService(),
+            $container->getParameter('paypal_unified.plugin_dir')
         );
         $this->expectException(InstallationException::class);
         $installer->install();
@@ -111,11 +120,15 @@ class InstallerTest extends \PHPUnit_Framework_TestCase
     {
         /** @var ModelManager $em */
         $em = Shopware()->Container()->get('models');
+
+        $container = Shopware()->Container();
+
         $installer = new Installer(
             $em,
-            Shopware()->Container()->get('dbal_connection'),
-            Shopware()->Container()->get('shopware_attribute.crud_service'),
-            Shopware()->Container()->getParameter('paypal_unified.plugin_dir')
+            $container->get('dbal_connection'),
+            $container->get('shopware_attribute.crud_service'),
+            $this->getTranslationService(),
+            $container->getParameter('paypal_unified.plugin_dir')
         );
 
         $result = $installer->install();
@@ -170,5 +183,20 @@ class InstallerTest extends \PHPUnit_Framework_TestCase
 
         $query = "SHOW TABLES LIKE 'swag_payment_paypal_unified_settings_general';";
         static::assertCount(1, Shopware()->Db()->fetchAll($query));
+    }
+
+    /**
+     * @return \Shopware_Components_Translation
+     */
+    private function getTranslationService()
+    {
+        $container = Shopware()->Container();
+
+        if ($container->has('translation')) {
+            return $container->get('translation');
+        }
+
+        // for Shopware versions before 5.6
+        return new \Shopware_Components_Translation();
     }
 }

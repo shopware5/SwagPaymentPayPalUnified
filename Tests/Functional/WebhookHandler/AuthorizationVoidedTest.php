@@ -8,13 +8,14 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\WebhookHandler;
 
+use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\Components\PaymentStatus;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\Webhook\WebhookEventTypes;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Webhook;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\WebhookHandlers\AuthorizationVoided;
 
-class AuthorizationVoidedTest extends \PHPUnit_Framework_TestCase
+class AuthorizationVoidedTest extends TestCase
 {
     use DatabaseTestCaseTrait;
 

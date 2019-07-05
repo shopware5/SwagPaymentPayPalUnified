@@ -8,12 +8,13 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Subscriber;
 
+use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\Subscriber\BackendOrder;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Mocks\DummyController;
 use SwagPaymentPayPalUnified\Tests\Mocks\ViewMock;
 
-class BackendOrderSubscriberTest extends \PHPUnit_Framework_TestCase
+class BackendOrderSubscriberTest extends TestCase
 {
     use DatabaseTestCaseTrait;
 
@@ -83,7 +84,7 @@ class BackendOrderSubscriberTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $connection->insert('s_order', [
-            'id' => 9999,
+            'id' => 99991,
         ]);
 
         $connection->insert('s_order_attributes', [
@@ -92,7 +93,7 @@ class BackendOrderSubscriberTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $connection->insert('s_order_attributes', [
-            'orderID' => 9999,
+            'orderID' => 99991,
             'swag_paypal_unified_payment_type' => null,
         ]);
     }

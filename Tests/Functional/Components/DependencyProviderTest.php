@@ -8,11 +8,12 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Components;
 
+use PHPUnit\Framework\TestCase;
 use Shopware\Components\DependencyInjection\Container;
 use Shopware\Models\Shop\DetachedShop;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 
-class DependencyProviderTest extends \PHPUnit_Framework_TestCase
+class DependencyProviderTest extends TestCase
 {
     public function test_service_available()
     {

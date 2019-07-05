@@ -23,10 +23,13 @@ class PayPalUnifiedTestKernel extends \Shopware\Kernel
         /** @var $repository \Shopware\Models\Shop\Repository */
         $repository = $container->get('models')->getRepository(Shop::class);
 
-        $shop = $repository->getActiveDefault();
-        $shop->registerResources();
-
-        $_SERVER['HTTP_HOST'] = $shop->getHost();
+        if ($container->has('shopware.components.shop_registration_service')) {
+            $container->get('shopware.components.shop_registration_service')->registerResources(
+                $repository->getActiveDefault()
+            );
+        } else {
+            $repository->getActiveDefault()->registerResources();
+        }
 
         if (!self::isPluginInstalledAndActivated()) {
             die('Error: The plugin is not installed or activated, tests aborted!');

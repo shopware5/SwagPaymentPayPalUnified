@@ -8,13 +8,14 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services;
 
+use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
 use SwagPaymentPayPalUnified\Components\Services\PaymentBuilderService;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 
-class PaymentBuilderServiceTest extends \PHPUnit_Framework_TestCase
+class PaymentBuilderServiceTest extends TestCase
 {
     public function test_is_basket_service_available()
     {

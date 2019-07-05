@@ -8,9 +8,10 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Unit\Components\Services\Installments;
 
+use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\Components\Services\Installments\ValidationService;
 
-class ValidationServiceTest extends \PHPUnit_Framework_TestCase
+class ValidationServiceTest extends TestCase
 {
     public function test_valid_product_price()
     {

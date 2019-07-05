@@ -30,14 +30,21 @@ class InvoiceDocumentHandler
      */
     private $snippetManager;
 
+    /**
+     * @var \Shopware_Components_Translation
+     */
+    private $translation;
+
     public function __construct(
         PaymentInstructionService $instructionService,
         Connection $dbalConnection,
-        SnippetManager $snippetManager
+        SnippetManager $snippetManager,
+        \Shopware_Components_Translation $translation
     ) {
         $this->instructionService = $instructionService;
         $this->dbalConnection = $dbalConnection;
         $this->snippetManager = $snippetManager;
+        $this->translation = $translation;
     }
 
     /**
@@ -93,7 +100,7 @@ class InvoiceDocumentHandler
     public function getInvoiceContainer($containers, $orderData)
     {
         $footer = $containers['PayPal_Unified_Instructions_Content'];
-        $translation = (new \Shopware_Components_Translation())->read(
+        $translation = $this->translation->read(
             $orderData['_order']['language'],
             'documents',
             $footer['id']

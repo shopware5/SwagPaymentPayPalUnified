@@ -560,7 +560,12 @@ class InstallmentsTest extends UnifiedControllerTestCase
         $actionEventArgs = $this->getActionEventArgs();
         $settingService = new SettingsServiceInstallmentsMock();
 
-        $this->getInstallmentsSubscriber($settingService)->onConfirmInstallments($actionEventArgs);
+        $subscriber = $this->getInstallmentsSubscriber($settingService);
+        $subscriber->onConfirmInstallments($actionEventArgs);
+
+        $assign = $actionEventArgs->getSubject()->View()->getAssign();
+
+        static::assertEmpty($assign);
     }
 
     public function test_onConfirmInstallments_without_flag()
@@ -569,7 +574,12 @@ class InstallmentsTest extends UnifiedControllerTestCase
         $actionEventArgs = $this->getActionEventArgs();
         $settingService = new SettingsServiceInstallmentsMock();
 
-        $this->getInstallmentsSubscriber($settingService)->onConfirmInstallments($actionEventArgs);
+        $subscriber = $this->getInstallmentsSubscriber($settingService);
+        $subscriber->onConfirmInstallments($actionEventArgs);
+
+        $assign = $actionEventArgs->getSubject()->View()->getAssign();
+
+        static::assertEmpty($assign);
     }
 
     public function test_onConfirmInstallments_without_paymentId_and_payer()
@@ -579,7 +589,12 @@ class InstallmentsTest extends UnifiedControllerTestCase
         $actionEventArgs = $this->getActionEventArgs();
         $settingService = new SettingsServiceInstallmentsMock();
 
-        $this->getInstallmentsSubscriber($settingService)->onConfirmInstallments($actionEventArgs);
+        $subscriber = $this->getInstallmentsSubscriber($settingService);
+        $subscriber->onConfirmInstallments($actionEventArgs);
+
+        $assign = $actionEventArgs->getSubject()->View()->getAssign();
+
+        static::assertEmpty($assign);
     }
 
     public function test_onConfirmInstallments_throws_exception()
@@ -588,12 +603,18 @@ class InstallmentsTest extends UnifiedControllerTestCase
         $this->Request()->setParam('installments', true);
         $this->Request()->setParam('paymentId', 'exception');
         $this->Request()->setParam('PayerID', 'payerId');
+        $this->Request()->setParam('basketId', false);
+
         $actionEventArgs = $this->getActionEventArgs();
+
         $settingService = new SettingsServiceInstallmentsMock();
 
         $this->getInstallmentsSubscriber($settingService)->onConfirmInstallments($actionEventArgs);
-        $header = $this->Response()->getHeaders()[0];
-        static::assertContains('checkout/shippingPayment/paypal_unified_error_code/5/paypal_unified_error_name/0/paypal_unified_error_message', $header['value']);
+
+        static::assertContains(
+            'checkout/shippingPayment/paypal_unified_error_code/5/paypal_unified_error_name/0/paypal_unified_error_message',
+            $this->Response()->getHeader('Location')
+        );
         static::assertTrue($this->Response()->isRedirect());
     }
 
