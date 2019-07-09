@@ -1,6 +1,7 @@
 {block name='frontend_checkout_shipping_payment_paypal_unified_payment_wall_plugin'}
     {* Payment wall plugin *}
     <div class="is--hidden"
+         data-paypalApprovalUrl="{$paypalUnifiedApprovalUrl}"
          data-paypaLPaymentWall="true"
          data-paypalLanguage="{$paypalUnifiedLanguageIso}"
          data-paypalCountryIso="{$sUserData.additional.country.countryiso}"
