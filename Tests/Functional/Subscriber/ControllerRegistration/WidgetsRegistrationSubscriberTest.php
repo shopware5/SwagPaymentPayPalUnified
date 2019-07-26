@@ -23,8 +23,8 @@ class WidgetsRegistrationSubscriberTest extends TestCase
     {
         $events = Widgets::getSubscribedEvents();
         static::assertCount(2, $events);
-        static::assertEquals('onGetInstallmentsControllerPath', $events['Enlight_Controller_Dispatcher_ControllerPath_Widgets_PaypalUnifiedInstallments']);
-        static::assertEquals('onGetEcControllerPath', $events['Enlight_Controller_Dispatcher_ControllerPath_Widgets_PaypalUnifiedExpressCheckout']);
+        static::assertSame('onGetInstallmentsControllerPath', $events['Enlight_Controller_Dispatcher_ControllerPath_Widgets_PaypalUnifiedInstallments']);
+        static::assertSame('onGetEcControllerPath', $events['Enlight_Controller_Dispatcher_ControllerPath_Widgets_PaypalUnifiedExpressCheckout']);
     }
 
     public function test_onGetInstallmentsControllerPath()

@@ -186,9 +186,9 @@ class ExpressCheckout implements SubscriberInterface
     {
         $request = $args->getRequest();
 
-        if (strtolower($request->getActionName()) === 'payment' &&
-            $request->getParam('expressCheckout', false) &&
-            $args->getResponse()->isRedirect()
+        if (strtolower($request->getActionName()) === 'payment'
+            && $request->getParam('expressCheckout', false)
+            && $args->getResponse()->isRedirect()
         ) {
             $paymentId = $request->getParam('paymentId');
 

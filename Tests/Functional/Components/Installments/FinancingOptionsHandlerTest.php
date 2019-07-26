@@ -27,11 +27,11 @@ class FinancingOptionsHandlerTest extends TestCase
 
         $sorted = $service->sortOptionsBy(FinancingOptionsHandler::SORT_BY_TERM)->toArray()['qualifyingFinancingOptions'];
 
-        static::assertEquals(6, $sorted[0]['creditFinancing']['term']);
-        static::assertEquals(12, $sorted[1]['creditFinancing']['term']);
-        static::assertEquals(18, $sorted[2]['creditFinancing']['term']);
-        static::assertEquals(24, $sorted[3]['creditFinancing']['term']);
-        static::assertEquals(24, $sorted[4]['creditFinancing']['term']);
+        static::assertSame(6, $sorted[0]['creditFinancing']['term']);
+        static::assertSame(12, $sorted[1]['creditFinancing']['term']);
+        static::assertSame(18, $sorted[2]['creditFinancing']['term']);
+        static::assertSame(24, $sorted[3]['creditFinancing']['term']);
+        static::assertSame(24, $sorted[4]['creditFinancing']['term']);
     }
 
     public function test_sortOptionsBy_by_monthly_payment()
@@ -40,11 +40,11 @@ class FinancingOptionsHandlerTest extends TestCase
 
         $sorted = $service->sortOptionsBy(FinancingOptionsHandler::SORT_BY_MONTHLY_PAYMENT)->toArray()['qualifyingFinancingOptions'];
 
-        static::assertEquals(29.49, $sorted[0]['monthlyPayment']['value']);
-        static::assertEquals(29.49, $sorted[1]['monthlyPayment']['value']);
-        static::assertEquals(38.42, $sorted[2]['monthlyPayment']['value']);
-        static::assertEquals(56.3, $sorted[3]['monthlyPayment']['value']);
-        static::assertEquals(106.98, $sorted[4]['monthlyPayment']['value']);
+        static::assertSame(29.49, $sorted[0]['monthlyPayment']['value']);
+        static::assertSame(29.49, $sorted[1]['monthlyPayment']['value']);
+        static::assertSame(38.42, $sorted[2]['monthlyPayment']['value']);
+        static::assertSame(56.3, $sorted[3]['monthlyPayment']['value']);
+        static::assertSame(106.98, $sorted[4]['monthlyPayment']['value']);
     }
 
     public function test_build_by_term()

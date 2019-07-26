@@ -20,25 +20,25 @@ class InstallmentsPaymentBuilderServiceTest extends TestCase
     public function test_serviceIsAvailable()
     {
         $service = Shopware()->Container()->get('paypal_unified.installments.payment_builder_service');
-        static::assertEquals(InstallmentsPaymentBuilderService::class, get_class($service));
+        static::assertSame(InstallmentsPaymentBuilderService::class, get_class($service));
     }
 
     public function test_getPayment_has_correct_intent_order_fallback()
     {
         $requestParameters = $this->getRequestData(true, 1);
-        static::assertEquals('order', $requestParameters['intent']);
+        static::assertSame('order', $requestParameters['intent']);
     }
 
     public function test_getPayment_has_correct_intent_sale()
     {
         $requestParameters = $this->getRequestData(true);
-        static::assertEquals('sale', $requestParameters['intent']);
+        static::assertSame('sale', $requestParameters['intent']);
     }
 
     public function test_getPayment_has_correct_intent_order()
     {
         $requestParameters = $this->getRequestData(true, 2);
-        static::assertEquals('order', $requestParameters['intent']);
+        static::assertSame('order', $requestParameters['intent']);
     }
 
     public function test_getPayment_returns_url_with_basket_id()

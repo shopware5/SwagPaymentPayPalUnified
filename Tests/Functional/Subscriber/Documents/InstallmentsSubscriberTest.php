@@ -36,7 +36,7 @@ class InstallmentsSubscriberTest extends TestCase
         $events = Installments::getSubscribedEvents();
 
         static::assertCount(1, $events);
-        static::assertEquals('onBeforeRenderDocument', $events['Shopware_Components_Document::assignValues::after']);
+        static::assertSame('onBeforeRenderDocument', $events['Shopware_Components_Document::assignValues::after']);
     }
 
     public function test_onBeforeRenderDocument_returns_when_no_document_was_given()

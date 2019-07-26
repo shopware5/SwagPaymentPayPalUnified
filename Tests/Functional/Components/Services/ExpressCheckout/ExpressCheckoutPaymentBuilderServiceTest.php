@@ -21,17 +21,17 @@ class ExpressCheckoutPaymentBuilderServiceTest extends TestCase
     public function test_serviceIsAvailable()
     {
         $service = Shopware()->Container()->get('paypal_unified.express_checkout.payment_builder_service');
-        static::assertEquals(ExpressCheckoutPaymentBuilderService::class, get_class($service));
+        static::assertSame(ExpressCheckoutPaymentBuilderService::class, get_class($service));
     }
 
     public function test_getPayment_has_currency()
     {
         $request = $this->getRequestData();
 
-        static::assertEquals('EUR', $request->getTransactions()->getAmount()->getCurrency());
+        static::assertSame('EUR', $request->getTransactions()->getAmount()->getCurrency());
 
         foreach ($request->getTransactions()->getItemList()->getItems() as $item) {
-            static::assertEquals('EUR', $item->getCurrency());
+            static::assertSame('EUR', $item->getCurrency());
         }
     }
 

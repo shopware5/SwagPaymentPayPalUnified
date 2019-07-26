@@ -45,8 +45,8 @@ class InstallmentsTest extends UnifiedControllerTestCase
     {
         $events = Installments::getSubscribedEvents();
         static::assertCount(2, $events);
-        static::assertEquals('onPostDispatchDetail', $events['Enlight_Controller_Action_PostDispatchSecure_Frontend_Detail']);
-        static::assertEquals([['onPostDispatchCheckout'], ['onConfirmInstallments']], $events['Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout']);
+        static::assertSame('onPostDispatchDetail', $events['Enlight_Controller_Action_PostDispatchSecure_Frontend_Detail']);
+        static::assertSame([['onPostDispatchCheckout'], ['onConfirmInstallments']], $events['Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout']);
     }
 
     public function test_post_dispatch_detail_no_settings()
@@ -196,7 +196,7 @@ class InstallmentsTest extends UnifiedControllerTestCase
 
         $displayKind = $actionEventArgs->getSubject()->View()->getAssign('paypalInstallmentsMode');
 
-        static::assertEquals('simple', $displayKind);
+        static::assertSame('simple', $displayKind);
     }
 
     public function test_post_dispatch_detail_installments_product_price_match_displayKind_cheapest()
@@ -220,7 +220,7 @@ class InstallmentsTest extends UnifiedControllerTestCase
 
         $displayKind = $actionEventArgs->getSubject()->View()->getAssign('paypalInstallmentsMode');
 
-        static::assertEquals('cheapest', $displayKind);
+        static::assertSame('cheapest', $displayKind);
     }
 
     public function test_OnPostDispatchCheckout_with_wrong_action()
@@ -379,7 +379,7 @@ class InstallmentsTest extends UnifiedControllerTestCase
         $this->getInstallmentsSubscriber($settingService)->onPostDispatchCheckout($actionEventArgs);
         $displayKind = $actionEventArgs->getSubject()->View()->getAssign('paypalInstallmentsMode');
 
-        static::assertEquals('simple', $displayKind);
+        static::assertSame('simple', $displayKind);
     }
 
     public function test_OnPostDispatchCheckout_display_kind_is_cheapest()
@@ -407,7 +407,7 @@ class InstallmentsTest extends UnifiedControllerTestCase
         $this->getInstallmentsSubscriber($settingService)->onPostDispatchCheckout($actionEventArgs);
         $displayKind = $actionEventArgs->getSubject()->View()->getAssign('paypalInstallmentsMode');
 
-        static::assertEquals('cheapest', $displayKind);
+        static::assertSame('cheapest', $displayKind);
     }
 
     public function test_OnPostDispatchCheckout_has_correct_product_price()
@@ -434,7 +434,7 @@ class InstallmentsTest extends UnifiedControllerTestCase
         $this->getInstallmentsSubscriber($settingService)->onPostDispatchCheckout($actionEventArgs);
         $price = $actionEventArgs->getSubject()->View()->getAssign('paypalInstallmentsProductPrice');
 
-        static::assertEquals(444.44, $price);
+        static::assertSame('444.44', $price);
     }
 
     public function test_OnPostDispatchCheckout_has_correct_product_net_price()
@@ -461,7 +461,7 @@ class InstallmentsTest extends UnifiedControllerTestCase
         $this->getInstallmentsSubscriber($settingService)->onPostDispatchCheckout($actionEventArgs);
         $price = $actionEventArgs->getSubject()->View()->getAssign('paypalInstallmentsProductPrice');
 
-        static::assertEquals(399.99, $price);
+        static::assertSame('399.99', $price);
     }
 
     public function test_OnPostDispatchCheckout_has_correct_page_type()
@@ -489,7 +489,7 @@ class InstallmentsTest extends UnifiedControllerTestCase
         $this->getInstallmentsSubscriber($settingService)->onPostDispatchCheckout($actionEventArgs);
         $pageType = $actionEventArgs->getSubject()->View()->getAssign('paypalInstallmentsPageType');
 
-        static::assertEquals('cart', $pageType);
+        static::assertSame('cart', $pageType);
     }
 
     public function test_OnPostDispatchCheckout_confirm_action_with_selected_payment_method_installments()
@@ -630,8 +630,8 @@ class InstallmentsTest extends UnifiedControllerTestCase
         $this->getInstallmentsSubscriber($settingService)->onConfirmInstallments($actionEventArgs);
         $viewAssignments = $actionEventArgs->getSubject()->View()->getAssign();
 
-        static::assertEquals(self::INSTALLMENTS_PAYMENT_ID, $viewAssignments['paypalInstallmentsPaymentId']);
-        static::assertEquals('payerId', $viewAssignments['paypalInstallmentsPayerId']);
+        static::assertSame(self::INSTALLMENTS_PAYMENT_ID, $viewAssignments['paypalInstallmentsPaymentId']);
+        static::assertSame('payerId', $viewAssignments['paypalInstallmentsPayerId']);
     }
 
     /**

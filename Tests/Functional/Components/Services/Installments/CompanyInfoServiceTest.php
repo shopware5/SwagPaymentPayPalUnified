@@ -24,7 +24,7 @@ class CompanyInfoServiceTest extends TestCase
     {
         $service = Shopware()->Container()->get('paypal_unified.installments.company_info_service');
 
-        static::assertEquals(CompanyInfoService::class, get_class($service));
+        static::assertSame(CompanyInfoService::class, get_class($service));
     }
 
     public function test_getCompanyInfo()
@@ -32,8 +32,8 @@ class CompanyInfoServiceTest extends TestCase
         $result = (new CompanyInfoService(new ShopwareAddressConfigMock()))->getCompanyInfo();
 
         static::assertCount(2, $result);
-        static::assertEquals('Test address', $result['address']);
-        static::assertEquals('Test company', $result['name']);
+        static::assertSame('Test address', $result['address']);
+        static::assertSame('Test company', $result['name']);
     }
 }
 

@@ -24,7 +24,7 @@ class CustomerServiceTest extends TestCase
     public function test_service_is_available()
     {
         $service = Shopware()->Container()->get('paypal_unified.express_checkout.customer_service');
-        static::assertEquals(CustomerService::class, get_class($service));
+        static::assertSame(CustomerService::class, get_class($service));
     }
 
     public function test_construct()
@@ -75,9 +75,9 @@ class CustomerServiceTest extends TestCase
         $user = $this->getUserByMail()[0];
 
         static::assertNotNull($user);
-        static::assertEquals('1', $user['accountmode']);
-        static::assertEquals('Shopware', $user['firstname']);
-        static::assertEquals('PHPUnit', $user['lastname']);
+        static::assertSame('1', $user['accountmode']);
+        static::assertSame('Shopware', $user['firstname']);
+        static::assertSame('PHPUnit', $user['lastname']);
 
         static::assertNotNull(Shopware()->Container()->get('session')->get('sUserId'));
     }

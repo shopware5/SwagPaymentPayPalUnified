@@ -38,7 +38,7 @@ class PlusSubscriberTest extends TestCase
     public function test_getSubscribedEvents_has_correct_events()
     {
         $events = Plus::getSubscribedEvents();
-        static::assertEquals(
+        static::assertSame(
             ['onPostDispatchCheckout', -10],
             $events['Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout']
         );
@@ -178,7 +178,7 @@ class PlusSubscriberTest extends TestCase
         $this->getSubscriber()->onPostDispatchCheckout($enlightEventArgs);
 
         static::assertTrue((bool) $view->getAssign('paypalUnifiedUsePlus'));
-        static::assertEquals('5', $view->getAssign('paypalUnifiedErrorCode'));
+        static::assertSame(5, $view->getAssign('paypalUnifiedErrorCode'));
     }
 
     public function test_onPostDispatchCheckout_overwritePaymentName()
@@ -204,17 +204,17 @@ class PlusSubscriberTest extends TestCase
 
         $viewAssignments = $view->getAssign();
 
-        static::assertEquals('Test Plus Name', $viewAssignments['sPayment']['description']);
-        static::assertEquals('<br>Test Plus Description', $viewAssignments['sPayment']['additionaldescription']);
+        static::assertSame('Test Plus Name', $viewAssignments['sPayment']['description']);
+        static::assertSame('<br>Test Plus Description', $viewAssignments['sPayment']['additionaldescription']);
 
-        static::assertEquals('Test Plus Name', $viewAssignments['sUserData']['additional']['payment']['description']);
-        static::assertEquals(
+        static::assertSame('Test Plus Name', $viewAssignments['sUserData']['additional']['payment']['description']);
+        static::assertSame(
             '<br>Test Plus Description',
             $viewAssignments['sUserData']['additional']['payment']['additionaldescription']
         );
 
-        static::assertEquals('Test Plus Name', $viewAssignments['sPayments'][$unifiedPaymentId]['description']);
-        static::assertEquals(
+        static::assertSame('Test Plus Name', $viewAssignments['sPayments'][$unifiedPaymentId]['description']);
+        static::assertSame(
             '<br>Test Plus Description',
             $viewAssignments['sPayments'][$unifiedPaymentId]['additionaldescription']
         );
@@ -316,9 +316,9 @@ class PlusSubscriberTest extends TestCase
         $this->getSubscriber()->onPostDispatchCheckout($enlightEventArgs);
         $paymentsForPaymentWall = json_decode($view->getAssign('paypalUnifiedPlusPaymentMethodsPaymentWall'), true)[0];
 
-        static::assertEquals('http://4', $paymentsForPaymentWall['redirectUrl']);
-        static::assertEquals('Rechnung', $paymentsForPaymentWall['methodName']);
-        static::assertEquals('Sie zahlen einfach und bequem auf Rechnung.', $paymentsForPaymentWall['description']);
+        static::assertSame('http://4', $paymentsForPaymentWall['redirectUrl']);
+        static::assertSame('Rechnung', $paymentsForPaymentWall['methodName']);
+        static::assertSame('Sie zahlen einfach und bequem auf Rechnung.', $paymentsForPaymentWall['description']);
     }
 
     public function test_onPostDispatchSecure_handleFinishDispatch()
@@ -341,7 +341,7 @@ class PlusSubscriberTest extends TestCase
 
         $this->getSubscriber()->onPostDispatchCheckout($enlightEventArgs);
 
-        static::assertEquals('testTransactionId', $view->getAssign('sTransactionumber'));
+        static::assertSame('testTransactionId', $view->getAssign('sTransactionumber'));
     }
 
     public function test_onPostDispatchSecure_handleFinishDispatch_add_paymentInstructions()
@@ -365,8 +365,8 @@ class PlusSubscriberTest extends TestCase
 
         $this->getSubscriber()->onPostDispatchCheckout($enlightEventArgs);
 
-        static::assertEquals('testReference', $view->getAssign('sTransactionumber'));
-        static::assertEquals('testAccountHolder', $view->getAssign('paypalUnifiedPaymentInstructions')['accountHolder']);
+        static::assertSame('testReference', $view->getAssign('sTransactionumber'));
+        static::assertSame('testAccountHolder', $view->getAssign('paypalUnifiedPaymentInstructions')['accountHolder']);
     }
 
     public function test_onPostDispatchSecure_handleConfirmDispatch()
@@ -391,9 +391,9 @@ class PlusSubscriberTest extends TestCase
 
         $this->getSubscriber()->onPostDispatchCheckout($enlightEventArgs);
 
-        static::assertEquals('PAY-9HW62735H82101921LLK3D4I', $view->getAssign('paypalUnifiedRemotePaymentId'));
-        static::assertEquals('https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=_express-checkout&token=EC-49W9096312907153R', $view->getAssign('paypalUnifiedApprovalUrl'));
-        static::assertEquals('de_DE', $view->getAssign('paypalUnifiedLanguageIso'));
+        static::assertSame('PAY-9HW62735H82101921LLK3D4I', $view->getAssign('paypalUnifiedRemotePaymentId'));
+        static::assertSame('https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=_express-checkout&token=EC-49W9096312907153R', $view->getAssign('paypalUnifiedApprovalUrl'));
+        static::assertSame('de_DE', $view->getAssign('paypalUnifiedLanguageIso'));
     }
 
     public function test_onPostDispatchSecure_handleConfirmDispatch_should_return_because_of_no_paymentStruct()
@@ -447,7 +447,7 @@ class PlusSubscriberTest extends TestCase
 
         $viewAssignments = $view->getAssign();
 
-        static::assertEquals('PAY-TestRemotePaymentId', $viewAssignments['paypalUnifiedRemotePaymentId']);
+        static::assertSame('PAY-TestRemotePaymentId', $viewAssignments['paypalUnifiedRemotePaymentId']);
 
         $session->offsetUnset('paypalUnifiedCameFromPaymentSelection');
         $session->offsetUnset('paypalUnifiedRemotePaymentId');

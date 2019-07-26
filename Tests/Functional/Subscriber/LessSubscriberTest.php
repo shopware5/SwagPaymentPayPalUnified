@@ -30,6 +30,6 @@ class LessSubscriberTest extends TestCase
     {
         $events = Less::getSubscribedEvents();
         static::assertCount(1, $events);
-        static::assertEquals('onCollectLessFiles', $events['Theme_Compiler_Collect_Plugin_Less']);
+        static::assertSame('onCollectLessFiles', $events['Theme_Compiler_Collect_Plugin_Less']);
     }
 }

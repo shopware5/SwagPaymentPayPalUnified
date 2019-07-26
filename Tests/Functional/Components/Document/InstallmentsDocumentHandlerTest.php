@@ -42,11 +42,11 @@ class InstallmentsDocumentHandlerTest extends TestCase
         $handler->handleDocument($orderNumber, $document);
 
         $creditInfo = $document->_view->getVariable('paypalInstallmentsCredit')->value;
-        static::assertEquals('TEST_PAYMENT_ID', $creditInfo['paymentId']);
-        static::assertEquals(10.01, $creditInfo['feeAmount']);
-        static::assertEquals(1400.04, $creditInfo['totalCost']);
-        static::assertEquals(67.68, $creditInfo['monthlyPayment']);
-        static::assertEquals(12, $creditInfo['term']);
+        static::assertSame('TEST_PAYMENT_ID', $creditInfo['paymentId']);
+        static::assertSame(10.01, $creditInfo['feeAmount']);
+        static::assertSame(1400.04, $creditInfo['totalCost']);
+        static::assertSame(67.68, $creditInfo['monthlyPayment']);
+        static::assertSame(12, $creditInfo['term']);
     }
 
     private function insertTestData()

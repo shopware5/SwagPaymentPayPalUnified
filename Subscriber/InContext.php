@@ -107,9 +107,9 @@ class InContext implements SubscriberInterface
     public function addInContextInfoToRequest(\Enlight_Controller_ActionEventArgs $args)
     {
         $request = $args->getRequest();
-        if ($request->getActionName() === 'payment' &&
-            $request->getParam('useInContext') &&
-            $args->getResponse()->isRedirect()
+        if ($request->getActionName() === 'payment'
+            && $request->getParam('useInContext')
+            && $args->getResponse()->isRedirect()
         ) {
             $args->getSubject()->redirect([
                 'controller' => 'PaypalUnified',
