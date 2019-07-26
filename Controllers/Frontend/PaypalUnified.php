@@ -7,6 +7,7 @@
  */
 
 use Shopware\Components\HttpClient\RequestException;
+use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
 use SwagPaymentPayPalUnified\Components\ExceptionHandlerServiceInterface;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
@@ -33,8 +34,13 @@ use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Instruction\PaymentIns
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\RelatedResources\RelatedResource;
 use Symfony\Component\HttpFoundation\Response;
 
-class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_Frontend_Payment
+class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_Frontend_Payment
 {
+    /**
+     * @var DependencyProvider
+     */
+    private $dependencyProvider;
+
     /**
      * @var PaymentResource
      */
@@ -62,6 +68,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
 
     public function preDispatch()
     {
+        $this->dependencyProvider = $this->get('paypal_unified.dependency_provider');
         $this->paymentResource = $this->get('paypal_unified.payment_resource');
         $this->client = $this->get('paypal_unified.client_service');
         $this->logger = $this->get('paypal_unified.logger_service');
@@ -82,7 +89,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
      */
     public function gatewayAction()
     {
-        $orderData = $this->get('session')->get('sOrderVariables');
+        $orderData = $this->dependencyProvider->getSession()->get('sOrderVariables');
 
         if ($orderData === null) {
             $this->handleError(ErrorCodes::NO_ORDER_TO_PROCESS);
@@ -199,8 +206,8 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
         $basketId = $request->getParam('basketId');
 
         //Basket validation with shopware 5.2 support
-        if (in_array($basketId, BasketIdWhitelist::WHITELIST_IDS, true) ||
-            version_compare($this->shopwareConfig->get('version'), '5.3.0', '<')
+        if (in_array($basketId, BasketIdWhitelist::WHITELIST_IDS, true)
+            || version_compare($this->shopwareConfig->get('version'), '5.3.0', '<')
         ) {
             //For shopware < 5.3 and for whitelisted basket ids
             try {
@@ -226,6 +233,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
         $isPlus = (bool) $request->getParam('plus', false);
         $isExpressCheckout = (bool) $request->getParam('expressCheckout', false);
         $isInstallments = (bool) $request->getParam('installments', false);
+        $isSpbCheckout = (bool) $request->getParam('smartPaymentButtons', false);
 
         if ($isPlus) {
             $this->client->setPartnerAttributionId(PartnerAttributionId::PAYPAL_PLUS);
@@ -233,6 +241,8 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
             $this->client->setPartnerAttributionId(PartnerAttributionId::PAYPAL_EXPRESS_CHECKOUT);
         } elseif ($isInstallments) {
             $this->client->setPartnerAttributionId(PartnerAttributionId::PAYPAL_INSTALLMENTS);
+        } elseif ($isSpbCheckout) {
+            $this->client->setPartnerAttributionId(PartnerAttributionId::PAYPAL_SMART_PAYMENT_BUTTONS);
         }
 
         $sendOrderNumber = (bool) $this->settingsService->get('send_order_number');
@@ -256,7 +266,6 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
         }
 
         $payerId = $request->getParam('PayerID');
-        $session = $this->get('session');
         /** @var OrderDataService $orderDataService */
         $orderDataService = $this->get('paypal_unified.order_data_service');
 
@@ -316,7 +325,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
             $instructionService->createInstructions($orderNumber, $instructions);
         }
 
-        $orderDataService->applyPaymentTypeAttribute($orderNumber, $response, $isExpressCheckout);
+        $orderDataService->applyPaymentTypeAttribute($orderNumber, $response, $isExpressCheckout, $isSpbCheckout);
 
         $redirectParameter = [
             'module' => 'frontend',
@@ -329,7 +338,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
             $redirectParameter['expressCheckout'] = true;
         }
 
-        $session->offsetUnset('sComment');
+        $this->dependencyProvider->getSession()->offsetUnset('sComment');
 
         // Done, redirect to the finish page
         $this->redirect($redirectParameter);
@@ -353,7 +362,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
         }
 
         $request = $this->Request();
-        $session = $this->get('session');
+        $session = $this->dependencyProvider->getSession();
 
         $paymentId = $request->getParam('paymentId');
         $orderData = $session->get('sOrderVariables');
@@ -408,14 +417,13 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
     }
 
     /**
-     * This method handles the redirection to the shippingPayment action if an
-     * error has occurred during the payment process.
+     * This method handles the redirection to the shippingPayment action if an error has occurred during the payment process.
+     * If the order number was sent before, the method will redirect to the finish page.
      *
      * @see ErrorCodes
      *
-     * @param int       $code
-     * @param Exception $exception
-     * @param bool      $redirectToFinishAction
+     * @param int  $code
+     * @param bool $redirectToFinishAction
      */
     private function handleError($code, Exception $exception = null, $redirectToFinishAction = false)
     {
@@ -500,8 +508,8 @@ class Shopware_Controllers_Frontend_PaypalUnified extends \Shopware_Controllers_
      */
     private function noDispatchForOrder()
     {
-        $session = $this->get('session');
+        $session = $this->dependencyProvider->getSession();
 
-        return !empty($this->shopwareConfig->get('premiumShippingNoOrder')) && (empty($session['sDispatch']) || empty($session['sCountry']));
+        return !empty($this->shopwareConfig->get('premiumShippingNoOrder')) && (empty($session->get('sDispatch')) || empty($session->get('sCountry')));
     }
 }

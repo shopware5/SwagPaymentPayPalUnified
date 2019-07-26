@@ -1,4 +1,10 @@
 <?php
+/**
+ * (c) shopware AG <info@shopware.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 namespace SwagPaymentPayPalUnified\Setup;
 
@@ -19,7 +25,9 @@ class FirstRunWizardInstaller
             'use_in_context' => 0,
             'log_level' => 1,
             'display_errors' => 0,
-            'advertise_returns' => 0
+            'advertise_returns' => 0,
+            'use_smart_payment_buttons' => 0,
+            'merchant_location' => 'germany',
         ]);
 
         if ($configuration['payPalPlusEnabled']) {
@@ -27,7 +35,7 @@ class FirstRunWizardInstaller
                 'shop_id' => 1,
                 'active' => 1,
                 'restyle' => 0,
-                'integrate_third_party_methods' => 0
+                'integrate_third_party_methods' => 0,
             ]);
         }
     }

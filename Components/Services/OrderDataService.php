@@ -123,18 +123,21 @@ class OrderDataService
     }
 
     /**
-     * @param int  $orderNumber
-     * @param bool $expressCheckout
+     * @param string $orderNumber
+     * @param bool   $expressCheckout
+     * @param bool   $smartPaymentButtons
      *
      * @see PaymentType
      */
-    public function applyPaymentTypeAttribute($orderNumber, Payment $payment, $expressCheckout = false)
+    public function applyPaymentTypeAttribute($orderNumber, Payment $payment, $expressCheckout = false, $smartPaymentButtons = false)
     {
         $paymentType = PaymentType::PAYPAL_CLASSIC;
         $payer = $payment->getPayer();
 
         if ($expressCheckout) {
             $paymentType = PaymentType::PAYPAL_EXPRESS;
+        } elseif ($smartPaymentButtons) {
+            $paymentType = PaymentType::PAYPAL_SMART_PAYMENT_BUTTONS;
         } elseif ($payer && $payment->getPayer()->getExternalSelectedFundingInstrumentType() === 'CREDIT') {
             $paymentType = PaymentType::PAYPAL_INSTALLMENTS;
         } elseif ($payment->getPaymentInstruction() !== null) {

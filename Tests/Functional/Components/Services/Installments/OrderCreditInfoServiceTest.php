@@ -22,7 +22,7 @@ class OrderCreditInfoServiceTest extends TestCase
     public function test_service_is_available()
     {
         $service = Shopware()->Container()->get('paypal_unified.installments.order_credit_info_service');
-        static::assertEquals(OrderCreditInfoService::class, get_class($service));
+        static::assertSame(OrderCreditInfoService::class, get_class($service));
     }
 
     public function test_construct()
@@ -39,10 +39,10 @@ class OrderCreditInfoServiceTest extends TestCase
 
         /** @var FinancingInformation $creditInfo */
         $creditInfo = $service->getCreditInfo('TEST_PAYMENT_ID');
-        static::assertEquals('TEST_PAYMENT_ID', $creditInfo->getPaymentId());
-        static::assertEquals(10.01, $creditInfo->getFeeAmount());
-        static::assertEquals(1400.04, $creditInfo->getTotalCost());
-        static::assertEquals(67.68, $creditInfo->getMonthlyPayment());
+        static::assertSame('TEST_PAYMENT_ID', $creditInfo->getPaymentId());
+        static::assertSame(10.01, $creditInfo->getFeeAmount());
+        static::assertSame(1400.04, $creditInfo->getTotalCost());
+        static::assertSame(67.68, $creditInfo->getMonthlyPayment());
     }
 
     public function test_createInfo()
@@ -72,11 +72,11 @@ class OrderCreditInfoServiceTest extends TestCase
 
         /** @var FinancingInformation $creditInfo */
         $creditInfo = $service->getCreditInfo('TEST_PAYMENT_ID');
-        static::assertEquals('TEST_PAYMENT_ID', $creditInfo->getPaymentId());
-        static::assertEquals(19.91, $creditInfo->getFeeAmount());
-        static::assertEquals(381.05, $creditInfo->getTotalCost());
-        static::assertEquals(21.99, $creditInfo->getMonthlyPayment());
-        static::assertEquals(12, $creditInfo->getTerm());
+        static::assertSame('TEST_PAYMENT_ID', $creditInfo->getPaymentId());
+        static::assertSame(19.91, $creditInfo->getFeeAmount());
+        static::assertSame(381.05, $creditInfo->getTotalCost());
+        static::assertSame(21.99, $creditInfo->getMonthlyPayment());
+        static::assertSame(12, $creditInfo->getTerm());
     }
 
     private function insertTestData()

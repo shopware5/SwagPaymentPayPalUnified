@@ -50,11 +50,11 @@ class PaymentAddressServiceTest extends TestCase
         $testAddress = $addressService->getShippingAddress($testAddressData);
 
         static::assertNotNull($testAddress);
-        static::assertEquals(self::TEST_ADDRESS_CITY, $testAddress->getCity());
-        static::assertEquals(self::TEST_ADDRESS_COUNTRY, $testAddress->getCountryCode());
-        static::assertEquals(self::TEST_ADDRESS_FIRSTNAME . ' ' . self::TEST_ADDRESS_LASTNAME, $testAddress->getRecipientName());
-        static::assertEquals(self::TEST_ADDRESS_ZIPCODE, $testAddress->getPostalCode());
-        static::assertEquals(self::TEST_ADDRESS_STREET, $testAddress->getLine1());
+        static::assertSame(self::TEST_ADDRESS_CITY, $testAddress->getCity());
+        static::assertSame(self::TEST_ADDRESS_COUNTRY, $testAddress->getCountryCode());
+        static::assertSame(self::TEST_ADDRESS_FIRSTNAME . ' ' . self::TEST_ADDRESS_LASTNAME, $testAddress->getRecipientName());
+        static::assertSame(self::TEST_ADDRESS_ZIPCODE, $testAddress->getPostalCode());
+        static::assertSame(self::TEST_ADDRESS_STREET, $testAddress->getLine1());
         static::assertNull($testAddress->getState());
     }
 
@@ -82,7 +82,7 @@ class PaymentAddressServiceTest extends TestCase
         $addressService = Shopware()->Container()->get('paypal_unified.payment_address_service');
         $testAddress = $addressService->getShippingAddress($testAddressData);
 
-        static::assertEquals(self::TEST_ADDRESS_STATE, $testAddress->getState());
+        static::assertSame(self::TEST_ADDRESS_STATE, $testAddress->getState());
     }
 
     public function test_getPayerInfo_result()
@@ -115,12 +115,12 @@ class PaymentAddressServiceTest extends TestCase
 
         static::assertNotNull($payerInfo);
         static::assertNotNull($payerInfo->getBillingAddress());
-        static::assertEquals(self::TEST_ADDRESS_CITY, $payerInfo->getBillingAddress()->getCity());
-        static::assertEquals(self::TEST_ADDRESS_COUNTRY, $payerInfo->getCountryCode());
-        static::assertEquals(self::TEST_ADDRESS_FIRSTNAME, $payerInfo->getFirstName());
-        static::assertEquals(self::TEST_ADDRESS_LASTNAME, $payerInfo->getLastName());
-        static::assertEquals(self::TEST_USER_EMAIL, $payerInfo->getEmail());
-        static::assertEquals(self::TEST_ADDRESS_ZIPCODE, $payerInfo->getBillingAddress()->getPostalCode());
-        static::assertEquals(self::TEST_ADDRESS_STREET, $payerInfo->getBillingAddress()->getLine1());
+        static::assertSame(self::TEST_ADDRESS_CITY, $payerInfo->getBillingAddress()->getCity());
+        static::assertSame(self::TEST_ADDRESS_COUNTRY, $payerInfo->getCountryCode());
+        static::assertSame(self::TEST_ADDRESS_FIRSTNAME, $payerInfo->getFirstName());
+        static::assertSame(self::TEST_ADDRESS_LASTNAME, $payerInfo->getLastName());
+        static::assertSame(self::TEST_USER_EMAIL, $payerInfo->getEmail());
+        static::assertSame(self::TEST_ADDRESS_ZIPCODE, $payerInfo->getBillingAddress()->getPostalCode());
+        static::assertSame(self::TEST_ADDRESS_STREET, $payerInfo->getBillingAddress()->getLine1());
     }
 }

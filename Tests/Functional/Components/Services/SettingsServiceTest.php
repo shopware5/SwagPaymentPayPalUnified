@@ -44,11 +44,11 @@ class SettingsServiceTest extends TestCase
         /** @var Settings\General $settingsModel */
         $settingsModel = Shopware()->Container()->get('paypal_unified.settings_service')->getSettings(self::SHOP_ID);
 
-        static::assertEquals(self::ACTIVE, $settingsModel->getActive());
-        static::assertEquals(self::CLIENT_ID, $settingsModel->getClientId());
-        static::assertEquals(self::CLIENT_SECRET, $settingsModel->getClientSecret());
-        static::assertEquals(self::SANDBOX, $settingsModel->getSandbox());
-        static::assertEquals(self::SHOW_SIDEBAR_LOGO, $settingsModel->getShowSidebarLogo());
+        static::assertSame(self::ACTIVE, $settingsModel->getActive());
+        static::assertSame(self::CLIENT_ID, $settingsModel->getClientId());
+        static::assertSame(self::CLIENT_SECRET, $settingsModel->getClientSecret());
+        static::assertSame(self::SANDBOX, $settingsModel->getSandbox());
+        static::assertSame(self::SHOW_SIDEBAR_LOGO, $settingsModel->getShowSidebarLogo());
     }
 
     public function test_get()
@@ -57,8 +57,8 @@ class SettingsServiceTest extends TestCase
 
         /** @var SettingsServiceInterface $settingsService */
         $settingsService = Shopware()->Container()->get('paypal_unified.settings_service');
-        static::assertEquals(self::CLIENT_ID, $settingsService->get('client_id'));
-        static::assertEquals(self::CLIENT_SECRET, $settingsService->get('client_secret'));
+        static::assertSame(self::CLIENT_ID, $settingsService->get('client_id'));
+        static::assertSame(self::CLIENT_SECRET, $settingsService->get('client_secret'));
     }
 
     public function test_get_without_shop_throws_exception()
@@ -106,9 +106,9 @@ class SettingsServiceTest extends TestCase
         /** @var InstallmentsSettingsModel $installmentsSettings */
         $installmentsSettings = $settingsService->getSettings(self::SHOP_ID, SettingsTable::INSTALLMENTS);
 
-        static::assertEquals(2, $installmentsSettings->getIntent());
-        static::assertEquals(1, $installmentsSettings->getPresentmentTypeDetail());
-        static::assertEquals(2, $installmentsSettings->getPresentmentTypeCart());
+        static::assertSame(2, $installmentsSettings->getIntent());
+        static::assertSame(1, $installmentsSettings->getPresentmentTypeDetail());
+        static::assertSame(2, $installmentsSettings->getPresentmentTypeCart());
     }
 
     public function test_getSettings_plus()

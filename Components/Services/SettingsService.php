@@ -160,7 +160,7 @@ class SettingsService implements SettingsServiceInterface
             case SettingsTable::GENERAL:
                 return 'swag_payment_paypal_unified_settings_general';
             case SettingsTable::EXPRESS_CHECKOUT:
-                return  'swag_payment_paypal_unified_settings_express';
+                return 'swag_payment_paypal_unified_settings_express';
             case SettingsTable::INSTALLMENTS:
                 return 'swag_payment_paypal_unified_settings_installments';
             case SettingsTable::PLUS:

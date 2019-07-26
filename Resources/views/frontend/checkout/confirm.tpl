@@ -37,7 +37,7 @@
     {$smarty.block.parent}
 {/block}
 
-{* PayPal Installments and In-Context integration *}
+{* PayPal Installments, In-Context and SPB integration *}
 {block name='frontend_checkout_confirm_submit'}
     {block name='frontend_checkout_confirm_submit_paypal_unified_installments_and_in_context'}
         {if $paypalInstallmentsRequestCompleteList}
@@ -50,6 +50,10 @@
             {$smarty.block.parent}
             {block name='frontend_paypal_unified_in_context_confirm_submit_button'}
                 {include file='frontend/paypal_unified/in_context/button.tpl'}
+            {/block}
+        {elseif $paypalUnifiedUseSmartPaymentButtons && !$paypalUnifiedExpressCheckout && !$paypalUnifiedUsePlus && !$paypalUnifiedUseInContext && $sUserData.additional.payment.id == $paypalUnifiedPaymentId}
+            {block name='frontend_paypal_unified_confirm_smart_payment_buttons'}
+                {include file="frontend/paypal_unified/spb/smart_payment_buttons.tpl"}
             {/block}
         {else}
             {$smarty.block.parent}

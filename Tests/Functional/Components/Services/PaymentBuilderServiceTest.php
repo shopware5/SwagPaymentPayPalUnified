@@ -30,35 +30,35 @@ class PaymentBuilderServiceTest extends TestCase
     {
         $requestParameters = $this->getRequestData(PaymentType::PAYPAL_PLUS);
 
-        static::assertEquals('sale', $requestParameters['intent']);
+        static::assertSame('sale', $requestParameters['intent']);
     }
 
     public function test_getPayment_return_sale_intent_without_plus()
     {
         $requestParameters = $this->getRequestData();
 
-        static::assertEquals('sale', $requestParameters['intent']);
+        static::assertSame('sale', $requestParameters['intent']);
     }
 
     public function test_getPayment_return_authorize_intent_without_plus()
     {
         $requestParameters = $this->getRequestData(PaymentType::PAYPAL_CLASSIC, 1);
 
-        static::assertEquals('authorize', $requestParameters['intent']);
+        static::assertSame('authorize', $requestParameters['intent']);
     }
 
     public function test_getPayment_return_order_intent_without_plus()
     {
         $requestParameters = $this->getRequestData(PaymentType::PAYPAL_CLASSIC, 2);
 
-        static::assertEquals('order', $requestParameters['intent']);
+        static::assertSame('order', $requestParameters['intent']);
     }
 
     public function test_getPayment_return_valid_payer()
     {
         $requestParameters = $this->getRequestData();
 
-        static::assertEquals('paypal', $requestParameters['payer']['payment_method']);
+        static::assertSame('paypal', $requestParameters['payer']['payment_method']);
     }
 
     public function test_getPayment_return_valid_transactions()
@@ -66,12 +66,12 @@ class PaymentBuilderServiceTest extends TestCase
         $requestParameters = $this->getRequestData();
 
         // test the amount sub array
-        static::assertEquals('EUR', $requestParameters['transactions'][0]['amount']['currency']);
-        static::assertEquals('114.99', $requestParameters['transactions'][0]['amount']['total']);
+        static::assertSame('EUR', $requestParameters['transactions'][0]['amount']['currency']);
+        static::assertSame('114.99', $requestParameters['transactions'][0]['amount']['total']);
         // test the amount details
-        static::assertEquals(55, $requestParameters['transactions'][0]['amount']['details']['shipping']);
-        static::assertEquals('59.99', $requestParameters['transactions'][0]['amount']['details']['subtotal']);
-        static::assertEquals('0.00', $requestParameters['transactions'][0]['amount']['details']['tax']);
+        static::assertSame('55', $requestParameters['transactions'][0]['amount']['details']['shipping']);
+        static::assertSame('59.99', $requestParameters['transactions'][0]['amount']['details']['subtotal']);
+        static::assertSame('0.00', $requestParameters['transactions'][0]['amount']['details']['tax']);
     }
 
     public function test_getPayment_with_show_gross()
@@ -91,10 +91,10 @@ class PaymentBuilderServiceTest extends TestCase
         $requestParameters = $requestService->getPayment($params);
         $requestParameters = $requestParameters->toArray();
 
-        static::assertEquals('136.84', $requestParameters['transactions'][0]['amount']['total']);
-        static::assertEquals(46.22, $requestParameters['transactions'][0]['amount']['details']['shipping']);
-        static::assertEquals('50.41', $requestParameters['transactions'][0]['amount']['details']['subtotal']);
-        static::assertEquals(18.36, $requestParameters['transactions'][0]['amount']['details']['tax']);
+        static::assertSame('136.84', $requestParameters['transactions'][0]['amount']['total']);
+        static::assertSame('46.22', $requestParameters['transactions'][0]['amount']['details']['shipping']);
+        static::assertSame('50.41', $requestParameters['transactions'][0]['amount']['details']['subtotal']);
+        static::assertSame('18.36', $requestParameters['transactions'][0]['amount']['details']['tax']);
     }
 
     public function test_getPayment_with_basket_unique_id()
@@ -134,9 +134,9 @@ class PaymentBuilderServiceTest extends TestCase
         $requestParameters = $requestService->getPayment($params);
         $requestParameters = $requestParameters->toArray();
 
-        static::assertEquals('96.63', $requestParameters['transactions'][0]['amount']['total']);
-        static::assertEquals(46.22, $requestParameters['transactions'][0]['amount']['details']['shipping']);
-        static::assertEquals('50.41', $requestParameters['transactions'][0]['amount']['details']['subtotal']);
+        static::assertSame('96.63', $requestParameters['transactions'][0]['amount']['total']);
+        static::assertSame('46.22', $requestParameters['transactions'][0]['amount']['details']['shipping']);
+        static::assertSame('50.41', $requestParameters['transactions'][0]['amount']['details']['subtotal']);
         static::assertNull($requestParameters['transactions'][0]['amount']['details']['tax']);
     }
 
@@ -157,10 +157,10 @@ class PaymentBuilderServiceTest extends TestCase
         $requestParameters = $requestService->getPayment($params);
         $requestParameters = $requestParameters->toArray();
 
-        static::assertEquals('114.99', $requestParameters['transactions'][0]['amount']['total']);
-        static::assertEquals(55, $requestParameters['transactions'][0]['amount']['details']['shipping']);
-        static::assertEquals('59.99', $requestParameters['transactions'][0]['amount']['details']['subtotal']);
-        static::assertEquals('0.00', $requestParameters['transactions'][0]['amount']['details']['tax']);
+        static::assertSame('114.99', $requestParameters['transactions'][0]['amount']['total']);
+        static::assertSame('55', $requestParameters['transactions'][0]['amount']['details']['shipping']);
+        static::assertSame('59.99', $requestParameters['transactions'][0]['amount']['details']['subtotal']);
+        static::assertSame('0.00', $requestParameters['transactions'][0]['amount']['details']['tax']);
     }
 
     public function test_getPayment_with_tax_free_companies_with_vat_id()
@@ -181,9 +181,9 @@ class PaymentBuilderServiceTest extends TestCase
         $requestParameters = $requestService->getPayment($params);
         $requestParameters = $requestParameters->toArray();
 
-        static::assertEquals('96.63', $requestParameters['transactions'][0]['amount']['total']);
-        static::assertEquals(46.22, $requestParameters['transactions'][0]['amount']['details']['shipping']);
-        static::assertEquals('50.41', $requestParameters['transactions'][0]['amount']['details']['subtotal']);
+        static::assertSame('96.63', $requestParameters['transactions'][0]['amount']['total']);
+        static::assertSame('46.22', $requestParameters['transactions'][0]['amount']['details']['shipping']);
+        static::assertSame('50.41', $requestParameters['transactions'][0]['amount']['details']['subtotal']);
         static::assertNull($requestParameters['transactions'][0]['amount']['details']['tax']);
     }
 
@@ -206,9 +206,9 @@ class PaymentBuilderServiceTest extends TestCase
         $requestParameters = $requestService->getPayment($params);
         $requestParameters = $requestParameters->toArray();
 
-        static::assertEquals('96.63', $requestParameters['transactions'][0]['amount']['total']);
-        static::assertEquals(46.22, $requestParameters['transactions'][0]['amount']['details']['shipping']);
-        static::assertEquals('50.41', $requestParameters['transactions'][0]['amount']['details']['subtotal']);
+        static::assertSame('96.63', $requestParameters['transactions'][0]['amount']['total']);
+        static::assertSame('46.22', $requestParameters['transactions'][0]['amount']['details']['shipping']);
+        static::assertSame('50.41', $requestParameters['transactions'][0]['amount']['details']['subtotal']);
         static::assertNull($requestParameters['transactions'][0]['amount']['details']['tax']);
     }
 
@@ -227,7 +227,7 @@ class PaymentBuilderServiceTest extends TestCase
         $customProductsOption = $requestParameters['transactions'][0]['item_list']['items'][0];
 
         // summed up price -> product price and configurations
-        static::assertEquals(round(2 * 59.99 + 1 * 1 + 2 * 2 + 1 * 3, 2), (float) $customProductsOption['price']);
+        static::assertSame(round(2 * 59.99 + 1 * 1 + 2 * 2 + 1 * 3, 2), (float) $customProductsOption['price']);
     }
 
     public function test_getPayment_express_checkout_without_cart()
@@ -293,7 +293,7 @@ class PaymentBuilderServiceTest extends TestCase
         $params->setPaymentType(PaymentType::PAYPAL_INSTALLMENTS);
 
         $payment = $requestService->getPayment($params);
-        static::assertEquals('order', $payment->getIntent());
+        static::assertSame('order', $payment->getIntent());
     }
 
     /**

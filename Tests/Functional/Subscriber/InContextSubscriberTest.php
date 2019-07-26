@@ -34,8 +34,8 @@ class InContextSubscriberTest extends TestCase
 
         static::assertCount(2, $events['Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout']);
 
-        static::assertEquals('addInContextButton', $events['Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout'][0][0]);
-        static::assertEquals('addInContextInfoToRequest', $events['Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout'][1][0]);
+        static::assertSame('addInContextButton', $events['Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout'][0][0]);
+        static::assertSame('addInContextInfoToRequest', $events['Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout'][1][0]);
     }
 
     public function test_addInContextButton_return_wrong_action()
@@ -222,7 +222,7 @@ class InContextSubscriberTest extends TestCase
         $subscriber->addInContextInfoToRequest($enlightEventArgs);
 
         static::assertContains('/PaypalUnified/gateway/useInContext/1', $response->getHeader('Location'));
-        static::assertEquals(302, $response->getHttpResponseCode());
+        static::assertSame(302, $response->getHttpResponseCode());
     }
 
     /**

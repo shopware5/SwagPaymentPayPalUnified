@@ -29,7 +29,7 @@ class WebhookServiceTest extends TestCase
 
         $service->registerWebhooks([$webhook]);
 
-        static::assertEquals($webhook->getEventType(), $service->getWebhookHandler($webhook->getEventType())->getEventType());
+        static::assertSame($webhook->getEventType(), $service->getWebhookHandler($webhook->getEventType())->getEventType());
     }
 
     public function test_register_webhook_exception()

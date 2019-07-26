@@ -25,8 +25,8 @@ class BackendSubscriberTest extends TestCase
     public function test_getSubscribedEvents_has_correct_events()
     {
         $events = Backend::getSubscribedEvents();
-        static::assertEquals('onLoadBackendIndex', $events['Enlight_Controller_Action_PostDispatchSecure_Backend_Index']);
-        static::assertEquals('onPostDispatchConfig', $events['Enlight_Controller_Action_PostDispatchSecure_Backend_Config']);
+        static::assertSame('onLoadBackendIndex', $events['Enlight_Controller_Action_PostDispatchSecure_Backend_Index']);
+        static::assertSame('onPostDispatchConfig', $events['Enlight_Controller_Action_PostDispatchSecure_Backend_Config']);
         static::assertCount(2, $events);
     }
 

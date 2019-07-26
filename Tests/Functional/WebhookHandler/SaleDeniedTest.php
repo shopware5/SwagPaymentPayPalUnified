@@ -46,8 +46,8 @@ class SaleDeniedTest extends TestCase
 
         $sql = 'SELECT cleared FROM s_order WHERE id=' . self::TEST_ORDER_ID;
 
-        $status = Shopware()->Db()->fetchOne($sql);
-        static::assertEquals(PaymentStatus::PAYMENT_STATUS_OPEN, $status);
+        $status = (int) Shopware()->Db()->fetchOne($sql);
+        static::assertSame(PaymentStatus::PAYMENT_STATUS_OPEN, $status);
     }
 
     public function test_invoke_returns_false_because_the_order_does_not_exist()
@@ -60,7 +60,7 @@ class SaleDeniedTest extends TestCase
     public function test_getEventType_is_correct()
     {
         $instance = new SaleDenied(Shopware()->Container()->get('paypal_unified.logger_service'), Shopware()->Container()->get('models'));
-        static::assertEquals(WebhookEventTypes::PAYMENT_SALE_DENIED, $instance->getEventType());
+        static::assertSame(WebhookEventTypes::PAYMENT_SALE_DENIED, $instance->getEventType());
     }
 
     public function test_invoke_will_return_false_without_active_entity_manager()

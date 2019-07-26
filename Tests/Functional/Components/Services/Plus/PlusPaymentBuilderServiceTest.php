@@ -21,7 +21,7 @@ class PlusPaymentBuilderServiceTest extends TestCase
     public function test_serviceIsAvailable()
     {
         $service = Shopware()->Container()->get('paypal_unified.plus.payment_builder_service');
-        static::assertEquals(PlusPaymentBuilderService::class, get_class($service));
+        static::assertSame(PlusPaymentBuilderService::class, get_class($service));
     }
 
     public function test_getPayment_has_plus_basketId()

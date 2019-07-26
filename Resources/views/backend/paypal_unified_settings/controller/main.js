@@ -107,7 +107,8 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
             'paypal-unified-settings-tabs-general': {
                 'registerWebhook': me.onRegisterWebhook,
                 'validateAPI': me.onValidateAPISettings,
-                'onChangeShopActivation': me.applyActivationState
+                'onChangeShopActivation': me.applyActivationState,
+                'onChangeMerchantLocation': me.applyMerchantLocationState
             },
             'paypal-unified-settings-tabs-installments': {
                 'testInstallmentsAvailability': me.onTestInstallmentsAvailability
@@ -194,12 +195,14 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
 
     onSaveSettings: function() {
         var me = this,
-            generalSettings = me.getGeneralTab().getForm().getValues(),
+            generalTabForm = me.getGeneralTab().getForm(),
+            generalSettings = generalTabForm.getValues(),
             plusSettings = me.getPlusTab().getForm().getValues(),
             installmentsSettings = me.getInstallmentsTab().getForm().getValues(),
-            ecSettings = me.getEcTab().getForm().getValues();
+            ecTabForm = me.getEcTab().getForm(),
+            ecSettings = ecTabForm.getValues();
 
-        if (!me.getGeneralTab().getForm().isValid() || !me.getEcTab().getForm().isValid()) {
+        if (!generalTabForm.isValid() || !ecTabForm.isValid()) {
             Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal{/s}', '{s name=growl/formValidationError}Please fill out all fields marked in red.{/s}', me.window.title);
             return;
         }
@@ -338,6 +341,11 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
             me.generalRecord = Ext.create('Shopware.apps.PaypalUnifiedSettings.model.General', settings.general);
             generalTab.loadRecord(me.generalRecord);
             me.applyActivationState(me.generalRecord.get('active'));
+            if (me.generalRecord.get('merchantLocation') === 'other') {
+                plusTab.setDisabled(true);
+            } else {
+                generalTab.smartPaymentButtonsCheckbox.setDisabled(true);
+            }
         } else if (settings.installments) {
             me.installmentsRecord = Ext.create('Shopware.apps.PaypalUnifiedSettings.model.Installments', settings.installments);
             installmentsTab.loadRecord(me.installmentsRecord);
@@ -358,15 +366,31 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
      * @param { Boolean } active
      */
     applyActivationState: function(active) {
-        var me = this;
+        var me = this,
+            generalTab = me.getGeneralTab();
 
-        me.getGeneralTab().restContainer.setDisabled(!active);
-        me.getGeneralTab().behaviorContainer.setDisabled(!active);
-        me.getGeneralTab().errorHandlingContainer.setDisabled(!active);
+        generalTab.restContainer.setDisabled(!active);
+        generalTab.behaviourContainer.setDisabled(!active);
+        generalTab.errorHandlingContainer.setDisabled(!active);
 
         me.getPlusTab().setDisabled(!active);
         me.getInstallmentsTab().setDisabled(!active);
         me.getEcTab().setDisabled(!active);
+    },
+
+    applyMerchantLocationState: function(combobox) {
+        var me = this,
+            generalTab = me.getGeneralTab(),
+            plusTab = me.getPlusTab();
+
+        if (combobox.value === 'other') {
+            plusTab.setDisabled(true);
+            me.plusRecord.set('active', false);
+            generalTab.smartPaymentButtonsCheckbox.setDisabled(false);
+        } else {
+            plusTab.setDisabled(false);
+            generalTab.smartPaymentButtonsCheckbox.setDisabled(true);
+        }
     },
 
     onTestInstallmentsAvailability: function() {

@@ -43,13 +43,13 @@ class PaymentInstructionServiceTest extends TestCase
         $testInstructions = $instructionsService->getInstructions(self::TEST_ORDER_NUMBER);
 
         static::assertNotNull($testInstructions);
-        static::assertEquals(self::TEST_DUE_DATE, $testInstructions->getDueDate());
-        static::assertEquals(self::TEST_REFERENCE, $testInstructions->getReference());
-        static::assertEquals(self::TEST_BANK_BANK_NAME, $testInstructions->getBankName());
-        static::assertEquals(self::TEST_BANK_ACCOUNT_HOLDER, $testInstructions->getAccountHolder());
-        static::assertEquals(self::TEST_BANK_BIC, $testInstructions->getBic());
-        static::assertEquals(self::TEST_BANK_IBAN, $testInstructions->getIban());
-        static::assertEquals(self::TEST_BANK_IBAN, $testInstructions->getIban());
+        static::assertSame(self::TEST_DUE_DATE, $testInstructions->getDueDate());
+        static::assertSame(self::TEST_REFERENCE, $testInstructions->getReference());
+        static::assertSame(self::TEST_BANK_BANK_NAME, $testInstructions->getBankName());
+        static::assertSame(self::TEST_BANK_ACCOUNT_HOLDER, $testInstructions->getAccountHolder());
+        static::assertSame(self::TEST_BANK_BIC, $testInstructions->getBic());
+        static::assertSame(self::TEST_BANK_IBAN, $testInstructions->getIban());
+        static::assertSame(self::TEST_BANK_IBAN, $testInstructions->getIban());
 
         /** @var QueryBuilder $query */
         $query = Shopware()->Container()->get('dbal_connection')->createQueryBuilder();

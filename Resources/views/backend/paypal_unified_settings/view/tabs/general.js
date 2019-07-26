@@ -26,7 +26,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
     /**
      * @type { Ext.form.FieldSet }
      */
-    behaviorContainer: null,
+    behaviourContainer: null,
 
     /**
      * @type { Ext.form.FieldSet }
@@ -68,7 +68,14 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
              *
              * @param { Boolean }
              */
-            'onChangeShopActivation'
+            'onChangeShopActivation',
+
+            /**
+             * Will be fired when the user changes the merchant location
+             *
+             * @param { String }
+             */
+            'onChangeMerchantLocation'
         );
     },
 
@@ -82,7 +89,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
             me.createNotice(),
             me.createActivationContainer(),
             me.createRestContainer(),
-            me.createBehaviorContainer(),
+            me.createBehaviourContainer(),
             me.createErrorHandlingContainer()
         ];
     },
@@ -173,24 +180,46 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
     /**
      * @returns { Ext.form.FieldSet }
      */
-    createBehaviorContainer: function () {
+    createBehaviourContainer: function () {
         var me = this;
 
         me.orderNumberPrefix = Ext.create('Ext.form.field.Text', {
             name: 'orderNumberPrefix',
-            fieldLabel: '{s name="fieldset/behavior/orderNumberPrefix"}Order number prefix{/s}',
-            helpText: '{s name="fieldset/behavior/orderNumberPrefix/help"}The text you enter here will be placed before the actual order number (e.g MyShop_%orderNumber%). This helps to identify the shop in which this order has been taken in.{/s}',
+            fieldLabel: '{s name="fieldset/behaviour/orderNumberPrefix"}Order number prefix{/s}',
+            helpText: '{s name="fieldset/behaviour/orderNumberPrefix/help"}The text you enter here will be placed before the actual order number (e.g MyShop_%orderNumber%). This helps to identify the shop in which this order has been taken in.{/s}',
             disabled: true
         });
 
-        me.behaviorContainer = Ext.create('Ext.form.FieldSet', {
-            title: '{s name="fieldset/behavior/title"}Behavior{/s}',
+        me.smartPaymentButtonsCheckbox = Ext.create('Ext.form.field.Checkbox', {
+            name: 'useSmartPaymentButtons',
+            inputValue: true,
+            uncheckedValue: false,
+            fieldLabel: '{s name="fieldset/behaviour/useSmartPaymentButtons"}Use Smart Payment Buttons{/s}',
+            helpText: '{s name="fieldset/behaviour/useSmartPaymentButtons/helpText"}Enable this option to use the PayPal Smart Payment Buttons. Note that the Smart Payment Buttons are not available if your merchant location is Germany.{/s}'
+        });
+
+        me.behaviourContainer = Ext.create('Ext.form.FieldSet', {
+            title: '{s name="fieldset/behaviour/title"}Behaviour{/s}',
             items: [
+                {
+                    xtype: 'combobox',
+                    name: 'merchantLocation',
+                    fieldLabel: '{s name="fieldset/behaviour/merchantLocation"}Merchant location{/s}',
+                    helpText: '{s name="fieldset/behaviour/merchantLocation/help"}Choose your merchant location. Depending on this, different features are available to you.{/s}',
+                    store: Ext.create('Shopware.apps.PaypalUnifiedSettings.store.MerchantLocation'),
+                    valueField: 'type',
+                    value: 'germany',
+                    listeners: {
+                        'select': function(checkbox) {
+                            me.fireEvent('onChangeMerchantLocation', checkbox);
+                        }
+                    }
+                },
                 {
                     xtype: 'textfield',
                     name: 'brandName',
-                    fieldLabel: '{s name="fieldset/behavior/brandName"}Brand name on the PayPal page{/s}',
-                    helpText: '{s name="fieldset/behavior/brandName/help"}This text will be displayed as the brand name on the PayPal payment page.{/s}',
+                    fieldLabel: '{s name="fieldset/behaviour/brandName"}Brand name on the PayPal page{/s}',
+                    helpText: '{s name="fieldset/behaviour/brandName/help"}This text will be displayed as the brand name on the PayPal payment page.{/s}',
                     maxLength: 127
                 },
                 {
@@ -215,16 +244,16 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
                     name: 'showSidebarLogo',
                     inputValue: true,
                     uncheckedValue: false,
-                    fieldLabel: '{s name="fieldset/behavior/showSidebarLogo"}Show logo in sidebar{/s}',
-                    boxLabel: '{s name="fieldset/behavior/showSidebarLogo/help"}Enable this option to show the PayPal logo in the storefront sidebar.{/s}'
+                    fieldLabel: '{s name="fieldset/behaviour/showSidebarLogo"}Show logo in sidebar{/s}',
+                    boxLabel: '{s name="fieldset/behaviour/showSidebarLogo/help"}Enable this option to show the PayPal logo in the storefront sidebar.{/s}'
                 },
                 {
                     xtype: 'checkbox',
                     name: 'sendOrderNumber',
                     inputValue: true,
                     uncheckedValue: false,
-                    fieldLabel: '{s name="fieldset/behavior/sendOrderNumber"}Send order number to PayPal{/s}',
-                    boxLabel: '{s name="fieldset/behavior/sendOrderNumber/help"}Enable this option to send the order number to PayPal after an order has been completed.{/s}',
+                    fieldLabel: '{s name="fieldset/behaviour/sendOrderNumber"}Send order number to PayPal{/s}',
+                    boxLabel: '{s name="fieldset/behaviour/sendOrderNumber/help"}Enable this option to send the order number to PayPal after an order has been completed.{/s}',
                     handler: Ext.bind(me.onSendOrderNumberChecked, me)
                 },
                 me.orderNumberPrefix,
@@ -236,11 +265,12 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
                     fieldLabel: '{s name="fieldset/behaviour/advertiseReturns"}Free returns{/s}',
                     boxLabel: '{s name="fieldset/behaviour/advertiseReturns/boxLabel"}Enable to advertise free returns via PayPal. More information <a href="https://www.paypal.com/de/webapps/mpp/returns-on-paypal" title="PayPal returns" target="_blank">here</a>{/s}',
                     helpText: '{s name="fieldset/behaviour/advertiseReturns/helpText"}If you already offer free returns, the use of the program is excluded.{/s}'
-                }
+                },
+                me.smartPaymentButtonsCheckbox
             ]
         });
 
-        return me.behaviorContainer;
+        return me.behaviourContainer;
     },
 
     /**

@@ -23,9 +23,9 @@ class FrontendRegistrationSubscriberTest extends TestCase
     {
         $events = Frontend::getSubscribedEvents();
         static::assertCount(3, $events);
-        static::assertEquals('onGetWebhookControllerPath', $events['Enlight_Controller_Dispatcher_ControllerPath_Frontend_PaypalUnifiedWebhook']);
-        static::assertEquals('onGetUnifiedControllerPath', $events['Enlight_Controller_Dispatcher_ControllerPath_Frontend_PaypalUnified']);
-        static::assertEquals('onGetInstallmentsPaymentControllerPath', $events['Enlight_Controller_Dispatcher_ControllerPath_Frontend_PaypalUnifiedInstallments']);
+        static::assertSame('onGetWebhookControllerPath', $events['Enlight_Controller_Dispatcher_ControllerPath_Frontend_PaypalUnifiedWebhook']);
+        static::assertSame('onGetUnifiedControllerPath', $events['Enlight_Controller_Dispatcher_ControllerPath_Frontend_PaypalUnified']);
+        static::assertSame('onGetInstallmentsPaymentControllerPath', $events['Enlight_Controller_Dispatcher_ControllerPath_Frontend_PaypalUnifiedInstallments']);
     }
 
     public function test_onGetWebhookControllerPath()

@@ -6,7 +6,7 @@
  * file that was distributed with this source code.
  */
 
-class Shopware_Controllers_Frontend_PaypalUnifiedInstallments extends \Enlight_Controller_Action
+class Shopware_Controllers_Frontend_PaypalUnifiedInstallments extends Enlight_Controller_Action
 {
     /**
      * To avoid duplicate code, simply trigger the unified controller here.

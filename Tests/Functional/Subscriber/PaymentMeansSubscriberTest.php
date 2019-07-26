@@ -25,14 +25,14 @@ class PaymentMeansSubscriberTest extends TestCase
     public function test_can_be_created()
     {
         $subscriber = $this->getSubscriber();
-        static::assertEquals(PaymentMeans::class, get_class($subscriber));
+        static::assertSame(PaymentMeans::class, get_class($subscriber));
     }
 
     public function test_getSubscribedEvents()
     {
         $events = PaymentMeans::getSubscribedEvents();
         static::assertCount(1, $events);
-        static::assertEquals('onFilterPaymentMeans', $events['Shopware_Modules_Admin_GetPaymentMeans_DataFilter']);
+        static::assertSame('onFilterPaymentMeans', $events['Shopware_Modules_Admin_GetPaymentMeans_DataFilter']);
     }
 
     public function test_onFilterPaymentMeans_without_available_methods()
@@ -65,7 +65,7 @@ class PaymentMeansSubscriberTest extends TestCase
         $result = $args->result;
 
         static::assertCount(6, $result);
-        static::assertEquals($this->getUnifiedPaymentId(), $result[5]['id']);
+        static::assertSame($this->getUnifiedPaymentId(), $result[5]['id']);
     }
 
     public function test_onFilterPaymentMeans_has_no_unified_method_because_the_settings_dont_exist()

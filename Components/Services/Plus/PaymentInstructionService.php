@@ -19,9 +19,6 @@ class PaymentInstructionService
      */
     private $modelManager;
 
-    /**
-     * PaymentInstructionService constructor.
-     */
     public function __construct(ModelManager $modelManager)
     {
         $this->modelManager = $modelManager;

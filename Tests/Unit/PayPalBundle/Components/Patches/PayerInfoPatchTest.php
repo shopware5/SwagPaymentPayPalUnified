@@ -19,14 +19,14 @@ class PayerInfoPatchTest extends TestCase
     {
         $patch = new PayerInfoPatch($this->getPayerInfo());
 
-        static::assertEquals('/payer/payer_info', $patch->getPath());
+        static::assertSame('/payer/payer_info', $patch->getPath());
     }
 
     public function test_getOperation()
     {
         $patch = new PayerInfoPatch($this->getPayerInfo());
 
-        static::assertEquals('replace', $patch->getOperation());
+        static::assertSame('replace', $patch->getOperation());
     }
 
     public function test_getValue()
@@ -35,19 +35,19 @@ class PayerInfoPatchTest extends TestCase
 
         //Payer info
         static::assertCount(7, $value);
-        static::assertEquals('123456789', $value['phone']);
-        static::assertEquals('test@example.com', $value['email']);
-        static::assertEquals('Firstname', $value['first_name']);
-        static::assertEquals('Lastname', $value['last_name']);
-        static::assertEquals('DE', $value['country_code']);
+        static::assertSame('123456789', $value['phone']);
+        static::assertSame('test@example.com', $value['email']);
+        static::assertSame('Firstname', $value['first_name']);
+        static::assertSame('Lastname', $value['last_name']);
+        static::assertSame('DE', $value['country_code']);
 
         //Billing address
-        static::assertEquals('DE', $value['billing_address']['country_code']);
-        static::assertEquals('123456789', $value['billing_address']['phone']);
-        static::assertEquals('Schöppingen', $value['billing_address']['city']);
-        static::assertEquals('Ebbinghoff 10', $value['billing_address']['line1']);
-        static::assertEquals('48624', $value['billing_address']['postal_code']);
-        static::assertEquals('NW', $value['billing_address']['state']);
+        static::assertSame('DE', $value['billing_address']['country_code']);
+        static::assertSame('123456789', $value['billing_address']['phone']);
+        static::assertSame('Schöppingen', $value['billing_address']['city']);
+        static::assertSame('Ebbinghoff 10', $value['billing_address']['line1']);
+        static::assertSame('48624', $value['billing_address']['postal_code']);
+        static::assertSame('NW', $value['billing_address']['state']);
     }
 
     /**

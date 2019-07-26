@@ -17,42 +17,42 @@ class WebhookStructTest extends TestCase
     {
         $struct = Webhook::fromArray(['id' => 10]);
 
-        static::assertEquals(10, $struct->getId());
+        static::assertSame(10, $struct->getId());
     }
 
     public function test_getCreationTime()
     {
         $struct = Webhook::fromArray(['create_time' => '01-01-1970']);
 
-        static::assertEquals('01-01-1970', $struct->getCreationTime());
+        static::assertSame('01-01-1970', $struct->getCreationTime());
     }
 
     public function test_getResourceType()
     {
         $struct = Webhook::fromArray(['resource_type' => 'Test']);
 
-        static::assertEquals('Test', $struct->getResourceType());
+        static::assertSame('Test', $struct->getResourceType());
     }
 
     public function test_getEventType()
     {
         $struct = Webhook::fromArray(['event_type' => 'Test-Event']);
 
-        static::assertEquals('Test-Event', $struct->getEventType());
+        static::assertSame('Test-Event', $struct->getEventType());
     }
 
     public function test_getSummary()
     {
         $struct = Webhook::fromArray(['summary' => 'Test notification triggered in PHPUnit']);
 
-        static::assertEquals('Test notification triggered in PHPUnit', $struct->getSummary());
+        static::assertSame('Test notification triggered in PHPUnit', $struct->getSummary());
     }
 
     public function test_getResource()
     {
         $struct = Webhook::fromArray(['resource' => ['name' => 'test']]);
 
-        static::assertEquals('test', $struct->getResource()['name']);
+        static::assertSame('test', $struct->getResource()['name']);
     }
 
     public function test_toArray()
@@ -70,11 +70,11 @@ class WebhookStructTest extends TestCase
 
         $data = Webhook::fromArray($data)->toArray();
 
-        static::assertEquals('01-01-1970', $data['creationTime']);
-        static::assertEquals('Test object', $data['summary']);
-        static::assertEquals('Test', $data['resourceType']);
-        static::assertEquals('Test event', $data['eventType']);
-        static::assertEquals('Test id', $data['id']);
-        static::assertEquals('Test Resource', $data['resource']['name']);
+        static::assertSame('01-01-1970', $data['creationTime']);
+        static::assertSame('Test object', $data['summary']);
+        static::assertSame('Test', $data['resourceType']);
+        static::assertSame('Test event', $data['eventType']);
+        static::assertSame('Test id', $data['id']);
+        static::assertSame('Test Resource', $data['resource']['name']);
     }
 }

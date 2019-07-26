@@ -17,6 +17,9 @@ use Shopware\Components\Model\ModelEntity;
  */
 class General extends ModelEntity
 {
+    const MERCHANT_LOCATION_GERMANY = 'germany';
+    const MERCHANT_LOCATION_OTHER = 'other';
+
     /**
      * @var int
      *
@@ -109,6 +112,18 @@ class General extends ModelEntity
      * @ORM\Column(name="advertise_returns", type="boolean", nullable=false)
      */
     private $advertiseReturns;
+
+    /**
+     * @var bool
+     * @ORM\Column(name="use_smart_payment_buttons", type="boolean", nullable=false)
+     */
+    private $useSmartPaymentButtons;
+
+    /**
+     * @var string
+     * @ORM\Column(name="merchant_location", type="string", nullable=false)
+     */
+    private $merchantLocation;
 
     /**
      * @return int
@@ -348,6 +363,38 @@ class General extends ModelEntity
     public function setLandingPageType($landingPageType)
     {
         $this->landingPageType = $landingPageType;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getUseSmartPaymentButtons()
+    {
+        return $this->useSmartPaymentButtons;
+    }
+
+    /**
+     * @param bool $useSmartPaymentButtons
+     */
+    public function setUseSmartPaymentButtons($useSmartPaymentButtons)
+    {
+        $this->useSmartPaymentButtons = $useSmartPaymentButtons;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMerchantLocation()
+    {
+        return $this->merchantLocation;
+    }
+
+    /**
+     * @param string $merchantLocation
+     */
+    public function setMerchantLocation($merchantLocation)
+    {
+        $this->merchantLocation = $merchantLocation;
     }
 
     /**

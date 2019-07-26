@@ -68,9 +68,9 @@ class PaymentMethodProviderTest extends TestCase
         $provider = new PaymentMethodProvider(Shopware()->Models());
         $paymentIdQuery = "SELECT pm.id FROM s_core_paymentmeans pm WHERE pm.name='SwagPaymentPayPalUnified'";
 
-        $paymentId = Shopware()->Db()->fetchCol($paymentIdQuery)[0];
+        $paymentId = (int) Shopware()->Db()->fetchCol($paymentIdQuery)[0];
 
-        static::assertEquals($paymentId, $provider->getPaymentId(Shopware()->Container()->get('dbal_connection')));
+        static::assertSame($paymentId, $provider->getPaymentId(Shopware()->Container()->get('dbal_connection')));
     }
 
     public function test_get_payment_id_installments()
@@ -78,9 +78,9 @@ class PaymentMethodProviderTest extends TestCase
         $provider = new PaymentMethodProvider(Shopware()->Models());
         $paymentIdQuery = "SELECT pm.id FROM s_core_paymentmeans pm WHERE pm.name='SwagPaymentPayPalUnifiedInstallments'";
 
-        $paymentId = Shopware()->Db()->fetchCol($paymentIdQuery)[0];
+        $paymentId = (int) Shopware()->Db()->fetchCol($paymentIdQuery)[0];
 
-        static::assertEquals($paymentId, $provider->getPaymentId(Shopware()->Container()->get('dbal_connection'), PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME));
+        static::assertSame($paymentId, $provider->getPaymentId(Shopware()->Container()->get('dbal_connection'), PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME));
     }
 
     public function test_get_payment_active()
