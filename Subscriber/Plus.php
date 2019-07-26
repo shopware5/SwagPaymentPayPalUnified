@@ -19,6 +19,7 @@ use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\Services\OrderDataService;
 use SwagPaymentPayPalUnified\Components\Services\Plus\PaymentInstructionService;
+use SwagPaymentPayPalUnified\Models\Settings\General;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use SwagPaymentPayPalUnified\PayPalBundle\PartnerAttributionId;
@@ -137,6 +138,10 @@ class Plus implements SubscriberInterface
 
         $unifiedActive = (bool) $this->settingsService->get('active');
         if (!$unifiedActive) {
+            return;
+        }
+
+        if ((string) $this->settingsService->get('merchant_location') !== General::MERCHANT_LOCATION_GERMANY) {
             return;
         }
 

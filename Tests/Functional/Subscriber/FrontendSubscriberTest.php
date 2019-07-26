@@ -32,9 +32,9 @@ class FrontendSubscriberTest extends TestCase
     {
         $events = Frontend::getSubscribedEvents();
         static::assertCount(3, $events);
-        static::assertEquals('onCollectJavascript', $events['Theme_Compiler_Collect_Plugin_Javascript']);
-        static::assertEquals('onPostDispatchSecure', $events['Enlight_Controller_Action_PostDispatchSecure_Frontend']);
-        static::assertEquals('onCollectTemplateDir', $events['Theme_Inheritance_Template_Directories_Collected']);
+        static::assertSame('onCollectJavascript', $events['Theme_Compiler_Collect_Plugin_Javascript']);
+        static::assertSame('onPostDispatchSecure', $events['Enlight_Controller_Action_PostDispatchSecure_Frontend']);
+        static::assertSame('onCollectTemplateDir', $events['Theme_Inheritance_Template_Directories_Collected']);
     }
 
     public function test_onCollectJavascript()
@@ -45,7 +45,7 @@ class FrontendSubscriberTest extends TestCase
             static::assertFileExists($script);
         }
 
-        static::assertCount(9, $javascripts);
+        static::assertCount(10, $javascripts);
     }
 
     public function test_onPostDistpatchSecure_without_any_setttings()

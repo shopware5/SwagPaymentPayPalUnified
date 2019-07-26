@@ -11,6 +11,7 @@ namespace SwagPaymentPayPalUnified\Setup;
 use Doctrine\DBAL\Connection;
 use Shopware\Bundle\AttributeBundle\Service\CrudService;
 use Shopware\Components\Model\ModelManager;
+use SwagPaymentPayPalUnified\Models\Settings\General as GeneralSettingsModel;
 
 class Updater
 {
@@ -63,6 +64,10 @@ class Updater
 
         if (version_compare($oldVersion, '2.1.3', '<=')) {
             $this->updateTo220();
+        }
+
+        if (version_compare($oldVersion, '2.3.0', '<=')) {
+            $this->updateTo240();
         }
     }
 
@@ -138,6 +143,21 @@ class Updater
                 SET `button_locale` = '';";
 
             $this->connection->executeQuery($sql);
+        }
+    }
+
+    private function updateTo240()
+    {
+        if (!$this->checkIfColumnExist('swag_payment_paypal_unified_settings_general', 'use_smart_payment_buttons')) {
+            $query = <<<SQL
+ALTER TABLE `swag_payment_paypal_unified_settings_general`
+ADD `use_smart_payment_buttons` TINYINT(1) NOT NULL,
+ADD `merchant_location` VARCHAR(255) NOT NULL;
+UPDATE `swag_payment_paypal_unified_settings_general`
+SET `use_smart_payment_buttons` = 0, `merchant_location` = :location;
+SQL;
+
+            $this->connection->executeQuery($query, ['location' => GeneralSettingsModel::MERCHANT_LOCATION_GERMANY]);
         }
     }
 

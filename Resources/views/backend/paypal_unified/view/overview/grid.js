@@ -234,6 +234,8 @@ Ext.define('Shopware.apps.PaypalUnified.view.overview.Grid', {
                 return '{s name="type/installments"}Installments{/s}';
             case 'PayPalExpress':
                 return '{s name="type/express"}Express{/s}';
+            case 'PayPalSmartPaymentButtons':
+                return '{s name="type/smart_payment_buttons"}Smart Payment Buttons{/s}';
         }
     }
 });

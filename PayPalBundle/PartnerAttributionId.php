@@ -29,4 +29,9 @@ class PartnerAttributionId
      * Shopware Partner Id for PayPal Express Checkout
      */
     const PAYPAL_EXPRESS_CHECKOUT = 'Shopware_Cart_ECS_5native';
+
+    /**
+     * Shopware Partner Id for PayPal Smart Payment Buttons
+     */
+    const PAYPAL_SMART_PAYMENT_BUTTONS = 'Shopware_Cart_SPB_5native';
 }

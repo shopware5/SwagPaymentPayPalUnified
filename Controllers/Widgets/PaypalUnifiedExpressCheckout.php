@@ -20,7 +20,7 @@ use SwagPaymentPayPalUnified\PayPalBundle\Resources\PaymentResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
 
-class Shopware_Controllers_Widgets_PaypalUnifiedExpressCheckout extends \Shopware_Controllers_Frontend_Checkout
+class Shopware_Controllers_Widgets_PaypalUnifiedExpressCheckout extends Shopware_Controllers_Frontend_Checkout
 {
     /**
      * @var PaymentResource

@@ -132,5 +132,12 @@
             <argument type="service" id="paypal_unified.exception_handler_service"/>
             <tag name="shopware.event_subscriber"/>
         </service>
+
+        <service id="paypal_unified.subscriber.smart_payment_buttons"
+                 class="SwagPaymentPayPalUnified\Subscriber\SmartPaymentButtons">
+            <argument type="service" id="paypal_unified.settings_service"/>
+            <argument type="service" id="dbal_connection"/>
+            <tag name="shopware.event_subscriber"/>
+        </service>
     </services>
 </container>

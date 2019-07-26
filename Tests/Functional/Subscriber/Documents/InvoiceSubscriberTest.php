@@ -44,12 +44,28 @@ class InvoiceSubscriberTest extends TestCase
         static::assertNotNull($subscriber);
     }
 
+    public function test_construct_without_translator()
+    {
+        $translatorConstructor = (new \ReflectionClass('Shopware_Components_Translation'))->getConstructor();
+        if ($translatorConstructor && !empty($translatorConstructor->getParameters())) {
+            static::markTestSkipped('Test makes only sense if the translation component has no constructor parameters');
+        }
+
+        $subscriber = new Invoice(
+            Shopware()->Container()->get('paypal_unified.payment_instruction_service'),
+            Shopware()->Container()->get('dbal_connection'),
+            Shopware()->Container()->get('snippets'),
+            null
+        );
+        static::assertNotNull($subscriber);
+    }
+
     public function test_getSubscribedEvents()
     {
         $events = Invoice::getSubscribedEvents();
 
         static::assertCount(1, $events);
-        static::assertEquals('onBeforeRenderDocument', $events['Shopware_Components_Document::assignValues::after']);
+        static::assertSame('onBeforeRenderDocument', $events['Shopware_Components_Document::assignValues::after']);
     }
 
     public function test_onBeforeRenderDocument_returns_when_no_document_was_given()
