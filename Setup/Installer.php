@@ -172,15 +172,16 @@ class Installer
             return;
         }
 
-        $entity = new Payment();
-        $entity->setActive(false);
-        $entity->setName(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
-        $entity->setDescription('PayPal');
-        $entity->setAdditionalDescription($this->getUnifiedPaymentLogo() . 'Bezahlung per PayPal - einfach, schnell und sicher.');
-        $entity->setAction('PaypalUnified');
+        $payment = new Payment();
+        $payment->setActive(false);
+        $payment->setPosition(-100);
+        $payment->setName(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
+        $payment->setDescription('PayPal');
+        $payment->setAdditionalDescription($this->getUnifiedPaymentLogo() . 'Bezahlung per PayPal - einfach, schnell und sicher.');
+        $payment->setAction('PaypalUnified');
 
-        $this->modelManager->persist($entity);
-        $this->modelManager->flush($entity);
+        $this->modelManager->persist($payment);
+        $this->modelManager->flush($payment);
     }
 
     private function createInstallmentsPaymentMethod()
@@ -194,15 +195,16 @@ class Installer
             return;
         }
 
-        $entity = new Payment();
-        $entity->setActive(false);
-        $entity->setName(PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME);
-        $entity->setDescription('Ratenzahlung Powered by PayPal');
-        $entity->setAdditionalDescription('Wir ermöglichen Ihnen die Finanzierung Ihres Einkaufs mithilfe der Ratenzahlung Powered by PayPal. In Sekundenschnelle, vollständig online, vorbehaltlich Bonitätsprüfung.');
-        $entity->setAction('PaypalUnifiedInstallments');
+        $payment = new Payment();
+        $payment->setActive(false);
+        $payment->setPosition(-99);
+        $payment->setName(PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME);
+        $payment->setDescription('Ratenzahlung Powered by PayPal');
+        $payment->setAdditionalDescription('Wir ermöglichen Ihnen die Finanzierung Ihres Einkaufs mithilfe der Ratenzahlung Powered by PayPal. In Sekundenschnelle, vollständig online, vorbehaltlich Bonitätsprüfung.');
+        $payment->setAction('PaypalUnifiedInstallments');
 
-        $this->modelManager->persist($entity);
-        $this->modelManager->flush($entity);
+        $this->modelManager->persist($payment);
+        $this->modelManager->flush($payment);
     }
 
     private function removeDocumentTemplates()
