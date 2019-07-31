@@ -65,7 +65,7 @@
 
         createButtons: function() {
             var me = this,
-                scriptUrl = me.getScriptUrl(),
+                scriptUrl = 'https://www.paypal.com/sdk/js?client-id=' + me.opts.clientId + '&currency=' + me.opts.currency,
                 $head = $('head');
             if (!$head.hasClass(me.opts.scriptLoadedClass)) {
                 $.ajax({
@@ -82,20 +82,6 @@
                 me.paypal = window.paypal;
                 me.renderButtons();
             }
-        },
-
-        getScriptUrl: function() {
-            var me = this;
-            var url = 'https://www.paypal.com/sdk/js';
-            if (me.opts.sandbox) {
-                url += '?client-id=sb';
-            } else {
-                url += '?client-id=' + me.opts.clientId;
-            }
-
-            url += '&currency=' + me.opts.currency;
-
-            return url;
         },
 
         renderButtons: function() {
