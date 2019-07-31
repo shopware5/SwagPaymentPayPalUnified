@@ -69,7 +69,6 @@ class SmartPaymentButtons implements SubscriberInterface
         $view->assign('paypalUnifiedUseSmartPaymentButtons', true);
         $view->assign('paypalUnifiedSpbClientId', $generalSettings->getClientId());
         $view->assign('paypalUnifiedSpbCurrency', $view->getAssign('sBasket')['sCurrencyName']);
-        $view->assign('paypalUnifiedSpbSandbox', $generalSettings->getSandbox());
         $view->assign('paypalUnifiedPaymentId', $this->paymentMethodProvider->getPaymentId($this->connection));
     }
 }
