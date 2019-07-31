@@ -21,13 +21,6 @@
             scriptLoadedClass: 'paypal-unified--paypal-sdk-loaded',
 
             /**
-             * Value to determine whether to use sandbox or clientId
-             *
-             * @type boolean
-             */
-            sandbox: false,
-
-            /**
              * Holds the client id
              *
              * @type string
