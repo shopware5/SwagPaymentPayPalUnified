@@ -141,10 +141,6 @@ class Plus implements SubscriberInterface
             return;
         }
 
-        if ((string) $this->settingsService->get('merchant_location') !== General::MERCHANT_LOCATION_GERMANY) {
-            return;
-        }
-
         /** @var \Enlight_Controller_Action $controller */
         $controller = $args->getSubject();
 
@@ -174,6 +170,10 @@ class Plus implements SubscriberInterface
 
         $isExpressCheckout = (bool) $request->getParam('expressCheckout', false);
         if ($isExpressCheckout) {
+            return;
+        }
+
+        if ((string) $this->settingsService->get('merchant_location') !== General::MERCHANT_LOCATION_GERMANY) {
             return;
         }
 
