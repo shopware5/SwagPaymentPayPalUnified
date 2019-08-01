@@ -344,7 +344,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
             if (me.generalRecord.get('merchantLocation') === 'other') {
                 plusTab.setDisabled(true);
             } else {
-                generalTab.smartPaymentButtonsCheckbox.setDisabled(true);
+                generalTab.smartPaymentButtonsCheckbox.setVisible(false);
             }
         } else if (settings.installments) {
             me.installmentsRecord = Ext.create('Shopware.apps.PaypalUnifiedSettings.model.Installments', settings.installments);
@@ -386,10 +386,10 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
         if (combobox.value === 'other') {
             plusTab.setDisabled(true);
             me.plusRecord.set('active', false);
-            generalTab.smartPaymentButtonsCheckbox.setDisabled(false);
+            generalTab.smartPaymentButtonsCheckbox.setVisible(true);
         } else {
             plusTab.setDisabled(false);
-            generalTab.smartPaymentButtonsCheckbox.setDisabled(true);
+            generalTab.smartPaymentButtonsCheckbox.setVisible(false);
         }
     },
 
