@@ -89,7 +89,9 @@
             var me = this;
 
             return {
-                onClick: me.onClick,
+                style: {
+                    label: 'checkout'
+                },
 
                 /**
                  * Will be called if on smarty payment button is clicked
@@ -106,17 +108,6 @@
                  */
                 onCancel: me.onCancel
             };
-        },
-
-        onClick: function(data, actions) {
-            var form = $('#confirm--form'),
-                confirmForm = form.get(0);
-
-            if (confirmForm.checkValidity()) {
-                return actions.resolve();
-            }
-
-            return actions.reject();
         },
 
         createOrder: function() {

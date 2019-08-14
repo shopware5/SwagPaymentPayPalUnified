@@ -6,7 +6,7 @@
                  data-clientId="{$paypalUnifiedSpbClientId}"
                  data-currency="{$paypalUnifiedSpbCurrency}"
                  data-createPaymentUrl="{url module=widgets controller=PaypalUnifiedSmartPaymentButtons action=createPayment forceSecure}"
-                 data-approvePaymentUrl="{url module=frontend controller=PaypalUnified action=return forceSecure}">
+                 data-approvePaymentUrl="{url module=widgets controller=PaypalUnifiedSmartPaymentButtons action=approve forceSecure}">
             </div>
         {/block}
     </div>

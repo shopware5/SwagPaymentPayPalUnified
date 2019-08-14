@@ -1,5 +1,13 @@
 {extends file='parent:frontend/checkout/confirm.tpl'}
 
+{block name='frontend_checkout_confirm_error_messages'}
+    {if $paypalUnifiedSpbCheckout}
+        {include file='frontend/_includes/messages.tpl' type='success' content="{s namespace='frontend/paypal_unified/checkout/messages' name="success/spbPaymentCreated"}Your payment has been accepted. You can now confirm your order.{/s}"}
+    {/if}
+
+    {$smarty.block.parent}
+{/block}
+
 {* PayPal Plus integration *}
 {block name='frontend_index_header_javascript_jquery_lib'}
     {block name='frontend_index_header_javascript_jquery_lib_paypal_unified_plus'}
@@ -67,6 +75,8 @@
     {block name='frontend_checkout_confirm_tos_panel_paypal_unified_express_checkout'}
         {if $paypalUnifiedExpressCheckout}
             {include file='frontend/paypal_unified/express_checkout/confirm_inputs.tpl'}
+        {elseif $paypalUnifiedSpbCheckout}
+            {include file='frontend/paypal_unified/spb/confirm_inputs.tpl'}
         {/if}
     {/block}
 
@@ -76,7 +86,7 @@
 {*No premium items should be available*}
 {block name='frontend_checkout_confirm_premiums'}
     {block name='frontend_checkout_confirm_premiums_paypal_unified_express_checkout'}
-        {if $paypalUnifiedExpressCheckout}
+        {if $paypalUnifiedExpressCheckout || $paypalUnifiedSpbCheckout}
         {else}
             {$smarty.block.parent}
         {/if}
@@ -86,7 +96,8 @@
 {*Do not allow deletion of items*}
 {block name='frontend_checkout_cart_item_delete_article'}
     {block name='frontend_checkout_cart_item_delete_article_paypal_unified_express_checkout'}
-        {if !$paypalUnifiedExpressCheckout}
+        {if $paypalUnifiedExpressCheckout || $paypalUnifiedSpbCheckout}
+        {else}
             {$smarty.block.parent}
         {/if}
     {/block}
@@ -95,7 +106,7 @@
 {* Disable item quantity selection *}
 {block name='frontend_checkout_cart_item_quantity_selection'}
     {block name='frontend_checkout_cart_item_quantity_selection_paypal_unified_express_checkout'}
-        {if $paypalUnifiedExpressCheckout}
+        {if $paypalUnifiedExpressCheckout || $paypalUnifiedSpbCheckout}
             {include file='frontend/paypal_unified/express_checkout/confirm/quantity_selection.tpl'}
         {else}
             {$smarty.block.parent}
