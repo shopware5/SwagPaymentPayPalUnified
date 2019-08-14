@@ -354,7 +354,7 @@ class PaymentBuilderService implements PaymentBuilderInterface
         $applicationContext->setLocale($this->dependencyProvider->getShop()->getLocale()->getLocale());
         $applicationContext->setLandingPage($this->getLandingPage());
 
-        if ($paymentType === PaymentType::PAYPAL_EXPRESS) {
+        if ($paymentType === PaymentType::PAYPAL_EXPRESS || $paymentType === PaymentType::PAYPAL_SMART_PAYMENT_BUTTONS) {
             $applicationContext->setUserAction('continue');
         }
 

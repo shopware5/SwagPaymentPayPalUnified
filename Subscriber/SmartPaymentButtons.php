@@ -43,7 +43,11 @@ class SmartPaymentButtons implements SubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            'Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout' => 'addSmartPaymentButtons',
+            'Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout' => [
+                ['addSpbInfoOnConfirm'],
+                ['addInfoToPaymentRequest'],
+                ['addSmartPaymentButtons', 101],
+            ],
         ];
     }
 
@@ -62,6 +66,7 @@ class SmartPaymentButtons implements SubscriberInterface
         if ($generalSettings === null
             || !$generalSettings->getUseSmartPaymentButtons()
             || $generalSettings->getMerchantLocation() === GeneralSettingsModel::MERCHANT_LOCATION_GERMANY
+            || $request->getParam('spbCheckout', false)
         ) {
             return;
         }
@@ -70,5 +75,41 @@ class SmartPaymentButtons implements SubscriberInterface
         $view->assign('paypalUnifiedSpbClientId', $generalSettings->getClientId());
         $view->assign('paypalUnifiedSpbCurrency', $view->getAssign('sBasket')['sCurrencyName']);
         $view->assign('paypalUnifiedPaymentId', $this->paymentMethodProvider->getPaymentId($this->connection));
+    }
+
+    public function addSpbInfoOnConfirm(ActionEventArgs $args)
+    {
+        $request = $args->getRequest();
+        $view = $args->getSubject()->View();
+
+        if (strtolower($request->getActionName()) !== 'confirm' || !$request->getParam('spbCheckout', false)) {
+            return;
+        }
+
+        $view->assign('paypalUnifiedSpbCheckout', true);
+        $view->assign('paypalUnifiedSpbPaymentId', $request->getParam('paymentId'));
+        $view->assign('paypalUnifiedSpbPayerId', $request->getParam('payerId'));
+        $view->assign('paypalUnifiedSpbBasketId', $request->getParam('basketId'));
+    }
+
+    public function addInfoToPaymentRequest(ActionEventArgs $args)
+    {
+        $request = $args->getRequest();
+
+        if (strtolower($request->getActionName()) !== 'payment'
+            || !$request->getParam('spbCheckout', false)
+            || !$args->getResponse()->isRedirect()
+        ) {
+            return;
+        }
+
+        $args->getSubject()->redirect([
+            'controller' => 'PaypalUnified',
+            'action' => 'return',
+            'spbCheckout' => true,
+            'paymentId' => $request->getParam('paymentId'),
+            'PayerID' => $request->getParam('payerId'),
+            'basketId' => $request->getParam('basketId'),
+        ]);
     }
 }

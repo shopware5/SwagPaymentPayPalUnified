@@ -12,9 +12,14 @@ use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
 use SwagPaymentPayPalUnified\Components\ExceptionHandlerServiceInterface;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
+use SwagPaymentPayPalUnified\Components\Services\PaymentAddressService;
 use SwagPaymentPayPalUnified\Components\Services\PaymentTokenExtractor;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PayerInfoPatch;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PaymentAddressPatch;
 use SwagPaymentPayPalUnified\PayPalBundle\PartnerAttributionId;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
+use SwagPaymentPayPalUnified\PayPalBundle\Resources\PaymentResource;
+use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
 
 class Shopware_Controllers_Widgets_PaypalUnifiedSmartPaymentButtons extends Shopware_Controllers_Frontend_Payment
@@ -29,8 +34,20 @@ class Shopware_Controllers_Widgets_PaypalUnifiedSmartPaymentButtons extends Shop
      */
     private $shopwareConfig;
 
+    /**
+     * @var PaymentResource
+     */
+    private $paymentResource;
+
+    /**
+     * @var ClientService
+     */
+    private $client;
+
     public function preDispatch()
     {
+        $this->paymentResource = $this->get('paypal_unified.payment_resource');
+        $this->client = $this->get('paypal_unified.client_service');
         $this->dependencyProvider = $this->get('paypal_unified.dependency_provider');
         $this->shopwareConfig = $this->get('config');
     }
@@ -77,8 +94,25 @@ class Shopware_Controllers_Widgets_PaypalUnifiedSmartPaymentButtons extends Shop
         $params = $this->get('paypal_unified.payment_builder_service')->getPayment($requestParams);
 
         try {
-            $response = $this->get('paypal_unified.payment_resource')->create($params);
+            $response = $this->paymentResource->create($params);
             $responseStruct = Payment::fromArray($response);
+        } catch (RequestException $requestEx) {
+            $this->handleError(ErrorCodes::COMMUNICATION_FAILURE, $requestEx);
+
+            return;
+        } catch (Exception $exception) {
+            $this->handleError(ErrorCodes::UNKNOWN, $exception);
+
+            return;
+        }
+
+        /** @var PaymentAddressService $addressService */
+        $addressService = $this->get('paypal_unified.payment_address_service');
+        $addressPatch = new PaymentAddressPatch($addressService->getShippingAddress($userData));
+        $payerInfoPatch = new PayerInfoPatch($addressService->getPayerInfo($userData));
+
+        try {
+            $this->paymentResource->patch($responseStruct->getId(), [$addressPatch, $payerInfoPatch]);
         } catch (RequestException $requestEx) {
             $this->handleError(ErrorCodes::COMMUNICATION_FAILURE, $requestEx);
 
@@ -91,6 +125,38 @@ class Shopware_Controllers_Widgets_PaypalUnifiedSmartPaymentButtons extends Shop
 
         $this->view->assign('token', PaymentTokenExtractor::extract($responseStruct));
         $this->view->assign('basketId', $basketUniqueId);
+    }
+
+    public function approveAction()
+    {
+        $request = $this->Request();
+        $paymentId = $request->getParam('paymentId');
+        $payerId = $request->getParam('PayerID');
+        $basketId = $request->getParam('basketId');
+
+        try {
+            $this->client->setPartnerAttributionId(PartnerAttributionId::PAYPAL_SMART_PAYMENT_BUTTONS);
+            $payment = $this->paymentResource->get($paymentId);
+
+            $paymentStruct = Payment::fromArray($payment);
+        } catch (RequestException $requestEx) {
+            $this->handleError(ErrorCodes::COMMUNICATION_FAILURE, $requestEx);
+
+            return;
+        } catch (Exception $exception) {
+            $this->handleError(ErrorCodes::UNKNOWN, $exception);
+
+            return;
+        }
+
+        $this->redirect([
+            'controller' => 'checkout',
+            'action' => 'confirm',
+            'spbCheckout' => true,
+            'paymentId' => $paymentId,
+            'payerId' => $payerId,
+            'basketId' => $basketId,
+        ]);
     }
 
     /**

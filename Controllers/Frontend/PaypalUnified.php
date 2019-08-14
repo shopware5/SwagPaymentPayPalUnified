@@ -233,7 +233,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_F
         $isPlus = (bool) $request->getParam('plus', false);
         $isExpressCheckout = (bool) $request->getParam('expressCheckout', false);
         $isInstallments = (bool) $request->getParam('installments', false);
-        $isSpbCheckout = (bool) $request->getParam('smartPaymentButtons', false);
+        $isSpbCheckout = (bool) $request->getParam('spbCheckout', false);
 
         if ($isPlus) {
             $this->client->setPartnerAttributionId(PartnerAttributionId::PAYPAL_PLUS);
