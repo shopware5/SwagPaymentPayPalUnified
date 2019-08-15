@@ -6,6 +6,15 @@
         {if $paypalUnifiedUsePlus && $paypalUnifiedApprovalUrl && $payment_mean.id == $paypalUnifiedPaymentId}
             <div id="ppplus" class="method--description">
             </div>
+        {elseif $payment_mean.name === "SwagPaymentPayPalUnified" && $paypalUnifiedUseSmartPaymentButtons}
+            {$smarty.block.parent}
+
+            {block name='frontend_paypal_unified_confirm_smart_payment_buttons_marks'}
+                <div id="spbMarksContainer" class="method--description is--last">
+                </div>
+
+                {include file="frontend/paypal_unified/spb/smart_payment_buttons.tpl" marksOnly=true}
+            {/block}
         {else}
             {$smarty.block.parent}
         {/if}

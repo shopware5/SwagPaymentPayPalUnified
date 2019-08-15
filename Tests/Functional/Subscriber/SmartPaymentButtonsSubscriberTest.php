@@ -35,13 +35,18 @@ class SmartPaymentButtonsSubscriberTest extends TestCase
     {
         $actualEvents = SmartPaymentButtons::getSubscribedEvents();
         $expectedEvents = [
-            ['addSpbInfoOnConfirm'],
-            ['addInfoToPaymentRequest'],
-            ['addSmartPaymentButtons', 101],
+            'Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout' => [
+                ['addSpbInfoOnConfirm'],
+                ['addInfoToPaymentRequest'],
+                ['addSmartPaymentButtons', 101],
+            ],
+            'Enlight_Controller_Action_PostDispatchSecure_Frontend_Account' => [
+                'addSmartPaymentButtonMarks',
+            ],
         ];
 
-        static::assertCount(1, $actualEvents);
-        static::assertSame($expectedEvents, $actualEvents['Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout']);
+        static::assertCount(2, $actualEvents);
+        static::assertSame($expectedEvents, $actualEvents);
     }
 
     public function testAddSmartPaymentButtonsWrongAction()
@@ -221,6 +226,92 @@ class SmartPaymentButtonsSubscriberTest extends TestCase
 
         static::assertContains('/PaypalUnified/return/spbCheckout/1/paymentId//PayerID//basketId/', $response->getHeader('Location'));
         static::assertSame(302, $response->getHttpResponseCode());
+    }
+
+    public function testaddSmartPaymentButtonMarks()
+    {
+        $this->insertGeneralSettingsFromArray([
+            'shopId' => 1,
+            'useSmartPaymentButtons' => true,
+            'merchantLocation' => 'other',
+        ]);
+        $view = new ViewMock(new Enlight_Template_Manager());
+        $request = new Enlight_Controller_Request_RequestTestCase();
+
+        $validActions = ['index', 'payment'];
+        $request->setActionName($validActions[\random_int(0, 1)]);
+
+        $enlightEventArgs = new Enlight_Controller_ActionEventArgs([
+            'subject' => new DummyController($request, $view),
+            'request' => $request,
+        ]);
+
+        $this->getSubscriber()->addSmartPaymentButtonMarks($enlightEventArgs);
+        static::assertTrue($view->getAssign('paypalUnifiedUseSmartPaymentButtonMarks'));
+    }
+
+    public function testaddSmartPaymentButtonMarksWrongAction()
+    {
+        $this->insertGeneralSettingsFromArray([
+            'shopId' => 1,
+            'useSmartPaymentButtons' => true,
+            'merchantLocation' => 'other',
+        ]);
+        $view = new ViewMock(new Enlight_Template_Manager());
+        $request = new Enlight_Controller_Request_RequestTestCase();
+        $request->setActionName('confirm');
+
+        $enlightEventArgs = new Enlight_Controller_ActionEventArgs([
+            'subject' => new DummyController($request, $view),
+            'request' => $request,
+        ]);
+
+        $this->getSubscriber()->addSmartPaymentButtonMarks($enlightEventArgs);
+        static::assertNull($view->getAssign('paypalUnifiedUseSmartPaymentButtonMarks'));
+    }
+
+    public function testaddSmartPaymentButtonMarksSpbDisabled()
+    {
+        $this->insertGeneralSettingsFromArray([
+            'shopId' => 1,
+            'useSmartPaymentButtons' => false,
+            'merchantLocation' => 'other',
+        ]);
+        $view = new ViewMock(new Enlight_Template_Manager());
+        $request = new Enlight_Controller_Request_RequestTestCase();
+
+        $validActions = ['index', 'payment'];
+        $request->setActionName($validActions[\random_int(0, 1)]);
+
+        $enlightEventArgs = new Enlight_Controller_ActionEventArgs([
+            'subject' => new DummyController($request, $view),
+            'request' => $request,
+        ]);
+
+        $this->getSubscriber()->addSmartPaymentButtonMarks($enlightEventArgs);
+        static::assertNull($view->getAssign('paypalUnifiedUseSmartPaymentButtonMarks'));
+    }
+
+    public function testaddSmartPaymentButtonMarksGermanMerchantLocation()
+    {
+        $this->insertGeneralSettingsFromArray([
+            'shopId' => 1,
+            'useSmartPaymentButtons' => true,
+            'merchantLocation' => 'germany',
+        ]);
+        $view = new ViewMock(new Enlight_Template_Manager());
+        $request = new Enlight_Controller_Request_RequestTestCase();
+
+        $validActions = ['index', 'payment'];
+        $request->setActionName($validActions[\random_int(0, 1)]);
+
+        $enlightEventArgs = new Enlight_Controller_ActionEventArgs([
+            'subject' => new DummyController($request, $view),
+            'request' => $request,
+        ]);
+
+        $this->getSubscriber()->addSmartPaymentButtonMarks($enlightEventArgs);
+        static::assertNull($view->getAssign('paypalUnifiedUseSmartPaymentButtonMarks'));
     }
 
     /**
