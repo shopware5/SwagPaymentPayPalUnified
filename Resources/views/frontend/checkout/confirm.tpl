@@ -19,6 +19,16 @@
     {$smarty.block.parent}
 {/block}
 
+{* SPB marks integration *}
+{block name='frontend_checkout_confirm_left_payment_method'}
+    {$smarty.block.parent}
+
+    {if $paypalUnifiedSpbCheckout || $paypalUnifiedUseSmartPaymentButtons}
+        <div id="spbMarksContainer" class="payment--method-info">
+        </div>
+    {/if}
+{/block}
+
 {* PayPal Plus integration *}
 {block name='frontend_checkout_confirm_premiums'}
     {block name='frontend_checkout_confirm_premiums_paypal_unified_plus'}

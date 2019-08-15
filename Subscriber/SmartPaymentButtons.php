@@ -48,6 +48,9 @@ class SmartPaymentButtons implements SubscriberInterface
                 ['addInfoToPaymentRequest'],
                 ['addSmartPaymentButtons', 101],
             ],
+            'Enlight_Controller_Action_PostDispatchSecure_Frontend_Account' => [
+                'addSmartPaymentButtonMarks',
+            ],
         ];
     }
 
@@ -55,8 +58,9 @@ class SmartPaymentButtons implements SubscriberInterface
     {
         $request = $args->getRequest();
         $view = $args->getSubject()->View();
+        $availableActions = ['confirm', 'shippingpayment'];
 
-        if (strtolower($request->getActionName()) !== 'confirm') {
+        if (!in_array(strtolower($request->getActionName()), $availableActions, true)) {
             return;
         }
 
@@ -75,6 +79,30 @@ class SmartPaymentButtons implements SubscriberInterface
         $view->assign('paypalUnifiedSpbClientId', $generalSettings->getClientId());
         $view->assign('paypalUnifiedSpbCurrency', $view->getAssign('sBasket')['sCurrencyName']);
         $view->assign('paypalUnifiedPaymentId', $this->paymentMethodProvider->getPaymentId($this->connection));
+    }
+
+    public function addSmartPaymentButtonMarks(ActionEventArgs $args)
+    {
+        $request = $args->getRequest();
+        $view = $args->getSubject()->View();
+        $availableActions = ['index', 'payment'];
+
+        if (!in_array(strtolower($request->getActionName()), $availableActions, true)) {
+            return;
+        }
+
+        /** @var GeneralSettingsModel|null $generalSettings */
+        $generalSettings = $this->settingsService->getSettings();
+
+        if ($generalSettings === null
+            || !$generalSettings->getUseSmartPaymentButtons()
+            || $generalSettings->getMerchantLocation() === GeneralSettingsModel::MERCHANT_LOCATION_GERMANY
+        ) {
+            return;
+        }
+
+        $view->assign('paypalUnifiedUseSmartPaymentButtonMarks', true);
+        $view->assign('paypalUnifiedSpbClientId', $generalSettings->getClientId());
     }
 
     public function addSpbInfoOnConfirm(ActionEventArgs $args)

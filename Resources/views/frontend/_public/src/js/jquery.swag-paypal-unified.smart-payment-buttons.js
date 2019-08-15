@@ -4,6 +4,11 @@
     $.plugin('swagPayPalUnifiedSmartPaymentButtons', {
         defaults: {
             /**
+             * Determines whether or not only the marks are needed on the current page
+             */
+            marksOnly: false,
+
+            /**
              * The url used to create the payment
              */
             createPaymentUrl: '',
@@ -48,7 +53,7 @@
             var me = this;
 
             me.applyDataAttributes();
-
+            me.subscribeEvents();
             $.publish('plugin/swagPayPalUnifiedSmartPaymentButtons/init', me);
 
             me.createButtons();
@@ -56,10 +61,34 @@
             $.publish('plugin/swagPayPalUnifiedSmartPaymentButtons/buttonsCreated', me);
         },
 
+        /**
+         * Subscribes the events that are required to run this instance.
+         *
+         * @private
+         * @method subscribeEvents
+         */
+        subscribeEvents: function() {
+            var me = this;
+
+            $.subscribe(me.getEventName('plugin/swShippingPayment/onInputChanged'), $.proxy(me.createButtons, me));
+        },
+
+
         createButtons: function() {
             var me = this,
-                scriptUrl = 'https://www.paypal.com/sdk/js?client-id=' + me.opts.clientId + '&currency=' + me.opts.currency,
+                baseUrl = 'https://www.paypal.com/sdk/js?client-id=',
+                scriptUrl = baseUrl + me.opts.clientId + '&currency=' +
+                    me.opts.currency + '&components=buttons,marks',
                 $head = $('head');
+
+            /**
+             * If marks only are displayed, remove unnecessary parameters
+             * But still load buttons and marks so the buttons are present on the window paypal object
+             */
+            if (me.opts.marksOnly) {
+                scriptUrl = baseUrl + me.opts.clientId + '&components=buttons,marks';
+            }
+
             if (!$head.hasClass(me.opts.scriptLoadedClass)) {
                 $.ajax({
                     url: scriptUrl,
@@ -81,6 +110,15 @@
             var me = this,
                 buttonConfig = me.getButtonConfig(),
                 el = me.$el.get(0);
+
+            // Render the marks for each element visible with the id spbMarksContainer
+            $('[id=spbMarksContainer]:visible').each(function() {
+                me.paypal.Marks().render(this);
+            });
+
+            if (me.opts.marksOnly) {
+                return;
+            }
 
             me.paypal.Buttons(buttonConfig).render(el);
         },
