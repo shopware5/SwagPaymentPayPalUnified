@@ -7,7 +7,6 @@
  */
 
 use Shopware\Components\HttpClient\RequestException;
-use Shopware\Models\Shop\DetachedShop;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
 use SwagPaymentPayPalUnified\Components\ExceptionHandlerServiceInterface;
@@ -75,10 +74,6 @@ class Shopware_Controllers_Widgets_PaypalUnifiedSmartPaymentButtons extends Shop
         $basketData = $orderData['sBasket'];
         $userData = $orderData['sUserData'];
 
-        /** @var DetachedShop $shop */
-        $shop = $this->dependencyProvider->getShop();
-        $currency = $shop->getCurrency()->getCurrency();
-
         $requestParams = new PaymentBuilderParameters();
         $requestParams->setBasketData($basketData);
         $requestParams->setUserData($userData);
@@ -125,38 +120,6 @@ class Shopware_Controllers_Widgets_PaypalUnifiedSmartPaymentButtons extends Shop
 
         $this->view->assign('token', PaymentTokenExtractor::extract($responseStruct));
         $this->view->assign('basketId', $basketUniqueId);
-    }
-
-    public function approveAction()
-    {
-        $request = $this->Request();
-        $paymentId = $request->getParam('paymentId');
-        $payerId = $request->getParam('PayerID');
-        $basketId = $request->getParam('basketId');
-
-        try {
-            $this->client->setPartnerAttributionId(PartnerAttributionId::PAYPAL_SMART_PAYMENT_BUTTONS);
-            $payment = $this->paymentResource->get($paymentId);
-
-            $paymentStruct = Payment::fromArray($payment);
-        } catch (RequestException $requestEx) {
-            $this->handleError(ErrorCodes::COMMUNICATION_FAILURE, $requestEx);
-
-            return;
-        } catch (Exception $exception) {
-            $this->handleError(ErrorCodes::UNKNOWN, $exception);
-
-            return;
-        }
-
-        $this->redirect([
-            'controller' => 'checkout',
-            'action' => 'confirm',
-            'spbCheckout' => true,
-            'paymentId' => $paymentId,
-            'payerId' => $payerId,
-            'basketId' => $basketId,
-        ]);
     }
 
     /**

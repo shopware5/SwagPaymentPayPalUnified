@@ -2,7 +2,7 @@
 
 {block name='frontend_checkout_confirm_error_messages'}
     {if $paypalUnifiedSpbCheckout}
-        {include file='frontend/_includes/messages.tpl' type='success' content="{s namespace='frontend/paypal_unified/checkout/messages' name="success/spbPaymentCreated"}Your payment has been accepted. You can now confirm your order.{/s}"}
+        {include file='frontend/_includes/messages.tpl' type='success' content="{s namespace='frontend/paypal_unified/checkout/messages' name="success/spbPaymentCreated"}Your payment has been created. Please complete it, by confirming your order.{/s}"}
     {/if}
 
     {$smarty.block.parent}
