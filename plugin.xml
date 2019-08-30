@@ -13,8 +13,8 @@
     <compatibility minVersion="5.2.0" maxVersion="5.99.99"/>
 
     <changelog version="2.4.0">
-        <changes lang="de">PT-10573 - Smart Payment Buttons integriert</changes>
-        <changes lang="en">PT-10573 - Introduced Smart Payment Buttons</changes>
+        <changes lang="de">PT-10573, PT-10724, PT-10732, PT-10765 - Smart Payment Buttons integriert</changes>
+        <changes lang="en">PT-10573, PT-10724, PT-10732, PT-10765 - Introduced Smart Payment Buttons</changes>
     </changelog>
 
     <changelog version="2.3.0">

@@ -1,18 +1,23 @@
 {extends file='parent:frontend/checkout/change_payment.tpl'}
 
-{* PayPal Plus integration *}
+{* Smart Payment Buttons integration *}
+{block name='frontend_checkout_payment_fieldset_input_label'}
+    {if $paypalUnifiedUseSmartPaymentButtons && $payment_mean.id == $paypalUnifiedPaymentId}
+    {else}
+        {$smarty.block.parent}
+    {/if}
+{/block}
+
+{* PayPal Plus and Smart Payment Buttons integration *}
 {block name='frontend_checkout_payment_fieldset_description'}
     {block name='frontend_checkout_payment_fieldset_description_paypal_unified_plus'}
         {if $paypalUnifiedUsePlus && $paypalUnifiedApprovalUrl && $payment_mean.id == $paypalUnifiedPaymentId}
             <div id="ppplus" class="method--description">
             </div>
-        {elseif $payment_mean.name === "SwagPaymentPayPalUnified" && $paypalUnifiedUseSmartPaymentButtons}
+        {elseif $paypalUnifiedUseSmartPaymentButtons && $payment_mean.id == $paypalUnifiedPaymentId}
             {$smarty.block.parent}
 
             {block name='frontend_paypal_unified_confirm_smart_payment_buttons_marks'}
-                <div id="spbMarksContainer" class="method--description is--last">
-                </div>
-
                 {include file="frontend/paypal_unified/spb/smart_payment_buttons.tpl" marksOnly=true}
             {/block}
         {else}

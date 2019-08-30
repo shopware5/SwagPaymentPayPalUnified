@@ -40,9 +40,7 @@ class SmartPaymentButtonsSubscriberTest extends TestCase
                 ['addInfoToPaymentRequest'],
                 ['addSmartPaymentButtons', 101],
             ],
-            'Enlight_Controller_Action_PostDispatchSecure_Frontend_Account' => [
-                'addSmartPaymentButtonMarks',
-            ],
+            'Enlight_Controller_Action_PostDispatchSecure_Frontend_Account' => 'addSmartPaymentButtonMarks',
         ];
 
         static::assertCount(2, $actualEvents);
@@ -337,7 +335,8 @@ class SmartPaymentButtonsSubscriberTest extends TestCase
     {
         return new SmartPaymentButtons(
             Shopware()->Container()->get('paypal_unified.settings_service'),
-            Shopware()->Container()->get('dbal_connection')
+            Shopware()->Container()->get('dbal_connection'),
+            Shopware()->Container()->get('snippets')
         );
     }
 }

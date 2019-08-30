@@ -180,6 +180,7 @@
                     return;
                 }
                 me.opts.basketId = response.basketId;
+
                 return response.token;
             }).promise();
         },

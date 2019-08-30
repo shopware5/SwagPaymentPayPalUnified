@@ -2,7 +2,7 @@
     <div class="paypal-unified-in-context--outer-button-container">
         {block name='paypal_unified_spb_checkout_container_inner'}
             {if $marksOnly}
-                <div class="paypal-unified--smart-payment-buttons"
+                <div class="is--hidden"
                      data-paypalUnifiedSmartPaymentButtons="true"
                      data-clientId="{$paypalUnifiedSpbClientId}"
                      data-marksOnly="true">

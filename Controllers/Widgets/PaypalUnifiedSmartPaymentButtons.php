@@ -18,7 +18,6 @@ use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PaymentAddressPatch
 use SwagPaymentPayPalUnified\PayPalBundle\PartnerAttributionId;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\PaymentResource;
-use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
 
 class Shopware_Controllers_Widgets_PaypalUnifiedSmartPaymentButtons extends Shopware_Controllers_Frontend_Payment
@@ -38,15 +37,9 @@ class Shopware_Controllers_Widgets_PaypalUnifiedSmartPaymentButtons extends Shop
      */
     private $paymentResource;
 
-    /**
-     * @var ClientService
-     */
-    private $client;
-
     public function preDispatch()
     {
         $this->paymentResource = $this->get('paypal_unified.payment_resource');
-        $this->client = $this->get('paypal_unified.client_service');
         $this->dependencyProvider = $this->get('paypal_unified.dependency_provider');
         $this->shopwareConfig = $this->get('config');
     }
@@ -78,6 +71,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedSmartPaymentButtons extends Shop
         $requestParams->setBasketData($basketData);
         $requestParams->setUserData($userData);
 
+        $basketUniqueId = null;
         // Prepare the new basket signature feature, announced in SW 5.3.0
         if (version_compare($this->shopwareConfig->offsetGet('version'), '5.3.0', '>=')) {
             $basketUniqueId = $this->persistBasket();

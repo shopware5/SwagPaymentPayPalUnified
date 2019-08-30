@@ -137,6 +137,7 @@
                  class="SwagPaymentPayPalUnified\Subscriber\SmartPaymentButtons">
             <argument type="service" id="paypal_unified.settings_service"/>
             <argument type="service" id="dbal_connection"/>
+            <argument type="service" id="snippets"/>
             <tag name="shopware.event_subscriber"/>
         </service>
     </services>
