@@ -7,7 +7,6 @@
  */
 
 use Shopware\Components\HttpClient\RequestException;
-use Shopware\Models\Shop\DetachedShop;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
 use SwagPaymentPayPalUnified\Components\ExceptionHandlerServiceInterface;
@@ -19,7 +18,6 @@ use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PaymentAddressPatch
 use SwagPaymentPayPalUnified\PayPalBundle\PartnerAttributionId;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\PaymentResource;
-use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
 
 class Shopware_Controllers_Widgets_PaypalUnifiedSmartPaymentButtons extends Shopware_Controllers_Frontend_Payment
@@ -39,15 +37,9 @@ class Shopware_Controllers_Widgets_PaypalUnifiedSmartPaymentButtons extends Shop
      */
     private $paymentResource;
 
-    /**
-     * @var ClientService
-     */
-    private $client;
-
     public function preDispatch()
     {
         $this->paymentResource = $this->get('paypal_unified.payment_resource');
-        $this->client = $this->get('paypal_unified.client_service');
         $this->dependencyProvider = $this->get('paypal_unified.dependency_provider');
         $this->shopwareConfig = $this->get('config');
     }
@@ -75,14 +67,11 @@ class Shopware_Controllers_Widgets_PaypalUnifiedSmartPaymentButtons extends Shop
         $basketData = $orderData['sBasket'];
         $userData = $orderData['sUserData'];
 
-        /** @var DetachedShop $shop */
-        $shop = $this->dependencyProvider->getShop();
-        $currency = $shop->getCurrency()->getCurrency();
-
         $requestParams = new PaymentBuilderParameters();
         $requestParams->setBasketData($basketData);
         $requestParams->setUserData($userData);
 
+        $basketUniqueId = null;
         // Prepare the new basket signature feature, announced in SW 5.3.0
         if (version_compare($this->shopwareConfig->offsetGet('version'), '5.3.0', '>=')) {
             $basketUniqueId = $this->persistBasket();
@@ -125,38 +114,6 @@ class Shopware_Controllers_Widgets_PaypalUnifiedSmartPaymentButtons extends Shop
 
         $this->view->assign('token', PaymentTokenExtractor::extract($responseStruct));
         $this->view->assign('basketId', $basketUniqueId);
-    }
-
-    public function approveAction()
-    {
-        $request = $this->Request();
-        $paymentId = $request->getParam('paymentId');
-        $payerId = $request->getParam('PayerID');
-        $basketId = $request->getParam('basketId');
-
-        try {
-            $this->client->setPartnerAttributionId(PartnerAttributionId::PAYPAL_SMART_PAYMENT_BUTTONS);
-            $payment = $this->paymentResource->get($paymentId);
-
-            $paymentStruct = Payment::fromArray($payment);
-        } catch (RequestException $requestEx) {
-            $this->handleError(ErrorCodes::COMMUNICATION_FAILURE, $requestEx);
-
-            return;
-        } catch (Exception $exception) {
-            $this->handleError(ErrorCodes::UNKNOWN, $exception);
-
-            return;
-        }
-
-        $this->redirect([
-            'controller' => 'checkout',
-            'action' => 'confirm',
-            'spbCheckout' => true,
-            'paymentId' => $paymentId,
-            'payerId' => $payerId,
-            'basketId' => $basketId,
-        ]);
     }
 
     /**

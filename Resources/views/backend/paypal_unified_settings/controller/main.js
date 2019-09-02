@@ -343,6 +343,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
             me.applyActivationState(me.generalRecord.get('active'));
             if (me.generalRecord.get('merchantLocation') === 'other') {
                 plusTab.setDisabled(true);
+                installmentsTab.setDisabled(true);
             } else {
                 generalTab.smartPaymentButtonsCheckbox.setVisible(false);
             }
@@ -381,14 +382,18 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
     applyMerchantLocationState: function(combobox) {
         var me = this,
             generalTab = me.getGeneralTab(),
-            plusTab = me.getPlusTab();
+            plusTab = me.getPlusTab(),
+            installmentsTab = me.getInstallmentsTab();
 
         if (combobox.value === 'other') {
             plusTab.setDisabled(true);
+            installmentsTab.setDisabled(true);
             me.plusRecord.set('active', false);
+            me.installmentsRecord.set('active', false);
             generalTab.smartPaymentButtonsCheckbox.setVisible(true);
         } else {
             plusTab.setDisabled(false);
+            installmentsTab.setDisabled(false);
             generalTab.smartPaymentButtonsCheckbox.setVisible(false);
         }
     },

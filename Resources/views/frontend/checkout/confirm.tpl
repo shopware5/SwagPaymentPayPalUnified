@@ -2,7 +2,7 @@
 
 {block name='frontend_checkout_confirm_error_messages'}
     {if $paypalUnifiedSpbCheckout}
-        {include file='frontend/_includes/messages.tpl' type='success' content="{s namespace='frontend/paypal_unified/checkout/messages' name="success/spbPaymentCreated"}Your payment has been accepted. You can now confirm your order.{/s}"}
+        {include file='frontend/_includes/messages.tpl' type='success' content="{s namespace='frontend/paypal_unified/checkout/messages' name="success/spbPaymentCreated"}Your payment has been created. Please complete it, by confirming your order.{/s}"}
     {/if}
 
     {$smarty.block.parent}
@@ -21,11 +21,17 @@
 
 {* SPB marks integration *}
 {block name='frontend_checkout_confirm_left_payment_method'}
-    {$smarty.block.parent}
-
     {if $paypalUnifiedSpbCheckout || $paypalUnifiedUseSmartPaymentButtons}
-        <div id="spbMarksContainer" class="payment--method-info">
-        </div>
+        <p class="payment--method-info">
+            <strong class="payment--title">{s name="ConfirmInfoPaymentMethod" namespace="frontend/checkout/confirm"}{/s}</strong>
+            <span id="spbMarksContainer" class="payment--method-info"></span>
+        </p>
+
+        {if !$sUserData.additional.payment.esdactive && {config name="showEsd"}}
+            <p class="payment--confirm-esd">{s name="ConfirmInfoInstantDownload" namespace="frontend/checkout/confirm"}{/s}</p>
+        {/if}
+    {else}
+        {$smarty.block.parent}
     {/if}
 {/block}
 

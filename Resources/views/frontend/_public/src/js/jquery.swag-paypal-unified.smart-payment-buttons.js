@@ -5,18 +5,24 @@
         defaults: {
             /**
              * Determines whether or not only the marks are needed on the current page
+             *
+             * @type boolean
              */
             marksOnly: false,
 
             /**
-             * The url used to create the payment
+             * The URL used to create the payment
+             *
+             * @type string
              */
             createPaymentUrl: '',
 
             /**
-             * The url used to approve the payment
+             * After approval, redirect to this URL
+             *
+             * @type string
              */
-            approvePaymentUrl: '',
+            checkoutConfirmUrl: '',
 
             /**
              * The class name to identify whether or not the paypal sdk has been loaded
@@ -39,8 +45,18 @@
              */
             languageIso: 'en_GB',
 
+            /**
+             * Currency which should be used for the Smart Payment Buttons
+             *
+             * @type string
+             */
             currency: 'EUR',
 
+            /**
+             * The unique ID of the basket. Will be generated on creating the payment
+             *
+             * @type string
+             */
             basketId: ''
         },
 
@@ -73,12 +89,10 @@
             $.subscribe(me.getEventName('plugin/swShippingPayment/onInputChanged'), $.proxy(me.createButtons, me));
         },
 
-
         createButtons: function() {
             var me = this,
                 baseUrl = 'https://www.paypal.com/sdk/js?client-id=',
-                scriptUrl = baseUrl + me.opts.clientId + '&currency=' +
-                    me.opts.currency + '&components=buttons,marks',
+                scriptUrl = baseUrl + me.opts.clientId + '&currency=' + me.opts.currency + '&components=buttons,marks&commit=false',
                 $head = $('head');
 
             /**
@@ -86,7 +100,7 @@
              * But still load buttons and marks so the buttons are present on the window paypal object
              */
             if (me.opts.marksOnly) {
-                scriptUrl = baseUrl + me.opts.clientId + '&components=buttons,marks';
+                scriptUrl = baseUrl + me.opts.clientId + '&components=marks';
             }
 
             if (!$head.hasClass(me.opts.scriptLoadedClass)) {
@@ -94,7 +108,7 @@
                     url: scriptUrl,
                     dataType: 'script',
                     cache: true,
-                    success: function () {
+                    success: function() {
                         $head.addClass(me.opts.scriptLoadedClass);
                         me.paypal = window.paypal;
                         me.renderButtons();
@@ -165,57 +179,22 @@
                     window.location.replace(response.errorUrl);
                     return;
                 }
-                me.opts.paymentId = response.paymentId;
                 me.opts.basketId = response.basketId;
+
                 return response.token;
             }).promise();
         },
 
-        onApprove: function(data) {
-            var me = this,
-                paymentId = data.paymentID,
+        onApprove: function(data, actions) {
+            var paymentId = data.paymentID,
                 payerId = data.payerID,
-                form,
-                token;
+                confirmUrl = this.opts.checkoutConfirmUrl + '?paymentId=' + paymentId + '&payerId=' + payerId + '&basketId=' + this.opts.basketId;
 
-            if (CSRF.checkToken()) {
-                token = CSRF.getToken();
-            }
-
-            form = me.createApproveForm(token, paymentId, payerId);
-
-            form.submit();
+            actions.redirect(confirmUrl);
         },
 
         onCancel: function() {
             $.loadingIndicator.close();
-        },
-
-        createApproveForm: function(token, paymentId, payerId) {
-            var me = this,
-                $form,
-                createField = function(name, val) {
-                    return $('<input>', {
-                        type: 'hidden',
-                        name: name,
-                        value: val
-                    });
-                };
-
-            $form = $('<form>', {
-                action: me.opts.approvePaymentUrl,
-                method: 'POST'
-            });
-
-            createField('__csrf_token', token).appendTo($form);
-            createField('paymentId', paymentId).appendTo($form);
-            createField('PayerID', payerId).appendTo($form);
-            createField('smartPaymentButtons', true).appendTo($form);
-            createField('basketId', me.opts.basketId).appendTo($form);
-
-            $form.appendTo($('body'));
-
-            return $form;
         },
 
         /**

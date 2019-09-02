@@ -2,10 +2,10 @@
     <div class="paypal-unified-in-context--outer-button-container">
         {block name='paypal_unified_spb_checkout_container_inner'}
             {if $marksOnly}
-                <div class="paypal-unified--smart-payment-buttons"
+                <div class="is--hidden"
                      data-paypalUnifiedSmartPaymentButtons="true"
                      data-clientId="{$paypalUnifiedSpbClientId}"
-                     data-marksOnly="{$marksOnly}">
+                     data-marksOnly="true">
                 </div>
             {else}
                 <div class="paypal-unified--smart-payment-buttons"
@@ -13,7 +13,7 @@
                      data-clientId="{$paypalUnifiedSpbClientId}"
                      data-currency="{$paypalUnifiedSpbCurrency}"
                      data-createPaymentUrl="{url module=widgets controller=PaypalUnifiedSmartPaymentButtons action=createPayment forceSecure}"
-                     data-approvePaymentUrl="{url module=widgets controller=PaypalUnifiedSmartPaymentButtons action=approve forceSecure}"">
+                     data-checkoutConfirmUrl="{url module=frontend controller=checkout action=confirm spbCheckout=1 forceSecure}">
                 </div>
             {/if}
         {/block}
