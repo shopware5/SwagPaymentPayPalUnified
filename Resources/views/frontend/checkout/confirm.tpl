@@ -21,7 +21,7 @@
 
 {* SPB marks integration *}
 {block name='frontend_checkout_confirm_left_payment_method'}
-    {if $paypalUnifiedSpbCheckout || $paypalUnifiedUseSmartPaymentButtons}
+    {if $sUserData.additional.payment.id == $paypalUnifiedPaymentId && ($paypalUnifiedSpbCheckout || $paypalUnifiedUseSmartPaymentButtons)}
         <p class="payment--method-info">
             <strong class="payment--title">{s name="ConfirmInfoPaymentMethod" namespace="frontend/checkout/confirm"}{/s}</strong>
             <span id="spbMarksContainer" class="payment--method-info"></span>
