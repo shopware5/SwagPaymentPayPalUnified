@@ -20,7 +20,7 @@
     {$smarty.block.parent}
 
     {block name='frontend_detail_buy_button_paypal_unified_installments'}
-        {if !($sArticle.sConfigurator && !$activeConfiguratorSelection) && $paypalUnifiedEcDetailActive}
+        {if !($sArticle.sConfigurator && !$activeConfiguratorSelection) && $paypalUnifiedEcDetailActive && !$sArticle.swag_paypal_unified_express_disabled}
             {include file='frontend/paypal_unified/express_checkout/button_detail.tpl'}
         {/if}
     {/block}

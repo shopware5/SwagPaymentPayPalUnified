@@ -71,7 +71,14 @@ class Uninstaller
                 'swag_paypal_unified_plus_iframe_payment_logo'
             );
         }
-        $this->modelManager->generateAttributeModels(['s_core_paymentmeans_attributes']);
+
+        if ($this->attributeCrudService->get('s_articles_attributes', 'swag_paypal_unified_express_disabled') !== null) {
+            $this->attributeCrudService->delete(
+                's_articles_attributes',
+                'swag_paypal_unified_express_disabled'
+            );
+        }
+        $this->modelManager->generateAttributeModels(['s_core_paymentmeans_attributes', 's_articles_attributes']);
     }
 
     private function removeSettingsTables()

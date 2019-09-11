@@ -136,7 +136,19 @@ class Installer
             ]
         );
 
-        $this->modelManager->generateAttributeModels(['s_order_attributes', 's_core_paymentmeans_attributes']);
+        $this->attributeCrudService->update(
+            's_articles_attributes',
+            'swag_paypal_unified_express_disabled',
+            'boolean',
+            [
+                'position' => -99,
+                'displayInBackend' => true,
+                'label' => 'Disable Paypal Express',
+                'helpText' => 'You can disable the Paypal Express button for this specific product with this checkbox',
+            ]
+        );
+
+        $this->modelManager->generateAttributeModels(['s_order_attributes', 's_core_paymentmeans_attributes', 's_articles_attributes']);
     }
 
     private function createDocumentTemplates()

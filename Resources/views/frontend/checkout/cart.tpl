@@ -20,7 +20,12 @@
     {$smarty.block.parent}
 
     {block name='frontend_checkout_cart_table_actions_paypal_unified_ec_button'}
-        {if $paypalUnifiedEcCartActive && $paypalUnifiedUseInContext !== null}
+        {foreach $sBasket.content as $product}
+            {if $product.additional_details.swag_paypal_unified_express_disabled}
+                {assign var="swag_paypal_unified_express_disabled" value="1"}
+            {/if}
+        {/foreach}
+        {if $paypalUnifiedEcOffCanvasActive && $paypalUnifiedUseInContext !== null && !$swag_paypal_unified_express_disabled }
             {include file='frontend/paypal_unified/express_checkout/button_cart.tpl'}
         {/if}
     {/block}
