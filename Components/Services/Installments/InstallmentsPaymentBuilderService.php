@@ -8,12 +8,35 @@
 
 namespace SwagPaymentPayPalUnified\Components\Services\Installments;
 
+use Shopware\Components\Routing\RouterInterface;
+use Shopware_Components_Snippet_Manager as SnippetManager;
+use SwagPaymentPayPalUnified\Components\DependencyProvider;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
 use SwagPaymentPayPalUnified\Components\Services\PaymentBuilderService;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 
 class InstallmentsPaymentBuilderService extends PaymentBuilderService
 {
+
+    /**
+     * @var DependencyProvider
+     */
+    private $dependencyProvider;
+
+    public function __construct(
+        RouterInterface $router,
+        SettingsServiceInterface $settingsService,
+        SnippetManager $snippetManager,
+        dependencyProvider $dependencyProvider
+    ) {
+        parent::__construct($router, $settingsService, $snippetManager, $dependencyProvider);
+
+        $this->dependencyProvider = $dependencyProvider;
+
+    }
+
+
     /**
      * {@inheritdoc}
      */
@@ -42,6 +65,18 @@ class InstallmentsPaymentBuilderService extends PaymentBuilderService
      */
     private function getReturnUrl()
     {
+        $token = $this->dependencyProvider->getToken();
+
+        if ($token) {
+            return $this->router->assemble([
+                'controller' => 'PaypalUnifiedInstallments',
+                'action' => 'return',
+                'forceSecure' => true,
+                'basketId' => $this->requestParams->getBasketUniqueId(),
+                'swPaymentToken' => $token,
+            ]);
+        }
+
         if ($this->requestParams->getBasketUniqueId()) {
             return $this->router->assemble([
                 'controller' => 'PaypalUnifiedInstallments',
