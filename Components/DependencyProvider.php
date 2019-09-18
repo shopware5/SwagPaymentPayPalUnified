@@ -56,4 +56,20 @@ class DependencyProvider
     {
         return $this->container->get('session');
     }
+
+    /**
+     * Returns the payment token.
+     */
+    public function getToken()
+    {
+        return $this->container->get(\Shopware\Components\Cart\PaymentTokenService::class)->generate();
+    }
+
+    /**
+     * Returns shopware version.
+     */
+    public function getVersion()
+    {
+        return $this->container->get('config')->get('version');
+    }
 }

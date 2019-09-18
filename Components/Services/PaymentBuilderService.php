@@ -242,9 +242,25 @@ class PaymentBuilderService implements PaymentBuilderInterface
      */
     private function getRedirectUrl($action)
     {
+        if (version_compare($this->dependencyProvider->getVersion(),'5.6.0','>=')) {
+            
+            $token = $this->dependencyProvider->getToken();
+
+            return $this->router->assemble(
+                [
+                    'controller' => 'PaypalUnified',
+                    'action' => $action,
+                    'forceSecure' => true,
+                    'basketId' => $this->requestParams->getBasketUniqueId(),
+                    'swPaymentToken' => $token,
+                ]
+            );
+        }
+
         //Shopware 5.3 + supports cart validation.
         //In order to use it, we have to slightly modify the return URL.
         if ($this->requestParams->getBasketUniqueId()) {
+
             return $this->router->assemble(
                 [
                     'controller' => 'PaypalUnified',

@@ -27,6 +27,11 @@ class PlusPaymentBuilderService extends PaymentBuilderService
      */
     private $attributeService;
 
+    /**
+     * @var DependencyProvider
+     */
+    private $dependencyProvider;
+
     public function __construct(
         RouterInterface $router,
         SettingsServiceInterface $settingsService,
@@ -37,6 +42,7 @@ class PlusPaymentBuilderService extends PaymentBuilderService
         parent::__construct($router, $settingsService, $snippetManager, $dependencyProvider);
 
         $this->attributeService = $crudService;
+        $this->dependencyProvider = $dependencyProvider;
     }
 
     /**
@@ -56,6 +62,20 @@ class PlusPaymentBuilderService extends PaymentBuilderService
      */
     private function getReturnUrl()
     {
+        if (version_compare($this->dependencyProvider->getVersion(),'5.6.0','>=')) {
+            
+            $token = $this->dependencyProvider->getToken();
+
+            return $this->router->assemble([
+                'action' => 'return',
+                'controller' => 'PaypalUnified',
+                'forceSecure' => true,
+                'plus' => true,
+                'basketId' => BasketIdWhitelist::WHITELIST_IDS['PayPalPlus'],
+                'swPaymentToken' => $token,
+            ]);
+        }
+
         return $this->router->assemble([
             'action' => 'return',
             'controller' => 'PaypalUnified',
