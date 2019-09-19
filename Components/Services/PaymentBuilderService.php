@@ -242,10 +242,9 @@ class PaymentBuilderService implements PaymentBuilderInterface
      */
     private function getRedirectUrl($action)
     {
-        if (version_compare($this->dependencyProvider->getVersion(),'5.6.0','>=')) {
-            
-            $token = $this->dependencyProvider->getToken();
+        $token = $this->dependencyProvider->getToken();
 
+        if ($token) {
             return $this->router->assemble(
                 [
                     'controller' => 'PaypalUnified',

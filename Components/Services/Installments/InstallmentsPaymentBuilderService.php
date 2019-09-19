@@ -65,11 +65,9 @@ class InstallmentsPaymentBuilderService extends PaymentBuilderService
      */
     private function getReturnUrl()
     {
+        $token = $this->dependencyProvider->getToken();
 
-        if (version_compare($this->dependencyProvider->getVersion(),'5.6.0','>=')) {
-            
-            $token = $this->dependencyProvider->getToken();
-
+        if ($token) {
             return $this->router->assemble([
                 'controller' => 'PaypalUnifiedInstallments',
                 'action' => 'return',
