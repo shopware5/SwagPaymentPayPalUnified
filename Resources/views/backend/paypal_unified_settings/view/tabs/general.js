@@ -195,7 +195,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
             inputValue: true,
             uncheckedValue: false,
             fieldLabel: '{s name="fieldset/behaviour/useSmartPaymentButtons"}Use Smart Payment Buttons{/s}',
-            helpText: '{s name="fieldset/behaviour/useSmartPaymentButtons/helpText"}Enable this option to use the PayPal Smart Payment Buttons. Note that the Smart Payment Buttons are not available if your merchant location is Germany.{/s}'
+            helpText: '{s name="fieldset/behaviour/useSmartPaymentButtons/helpText"}Enable this option to use the PayPal Smart Payment Buttons. Note that the Smart Payment Buttons are not available if your merchant location is Germany. The Smart Payment Buttons always use the in-context mode.{/s}'
         });
 
         me.behaviourContainer = Ext.create('Ext.form.FieldSet', {
@@ -228,7 +228,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
                     inputValue: true,
                     uncheckedValue: false,
                     fieldLabel: '{s name="fieldset/behaviour/useInContext"}Use in-context mode{/s}',
-                    helpText: '{s name="fieldset/behaviour/useInContext/help"}Enable this option to use the PayPal in-context solution. Instead of redirecting to the PayPal login page, an overlay will be shown and the customer does not need to leave the shop.{/s}'
+                    helpText: '{s name="fieldset/behaviour/useInContext/help"}Enable to use the PayPal in-context solution. Instead of redirecting to the PayPal login page, an overlay will be shown and the customer does not need to leave the shop. This option has no effect on the Smart Payment Buttons, as they always use the in-Context mode.{/s}'
                 },
                 {
                     xtype: 'combobox',
