@@ -231,6 +231,14 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
                     helpText: '{s name="fieldset/behaviour/useInContext/help"}Enable to use the PayPal in-context solution. Instead of redirecting to the PayPal login page, an overlay will be shown and the customer does not need to leave the shop. This option has no effect on the Smart Payment Buttons, as they always use the in-Context mode.{/s}'
                 },
                 {
+                    xtype: 'checkbox',
+                    name: 'submitCart',
+                    inputValue: true,
+                    uncheckedValue: false,
+                    fieldLabel: '{s name="fieldset/behaviour/submitCart"}Submit cart{/s}',
+                    helpText: '{s name="fieldset/behaviour/submitCart/help"}If this option is active, the cart will be submitted to PayPal.{/s}'
+                },
+                {
                     xtype: 'combobox',
                     name: 'landingPageType',
                     helpText: '{s name=fieldset/landingPage/help}<u>Login</u><br>The PayPal site displays a login screen as landingpage.<br><br><u>Registration</u><br>The PayPal site displays a registration form as landingpage.{/s}',

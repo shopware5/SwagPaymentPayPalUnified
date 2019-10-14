@@ -33,6 +33,10 @@ trait SettingsHelperTrait
             $data['useInContext'] = false;
         }
 
+        if (!isset($data['submitCart'])) {
+            $data['submitCart'] = true;
+        }
+
         if (!isset($data['sendOrderNumber'])) {
             $data['sendOrderNumber'] = false;
         }

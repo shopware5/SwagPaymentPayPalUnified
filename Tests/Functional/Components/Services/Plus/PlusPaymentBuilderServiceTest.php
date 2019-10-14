@@ -14,7 +14,7 @@ use SwagPaymentPayPalUnified\Components\Services\Plus\PlusPaymentBuilderService;
 use SwagPaymentPayPalUnified\Components\Services\Validation\BasketIdWhitelist;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
-use SwagPaymentPayPalUnified\Tests\Functional\Components\Services\SettingsServicePaymentBuilderServiceMock;
+use SwagPaymentPayPalUnified\Tests\Functional\Components\Services\Mock\SettingsServicePaymentBuilderServiceMock;
 
 class PlusPaymentBuilderServiceTest extends TestCase
 {

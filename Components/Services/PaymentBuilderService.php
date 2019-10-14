@@ -112,12 +112,12 @@ class PaymentBuilderService implements PaymentBuilderInterface
         $transactions = new Transactions();
         $transactions->setAmount($amount);
 
-        //don't submit the cart if the option is false and the selected payment method is express checkout
-        if ($paymentType !== PaymentType::PAYPAL_EXPRESS || $this->settings->get('submit_cart', SettingsTable::EXPRESS_CHECKOUT)) {
-            $itemList = new ItemList();
-            $itemList->setItems($this->getItemList());
-
-            $transactions->setItemList($itemList);
+        $submitCartGeneral = (bool) $this->settings->get('submit_cart');
+        $submitCartEcs = (bool) $this->settings->get('submit_cart', SettingsTable::EXPRESS_CHECKOUT);
+        if ($paymentType !== PaymentType::PAYPAL_EXPRESS && $submitCartGeneral) {
+            $this->setItemList($transactions);
+        } elseif ($paymentType === PaymentType::PAYPAL_EXPRESS && $submitCartEcs) {
+            $this->setItemList($transactions);
         }
 
         $requestParameters->setPayer($payer);
@@ -164,6 +164,14 @@ class PaymentBuilderService implements PaymentBuilderInterface
 
         //Case 3: No tax handling at all, just use the net amounts.
         return $this->formatPrice($this->basketData['AmountNetNumeric']);
+    }
+
+    private function setItemList(Transactions $transactions)
+    {
+        $itemList = new ItemList();
+        $itemList->setItems($this->getItemList());
+
+        $transactions->setItemList($itemList);
     }
 
     /**
