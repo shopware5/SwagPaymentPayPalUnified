@@ -165,12 +165,6 @@
         createOrder: function() {
             var me = this;
 
-            $.loadingIndicator.open({
-                openOverlay: true,
-                closeOnClick: false,
-                theme: 'light'
-            });
-
             return $.ajax({
                 method: 'get',
                 url: me.opts.createPaymentUrl
@@ -189,6 +183,12 @@
             var paymentId = data.paymentID,
                 payerId = data.payerID,
                 confirmUrl = this.opts.checkoutConfirmUrl + '?paymentId=' + paymentId + '&payerId=' + payerId + '&basketId=' + this.opts.basketId;
+
+            $.loadingIndicator.open({
+                openOverlay: true,
+                closeOnClick: false,
+                theme: 'light'
+            });
 
             actions.redirect(confirmUrl);
         },
