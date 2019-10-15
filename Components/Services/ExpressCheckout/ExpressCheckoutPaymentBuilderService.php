@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\Components\Services\ExpressCheckout;
 
+use Shopware\Components\Cart\PaymentTokenService;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
 use SwagPaymentPayPalUnified\Components\Services\PaymentBuilderService;
 use SwagPaymentPayPalUnified\Components\Services\Validation\BasketIdWhitelist;
@@ -50,13 +51,21 @@ class ExpressCheckoutPaymentBuilderService extends PaymentBuilderService
      */
     private function getReturnUrl()
     {
-        return $this->router->assemble([
-            'module' => 'widgets',
+        $routingParameters = [
+            'module' => 'frontend',
             'controller' => 'PaypalUnifiedExpressCheckout',
             'action' => 'expressCheckoutReturn',
             'forceSecure' => true,
             'basketId' => BasketIdWhitelist::WHITELIST_IDS['PayPalExpress'], //PayPal Express Checkout basket Id
-        ]);
+        ];
+
+        // Shopware 5.6+ supports session restoring
+        $token = $this->requestParams->getPaymentToken();
+        if ($token !== null) {
+            $routingParameters[PaymentTokenService::TYPE_PAYMENT_TOKEN] = $token;
+        }
+
+        return $this->router->assemble($routingParameters);
     }
 
     /**
@@ -64,12 +73,18 @@ class ExpressCheckoutPaymentBuilderService extends PaymentBuilderService
      */
     private function getCancelUrl()
     {
-        return $this->router->assemble(
-            [
-                'controller' => 'checkout',
-                'action' => 'cart',
-                'forceSecure' => true,
-            ]
-        );
+        $routingParameters = [
+            'controller' => 'checkout',
+            'action' => 'cart',
+            'forceSecure' => true,
+        ];
+
+        // Shopware 5.6+ supports session restoring
+        $token = $this->requestParams->getPaymentToken();
+        if ($token !== null) {
+            $routingParameters['swPaymentToken'] = $token;
+        }
+
+        return $this->router->assemble($routingParameters);
     }
 }

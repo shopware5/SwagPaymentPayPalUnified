@@ -10,7 +10,6 @@ namespace SwagPaymentPayPalUnified\Subscriber;
 
 use Doctrine\DBAL\Connection;
 use Enlight\Event\SubscriberInterface;
-use Shopware\Models\Shop\DetachedShop;
 use Shopware_Components_Snippet_Manager as SnippetManager;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\ExceptionHandlerServiceInterface;
@@ -41,9 +40,9 @@ class Plus implements SubscriberInterface
     private $settingsService;
 
     /**
-     * @var DetachedShop
+     * @var DependencyProvider
      */
-    private $shop;
+    private $dependencyProvider;
 
     /**
      * @var SnippetManager
@@ -104,7 +103,7 @@ class Plus implements SubscriberInterface
     ) {
         $this->paymentMethodProvider = new PaymentMethodProvider();
         $this->settingsService = $settingsService;
-        $this->shop = $dependencyProvider->getShop();
+        $this->dependencyProvider = $dependencyProvider;
         $this->snippetManager = $snippetManager;
         $this->connection = $connection;
         $this->paymentInstructionService = $paymentInstructionService;
@@ -357,6 +356,7 @@ class Plus implements SubscriberInterface
         $requestParams->setUserData($userData);
         $requestParams->setBasketData($basketData);
         $requestParams->setPaymentType(PaymentType::PAYPAL_PLUS);
+        $requestParams->setPaymentToken($this->dependencyProvider->createPaymentToken());
 
         $params = $this->paymentBuilderService->getPayment($requestParams);
 
@@ -377,7 +377,7 @@ class Plus implements SubscriberInterface
      */
     private function getPaymentWallLanguage()
     {
-        $languageIso = $this->shop->getLocale()->getLocale();
+        $languageIso = $this->dependencyProvider->getShop()->getLocale()->getLocale();
 
         $plusLanguage = 'en_US';
         // use english as default, use german if the locale is from german speaking country (de_DE, de_AT, etc)

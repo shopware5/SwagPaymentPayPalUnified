@@ -121,7 +121,10 @@ class PaymentBuilderServiceTest extends TestCase
 
         $requestParameters = $requestService->getPayment($params);
 
-        static::assertStringEndsWith('basketId/MyUniqueBasketId', $requestParameters->getRedirectUrls()->getReturnUrl());
+        static::assertContains(
+            '/PaypalUnified/return/basketId/MyUniqueBasketId',
+            $requestParameters->getRedirectUrls()->getReturnUrl()
+        );
     }
 
     public function test_getPayment_with_tax_free_country()

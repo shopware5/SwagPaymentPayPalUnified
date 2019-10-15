@@ -192,7 +192,6 @@ class Installments implements SubscriberInterface
         $paymentBuilderParams = new PaymentBuilderParameters();
         $paymentBuilderParams->setBasketData($view->getAssign('sBasket'));
         $paymentBuilderParams->setUserData($view->getAssign('sUserData'));
-        /** @var Payment $paymentStruct */
         $paymentStruct = $this->installmentsPaymentBuilder->getPayment($paymentBuilderParams);
         $productPrice = $paymentStruct->getTransactions()->getAmount()->getTotal();
 

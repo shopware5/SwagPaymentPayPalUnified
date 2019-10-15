@@ -113,6 +113,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_F
             $requestParams = new PaymentBuilderParameters();
             $requestParams->setBasketData($basketData);
             $requestParams->setUserData($userData);
+            $requestParams->setPaymentToken($this->dependencyProvider->createPaymentToken());
 
             //Prepare the new basket signature feature, announced in SW 5.3.0
             if (version_compare($this->shopwareConfig->offsetGet('version'), '5.3.0', '>=')) {
@@ -499,6 +500,12 @@ class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_F
     {
         /** @var BasketValidatorInterface $legacyValidator */
         $legacyValidator = $this->get('paypal_unified.simple_basket_validator');
+
+        $basket = $this->getBasket();
+        $customer = $this->getUser();
+        if ($basket === null || $customer === null) {
+            return false;
+        }
 
         return $legacyValidator->validate($this->getBasket(), $this->getUser(), $payment);
     }

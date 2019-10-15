@@ -17,5 +17,5 @@ interface BasketValidatorInterface
      *
      * @return bool
      */
-    public function validate(array $basket, array $user, Payment $payment);
+    public function validate(array $basket, array $customer, Payment $payment);
 }

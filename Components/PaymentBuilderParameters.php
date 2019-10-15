@@ -31,6 +31,11 @@ class PaymentBuilderParameters
     private $paymentType;
 
     /**
+     * @var string
+     */
+    private $paymentToken;
+
+    /**
      * @return array
      */
     public function getUserData()
@@ -92,5 +97,21 @@ class PaymentBuilderParameters
     public function setPaymentType($paymentType)
     {
         $this->paymentType = $paymentType;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getPaymentToken()
+    {
+        return $this->paymentToken;
+    }
+
+    /**
+     * @param string|null $paymentToken
+     */
+    public function setPaymentToken($paymentToken)
+    {
+        $this->paymentToken = $paymentToken;
     }
 }
