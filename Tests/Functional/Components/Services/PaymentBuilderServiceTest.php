@@ -12,8 +12,8 @@ use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
 use SwagPaymentPayPalUnified\Components\Services\PaymentBuilderService;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
-use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
+use SwagPaymentPayPalUnified\Tests\Functional\Components\Services\Mock\SettingsServicePaymentBuilderServiceMock;
 
 class PaymentBuilderServiceTest extends TestCase
 {
@@ -59,6 +59,13 @@ class PaymentBuilderServiceTest extends TestCase
         $requestParameters = $this->getRequestData();
 
         static::assertSame('paypal', $requestParameters['payer']['payment_method']);
+    }
+
+    public function test_getPayment_cut_long_brand_name()
+    {
+        $requestParameters = $this->getRequestData(PaymentType::PAYPAL_CLASSIC, 0, true);
+
+        static::assertSame('Lorem ipsum dolor sit amet consetetur sadipscing elitr sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquya', $requestParameters['application_context']['brand_name']);
     }
 
     public function test_getPayment_return_valid_transactions()
@@ -232,7 +239,7 @@ class PaymentBuilderServiceTest extends TestCase
 
     public function test_getPayment_express_checkout_without_cart()
     {
-        $settingService = new SettingsServicePaymentBuilderServiceMock(false, 0, false);
+        $settingService = new SettingsServicePaymentBuilderServiceMock(false, 0, false, false);
         $requestService = $this->getRequestService($settingService);
 
         $params = new PaymentBuilderParameters();
@@ -248,7 +255,7 @@ class PaymentBuilderServiceTest extends TestCase
 
     public function test_getPayment_express_checkout_with_cart()
     {
-        $settingService = new SettingsServicePaymentBuilderServiceMock(false, 0, true);
+        $settingService = new SettingsServicePaymentBuilderServiceMock(false, 0, true, false);
         $requestService = $this->getRequestService($settingService);
 
         $params = new PaymentBuilderParameters();
@@ -258,6 +265,38 @@ class PaymentBuilderServiceTest extends TestCase
         $params->setBasketData($basketData);
         $params->setUserData($userData);
         $params->setPaymentType(PaymentType::PAYPAL_EXPRESS);
+
+        static::assertNotEmpty($requestService->getPayment($params)->getTransactions()->getItemList());
+    }
+
+    public function test_getPayment_without_cart()
+    {
+        $settingService = new SettingsServicePaymentBuilderServiceMock(false, 0, false, false);
+        $requestService = $this->getRequestService($settingService);
+
+        $params = new PaymentBuilderParameters();
+        $basketData = $this->getBasketDataArray();
+        $userData = $this->getUserDataAsArray();
+
+        $params->setBasketData($basketData);
+        $params->setUserData($userData);
+        $params->setPaymentType(PaymentType::PAYPAL_CLASSIC);
+
+        static::assertEmpty($requestService->getPayment($params)->getTransactions()->getItemList());
+    }
+
+    public function test_getPayment_with_cart()
+    {
+        $settingService = new SettingsServicePaymentBuilderServiceMock(false, 0, false, true);
+        $requestService = $this->getRequestService($settingService);
+
+        $params = new PaymentBuilderParameters();
+        $basketData = $this->getBasketDataArray();
+        $userData = $this->getUserDataAsArray();
+
+        $params->setBasketData($basketData);
+        $params->setUserData($userData);
+        $params->setPaymentType(PaymentType::PAYPAL_CLASSIC);
 
         static::assertNotEmpty($requestService->getPayment($params)->getTransactions()->getItemList());
     }
@@ -302,9 +341,15 @@ class PaymentBuilderServiceTest extends TestCase
      *
      * @return array
      */
-    private function getRequestData($paymentType = PaymentType::PAYPAL_CLASSIC, $intent = 0)
+    private function getRequestData($paymentType = PaymentType::PAYPAL_CLASSIC, $intent = 0, $longBrandName = false)
     {
-        $settingService = new SettingsServicePaymentBuilderServiceMock($paymentType === PaymentType::PAYPAL_PLUS, $intent);
+        $settingService = new SettingsServicePaymentBuilderServiceMock(
+            $paymentType === PaymentType::PAYPAL_PLUS,
+            $intent,
+            true,
+            true,
+            $longBrandName
+        );
         $requestService = $this->getRequestService($settingService);
 
         $basketData = $this->getBasketDataArray();
@@ -394,65 +439,5 @@ class PaymentBuilderServiceTest extends TestCase
                 ],
             ],
         ];
-    }
-}
-
-class SettingsServicePaymentBuilderServiceMock implements SettingsServiceInterface
-{
-    /**
-     * @var bool
-     */
-    private $plus_active;
-
-    /**
-     * @var int
-     */
-    private $paypal_payment_intent;
-
-    /**
-     * @var bool
-     */
-    private $ec_submit_cart;
-
-    public function __construct($plusActive, $paypalPaymentIntent, $submitCart = true)
-    {
-        // do not delete, even if PHPStorm says they are unused
-        // used in the get() method
-        $this->plus_active = $plusActive;
-        $this->paypal_payment_intent = $paypalPaymentIntent;
-        $this->ec_submit_cart = $submitCart;
-    }
-
-    public function getSettings($shopId = null, $settingsTable = SettingsTable::GENERAL)
-    {
-    }
-
-    public function get($column, $settingsTable = SettingsTable::GENERAL)
-    {
-        if ($column === 'active' && $settingsTable === SettingsTable::PLUS) {
-            return $this->plus_active;
-        }
-
-        if ($column === 'intent') {
-            return $this->paypal_payment_intent;
-        }
-
-        if ($column === 'submit_cart' && $settingsTable === SettingsTable::EXPRESS_CHECKOUT) {
-            return $this->ec_submit_cart;
-        }
-
-        if ($column === 'brand_name') {
-            return 'TestBrandName';
-        }
-
-        return $this->$column;
-    }
-
-    public function hasSettings($settingsTable = SettingsTable::GENERAL)
-    {
-    }
-
-    public function refreshDependencies()
-    {
     }
 }

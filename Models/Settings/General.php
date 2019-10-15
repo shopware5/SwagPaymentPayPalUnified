@@ -126,6 +126,12 @@ class General extends ModelEntity
     private $merchantLocation;
 
     /**
+     * @var bool
+     * @ORM\Column(name="submit_cart", type="boolean", nullable=false)
+     */
+    private $submitCart;
+
+    /**
      * @return int
      */
     public function getId()
@@ -395,6 +401,22 @@ class General extends ModelEntity
     public function setMerchantLocation($merchantLocation)
     {
         $this->merchantLocation = $merchantLocation;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getSubmitCart()
+    {
+        return $this->submitCart;
+    }
+
+    /**
+     * @param bool $submitCart
+     */
+    public function setSubmitCart($submitCart)
+    {
+        $this->submitCart = $submitCart;
     }
 
     /**

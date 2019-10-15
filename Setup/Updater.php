@@ -69,6 +69,10 @@ class Updater
         if (version_compare($oldVersion, '2.3.0', '<=')) {
             $this->updateTo240();
         }
+
+        if (version_compare($oldVersion, '2.4.1', '<=')) {
+            $this->updateTo250();
+        }
     }
 
     private function updateTo103()
@@ -158,6 +162,20 @@ SET `use_smart_payment_buttons` = 0, `merchant_location` = :location;
 SQL;
 
             $this->connection->executeQuery($query, ['location' => GeneralSettingsModel::MERCHANT_LOCATION_GERMANY]);
+        }
+    }
+
+    private function updateTo250()
+    {
+        if (!$this->checkIfColumnExist('swag_payment_paypal_unified_settings_general', 'submit_cart')) {
+            $query = <<<SQL
+ALTER TABLE `swag_payment_paypal_unified_settings_general`
+ADD `submit_cart` TINYINT(1) NOT NULL;
+UPDATE `swag_payment_paypal_unified_settings_general`
+SET `submit_cart` = 1;
+SQL;
+
+            $this->connection->executeQuery($query);
         }
     }
 
