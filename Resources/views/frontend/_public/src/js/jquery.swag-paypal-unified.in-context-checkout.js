@@ -117,7 +117,14 @@
              *
              * @type string
              */
-            paypalErrorPage: ''
+            paypalErrorPage: '',
+
+            /**
+             * The URL called, when the payment should be created
+             *
+             * @type string
+             */
+            checkoutPaymentUrl: ''
         },
 
         /**
@@ -377,7 +384,7 @@
          */
         processPayment: function() {
             var me = this,
-                url = me.$form.attr('action'),
+                url = me.opts.checkoutPaymentUrl,
                 method = me.$form.attr('method'),
                 data = me.$form.serialize();
 
