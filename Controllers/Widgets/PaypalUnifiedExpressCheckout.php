@@ -10,9 +10,7 @@ use Shopware\Components\HttpClient\RequestException;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
 use SwagPaymentPayPalUnified\Components\ExceptionHandlerServiceInterface;
-use SwagPaymentPayPalUnified\Components\ExpressCheckout\CustomerService;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
-use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\PartnerAttributionId;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
@@ -26,11 +24,6 @@ class Shopware_Controllers_Widgets_PaypalUnifiedExpressCheckout extends Shopware
      * @var PaymentResource
      */
     private $paymentResource;
-
-    /**
-     * @var LoggerServiceInterface
-     */
-    private $logger;
 
     /**
      * @var ClientService
@@ -51,7 +44,6 @@ class Shopware_Controllers_Widgets_PaypalUnifiedExpressCheckout extends Shopware
     {
         $this->paymentResource = $this->get('paypal_unified.payment_resource');
         $this->client = $this->get('paypal_unified.client_service');
-        $this->logger = $this->get('paypal_unified.logger_service');
         $this->dependencyProvider = $this->get('paypal_unified.dependency_provider');
         $this->settingsService = $this->get('paypal_unified.settings_service');
     }
@@ -91,6 +83,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedExpressCheckout extends Shopware
         $requestParams->setBasketData($basketData);
         $requestParams->setUserData($userData);
         $requestParams->setPaymentType(PaymentType::PAYPAL_EXPRESS);
+        $requestParams->setPaymentToken($this->dependencyProvider->createPaymentToken());
 
         $this->client->setPartnerAttributionId(PartnerAttributionId::PAYPAL_EXPRESS_CHECKOUT);
 
@@ -120,43 +113,6 @@ class Shopware_Controllers_Widgets_PaypalUnifiedExpressCheckout extends Shopware
         }
 
         $this->redirect($responseStruct->getLinks()[1]->getHref());
-    }
-
-    public function expressCheckoutReturnAction()
-    {
-        $request = $this->Request();
-        $paymentId = $request->getParam('paymentId');
-        $payerId = $request->getParam('PayerID');
-        $basketId = $request->getParam('basketId');
-
-        try {
-            $this->client->setPartnerAttributionId(PartnerAttributionId::PAYPAL_EXPRESS_CHECKOUT);
-            $payment = $this->paymentResource->get($paymentId);
-
-            $paymentStruct = Payment::fromArray($payment);
-        } catch (RequestException $requestEx) {
-            $this->handleError(ErrorCodes::COMMUNICATION_FAILURE, $requestEx);
-
-            return;
-        } catch (Exception $exception) {
-            $this->handleError(ErrorCodes::UNKNOWN, $exception);
-
-            return;
-        }
-
-        /** @var CustomerService $customerService */
-        $customerService = $this->get('paypal_unified.express_checkout.customer_service');
-
-        $customerService->createNewCustomer($paymentStruct);
-
-        $this->redirect([
-            'controller' => 'checkout',
-            'action' => 'confirm',
-            'expressCheckout' => true,
-            'paymentId' => $paymentId,
-            'payerId' => $payerId,
-            'basketId' => $basketId,
-        ]);
     }
 
     /**

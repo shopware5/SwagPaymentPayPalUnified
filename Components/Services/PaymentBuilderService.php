@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\Components\Services;
 
+use Shopware\Components\Cart\PaymentTokenService;
 use Shopware\Components\Routing\RouterInterface;
 use Shopware_Components_Snippet_Manager as SnippetManager;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
@@ -44,6 +45,11 @@ class PaymentBuilderService implements PaymentBuilderInterface
     protected $requestParams;
 
     /**
+     * @var DependencyProvider
+     */
+    protected $dependencyProvider;
+
+    /**
      * @var array
      */
     private $basketData;
@@ -58,11 +64,6 @@ class PaymentBuilderService implements PaymentBuilderInterface
      */
     private $snippetManager;
 
-    /**
-     * @var DependencyProvider
-     */
-    private $dependencyProvider;
-
     public function __construct(
         RouterInterface $router,
         SettingsServiceInterface $settingsService,
@@ -71,8 +72,8 @@ class PaymentBuilderService implements PaymentBuilderInterface
     ) {
         $this->router = $router;
         $this->settings = $settingsService;
-        $this->snippetManager = $snippetManager;
         $this->dependencyProvider = $dependencyProvider;
+        $this->snippetManager = $snippetManager;
     }
 
     /**
@@ -250,26 +251,24 @@ class PaymentBuilderService implements PaymentBuilderInterface
      */
     private function getRedirectUrl($action)
     {
-        //Shopware 5.3 + supports cart validation.
-        //In order to use it, we have to slightly modify the return URL.
+        $routingParameters = [
+            'controller' => 'PaypalUnified',
+            'action' => $action,
+            'forceSecure' => true,
+        ];
+
+        // Shopware 5.3+ supports cart validation.
         if ($this->requestParams->getBasketUniqueId()) {
-            return $this->router->assemble(
-                [
-                    'controller' => 'PaypalUnified',
-                    'action' => $action,
-                    'forceSecure' => true,
-                    'basketId' => $this->requestParams->getBasketUniqueId(),
-                ]
-            );
+            $routingParameters['basketId'] = $this->requestParams->getBasketUniqueId();
         }
 
-        return $this->router->assemble(
-            [
-                'controller' => 'PaypalUnified',
-                'action' => $action,
-                'forceSecure' => true,
-            ]
-        );
+        // Shopware 5.6+ supports session restoring
+        $token = $this->requestParams->getPaymentToken();
+        if ($token !== null) {
+            $routingParameters[PaymentTokenService::TYPE_PAYMENT_TOKEN] = $token;
+        }
+
+        return $this->router->assemble($routingParameters);
     }
 
     /**

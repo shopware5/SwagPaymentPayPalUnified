@@ -70,10 +70,11 @@ class Shopware_Controllers_Widgets_PaypalUnifiedSmartPaymentButtons extends Shop
         $requestParams = new PaymentBuilderParameters();
         $requestParams->setBasketData($basketData);
         $requestParams->setUserData($userData);
+        $requestParams->setPaymentToken($this->dependencyProvider->createPaymentToken());
 
         $basketUniqueId = null;
-        // Prepare the new basket signature feature, announced in SW 5.3.0
-        if (version_compare($this->shopwareConfig->offsetGet('version'), '5.3.0', '>=')) {
+        // If supported, add the basket signature feature
+        if ($this->container->has('basket_signature_generator')) {
             $basketUniqueId = $this->persistBasket();
             $requestParams->setBasketUniqueId($basketUniqueId);
         }

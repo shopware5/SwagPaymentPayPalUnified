@@ -9,6 +9,7 @@
 namespace SwagPaymentPayPalUnified\Components\Services\Plus;
 
 use Shopware\Bundle\AttributeBundle\Service\CrudService;
+use Shopware\Components\Cart\PaymentTokenService;
 use Shopware\Components\Routing\RouterInterface;
 use Shopware_Components_Snippet_Manager as SnippetManager;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
@@ -22,6 +23,7 @@ use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Transactions\ShipmentD
 class PlusPaymentBuilderService extends PaymentBuilderService
 {
     const EDD_ATTRIBUTE_COLUMN_NAME = 'swag_paypal_estimated_delivery_date_days';
+
     /**
      * @var CrudService
      */
@@ -56,13 +58,21 @@ class PlusPaymentBuilderService extends PaymentBuilderService
      */
     private function getReturnUrl()
     {
-        return $this->router->assemble([
+        $routingParameters = [
             'action' => 'return',
             'controller' => 'PaypalUnified',
             'forceSecure' => true,
             'plus' => true,
             'basketId' => BasketIdWhitelist::WHITELIST_IDS['PayPalPlus'],
-        ]);
+        ];
+
+        // Shopware 5.6+ supports session restoring
+        $token = $this->requestParams->getPaymentToken();
+        if ($token !== null) {
+            $routingParameters[PaymentTokenService::TYPE_PAYMENT_TOKEN] = $token;
+        }
+
+        return $this->router->assemble($routingParameters);
     }
 
     /**

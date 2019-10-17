@@ -113,9 +113,10 @@ class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_F
             $requestParams = new PaymentBuilderParameters();
             $requestParams->setBasketData($basketData);
             $requestParams->setUserData($userData);
+            $requestParams->setPaymentToken($this->dependencyProvider->createPaymentToken());
 
-            //Prepare the new basket signature feature, announced in SW 5.3.0
-            if (version_compare($this->shopwareConfig->offsetGet('version'), '5.3.0', '>=')) {
+            // If supported, add the basket signature feature
+            if ($this->container->has('basket_signature_generator')) {
                 $basketUniqueId = $this->persistBasket();
                 $requestParams->setBasketUniqueId($basketUniqueId);
             }
@@ -207,7 +208,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_F
 
         //Basket validation with shopware 5.2 support
         if (in_array($basketId, BasketIdWhitelist::WHITELIST_IDS, true)
-            || version_compare($this->shopwareConfig->get('version'), '5.3.0', '<')
+            || !$this->container->has('basket_signature_generator')
         ) {
             //For shopware < 5.3 and for whitelisted basket ids
             try {
@@ -499,6 +500,12 @@ class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_F
     {
         /** @var BasketValidatorInterface $legacyValidator */
         $legacyValidator = $this->get('paypal_unified.simple_basket_validator');
+
+        $basket = $this->getBasket();
+        $customer = $this->getUser();
+        if ($basket === null || $customer === null) {
+            return false;
+        }
 
         return $legacyValidator->validate($this->getBasket(), $this->getUser(), $payment);
     }

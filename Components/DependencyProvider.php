@@ -9,6 +9,7 @@
 namespace SwagPaymentPayPalUnified\Components;
 
 use Enlight_Components_Session_Namespace as ShopwareSession;
+use Shopware\Components\Cart\PaymentTokenService;
 use Shopware\Components\DependencyInjection\Container as DIContainer;
 use Shopware\Models\Shop\DetachedShop;
 
@@ -55,5 +56,17 @@ class DependencyProvider
     public function getSession()
     {
         return $this->container->get('session');
+    }
+
+    /**
+     * @return string|null
+     */
+    public function createPaymentToken()
+    {
+        if ($this->container->has(PaymentTokenService::class)) {
+            return $this->container->get(PaymentTokenService::class)->generate();
+        }
+
+        return null;
     }
 }

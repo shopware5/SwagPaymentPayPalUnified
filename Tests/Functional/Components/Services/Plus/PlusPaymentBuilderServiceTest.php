@@ -28,7 +28,10 @@ class PlusPaymentBuilderServiceTest extends TestCase
     {
         $request = $this->getRequestData();
 
-        static::assertStringEndsWith('basketId/' . BasketIdWhitelist::WHITELIST_IDS['PayPalPlus'], $request->getRedirectUrls()->getReturnUrl());
+        static::assertContains(
+            '/PaypalUnified/return/plus/1/basketId/' . BasketIdWhitelist::WHITELIST_IDS['PayPalPlus'],
+            $request->getRedirectUrls()->getReturnUrl()
+        );
     }
 
     public function test_estimated_delivery_date_attribute_exists_but_not_set()

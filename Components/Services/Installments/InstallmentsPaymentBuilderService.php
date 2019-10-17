@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\Components\Services\Installments;
 
+use Shopware\Components\Cart\PaymentTokenService;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
 use SwagPaymentPayPalUnified\Components\Services\PaymentBuilderService;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
@@ -42,19 +43,23 @@ class InstallmentsPaymentBuilderService extends PaymentBuilderService
      */
     private function getReturnUrl()
     {
-        if ($this->requestParams->getBasketUniqueId()) {
-            return $this->router->assemble([
-                'controller' => 'PaypalUnifiedInstallments',
-                'action' => 'return',
-                'forceSecure' => true,
-                'basketId' => $this->requestParams->getBasketUniqueId(),
-            ]);
-        }
-
-        return $this->router->assemble([
+        $routingParameters = [
             'controller' => 'PaypalUnifiedInstallments',
             'action' => 'return',
             'forceSecure' => true,
-        ]);
+        ];
+
+        // Shopware 5.3+ supports cart validation.
+        if ($this->requestParams->getBasketUniqueId()) {
+            $routingParameters['basketId'] = $this->requestParams->getBasketUniqueId();
+        }
+
+        // Shopware 5.6+ supports session restoring
+        $token = $this->requestParams->getPaymentToken();
+        if ($token !== null) {
+            $routingParameters[PaymentTokenService::TYPE_PAYMENT_TOKEN] = $token;
+        }
+
+        return $this->router->assemble($routingParameters);
     }
 }
