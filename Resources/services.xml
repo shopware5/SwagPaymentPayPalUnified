@@ -5,16 +5,10 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <imports>
-        <!-- Services -->
-        <import resource="services/services.xml"/>
-
-        <!-- Resources -->
-        <import resource="services/resources.xml"/>
-
-        <!-- Subscribers -->
-        <import resource="services/subscribers.xml"/>
-
-        <!-- Decorators -->
+        <import resource="services/components.xml"/>
         <import resource="services/decorators.xml"/>
+        <import resource="services/paypal_bundle.xml"/>
+        <import resource="services/resources.xml"/>
+        <import resource="services/subscribers.xml"/>
     </imports>
 </container>

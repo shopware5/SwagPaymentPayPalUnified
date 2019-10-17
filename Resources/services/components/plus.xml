@@ -1,0 +1,22 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service id="paypal_unified.plus.payment_builder_service"
+                 class="SwagPaymentPayPalUnified\Components\Services\Plus\PlusPaymentBuilderService">
+            <argument type="service" id="router"/>
+            <argument type="service" id="paypal_unified.settings_service"/>
+            <argument type="service" id="shopware_attribute.crud_service"/>
+            <argument type="service" id="snippets"/>
+            <argument type="service" id="paypal_unified.dependency_provider"/>
+        </service>
+
+        <service id="paypal_unified.payment_instruction_service"
+                 class="SwagPaymentPayPalUnified\Components\Services\Plus\PaymentInstructionService">
+            <argument type="service" id="models"/>
+        </service>
+    </services>
+</container>

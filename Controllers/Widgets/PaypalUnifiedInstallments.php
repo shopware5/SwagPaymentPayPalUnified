@@ -6,8 +6,8 @@
  * file that was distributed with this source code.
  */
 
-use SwagPaymentPayPalUnified\Components\Installments\FinancingOptionsHandler;
 use SwagPaymentPayPalUnified\Components\Services\Installments\CompanyInfoService;
+use SwagPaymentPayPalUnified\Components\Services\Installments\FinancingOptionsHandler;
 use SwagPaymentPayPalUnified\Components\Services\Installments\InstallmentsRequestService;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Installments\FinancingResponse;
