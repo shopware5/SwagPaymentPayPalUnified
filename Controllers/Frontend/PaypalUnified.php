@@ -312,7 +312,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_F
         // apply the payment status if its completed by PayPal
         $paymentState = $relatedResource->getState();
         if ($paymentState === PaymentStatus::PAYMENT_COMPLETED) {
-            $this->savePaymentStatus($relatedResourceId, $paymentId, PaymentStatus::PAYMENT_STATUS_APPROVED);
+            $this->savePaymentStatus($relatedResourceId, $paymentId, PaymentStatus::PAYMENT_STATUS_PAID);
             $orderDataService->setClearedDate($orderNumber);
         }
 

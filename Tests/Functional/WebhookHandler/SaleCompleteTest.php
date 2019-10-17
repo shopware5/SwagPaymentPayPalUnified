@@ -47,7 +47,7 @@ class SaleCompleteTest extends TestCase
         $sql = 'SELECT cleared FROM s_order WHERE id=' . self::TEST_ORDER_ID;
 
         $status = (int) Shopware()->Db()->fetchOne($sql);
-        static::assertSame(PaymentStatus::PAYMENT_STATUS_APPROVED, $status);
+        static::assertSame(PaymentStatus::PAYMENT_STATUS_PAID, $status);
     }
 
     public function test_invoke_returns_false_because_the_order_does_not_exist()

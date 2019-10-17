@@ -52,7 +52,7 @@ class SaleComplete implements WebhookHandler
             /** @var Order $orderRepository */
             $orderRepository = $this->modelManager->getRepository(Order::class)->findOneBy(['temporaryId' => $webhook->getResource()['parent_payment']]);
             /** @var Status $orderStatusModel */
-            $orderStatusModel = $this->modelManager->getRepository(Status::class)->find(PaymentStatus::PAYMENT_STATUS_APPROVED);
+            $orderStatusModel = $this->modelManager->getRepository(Status::class)->find(PaymentStatus::PAYMENT_STATUS_PAID);
 
             if ($orderRepository === null) {
                 $this->logger->error('[SaleComplete-Webhook] Could not find associated order with the temporaryID ' . $webhook->getResource()['parent_payment'], ['webhook' => $webhook->toArray()]);
