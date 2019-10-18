@@ -601,7 +601,7 @@ class InstallmentsTest extends UnifiedControllerTestCase
     {
         $this->Request()->setActionName('confirm');
         $this->Request()->setParam('installments', true);
-        $this->Request()->setParam('paymentId', 'exception');
+        $this->Request()->setParam('paymentId', PaymentResourceMock::THROW_EXCEPTION);
         $this->Request()->setParam('PayerID', 'payerId');
         $this->Request()->setParam('basketId', false);
 
