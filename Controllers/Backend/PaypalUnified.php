@@ -10,24 +10,20 @@ use Doctrine\DBAL\Connection;
 use Doctrine\ORM\Query\Expr\Join;
 use Shopware\Components\Model\QueryBuilder;
 use Shopware\Models\Order\Order;
-use Shopware\Models\Order\Status;
 use Shopware\Models\Shop\Repository as ShopRepository;
 use Shopware\Models\Shop\Shop;
+use SwagPaymentPayPalUnified\Components\Backend\CaptureService;
+use SwagPaymentPayPalUnified\Components\Backend\PaymentDetailsService;
+use SwagPaymentPayPalUnified\Components\Backend\VoidService;
 use SwagPaymentPayPalUnified\Components\ExceptionHandlerServiceInterface;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\PaymentStatus;
-use SwagPaymentPayPalUnified\Components\Services\Legacy\LegacyService;
-use SwagPaymentPayPalUnified\Components\Services\TransactionHistoryBuilderService;
-use SwagPaymentPayPalUnified\PayPalBundle\PaymentIntent;
+use SwagPaymentPayPalUnified\Components\Services\PaymentStatusService;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\AuthorizationResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\CaptureResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\OrderResource;
-use SwagPaymentPayPalUnified\PayPalBundle\Resources\PaymentResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\RefundResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\SaleResource;
-use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Capture;
-use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\CaptureRefund;
-use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\RelatedResources\Sale;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\SaleRefund;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Transactions\Amount;
 
@@ -80,29 +76,14 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
 
         $paymentId = $this->Request()->getParam('id');
         $paymentMethodId = $this->Request()->getParam('paymentMethodId');
-
         //For legacy orders, the payment id is the transactionId and not the temporaryId
         $transactionId = $this->Request()->getParam('transactionId');
 
-        /** @var LegacyService $legacyService */
-        $legacyService = $this->get('paypal_unified.legacy_service');
-        $legacyPaymentIds = $legacyService->getClassicPaymentIds();
+        /** @var PaymentDetailsService $paymentDetailService */
+        $paymentDetailService = $this->get('paypal_unified.backend.payment_details_service');
+        $viewParameter = $paymentDetailService->getPaymentDetails($paymentId, $paymentMethodId, $transactionId);
 
-        try {
-            //Check for a legacy payment
-            if (in_array($paymentMethodId, $legacyPaymentIds, true)) {
-                $this->prepareLegacyDetails($transactionId);
-            } else {
-                $this->prepareUnifiedDetails($paymentId);
-            }
-        } catch (Exception $e) {
-            $error = $this->exceptionHandler->handle($e, 'obtain payment details');
-
-            $this->View()->assign([
-                'success' => false,
-                'message' => $error->getCompleteMessage(),
-            ]);
-        }
+        $this->View()->assign($viewParameter);
     }
 
     public function saleDetailsAction()
@@ -204,7 +185,7 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
         $orderId = $this->Request()->getParam('id');
         $view = $this->View();
 
-        /** @var AuthorizationResource $orderResource */
+        /** @var OrderResource $orderResource */
         $orderResource = $this->get('paypal_unified.order_resource');
 
         try {
@@ -244,12 +225,17 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
 
         /** @var SaleResource $saleResource */
         $saleResource = $this->get('paypal_unified.sale_resource');
+        /** @var PaymentStatusService $paymentStatusService */
+        $paymentStatusService = $this->get('paypal_unified.payment_status_service');
 
         try {
             $refundData = $saleResource->refund($saleId, $refund);
 
             if ($refundData['state'] === PaymentStatus::PAYMENT_COMPLETED) {
-                $this->updatePaymentStatus($refundData['parent_payment']);
+                $paymentStatusService->updatePaymentStatus(
+                    $refundData['parent_payment'],
+                    PaymentStatus::PAYMENT_STATUS_REFUNDED
+                );
             }
 
             $view->assign('refund', $refundData);
@@ -269,27 +255,15 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
         $this->registerShopResource();
 
         $orderId = $this->Request()->getParam('id');
+        $amountToCapture = number_format($this->Request()->getParam('amount'), 2);
+        $currency = $this->Request()->getParam('currency');
         $isFinal = (bool) $this->Request()->getParam('isFinal');
-        $view = $this->View();
 
-        $capture = $this->createCapture($isFinal);
+        /** @var CaptureService $captureService */
+        $captureService = $this->get('paypal_unified.backend.capture_service');
+        $viewParameter = $captureService->captureOrder($orderId, $amountToCapture, $currency, $isFinal);
 
-        /** @var AuthorizationResource $orderResource */
-        $orderResource = $this->get('paypal_unified.order_resource');
-
-        try {
-            $captureData = $orderResource->capture($orderId, $capture);
-            $this->updateCapturePaymentStatus($captureData, $isFinal);
-
-            $view->assign('success', true);
-        } catch (Exception $e) {
-            $error = $this->exceptionHandler->handle($e, 'capture order');
-
-            $view->assign([
-                'success' => false,
-                'message' => $error->getCompleteMessage(),
-            ]);
-        }
+        $this->View()->assign($viewParameter);
     }
 
     public function captureAuthorizationAction()
@@ -297,121 +271,57 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
         $this->registerShopResource();
 
         $authorizationId = $this->Request()->getParam('id');
+        $amountToCapture = number_format($this->Request()->getParam('amount'), 2);
+        $currency = $this->Request()->getParam('currency');
         $isFinal = (bool) $this->Request()->getParam('isFinal');
-        $view = $this->View();
 
-        $capture = $this->createCapture($isFinal);
+        /** @var CaptureService $captureService */
+        $captureService = $this->get('paypal_unified.backend.capture_service');
+        $viewParameter = $captureService->captureAuthorization($authorizationId, $amountToCapture, $currency, $isFinal);
 
-        /** @var AuthorizationResource $authResource */
-        $authResource = $this->get('paypal_unified.authorization_resource');
-
-        try {
-            $captureData = $authResource->capture($authorizationId, $capture);
-            $this->updateCapturePaymentStatus($captureData, $isFinal);
-
-            $view->assign('success', true);
-        } catch (Exception $e) {
-            $error = $this->exceptionHandler->handle($e, 'capture authorization');
-
-            $view->assign([
-                'success' => false,
-                'message' => $error->getCompleteMessage(),
-            ]);
-        }
+        $this->View()->assign($viewParameter);
     }
 
     public function refundCaptureAction()
     {
         $this->registerShopResource();
 
-        $id = $this->Request()->getParam('id');
+        $captureId = $this->Request()->getParam('id');
         $totalAmount = number_format($this->Request()->getParam('amount'), 2);
         $description = $this->Request()->getParam('note');
         $currency = $this->Request()->getParam('currency');
-        $view = $this->View();
 
-        $refund = new CaptureRefund();
-        $refund->setDescription($description);
+        /** @var CaptureService $captureService */
+        $captureService = $this->get('paypal_unified.backend.capture_service');
+        $viewParameter = $captureService->refundCapture($captureId, $totalAmount, $currency, $description);
 
-        $amountStruct = new Amount();
-        $amountStruct->setTotal($totalAmount);
-        $amountStruct->setCurrency($currency);
-        $refund->setAmount($amountStruct);
-
-        /** @var CaptureResource $captureResource */
-        $captureResource = $this->get('paypal_unified.capture_resource');
-
-        try {
-            $refundData = $captureResource->refund($id, $refund);
-
-            if ($refundData['state'] === PaymentStatus::PAYMENT_COMPLETED) {
-                $this->updatePaymentStatus($refundData['parent_payment']);
-            }
-
-            $view->assign('refund', $refundData);
-            $view->assign('success', true);
-        } catch (Exception $e) {
-            $error = $this->exceptionHandler->handle($e, 'refund capture');
-
-            $view->assign([
-                'success' => false,
-                'message' => $error->getCompleteMessage(),
-            ]);
-        }
+        $this->View()->assign($viewParameter);
     }
 
     public function voidAuthorizationAction()
     {
         $this->registerShopResource();
 
-        $id = $this->Request()->getParam('id');
-        $view = $this->View();
+        $authorizationId = $this->Request()->getParam('id');
 
-        /** @var AuthorizationResource $authResource */
-        $authResource = $this->get('paypal_unified.authorization_resource');
+        /** @var VoidService $voidService */
+        $voidService = $this->get('paypal_unified.backend.void_service');
+        $viewParameter = $voidService->voidAuthorization($authorizationId);
 
-        try {
-            $voidData = $authResource->void($id);
-            if (strtolower($voidData['state']) === PaymentStatus::PAYMENT_VOIDED) {
-                $this->updatePaymentStatus($voidData['parent_payment'], PaymentStatus::PAYMENT_STATUS_CANCELLED);
-            }
-            $view->assign('void', $voidData);
-            $view->assign('success', true);
-        } catch (Exception $e) {
-            $error = $this->exceptionHandler->handle($e, 'void authorization');
-
-            $view->assign([
-                'success' => false,
-                'message' => $error->getCompleteMessage(),
-            ]);
-        }
+        $this->View()->assign($viewParameter);
     }
 
     public function voidOrderAction()
     {
         $this->registerShopResource();
 
-        $id = $this->Request()->getParam('id');
-        $view = $this->View();
+        $orderId = $this->Request()->getParam('id');
 
-        /** @var OrderResource $orderResource */
-        $orderResource = $this->get('paypal_unified.order_resource');
+        /** @var VoidService $voidService */
+        $voidService = $this->get('paypal_unified.backend.void_service');
+        $viewParameter = $voidService->voidOrder($orderId);
 
-        try {
-            $voidData = $orderResource->void($id);
-            if (strtolower($voidData['state']) === PaymentStatus::PAYMENT_VOIDED) {
-                $this->updatePaymentStatus($voidData['parent_payment'], PaymentStatus::PAYMENT_STATUS_CANCELLED);
-            }
-            $view->assign('void', $voidData);
-            $view->assign('success', true);
-        } catch (Exception $e) {
-            $error = $this->exceptionHandler->handle($e, 'void order');
-
-            $view->assign([
-                'success' => false,
-                'message' => $error->getCompleteMessage(),
-            ]);
-        }
+        $this->View()->assign($viewParameter);
     }
 
     /**
@@ -580,77 +490,6 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
     }
 
     /**
-     * @param string $transactionId
-     */
-    private function prepareLegacyDetails($transactionId)
-    {
-        $view = $this->View();
-        $view->assign('success', true);
-        $view->assign('legacy', true);
-
-        /** @var SaleResource $saleResource */
-        $saleResource = $this->get('paypal_unified.sale_resource');
-        $details = $saleResource->get($transactionId);
-        $details['intent'] = 'sale';
-
-        /** @var TransactionHistoryBuilderService $transactionHistoryBuilder */
-        $transactionHistoryBuilder = $this->get('paypal_unified.transaction_history_builder_service');
-
-        $view->assign('history', $transactionHistoryBuilder->getLegacyHistory(Sale::fromArray($details)));
-        $view->assign('payment', $details);
-    }
-
-    /**
-     * @param string $paymentId
-     */
-    private function prepareUnifiedDetails($paymentId)
-    {
-        /** @var PaymentResource $paymentResource */
-        $paymentResource = $this->get('paypal_unified.payment_resource');
-        $paymentDetails = $paymentResource->get($paymentId);
-        $view = $this->View();
-
-        /** @var TransactionHistoryBuilderService $transactionHistoryBuilder */
-        $transactionHistoryBuilder = $this->get('paypal_unified.transaction_history_builder_service');
-
-        $view->assign('payment', $paymentDetails);
-        $view->assign('history', $transactionHistoryBuilder->getTransactionHistory($paymentDetails));
-
-        if ($paymentDetails['intent'] === PaymentIntent::AUTHORIZE) {
-            //Separately assign the data, to provide an easier usage
-            $view->assign('authorization', $paymentDetails['transactions'][0]['related_resources'][0]['authorization']);
-        } elseif ($paymentDetails['intent'] === PaymentIntent::ORDER) {
-            $view->assign('order', $paymentDetails['transactions'][0]['related_resources'][0]['order']);
-        } elseif ($paymentDetails['intent'] === PaymentIntent::SALE) {
-            $view->assign('sale', $paymentDetails['transactions'][0]['related_resources'][0]['sale']);
-        }
-
-        $view->assign('success', true);
-    }
-
-    /**
-     * @param string $parentPayment
-     * @param int    $state
-     */
-    private function updatePaymentStatus($parentPayment, $state = PaymentStatus::PAYMENT_STATUS_REFUNDED)
-    {
-        /** @var Order $orderModel */
-        $orderModel = $this->getModelManager()->getRepository(Order::class)
-            ->findOneBy(['temporaryId' => $parentPayment]);
-
-        if (!($orderModel instanceof Order)) {
-            return;
-        }
-
-        /** @var Status|null $orderStatusModel */
-        $orderStatusModel = $this->getModelManager()->getRepository(Status::class)->find($state);
-
-        $orderModel->setPaymentStatus($orderStatusModel);
-
-        $this->getModelManager()->flush($orderModel);
-    }
-
-    /**
      * Checks if one of the filter conditions is "search". If not, the filters were set by the filter panel
      *
      * @return bool
@@ -658,43 +497,5 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
     private function isFilterRequest(array $filters)
     {
         return !in_array('search', array_column($filters, 'property'), true);
-    }
-
-    /**
-     * @param bool $isFinal
-     *
-     * @return Capture
-     */
-    private function createCapture($isFinal)
-    {
-        $amountToCapture = number_format($this->Request()->getParam('amount'), 2);
-        $currency = $this->Request()->getParam('currency');
-
-        $amount = new Amount();
-        $amount->setTotal($amountToCapture);
-        $amount->setCurrency($currency);
-
-        $capture = new Capture();
-        $capture->setAmount($amount);
-        $capture->setIsFinalCapture($isFinal);
-
-        return $capture;
-    }
-
-    /**
-     * @param bool $isFinal
-     */
-    private function updateCapturePaymentStatus(array $captureData, $isFinal)
-    {
-        if (strtolower($captureData['state']) === PaymentStatus::PAYMENT_COMPLETED) {
-            if ($isFinal) {
-                $this->updatePaymentStatus($captureData['parent_payment'], PaymentStatus::PAYMENT_STATUS_PAID);
-            } else {
-                $this->updatePaymentStatus(
-                    $captureData['parent_payment'],
-                    PaymentStatus::PAYMENT_STATUS_PARTIALLY_PAID
-                );
-            }
-        }
     }
 }

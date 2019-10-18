@@ -45,6 +45,11 @@
             <argument type="service" id="paypal_unified.dependency_provider"/>
         </service>
 
+        <service id="paypal_unified.payment_status_service"
+                 class="SwagPaymentPayPalUnified\Components\Services\PaymentStatusService">
+            <argument type="service" id="models"/>
+        </service>
+
         <service id="paypal_unified.settings_service"
                  class="SwagPaymentPayPalUnified\Components\Services\SettingsService">
             <argument type="service" id="models"/>
