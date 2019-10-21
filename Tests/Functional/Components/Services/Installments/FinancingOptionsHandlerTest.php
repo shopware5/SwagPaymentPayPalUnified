@@ -6,10 +6,10 @@
  * file that was distributed with this source code.
  */
 
-namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Installments;
+namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services\Installments;
 
 use PHPUnit\Framework\TestCase;
-use SwagPaymentPayPalUnified\Components\Installments\FinancingOptionsHandler;
+use SwagPaymentPayPalUnified\Components\Services\Installments\FinancingOptionsHandler;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Installments\FinancingResponse;
 
 class FinancingOptionsHandlerTest extends TestCase

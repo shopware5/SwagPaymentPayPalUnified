@@ -8,7 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\Components\Services\Validation;
 
-class BasketIdWhitelist
+final class BasketIdWhitelist
 {
     /**
      * Add a value here to always use the simple validator whenever a basket is being validated.
@@ -18,4 +18,8 @@ class BasketIdWhitelist
         'PayPalExpress' => 'express',
         'PayPalPlus' => 'plus',
     ];
+
+    private function __construct()
+    {
+    }
 }

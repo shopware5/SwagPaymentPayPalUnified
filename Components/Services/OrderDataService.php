@@ -55,7 +55,7 @@ class OrderDataService
                 ':paymentStatus' => $paymentStatusId,
             ]);
 
-        if ($paymentStatusId === PaymentStatus::PAYMENT_STATUS_APPROVED) {
+        if ($paymentStatusId === PaymentStatus::PAYMENT_STATUS_PAID) {
             $builder->set('o.cleareddate', 'NOW()');
         }
 

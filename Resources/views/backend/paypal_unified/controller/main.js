@@ -51,23 +51,23 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
 
         me.control({
             'paypal-unified-overview-grid': {
-                'select': me.onSelectGridRecord
+                select: me.onSelectGridRecord
             },
             'paypal-unified-sidebar-history-refund-button': {
-                'click': me.onRefundButtonClick
+                click: me.onRefundButtonClick
             },
             'paypal-unified-refund-sale-window': {
-                'refundSale': me.onRefundSale
+                refundSale: me.onRefundSale
             },
             'paypal-unified-capture-authorize': {
-                'authorizePayment': me.onAuthorizePayment
+                authorizePayment: me.onAuthorizePayment
             },
             'paypal-unified-refund-capture-window': {
-                'refundCapture': me.onRefundCapture
+                refundCapture: me.onRefundCapture
             },
             'paypal-unified-sidebar-order-actions': {
-                'voidAuthorization': me.onVoidAuthorization,
-                'voidOrder': me.onVoidOrder
+                voidAuthorization: me.onVoidAuthorization,
+                voidOrder: me.onVoidOrder
             }
         });
     },
@@ -170,6 +170,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
         }
 
         me.getSidebar().setLoading(false);
+        me.getGrid().getStore().reload();
     },
 
     voidCallback: function(options, success, response) {
@@ -185,6 +186,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
         }
 
         me.getSidebar().setLoading(false);
+        me.getGrid().getStore().reload();
     },
 
     /**
@@ -582,8 +584,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
      * @returns { Ext.data.Model }
      */
     getRecord: function() {
-        var me = this;
-        return me.record;
+        return this.record;
     },
 
     /**
@@ -592,8 +593,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
      * @returns { Object }
      */
     getDetails: function() {
-        var me = this;
-        return me.details;
+        return this.details;
     }
 });
 // {/block}

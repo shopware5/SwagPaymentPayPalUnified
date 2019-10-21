@@ -6,7 +6,7 @@
  * file that was distributed with this source code.
  */
 
-namespace SwagPaymentPayPalUnified\Components;
+namespace SwagPaymentPayPalUnified\Components\Exception;
 
 class PayPalApiException extends \Exception
 {

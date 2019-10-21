@@ -8,7 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\Components;
 
-class PaymentStatus
+final class PaymentStatus
 {
     /**
      * The default status for cancelled orders
@@ -17,7 +17,15 @@ class PaymentStatus
     /**
      * The default status for approved orders
      */
-    const PAYMENT_STATUS_APPROVED = 12;
+    const PAYMENT_STATUS_PARTIALLY_PAID = 11;
+    /**
+     * The default status for approved orders
+     */
+    const PAYMENT_STATUS_PAID = 12;
+    /**
+     * @deprecated Deprecated since 2.5.0, will be removed in 3.0.0, use PAYMENT_STATUS_PAID instead
+     */
+    const PAYMENT_STATUS_APPROVED = self::PAYMENT_STATUS_PAID;
     /**
      * The default status for open orders
      */
@@ -34,4 +42,12 @@ class PaymentStatus
      * The default status from PayPal to identify completed transactions
      */
     const PAYMENT_COMPLETED = 'completed';
+    /**
+     * The default state from PayPal to identify voided transactions (order/authorization)
+     */
+    const PAYMENT_VOIDED = 'voided';
+
+    private function __construct()
+    {
+    }
 }

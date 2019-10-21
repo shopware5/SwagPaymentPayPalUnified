@@ -10,8 +10,8 @@ namespace SwagPaymentPayPalUnified\Components\Services;
 
 use GuzzleHttp\Exception\ClientException;
 use Shopware\Components\HttpClient\RequestException;
+use SwagPaymentPayPalUnified\Components\Exception\PayPalApiException;
 use SwagPaymentPayPalUnified\Components\ExceptionHandlerServiceInterface;
-use SwagPaymentPayPalUnified\Components\PayPalApiException;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\ErrorResponse;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\GenericErrorResponse;

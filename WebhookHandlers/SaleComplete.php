@@ -8,10 +8,9 @@
 
 namespace SwagPaymentPayPalUnified\WebhookHandlers;
 
-use Shopware\Components\Model\ModelManager;
-use Shopware\Models\Order\Order;
-use Shopware\Models\Order\Status;
+use SwagPaymentPayPalUnified\Components\Exception\OrderNotFoundException;
 use SwagPaymentPayPalUnified\Components\PaymentStatus;
+use SwagPaymentPayPalUnified\Components\Services\PaymentStatusService;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\Webhook\WebhookEventTypes;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\Webhook\WebhookHandler;
@@ -25,14 +24,14 @@ class SaleComplete implements WebhookHandler
     private $logger;
 
     /**
-     * @var ModelManager
+     * @var PaymentStatusService
      */
-    private $modelManager;
+    private $paymentStatusService;
 
-    public function __construct(LoggerServiceInterface $logger, ModelManager $modelManager)
+    public function __construct(LoggerServiceInterface $logger, PaymentStatusService $paymentStatusService)
     {
         $this->logger = $logger;
-        $this->modelManager = $modelManager;
+        $this->paymentStatusService = $paymentStatusService;
     }
 
     /**
@@ -48,28 +47,28 @@ class SaleComplete implements WebhookHandler
      */
     public function invoke(Webhook $webhook)
     {
+        $parentPayment = $webhook->getResource()['parent_payment'];
         try {
-            /** @var Order $orderRepository */
-            $orderRepository = $this->modelManager->getRepository(Order::class)->findOneBy(['temporaryId' => $webhook->getResource()['parent_payment']]);
-            /** @var Status $orderStatusModel */
-            $orderStatusModel = $this->modelManager->getRepository(Status::class)->find(PaymentStatus::PAYMENT_STATUS_APPROVED);
-
-            if ($orderRepository === null) {
-                $this->logger->error('[SaleComplete-Webhook] Could not find associated order with the temporaryID ' . $webhook->getResource()['parent_payment'], ['webhook' => $webhook->toArray()]);
-
-                return false;
-            }
-
-            //Set the payment status to "completely payed"
-            $orderRepository->setPaymentStatus($orderStatusModel);
-
-            $this->modelManager->flush($orderRepository);
+            $this->paymentStatusService->updatePaymentStatus(
+                $parentPayment,
+                PaymentStatus::PAYMENT_STATUS_PAID
+            );
 
             return true;
-        } catch (\Exception $ex) {
-            $this->logger->error('[SaleComplete-Webhook] Could not update entity', ['message' => $ex->getMessage(), 'stacktrace' => $ex->getTrace()]);
-        }
+        } catch (OrderNotFoundException $e) {
+            $this->logger->error(
+                '[SaleComplete-Webhook] Could not find associated order with the temporaryID ' . $parentPayment,
+                ['webhook' => $webhook->toArray()]
+            );
 
-        return false;
+            return false;
+        } catch (\Exception $ex) {
+            $this->logger->error(
+                '[SaleComplete-Webhook] Could not update entity',
+                ['message' => $ex->getMessage(), 'stacktrace' => $ex->getTrace()]
+            );
+
+            return false;
+        }
     }
 }

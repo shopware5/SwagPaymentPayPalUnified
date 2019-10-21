@@ -10,6 +10,7 @@ namespace SwagPaymentPayPalUnified\Tests\Functional\WebhookHandler;
 
 use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\Components\PaymentStatus;
+use SwagPaymentPayPalUnified\Components\Services\PaymentStatusService;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\Webhook\WebhookEventTypes;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Webhook;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
@@ -33,14 +34,20 @@ class SaleRefundedTest extends TestCase
 
     public function test_can_construct()
     {
-        $instance = new SaleRefunded(Shopware()->Container()->get('paypal_unified.logger_service'), Shopware()->Container()->get('models'));
+        $instance = new SaleRefunded(
+            Shopware()->Container()->get('paypal_unified.logger_service'),
+            Shopware()->Container()->get('paypal_unified.payment_status_service')
+        );
 
         static::assertInstanceOf(SaleRefunded::class, $instance);
     }
 
     public function test_invoke_returns_true_because_the_order_status_has_been_updated()
     {
-        $instance = new SaleRefunded(Shopware()->Container()->get('paypal_unified.logger_service'), Shopware()->Container()->get('models'));
+        $instance = new SaleRefunded(
+            Shopware()->Container()->get('paypal_unified.logger_service'),
+            Shopware()->Container()->get('paypal_unified.payment_status_service')
+        );
 
         static::assertTrue($instance->invoke($this->getWebhookStruct()));
 
@@ -52,20 +59,29 @@ class SaleRefundedTest extends TestCase
 
     public function test_invoke_returns_false_because_the_order_does_not_exist()
     {
-        $instance = new SaleRefunded(Shopware()->Container()->get('paypal_unified.logger_service'), Shopware()->Container()->get('models'));
+        $instance = new SaleRefunded(
+            Shopware()->Container()->get('paypal_unified.logger_service'),
+            Shopware()->Container()->get('paypal_unified.payment_status_service')
+        );
 
         static::assertFalse($instance->invoke($this->getWebhookStruct('ORDER_NOT_AVAILABLE')));
     }
 
     public function test_getEventType_is_correct()
     {
-        $instance = new SaleRefunded(Shopware()->Container()->get('paypal_unified.logger_service'), Shopware()->Container()->get('models'));
+        $instance = new SaleRefunded(
+            Shopware()->Container()->get('paypal_unified.logger_service'),
+            Shopware()->Container()->get('paypal_unified.payment_status_service')
+        );
         static::assertSame(WebhookEventTypes::PAYMENT_SALE_REFUNDED, $instance->getEventType());
     }
 
     public function test_invoke_will_return_false_without_active_entity_manager()
     {
-        $instance = new SaleRefunded(Shopware()->Container()->get('paypal_unified.logger_service'), new EntityManagerMock());
+        $instance = new SaleRefunded(
+            Shopware()->Container()->get('paypal_unified.logger_service'),
+            new PaymentStatusService(new EntityManagerMock())
+        );
 
         static::assertFalse($instance->invoke($this->getWebhookStruct(self::TEST_ORDER_ID)));
     }

@@ -6,7 +6,7 @@
  * file that was distributed with this source code.
  */
 
-namespace SwagPaymentPayPalUnified\Components\Installments;
+namespace SwagPaymentPayPalUnified\Components\Services\Installments;
 
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Installments\FinancingResponse;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Installments\FinancingResponse\FinancingOption;

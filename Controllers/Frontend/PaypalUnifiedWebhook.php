@@ -46,13 +46,13 @@ class Shopware_Controllers_Frontend_PaypalUnifiedWebhook extends Enlight_Control
         $this->webhookService = $this->get('paypal_unified.webhook_service');
         $this->logger = $this->get('paypal_unified.logger_service');
 
-        $modelManager = $this->get('models');
+        $paymentStatusService = $this->get('paypal_unified.payment_status_service');
 
         $this->webhookService->registerWebhooks([
-            new SaleComplete($this->logger, $modelManager),
-            new SaleDenied($this->logger, $modelManager),
-            new SaleRefunded($this->logger, $modelManager),
-            new AuthorizationVoided($this->logger, $modelManager),
+            new SaleComplete($this->logger, $paymentStatusService),
+            new SaleDenied($this->logger, $paymentStatusService),
+            new SaleRefunded($this->logger, $paymentStatusService),
+            new AuthorizationVoided($this->logger, $paymentStatusService),
         ]);
     }
 

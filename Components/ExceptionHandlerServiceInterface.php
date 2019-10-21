@@ -8,6 +8,8 @@
 
 namespace SwagPaymentPayPalUnified\Components;
 
+use SwagPaymentPayPalUnified\Components\Exception\PayPalApiException;
+
 interface ExceptionHandlerServiceInterface
 {
     /**

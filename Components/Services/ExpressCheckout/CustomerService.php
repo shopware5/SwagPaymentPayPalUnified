@@ -6,7 +6,7 @@
  * file that was distributed with this source code.
  */
 
-namespace SwagPaymentPayPalUnified\Components\ExpressCheckout;
+namespace SwagPaymentPayPalUnified\Components\Services\ExpressCheckout;
 
 use Doctrine\DBAL\Connection;
 use Enlight_Controller_Front;
