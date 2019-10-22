@@ -99,19 +99,19 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
 
         me.control({
             'paypal-unified-settings-top-toolbar': {
-                'changeShop': me.onChangeShop
+                changeShop: me.onChangeShop
             },
             'paypal-unified-settings-toolbar': {
-                'saveSettings': me.onSaveSettings
+                saveSettings: me.onSaveSettings
             },
             'paypal-unified-settings-tabs-general': {
-                'registerWebhook': me.onRegisterWebhook,
-                'validateAPI': me.onValidateAPISettings,
-                'onChangeShopActivation': me.applyActivationState,
-                'onChangeMerchantLocation': me.applyMerchantLocationState
+                registerWebhook: me.onRegisterWebhook,
+                validateAPI: me.onValidateAPISettings,
+                onChangeShopActivation: me.applyActivationState,
+                onChangeMerchantLocation: me.applyMerchantLocationState
             },
             'paypal-unified-settings-tabs-installments': {
-                'testInstallmentsAvailability': me.onTestInstallmentsAvailability
+                testInstallmentsAvailability: me.onTestInstallmentsAvailability
             }
         });
     },
@@ -369,6 +369,8 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
     applyActivationState: function(active) {
         var me = this,
             generalTab = me.getGeneralTab();
+
+        me.applyMerchantLocationState(generalTab.smartPaymentButtonsCheckbox);
 
         generalTab.restContainer.setDisabled(!active);
         generalTab.behaviourContainer.setDisabled(!active);
