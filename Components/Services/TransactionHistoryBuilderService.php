@@ -75,31 +75,33 @@ class TransactionHistoryBuilderService
     private function getSalesHistory(Payment $payment)
     {
         $result = [];
-        $maxAmount = $payment->getTransactions()->getAmount()->getTotal();
+        $maxAmount = (float) $payment->getTransactions()->getAmount()->getTotal();
 
         $relatedResource = $payment->getTransactions()->getRelatedResources();
 
         if ($relatedResource !== null) {
             /** @var RelatedResource $sale */
             foreach ($relatedResource->getResources() as $sale) {
+                $amount = $sale->getAmount();
+                $amountTotal = (float) $amount->getTotal();
                 $result[] = [
                     'id' => $sale->getId(),
                     'state' => $sale->getState(),
-                    'amount' => $sale->getType() === ResourceType::SALE ? $sale->getAmount()->getTotal() : ($sale->getAmount()->getTotal() * -1),
+                    'amount' => $amountTotal,
                     'create_time' => $sale->getCreateTime(),
                     'update_time' => $sale->getUpdateTime(),
-                    'currency' => $sale->getAmount()->getCurrency(),
+                    'currency' => $amount->getCurrency(),
                     'type' => $sale->getType(),
                 ];
 
                 if ($sale->getType() === ResourceType::REFUND) {
-                    $maxAmount -= (float) $sale->getAmount()->getTotal();
+                    $maxAmount += $amountTotal;
                 }
             }
         }
 
         //This is the maximum amount that can be refunded.
-        $result['maxRefundableAmount'] = $maxAmount;
+        $result['maxRefundableAmount'] = round($maxAmount, 2);
 
         return $result;
     }
@@ -115,12 +117,12 @@ class TransactionHistoryBuilderService
     private function getAuthorizationHistory(Payment $payment)
     {
         $result = [];
-        $maxRefundableAmount = 0;
-        $maxAuthorizableAmount = $payment->getTransactions()->getAmount()->getTotal();
+        $maxRefundableAmount = 0.0;
+        $maxAuthorizableAmount = (float) $payment->getTransactions()->getAmount()->getTotal();
 
         foreach ($payment->getTransactions()->getRelatedResources()->getResources() as $authorization) {
             $amount = $authorization->getAmount();
-            $amountTotal = $amount->getTotal();
+            $amountTotal = (float) $amount->getTotal();
             $id = $authorization->getId();
             $result[$id] = [
                 'id' => $id,
@@ -143,8 +145,8 @@ class TransactionHistoryBuilderService
             }
         }
 
-        $result['maxRefundableAmount'] = $maxRefundableAmount;
-        $result['maxAuthorizableAmount'] = $maxAuthorizableAmount;
+        $result['maxRefundableAmount'] = round($maxRefundableAmount, 2);
+        $result['maxAuthorizableAmount'] = round($maxAuthorizableAmount, 2);
 
         return $result;
     }
