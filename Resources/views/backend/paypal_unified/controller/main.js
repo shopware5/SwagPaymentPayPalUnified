@@ -462,10 +462,11 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
         var me = this,
             refundButton = me.getSidebar().historyTab.down('#refundButton'),
             toolbar = me.getSidebar().toolbar,
-            payment = me.details.payment;
+            payment = me.details.payment,
+            maxRefundableAmount = me.details.history.maxRefundableAmount;
 
-        refundButton.enable();
-        toolbar.updateToolbar(payment.intent, me.details.history.maxRefundableAmount, false);
+        refundButton.setDisabled(maxRefundableAmount === 0);
+        toolbar.updateToolbar(payment.intent, maxRefundableAmount, false);
     },
 
     /**
@@ -491,20 +492,24 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
             refundButton = me.getSidebar().historyTab.down('#refundButton'),
             toolbar = me.getSidebar().toolbar,
             payment = me.details.payment,
-            authorization = me.details.authorization;
+            intent = payment.intent,
+            authorization = me.details.authorization,
+            state = authorization.state,
+            maxRefundableAmount = me.details.history.maxRefundableAmount,
+            maxAuthorizableAmount = me.details.history.maxAuthorizableAmount;
 
-        if (authorization.state === 'authorized') {
+        if (state === 'authorized') {
             refundButton.disable();
-            toolbar.updateToolbar(payment.intent, me.details.history.maxAuthorizableAmount, true);
-        } else if (authorization.state === 'partially_captured') {
-            refundButton.enable();
-            toolbar.updateToolbar(payment.intent, me.details.history.maxAuthorizableAmount, false);
-        } else if (authorization.state === 'captured') {
-            refundButton.enable();
-            toolbar.updateToolbar(payment.intent, 0, false);
-        } else if (authorization.state === 'voided') {
+            toolbar.updateToolbar(intent, maxAuthorizableAmount, true);
+        } else if (state === 'partially_captured') {
+            refundButton.setDisabled(maxRefundableAmount === 0);
+            toolbar.updateToolbar(intent, maxAuthorizableAmount, false);
+        } else if (state === 'captured') {
+            refundButton.setDisabled(maxRefundableAmount === 0);
+            toolbar.updateToolbar(intent, 0, false);
+        } else if (state === 'voided') {
             refundButton.disable();
-            toolbar.updateToolbar(payment.intent, 0, false);
+            toolbar.updateToolbar(intent, 0, false);
         }
     },
 
@@ -528,17 +533,20 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
             refundButton = me.getSidebar().historyTab.down('#refundButton'),
             toolbar = me.getSidebar().toolbar,
             payment = me.details.payment,
-            order = me.details.order;
+            intent = payment.intent,
+            order = me.details.order,
+            state = order.state,
+            maxAuthorizableAmount = me.details.history.maxAuthorizableAmount;
 
-        if (order.state === 'PENDING') {
+        if (state === 'PENDING') {
             refundButton.disable();
-            toolbar.updateToolbar(payment.intent, me.details.history.maxAuthorizableAmount, true);
-        } else if (order.state === 'CAPTURE') {
-            refundButton.enable();
-            toolbar.updateToolbar(payment.intent, me.details.history.maxAuthorizableAmount, false);
-        } else if (order.state === 'VOIDED') {
+            toolbar.updateToolbar(intent, maxAuthorizableAmount, true);
+        } else if (state === 'CAPTURE') {
+            refundButton.setDisabled(me.details.history.maxRefundableAmount === 0);
+            toolbar.updateToolbar(intent, maxAuthorizableAmount, false);
+        } else if (state === 'VOIDED') {
             refundButton.disable();
-            toolbar.updateToolbar(payment.intent, 0, false);
+            toolbar.updateToolbar(intent, 0, false);
         }
     },
 

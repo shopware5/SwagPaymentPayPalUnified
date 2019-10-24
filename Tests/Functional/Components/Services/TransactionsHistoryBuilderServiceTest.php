@@ -45,7 +45,7 @@ class TransactionsHistoryBuilderServiceTest extends TestCase
         $testPaymentData = $this->getTestSalePaymentDetails();
 
         $testSale = $historyBuilderService->getTransactionHistory($testPaymentData)[0];
-        static::assertSame('45.94', $testSale['amount']);
+        static::assertSame(45.94, $testSale['amount']);
         static::assertSame('TEST1', $testSale['id']);
         static::assertSame('partially_refunded', $testSale['state']);
         static::assertSame('2017-01-31T09:53:36Z', $testSale['create_time']);
