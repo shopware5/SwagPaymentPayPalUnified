@@ -31,7 +31,7 @@ class VoidServiceTest extends TestCase
         $this->modelManager = Shopware()->Container()->get('models');
     }
 
-    public function testVoidOrder(): void
+    public function testVoidOrder()
     {
         $orderId = $this->createOrder(OrderResourceMock::PAYPAL_PAYMENT_ID);
 
@@ -43,7 +43,7 @@ class VoidServiceTest extends TestCase
         static::assertTrue($result['success']);
     }
 
-    public function testVoidOrderThrowException(): void
+    public function testVoidOrderThrowException()
     {
         $orderId = $this->createOrder(OrderResourceMock::PAYPAL_PAYMENT_ID);
 
@@ -55,7 +55,7 @@ class VoidServiceTest extends TestCase
         static::assertFalse($result['success']);
     }
 
-    public function testVoidAuthorization(): void
+    public function testVoidAuthorization()
     {
         $orderId = $this->createOrder(AuthorizationResourceMock::PAYPAL_PAYMENT_ID);
 
@@ -67,7 +67,7 @@ class VoidServiceTest extends TestCase
         static::assertTrue($result['success']);
     }
 
-    public function testVoidAuthorizationThrowException(): void
+    public function testVoidAuthorizationThrowException()
     {
         $orderId = $this->createOrder(AuthorizationResourceMock::PAYPAL_PAYMENT_ID);
 
