@@ -28,7 +28,7 @@ class PaymentDetailsServiceTest extends TestCase
     const SALE_ID = 'saleId';
     const LEGACY_ID = 'legacyId';
 
-    public function testGetPaymentDetailsOrder(): void
+    public function testGetPaymentDetailsOrder()
     {
         $result = $this->createPaymentDetailService()->getPaymentDetails(self::ORDER_ID, '0', '');
 
@@ -38,7 +38,7 @@ class PaymentDetailsServiceTest extends TestCase
         static::assertArrayHasKey('history', $result);
     }
 
-    public function testGetPaymentDetailsAuthorization(): void
+    public function testGetPaymentDetailsAuthorization()
     {
         $result = $this->createPaymentDetailService()->getPaymentDetails(self::AUTHORIZATION_ID, '0', '');
 
@@ -48,7 +48,7 @@ class PaymentDetailsServiceTest extends TestCase
         static::assertArrayHasKey('history', $result);
     }
 
-    public function testGetPaymentDetailsSale(): void
+    public function testGetPaymentDetailsSale()
     {
         $result = $this->createPaymentDetailService()->getPaymentDetails(self::SALE_ID, '0', '');
 
@@ -58,7 +58,7 @@ class PaymentDetailsServiceTest extends TestCase
         static::assertArrayHasKey('history', $result);
     }
 
-    public function testGetPaymentDetailsSaleThrowException(): void
+    public function testGetPaymentDetailsSaleThrowException()
     {
         $result = $this->createPaymentDetailService()->getPaymentDetails(PaymentResourceMock::THROW_EXCEPTION, '0', '');
 
@@ -69,7 +69,7 @@ class PaymentDetailsServiceTest extends TestCase
         static::assertArrayNotHasKey('history', $result);
     }
 
-    public function testGetPaymentDetailsLegacy(): void
+    public function testGetPaymentDetailsLegacy()
     {
         $legacyPaymentId = '99';
         /** @var Connection $connection */

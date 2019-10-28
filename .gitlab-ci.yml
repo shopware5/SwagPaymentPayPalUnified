@@ -72,7 +72,7 @@ Code Coverage:
 SW 5.2:
     stage: Shopware Versions
     needs: [PHP analyze]
-    image: shopware/5-continuous:7.1
+    image: shopware/5-continuous:5.6
     before_script: []
     variables:
         CHECKOUT_SHOPWARE_BRANCH: "5.2"
