@@ -5,12 +5,33 @@
     <label lang="de">PayPal</label>
     <label lang="en">PayPal</label>
 
-    <version>2.4.1</version>
+    <version>2.5.0</version>
     <copyright>(c) by shopware AG</copyright>
     <license>MIT</license>
     <link>http://store.shopware.com</link>
     <author>shopware AG</author>
     <compatibility minVersion="5.2.0" maxVersion="5.99.99"/>
+
+    <changelog version="2.5.0">
+        <changes lang="de">
+            PT-9896 - Neue allgemeine Option für das Warenkorb übertragen hinzugefügt;
+            PT-10621 - Mit Shopware 5.6 kann nun die Session wiederhergestellt werden, falls diese verloren geht, während der Kunde sich auf der PayPal Seite befindet;
+            PT-10823 - Wenn verschiedene Aktionen über das PayPal Bestellmodul ausgelöst werden, wird nun auch der Zahlungsstatus der Bestellung aktualisiert;
+            PT-10825 - Anzeige der Smart Payment Buttons verbessert;
+            PT-10855 - Problem behoben, dass manchmal beim Erstellen einer Zahlung für den In-Context-Modus aufgetreten ist;
+            PT-10919 - Fehlermeldungen im Bestellmodul sind nun fest gesetzt;
+            PT-10953 - Anzeige des Maximalbetrags zur Wiedergutschrift im Bestellmodul wurde korrigiert;
+        </changes>
+        <changes lang="en">
+            PT-9896 - Add new general option for shopping cart submit;
+            PT-10621 - With Shopware 5.6 the session can now be restored if it gets lost while the customer is on the PayPal page;
+            PT-10823 - If several actions are triggered via the PayPal order module, the payment status of the order is now also updated;
+            PT-10825 - Improve displaying of Smart Payment Buttons;
+            PT-10855 - Fixed problem that sometimes occurred when creating a payment for in-context mode;
+            PT-10919 - Error messages in the order module are now sticky;
+            PT-10953 - Fix displaying of maximum amount for refund in order module;
+        </changes>
+    </changelog>
 
     <changelog version="2.4.1">
         <changes lang="de">PT-10794 - Anzeigefehler mit aktivierten SPB auf der Bestätigungsseite behoben;</changes>
