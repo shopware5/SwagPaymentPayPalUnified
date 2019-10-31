@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Subscriber;
 
+use SwagPaymentPayPalUnified\Components\PaymentBuilderInterface;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\Services\Installments\ValidationService;
 use SwagPaymentPayPalUnified\Models\Settings\General as GeneralSettingsModel;
@@ -337,9 +338,7 @@ class InstallmentsTest extends UnifiedControllerTestCase
             'AmountNumeric' => 9.99,
             'AmountWithTaxNumeric' => 11.11,
         ]);
-        $actionEventArgs->getSubject()->View()->assign('sUserData', [
-            'additional' => ['show_net' => 0],
-        ]);
+        $actionEventArgs->getSubject()->View()->assign('sUserData', $this->getDefaultUserData());
 
         $settings = new GeneralSettingsModel();
         $settings->setActive(true);
@@ -364,9 +363,7 @@ class InstallmentsTest extends UnifiedControllerTestCase
             'AmountNumeric' => 399.99,
             'AmountWithTaxNumeric' => 444.44,
         ]);
-        $actionEventArgs->getSubject()->View()->assign('sUserData', [
-            'additional' => ['show_net' => 0],
-        ]);
+        $actionEventArgs->getSubject()->View()->assign('sUserData', $this->getDefaultUserData());
 
         $settings = new GeneralSettingsModel();
         $settings->setActive(true);
@@ -391,9 +388,7 @@ class InstallmentsTest extends UnifiedControllerTestCase
             'AmountNumeric' => 399.99,
             'AmountWithTaxNumeric' => 444.44,
         ]);
-        $actionEventArgs->getSubject()->View()->assign('sUserData', [
-            'additional' => ['show_net' => 0],
-        ]);
+        $actionEventArgs->getSubject()->View()->assign('sUserData', $this->getDefaultUserData());
 
         $settings = new GeneralSettingsModel();
         $settings->setActive(true);
@@ -419,9 +414,7 @@ class InstallmentsTest extends UnifiedControllerTestCase
             'AmountNumeric' => 399.99,
             'AmountWithTaxNumeric' => 444.44,
         ]);
-        $actionEventArgs->getSubject()->View()->assign('sUserData', [
-            'additional' => ['show_net' => false],
-        ]);
+        $actionEventArgs->getSubject()->View()->assign('sUserData', $this->getDefaultUserData());
 
         $settings = new GeneralSettingsModel();
         $settings->setActive(true);
@@ -446,9 +439,7 @@ class InstallmentsTest extends UnifiedControllerTestCase
             'AmountNumeric' => 399.99,
             'AmountWithTaxNumeric' => 444.44,
         ]);
-        $actionEventArgs->getSubject()->View()->assign('sUserData', [
-            'additional' => ['show_net' => true],
-        ]);
+        $actionEventArgs->getSubject()->View()->assign('sUserData', $this->getDefaultUserData(true));
 
         $settings = new GeneralSettingsModel();
         $settings->setActive(true);
@@ -473,9 +464,7 @@ class InstallmentsTest extends UnifiedControllerTestCase
             'AmountNumeric' => 399.99,
             'AmountWithTaxNumeric' => 444.44,
         ]);
-        $actionEventArgs->getSubject()->View()->assign('sUserData', [
-            'additional' => ['show_net' => 0],
-        ]);
+        $actionEventArgs->getSubject()->View()->assign('sUserData', $this->getDefaultUserData());
 
         $settings = new GeneralSettingsModel();
         $settings->setActive(true);
@@ -505,9 +494,7 @@ class InstallmentsTest extends UnifiedControllerTestCase
             'AmountNumeric' => 399.99,
             'AmountWithTaxNumeric' => 444.44,
         ]);
-        $actionEventArgs->getSubject()->View()->assign('sUserData', [
-            'additional' => ['show_net' => 0],
-        ]);
+        $actionEventArgs->getSubject()->View()->assign('sUserData', $this->getDefaultUserData());
         $actionEventArgs->getSubject()->View()->assign('sPayment', ['id' => $installmentsPaymentId]);
 
         $settings = new GeneralSettingsModel();
@@ -534,9 +521,7 @@ class InstallmentsTest extends UnifiedControllerTestCase
             'AmountNumeric' => 399.99,
             'AmountWithTaxNumeric' => 444.44,
         ]);
-        $actionEventArgs->getSubject()->View()->assign('sUserData', [
-            'additional' => ['show_net' => 0],
-        ]);
+        $actionEventArgs->getSubject()->View()->assign('sUserData', $this->getDefaultUserData());
         $actionEventArgs->getSubject()->View()->assign('sPayment', ['id' => 1]);
 
         $settings = new GeneralSettingsModel();
@@ -667,6 +652,14 @@ class InstallmentsTest extends UnifiedControllerTestCase
             new OrderCreditInfoServiceMock(),
             Shopware()->Container()->get('paypal_unified.client_service')
         );
+    }
+
+    private function getDefaultUserData(bool $showNet = false, bool $customerGroupUseGrossPrice = true): array
+    {
+        return [
+            'additional' => ['show_net' => $showNet],
+            PaymentBuilderInterface::CUSTOMER_GROUP_USE_GROSS_PRICES => $customerGroupUseGrossPrice,
+        ];
     }
 }
 

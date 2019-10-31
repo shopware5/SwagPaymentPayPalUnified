@@ -10,6 +10,7 @@ use Shopware\Components\HttpClient\RequestException;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
 use SwagPaymentPayPalUnified\Components\ExceptionHandlerServiceInterface;
+use SwagPaymentPayPalUnified\Components\PaymentBuilderInterface;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\PaymentStatus;
@@ -89,7 +90,8 @@ class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_F
      */
     public function gatewayAction()
     {
-        $orderData = $this->dependencyProvider->getSession()->get('sOrderVariables');
+        $session = $this->dependencyProvider->getSession();
+        $orderData = $session->get('sOrderVariables');
 
         if ($orderData === null) {
             $this->handleError(ErrorCodes::NO_ORDER_TO_PROCESS);
@@ -104,6 +106,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_F
         }
 
         $userData = $orderData['sUserData'];
+        $userData[PaymentBuilderInterface::CUSTOMER_GROUP_USE_GROSS_PRICES] = (bool) $session->get('sUserGroupData', ['tax' => 1])['tax'];
 
         try {
             //Query all information

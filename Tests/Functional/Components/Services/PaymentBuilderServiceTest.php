@@ -9,6 +9,7 @@
 namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services;
 
 use PHPUnit\Framework\TestCase;
+use SwagPaymentPayPalUnified\Components\PaymentBuilderInterface;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
 use SwagPaymentPayPalUnified\Components\Services\PaymentBuilderService;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
@@ -102,6 +103,25 @@ class PaymentBuilderServiceTest extends TestCase
         static::assertSame('46.22', $requestParameters['transactions'][0]['amount']['details']['shipping']);
         static::assertSame('50.41', $requestParameters['transactions'][0]['amount']['details']['subtotal']);
         static::assertSame('18.36', $requestParameters['transactions'][0]['amount']['details']['tax']);
+    }
+
+    public function test_getPayment_with_show_net_in_frontend()
+    {
+        $settingService = new SettingsServicePaymentBuilderServiceMock(false, 0);
+        $requestService = $this->getRequestService($settingService);
+
+        $basketData = $this->getBasketDataArray();
+        $userData = $this->getUserDataAsArray();
+        $userData[PaymentBuilderInterface::CUSTOMER_GROUP_USE_GROSS_PRICES] = false;
+
+        $params = new PaymentBuilderParameters();
+        $params->setBasketData($basketData);
+        $params->setUserData($userData);
+
+        $requestParameters = $requestService->getPayment($params);
+        $requestParameters = $requestParameters->toArray();
+
+        static::assertSame('96.63', $requestParameters['transactions'][0]['amount']['total']);
     }
 
     public function test_getPayment_with_basket_unique_id()
@@ -435,6 +455,7 @@ class PaymentBuilderServiceTest extends TestCase
     private function getUserDataAsArray()
     {
         return [
+            PaymentBuilderInterface::CUSTOMER_GROUP_USE_GROSS_PRICES => true,
             'additional' => [
                 'show_net' => true,
                 'countryShipping' => [
