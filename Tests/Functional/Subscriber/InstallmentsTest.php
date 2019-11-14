@@ -654,7 +654,7 @@ class InstallmentsTest extends UnifiedControllerTestCase
         );
     }
 
-    private function getDefaultUserData(bool $showNet = false, bool $customerGroupUseGrossPrice = true): array
+    private function getDefaultUserData(bool $showNet = false, bool $customerGroupUseGrossPrice = true)
     {
         return [
             'additional' => ['show_net' => $showNet],
