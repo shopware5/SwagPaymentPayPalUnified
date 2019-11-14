@@ -64,9 +64,31 @@ class DependencyProvider
     public function createPaymentToken()
     {
         if ($this->container->has(PaymentTokenService::class)) {
+            if ($this->isBlacklistedShopwareVersionsForPaymentToken()) {
+                return null;
+            }
+
             return $this->container->get(PaymentTokenService::class)->generate();
         }
 
         return null;
+    }
+
+    /**
+     * In older Shopware 5.6.x versions the PaymentTokenSubscriber::onPreDispatchFrontend method
+     * sets the session cookie to another path than the original Session::createSession method.
+     * This was fixed with Shopware 5.6.3, so these three versions are blacklisted for this feature.
+     *
+     * @see \Shopware\Components\Cart\PaymentTokenSubscriber::onPreDispatchFrontend
+     * @see \Shopware\Components\DependencyInjection\Bridge\Session::createSession
+     *
+     * @return bool
+     */
+    private function isBlacklistedShopwareVersionsForPaymentToken()
+    {
+        $blacklistedShopwareVersions = ['5.6.0', '5.6.1', '5.6.2'];
+        $currentShopwareVersion = $this->container->getParameter('shopware.release.version');
+
+        return in_array($currentShopwareVersion, $blacklistedShopwareVersions, true);
     }
 }
