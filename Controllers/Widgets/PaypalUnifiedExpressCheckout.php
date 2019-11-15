@@ -10,6 +10,7 @@ use Shopware\Components\HttpClient\RequestException;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
 use SwagPaymentPayPalUnified\Components\ExceptionHandlerServiceInterface;
+use SwagPaymentPayPalUnified\Components\PaymentBuilderInterface;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\PartnerAttributionId;
@@ -74,6 +75,8 @@ class Shopware_Controllers_Widgets_PaypalUnifiedExpressCheckout extends Shopware
 
         $basketData = $this->getBasket();
         $userData = $this->getUserData();
+        $userData[PaymentBuilderInterface::CUSTOMER_GROUP_USE_GROSS_PRICES] = (bool) $this->dependencyProvider->getSession()
+            ->get('sUserGroupData', ['tax' => 1])['tax'];
 
         /** @var \Shopware\Models\Shop\DetachedShop $shop */
         $shop = $this->dependencyProvider->getShop();

@@ -352,6 +352,9 @@ class Plus implements SubscriberInterface
      */
     private function createPayment(array $basketData, array $userData)
     {
+        $userData[PaymentBuilderInterface::CUSTOMER_GROUP_USE_GROSS_PRICES] = (bool) $this->dependencyProvider->getSession()
+            ->get('sUserGroupData', ['tax' => 1])['tax'];
+
         $requestParams = new PaymentBuilderParameters();
         $requestParams->setUserData($userData);
         $requestParams->setBasketData($basketData);

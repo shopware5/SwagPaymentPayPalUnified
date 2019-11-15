@@ -372,6 +372,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_F
         $orderData = $session->get('sOrderVariables');
         $userData = $orderData['sUserData'];
         $basketData = $orderData['sBasket'];
+        $userData[PaymentBuilderInterface::CUSTOMER_GROUP_USE_GROSS_PRICES] = (bool) $session->get('sUserGroupData', ['tax' => 1])['tax'];
 
         $customerComment = (string) $request->getParam('customerComment', '');
         if ($customerComment !== '') {
