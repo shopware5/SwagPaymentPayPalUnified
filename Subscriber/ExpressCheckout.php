@@ -305,6 +305,8 @@ class ExpressCheckout implements SubscriberInterface
         $orderVariables = $this->session->get('sOrderVariables');
         $userData = $orderVariables['sUserData'];
         $basketData = $orderVariables['sBasket'];
+        $userData[PaymentBuilderInterface::CUSTOMER_GROUP_USE_GROSS_PRICES] = (bool) $this->dependencyProvider->getSession()
+            ->get('sUserGroupData', ['tax' => 1])['tax'];
 
         $shippingAddress = $this->paymentAddressService->getShippingAddress($userData);
         $addressPatch = new PaymentAddressPatch($shippingAddress);

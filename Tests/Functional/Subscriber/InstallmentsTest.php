@@ -36,7 +36,8 @@ class InstallmentsTest extends UnifiedControllerTestCase
             Shopware()->Container()->get('paypal_unified.exception_handler_service'),
             new PaymentResourceMock(),
             new OrderCreditInfoServiceMock(),
-            Shopware()->Container()->get('paypal_unified.client_service')
+            Shopware()->Container()->get('paypal_unified.client_service'),
+            Shopware()->Container()->get('paypal_unified.dependency_provider')
         );
 
         static::assertNotNull($subscriber);
@@ -650,7 +651,8 @@ class InstallmentsTest extends UnifiedControllerTestCase
             Shopware()->Container()->get('paypal_unified.exception_handler_service'),
             new PaymentResourceMock(),
             new OrderCreditInfoServiceMock(),
-            Shopware()->Container()->get('paypal_unified.client_service')
+            Shopware()->Container()->get('paypal_unified.client_service'),
+            Shopware()->Container()->get('paypal_unified.dependency_provider')
         );
     }
 

@@ -11,6 +11,7 @@ namespace SwagPaymentPayPalUnified\Subscriber;
 use Doctrine\DBAL\Connection;
 use Enlight\Event\SubscriberInterface;
 use Enlight_Controller_ActionEventArgs as ActionEventArgs;
+use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\ExceptionHandlerServiceInterface;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderInterface;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
@@ -74,6 +75,11 @@ class Installments implements SubscriberInterface
      */
     private $clientService;
 
+    /**
+     * @var DependencyProvider
+     */
+    private $dependencyProvider;
+
     public function __construct(
         SettingsServiceInterface $settingsService,
         ValidationService $validationService,
@@ -82,7 +88,8 @@ class Installments implements SubscriberInterface
         ExceptionHandlerServiceInterface $exceptionHandlerService,
         PaymentResource $paymentResource,
         OrderCreditInfoService $orderCreditInfoService,
-        ClientService $clientService
+        ClientService $clientService,
+        DependencyProvider $dependencyProvider
     ) {
         $this->settingsService = $settingsService;
         $this->validationService = $validationService;
@@ -93,6 +100,7 @@ class Installments implements SubscriberInterface
         $this->orderCreditInfoService = $orderCreditInfoService;
         $this->clientService = $clientService;
         $this->paymentMethodProvider = new PaymentMethodProvider();
+        $this->dependencyProvider = $dependencyProvider;
     }
 
     /**
@@ -189,9 +197,14 @@ class Installments implements SubscriberInterface
             return;
         }
 
+        $userData = $view->getAssign('sUserData');
+        $userData[PaymentBuilderInterface::CUSTOMER_GROUP_USE_GROSS_PRICES] = (bool) $this->dependencyProvider->getSession()
+            ->get('sUserGroupData', ['tax' => 1])['tax'];
+
         $paymentBuilderParams = new PaymentBuilderParameters();
         $paymentBuilderParams->setBasketData($view->getAssign('sBasket'));
-        $paymentBuilderParams->setUserData($view->getAssign('sUserData'));
+        $paymentBuilderParams->setUserData($userData);
+
         $paymentStruct = $this->installmentsPaymentBuilder->getPayment($paymentBuilderParams);
         $productPrice = $paymentStruct->getTransactions()->getAmount()->getTotal();
 
