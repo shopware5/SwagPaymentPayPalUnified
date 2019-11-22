@@ -321,16 +321,16 @@ class PaymentBuilderService implements PaymentBuilderInterface
      */
     private function useNetPriceCalculation()
     {
-        if (!$this->userData[self::CUSTOMER_GROUP_USE_GROSS_PRICES]) {
-            return true;
-        }
-
         if (!empty($this->userData['additional']['countryShipping']['taxfree'])) {
             return true;
         }
 
         if (empty($this->userData['additional']['countryShipping']['taxfree_ustid'])) {
             return false;
+        }
+
+        if (!$this->userData[self::CUSTOMER_GROUP_USE_GROSS_PRICES]) {
+            return true;
         }
 
         if (empty($this->userData['shippingaddress']['ustid'])

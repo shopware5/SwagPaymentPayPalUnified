@@ -113,6 +113,7 @@ class PaymentBuilderServiceTest extends TestCase
         $basketData = $this->getBasketDataArray();
         $userData = $this->getUserDataAsArray();
         $userData[PaymentBuilderInterface::CUSTOMER_GROUP_USE_GROSS_PRICES] = false;
+        $userData['additional']['countryShipping']['taxfree_ustid'] = '123456789';
 
         $params = new PaymentBuilderParameters();
         $params->setBasketData($basketData);
@@ -122,6 +123,196 @@ class PaymentBuilderServiceTest extends TestCase
         $requestParameters = $requestParameters->toArray();
 
         static::assertSame('96.63', $requestParameters['transactions'][0]['amount']['total']);
+    }
+
+    public function test_useNetPriceCalculation_should_be_net_functional_test_step1()
+    {
+        $settingService = new SettingsServicePaymentBuilderServiceMock(false, 0);
+        $requestService = $this->getRequestService($settingService);
+
+        $basketData = $this->getBasketDataArray();
+        $userData = $this->getUserDataAsArray();
+
+        // Should match
+        $userData['additional']['countryShipping']['taxfree'] = true;
+
+        $userData[PaymentBuilderInterface::CUSTOMER_GROUP_USE_GROSS_PRICES] = false;
+        $userData['additional']['countryShipping']['taxfree_ustid'] = null;
+        $userData['shippingaddress']['ustid'] = null;
+        $userData['billingaddress']['ustid'] = null;
+        $userData['additional']['country']['taxfree_ustid'] = null;
+
+        $params = new PaymentBuilderParameters();
+        $params->setBasketData($basketData);
+        $params->setUserData($userData);
+
+        $requestParameters = $requestService->getPayment($params);
+        $requestParameters = $requestParameters->toArray();
+
+        static::assertSame('96.63', $requestParameters['transactions'][0]['amount']['total']);
+    }
+
+    public function test_useNetPriceCalculation_should_be_net_functional_test_step2()
+    {
+        $settingService = new SettingsServicePaymentBuilderServiceMock(false, 0);
+        $requestService = $this->getRequestService($settingService);
+
+        $basketData = $this->getBasketDataArray();
+        $userData = $this->getUserDataAsArray();
+
+        // Should match
+        $userData['additional']['countryShipping']['taxfree_ustid'] = '1';
+
+        $userData[PaymentBuilderInterface::CUSTOMER_GROUP_USE_GROSS_PRICES] = false;
+        $userData['additional']['countryShipping']['taxfree'] = false;
+        $userData['shippingaddress']['ustid'] = null;
+        $userData['billingaddress']['ustid'] = null;
+        $userData['additional']['country']['taxfree_ustid'] = null;
+
+        $params = new PaymentBuilderParameters();
+        $params->setBasketData($basketData);
+        $params->setUserData($userData);
+
+        $requestParameters = $requestService->getPayment($params);
+        $requestParameters = $requestParameters->toArray();
+
+        static::assertSame('96.63', $requestParameters['transactions'][0]['amount']['total']);
+    }
+
+    public function test_useNetPriceCalculation_should_be_net_functional_test_step3()
+    {
+        $settingService = new SettingsServicePaymentBuilderServiceMock(false, 0);
+        $requestService = $this->getRequestService($settingService);
+
+        $basketData = $this->getBasketDataArray();
+        $userData = $this->getUserDataAsArray();
+
+        // Should match
+        $userData['additional']['countryShipping']['taxfree_ustid'] = '1';
+        $userData[PaymentBuilderInterface::CUSTOMER_GROUP_USE_GROSS_PRICES] = false;
+
+        $userData['shippingaddress']['ustid'] = null;
+        $userData['billingaddress']['ustid'] = null;
+        $userData['additional']['country']['taxfree_ustid'] = null;
+        $userData['additional']['countryShipping']['taxfree'] = false;
+
+        $params = new PaymentBuilderParameters();
+        $params->setBasketData($basketData);
+        $params->setUserData($userData);
+
+        $requestParameters = $requestService->getPayment($params);
+        $requestParameters = $requestParameters->toArray();
+
+        static::assertSame('96.63', $requestParameters['transactions'][0]['amount']['total']);
+    }
+
+    public function test_useNetPriceCalculation_should_be_net_functional_test_step4()
+    {
+        $settingService = new SettingsServicePaymentBuilderServiceMock(false, 0);
+        $requestService = $this->getRequestService($settingService);
+
+        $basketData = $this->getBasketDataArray();
+        $userData = $this->getUserDataAsArray();
+
+        // Should match
+        $userData['shippingaddress']['ustid'] = null;
+        $userData['billingaddress']['ustid'] = '1';
+        $userData['additional']['country']['taxfree_ustid'] = '1';
+
+        $userData['additional']['countryShipping']['taxfree_ustid'] = '1';
+        $userData[PaymentBuilderInterface::CUSTOMER_GROUP_USE_GROSS_PRICES] = true;
+        $userData['additional']['countryShipping']['taxfree'] = false;
+
+        $params = new PaymentBuilderParameters();
+        $params->setBasketData($basketData);
+        $params->setUserData($userData);
+
+        $requestParameters = $requestService->getPayment($params);
+        $requestParameters = $requestParameters->toArray();
+
+        static::assertSame('96.63', $requestParameters['transactions'][0]['amount']['total']);
+    }
+
+    public function test_useNetPriceCalculation_should_be_net_functional_test_step5()
+    {
+        $settingService = new SettingsServicePaymentBuilderServiceMock(false, 0);
+        $requestService = $this->getRequestService($settingService);
+
+        $basketData = $this->getBasketDataArray();
+        $userData = $this->getUserDataAsArray();
+
+        // Should match
+        $userData['shippingaddress']['ustid'] = '1';
+
+        $userData['additional']['countryShipping']['taxfree'] = null;
+        $userData['additional']['countryShipping']['taxfree_ustid'] = '1';
+        $userData[PaymentBuilderInterface::CUSTOMER_GROUP_USE_GROSS_PRICES] = true;
+        $userData['additional']['country']['taxfree_ustid'] = null;
+        $userData['billingaddress']['ustid'] = null;
+
+        $params = new PaymentBuilderParameters();
+        $params->setBasketData($basketData);
+        $params->setUserData($userData);
+
+        $requestParameters = $requestService->getPayment($params);
+        $requestParameters = $requestParameters->toArray();
+
+        static::assertSame('96.63', $requestParameters['transactions'][0]['amount']['total']);
+    }
+
+    public function test_useNetPriceCalculation_should_be_gross_functional_test_step6()
+    {
+        $settingService = new SettingsServicePaymentBuilderServiceMock(false, 0);
+        $requestService = $this->getRequestService($settingService);
+
+        $basketData = $this->getBasketDataArray();
+        $userData = $this->getUserDataAsArray();
+
+        // Should match
+        $userData['additional']['countryShipping']['taxfree_ustid'] = null;
+
+        $userData[PaymentBuilderInterface::CUSTOMER_GROUP_USE_GROSS_PRICES] = false;
+        $userData['shippingaddress']['ustid'] = null;
+        $userData['additional']['countryShipping']['taxfree'] = null;
+        $userData['additional']['country']['taxfree_ustid'] = null;
+        $userData['billingaddress']['ustid'] = null;
+
+        $params = new PaymentBuilderParameters();
+        $params->setBasketData($basketData);
+        $params->setUserData($userData);
+
+        $requestParameters = $requestService->getPayment($params);
+        $requestParameters = $requestParameters->toArray();
+
+        static::assertSame('114.99', $requestParameters['transactions'][0]['amount']['total']);
+    }
+
+    public function test_useNetPriceCalculation_should_be_gross_functional_test_step7()
+    {
+        $settingService = new SettingsServicePaymentBuilderServiceMock(false, 0);
+        $requestService = $this->getRequestService($settingService);
+
+        $basketData = $this->getBasketDataArray();
+        $userData = $this->getUserDataAsArray();
+
+        // Should match
+        $userData['billingaddress']['ustid'] = null;
+
+        $userData['additional']['countryShipping']['taxfree_ustid'] = '1';
+        $userData[PaymentBuilderInterface::CUSTOMER_GROUP_USE_GROSS_PRICES] = true;
+
+        $userData['shippingaddress']['ustid'] = null;
+        $userData['additional']['countryShipping']['taxfree'] = null;
+        $userData['additional']['country']['taxfree_ustid'] = null;
+
+        $params = new PaymentBuilderParameters();
+        $params->setBasketData($basketData);
+        $params->setUserData($userData);
+
+        $requestParameters = $requestService->getPayment($params);
+        $requestParameters = $requestParameters->toArray();
+
+        static::assertSame('114.99', $requestParameters['transactions'][0]['amount']['total']);
     }
 
     public function test_getPayment_with_basket_unique_id()
