@@ -73,6 +73,10 @@ class Updater
         if (version_compare($oldVersion, '2.4.1', '<=')) {
             $this->updateTo250();
         }
+
+        if (version_compare($oldVersion, '2.5.1', '<=')) {
+            $this->updateTo260();
+        }
     }
 
     private function updateTo103()
@@ -173,6 +177,20 @@ ALTER TABLE `swag_payment_paypal_unified_settings_general`
 ADD `submit_cart` TINYINT(1) NOT NULL;
 UPDATE `swag_payment_paypal_unified_settings_general`
 SET `submit_cart` = 1;
+SQL;
+
+            $this->connection->executeQuery($query);
+        }
+    }
+
+    private function updateTo260()
+    {
+        if (!$this->checkIfColumnExist('swag_payment_paypal_unified_settings_general', 'advertise_installments')) {
+            $query = <<<SQL
+ALTER TABLE `swag_payment_paypal_unified_settings_general`
+ADD `advertise_installments` TINYINT(1) NOT NULL;
+UPDATE `swag_payment_paypal_unified_settings_general`
+SET `advertise_installments` = 1;
 SQL;
 
             $this->connection->executeQuery($query);
