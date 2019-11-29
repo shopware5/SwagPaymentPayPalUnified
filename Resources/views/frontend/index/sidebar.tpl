@@ -4,7 +4,7 @@
     {$smarty.block.parent}
 
     {block name='frontend_index_left_menu_paypal_unified_logos'}
-        {if $paypalUnifiedShowLogo || $paypalUnifiedShowInstallmentsLogo || $paypalUnifiedAdvertiseReturns || $paypalUnifiedInstallmentsBanner}
+        {if $paypalUnifiedShowLogo || $paypalUnifiedShowInstallmentsLogo || $paypalUnifiedAdvertiseReturns}
             {include file='frontend/paypal_unified/index/sidebar.tpl'}
         {/if}
     {/block}

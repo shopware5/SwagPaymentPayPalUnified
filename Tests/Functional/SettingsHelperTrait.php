@@ -53,10 +53,6 @@ trait SettingsHelperTrait
             $data['advertiseReturns'] = false;
         }
 
-        if (!isset($data['advertiseInstallments'])) {
-            $data['advertiseInstallments'] = false;
-        }
-
         if (!isset($data['brandName'])) {
             $data['brandName'] = 'TestBrandName';
         }

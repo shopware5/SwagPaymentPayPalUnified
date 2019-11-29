@@ -104,14 +104,6 @@
             <tag name="shopware.event_subscriber"/>
         </service>
 
-        <service id="paypal_unified.subscriber.installments_banner"
-                 class="SwagPaymentPayPalUnified\Subscriber\InstallmentsBanner">
-            <argument type="service" id="paypal_unified.settings_service"/>
-            <argument type="service" id="dbal_connection"/>
-            <argument type="service" id="shopware_storefront.context_service"/>
-            <tag name="shopware.event_subscriber"/>
-        </service>
-
         <service id="paypal_unified.subscriber.less"
                  class="SwagPaymentPayPalUnified\Subscriber\Less">
             <argument>%paypal_unified.plugin_dir%</argument>

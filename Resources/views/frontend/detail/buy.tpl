@@ -12,10 +12,6 @@
         {/if}
     {/block}
 
-    {block name='frontend_detail_buy_button_container_paypal_unified_installments_banner'}
-        {include file='frontend/paypal_unified/installments/banner/product_detail.tpl'}
-    {/block}
-
     {$smarty.block.parent}
 {/block}
 

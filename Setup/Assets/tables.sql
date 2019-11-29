@@ -14,7 +14,6 @@ CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_settings_general (
     `log_level`                 INT(11)      NOT NULL,
     `display_errors`            TINYINT(1)   NOT NULL,
     `advertise_returns`         TINYINT(1)   NOT NULL,
-    `advertise_installments`    TINYINT(1)   NOT NULL,
     `use_smart_payment_buttons` TINYINT(1)   NOT NULL,
     `merchant_location`         VARCHAR(255) NOT NULL,
     `submit_cart`               TINYINT(1)   NOT NULL

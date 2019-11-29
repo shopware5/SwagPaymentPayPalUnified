@@ -26,7 +26,6 @@ class FirstRunWizardInstaller
             'log_level' => 1,
             'display_errors' => 0,
             'advertise_returns' => 0,
-            'advertise_installments' => 1,
             'use_smart_payment_buttons' => 0,
             'merchant_location' => 'germany',
         ]);
