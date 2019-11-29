@@ -320,15 +320,14 @@ class ExpressCheckout implements SubscriberInterface
 
         $this->clientService->setPartnerAttributionId(PartnerAttributionId::PAYPAL_EXPRESS_CHECKOUT);
 
+        $patches = [$addressPatch, $amountPatch];
+        $itemList = $paymentStruct->getTransactions()->getItemList();
+        if ($itemList !== null) {
+            $patches[] = new PaymentItemsPatch($itemList->getItems());
+        }
+
         try {
-            if ($this->settingsService->get('submit_cart', SettingsTable::EXPRESS_CHECKOUT)) {
-                $itemListPatch = new PaymentItemsPatch($paymentStruct->getTransactions()->getItemList()->getItems());
-                $this->paymentResource->patch($paymentId, [$addressPatch, $amountPatch, $itemListPatch]);
-
-                return;
-            }
-
-            $this->paymentResource->patch($paymentId, [$addressPatch, $amountPatch]);
+            $this->paymentResource->patch($paymentId, $patches);
         } catch (Exception $exception) {
             $this->exceptionHandlerService->handle($exception, 'patch the payment for express checkout');
             throw $exception;
