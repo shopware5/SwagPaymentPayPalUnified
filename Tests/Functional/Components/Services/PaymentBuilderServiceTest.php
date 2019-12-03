@@ -113,7 +113,7 @@ class PaymentBuilderServiceTest extends TestCase
         $basketData = $this->getBasketDataArray();
         $userData = $this->getUserDataAsArray();
         $userData[PaymentBuilderInterface::CUSTOMER_GROUP_USE_GROSS_PRICES] = false;
-        $userData['additional']['countryShipping']['taxfree_ustid'] = '123456789';
+        $userData['additional']['countryShipping']['taxfree'] = '1';
 
         $params = new PaymentBuilderParameters();
         $params->setBasketData($basketData);
@@ -161,7 +161,8 @@ class PaymentBuilderServiceTest extends TestCase
         $userData = $this->getUserDataAsArray();
 
         // Should match
-        $userData['additional']['countryShipping']['taxfree_ustid'] = '1';
+        $userData['additional']['countryShipping']['taxfree'] = null;
+        $userData['additional']['countryShipping']['taxfree_ustid'] = null;
 
         $userData[PaymentBuilderInterface::CUSTOMER_GROUP_USE_GROSS_PRICES] = false;
         $userData['additional']['countryShipping']['taxfree'] = false;
@@ -176,7 +177,7 @@ class PaymentBuilderServiceTest extends TestCase
         $requestParameters = $requestService->getPayment($params);
         $requestParameters = $requestParameters->toArray();
 
-        static::assertSame('96.63', $requestParameters['transactions'][0]['amount']['total']);
+        static::assertSame('114.99', $requestParameters['transactions'][0]['amount']['total']);
     }
 
     public function test_useNetPriceCalculation_should_be_net_functional_test_step3()
@@ -188,12 +189,12 @@ class PaymentBuilderServiceTest extends TestCase
         $userData = $this->getUserDataAsArray();
 
         // Should match
+        $userData['additional']['countryShipping']['taxfree'] = null;
         $userData['additional']['countryShipping']['taxfree_ustid'] = '1';
-        $userData[PaymentBuilderInterface::CUSTOMER_GROUP_USE_GROSS_PRICES] = false;
-
         $userData['shippingaddress']['ustid'] = null;
-        $userData['billingaddress']['ustid'] = null;
-        $userData['additional']['country']['taxfree_ustid'] = null;
+        $userData['billingaddress']['ustid'] = '1';
+        $userData['additional']['country']['taxfree_ustid'] = '1';
+
         $userData['additional']['countryShipping']['taxfree'] = false;
 
         $params = new PaymentBuilderParameters();
@@ -215,13 +216,13 @@ class PaymentBuilderServiceTest extends TestCase
         $userData = $this->getUserDataAsArray();
 
         // Should match
-        $userData['shippingaddress']['ustid'] = null;
-        $userData['billingaddress']['ustid'] = '1';
-        $userData['additional']['country']['taxfree_ustid'] = '1';
-
+        $userData['additional']['countryShipping']['taxfree'] = null;
         $userData['additional']['countryShipping']['taxfree_ustid'] = '1';
+        $userData['billingaddress']['ustid'] = null;
+        $userData['shippingaddress']['ustid'] = null;
+
+        $userData['additional']['country']['taxfree_ustid'] = '1';
         $userData[PaymentBuilderInterface::CUSTOMER_GROUP_USE_GROSS_PRICES] = true;
-        $userData['additional']['countryShipping']['taxfree'] = false;
 
         $params = new PaymentBuilderParameters();
         $params->setBasketData($basketData);
@@ -230,7 +231,7 @@ class PaymentBuilderServiceTest extends TestCase
         $requestParameters = $requestService->getPayment($params);
         $requestParameters = $requestParameters->toArray();
 
-        static::assertSame('96.63', $requestParameters['transactions'][0]['amount']['total']);
+        static::assertSame('114.99', $requestParameters['transactions'][0]['amount']['total']);
     }
 
     public function test_useNetPriceCalculation_should_be_net_functional_test_step5()
@@ -242,13 +243,13 @@ class PaymentBuilderServiceTest extends TestCase
         $userData = $this->getUserDataAsArray();
 
         // Should match
-        $userData['shippingaddress']['ustid'] = '1';
-
         $userData['additional']['countryShipping']['taxfree'] = null;
         $userData['additional']['countryShipping']['taxfree_ustid'] = '1';
-        $userData[PaymentBuilderInterface::CUSTOMER_GROUP_USE_GROSS_PRICES] = true;
-        $userData['additional']['country']['taxfree_ustid'] = null;
         $userData['billingaddress']['ustid'] = null;
+        $userData['shippingaddress']['ustid'] = null;
+        $userData[PaymentBuilderInterface::CUSTOMER_GROUP_USE_GROSS_PRICES] = true;
+
+        $userData['additional']['country']['taxfree_ustid'] = '1';
 
         $params = new PaymentBuilderParameters();
         $params->setBasketData($basketData);
@@ -257,7 +258,7 @@ class PaymentBuilderServiceTest extends TestCase
         $requestParameters = $requestService->getPayment($params);
         $requestParameters = $requestParameters->toArray();
 
-        static::assertSame('96.63', $requestParameters['transactions'][0]['amount']['total']);
+        static::assertSame('114.99', $requestParameters['transactions'][0]['amount']['total']);
     }
 
     public function test_useNetPriceCalculation_should_be_gross_functional_test_step6()
@@ -269,13 +270,13 @@ class PaymentBuilderServiceTest extends TestCase
         $userData = $this->getUserDataAsArray();
 
         // Should match
-        $userData['additional']['countryShipping']['taxfree_ustid'] = null;
-
-        $userData[PaymentBuilderInterface::CUSTOMER_GROUP_USE_GROSS_PRICES] = false;
-        $userData['shippingaddress']['ustid'] = null;
+        // Should match
         $userData['additional']['countryShipping']['taxfree'] = null;
-        $userData['additional']['country']['taxfree_ustid'] = null;
+        $userData['additional']['countryShipping']['taxfree_ustid'] = '1';
         $userData['billingaddress']['ustid'] = null;
+        $userData['shippingaddress']['ustid'] = '1';
+        $userData[PaymentBuilderInterface::CUSTOMER_GROUP_USE_GROSS_PRICES] = false;
+        $userData['additional']['country']['taxfree_ustid'] = '1';
 
         $params = new PaymentBuilderParameters();
         $params->setBasketData($basketData);
@@ -284,7 +285,7 @@ class PaymentBuilderServiceTest extends TestCase
         $requestParameters = $requestService->getPayment($params);
         $requestParameters = $requestParameters->toArray();
 
-        static::assertSame('114.99', $requestParameters['transactions'][0]['amount']['total']);
+        static::assertSame('96.63', $requestParameters['transactions'][0]['amount']['total']);
     }
 
     public function test_useNetPriceCalculation_should_be_gross_functional_test_step7()
@@ -394,6 +395,7 @@ class PaymentBuilderServiceTest extends TestCase
 
         $userData['additional']['countryShipping']['taxfree_ustid'] = '1';
         $userData['shippingaddress']['ustid'] = 'VATID123';
+        $userData[PaymentBuilderInterface::CUSTOMER_GROUP_USE_GROSS_PRICES] = false;
 
         $params = new PaymentBuilderParameters();
         $params->setBasketData($basketData);
