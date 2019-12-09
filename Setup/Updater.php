@@ -74,8 +74,8 @@ class Updater
             $this->updateTo250();
         }
 
-        if (version_compare($oldVersion, '2.5.1', '<=')) {
-            $this->updateTo260();
+        if (version_compare($oldVersion, '2.6.0', '<=')) {
+            $this->updateTo261();
         }
     }
 
@@ -121,9 +121,9 @@ class Updater
     private function updateTo112()
     {
         if (!$this->checkIfColumnExist('swag_payment_paypal_unified_settings_express', 'off_canvas_active')) {
-            $sql = 'ALTER TABLE `swag_payment_paypal_unified_settings_express` 
-                ADD `off_canvas_active` TINYINT(1) NOT NULL; 
-                UPDATE `swag_payment_paypal_unified_settings_express` 
+            $sql = 'ALTER TABLE `swag_payment_paypal_unified_settings_express`
+                ADD `off_canvas_active` TINYINT(1) NOT NULL;
+                UPDATE `swag_payment_paypal_unified_settings_express`
                 SET `off_canvas_active` = 1;';
 
             $this->connection->executeQuery($sql);
@@ -133,9 +133,9 @@ class Updater
     private function updateTo210()
     {
         if (!$this->checkIfColumnExist('swag_payment_paypal_unified_settings_express', 'listing_active')) {
-            $sql = 'ALTER TABLE `swag_payment_paypal_unified_settings_express` 
-                ADD `listing_active` TINYINT(1) NOT NULL; 
-                UPDATE `swag_payment_paypal_unified_settings_express` 
+            $sql = 'ALTER TABLE `swag_payment_paypal_unified_settings_express`
+                ADD `listing_active` TINYINT(1) NOT NULL;
+                UPDATE `swag_payment_paypal_unified_settings_express`
                 SET `listing_active` = 0;';
 
             $this->connection->executeQuery($sql);
@@ -145,9 +145,9 @@ class Updater
     private function updateTo220()
     {
         if (!$this->checkIfColumnExist('swag_payment_paypal_unified_settings_express', 'button_locale')) {
-            $sql = "ALTER TABLE `swag_payment_paypal_unified_settings_express` 
-                ADD `button_locale` VARCHAR(5) NOT NULL; 
-                UPDATE `swag_payment_paypal_unified_settings_express` 
+            $sql = "ALTER TABLE `swag_payment_paypal_unified_settings_express`
+                ADD `button_locale` VARCHAR(5) NOT NULL;
+                UPDATE `swag_payment_paypal_unified_settings_express`
                 SET `button_locale` = '';";
 
             $this->connection->executeQuery($sql);
@@ -183,7 +183,7 @@ SQL;
         }
     }
 
-    private function updateTo260()
+    private function updateTo261()
     {
         if (!$this->checkIfColumnExist('swag_payment_paypal_unified_settings_general', 'advertise_installments')) {
             $query = <<<SQL
