@@ -572,6 +572,7 @@ class PlusSubscriberTest extends TestCase
             'logLevel' => 0,
             'displayErrors' => 0,
             'advertiseReturns' => 0,
+            'advertiseInstallments' => 0,
             'brandName' => 'TestBrandName',
         ];
     }

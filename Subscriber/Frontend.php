@@ -80,15 +80,12 @@ class Frontend implements SubscriberInterface
             $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.express-checkout-button-in-context.js',
             $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.in-context-checkout.js',
             $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.smart-payment-buttons.js',
+            $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.installments-banner.js',
         ];
 
         return new ArrayCollection($jsPath);
     }
 
-    /**
-     * Handles the Enlight_Controller_Action_PostDispatchSecure_Frontend.
-     * Adds the template directory to the TemplateManager
-     */
     public function onPostDispatchSecure(\Enlight_Controller_ActionEventArgs $args)
     {
         if (!$this->settingsService->hasSettings()) {
@@ -119,6 +116,9 @@ class Frontend implements SubscriberInterface
         $view->assign('paypalUnifiedShowInstallmentsLogo', $showInstallmentsLogo);
     }
 
+    /**
+     * Adds the template directory to the TemplateManager
+     */
     public function onCollectTemplateDir(\Enlight_Event_EventArgs $args)
     {
         $dirs = $args->getReturn();

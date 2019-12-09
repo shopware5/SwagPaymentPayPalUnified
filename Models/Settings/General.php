@@ -115,6 +115,12 @@ class General extends ModelEntity
 
     /**
      * @var bool
+     * @ORM\Column(name="advertise_installments", type="boolean", nullable=false)
+     */
+    private $advertiseInstallments;
+
+    /**
+     * @var bool
      * @ORM\Column(name="use_smart_payment_buttons", type="boolean", nullable=false)
      */
     private $useSmartPaymentButtons;
@@ -353,6 +359,22 @@ class General extends ModelEntity
     public function setAdvertiseReturns($advertiseReturns)
     {
         $this->advertiseReturns = $advertiseReturns;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAdvertiseInstallments()
+    {
+        return $this->advertiseInstallments;
+    }
+
+    /**
+     * @param bool $advertiseInstallments
+     */
+    public function setAdvertiseInstallments($advertiseInstallments)
+    {
+        $this->advertiseInstallments = $advertiseInstallments;
     }
 
     /**
