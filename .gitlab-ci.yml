@@ -179,6 +179,7 @@ SW 5.7:
         CHECKOUT_SHOPWARE_BRANCH: "5.7"
     only:
         - master
+    allow_failure: true
     script:
         - cd custom/plugins/SwagPaymentPayPalUnified
         - php ../../../vendor/bin/phpunit

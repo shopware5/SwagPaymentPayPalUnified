@@ -13,8 +13,14 @@
     <compatibility minVersion="5.2.0" maxVersion="5.99.99"/>
 
     <changelog version="2.6.0">
-        <changes lang="de"></changes>
-        <changes lang="en"></changes>
+        <changes lang="de">
+            PT-11003 - Neue Option für das Bewerben von Ratenzahlung;
+            PT-11082 - Umsatzsteuer-ID wird nun wieder korrekt berücksichtigt;
+        </changes>
+        <changes lang="en">
+            PT-11003 - New option for advertising installment payment;
+            PT-11082 - VAT ID is now correctly considered again;
+        </changes>
     </changelog>
 
     <changelog version="2.5.2">
