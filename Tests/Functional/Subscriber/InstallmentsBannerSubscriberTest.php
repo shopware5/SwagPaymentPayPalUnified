@@ -113,6 +113,8 @@ class InstallmentsBannerSubscriberTest extends TestCase
 
         $view = new ViewMock(new Enlight_Template_Manager());
         $request = new \Enlight_Controller_Request_RequestTestCase();
+        $request->setControllerName('foo');
+        $request->setActionName('bar');
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
             'subject' => new DummyController($request, $view),
             'request' => $request,
