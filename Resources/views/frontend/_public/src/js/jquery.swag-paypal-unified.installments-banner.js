@@ -1,4 +1,4 @@
-;(function($, window, payPalInstallmentsBannerJS, undefined) {
+;(function($, window, undefined) {
     'use strict';
 
     $.plugin('swagPayPalUnifiedInstallmentsBanner', {
@@ -73,9 +73,7 @@
         },
 
         init: function() {
-            if (payPalInstallmentsBannerJS === undefined) {
-                return;
-            }
+            this.payPalInstallmentsBannerJS = window.payPalInstallmentsBannerJS;
 
             this.applyDataAttributes();
             $.publish('plugin/swagPayPalUnifiedInstallmentsBanner/init', this);
@@ -86,7 +84,7 @@
         },
 
         createBanner: function() {
-            payPalInstallmentsBannerJS.Messages({
+            this.payPalInstallmentsBannerJS.Messages({
                 amount: this.opts.amount,
                 currency: this.opts.currency,
                 style: {
@@ -113,4 +111,4 @@
     });
 
     window.StateManager.addPlugin('*[data-paypalUnifiedInstallmentsBanner="true"]', 'swagPayPalUnifiedInstallmentsBanner');
-})(jQuery, window, payPalInstallmentsBannerJS);
+})(jQuery, window);
