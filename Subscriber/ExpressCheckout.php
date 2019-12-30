@@ -15,6 +15,7 @@ use Enlight_Controller_ActionEventArgs as ActionEventArgs;
 use Enlight_View_Default as ViewEngine;
 use Exception;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
+use SwagPaymentPayPalUnified\Components\ErrorCodes;
 use SwagPaymentPayPalUnified\Components\ExceptionHandlerServiceInterface;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderInterface;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
@@ -193,7 +194,14 @@ class ExpressCheckout implements SubscriberInterface
         ) {
             $paymentId = $request->getParam('paymentId');
 
-            $this->patchAddressAndAmount($paymentId);
+            try {
+                $this->patchAddressAndAmount($paymentId);
+            } catch (Exception $exception) {
+                $redirectData = $this->handlePaymentPatchException($exception);
+                $args->getSubject()->redirect($redirectData);
+
+                return;
+            }
 
             $args->getSubject()->redirect([
                 'controller' => 'PaypalUnified',
@@ -298,8 +306,6 @@ class ExpressCheckout implements SubscriberInterface
      * must be updated, because they may have changed during the process
      *
      * @param string $paymentId
-     *
-     * @throws Exception
      */
     private function patchAddressAndAmount($paymentId)
     {
@@ -328,12 +334,7 @@ class ExpressCheckout implements SubscriberInterface
             $patches[] = new PaymentItemsPatch($itemList->getItems());
         }
 
-        try {
-            $this->paymentResource->patch($paymentId, $patches);
-        } catch (Exception $exception) {
-            $this->exceptionHandlerService->handle($exception, 'patch the payment for express checkout');
-            throw $exception;
-        }
+        $this->paymentResource->patch($paymentId, $patches);
     }
 
     /**
@@ -363,5 +364,33 @@ class ExpressCheckout implements SubscriberInterface
         $view->assign('paypalUnifiedEcButtonStyleShape', $expressSettings->getButtonStyleShape());
         $view->assign('paypalUnifiedEcButtonStyleSize', $expressSettings->getButtonStyleSize());
         $view->assign('paypalUnifiedLanguageIso', $this->getExpressCheckoutButtonLanguage($expressSettings));
+    }
+
+    /**
+     * @return array
+     */
+    private function handlePaymentPatchException(Exception $exception)
+    {
+        $message = null;
+        $name = null;
+        $error = $this->exceptionHandlerService->handle($exception, 'patch the payment for express checkout');
+
+        if ($this->settingsService->hasSettings() && $this->settingsService->get('display_errors')) {
+            $message = $error->getMessage();
+            $name = $error->getName();
+        }
+
+        $redirectData = [
+            'controller' => 'checkout',
+            'action' => 'shippingPayment',
+            'paypal_unified_error_code' => ErrorCodes::COMMUNICATION_FAILURE,
+        ];
+
+        if ($name !== null) {
+            $redirectData['paypal_unified_error_name'] = $name;
+            $redirectData['paypal_unified_error_message'] = $message;
+        }
+
+        return $redirectData;
     }
 }

@@ -9,8 +9,8 @@
 namespace SwagPaymentPayPalUnified\Tests\Functional\Subscriber;
 
 use PHPUnit\Framework\TestCase;
-use Shopware\Components\HttpClient\RequestException;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
+use SwagPaymentPayPalUnified\Components\Services\ExceptionHandlerService;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PaymentItemsPatch;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\PaymentResource;
 use SwagPaymentPayPalUnified\Subscriber\ExpressCheckout as ExpressCheckoutSubscriber;
@@ -18,6 +18,7 @@ use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\SettingsHelperTrait;
 use SwagPaymentPayPalUnified\Tests\Mocks\ClientService;
 use SwagPaymentPayPalUnified\Tests\Mocks\DummyController;
+use SwagPaymentPayPalUnified\Tests\Mocks\LoggerMock;
 use SwagPaymentPayPalUnified\Tests\Mocks\PaymentResourceMock;
 use SwagPaymentPayPalUnified\Tests\Mocks\ViewMock;
 
@@ -30,6 +31,11 @@ class ExpressCheckoutSubscriberTest extends TestCase
      * @var PaymentResource|PaymentResourceMock
      */
     private $paymentResource;
+
+    /**
+     * @var LoggerMock
+     */
+    private $loggerMock;
 
     public function test_construct()
     {
@@ -297,7 +303,7 @@ class ExpressCheckoutSubscriberTest extends TestCase
         static::assertNull($subscriber->addPaymentInfoToRequest($enlightEventArgs));
     }
 
-    public function test_addPaymentInfoToRequest_throws_exception()
+    public function test_addPaymentInfoToRequest_logs_error()
     {
         $session = Shopware()->Session();
         $session->offsetSet('sOrderVariables', require __DIR__ . '/_fixtures/sOrderVariables.php');
@@ -318,9 +324,13 @@ class ExpressCheckoutSubscriberTest extends TestCase
 
         $subscriber = $this->getSubscriber(true);
 
-        $this->expectException(RequestException::class);
-        $this->expectExceptionMessage('patch exception');
         $subscriber->addPaymentInfoToRequest($enlightEventArgs);
+
+        static::assertContains('/shippingPayment/paypal_unified_error_code/2', $response->getHeader('Location'));
+        static::assertSame(302, $response->getHttpResponseCode());
+
+        $errors = $this->loggerMock->getErrors();
+        static::assertSame('patch exception', $errors['Could not patch the payment for express checkout due to a communication failure']['message']);
     }
 
     public function test_addPaymentInfoToRequest()
@@ -613,6 +623,7 @@ class ExpressCheckoutSubscriberTest extends TestCase
         Shopware()->Container()->set('paypal_unified.client_service', new ClientService());
 
         $this->paymentResource = Shopware()->Container()->get('paypal_unified.payment_resource');
+        $this->loggerMock = new LoggerMock();
         if ($usePaymentResourceMock) {
             $this->paymentResource = new PaymentResourceMock();
         }
@@ -623,7 +634,7 @@ class ExpressCheckoutSubscriberTest extends TestCase
             $this->paymentResource,
             Shopware()->Container()->get('paypal_unified.payment_address_service'),
             Shopware()->Container()->get('paypal_unified.payment_builder_service'),
-            Shopware()->Container()->get('paypal_unified.exception_handler_service'),
+            new ExceptionHandlerService($this->loggerMock),
             Shopware()->Container()->get('dbal_connection'),
             Shopware()->Container()->get('paypal_unified.client_service'),
             Shopware()->Container()->get('paypal_unified.dependency_provider')
