@@ -46,6 +46,12 @@ class InstallmentsPaymentBuilderServiceTest extends TestCase
         $requestParameters = $this->getRequestData(true, 2, true);
         $returnUrl = $requestParameters['redirect_urls']['return_url'];
 
+        if (method_exists($this, 'assertStringContainsString')) {
+            static::assertStringContainsString('PaypalUnifiedInstallments/return/basketId/test-test-test', $returnUrl);
+
+            return;
+        }
+
         static::assertContains('PaypalUnifiedInstallments/return/basketId/test-test-test', $returnUrl);
     }
 

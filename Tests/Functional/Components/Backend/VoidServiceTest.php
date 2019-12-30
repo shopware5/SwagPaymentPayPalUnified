@@ -26,7 +26,10 @@ class VoidServiceTest extends TestCase
 
     const CURRENCY = CaptureServiceTest::CURRENCY;
 
-    protected function setUp()
+    /**
+     * @before
+     */
+    public function before()
     {
         $this->modelManager = Shopware()->Container()->get('models');
     }

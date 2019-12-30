@@ -43,6 +43,11 @@ class BackendRegistrationSubscriberTest extends TestCase
         $templateDirs = $template->getTemplateDir();
 
         //Do not use the absolute path, since it's different from machine to machine
+        if (method_exists($this, 'assertStringContainsString')) {
+            static::assertStringContainsString('/SwagPaymentPayPalUnified/Resources/views/', implode('', $templateDirs));
+
+            return;
+        }
         static::assertContains('/SwagPaymentPayPalUnified/Resources/views/', implode('', $templateDirs));
     }
 
@@ -58,6 +63,11 @@ class BackendRegistrationSubscriberTest extends TestCase
         $templateDirs = $template->getTemplateDir();
 
         //Do not use the absolute path, since it's different from machine to machine
+        if (method_exists($this, 'assertStringContainsString')) {
+            static::assertStringContainsString('/SwagPaymentPayPalUnified/Resources/views/', implode('', $templateDirs));
+
+            return;
+        }
         static::assertContains('/SwagPaymentPayPalUnified/Resources/views/', implode('', $templateDirs));
     }
 

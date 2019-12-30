@@ -67,6 +67,12 @@ class LoggerServiceTest extends TestCase
         $loggerService->warning('Test message');
 
         $lastLine = $this->getLastLine($fileName);
+
+        if (method_exists($this, 'assertStringContainsString')) {
+            static::assertStringContainsString('Test message', $lastLine);
+
+            return;
+        }
         static::assertContains('Test message', $lastLine);
     }
 
@@ -119,6 +125,12 @@ class LoggerServiceTest extends TestCase
         $loggerService->notify('Test message');
 
         $lastLine = $this->getLastLine($fileName);
+
+        if (method_exists($this, 'assertStringContainsString')) {
+            static::assertStringContainsString('Test message', $lastLine);
+
+            return;
+        }
         static::assertContains('Test message', $lastLine);
     }
 
@@ -135,6 +147,12 @@ class LoggerServiceTest extends TestCase
         $loggerService->error('A very fatal error');
 
         $lastLine = $this->getLastLine($fileName);
+
+        if (method_exists($this, 'assertStringContainsString')) {
+            static::assertStringContainsString('A very fatal error', $lastLine);
+
+            return;
+        }
         static::assertContains('A very fatal error', $lastLine);
     }
 

@@ -40,7 +40,7 @@ class ExceptionHandlerServiceTest extends TestCase
         $logErrors = $loggerMock->getErrors();
 
         static::assertArrayHasKey('Could not testing due to a communication failure', $logErrors);
-        static::assertArraySubset(['message' => 'test message'], $logErrors['Could not testing due to a communication failure']);
+        static::assertEquals(['message' => 'test message'], $logErrors['Could not testing due to a communication failure']);
     }
 
     public function test_requestException_without_body()
@@ -60,7 +60,7 @@ class ExceptionHandlerServiceTest extends TestCase
         $logErrors = $loggerMock->getErrors();
 
         static::assertArrayHasKey('Could not testing due to a communication failure', $logErrors);
-        static::assertArraySubset(['message' => 'test message'], $logErrors['Could not testing due to a communication failure']);
+        static::assertEquals(['message' => 'test message', 'payload' => null], $logErrors['Could not testing due to a communication failure']);
     }
 
     public function test_requestException_with_body_but_no_array()
@@ -83,7 +83,7 @@ class ExceptionHandlerServiceTest extends TestCase
 
         static::assertArrayHasKey('Could not testing due to a communication failure', $logErrors);
         $logError = $logErrors['Could not testing due to a communication failure'];
-        static::assertArraySubset(['message' => 'test message', 'payload' => 'test'], $logError);
+        static::assertEquals(['message' => 'test message', 'payload' => 'test'], $logError);
     }
 
     public function test_requestException_generic_error()
@@ -106,7 +106,7 @@ class ExceptionHandlerServiceTest extends TestCase
 
         static::assertArrayHasKey('Could not testing due to a communication failure', $logErrors);
         $logError = $logErrors['Could not testing due to a communication failure'];
-        static::assertArraySubset(
+        static::assertEquals(
             [
                 'message' => 'test message',
                 'payload' => '{"error":"test error","error_description":"test error description"}',
@@ -135,7 +135,7 @@ class ExceptionHandlerServiceTest extends TestCase
 
         static::assertArrayHasKey('Could not testing due to a communication failure', $logErrors);
         $logError = $logErrors['Could not testing due to a communication failure'];
-        static::assertArraySubset(['message' => 'test message', 'payload' => '[]'], $logError);
+        static::assertEquals(['message' => 'test message', 'payload' => '[]'], $logError);
     }
 
     public function test_requestException_error_response()
@@ -162,7 +162,7 @@ class ExceptionHandlerServiceTest extends TestCase
 
         static::assertArrayHasKey('Could not testing due to a communication failure', $logErrors);
         $logError = $logErrors['Could not testing due to a communication failure'];
-        static::assertArraySubset(
+        static::assertEquals(
             [
                 'message' => 'test message',
                 'payload' => '{"name":"error name","message":"error message","information_link":"error link"}',
@@ -199,7 +199,7 @@ class ExceptionHandlerServiceTest extends TestCase
 
         static::assertArrayHasKey('Could not testing due to a communication failure', $logErrors);
         $logError = $logErrors['Could not testing due to a communication failure'];
-        static::assertArraySubset(
+        static::assertEquals(
             [
                 'message' => 'test message',
                 'payload' => '{"name":"error name","message":"error message","information_link":"error link","details":[{"field":"error field","issue":"error issue"}]}',

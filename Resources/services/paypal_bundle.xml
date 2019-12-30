@@ -5,6 +5,8 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
+        <defaults public="true"/>
+
         <service id="paypal_unified.client_service"
                  class="SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService">
             <argument type="service" id="paypal_unified.settings_service"/>

@@ -333,6 +333,14 @@ class PaymentBuilderServiceTest extends TestCase
 
         $requestParameters = $requestService->getPayment($params);
 
+        if (method_exists($this, 'assertStringContainsString')) {
+            static::assertStringContainsString(
+                '/PaypalUnified/return/basketId/MyUniqueBasketId',
+                $requestParameters->getRedirectUrls()->getReturnUrl()
+            );
+
+            return;
+        }
         static::assertContains(
             '/PaypalUnified/return/basketId/MyUniqueBasketId',
             $requestParameters->getRedirectUrls()->getReturnUrl()

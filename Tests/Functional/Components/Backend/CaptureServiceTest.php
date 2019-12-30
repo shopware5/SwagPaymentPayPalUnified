@@ -27,7 +27,10 @@ class CaptureServiceTest extends TestCase
 
     const CURRENCY = 'EUR';
 
-    protected function setUp()
+    /**
+     * @before
+     */
+    public function before()
     {
         $this->modelManager = Shopware()->Container()->get('models');
     }
