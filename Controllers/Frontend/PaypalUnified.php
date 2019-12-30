@@ -387,6 +387,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_F
         $requestParams = new PaymentBuilderParameters();
         $requestParams->setBasketData($basketData);
         $requestParams->setUserData($userData);
+        $requestParams->setPaymentType(PaymentType::PAYPAL_PLUS);
         $paymentStruct = $this->get('paypal_unified.plus.payment_builder_service')->getPayment($requestParams);
 
         $amountPatch = new PaymentAmountPatch($paymentStruct->getTransactions()->getAmount());
