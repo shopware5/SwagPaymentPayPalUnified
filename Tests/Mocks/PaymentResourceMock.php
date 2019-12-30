@@ -9,6 +9,7 @@
 namespace SwagPaymentPayPalUnified\Tests\Mocks;
 
 use Shopware\Components\HttpClient\RequestException;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PatchInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\PaymentResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
 use SwagPaymentPayPalUnified\Tests\Functional\Components\Backend\PaymentDetailsServiceTest;
@@ -23,6 +24,11 @@ class PaymentResourceMock extends PaymentResource
 {
     const THROW_EXCEPTION = 'throwException';
 
+    /**
+     * @var PatchInterface[]
+     */
+    private $patches = [];
+
     public function __construct()
     {
     }
@@ -32,7 +38,18 @@ class PaymentResourceMock extends PaymentResource
      */
     public function patch($paymentId, array $patches)
     {
-        throw new RequestException('patch exception');
+        $this->patches = $patches;
+        if ($paymentId === self::THROW_EXCEPTION) {
+            throw new RequestException('patch exception');
+        }
+    }
+
+    /**
+     * @return PatchInterface[]
+     */
+    public function getPatches()
+    {
+        return $this->patches;
     }
 
     /**

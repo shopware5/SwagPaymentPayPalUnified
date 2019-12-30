@@ -11,6 +11,8 @@ namespace SwagPaymentPayPalUnified\Tests\Functional\Subscriber;
 use PHPUnit\Framework\TestCase;
 use Shopware\Components\HttpClient\RequestException;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PaymentItemsPatch;
+use SwagPaymentPayPalUnified\PayPalBundle\Resources\PaymentResource;
 use SwagPaymentPayPalUnified\Subscriber\ExpressCheckout as ExpressCheckoutSubscriber;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\SettingsHelperTrait;
@@ -23,6 +25,11 @@ class ExpressCheckoutSubscriberTest extends TestCase
 {
     use DatabaseTestCaseTrait;
     use SettingsHelperTrait;
+
+    /**
+     * @var PaymentResource|PaymentResourceMock
+     */
+    private $paymentResource;
 
     public function test_construct()
     {
@@ -298,6 +305,7 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $request = new \Enlight_Controller_Request_RequestTestCase();
         $request->setActionName('payment');
         $request->setParam('expressCheckout', true);
+        $request->setParam('paymentId', PaymentResourceMock::THROW_EXCEPTION);
 
         $response = new \Enlight_Controller_Response_ResponseTestCase();
         $response->setHttpResponseCode(302);
@@ -333,9 +341,16 @@ class ExpressCheckoutSubscriberTest extends TestCase
             'response' => $response,
         ]);
 
-        $subscriber = $this->getSubscriber();
+        $this->importSettings();
+        $subscriber = $this->getSubscriber(true);
 
         $subscriber->addPaymentInfoToRequest($enlightEventArgs);
+
+        foreach ($this->paymentResource->getPatches() as $patch) {
+            if ($patch instanceof PaymentItemsPatch) {
+                static::fail('No ItemList patch allowed if submit cart for ECS is false');
+            }
+        }
 
         static::assertContains('/PaypalUnified/return/expressCheckout/1/paymentId//PayerID//basketId/', $response->getHeader('Location'));
         static::assertSame(302, $response->getHttpResponseCode());
@@ -597,15 +612,15 @@ class ExpressCheckoutSubscriberTest extends TestCase
     {
         Shopware()->Container()->set('paypal_unified.client_service', new ClientService());
 
-        $paymentResource = Shopware()->Container()->get('paypal_unified.payment_resource');
+        $this->paymentResource = Shopware()->Container()->get('paypal_unified.payment_resource');
         if ($usePaymentResourceMock) {
-            $paymentResource = new PaymentResourceMock();
+            $this->paymentResource = new PaymentResourceMock();
         }
 
         return new ExpressCheckoutSubscriber(
             Shopware()->Container()->get('paypal_unified.settings_service'),
             Shopware()->Container()->get('session'),
-            $paymentResource,
+            $this->paymentResource,
             Shopware()->Container()->get('paypal_unified.payment_address_service'),
             Shopware()->Container()->get('paypal_unified.payment_builder_service'),
             Shopware()->Container()->get('paypal_unified.exception_handler_service'),

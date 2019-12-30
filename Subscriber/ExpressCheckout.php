@@ -28,6 +28,7 @@ use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PaymentItemsPatch;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use SwagPaymentPayPalUnified\PayPalBundle\PartnerAttributionId;
+use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\PaymentResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService;
 
@@ -314,6 +315,7 @@ class ExpressCheckout implements SubscriberInterface
         $requestParams = new PaymentBuilderParameters();
         $requestParams->setBasketData($basketData);
         $requestParams->setUserData($userData);
+        $requestParams->setPaymentType(PaymentType::PAYPAL_EXPRESS);
 
         $paymentStruct = $this->paymentBuilder->getPayment($requestParams);
         $amountPatch = new PaymentAmountPatch($paymentStruct->getTransactions()->getAmount());

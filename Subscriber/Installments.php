@@ -23,6 +23,7 @@ use SwagPaymentPayPalUnified\Models\Settings\Installments as InstallmentsSetting
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use SwagPaymentPayPalUnified\PayPalBundle\PartnerAttributionId;
+use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\PaymentResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
@@ -204,6 +205,7 @@ class Installments implements SubscriberInterface
         $paymentBuilderParams = new PaymentBuilderParameters();
         $paymentBuilderParams->setBasketData($view->getAssign('sBasket'));
         $paymentBuilderParams->setUserData($userData);
+        $paymentBuilderParams->setPaymentType(PaymentType::PAYPAL_INSTALLMENTS);
 
         $paymentStruct = $this->installmentsPaymentBuilder->getPayment($paymentBuilderParams);
         $productPrice = $paymentStruct->getTransactions()->getAmount()->getTotal();
