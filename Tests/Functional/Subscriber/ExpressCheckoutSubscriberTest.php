@@ -322,11 +322,13 @@ class ExpressCheckoutSubscriberTest extends TestCase
             'response' => $response,
         ]);
 
+        $this->importSettings();
+
         $subscriber = $this->getSubscriber(true);
 
         $subscriber->addPaymentInfoToRequest($enlightEventArgs);
 
-        static::assertContains('/shippingPayment/paypal_unified_error_code/2', $response->getHeader('Location'));
+        static::assertContains('/checkout/shippingPayment/paypal_unified_error_code/2/paypal_unified_error_name/0/paypal_unified_error_message/An+error+occurred%3A+patch+exception', $response->getHeader('Location'));
         static::assertSame(302, $response->getHttpResponseCode());
 
         $errors = $this->loggerMock->getErrors();
@@ -362,6 +364,42 @@ class ExpressCheckoutSubscriberTest extends TestCase
             }
         }
 
+        static::assertContains('/PaypalUnified/return/expressCheckout/1/paymentId//PayerID//basketId/', $response->getHeader('Location'));
+        static::assertSame(302, $response->getHttpResponseCode());
+    }
+
+    public function test_addPaymentInfoToRequest_should_patch_item_list()
+    {
+        $session = Shopware()->Session();
+        $session->offsetSet('sOrderVariables', require __DIR__ . '/_fixtures/sOrderVariables.php');
+        $view = new ViewMock(new \Enlight_Template_Manager());
+        $request = new \Enlight_Controller_Request_RequestTestCase();
+        $request->setActionName('payment');
+        $request->setParam('expressCheckout', true);
+
+        $response = new \Enlight_Controller_Response_ResponseTestCase();
+        $response->setHttpResponseCode(302);
+
+        $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
+            'subject' => new DummyController($request, $view, $response),
+            'request' => $request,
+            'response' => $response,
+        ]);
+
+        $this->importSettings(false, false, false, false, false, false, false, true);
+        $subscriber = $this->getSubscriber(true);
+
+        $subscriber->addPaymentInfoToRequest($enlightEventArgs);
+
+        $itemListPatchExists = false;
+        foreach ($this->paymentResource->getPatches() as $patch) {
+            if ($patch instanceof PaymentItemsPatch) {
+                $itemListPatchExists = true;
+                break;
+            }
+        }
+
+        static::assertTrue($itemListPatchExists, 'ItemList patch must exist if submit cart for ECS is true');
         static::assertContains('/PaypalUnified/return/expressCheckout/1/paymentId//PayerID//basketId/', $response->getHeader('Location'));
         static::assertSame(302, $response->getHttpResponseCode());
     }
@@ -588,6 +626,7 @@ class ExpressCheckoutSubscriberTest extends TestCase
      * @param bool $sandboxMode
      * @param bool $ecLoginActive
      * @param bool $ecOffCanvasActive
+     * @param bool $ecSubmitCart
      */
     private function importSettings(
         $active = false,
@@ -596,7 +635,8 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $sandboxMode = false,
         $ecLoginActive = false,
         $ecOffCanvasActive = false,
-        $ecListingActive = false
+        $ecListingActive = false,
+        $ecSubmitCart = false
     ) {
         $this->insertGeneralSettingsFromArray([
             'active' => $active,
@@ -610,6 +650,7 @@ class ExpressCheckoutSubscriberTest extends TestCase
             'listingActive' => $ecListingActive,
             'loginActive' => $ecLoginActive,
             'offCanvasActive' => $ecOffCanvasActive,
+            'submitCart' => $ecSubmitCart,
         ]);
     }
 

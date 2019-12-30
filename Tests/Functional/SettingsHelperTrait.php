@@ -46,7 +46,7 @@ trait SettingsHelperTrait
         }
 
         if (!isset($data['displayErrors'])) {
-            $data['displayErrors'] = false;
+            $data['displayErrors'] = true;
         }
 
         if (!isset($data['advertiseReturns'])) {
