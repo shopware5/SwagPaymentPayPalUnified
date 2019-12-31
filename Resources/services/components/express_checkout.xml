@@ -5,6 +5,8 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
+        <defaults public="true"/>
+
         <service id="paypal_unified.express_checkout.payment_builder_service"
                  class="SwagPaymentPayPalUnified\Components\Services\ExpressCheckout\ExpressCheckoutPaymentBuilderService">
             <argument type="service" id="router"/>

@@ -28,6 +28,14 @@ class PlusPaymentBuilderServiceTest extends TestCase
     {
         $request = $this->getRequestData();
 
+        if (method_exists($this, 'assertStringContainsString')) {
+            static::assertStringContainsString(
+                '/PaypalUnified/return/plus/1/basketId/' . BasketIdWhitelist::WHITELIST_IDS['PayPalPlus'],
+                $request->getRedirectUrls()->getReturnUrl()
+            );
+
+            return;
+        }
         static::assertContains(
             '/PaypalUnified/return/plus/1/basketId/' . BasketIdWhitelist::WHITELIST_IDS['PayPalPlus'],
             $request->getRedirectUrls()->getReturnUrl()

@@ -328,11 +328,23 @@ class ExpressCheckoutSubscriberTest extends TestCase
 
         $subscriber->addPaymentInfoToRequest($enlightEventArgs);
 
-        static::assertContains('/checkout/shippingPayment/paypal_unified_error_code/2/paypal_unified_error_name/0/paypal_unified_error_message/An+error+occurred%3A+patch+exception', $response->getHeader('Location'));
         static::assertSame(302, $response->getHttpResponseCode());
 
         $errors = $this->loggerMock->getErrors();
         static::assertSame('patch exception', $errors['Could not patch the payment for express checkout due to a communication failure']['message']);
+
+        if (method_exists($this, 'assertStringContainsString')) {
+            static::assertStringContainsString(
+                '/checkout/shippingPayment/paypal_unified_error_code/2/paypal_unified_error_name/0/paypal_unified_error_message/An+error+occurred%3A+patch+exception',
+                $response->getHeader('Location')
+            );
+
+            return;
+        }
+        static::assertContains(
+            '/checkout/shippingPayment/paypal_unified_error_code/2/paypal_unified_error_name/0/paypal_unified_error_message/An+error+occurred%3A+patch+exception',
+            $response->getHeader('Location')
+        );
     }
 
     public function test_addPaymentInfoToRequest()
@@ -364,8 +376,20 @@ class ExpressCheckoutSubscriberTest extends TestCase
             }
         }
 
-        static::assertContains('/PaypalUnified/return/expressCheckout/1/paymentId//PayerID//basketId/', $response->getHeader('Location'));
         static::assertSame(302, $response->getHttpResponseCode());
+
+        if (method_exists($this, 'assertStringContainsString')) {
+            static::assertStringContainsString(
+                '/PaypalUnified/return/expressCheckout/1/paymentId//PayerID//basketId/',
+                $response->getHeader('Location')
+            );
+
+            return;
+        }
+        static::assertContains(
+            '/PaypalUnified/return/expressCheckout/1/paymentId//PayerID//basketId/',
+            $response->getHeader('Location')
+        );
     }
 
     public function test_addPaymentInfoToRequest_should_patch_item_list()
@@ -400,8 +424,19 @@ class ExpressCheckoutSubscriberTest extends TestCase
         }
 
         static::assertTrue($itemListPatchExists, 'ItemList patch must exist if submit cart for ECS is true');
-        static::assertContains('/PaypalUnified/return/expressCheckout/1/paymentId//PayerID//basketId/', $response->getHeader('Location'));
         static::assertSame(302, $response->getHttpResponseCode());
+        if (method_exists($this, 'assertStringContainsString')) {
+            static::assertStringContainsString(
+                '/PaypalUnified/return/expressCheckout/1/paymentId//PayerID//basketId/',
+                $response->getHeader('Location')
+            );
+
+            return;
+        }
+        static::assertContains(
+            '/PaypalUnified/return/expressCheckout/1/paymentId//PayerID//basketId/',
+            $response->getHeader('Location')
+        );
     }
 
     public function test_addExpressCheckoutButtonDetail_return_payment_method_inactive()

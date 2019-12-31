@@ -65,6 +65,11 @@ class PaymentInstructionServiceTest extends TestCase
 {"jsonDescription":"Pay Upon Invoice Payment Instructions","orderNumber":20001,"bankName":"TEST_BANK","accountHolder":"TEST_ACCOUNT_HOLDER","iban":"TEST_IBAN","bic":"TEST_BIC","amount":50.5,"dueDate":"01-01-2000","reference":"TEST_REFERENCE_NUMBER"}
 ';
 
+        if (method_exists($this, 'assertStringContainsString')) {
+            static::assertStringContainsString($expected, $internalComment);
+
+            return;
+        }
         static::assertContains($expected, $internalComment);
     }
 

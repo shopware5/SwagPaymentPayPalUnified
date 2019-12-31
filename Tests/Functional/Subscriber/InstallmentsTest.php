@@ -597,11 +597,19 @@ class InstallmentsTest extends UnifiedControllerTestCase
 
         $this->getInstallmentsSubscriber($settingService)->onConfirmInstallments($actionEventArgs);
 
+        static::assertTrue($this->Response()->isRedirect());
+        if (method_exists($this, 'assertStringContainsString')) {
+            static::assertStringContainsString(
+                'checkout/shippingPayment/paypal_unified_error_code/5/paypal_unified_error_name/0/paypal_unified_error_message',
+                $this->Response()->getHeader('Location')
+            );
+
+            return;
+        }
         static::assertContains(
             'checkout/shippingPayment/paypal_unified_error_code/5/paypal_unified_error_name/0/paypal_unified_error_message',
             $this->Response()->getHeader('Location')
         );
-        static::assertTrue($this->Response()->isRedirect());
     }
 
     public function test_onConfirmInstallments_success()

@@ -465,7 +465,7 @@ class PlusSubscriberTest extends TestCase
 
         $result = $this->getSubscriber()->addPaymentMethodsAttributes($eventArgs);
 
-        static::assertArraySubset(['test' => 'foo'], $result);
+        static::assertEquals(['test' => 'foo'], $result);
 
         $paymentMethodProvider->setPaymentMethodActiveFlag(true);
     }
@@ -480,7 +480,7 @@ class PlusSubscriberTest extends TestCase
 
         $result = $this->getSubscriber()->addPaymentMethodsAttributes($eventArgs);
 
-        static::assertArraySubset(['test' => 'foo'], $result);
+        static::assertEquals(['test' => 'foo'], $result);
     }
 
     public function test_addPaymentMethodsAttributes_plus_inactive()
@@ -493,7 +493,7 @@ class PlusSubscriberTest extends TestCase
 
         $result = $this->getSubscriber()->addPaymentMethodsAttributes($eventArgs);
 
-        static::assertArraySubset(['test' => 'foo'], $result);
+        static::assertEquals(['test' => 'foo'], $result);
     }
 
     public function test_addPaymentMethodsAttributes_do_not_integrate_third_party_methods()
@@ -506,7 +506,7 @@ class PlusSubscriberTest extends TestCase
 
         $result = $this->getSubscriber()->addPaymentMethodsAttributes($eventArgs);
 
-        static::assertArraySubset(['test' => 'foo'], $result);
+        static::assertEquals(['test' => 'foo'], $result);
     }
 
     public function test_addPaymentMethodsAttributes_attribute_not_set()
@@ -524,7 +524,7 @@ class PlusSubscriberTest extends TestCase
 
         $result = $this->getSubscriber()->addPaymentMethodsAttributes($eventArgs);
 
-        static::assertArraySubset([['id' => 5], ['id' => 6]], $result);
+        static::assertEquals([['id' => 5], ['id' => 6]], $result);
     }
 
     public function test_addPaymentMethodsAttributes()
@@ -545,12 +545,13 @@ class PlusSubscriberTest extends TestCase
 
         $result = $this->getSubscriber()->addPaymentMethodsAttributes($eventArgs);
 
-        static::assertArraySubset(
+        static::assertEquals(
             [
                 ['id' => 5],
                 [
                     'id' => 6,
-                    'swag_paypal_unified_display_in_plus_iframe' => 1,
+                    'swag_paypal_unified_display_in_plus_iframe' => true,
+                    'swag_paypal_unified_plus_iframe_payment_logo' => null,
                 ],
             ],
             $result
