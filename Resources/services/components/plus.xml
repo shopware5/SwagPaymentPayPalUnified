@@ -5,10 +5,10 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
-        <defaults public="true"/>
 
         <service id="paypal_unified.plus.payment_builder_service"
-                 class="SwagPaymentPayPalUnified\Components\Services\Plus\PlusPaymentBuilderService">
+                 class="SwagPaymentPayPalUnified\Components\Services\Plus\PlusPaymentBuilderService"
+                 public="true">
             <argument type="service" id="router"/>
             <argument type="service" id="paypal_unified.settings_service"/>
             <argument type="service" id="shopware_attribute.crud_service"/>
@@ -17,7 +17,8 @@
         </service>
 
         <service id="paypal_unified.payment_instruction_service"
-                 class="SwagPaymentPayPalUnified\Components\Services\Plus\PaymentInstructionService">
+                 class="SwagPaymentPayPalUnified\Components\Services\Plus\PaymentInstructionService"
+                 public="true">
             <argument type="service" id="models"/>
         </service>
     </services>

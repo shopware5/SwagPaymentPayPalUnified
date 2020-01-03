@@ -5,10 +5,10 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
-        <defaults public="true"/>
 
         <service id="paypal_unified.legacy_service"
-                 class="SwagPaymentPayPalUnified\Components\Services\Legacy\LegacyService">
+                 class="SwagPaymentPayPalUnified\Components\Services\Legacy\LegacyService"
+                 public="true">
             <argument type="service" id="dbal_connection"/>
         </service>
     </services>

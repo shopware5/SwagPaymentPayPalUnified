@@ -5,10 +5,10 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
-        <defaults public="true"/>
 
         <service id="paypal_unified.backend.payment_details_service"
-                 class="SwagPaymentPayPalUnified\Components\Backend\PaymentDetailsService">
+                 class="SwagPaymentPayPalUnified\Components\Backend\PaymentDetailsService"
+                 public="true">
             <argument type="service" id="paypal_unified.exception_handler_service"/>
             <argument type="service" id="paypal_unified.payment_resource"/>
             <argument type="service" id="paypal_unified.sale_resource"/>
@@ -17,7 +17,8 @@
         </service>
 
         <service id="paypal_unified.backend.capture_service"
-                 class="SwagPaymentPayPalUnified\Components\Backend\CaptureService">
+                 class="SwagPaymentPayPalUnified\Components\Backend\CaptureService"
+                 public="true">
             <argument type="service" id="paypal_unified.exception_handler_service"/>
             <argument type="service" id="paypal_unified.order_resource"/>
             <argument type="service" id="paypal_unified.authorization_resource"/>
@@ -25,7 +26,9 @@
             <argument type="service" id="paypal_unified.payment_status_service"/>
         </service>
 
-        <service id="paypal_unified.backend.void_service" class="SwagPaymentPayPalUnified\Components\Backend\VoidService">
+        <service id="paypal_unified.backend.void_service"
+                 class="SwagPaymentPayPalUnified\Components\Backend\VoidService"
+                 public="true">
             <argument type="service" id="paypal_unified.exception_handler_service"/>
             <argument type="service" id="paypal_unified.authorization_resource"/>
             <argument type="service" id="paypal_unified.order_resource"/>

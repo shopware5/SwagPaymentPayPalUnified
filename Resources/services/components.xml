@@ -13,34 +13,40 @@
     </imports>
 
     <services>
-        <defaults public="true"/>
 
         <service id="paypal_unified.dependency_provider"
-                 class="SwagPaymentPayPalUnified\Components\DependencyProvider">
+                 class="SwagPaymentPayPalUnified\Components\DependencyProvider"
+                 public="true">
             <argument type="service" id="service_container"/>
         </service>
 
         <service id="paypal_unified.exception_handler_service"
-                 class="SwagPaymentPayPalUnified\Components\Services\ExceptionHandlerService">
+                 class="SwagPaymentPayPalUnified\Components\Services\ExceptionHandlerService"
+                 public="true">
             <argument id="paypal_unified.logger_service" type="service"/>
         </service>
 
-        <service id="paypal_unified.logger_service" class="SwagPaymentPayPalUnified\Components\Services\LoggerService">
+        <service id="paypal_unified.logger_service"
+                 class="SwagPaymentPayPalUnified\Components\Services\LoggerService"
+                 public="true">
             <argument type="service" id="pluginlogger"/>
             <argument type="service" id="paypal_unified.settings_service"/>
         </service>
 
         <service id="paypal_unified.order_data_service"
-                 class="SwagPaymentPayPalUnified\Components\Services\OrderDataService">
+                 class="SwagPaymentPayPalUnified\Components\Services\OrderDataService"
+                 public="true">
             <argument type="service" id="dbal_connection"/>
             <argument type="service" id="paypal_unified.settings_service"/>
         </service>
 
         <service id="paypal_unified.payment_address_service"
-                 class="SwagPaymentPayPalUnified\Components\Services\PaymentAddressService"/>
+                 class="SwagPaymentPayPalUnified\Components\Services\PaymentAddressService"
+                 public="true"/>
 
         <service id="paypal_unified.payment_builder_service"
-                 class="SwagPaymentPayPalUnified\Components\Services\PaymentBuilderService">
+                 class="SwagPaymentPayPalUnified\Components\Services\PaymentBuilderService"
+                 public="true">
             <argument type="service" id="router"/>
             <argument type="service" id="paypal_unified.settings_service"/>
             <argument type="service" id="snippets"/>
@@ -48,17 +54,20 @@
         </service>
 
         <service id="paypal_unified.payment_status_service"
-                 class="SwagPaymentPayPalUnified\Components\Services\PaymentStatusService">
+                 class="SwagPaymentPayPalUnified\Components\Services\PaymentStatusService"
+                 public="true">
             <argument type="service" id="models"/>
         </service>
 
         <service id="paypal_unified.settings_service"
-                 class="SwagPaymentPayPalUnified\Components\Services\SettingsService">
+                 class="SwagPaymentPayPalUnified\Components\Services\SettingsService"
+                 public="true">
             <argument type="service" id="models"/>
             <argument type="service" id="paypal_unified.dependency_provider"/>
         </service>
 
         <service id="paypal_unified.transaction_history_builder_service"
-                 class="SwagPaymentPayPalUnified\Components\Services\TransactionHistoryBuilderService"/>
+                 class="SwagPaymentPayPalUnified\Components\Services\TransactionHistoryBuilderService"
+                 public="true"/>
     </services>
 </container>
