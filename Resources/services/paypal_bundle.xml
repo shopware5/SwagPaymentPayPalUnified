@@ -5,10 +5,10 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
-        <defaults public="true"/>
 
         <service id="paypal_unified.client_service"
-                 class="SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService">
+                 class="SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService"
+                 public="true">
             <argument type="service" id="paypal_unified.settings_service"/>
             <argument type="service" id="paypal_unified.token_service"/>
             <argument type="service" id="paypal_unified.logger_service"/>
@@ -18,11 +18,13 @@
         </service>
 
         <service id="paypal_unified.token_service"
-                 class="SwagPaymentPayPalUnified\PayPalBundle\Services\TokenService">
+                 class="SwagPaymentPayPalUnified\PayPalBundle\Services\TokenService"
+                 public="true">
             <argument type="service" id="shopware.cache_manager"/>
         </service>
 
         <service id="paypal_unified.webhook_service"
-                 class="SwagPaymentPayPalUnified\PayPalBundle\Services\WebhookService"/>
+                 class="SwagPaymentPayPalUnified\PayPalBundle\Services\WebhookService"
+                 public="true"/>
     </services>
 </container>

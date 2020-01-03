@@ -5,9 +5,9 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
-        <defaults public="true"/>
 
         <service id="paypal_unified.simple_basket_validator"
-                 class="SwagPaymentPayPalUnified\Components\Services\Validation\SimpleBasketValidator"/>
+                 class="SwagPaymentPayPalUnified\Components\Services\Validation\SimpleBasketValidator"
+                 public="true"/>
     </services>
 </container>

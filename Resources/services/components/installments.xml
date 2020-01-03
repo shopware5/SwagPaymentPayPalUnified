@@ -5,10 +5,10 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
-        <defaults public="true"/>
 
         <service id="paypal_unified.installments.payment_builder_service"
-                 class="SwagPaymentPayPalUnified\Components\Services\Installments\InstallmentsPaymentBuilderService">
+                 class="SwagPaymentPayPalUnified\Components\Services\Installments\InstallmentsPaymentBuilderService"
+                 public="true">
             <argument type="service" id="router"/>
             <argument type="service" id="paypal_unified.settings_service"/>
             <argument type="service" id="snippets"/>
@@ -16,21 +16,25 @@
         </service>
 
         <service id="paypal_unified.installments.validation_service"
-                 class="SwagPaymentPayPalUnified\Components\Services\Installments\ValidationService"/>
+                 class="SwagPaymentPayPalUnified\Components\Services\Installments\ValidationService"
+                 public="true"/>
 
         <service id="paypal_unified.installments.company_info_service"
-                 class="SwagPaymentPayPalUnified\Components\Services\Installments\CompanyInfoService">
+                 class="SwagPaymentPayPalUnified\Components\Services\Installments\CompanyInfoService"
+                 public="true">
             <argument type="service" id="config"/>
         </service>
 
         <service id="paypal_unified.installments.installments_request_service"
-                 class="SwagPaymentPayPalUnified\Components\Services\Installments\InstallmentsRequestService">
+                 class="SwagPaymentPayPalUnified\Components\Services\Installments\InstallmentsRequestService"
+                 public="true">
             <argument type="service" id="paypal_unified.installments_resource"/>
             <argument type="service" id="paypal_unified.logger_service"/>
         </service>
 
         <service id="paypal_unified.installments.order_credit_info_service"
-                 class="SwagPaymentPayPalUnified\Components\Services\Installments\OrderCreditInfoService">
+                 class="SwagPaymentPayPalUnified\Components\Services\Installments\OrderCreditInfoService"
+                 public="true">
             <argument type="service" id="models"/>
         </service>
     </services>
