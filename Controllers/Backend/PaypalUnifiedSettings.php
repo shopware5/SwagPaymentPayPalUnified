@@ -10,7 +10,6 @@ use SwagPaymentPayPalUnified\Components\ExceptionHandlerServiceInterface;
 use SwagPaymentPayPalUnified\Components\Services\ExceptionHandlerService;
 use SwagPaymentPayPalUnified\Models\Settings\General as GeneralSettingsModel;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
-use SwagPaymentPayPalUnified\PayPalBundle\Resources\WebhookResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Installments\FinancingResponse;
 
@@ -74,7 +73,7 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
         try {
             $this->configureClient();
 
-            $webhookResource = new WebhookResource($this->clientService);
+            $webhookResource = $this->get('paypal_unified.webhook_resource');
             $webhookResource->create($url, ['*']);
         } catch (Exception $e) {
             $error = $this->exceptionHandler->handle($e, 'register webhooks');
