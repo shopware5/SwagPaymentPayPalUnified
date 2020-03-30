@@ -12,6 +12,11 @@
     <author>shopware AG</author>
     <compatibility minVersion="5.2.0" maxVersion="5.99.99"/>
 
+    <changelog version="REPLACE-GLOBAL-WITH-NEXT-VERSION">
+        <changes lang="de">PT-11575 - Javascript auf der Bestellbestätigungsseite verbessert, wenn der In-Context Modus benutzt wird;</changes>
+        <changes lang="en">PT-11575 - Improve Javascript on confirm page, if in-context mode is used;</changes>
+    </changelog>
+
     <changelog version="2.6.5">
         <changes lang="de">Erweiterbarkeit durch Dritt-Plugins verbessert;</changes>
         <changes lang="en">Improved extensibility via third-party plugins;</changes>
