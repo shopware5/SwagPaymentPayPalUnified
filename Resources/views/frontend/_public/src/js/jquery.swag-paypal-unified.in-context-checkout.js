@@ -134,7 +134,6 @@
 
         init: function() {
             var me = this;
-            me.shouldRun = false;
 
             me.applyDataAttributes();
 
@@ -280,7 +279,8 @@
          * @param {Object} actions
          */
         onValidate: function(actions) {
-            var me = this;
+            var me = this,
+                $tosCheckbox = $(me.opts.agbSelector);
 
             me.$form.on('change', function() {
                 if (me.checkFormValidity()) {
@@ -294,31 +294,11 @@
                 return actions.disable();
             });
 
-            // If-Statement is required since we don´t want Validation on Load
-            if (me.shouldRun) {
-                if (!me.checkFormValidity()) {
-                    $.publish('plugin/swagPayPalUnifiedInContextCheckout/formInValid', [me, actions]);
-
-                    return actions.disable();
-                }
-
-                $.publish('plugin/swagPayPalUnifiedInContextCheckout/formValid', [me, actions]);
-
-                return actions.enable();
-            }
-
-            me.shouldRun = true;
-
-            // if sAGB Checkbox exists return disable as default because a checkbox can´t be checked on load
-            if ($(me.opts.agbSelector).length > 0) {
+            if ($tosCheckbox.length > 0 && !$tosCheckbox.get(0).validity.valid) {
                 $.publish('plugin/swagPayPalUnifiedInContextCheckout/formInValid', [me, actions]);
 
                 return actions.disable();
             }
-
-            $.publish('plugin/swagPayPalUnifiedInContextCheckout/formValid', [me, actions]);
-
-            return actions.enable();
         },
 
         /**
