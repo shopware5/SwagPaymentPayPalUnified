@@ -171,16 +171,6 @@ class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_F
                 $payerInfoPatch,
             ]);
         } catch (\Exception $exception) {
-            /*
-             * The field addressValidation gets checked via JavaScript to ensure the redirect to the right error page,
-             * if the user uses the In-Context mode.
-             */
-            if ($useInContext) {
-                $this->View()->assign('addressValidation', false);
-
-                return;
-            }
-
             $this->handleError(ErrorCodes::ADDRESS_VALIDATION_ERROR, $exception);
 
             return;
@@ -438,15 +428,6 @@ class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_F
      */
     private function handleError($code, Exception $exception = null, $redirectToFinishAction = false)
     {
-        if ($this->Request()->isXmlHttpRequest()) {
-            $this->Front()->Plugins()->Json()->setRenderer();
-            $this->View()->setTemplate();
-
-            $this->View()->assign('errorCode', $code);
-
-            return;
-        }
-
         /** @var string $message */
         $message = null;
         $name = null;
@@ -460,6 +441,22 @@ class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_F
                 $message = $error->getMessage();
                 $name = $error->getName();
             }
+        }
+
+        if ($this->Request()->isXmlHttpRequest()) {
+            $this->Front()->Plugins()->Json()->setRenderer();
+            $view = $this->View();
+            $view->setTemplate();
+
+            $view->assign('errorCode', $code);
+            if ($name !== null) {
+                $view->assign([
+                    'paypal_unified_error_name' => $name,
+                    'paypal_unified_error_message' => $message,
+                ]);
+            }
+
+            return;
         }
 
         $redirectData = [
