@@ -35,12 +35,7 @@ class InvoiceSubscriberTest extends TestCase
 
     public function test_construct()
     {
-        $subscriber = new Invoice(
-            Shopware()->Container()->get('paypal_unified.payment_instruction_service'),
-            Shopware()->Container()->get('dbal_connection'),
-            Shopware()->Container()->get('snippets'),
-            $this->getTranslationService()
-        );
+        $subscriber = $this->getSubscriber();
         static::assertNotNull($subscriber);
     }
 
@@ -55,7 +50,8 @@ class InvoiceSubscriberTest extends TestCase
             Shopware()->Container()->get('paypal_unified.payment_instruction_service'),
             Shopware()->Container()->get('dbal_connection'),
             Shopware()->Container()->get('snippets'),
-            null
+            null,
+            Shopware()->Container()->get('template')
         );
         static::assertNotNull($subscriber);
     }
@@ -64,18 +60,14 @@ class InvoiceSubscriberTest extends TestCase
     {
         $events = Invoice::getSubscribedEvents();
 
-        static::assertCount(1, $events);
+        static::assertCount(2, $events);
         static::assertSame('onBeforeRenderDocument', $events['Shopware_Components_Document::assignValues::after']);
+        static::assertSame('onFilterMailVariables', $events['Shopware_Modules_Order_SendMail_FilterVariables']);
     }
 
     public function test_onBeforeRenderDocument_returns_when_no_document_was_given()
     {
-        $subscriber = new Invoice(
-            Shopware()->Container()->get('paypal_unified.payment_instruction_service'),
-            Shopware()->Container()->get('dbal_connection'),
-            Shopware()->Container()->get('snippets'),
-            $this->getTranslationService()
-        );
+        $subscriber = $this->getSubscriber();
         $hookArgs = new HookArgsWithoutSubject();
 
         static::assertNull($subscriber->onBeforeRenderDocument($hookArgs));
@@ -83,12 +75,7 @@ class InvoiceSubscriberTest extends TestCase
 
     public function test_onBeforeRenderDocument_returns_when_wrong_payment_id_was_given()
     {
-        $subscriber = new Invoice(
-            Shopware()->Container()->get('paypal_unified.payment_instruction_service'),
-            Shopware()->Container()->get('dbal_connection'),
-            Shopware()->Container()->get('snippets'),
-            $this->getTranslationService()
-        );
+        $subscriber = $this->getSubscriber();
 
         $hookArgs = new HookArgsWithWrongPaymentId();
 
@@ -97,12 +84,7 @@ class InvoiceSubscriberTest extends TestCase
 
     public function test_onBeforeRenderDocument_returns_when_wrong_payment_type()
     {
-        $subscriber = new Invoice(
-            Shopware()->Container()->get('paypal_unified.payment_instruction_service'),
-            Shopware()->Container()->get('dbal_connection'),
-            Shopware()->Container()->get('snippets'),
-            $this->getTranslationService()
-        );
+        $subscriber = $this->getSubscriber();
 
         $this->updateOrderPaymentId(15, $this->getUnifiedPaymentId());
         $hookArgs = new HookArgsWithCorrectPaymentId(Shopware()->Container()->has('shopware.benchmark_bundle.collector'));
@@ -112,12 +94,7 @@ class InvoiceSubscriberTest extends TestCase
 
     public function test_onBeforeRenderDocument_handleDocument()
     {
-        $subscriber = new Invoice(
-            Shopware()->Container()->get('paypal_unified.payment_instruction_service'),
-            Shopware()->Container()->get('dbal_connection'),
-            Shopware()->Container()->get('snippets'),
-            $this->getTranslationService()
-        );
+        $subscriber = $this->getSubscriber();
 
         $this->updateOrderPaymentId(15, $this->getUnifiedPaymentId());
         $this->insertTestData();
@@ -130,6 +107,63 @@ class InvoiceSubscriberTest extends TestCase
         $view = $hookArgs->getTemplate();
 
         static::assertNotNull($view->getVariable('PayPalUnifiedInvoiceInstruction'));
+    }
+
+    public function test_onFilterMailVariables(): void
+    {
+        $subscriber = $this->getSubscriber();
+        $args = new \Enlight_Event_EventArgs();
+
+        $template = [
+            'additional' => [
+                'payment' => [
+                    'name' => 'SwagPaymentPayPalUnified',
+                    'additionaldescription' => '{link file="frontend/_public/src/img/sidebar-paypal-generic.png" fullPath}',
+                ],
+            ],
+        ];
+
+        $args->setReturn($template);
+        $result = $subscriber->onFilterMailVariables($args);
+
+        static::assertStringEndsWith(
+            'custom/plugins/SwagPaymentPayPalUnified/Resources/views/frontend/_public/src/img/sidebar-paypal-generic.png',
+            $result['additional']['payment']['additionaldescription']
+        );
+    }
+
+    public function test_onFilterMailVariables_shouldNotBeRendered(): void
+    {
+        $subscriber = $this->getSubscriber();
+        $args = new \Enlight_Event_EventArgs();
+
+        $template = [
+            'additional' => [
+                'payment' => [
+                    'name' => 'SomeOtherPaymentMethod',
+                    'additionaldescription' => '{link file="frontend/_public/src/img/sidebar-paypal-generic.png" fullPath}',
+                ],
+            ],
+        ];
+
+        $args->setReturn($template);
+        $result = $subscriber->onFilterMailVariables($args);
+
+        static::assertStringEndsWith(
+            '{link file="frontend/_public/src/img/sidebar-paypal-generic.png" fullPath}',
+            $result['additional']['payment']['additionaldescription']
+        );
+    }
+
+    private function getSubscriber(): Invoice
+    {
+        return new Invoice(
+            Shopware()->Container()->get('paypal_unified.payment_instruction_service'),
+            Shopware()->Container()->get('dbal_connection'),
+            Shopware()->Container()->get('snippets'),
+            $this->getTranslationService(),
+            Shopware()->Container()->get('template')
+        );
     }
 
     private function insertTestData()
