@@ -13,8 +13,14 @@
     <compatibility minVersion="5.2.0" maxVersion="5.99.99"/>
 
     <changelog version="REPLACE-GLOBAL-WITH-NEXT-VERSION">
-        <changes lang="de">PT-11575 - Javascript auf der Bestellbestätigungsseite verbessert, wenn der In-Context Modus benutzt wird;</changes>
-        <changes lang="en">PT-11575 - Improve Javascript on confirm page, if in-context mode is used;</changes>
+        <changes lang="de">
+            PT-10536 - Beseitigt einen Fehler in der Bestellbestätigungsmail.
+            PT-11575 - Javascript auf der Bestellbestätigungsseite verbessert, wenn der In-Context Modus benutzt wird;
+        </changes>
+        <changes lang="en">
+            PT-10536 - Corrects an error in the order confirmation mail.
+            PT-11575 - Improve Javascript on confirm page, if in-context mode is used;
+        </changes>
     </changelog>
 
     <changelog version="2.6.5">

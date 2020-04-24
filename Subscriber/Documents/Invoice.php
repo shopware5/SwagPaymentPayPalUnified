@@ -10,6 +10,7 @@ namespace SwagPaymentPayPalUnified\Subscriber\Documents;
 
 use Doctrine\DBAL\Connection;
 use Enlight\Event\SubscriberInterface;
+use Enlight_Template_Manager as Template;
 use Shopware_Components_Snippet_Manager as SnippetManager;
 use Shopware_Components_Translation;
 use SwagPaymentPayPalUnified\Components\Document\InvoiceDocumentHandler;
@@ -39,16 +40,23 @@ class Invoice implements SubscriberInterface
      */
     private $translation;
 
+    /**
+     * @var Enlight_Template_ManagerTemplate
+     */
+    private $templateManager;
+
     public function __construct(
         PaymentInstructionService $paymentInstructionService,
         Connection $dbalConnection,
         SnippetManager $snippetManager,
-        Shopware_Components_Translation $translation = null
+        Shopware_Components_Translation $translation = null,
+        Template $templateManager
     ) {
         $this->paymentInstructionsService = $paymentInstructionService;
         $this->dbalConnection = $dbalConnection;
         $this->snippetManager = $snippetManager;
         $this->translation = $translation;
+        $this->templateManager = $templateManager;
 
         if ($this->translation === null) {
             $this->translation = new Shopware_Components_Translation();
@@ -62,6 +70,7 @@ class Invoice implements SubscriberInterface
     {
         return [
             'Shopware_Components_Document::assignValues::after' => 'onBeforeRenderDocument',
+            'Shopware_Modules_Order_SendMail_FilterVariables' => 'onFilterMailVariables',
         ];
     }
 
@@ -98,5 +107,20 @@ class Invoice implements SubscriberInterface
             $this->translation
         );
         $documentHandler->handleDocument($orderNumber, $document);
+    }
+
+    public function onFilterMailVariables(\Enlight_Event_EventArgs $eventArgs)
+    {
+        $vars = $eventArgs->getReturn();
+
+        if ($vars['additional']['payment']['name'] !== 'SwagPaymentPayPalUnified') {
+            return $vars;
+        }
+
+        $vars['additional']['payment']['additionaldescription'] = $this->templateManager->fetch(
+            sprintf('string:%s', $vars['additional']['payment']['additionaldescription'])
+        );
+
+        return $vars;
     }
 }
