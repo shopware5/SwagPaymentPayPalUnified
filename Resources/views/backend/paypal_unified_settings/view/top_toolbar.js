@@ -57,13 +57,6 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.TopToolbar', {
             store = factory.createDynamicSearchStore(attribute),
             selection;
 
-        store.load({
-            callback: function(records) {
-                selection.setValue(records[0].get('id')); // Set the default selection to the first entry
-                me.fireEvent('changeShop', records[0]);
-            }
-        });
-
         selection = Ext.create('Shopware.form.field.SingleSelection', {
             store: store,
             name: 'shopId',
@@ -74,6 +67,16 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.TopToolbar', {
             },
             style: {
                 float: 'right'
+            }
+        });
+
+        store.load({
+            callback: function(records) {
+                Ext.Function.defer(function() {
+                    selection.combo.clearValue();
+                    selection.setValue(records[0]);
+                    me.fireEvent('changeShop', records[0]);
+                }, 1, this);
             }
         });
 
