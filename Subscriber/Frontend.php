@@ -100,8 +100,6 @@ class Frontend implements SubscriberInterface
         $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag($this->connection);
         $showPayPalLogo = $swUnifiedActive && (bool) $this->settingsService->get('show_sidebar_logo');
 
-        $advertiseReturns = $swUnifiedActive && (bool) $this->settingsService->get('advertise_returns');
-
         $swUnifiedInstallmentsActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag($this->connection, PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME);
         $installmentsActive = (bool) $this->settingsService->get('active', SettingsTable::INSTALLMENTS);
         $showInstallmentsLogoSetting = (bool) $this->settingsService->get('show_logo', SettingsTable::INSTALLMENTS);
@@ -112,7 +110,6 @@ class Frontend implements SubscriberInterface
 
         //Assign shop specific and configurable values to the view.
         $view->assign('paypalUnifiedShowLogo', $showPayPalLogo);
-        $view->assign('paypalUnifiedAdvertiseReturns', $advertiseReturns);
         $view->assign('paypalUnifiedShowInstallmentsLogo', $showInstallmentsLogo);
     }
 

@@ -77,6 +77,10 @@ class Updater
         if (version_compare($oldVersion, '2.6.0', '<=')) {
             $this->updateTo261();
         }
+
+        if (version_compare($oldVersion, 'REPLACE_GLOBAL_WITH_NEXT_VERSION', '<=')) {
+            $this->updateTo_REPLACE_GLOBAL_WITH_NEXT_VERSION();
+        }
     }
 
     private function updateTo103()
@@ -194,6 +198,16 @@ SET `advertise_installments` = 1;
 SQL;
 
             $this->connection->executeQuery($query);
+        }
+    }
+
+    private function updateTo_REPLACE_GLOBAL_WITH_NEXT_VERSION()
+    {
+        if ($this->checkIfColumnExist('swag_payment_paypal_unified_settings_general', 'advertise_returns')) {
+            $sql = 'ALTER TABLE `swag_payment_paypal_unified_settings_general`
+                    DROP COLUMN `advertise_returns`;';
+
+            $this->connection->executeQuery($sql);
         }
     }
 
