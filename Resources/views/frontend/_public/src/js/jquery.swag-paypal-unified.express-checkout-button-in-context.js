@@ -1,4 +1,4 @@
-;(function($, window) {
+;(function($, window, undefined) {
     'use strict';
 
     $.plugin('swagPayPalUnifiedExpressCheckoutButtonInContext', {
@@ -87,11 +87,11 @@
             productQuantitySelector: '#sQuantity',
 
             /**
-             * The selector for the product number on the detail page.
+             * The product number which should be added to the cart.
              *
-             * @type string
+             * @type string|null
              */
-            productNumberSelector: 'input[name="sAdd"]',
+            productNumber: null,
 
             /**
              * The selector for the indicator whether the PayPal javascript is already loaded or not
@@ -165,7 +165,7 @@
             me.buffer(function() {
                 me.expressCheckoutButton = paypal.Button.render(me.createPayPalButtonConfiguration(), me.$el.get(0));
 
-                $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonInContextCart/createButton', [me, me.expressCheckoutButton]);
+                $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonInContextCart/createButton', [ me, me.expressCheckoutButton ]);
             });
         },
 
@@ -208,7 +208,7 @@
                 onAuthorize: $.proxy(me.onPayPalAuthorize, me)
             };
 
-            $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonInContextCart/createConfig', [me, config]);
+            $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonInContextCart/createConfig', [ me, config ]);
 
             return config;
         },
@@ -239,10 +239,10 @@
                 params.productQuantity = me.getProductQuantity();
             }
 
-            $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonInContextCart/beforeCreatePayment', [me, params]);
+            $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonInContextCart/beforeCreatePayment', [ me, params ]);
 
             return paypal.request.post(me.opts.createPaymentUrl, params).then(function(data) {
-                $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonInContextCart/paymentCreated', [me, data]);
+                $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonInContextCart/paymentCreated', [ me, data ]);
                 return data.paymentId;
             });
         },
@@ -267,7 +267,11 @@
         getProductNumber: function() {
             var me = this;
 
-            return $(me.opts.productNumberSelector).val();
+            if (me.opts.productNumber === null) {
+                throw new Error('Property productNumber is not set');
+            }
+
+            return me.opts.productNumber;
         },
 
         /**
@@ -277,9 +281,14 @@
          * @returns {Number}
          */
         getProductQuantity: function() {
-            var me = this;
+            var me = this,
+                quantity = $(me.opts.productQuantitySelector).val()
 
-            return $(me.opts.productQuantitySelector).val();
+            if (quantity === undefined) {
+                return 1;
+            }
+
+            return quantity;
         },
 
         /**
@@ -317,5 +326,13 @@
         window.StateManager.addPlugin('*[data-paypalUnifiedEcButtonInContext="true"]', 'swagPayPalUnifiedExpressCheckoutButtonInContext');
     });
 
+    $.subscribe('plugin/swInfiniteScrolling/onFetchNewPageFinished', function() {
+        window.StateManager.addPlugin('*[data-paypalUnifiedEcButtonInContext="true"]', 'swagPayPalUnifiedExpressCheckoutButtonInContext');
+    });
+
+    $.subscribe('plugin/swInfiniteScrolling/onLoadPreviousFinished', function() {
+        window.StateManager.addPlugin('*[data-paypalUnifiedEcButtonInContext="true"]', 'swagPayPalUnifiedExpressCheckoutButtonInContext');
+    });
+
     window.StateManager.addPlugin('*[data-paypalUnifiedEcButtonInContext="true"]', 'swagPayPalUnifiedExpressCheckoutButtonInContext');
-})(jQuery, window);
+})(jQuery, window, undefined);

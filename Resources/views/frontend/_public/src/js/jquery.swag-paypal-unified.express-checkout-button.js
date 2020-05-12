@@ -87,10 +87,11 @@
             productQuantitySelector: '#sQuantity',
 
             /**
-             * The selector for the product number on the detail page.
-             * @type string
+             * The product number which should be added to the cart.
+             *
+             * @type string|null
              */
-            productNumberSelector: 'input[name="sAdd"]',
+            productNumber: null,
 
             /**
              * The selector for the indicator whether the PayPal javascript is already loaded or not
@@ -164,7 +165,7 @@
             me.buffer(function() {
                 me.expressCheckoutButton = paypal.Button.render(me.createPayPalButtonConfiguration(), me.$el.get(0));
 
-                $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonCart/createButton', [me, me.expressCheckoutButton]);
+                $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonCart/createButton', [ me, me.expressCheckoutButton ]);
             });
         },
 
@@ -207,7 +208,7 @@
                 onAuthorize: $.noop
             };
 
-            $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonCart/createConfig', [me, config]);
+            $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonCart/createConfig', [ me, config ]);
 
             return config;
         },
@@ -274,7 +275,7 @@
                 createField('productQuantity', me.getProductQuantity()).appendTo($form);
             }
 
-            $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonCart/createRequestForm', [me, $form]);
+            $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonCart/createRequestForm', [ me, $form ]);
 
             $form.appendTo($('body'));
 
@@ -290,7 +291,11 @@
         getProductNumber: function() {
             var me = this;
 
-            return $(me.opts.productNumberSelector).val();
+            if (me.opts.productNumber === null) {
+                throw new Error('Property productNumber is not set');
+            }
+
+            return me.opts.productNumber;
         },
 
         /**
@@ -300,9 +305,14 @@
          * @returns {Number}
          */
         getProductQuantity: function() {
-            var me = this;
+            var me = this,
+                quantity = $(me.opts.productQuantitySelector).val()
 
-            return $(me.opts.productQuantitySelector).val();
+            if (quantity === undefined) {
+                return 1;
+            }
+
+            return quantity;
         },
 
         /**
@@ -337,6 +347,14 @@
      *  plugin instance, therefore, we have to re-initialize it here.
      */
     $.subscribe('plugin/swAjaxVariant/onRequestData', function() {
+        window.StateManager.addPlugin('*[data-paypalUnifiedEcButton="true"]', 'swagPayPalUnifiedExpressCheckoutButton');
+    });
+
+    $.subscribe('plugin/swInfiniteScrolling/onFetchNewPageFinished', function () {
+        window.StateManager.addPlugin('*[data-paypalUnifiedEcButton="true"]', 'swagPayPalUnifiedExpressCheckoutButton');
+    });
+
+    $.subscribe('plugin/swInfiniteScrolling/onLoadPreviousFinished', function () {
         window.StateManager.addPlugin('*[data-paypalUnifiedEcButton="true"]', 'swagPayPalUnifiedExpressCheckoutButton');
     });
 
