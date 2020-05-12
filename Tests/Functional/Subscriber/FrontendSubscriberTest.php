@@ -114,7 +114,6 @@ class FrontendSubscriberTest extends TestCase
 
         static::assertTrue((bool) $view->getAssign('paypalUnifiedShowLogo'));
         static::assertTrue((bool) $view->getAssign('paypalUnifiedShowInstallmentsLogo'));
-        static::assertTrue((bool) $view->getAssign('paypalUnifiedAdvertiseReturns'));
     }
 
     public function test_onCollectTemplateDir()
@@ -157,7 +156,6 @@ class FrontendSubscriberTest extends TestCase
             'sandbox' => true,
             'showSidebarLogo' => true,
             'active' => $active,
-            'advertiseReturns' => true,
         ]);
 
         $this->insertInstallmentsSettingsFromArray([

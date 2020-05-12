@@ -572,7 +572,6 @@ class PlusSubscriberTest extends TestCase
             'sendOrderNumber' => 0,
             'logLevel' => 0,
             'displayErrors' => 0,
-            'advertiseReturns' => 0,
             'advertiseInstallments' => 0,
             'brandName' => 'TestBrandName',
         ];

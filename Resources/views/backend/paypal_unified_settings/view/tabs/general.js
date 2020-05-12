@@ -267,15 +267,6 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
                 me.orderNumberPrefix,
                 {
                     xtype: 'checkbox',
-                    name: 'advertiseReturns',
-                    inputValue: true,
-                    uncheckedValue: false,
-                    fieldLabel: '{s name="fieldset/behaviour/advertiseReturns"}Free returns{/s}',
-                    boxLabel: '{s name="fieldset/behaviour/advertiseReturns/boxLabel"}Enable to advertise free returns via PayPal. More information <a href="https://www.paypal.com/de/webapps/mpp/returns-on-paypal" title="PayPal returns" target="_blank">here</a>{/s}',
-                    helpText: '{s name="fieldset/behaviour/advertiseReturns/helpText"}If you already offer free returns, the use of the program is excluded.{/s}'
-                },
-                {
-                    xtype: 'checkbox',
                     name: 'advertiseInstallments',
                     inputValue: true,
                     uncheckedValue: false,

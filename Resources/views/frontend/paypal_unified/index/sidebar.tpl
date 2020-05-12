@@ -39,20 +39,6 @@
     {/block}
 {/if}
 
-{if $paypalUnifiedAdvertiseReturns}
-    {block name='frontend_index_sidebar_paypal_unified_advertise_returns'}
-        <div class="panel is--rounded paypal--sidebar">
-            {block name='frontend_index_sidebar_paypal_unified_advertise_returns_body'}
-                <div class="panel--body is--wide paypal--sidebar-inner-returns">
-                    {block name='frontend_index_sidebar_paypal_unified_advertise_returns_script'}
-                        <script src="https://ad.doubleclick.net/ddm/adj/N426203.3552PAYPAL/B21012703.220637106;sz=180x180;u=PayerID;ord=[timestamp];dc_lat=;dc_rdid=;tag_for_child_directed_treatment=;tfua="></script>
-                    {/block}
-                </div>
-            {/block}
-        </div>
-    {/block}
-{/if}
-
 {if $paypalUnifiedInstallmentsBanner}
     {block name='frontend_index_sidebar_paypal_unified_installments_banner'}
         <div class="panel is--rounded paypal--sidebar">

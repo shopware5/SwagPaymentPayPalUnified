@@ -12,14 +12,16 @@
     <author>shopware AG</author>
     <compatibility minVersion="5.2.0" maxVersion="5.99.99"/>
 
-    <changelog version="REPLACE-GLOBAL-WITH-NEXT-VERSION">
+    <changelog version="REPLACE_GLOBAL_WITH_NEXT_VERSION">
         <changes lang="de">
             PT-10536 - Beseitigt einen Fehler in der Bestellbestätigungsmail.
+            PT-11361 - Entfernt Werbung für Kostenlose Retouren;
             PT-11469 - Shop-Einstellungen werden im Firefox wieder korrekt geladen;
             PT-11575 - Javascript auf der Bestellbestätigungsseite verbessert, wenn der In-Context Modus benutzt wird;
         </changes>
         <changes lang="en">
             PT-10536 - Corrects an error in the order confirmation mail.
+            PT-11361 - Remove free return advertising;
             PT-11469 - Shop settings are loaded correctly in Firefox again;
             PT-11575 - Improve Javascript on confirm page, if in-context mode is used;
         </changes>
