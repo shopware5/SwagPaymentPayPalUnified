@@ -13,6 +13,7 @@
                  data-shape="{$paypalUnifiedEcButtonStyleShape}"
                  data-size="{$paypalUnifiedEcButtonStyleSize}"
                  data-paypalLanguage="{$paypalUnifiedLanguageIso}"
+                 data-productNumber="{$sArticle.ordernumber}"
                  data-detailPage="true"
                 {block name='paypal_unified_ec_button_container_detail_data'}{/block}>
             </div>
