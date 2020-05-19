@@ -5,26 +5,26 @@
     <label lang="de">PayPal</label>
     <label lang="en">PayPal</label>
 
-    <version>2.6.5</version>
+    <version>2.7.0</version>
     <copyright>(c) by shopware AG</copyright>
     <license>MIT</license>
     <link>http://store.shopware.com</link>
     <author>shopware AG</author>
     <compatibility minVersion="5.2.0" maxVersion="5.99.99"/>
 
-    <changelog version="REPLACE_GLOBAL_WITH_NEXT_VERSION">
+    <changelog version="2.7.0">
         <changes lang="de">
-            PT-10536 - Beseitigt einen Fehler in der Bestellbestätigungsmail;
+            PT-10536 - Behebt Anzeigefehler des Logos in Bestellbestätigungsmail;
             PT-11361 - Entfernt Werbung für Kostenlose Retouren;
             PT-11469 - Shop-Einstellungen werden im Firefox wieder korrekt geladen;
-            PT-11574 - Beseitigt einen Fehler des Express-Checkout-Buttons im Listing;
+            PT-11574 - Behebt Fehler des Express-Checkout-Buttons in Produkt-Listings;
             PT-11575 - Javascript auf der Bestellbestätigungsseite verbessert, wenn der In-Context Modus benutzt wird;
         </changes>
         <changes lang="en">
-            PT-10536 - Corrects an error in the order confirmation mail;
+            PT-10536 - Fixes display error of logo in order confirmation mail;
             PT-11361 - Remove free return advertising;
             PT-11469 - Shop settings are loaded correctly in Firefox again;
-            PT-11574 - Fixes an error of the Express Checkout button in the listing;
+            PT-11574 - Fixes error of Express Checkout button in product listings;
             PT-11575 - Improve Javascript on confirm page, if in-context mode is used;
         </changes>
     </changelog>

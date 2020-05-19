@@ -78,8 +78,8 @@ class Updater
             $this->updateTo261();
         }
 
-        if (version_compare($oldVersion, 'REPLACE_GLOBAL_WITH_NEXT_VERSION', '<=')) {
-            $this->updateTo_REPLACE_GLOBAL_WITH_NEXT_VERSION();
+        if (version_compare($oldVersion, '2.7.0', '<=')) {
+            $this->updateTo270();
         }
     }
 
@@ -201,7 +201,7 @@ SQL;
         }
     }
 
-    private function updateTo_REPLACE_GLOBAL_WITH_NEXT_VERSION()
+    private function updateTo270()
     {
         if ($this->checkIfColumnExist('swag_payment_paypal_unified_settings_general', 'advertise_returns')) {
             $sql = 'ALTER TABLE `swag_payment_paypal_unified_settings_general`

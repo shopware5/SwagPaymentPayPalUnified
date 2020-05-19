@@ -109,7 +109,7 @@ class InvoiceSubscriberTest extends TestCase
         static::assertNotNull($view->getVariable('PayPalUnifiedInvoiceInstruction'));
     }
 
-    public function test_onFilterMailVariables(): void
+    public function test_onFilterMailVariables()
     {
         $subscriber = $this->getSubscriber();
         $args = new \Enlight_Event_EventArgs();
@@ -132,7 +132,7 @@ class InvoiceSubscriberTest extends TestCase
         );
     }
 
-    public function test_onFilterMailVariables_shouldNotBeRendered(): void
+    public function test_onFilterMailVariables_shouldNotBeRendered()
     {
         $subscriber = $this->getSubscriber();
         $args = new \Enlight_Event_EventArgs();
@@ -155,7 +155,7 @@ class InvoiceSubscriberTest extends TestCase
         );
     }
 
-    private function getSubscriber(): Invoice
+    private function getSubscriber()
     {
         return new Invoice(
             Shopware()->Container()->get('paypal_unified.payment_instruction_service'),
