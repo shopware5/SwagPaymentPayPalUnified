@@ -74,6 +74,9 @@
 
         init: function() {
             this.payPalInstallmentsBannerJS = window.payPalInstallmentsBannerJS;
+            if (this.payPalInstallmentsBannerJS === undefined) {
+                return;
+            }
 
             this.applyDataAttributes();
             $.publish('plugin/swagPayPalUnifiedInstallmentsBanner/init', this);
