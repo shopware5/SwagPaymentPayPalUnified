@@ -9,6 +9,7 @@ variables:
     WEB_DOCUMENT_ROOT: $CI_PROJECT_DIR/
     GIT_STRATEGY: clone
     CHECKOUT_SHOPWARE_BRANCH: "5.6"
+    CHECKOUT_COOKIE_CONSENT_MANAGER_BRANCH: "master"
 
 stages:
     - Code Style Check
@@ -76,6 +77,7 @@ SW 5.2:
     before_script: []
     variables:
         CHECKOUT_SHOPWARE_BRANCH: "5.2"
+        CHECKOUT_COOKIE_CONSENT_MANAGER_BRANCH: "5.2.11-5.2.27"
     only:
         - master
     script:
@@ -83,12 +85,14 @@ SW 5.2:
         - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.shopware.com/shopware/5/product/shopware.git shopware --depth=1 -b ${CHECKOUT_SHOPWARE_BRANCH}
         - unzip -q plugin.zip -d shopware/custom/plugins/SwagPaymentPayPalUnified
         - cd shopware
+        - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.shopware.com/shopware/5/product/swagcookieconsentmanager.git custom/plugins/SwagCookieConsentManager -b ${CHECKOUT_COOKIE_CONSENT_MANAGER_BRANCH}
         - /entrypoint supervisord &>/dev/null &
         - cp /usr/local/bin/composer composer.phar
         - ant -f build/build.xml build-unit -Dapp.path="" -Dapp.host="localhost" -Ddb.host="mysql" -Ddb.port=3306 -Ddb.name="shopware" -Ddb.user="app" -Ddb.password="app"
         - php bin/console sw:plugin:refresh
         - php bin/console sw:plugin:list
         - php bin/console sw:plugin:install --activate SwagPaymentPayPalUnified
+        - php bin/console sw:plugin:install --activate SwagCookieConsentManager
         - php bin/console sw:cache:clear -e testing
         - cd custom/plugins/SwagPaymentPayPalUnified
         - php ../../../vendor/bin/phpunit
@@ -105,9 +109,14 @@ SW 5.3:
     image: shopware/5-continuous:7.2
     variables:
         CHECKOUT_SHOPWARE_BRANCH: "5.3"
+        CHECKOUT_COOKIE_CONSENT_MANAGER_BRANCH: "5.3.5-5.3.7"
     only:
         - master
     script:
+        - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.shopware.com/shopware/5/product/swagcookieconsentmanager.git custom/plugins/SwagCookieConsentManager -b ${CHECKOUT_COOKIE_CONSENT_MANAGER_BRANCH}
+        - php bin/console sw:plugin:refresh
+        - php bin/console sw:plugin:install --activate SwagCookieConsentManager
+        - php bin/console sw:cache:clear -e testing
         - cd custom/plugins/SwagPaymentPayPalUnified
         - php ../../../vendor/bin/phpunit
             --configuration phpunit.xml.dist
@@ -123,9 +132,14 @@ SW 5.4:
     image: shopware/5-continuous:7.2
     variables:
         CHECKOUT_SHOPWARE_BRANCH: "5.4"
+        CHECKOUT_COOKIE_CONSENT_MANAGER_BRANCH: "5.4.6"
     only:
         - master
     script:
+        - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.shopware.com/shopware/5/product/swagcookieconsentmanager.git custom/plugins/SwagCookieConsentManager -b ${CHECKOUT_COOKIE_CONSENT_MANAGER_BRANCH}
+        - php bin/console sw:plugin:refresh
+        - php bin/console sw:plugin:install --activate SwagCookieConsentManager
+        - php bin/console sw:cache:clear -e testing
         - cd custom/plugins/SwagPaymentPayPalUnified
         - php ../../../vendor/bin/phpunit
             --configuration phpunit.xml.dist
@@ -141,9 +155,14 @@ SW 5.5:
     image: shopware/5-continuous:7.2
     variables:
         CHECKOUT_SHOPWARE_BRANCH: "5.5"
+        CHECKOUT_COOKIE_CONSENT_MANAGER_BRANCH: "5.5.0-5.5.10"
     only:
         - master
     script:
+        - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.shopware.com/shopware/5/product/swagcookieconsentmanager.git custom/plugins/SwagCookieConsentManager -b ${CHECKOUT_COOKIE_CONSENT_MANAGER_BRANCH}
+        - php bin/console sw:plugin:refresh
+        - php bin/console sw:plugin:install --activate SwagCookieConsentManager
+        - php bin/console sw:cache:clear -e testing
         - cd custom/plugins/SwagPaymentPayPalUnified
         - php ../../../vendor/bin/phpunit
             --configuration phpunit.xml.dist
@@ -174,7 +193,7 @@ SW 5.6:
 SW 5.7:
     stage: Shopware Versions
     needs: [PHP analyze]
-    image: shopware/5-continuous:7.2
+    image: shopware/5-continuous:7.3
     variables:
         CHECKOUT_SHOPWARE_BRANCH: "5.7"
     only:

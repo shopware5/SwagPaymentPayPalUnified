@@ -71,7 +71,8 @@
         </service>
 
         <service id="paypal_unified.subscriber.cookie_consent"
-                 class="SwagPaymentPayPalUnified\Subscriber\CookieConsent">
+                 class="SwagPaymentPayPalUnified\Subscriber\CookieConsent"
+                 public="true">
             <argument type="service" id="snippets"/>
             <tag name="shopware.event_subscriber"/>
         </service>
