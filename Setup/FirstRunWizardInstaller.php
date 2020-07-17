@@ -29,6 +29,7 @@ class FirstRunWizardInstaller
             'advertise_installments' => 1,
             'use_smart_payment_buttons' => 0,
             'merchant_location' => 'germany',
+            'landing_page_type' => 'Login',
         ]);
 
         if ($configuration['payPalPlusEnabled']) {
