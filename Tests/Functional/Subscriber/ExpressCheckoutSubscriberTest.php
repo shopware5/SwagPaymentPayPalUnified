@@ -500,6 +500,8 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $view = new ViewMock(new \Enlight_Template_Manager());
         $enlightEventArgs = $this->createEventArgs($view);
 
+        Shopware()->Container()->get('session')->offsetUnset('sUserId');
+
         $this->importSettings(true, true, true);
 
         $subscriber = $this->getSubscriber();
@@ -652,6 +654,34 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $subscriber->addExpressCheckoutButtonLogin($enlightEventArgs);
 
         static::assertTrue($view->getAssign('paypalUnifiedEcLoginActive'));
+    }
+
+    public function test_isUserLoggedIn_should_be_true()
+    {
+        Shopware()->Container()->get('session')->offsetSet('sUserId', 100);
+
+        $reflectionMethod = (new \ReflectionClass(ExpressCheckoutSubscriber::class))->getMethod('isUserLoggedIn');
+        $reflectionMethod->setAccessible(true);
+
+        $subscriber = $this->getSubscriber();
+
+        $result = $reflectionMethod->invoke($subscriber);
+
+        static::assertTrue($result);
+    }
+
+    public function test_isUserLoggedIn_should_be_false()
+    {
+        Shopware()->Container()->get('session')->offsetUnset('sUserId');
+
+        $reflectionMethod = (new \ReflectionClass(ExpressCheckoutSubscriber::class))->getMethod('isUserLoggedIn');
+        $reflectionMethod->setAccessible(true);
+
+        $subscriber = $this->getSubscriber();
+
+        $result = $reflectionMethod->invoke($subscriber);
+
+        static::assertFalse($result);
     }
 
     /**

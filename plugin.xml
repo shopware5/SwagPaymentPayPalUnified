@@ -15,9 +15,11 @@
     <changelog version="REPLACE_GLOBAL_WITH_NEXT_VERSION">
         <changes lang="de">
             PT-11760 - Behebt Fehler während der installation über den "Shopware First Run Wizard";
+            PT-11763 - Behebt fehlerhaftes Verhalten des Express-Checkout Buttons;
         </changes>
         <changes lang="en">
             PT-11760 - Fixes error during installation via the "Shopware First Run Wizard";
+            PT-11763 - Fixes incorrect behavior of the Express Checkout Button;
         </changes>
     </changelog>
 

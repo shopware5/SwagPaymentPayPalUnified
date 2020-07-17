@@ -165,7 +165,7 @@ class ExpressCheckout implements SubscriberInterface
         $cart = $view->getAssign('sBasket');
         $product = $view->getAssign('sArticle'); // content on modal window of ajaxAddArticleAction
 
-        if ((isset($cart['content']) || $product) && !$view->getAssign('sUserLoggedIn')) {
+        if ((isset($cart['content']) || $product) && !$this->isUserLoggedIn()) {
             $view->assign('paypalUnifiedUseInContext', $generalSettings->getUseInContext());
             $this->addEcButtonStyleInfo($view, $expressSettings);
         }
@@ -235,7 +235,7 @@ class ExpressCheckout implements SubscriberInterface
 
         $view = $args->getSubject()->View();
 
-        if (!$view->getAssign('userLoggedIn')) {
+        if (!$this->isUserLoggedIn()) {
             $view->assign('paypalUnifiedEcDetailActive', true);
             $this->addEcButtonBehaviour($view, $generalSettings);
             $this->addEcButtonStyleInfo($view, $expressSettings);
@@ -263,7 +263,7 @@ class ExpressCheckout implements SubscriberInterface
 
         $view = $args->getSubject()->View();
 
-        if (!$view->getAssign('userLoggedIn')) {
+        if (!$this->isUserLoggedIn()) {
             $view->assign('paypalUnifiedEcListingActive', true);
             $this->addEcButtonBehaviour($view, $generalSettings);
             $this->addEcButtonStyleInfo($view, $expressSettings);
@@ -392,5 +392,10 @@ class ExpressCheckout implements SubscriberInterface
         }
 
         return $redirectData;
+    }
+
+    private function isUserLoggedIn(): bool
+    {
+        return (bool) $this->session->get('sUserId');
     }
 }
