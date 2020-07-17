@@ -5,12 +5,21 @@
     <label lang="de">PayPal</label>
     <label lang="en">PayPal</label>
 
-    <version>2.8.0</version>
+    <version>REPLACE_GLOBAL_WITH_NEXT_VERSION</version>
     <copyright>(c) by shopware AG</copyright>
     <license>MIT</license>
     <link>http://store.shopware.com</link>
     <author>shopware AG</author>
     <compatibility minVersion="5.2.0" maxVersion="5.99.99"/>
+
+    <changelog version="REPLACE_GLOBAL_WITH_NEXT_VERSION">
+        <changes lang="de">
+            PT-11760 - Behebt Fehler während der installation über den "Shopware First Run Wizard";
+        </changes>
+        <changes lang="en">
+            PT-11760 - Fixes error during installation via the "Shopware First Run Wizard";
+        </changes>
+    </changelog>
 
     <changelog version="2.8.0">
         <changes lang="de">
