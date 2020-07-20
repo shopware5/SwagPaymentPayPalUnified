@@ -226,8 +226,7 @@ class Installer
     private function getUnifiedPaymentLogo()
     {
         return '<!-- PayPal Logo -->'
-        . '<a onclick="window.open(this.href, \'olcwhatispaypal\',\'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=400, height=500\'); return false;"'
-        . ' href="https://www.paypal.com/de/cgi-bin/webscr?cmd=xpt/cps/popup/OLCWhatIsPayPal-outside" target="_blank">'
+        . '<a href="https://www.paypal.com/de/cgi-bin/webscr?cmd=xpt/cps/popup/OLCWhatIsPayPal-outside" target="_blank" rel="noopener">'
         . '<img src="{link file=\'frontend/_public/src/img/sidebar-paypal-generic.png\' fullPath}" alt="Logo \'PayPal empfohlen\'">'
         . '</a><br><!-- PayPal Logo -->';
     }
@@ -243,8 +242,7 @@ class Installer
             $translationKeys['SwagPaymentPayPalUnified'],
             [
                 'description' => 'PayPal',
-                'additionalDescription' => '<!-- PayPal Logo --><a onclick="window.open(this.href, \'olcwhatispaypal\',\'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=400, height=500\'); '
-                    . 'return false;" href="https://www.paypal.com/de/cgi-bin/webscr?cmd=xpt/cps/popup/OLCWhatIsPayPal-outside" target="_blank">'
+                'additionalDescription' => '<!-- PayPal Logo --><a href="https://www.paypal.com/de/cgi-bin/webscr?cmd=xpt/cps/popup/OLCWhatIsPayPal-outside" target="_blank" rel="noopener">'
                     . '<img src="{link file=\'frontend/_public/src/img/sidebar-paypal-generic.png\' fullPath}" alt="Logo \'PayPal recommended\'">'
                     . '</a><br><!-- PayPal Logo -->Paying with PayPal - easy, fast and secure.',
             ],
