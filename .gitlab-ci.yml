@@ -78,8 +78,6 @@ SW 5.2:
     variables:
         CHECKOUT_SHOPWARE_BRANCH: "5.2"
         CHECKOUT_COOKIE_CONSENT_MANAGER_BRANCH: "5.2.11-5.2.27"
-    only:
-        - master
     script:
         - zip -rq plugin.zip .
         - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.shopware.com/shopware/5/product/shopware.git shopware --depth=1 -b ${CHECKOUT_SHOPWARE_BRANCH}

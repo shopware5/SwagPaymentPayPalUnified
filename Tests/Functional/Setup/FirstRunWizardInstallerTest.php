@@ -38,7 +38,10 @@ class FirstRunWizardInstallerTest extends TestCase
         static::assertSame('Login', $result['landing_page_type']);
     }
 
-    private function getDefaultConfig(): array
+    /**
+     * @return array
+     */
+    private function getDefaultConfig()
     {
         return [
             'clientId' => 'testClientId',
@@ -48,12 +51,18 @@ class FirstRunWizardInstallerTest extends TestCase
         ];
     }
 
-    private function getFirstRunWizardInstaller(): FirstRunWizardInstaller
+    /**
+     * @return FirstRunWizardInstaller
+     */
+    private function getFirstRunWizardInstaller()
     {
         return new FirstRunWizardInstaller();
     }
 
-    private function getConnection(): ?Connection
+    /**
+     * @return Connection
+     */
+    private function getConnection()
     {
         return Shopware()->Container()->get('dbal_connection');
     }
