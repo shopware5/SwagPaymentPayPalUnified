@@ -394,7 +394,7 @@ class ExpressCheckout implements SubscriberInterface
         return $redirectData;
     }
 
-    private function isUserLoggedIn(): bool
+    private function isUserLoggedIn()
     {
         return (bool) $this->session->get('sUserId');
     }
