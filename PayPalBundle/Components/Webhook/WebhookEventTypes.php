@@ -9,14 +9,18 @@
 namespace SwagPaymentPayPalUnified\PayPalBundle\Components\Webhook;
 
 /**
- * @url https://developer.paypal.com/docs/integration/direct/rest/webhooks/event-names/
+ * @url https://developer.paypal.com/docs/api-basics/notifications/webhooks/event-names/
  */
 class WebhookEventTypes
 {
+    /* A billing agreement is created. */
+    const BILLING_AGREEMENTS_AGREEMENT_CREATED = 'BILLING_AGREEMENTS.AGREEMENT.CREATED';
+    /* A billing agreement is cancelled. */
+    const BILLING_AGREEMENTS_AGREEMENT_CANCELLED = 'BILLING_AGREEMENTS.AGREEMENT.CANCELLED';
     /* A billing plan is created. */
     const BILLING_PLAN_CREATED = 'BILLING.PLAN.CREATED';
     /* A billing plan is updated. */
-    const BILLING_PLAN_UPDATE = 'BILLING.PLAN.CREATED';
+    const BILLING_PLAN_UPDATE = 'BILLING.PLAN.UPDATED';
     /* A billing subscription is canceled. */
     const BILLING_SUBSCRIPTION_CANCELLED = 'BILLING.SUBSCRIPTION.CANCELLED';
     /* A billing subscription is created. */
