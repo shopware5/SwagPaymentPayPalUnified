@@ -10,10 +10,19 @@
     <license>MIT</license>
     <link>http://store.shopware.com</link>
     <author>shopware AG</author>
-    <compatibility minVersion="5.2.0" maxVersion="5.99.99"/>
+    <compatibility minVersion="5.2.27" maxVersion="5.99.99"/>
 
     <description lang="de">Dieses Modul bietet Ihnen die beliebtesten PayPal-Produkte aus einer Hand: Den PayPal Express-Button, PayPal PLUS, und Banner für die neue PayPal Ratenzahlung. Und das Beste daran: Mit diesem Modul können Sie alle Produkte einzeln oder gleichzeitig in Ihrem Online-Shop nutzen.</description>
     <description lang="en">This module offers you the most popular PayPal products from a single source: the PayPal Express button, PayPal PLUS, and banners for the new PayPal Installment Payment. And best of all, this module lets you use all products individually or simultaneously in your online store.</description>
+
+    <changelog version="REPLACE_GLOBALLY_WITH_NEXT_VERSION">
+        <changes lang="de">
+            PT-11863 - Benötigte Mindestversion von Shopware auf 5.2.27 angehoben;
+        </changes>
+        <changes lang="en">
+            PT-11863 - Increased required minimum version of shopware to 5.2.27;
+        </changes>
+    </changelog>
 
     <changelog version="2.8.1">
         <changes lang="de">
