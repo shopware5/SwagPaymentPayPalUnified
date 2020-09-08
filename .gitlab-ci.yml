@@ -192,6 +192,17 @@ SW 5.7:
     stage: Shopware Versions
     needs: [PHP analyze]
     image: shopware/5-continuous:7.3
+    before_script:
+        - zip -rq plugin.zip .
+        - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.shopware.com/shopware/5/product/shopware.git shopware --depth=1 -b ${CHECKOUT_SHOPWARE_BRANCH}
+        - unzip -q plugin.zip -d shopware/custom/plugins/SwagPaymentPayPalUnified
+        - cd shopware
+        - make init
+        - php bin/console sw:plugin:refresh
+        - php bin/console sw:plugin:list
+        - php bin/console sw:plugin:install --activate SwagPaymentPayPalUnified
+        - php bin/console sw:cache:clear
+        - /entrypoint supervisord &>/dev/null &
     variables:
         CHECKOUT_SHOPWARE_BRANCH: "5.7"
     only:
