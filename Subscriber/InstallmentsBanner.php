@@ -16,6 +16,7 @@ use Enlight_View_Default as View;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 
 class InstallmentsBanner implements SubscriberInterface
 {
@@ -73,7 +74,7 @@ class InstallmentsBanner implements SubscriberInterface
         }
 
         $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag($this->connection);
-        $advertiseInstallments = $swUnifiedActive && (bool) $this->settingsService->get('advertise_installments');
+        $advertiseInstallments = $swUnifiedActive && (bool) $this->settingsService->get('advertise_installments', SettingsTable::INSTALLMENTS);
         if ($advertiseInstallments === false) {
             return;
         }

@@ -45,7 +45,7 @@ class FrontendSubscriberTest extends TestCase
             static::assertFileExists($script);
         }
 
-        static::assertCount(11, $javascripts);
+        static::assertCount(9, $javascripts);
     }
 
     public function test_onPostDistpatchSecure_without_any_setttings()
@@ -113,7 +113,6 @@ class FrontendSubscriberTest extends TestCase
         $subscriber->onPostDispatchSecure($enlightEventArgs);
 
         static::assertTrue((bool) $view->getAssign('paypalUnifiedShowLogo'));
-        static::assertTrue((bool) $view->getAssign('paypalUnifiedShowInstallmentsLogo'));
     }
 
     public function test_onCollectTemplateDir()
@@ -156,11 +155,6 @@ class FrontendSubscriberTest extends TestCase
             'sandbox' => true,
             'showSidebarLogo' => true,
             'active' => $active,
-        ]);
-
-        $this->insertInstallmentsSettingsFromArray([
-            'active' => true,
-            'showLogo' => true,
         ]);
     }
 }

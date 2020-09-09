@@ -86,7 +86,6 @@ class SwagPaymentPayPalUnified extends Plugin
     {
         $paymentMethodProvider = new PaymentMethodProvider($this->container->get('models'));
         $paymentMethodProvider->setPaymentMethodActiveFlag(true);
-        $paymentMethodProvider->setPaymentMethodActiveFlag(true, PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME);
 
         $context->scheduleClearCache(ActivateContext::CACHE_LIST_ALL);
     }
@@ -98,7 +97,6 @@ class SwagPaymentPayPalUnified extends Plugin
     {
         $paymentMethodProvider = new PaymentMethodProvider($this->container->get('models'));
         $paymentMethodProvider->setPaymentMethodActiveFlag(false);
-        $paymentMethodProvider->setPaymentMethodActiveFlag(false, PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME);
 
         $context->scheduleClearCache(DeactivateContext::CACHE_LIST_ALL);
     }

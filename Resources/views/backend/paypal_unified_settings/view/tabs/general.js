@@ -265,14 +265,6 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
                     handler: Ext.bind(me.onSendOrderNumberChecked, me)
                 },
                 me.orderNumberPrefix,
-                {
-                    xtype: 'checkbox',
-                    name: 'advertiseInstallments',
-                    inputValue: true,
-                    uncheckedValue: false,
-                    fieldLabel: '{s name="fieldset/behaviour/advertiseInstallments"}Installments banner{/s}',
-                    boxLabel: '{s name="fieldset/behaviour/advertiseInstallments/boxLabel"}Enable to advertise installments via PayPal. Works only with a Live Client-ID.{/s}',
-                },
                 me.smartPaymentButtonsCheckbox
             ]
         });

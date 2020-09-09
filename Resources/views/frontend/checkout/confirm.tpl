@@ -46,31 +46,10 @@
     {$smarty.block.parent}
 {/block}
 
-{* PayPal Installments integration *}
-{block name='frontend_checkout_confirm_confirm_table_actions'}
-    {block name='frontend_checkout_confirm_confirm_table_actions_paypal_unified_installments'}
-        {if $paypalInstallmentsMode === 'cheapest' || $paypalInstallmentsRequestCompleteList}
-            {include file='frontend/paypal_unified/installments/upstream_presentment.tpl'}
-        {/if}
-
-        {if $paypalInstallmentsMode === 'simple' && !$paypalInstallmentsRequestCompleteList}
-            {include file='frontend/paypal_unified/installments/upstream_presentment/cart/simple.tpl'}
-        {/if}
-    {/block}
-
-    {$smarty.block.parent}
-{/block}
-
-{* PayPal Installments, In-Context and SPB integration *}
+{* PayPal In-Context and SPB integration *}
 {block name='frontend_checkout_confirm_submit'}
-    {block name='frontend_checkout_confirm_submit_paypal_unified_installments_and_in_context'}
-        {if $paypalInstallmentsRequestCompleteList}
-            {block name='frontend_paypal_unified_installments_confirm_submit_button'}
-                <button type="submit" class="btn is--primary is--large right is--icon-right" form="confirm--form" data-preloader-button="true">
-                    {s namespace='frontend/paypal_unified/checkout/confirm' name='installments/confirmButtonText'}Apply for credit{/s}<i class="icon--arrow-right"></i>
-                </button>
-            {/block}
-        {elseif !$paypalUnifiedExpressCheckout && !$paypalUnifiedUsePlus && $paypalUnifiedUseInContext && $sUserData.additional.payment.id == $paypalUnifiedPaymentId}
+    {block name='frontend_checkout_confirm_submit_paypal_unified_in_context'}
+        {if !$paypalUnifiedExpressCheckout && !$paypalUnifiedUsePlus && $paypalUnifiedUseInContext && $sUserData.additional.payment.id == $paypalUnifiedPaymentId}
             {$smarty.block.parent}
             {block name='frontend_paypal_unified_in_context_confirm_submit_button'}
                 {include file='frontend/paypal_unified/in_context/button.tpl'}

@@ -6,7 +6,6 @@
 
     <imports>
         <import resource="components/express_checkout.xml"/>
-        <import resource="components/installments.xml"/>
         <import resource="components/legacy.xml"/>
         <import resource="components/plus.xml"/>
         <import resource="components/validation.xml"/>

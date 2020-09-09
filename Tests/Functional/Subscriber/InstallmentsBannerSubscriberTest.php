@@ -197,6 +197,10 @@ class InstallmentsBannerSubscriberTest extends TestCase
             'shopId' => 1,
             'clientId' => self::CLIENT_ID,
             'active' => $active,
+        ]);
+
+        $this->insertInstallmentsSettingsFromArray([
+            'shopId' => 1,
             'advertiseInstallments' => $advertiseInstallments,
         ]);
     }

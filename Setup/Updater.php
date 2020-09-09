@@ -81,6 +81,10 @@ class Updater
         if (version_compare($oldVersion, '2.7.0', '<=')) {
             $this->updateTo270();
         }
+
+        if (version_compare($oldVersion, '3.0.0', '<=')) {
+            $this->updateTo300();
+        }
     }
 
     private function updateTo103()
@@ -207,6 +211,79 @@ SQL;
             $sql = 'ALTER TABLE `swag_payment_paypal_unified_settings_general`
                     DROP COLUMN `advertise_returns`;';
 
+            $this->connection->executeQuery($sql);
+        }
+    }
+
+    private function updateTo300()
+    {
+        $sql = <<<SQL
+UPDATE `s_core_paymentmeans`
+SET `active` = '0'
+WHERE `s_core_paymentmeans`.`name` = 'SwagPaymentPayPalUnifiedInstallments';
+SQL;
+        $this->connection->executeQuery($sql);
+
+        if (!$this->checkIfColumnExist('swag_payment_paypal_unified_settings_installments', 'advertise_installments')) {
+            $sql = <<<SQL
+ALTER TABLE `swag_payment_paypal_unified_settings_installments`
+ADD `advertise_installments` TINYINT(1) NOT NULL;
+SQL;
+            $this->connection->executeQuery($sql);
+        }
+
+        if ($this->checkIfColumnExist('swag_payment_paypal_unified_settings_general', 'advertise_installments')) {
+            $sql = <<<SQL
+UPDATE `swag_payment_paypal_unified_settings_installments` AS `installments`, `swag_payment_paypal_unified_settings_general` AS `general`
+SET `installments`.`advertise_installments` = `general`.`advertise_installments`
+WHERE `installments`.`shop_id` = `general`.`shop_id`;
+SQL;
+            $this->connection->executeQuery($sql);
+
+            $sql = <<<SQL
+ALTER TABLE `swag_payment_paypal_unified_settings_general`
+DROP COLUMN `advertise_installments`;
+SQL;
+            $this->connection->executeQuery($sql);
+        }
+
+        if ($this->checkIfColumnExist('swag_payment_paypal_unified_settings_installments', 'active')) {
+            $sql = <<<SQL
+ALTER TABLE `swag_payment_paypal_unified_settings_installments`
+DROP COLUMN `active`;
+SQL;
+            $this->connection->executeQuery($sql);
+        }
+
+        if ($this->checkIfColumnExist('swag_payment_paypal_unified_settings_installments', 'presentment_detail')) {
+            $sql = <<<SQL
+ALTER TABLE `swag_payment_paypal_unified_settings_installments`
+DROP COLUMN `presentment_detail`;
+SQL;
+            $this->connection->executeQuery($sql);
+        }
+
+        if ($this->checkIfColumnExist('swag_payment_paypal_unified_settings_installments', 'presentment_cart')) {
+            $sql = <<<SQL
+ALTER TABLE `swag_payment_paypal_unified_settings_installments`
+DROP COLUMN `presentment_cart`;
+SQL;
+            $this->connection->executeQuery($sql);
+        }
+
+        if ($this->checkIfColumnExist('swag_payment_paypal_unified_settings_installments', 'show_logo')) {
+            $sql = <<<SQL
+ALTER TABLE `swag_payment_paypal_unified_settings_installments`
+DROP COLUMN `show_logo`;
+SQL;
+            $this->connection->executeQuery($sql);
+        }
+
+        if ($this->checkIfColumnExist('swag_payment_paypal_unified_settings_installments', 'intent')) {
+            $sql = <<<SQL
+ALTER TABLE `swag_payment_paypal_unified_settings_installments`
+DROP COLUMN `intent`;
+SQL;
             $this->connection->executeQuery($sql);
         }
     }

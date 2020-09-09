@@ -21,11 +21,6 @@ class PartnerAttributionId
     const PAYPAL_PLUS = 'Shopware_Cart_Plus_5native';
 
     /**
-     * Shopware Partner Id for PayPal Installments
-     */
-    const PAYPAL_INSTALLMENTS = 'Shopware_Cart_Rate_5native';
-
-    /**
      * Shopware Partner Id for PayPal Express Checkout
      */
     const PAYPAL_EXPRESS_CHECKOUT = 'Shopware_Cart_ECS_5native';

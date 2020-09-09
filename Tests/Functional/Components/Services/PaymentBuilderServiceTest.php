@@ -542,23 +542,6 @@ class PaymentBuilderServiceTest extends TestCase
         $requestService->getPayment($params);
     }
 
-    public function test_getPayment_with_installments_payment_type()
-    {
-        $settingService = new SettingsServicePaymentBuilderServiceMock(false, 2, true);
-        $requestService = $this->getRequestService($settingService);
-
-        $params = new PaymentBuilderParameters();
-        $basketData = $this->getBasketDataArray();
-        $userData = $this->getUserDataAsArray();
-
-        $params->setBasketData($basketData);
-        $params->setUserData($userData);
-        $params->setPaymentType(PaymentType::PAYPAL_INSTALLMENTS);
-
-        $payment = $requestService->getPayment($params);
-        static::assertSame('order', $payment->getIntent());
-    }
-
     /**
      * @param string $paymentType
      * @param int    $intent

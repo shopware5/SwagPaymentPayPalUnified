@@ -113,26 +113,6 @@ class OrderDataServiceTest extends TestCase
         static::assertSame(PaymentType::PAYPAL_PLUS, $updatedAttribute);
     }
 
-    public function test_applyPaymentTypeAttribute_installments()
-    {
-        $this->importFixturesBefore();
-
-        $orderDataService = $this->getOrderDataService();
-
-        $payment = new Payment();
-        $payer = new Payment\Payer();
-        $payer->setExternalSelectedFundingInstrumentType('CREDIT');
-        $payment->setPayer($payer);
-
-        $orderDataService->applyPaymentTypeAttribute(self::ORDER_NUMBER, $payment);
-
-        /** @var Connection $dbalConnection */
-        $dbalConnection = Shopware()->Container()->get('dbal_connection');
-        $updatedAttribute = $dbalConnection->executeQuery('SELECT swag_paypal_unified_payment_type FROM s_order_attributes WHERE orderID=9999')->fetchColumn();
-
-        static::assertSame(PaymentType::PAYPAL_INSTALLMENTS, $updatedAttribute);
-    }
-
     public function test_applyPaymentAttribute_classic()
     {
         $this->importFixturesBefore();

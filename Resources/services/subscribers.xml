@@ -28,14 +28,6 @@
             <tag name="shopware.event_subscriber"/>
         </service>
 
-        <service id="paypal_unified.subscriber.documents.installments"
-                 class="SwagPaymentPayPalUnified\Subscriber\Documents\Installments"
-                 public="true">
-            <argument type="service" id="paypal_unified.installments.order_credit_info_service"/>
-            <argument type="service" id="dbal_connection"/>
-            <tag name="shopware.event_subscriber"/>
-        </service>
-
         <service id="paypal_unified.subscriber.documents.invoice"
                  class="SwagPaymentPayPalUnified\Subscriber\Documents\Invoice"
                  public="true">
@@ -110,21 +102,6 @@
             <tag name="shopware.event_subscriber"/>
         </service>
 
-        <service id="paypal_unified.subscriber.installments"
-                 class="SwagPaymentPayPalUnified\Subscriber\Installments"
-                 public="true">
-            <argument type="service" id="paypal_unified.settings_service"/>
-            <argument type="service" id="paypal_unified.installments.validation_service"/>
-            <argument type="service" id="dbal_connection"/>
-            <argument type="service" id="paypal_unified.installments.payment_builder_service"/>
-            <argument type="service" id="paypal_unified.exception_handler_service"/>
-            <argument type="service" id="paypal_unified.payment_resource"/>
-            <argument type="service" id="paypal_unified.installments.order_credit_info_service"/>
-            <argument type="service" id="paypal_unified.client_service"/>
-            <argument type="service" id="paypal_unified.dependency_provider"/>
-            <tag name="shopware.event_subscriber"/>
-        </service>
-
         <service id="paypal_unified.subscriber.installments_banner"
                  class="SwagPaymentPayPalUnified\Subscriber\InstallmentsBanner"
                  public="true">
@@ -146,7 +123,6 @@
                  public="true">
             <argument type="service" id="dbal_connection"/>
             <argument type="service" id="paypal_unified.settings_service"/>
-            <argument type="service" id="paypal_unified.installments.validation_service"/>
             <argument type="service" id="session"/>
             <tag name="shopware.event_subscriber"/>
         </service>

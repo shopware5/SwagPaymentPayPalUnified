@@ -34,33 +34,9 @@ class Installments extends ModelEntity
 
     /**
      * @var bool
-     * @ORM\Column(name="active", type="boolean", nullable=false)
+     * @ORM\Column(name="advertise_installments", type="boolean", nullable=false)
      */
-    private $active;
-
-    /**
-     * @var int
-     * @ORM\Column(name="presentment_detail", type="integer")
-     */
-    private $presentmentTypeDetail;
-
-    /**
-     * @var int
-     * @ORM\Column(name="presentment_cart", type="integer")
-     */
-    private $presentmentTypeCart;
-
-    /**
-     * @var bool
-     * @ORM\Column(name="show_logo", type="boolean", nullable=false)
-     */
-    private $showLogo;
-
-    /**
-     * @var int
-     * @ORM\Column(name="intent", type="integer")
-     */
-    private $intent;
+    private $advertiseInstallments;
 
     /**
      * @return int
@@ -97,81 +73,17 @@ class Installments extends ModelEntity
     /**
      * @return bool
      */
-    public function getActive()
+    public function getAdvertiseInstallments()
     {
-        return $this->active;
+        return $this->advertiseInstallments;
     }
 
     /**
-     * @param bool $active
+     * @param bool $advertiseInstallments
      */
-    public function setActive($active)
+    public function setAdvertiseInstallments($advertiseInstallments)
     {
-        $this->active = $active;
-    }
-
-    /**
-     * @return int
-     */
-    public function getPresentmentTypeDetail()
-    {
-        return $this->presentmentTypeDetail;
-    }
-
-    /**
-     * @param int $presentmentTypeDetail
-     */
-    public function setPresentmentTypeDetail($presentmentTypeDetail)
-    {
-        $this->presentmentTypeDetail = $presentmentTypeDetail;
-    }
-
-    /**
-     * @return int
-     */
-    public function getPresentmentTypeCart()
-    {
-        return $this->presentmentTypeCart;
-    }
-
-    /**
-     * @param int $presentmentTypeCart
-     */
-    public function setPresentmentTypeCart($presentmentTypeCart)
-    {
-        $this->presentmentTypeCart = $presentmentTypeCart;
-    }
-
-    /**
-     * @return bool
-     */
-    public function getShowLogo()
-    {
-        return $this->showLogo;
-    }
-
-    /**
-     * @param bool $showLogo
-     */
-    public function setShowLogo($showLogo)
-    {
-        $this->showLogo = $showLogo;
-    }
-
-    /**
-     * @return int
-     */
-    public function getIntent()
-    {
-        return $this->intent;
-    }
-
-    /**
-     * @param int $intent
-     */
-    public function setIntent($intent)
-    {
-        $this->intent = $intent;
+        $this->advertiseInstallments = $advertiseInstallments;
     }
 
     /**

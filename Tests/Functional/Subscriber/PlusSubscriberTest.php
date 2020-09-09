@@ -301,7 +301,7 @@ class PlusSubscriberTest extends TestCase
         $payments = require __DIR__ . '/_fixtures/sPayments.php';
         $payments[$unifiedPaymentId] = [
             'id' => $unifiedPaymentId,
-            'name' => 'SwagPaymentPayPalUnified',
+            'name' => PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME,
             'description' => 'PayPal, Lastschrift oder Kreditkarte',
             'additionaldescription' => 'Bezahlung per PayPal - einfach, schnell und sicher. Zahlung per Lastschrift oder Kreditkarte ist auch ohne PayPal Konto möglich',
         ];
@@ -572,7 +572,6 @@ class PlusSubscriberTest extends TestCase
             'sendOrderNumber' => 0,
             'logLevel' => 0,
             'displayErrors' => 0,
-            'advertiseInstallments' => 0,
             'brandName' => 'TestBrandName',
         ];
     }

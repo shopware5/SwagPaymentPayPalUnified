@@ -14,7 +14,6 @@ use Enlight\Event\SubscriberInterface;
 use Enlight_View_Default;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
-use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 
 class Frontend implements SubscriberInterface
 {
@@ -74,8 +73,6 @@ class Frontend implements SubscriberInterface
             $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.payment-wall-shipping-payment.js',
             $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.payment-wall.js',
             $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.custom-shipping-payment.js',
-            $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.ajax-installments.js',
-            $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.installments-modal.js',
             $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.express-checkout-button.js',
             $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.express-checkout-button-in-context.js',
             $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.in-context-checkout.js',
@@ -100,17 +97,11 @@ class Frontend implements SubscriberInterface
         $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag($this->connection);
         $showPayPalLogo = $swUnifiedActive && (bool) $this->settingsService->get('show_sidebar_logo');
 
-        $swUnifiedInstallmentsActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag($this->connection, PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME);
-        $installmentsActive = (bool) $this->settingsService->get('active', SettingsTable::INSTALLMENTS);
-        $showInstallmentsLogoSetting = (bool) $this->settingsService->get('show_logo', SettingsTable::INSTALLMENTS);
-        $showInstallmentsLogo = $swUnifiedInstallmentsActive && $installmentsActive && $showInstallmentsLogoSetting;
-
         /** @var Enlight_View_Default $view */
         $view = $args->getSubject()->View();
 
         //Assign shop specific and configurable values to the view.
         $view->assign('paypalUnifiedShowLogo', $showPayPalLogo);
-        $view->assign('paypalUnifiedShowInstallmentsLogo', $showInstallmentsLogo);
     }
 
     /**

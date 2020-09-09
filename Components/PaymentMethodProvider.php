@@ -20,11 +20,6 @@ class PaymentMethodProvider
     const PAYPAL_UNIFIED_PAYMENT_METHOD_NAME = 'SwagPaymentPayPalUnified';
 
     /**
-     * The technical name of the installments payment method.
-     */
-    const PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME = 'SwagPaymentPayPalUnifiedInstallments';
-
-    /**
      * @var ModelManager
      */
     private $modelManager;
@@ -39,23 +34,11 @@ class PaymentMethodProvider
 
     /**
      * @see PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME
-     * @see PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME
-     *
-     * @param string $name
      *
      * @return Payment|null
      */
-    public function getPaymentMethodModel($name = self::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME)
+    public function getPaymentMethodModel()
     {
-        if ($name === self::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME) {
-            /** @var Payment|null $payment */
-            $payment = $this->modelManager->getRepository(Payment::class)->findOneBy([
-                'name' => self::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME,
-            ]);
-
-            return $payment;
-        }
-
         /** @var Payment|null $payment */
         $payment = $this->modelManager->getRepository(Payment::class)->findOneBy([
             'name' => self::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME,
@@ -66,14 +49,12 @@ class PaymentMethodProvider
 
     /**
      * @see PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME
-     * @see PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME
      *
-     * @param string $name
-     * @param bool   $active
+     * @param bool $active
      */
-    public function setPaymentMethodActiveFlag($active, $name = self::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME)
+    public function setPaymentMethodActiveFlag($active)
     {
-        $paymentMethod = $this->getPaymentMethodModel($name);
+        $paymentMethod = $this->getPaymentMethodModel();
         if ($paymentMethod) {
             $paymentMethod->setActive($active);
 
@@ -84,39 +65,43 @@ class PaymentMethodProvider
 
     /**
      * @see PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME
-     * @see PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME
-     *
-     * @param string $name
      *
      * @return bool
      */
-    public function getPaymentMethodActiveFlag(Connection $connection, $name = self::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME)
+    public function getPaymentMethodActiveFlag(Connection $connection)
     {
         $sql = 'SELECT `active` FROM s_core_paymentmeans WHERE `name`=:paymentName';
 
         return (bool) $connection->fetchColumn($sql, [
-            ':paymentName' => $name === self::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME
-                ? self::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME
-                : self::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME,
+            ':paymentName' => self::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME,
         ]);
     }
 
     /**
      * @see PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME
-     * @see PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME
-     *
-     * @param string $name
      *
      * @return int
      */
-    public function getPaymentId(Connection $connection, $name = self::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME)
+    public function getPaymentId(Connection $connection)
     {
         $sql = 'SELECT `id` FROM s_core_paymentmeans WHERE `name`=:paymentName';
 
         return (int) $connection->fetchColumn($sql, [
-            ':paymentName' => $name === self::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME
-                ? self::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME
-                : self::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME,
+            ':paymentName' => self::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME,
+        ]);
+    }
+
+    /**
+     * @deprecated since 3.0.0. Will be removed with 4.0.0. Only used for managing old installment payments in the backend module
+     *
+     * @return int
+     */
+    public function getInstallmentPaymentId(Connection $connection)
+    {
+        $sql = 'SELECT `id` FROM s_core_paymentmeans WHERE `name`=:paymentName';
+
+        return (int) $connection->fetchColumn($sql, [
+            ':paymentName' => 'SwagPaymentPayPalUnifiedInstallments',
         ]);
     }
 }

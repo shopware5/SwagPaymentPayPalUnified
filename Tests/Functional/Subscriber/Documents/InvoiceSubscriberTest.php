@@ -9,6 +9,7 @@
 namespace SwagPaymentPayPalUnified\Tests\Functional\Subscriber\Documents;
 
 use PHPUnit\Framework\TestCase;
+use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Instruction\Amount;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Instruction\RecipientBanking;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\PaymentInstruction;
@@ -117,7 +118,7 @@ class InvoiceSubscriberTest extends TestCase
         $template = [
             'additional' => [
                 'payment' => [
-                    'name' => 'SwagPaymentPayPalUnified',
+                    'name' => PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME,
                     'additionaldescription' => '{link file="frontend/_public/src/img/sidebar-paypal-generic.png" fullPath}',
                 ],
             ],

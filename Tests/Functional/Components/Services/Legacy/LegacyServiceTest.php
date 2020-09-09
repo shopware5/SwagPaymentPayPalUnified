@@ -42,9 +42,9 @@ class LegacyServiceTest extends TestCase
 
     private function insertClassicPayment()
     {
-        $sql = "INSERT INTO s_core_paymentmeans(name, description, template, class, `table`, hide, additionaldescription, surchargestring, `position`, esdactive, embediframe, hideprospect) 
+        $sql = "INSERT INTO s_core_paymentmeans(name, description, template, class, `table`, hide, additionaldescription, surchargestring, `position`, esdactive, embediframe, hideprospect)
 				VALUES ('paypal', 'PayPal Classic', '', '', 0, 'PayPal Classic legacy', '', 0, 1, 0, 0, 0);
-				INSERT INTO s_core_paymentmeans(name, description, template, class, `table`, hide, additionaldescription, surchargestring, `position`, esdactive, embediframe, hideprospect) 
+				INSERT INTO s_core_paymentmeans(name, description, template, class, `table`, hide, additionaldescription, surchargestring, `position`, esdactive, embediframe, hideprospect)
 				VALUES ('payment_paypal_installments', 'PayPal Installments', '', '', 0, 'PayPal Installments legacy', '', 0, 1, 0, 0, 0);";
 
         Shopware()->Db()->executeUpdate($sql);

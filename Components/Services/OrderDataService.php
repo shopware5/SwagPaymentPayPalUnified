@@ -132,14 +132,11 @@ class OrderDataService
     public function applyPaymentTypeAttribute($orderNumber, Payment $payment, $expressCheckout = false, $smartPaymentButtons = false)
     {
         $paymentType = PaymentType::PAYPAL_CLASSIC;
-        $payer = $payment->getPayer();
 
         if ($expressCheckout) {
             $paymentType = PaymentType::PAYPAL_EXPRESS;
         } elseif ($smartPaymentButtons) {
             $paymentType = PaymentType::PAYPAL_SMART_PAYMENT_BUTTONS;
-        } elseif ($payer && $payment->getPayer()->getExternalSelectedFundingInstrumentType() === 'CREDIT') {
-            $paymentType = PaymentType::PAYPAL_INSTALLMENTS;
         } elseif ($payment->getPaymentInstruction() !== null) {
             $paymentType = PaymentType::PAYPAL_INVOICE;
         } elseif ((bool) $this->settingsService->get('active', SettingsTable::PLUS)) {

@@ -11,9 +11,7 @@ namespace SwagPaymentPayPalUnified\Subscriber;
 use Doctrine\DBAL\Connection;
 use Enlight\Event\SubscriberInterface;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
-use SwagPaymentPayPalUnified\Components\Services\Installments\ValidationService;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
-use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 
 class PaymentMeans implements SubscriberInterface
 {
@@ -23,19 +21,9 @@ class PaymentMeans implements SubscriberInterface
     private $unifiedPaymentId;
 
     /**
-     * @var int
-     */
-    private $installmentsPaymentId;
-
-    /**
      * @var SettingsServiceInterface
      */
     private $settingsService;
-
-    /**
-     * @var ValidationService
-     */
-    private $installmentsValidationService;
 
     /**
      * @var \Enlight_Components_Session_Namespace
@@ -50,15 +38,12 @@ class PaymentMeans implements SubscriberInterface
     public function __construct(
         Connection $connection,
         SettingsServiceInterface $settingsService,
-        ValidationService $installmentsValidationService,
         \Enlight_Components_Session_Namespace $session
     ) {
         $this->connection = $connection;
         $paymentMethodProvider = new PaymentMethodProvider();
         $this->unifiedPaymentId = $paymentMethodProvider->getPaymentId($connection);
-        $this->installmentsPaymentId = $paymentMethodProvider->getPaymentId($connection, PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME);
         $this->settingsService = $settingsService;
-        $this->installmentsValidationService = $installmentsValidationService;
         $this->session = $session;
     }
 
@@ -83,29 +68,6 @@ class PaymentMeans implements SubscriberInterface
             ) {
                 //Force unset the payment method, because it's not available without any settings.
                 unset($availableMethods[$index]);
-            }
-
-            if ((int) $paymentMethod['id'] === $this->installmentsPaymentId
-                && (!$this->settingsService->hasSettings()
-                    || !$this->settingsService->get('active')
-                    || !$this->settingsService->get('active', SettingsTable::INSTALLMENTS))
-            ) {
-                unset($availableMethods[$index]);
-            }
-
-            if ((int) $paymentMethod['id'] === $this->installmentsPaymentId) {
-                $productPrice = (float) $this->session->get('sBasketAmount');
-                $customerData = $this->session->get('sOrderVariables')['sUserData'];
-
-                if ($customerData === null) {
-                    $customerData = $this->getCustomerData();
-                }
-
-                if (!$this->installmentsValidationService->validatePrice($productPrice)
-                    || !$this->installmentsValidationService->validateCustomer($customerData)
-                ) {
-                    unset($availableMethods[$index]);
-                }
             }
         }
 

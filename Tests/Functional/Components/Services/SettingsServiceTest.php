@@ -106,9 +106,7 @@ class SettingsServiceTest extends TestCase
         /** @var InstallmentsSettingsModel $installmentsSettings */
         $installmentsSettings = $settingsService->getSettings(self::SHOP_ID, SettingsTable::INSTALLMENTS);
 
-        static::assertSame(2, $installmentsSettings->getIntent());
-        static::assertSame(1, $installmentsSettings->getPresentmentTypeDetail());
-        static::assertSame(2, $installmentsSettings->getPresentmentTypeCart());
+        static::assertTrue($installmentsSettings->getAdvertiseInstallments());
     }
 
     public function test_getSettings_plus()
@@ -201,11 +199,7 @@ class SettingsServiceTest extends TestCase
     {
         $this->insertInstallmentsSettingsFromArray([
             'shopId' => self::SHOP_ID,
-            'active' => self::ACTIVE,
-            'presentmentTypeDetail' => 1,
-            'presentmentTypeCart' => 2,
-            'showLogo' => self::SHOW_SIDEBAR_LOGO,
-            'intent' => 2,
+            'advertiseInstallments' => true,
         ]);
     }
 
