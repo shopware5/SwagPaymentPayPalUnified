@@ -22,7 +22,7 @@ class SimpleBasketValidator implements BasketValidatorInterface
         } else {
             $basketAmount = number_format($basket['AmountNetNumeric'], 2);
         }
-        $paymentAmount = number_format($payment->getTransactions()->getAmount()->getTotal(), 2);
+        $paymentAmount = number_format((float) $payment->getTransactions()->getAmount()->getTotal(), 2);
 
         if ($customer['additional']['charge_vat'] && $basket['AmountWithTaxNumeric']) {
             $basketAmount = number_format($basket['AmountWithTaxNumeric'], 2);

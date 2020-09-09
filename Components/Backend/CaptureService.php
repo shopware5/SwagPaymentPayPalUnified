@@ -89,6 +89,7 @@ class CaptureService
     }
 
     /**
+     * @param string $authorizationId
      * @param string $amountToCapture
      * @param string $currency
      * @param bool   $isFinal

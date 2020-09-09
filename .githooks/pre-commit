@@ -31,6 +31,7 @@ class PreCommitChecks
 
         $this->runPhpLint($this->getCommittedFileList());
         $this->runPhpCsFixer($this->getCommittedFileList());
+        $this->runPHPStan($this->getCommittedFileList());
         $this->runEsLint($this->getCommittedFileList('js'));
 
         if ($this->error) {
@@ -139,6 +140,31 @@ class PreCommitChecks
         $this->writeln();
     }
 
+    private function runPHPStan(array $fileList)
+    {
+        $this->writeln('# Checking code with PHPStan');
+        $this->writeln('> phpstan.phar analyse');
+        $this->writeln();
+
+        if ($fileList === []) {
+            return;
+        }
+
+        if (!$this->isPHPStanAvailable()) {
+            $this->writeln('- PHPStan is NOT installed. Please install composer with dev dependencies or use higher Shopware version.', 2);
+            $this->writeln();
+
+            return;
+        }
+
+        exec('./../../../vendor/phpstan/phpstan/phpstan.phar analyse .', $output, $return);
+        if ($return !== 0) {
+            $this->error = true;
+        }
+
+        $this->writeln();
+    }
+
     /**
      * @param array $fileList
      */
@@ -167,6 +193,18 @@ class PreCommitChecks
         $output = [];
         $return = 0;
         exec('command -v ./../../../vendor/bin/php-cs-fixer >/dev/null 2>&1', $output, $return);
+
+        return !(bool) $return;
+    }
+
+    /**
+     * @return bool
+     */
+    private function isPHPStanAvailable()
+    {
+        $output = [];
+        $return = 0;
+        exec('command -v ./../../../vendor/phpstan/phpstan/phpstan.phar >/dev/null 2>&1', $output, $return);
 
         return !(bool) $return;
     }

@@ -41,7 +41,7 @@ class Invoice implements SubscriberInterface
     private $translation;
 
     /**
-     * @var Enlight_Template_ManagerTemplate
+     * @var Template
      */
     private $templateManager;
 

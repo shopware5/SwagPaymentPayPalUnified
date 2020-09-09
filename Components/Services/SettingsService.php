@@ -167,7 +167,6 @@ class SettingsService implements SettingsServiceInterface
                 return 'swag_payment_paypal_unified_settings_plus';
             default:
                 throw new \RuntimeException('The provided table ' . $settingsType . ' is not supported');
-                break;
         }
     }
 }

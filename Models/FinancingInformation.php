@@ -29,6 +29,8 @@ class FinancingInformation extends ModelEntity
     protected $order;
 
     /**
+     * @var int
+     *
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="IDENTITY")

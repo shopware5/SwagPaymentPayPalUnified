@@ -83,7 +83,7 @@ class OrderDataService
     {
         $builder = $this->dbalConnection->createQueryBuilder();
         $builder->update('s_order', 'o')
-            ->set('o.status', $orderStateId)
+            ->set('o.status', (string) $orderStateId)
             ->where('o.ordernumber = :orderNumber')
             ->setParameter(':orderNumber', $orderNumber)
             ->execute();

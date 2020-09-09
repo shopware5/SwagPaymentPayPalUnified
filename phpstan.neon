@@ -1,0 +1,22 @@
+includes:
+	- phpstan-baseline.neon
+
+parameters:
+    level: 8
+    checkMissingIterableValueType: false
+    checkGenericClassInNonGenericObjectType: false
+    excludes_analyse:
+        - vendor
+        - .githooks
+        - Tests
+
+    ignoreErrors:
+        - # Since Shopware 5.3.4 this class has constructor parameter
+            '#Class Shopware_Components_Translation constructor invoked with 0 parameters, 2 required#'
+        - # Properties are called with magic __get
+            '#Access to an undefined property Shopware_Models_Document_Order::#'
+        - # Since we have to support Shopware 5.2 we can not use return types
+            '#Method .* has no return typehint specified#'
+        - # Is in fact never null. Would need a core change
+            '#Cannot call method .* on Enlight_View_Default\|null#'
+        - '#Parameter .* expects Enlight_View_Default, Enlight_View_Default\|null given#'

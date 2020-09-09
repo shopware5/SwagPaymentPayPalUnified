@@ -205,7 +205,6 @@ class ClientService
     private function createAuthentication(OAuthCredentials $credentials)
     {
         try {
-            /** @var Token $cachedToken */
             $token = $this->tokenService->getToken($this, $credentials, $this->shopId);
             $this->setHeader('Authorization', $token->getTokenType() . ' ' . $token->getAccessToken());
         } catch (RequestException $requestException) {

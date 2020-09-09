@@ -50,6 +50,7 @@ PHP analyze:
         - cp /usr/local/bin/composer composer.phar
         - php composer.phar install
         - vendor/bin/php-cs-fixer fix --dry-run -v --config=custom/plugins/SwagPaymentPayPalUnified/.php_cs.dist --format=junit | tee php-cs-fixer.xml
+        - vendor/phpstan/phpstan/phpstan.phar analyse custom/plugins/SwagPaymentPayPalUnified -c custom/plugins/SwagPaymentPayPalUnified/phpstan.neon
     artifacts:
         reports:
             junit: shopware/php-cs-fixer.xml
