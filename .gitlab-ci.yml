@@ -10,6 +10,14 @@ variables:
     GIT_STRATEGY: clone
     CHECKOUT_SHOPWARE_BRANCH: "5.6"
     CHECKOUT_COOKIE_CONSENT_MANAGER_BRANCH: "master"
+    DB_USER: "app"
+    DB_PASSWORD: "app"
+    DB_HOST: "mysql"
+    DB_PORT: 3306
+    DB_NAME: shopware
+    SW_HOST: "localhost"
+    SW_BASE_PATH: ""
+    ELASTICSEARCH_HOST: elasticsearch
 
 stages:
     - Code Style Check
