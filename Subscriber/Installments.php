@@ -210,7 +210,7 @@ class Installments implements SubscriberInterface
         $paymentStruct = $this->installmentsPaymentBuilder->getPayment($paymentBuilderParams);
         $productPrice = $paymentStruct->getTransactions()->getAmount()->getTotal();
 
-        if (!$this->validationService->validatePrice($productPrice)) {
+        if (!$this->validationService->validatePrice((float) $productPrice)) {
             return;
         }
 

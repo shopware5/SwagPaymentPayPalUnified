@@ -66,7 +66,7 @@ class Details
     }
 
     /**
-     * @param float $tax
+     * @param float|string $tax
      */
     public function setTax($tax)
     {

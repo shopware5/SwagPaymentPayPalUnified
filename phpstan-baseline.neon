@@ -1,0 +1,362 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\DependencyProvider\\:\\:getShop\\(\\) should return Shopware\\\\Models\\\\Shop\\\\DetachedShop\\|null but returns object\\|null\\.$#"
+			count: 1
+			path: Components/DependencyProvider.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\DependencyProvider\\:\\:getSession\\(\\) should return Enlight_Components_Session_Namespace but returns object\\|null\\.$#"
+			count: 1
+			path: Components/DependencyProvider.php
+
+		-
+			message: "#^Cannot call method generate\\(\\) on object\\|null\\.$#"
+			count: 1
+			path: Components/DependencyProvider.php
+
+		-
+			message: "#^Cannot access offset 'value' on array\\|bool\\.$#"
+			count: 1
+			path: Components/Document/InvoiceDocumentHandler.php
+
+		-
+			message: "#^Property SwagPaymentPayPalUnified\\\\Components\\\\PaymentBuilderParameters\\:\\:\\$paymentToken \\(string\\) does not accept string\\|null\\.$#"
+			count: 1
+			path: Components/PaymentBuilderParameters.php
+
+		-
+			message: "#^Property SwagPaymentPayPalUnified\\\\Components\\\\PaymentMethodProvider\\:\\:\\$modelManager \\(Shopware\\\\Components\\\\Model\\\\ModelManager\\) does not accept Shopware\\\\Components\\\\Model\\\\ModelManager\\|null\\.$#"
+			count: 1
+			path: Components/PaymentMethodProvider.php
+
+		-
+			message: "#^Cannot call method getBody\\(\\) on GuzzleHttp\\\\Message\\\\ResponseInterface\\|null\\.$#"
+			count: 1
+			path: Components/Services/ExceptionHandlerService.php
+
+		-
+			message: "#^Cannot call method getContents\\(\\) on GuzzleHttp\\\\Stream\\\\StreamInterface\\|null\\.$#"
+			count: 1
+			path: Components/Services/ExceptionHandlerService.php
+
+		-
+			message: "#^Cannot call method getPayerInfo\\(\\) on SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\Payer\\|null\\.$#"
+			count: 1
+			path: Components/Services/ExpressCheckout/CustomerService.php
+
+		-
+			message: "#^Cannot call method setPost\\(\\) on Enlight_Controller_Request_Request\\|null\\.$#"
+			count: 2
+			path: Components/Services/ExpressCheckout/CustomerService.php
+
+		-
+			message: "#^Cannot call method getCountry\\(\\) on Shopware\\\\Models\\\\Customer\\\\Address\\|null\\.$#"
+			count: 1
+			path: Components/Services/ExpressCheckout/CustomerService.php
+
+		-
+			message: "#^Cannot call method getId\\(\\) on Shopware\\\\Models\\\\Country\\\\Country\\|null\\.$#"
+			count: 1
+			path: Components/Services/ExpressCheckout/CustomerService.php
+
+		-
+			message: "#^Cannot call method getArea\\(\\) on Shopware\\\\Models\\\\Country\\\\Country\\|null\\.$#"
+			count: 1
+			path: Components/Services/ExpressCheckout/CustomerService.php
+
+		-
+			message: "#^Cannot call method getId\\(\\) on Shopware\\\\Models\\\\Country\\\\Area\\|null\\.$#"
+			count: 1
+			path: Components/Services/ExpressCheckout/CustomerService.php
+
+		-
+			message: "#^Parameter \\#1 \\$returnUrl of method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\RedirectUrls\\:\\:setReturnUrl\\(\\) expects string, string\\|false given\\.$#"
+			count: 1
+			path: Components/Services/ExpressCheckout/ExpressCheckoutPaymentBuilderService.php
+
+		-
+			message: "#^Parameter \\#1 \\$cancelUrl of method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\RedirectUrls\\:\\:setCancelUrl\\(\\) expects string, string\\|false given\\.$#"
+			count: 1
+			path: Components/Services/ExpressCheckout/ExpressCheckoutPaymentBuilderService.php
+
+		-
+			message: "#^Parameter \\#1 \\$currency of method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\Transactions\\\\Amount\\:\\:setCurrency\\(\\) expects string, string\\|null given\\.$#"
+			count: 1
+			path: Components/Services/ExpressCheckout/ExpressCheckoutPaymentBuilderService.php
+
+		-
+			message: "#^Parameter \\#1 \\$currency of method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\Transactions\\\\ItemList\\\\Item\\:\\:setCurrency\\(\\) expects string, string\\|null given\\.$#"
+			count: 1
+			path: Components/Services/ExpressCheckout/ExpressCheckoutPaymentBuilderService.php
+
+		-
+			message: "#^Cannot call method setExternalSelectedFundingInstrumentType\\(\\) on SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\Payer\\|null\\.$#"
+			count: 1
+			path: Components/Services/Installments/InstallmentsPaymentBuilderService.php
+
+		-
+			message: "#^Parameter \\#1 \\$returnUrl of method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\RedirectUrls\\:\\:setReturnUrl\\(\\) expects string, string\\|false given\\.$#"
+			count: 1
+			path: Components/Services/Installments/InstallmentsPaymentBuilderService.php
+
+		-
+			message: "#^Parameter \\#3 \\$subject of function str_replace expects array\\|string, float\\|string given\\.$#"
+			count: 1
+			path: Components/Services/Installments/InstallmentsRequestService.php
+
+		-
+			message: "#^Cannot call method fetchAll\\(\\) on Doctrine\\\\DBAL\\\\Driver\\\\Statement\\|int\\.$#"
+			count: 1
+			path: Components/Services/Legacy/LegacyService.php
+
+		-
+			message: "#^Cannot call method getExternalSelectedFundingInstrumentType\\(\\) on SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\Payer\\|null\\.$#"
+			count: 1
+			path: Components/Services/OrderDataService.php
+
+		-
+			message: "#^Cannot call method fetchColumn\\(\\) on Doctrine\\\\DBAL\\\\Driver\\\\Statement\\|int\\.$#"
+			count: 1
+			path: Components/Services/OrderDataService.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\OrderDataService\\:\\:getTransactionId\\(\\) should return string but returns bool\\|string\\.$#"
+			count: 1
+			path: Components/Services/OrderDataService.php
+
+		-
+			message: "#^Parameter \\#1 \\$cancelUrl of method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\RedirectUrls\\:\\:setCancelUrl\\(\\) expects string, string\\|false given\\.$#"
+			count: 1
+			path: Components/Services/PaymentBuilderService.php
+
+		-
+			message: "#^Parameter \\#1 \\$returnUrl of method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\RedirectUrls\\:\\:setReturnUrl\\(\\) expects string, string\\|false given\\.$#"
+			count: 1
+			path: Components/Services/PaymentBuilderService.php
+
+		-
+			message: "#^Parameter \\#3 \\$subject of function str_replace expects array\\|string, float\\|string given\\.$#"
+			count: 1
+			path: Components/Services/PaymentBuilderService.php
+
+		-
+			message: "#^Cannot call method getLocale\\(\\) on Shopware\\\\Models\\\\Shop\\\\DetachedShop\\|null\\.$#"
+			count: 1
+			path: Components/Services/PaymentBuilderService.php
+
+		-
+			message: "#^Parameter \\#1 \\$paymentStatus of method Shopware\\\\Models\\\\Order\\\\Order\\:\\:setPaymentStatus\\(\\) expects Shopware\\\\Models\\\\Order\\\\Status, Shopware\\\\Models\\\\Order\\\\Status\\|null given\\.$#"
+			count: 1
+			path: Components/Services/PaymentStatusService.php
+
+		-
+			message: "#^Parameter \\#1 \\$returnUrl of method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\RedirectUrls\\:\\:setReturnUrl\\(\\) expects string, string\\|false given\\.$#"
+			count: 1
+			path: Components/Services/Plus/PlusPaymentBuilderService.php
+
+		-
+			message: "#^Parameter \\#1 \\$shipmentDetails of method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\Transactions\\:\\:setShipmentDetails\\(\\) expects SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\Transactions\\\\ShipmentDetails, SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\Transactions\\\\ShipmentDetails\\|null given\\.$#"
+			count: 1
+			path: Components/Services/Plus/PlusPaymentBuilderService.php
+
+		-
+			message: "#^Property SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\SettingsService\\:\\:\\$shop \\(Shopware\\\\Models\\\\Shop\\\\DetachedShop\\) does not accept Shopware\\\\Models\\\\Shop\\\\DetachedShop\\|null\\.$#"
+			count: 1
+			path: Components/Services/SettingsService.php
+
+		-
+			message: "#^Cannot call method fetchColumn\\(\\) on Doctrine\\\\DBAL\\\\Driver\\\\Statement\\|int\\.$#"
+			count: 2
+			path: Components/Services/SettingsService.php
+
+		-
+			message: "#^Cannot call method getResources\\(\\) on SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\Transactions\\\\RelatedResources\\|null\\.$#"
+			count: 1
+			path: Components/Services/TransactionHistoryBuilderService.php
+
+		-
+			message: "#^Cannot call method getNamespace\\(\\) on object\\|null\\.$#"
+			count: 2
+			path: Controllers/Backend/PaypalUnified.php
+
+		-
+			message: "#^Parameter \\#1 \\$orderNumber of method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\OrderDataService\\:\\:setOrderState\\(\\) expects string, int\\|string\\|false given\\.$#"
+			count: 1
+			path: Controllers/Frontend/PaypalUnified.php
+
+		-
+			message: "#^Parameter \\#1 \\$orderNumber of method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\OrderDataService\\:\\:removeTransactionId\\(\\) expects string, int\\|string\\|false given\\.$#"
+			count: 1
+			path: Controllers/Frontend/PaypalUnified.php
+
+		-
+			message: "#^Cannot call method getResources\\(\\) on SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\Transactions\\\\RelatedResources\\|null\\.$#"
+			count: 1
+			path: Controllers/Frontend/PaypalUnified.php
+
+		-
+			message: "#^Parameter \\#1 \\$orderNumber of method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\OrderDataService\\:\\:applyTransactionId\\(\\) expects string, int\\|string\\|false given\\.$#"
+			count: 1
+			path: Controllers/Frontend/PaypalUnified.php
+
+		-
+			message: "#^Parameter \\#1 \\$orderNumber of method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\OrderDataService\\:\\:setClearedDate\\(\\) expects string, int\\|string\\|false given\\.$#"
+			count: 1
+			path: Controllers/Frontend/PaypalUnified.php
+
+		-
+			message: "#^Parameter \\#1 \\$orderNumber of method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\Plus\\\\PaymentInstructionService\\:\\:createInstructions\\(\\) expects string, int\\|string\\|false given\\.$#"
+			count: 1
+			path: Controllers/Frontend/PaypalUnified.php
+
+		-
+			message: "#^Parameter \\#1 \\$orderNumber of method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\OrderDataService\\:\\:applyPaymentTypeAttribute\\(\\) expects string, int\\|string\\|false given\\.$#"
+			count: 1
+			path: Controllers/Frontend/PaypalUnified.php
+
+		-
+			message: "#^Parameter \\#1 \\$basket of method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\Validation\\\\BasketValidatorInterface\\:\\:validate\\(\\) expects array, array\\|null given\\.$#"
+			count: 1
+			path: Controllers/Frontend/PaypalUnified.php
+
+		-
+			message: "#^Parameter \\#2 \\$customer of method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\Validation\\\\BasketValidatorInterface\\:\\:validate\\(\\) expects array, array\\|null given\\.$#"
+			count: 1
+			path: Controllers/Frontend/PaypalUnified.php
+
+		-
+			message: "#^Parameter \\#1 \\$json of function json_decode expects string, string\\|false given\\.$#"
+			count: 1
+			path: Controllers/Frontend/PaypalUnifiedWebhook.php
+
+		-
+			message: "#^Parameter \\#3 \\$content of method Shopware\\\\Components\\\\HttpClient\\\\GuzzleHttpClient\\:\\:post\\(\\) expects array\\|string\\|null, array\\|string\\|false given\\.$#"
+			count: 1
+			path: PayPalBundle/Services/ClientService.php
+
+		-
+			message: "#^Parameter \\#3 \\$content of method Shopware\\\\Components\\\\HttpClient\\\\GuzzleHttpClient\\:\\:patch\\(\\) expects array\\|string\\|null, array\\|string\\|false given\\.$#"
+			count: 1
+			path: PayPalBundle/Services/ClientService.php
+
+		-
+			message: "#^Parameter \\#3 \\$content of method Shopware\\\\Components\\\\HttpClient\\\\GuzzleHttpClient\\:\\:put\\(\\) expects array\\|string\\|null, array\\|string\\|false given\\.$#"
+			count: 1
+			path: PayPalBundle/Services/ClientService.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Services\\\\WebhookService\\:\\:getWebhookHandlers\\(\\) should return array\\<SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Components\\\\Webhook\\\\WebhookHandler\\> but returns array\\<SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Components\\\\Webhook\\\\WebhookHandler\\|null\\>\\.$#"
+			count: 1
+			path: PayPalBundle/Services/WebhookService.php
+
+		-
+			message: "#^Parameter \\#1 \\$creditFinancingOffered of method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\:\\:setCreditFinancingOffered\\(\\) expects SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\Credit, SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\Credit\\|null given\\.$#"
+			count: 1
+			path: PayPalBundle/Structs/Payment.php
+
+		-
+			message: "#^Cannot call method toArray\\(\\) on SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\Payer\\|null\\.$#"
+			count: 1
+			path: PayPalBundle/Structs/Payment.php
+
+		-
+			message: "#^Cannot call method fetchAll\\(\\) on Doctrine\\\\DBAL\\\\Driver\\\\Statement\\|int\\.$#"
+			count: 1
+			path: Setup/Installer.php
+
+		-
+			message: "#^Cannot call method fetchAll\\(\\) on Doctrine\\\\DBAL\\\\Driver\\\\Statement\\|int\\.$#"
+			count: 1
+			path: Subscriber/BackendOrder.php
+
+		-
+			message: "#^Property SwagPaymentPayPalUnified\\\\Subscriber\\\\Documents\\\\Invoice\\:\\:\\$translation \\(Shopware_Components_Translation\\) does not accept Shopware_Components_Translation\\|null\\.$#"
+			count: 1
+			path: Subscriber/Documents/Invoice.php
+
+		-
+			message: "#^Cannot call method getLocale\\(\\) on Shopware\\\\Models\\\\Shop\\\\DetachedShop\\|null\\.$#"
+			count: 1
+			path: Subscriber/ExpressCheckout.php
+
+		-
+			message: "#^Cannot call method getLocale\\(\\) on Shopware\\\\Models\\\\Shop\\\\DetachedShop\\|null\\.$#"
+			count: 1
+			path: Subscriber/InContext.php
+
+		-
+			message: "#^Parameter \\#1 \\$credit of method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\Installments\\\\OrderCreditInfoService\\:\\:saveCreditInfo\\(\\) expects SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\Credit, SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\Credit\\|null given\\.$#"
+			count: 1
+			path: Subscriber/Installments.php
+
+		-
+			message: "#^Cannot call method fetchColumn\\(\\) on Doctrine\\\\DBAL\\\\Driver\\\\Statement\\|int\\.$#"
+			count: 1
+			path: Subscriber/PaymentMeans.php
+
+		-
+			message: "#^Cannot call method fetchAll\\(\\) on Doctrine\\\\DBAL\\\\Driver\\\\Statement\\|int\\.$#"
+			count: 1
+			path: Subscriber/Plus.php
+
+		-
+			message: "#^Cannot call method getLocale\\(\\) on Shopware\\\\Models\\\\Shop\\\\DetachedShop\\|null\\.$#"
+			count: 1
+			path: Subscriber/Plus.php
+
+		-
+			message: "#^Parameter \\#1 \\$modelManager of class SwagPaymentPayPalUnified\\\\Setup\\\\Installer constructor expects Shopware\\\\Components\\\\Model\\\\ModelManager, object\\|null given\\.$#"
+			count: 1
+			path: SwagPaymentPayPalUnified.php
+
+		-
+			message: "#^Parameter \\#2 \\$connection of class SwagPaymentPayPalUnified\\\\Setup\\\\Installer constructor expects Doctrine\\\\DBAL\\\\Connection, object\\|null given\\.$#"
+			count: 1
+			path: SwagPaymentPayPalUnified.php
+
+		-
+			message: "#^Parameter \\#3 \\$attributeCrudService of class SwagPaymentPayPalUnified\\\\Setup\\\\Installer constructor expects Shopware\\\\Bundle\\\\AttributeBundle\\\\Service\\\\CrudService, object\\|null given\\.$#"
+			count: 1
+			path: SwagPaymentPayPalUnified.php
+
+		-
+			message: "#^Parameter \\#4 \\$translation of class SwagPaymentPayPalUnified\\\\Setup\\\\Installer constructor expects Shopware_Components_Translation, object\\|null given\\.$#"
+			count: 1
+			path: SwagPaymentPayPalUnified.php
+
+		-
+			message: "#^Parameter \\#1 \\$attributeCrudService of class SwagPaymentPayPalUnified\\\\Setup\\\\Uninstaller constructor expects Shopware\\\\Bundle\\\\AttributeBundle\\\\Service\\\\CrudService, object\\|null given\\.$#"
+			count: 1
+			path: SwagPaymentPayPalUnified.php
+
+		-
+			message: "#^Parameter \\#2 \\$modelManager of class SwagPaymentPayPalUnified\\\\Setup\\\\Uninstaller constructor expects Shopware\\\\Components\\\\Model\\\\ModelManager, object\\|null given\\.$#"
+			count: 1
+			path: SwagPaymentPayPalUnified.php
+
+		-
+			message: "#^Parameter \\#3 \\$connection of class SwagPaymentPayPalUnified\\\\Setup\\\\Uninstaller constructor expects Doctrine\\\\DBAL\\\\Connection, object\\|null given\\.$#"
+			count: 1
+			path: SwagPaymentPayPalUnified.php
+
+		-
+			message: "#^Parameter \\#1 \\$attributeCrudService of class SwagPaymentPayPalUnified\\\\Setup\\\\Updater constructor expects Shopware\\\\Bundle\\\\AttributeBundle\\\\Service\\\\CrudService, object\\|null given\\.$#"
+			count: 1
+			path: SwagPaymentPayPalUnified.php
+
+		-
+			message: "#^Parameter \\#2 \\$modelManager of class SwagPaymentPayPalUnified\\\\Setup\\\\Updater constructor expects Shopware\\\\Components\\\\Model\\\\ModelManager, object\\|null given\\.$#"
+			count: 1
+			path: SwagPaymentPayPalUnified.php
+
+		-
+			message: "#^Parameter \\#3 \\$connection of class SwagPaymentPayPalUnified\\\\Setup\\\\Updater constructor expects Doctrine\\\\DBAL\\\\Connection, object\\|null given\\.$#"
+			count: 1
+			path: SwagPaymentPayPalUnified.php
+
+		-
+			message: "#^Parameter \\#1 \\$modelManager of class SwagPaymentPayPalUnified\\\\Components\\\\PaymentMethodProvider constructor expects Shopware\\\\Components\\\\Model\\\\ModelManager\\|null, object\\|null given\\.$#"
+			count: 2
+			path: SwagPaymentPayPalUnified.php
+

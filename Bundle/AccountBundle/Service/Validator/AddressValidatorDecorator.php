@@ -12,6 +12,7 @@ use Shopware\Bundle\AccountBundle\Service\Validator\AddressValidatorInterface;
 use Shopware\Components\Api\Exception\ValidationException;
 use Shopware\Models\Customer\Address;
 use Symfony\Component\Validator\ConstraintViolationInterface;
+use Symfony\Component\Validator\ConstraintViolationList;
 
 class AddressValidatorDecorator implements AddressValidatorInterface
 {
@@ -54,6 +55,7 @@ class AddressValidatorDecorator implements AddressValidatorInterface
         try {
             $this->innerValidator->validate($address);
         } catch (ValidationException $exception) {
+            /** @var ConstraintViolationList $violations */
             $violations = $exception->getViolations();
 
             // these values are not always provided by PayPal, but might be required due to the shop settings

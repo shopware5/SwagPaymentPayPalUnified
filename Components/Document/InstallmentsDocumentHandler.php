@@ -32,7 +32,7 @@ class InstallmentsDocumentHandler
     }
 
     /**
-     * @param int $orderNumber
+     * @param string $orderNumber
      */
     public function handleDocument($orderNumber, Document $document)
     {

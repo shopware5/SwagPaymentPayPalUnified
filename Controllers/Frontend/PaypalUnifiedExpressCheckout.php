@@ -10,6 +10,7 @@ use Shopware\Components\HttpClient\RequestException;
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
 use SwagPaymentPayPalUnified\Components\ExceptionHandlerServiceInterface;
 use SwagPaymentPayPalUnified\Components\Services\ExpressCheckout\CustomerService;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\PartnerAttributionId;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\PaymentResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService;
@@ -17,6 +18,16 @@ use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
 
 class Shopware_Controllers_Frontend_PaypalUnifiedExpressCheckout extends Enlight_Controller_Action
 {
+    /**
+     * @var SettingsServiceInterface
+     */
+    private $settingsService;
+
+    public function preDispatch()
+    {
+        $this->settingsService = $this->get('paypal_unified.settings_service');
+    }
+
     public function expressCheckoutReturnAction()
     {
         $request = $this->Request();

@@ -49,7 +49,7 @@ class PaymentInstructionServiceTest extends TestCase
         static::assertSame(self::TEST_BANK_ACCOUNT_HOLDER, $testInstructions->getAccountHolder());
         static::assertSame(self::TEST_BANK_BIC, $testInstructions->getBic());
         static::assertSame(self::TEST_BANK_IBAN, $testInstructions->getIban());
-        static::assertSame(self::TEST_BANK_IBAN, $testInstructions->getIban());
+        static::assertSame((string) self::TEST_AMOUNT_VALUE, $testInstructions->getAmount());
 
         /** @var QueryBuilder $query */
         $query = Shopware()->Container()->get('dbal_connection')->createQueryBuilder();
@@ -62,7 +62,7 @@ class PaymentInstructionServiceTest extends TestCase
         $internalComment = $query->execute()->fetchColumn();
 
         $expected = '
-{"jsonDescription":"Pay Upon Invoice Payment Instructions","orderNumber":20001,"bankName":"TEST_BANK","accountHolder":"TEST_ACCOUNT_HOLDER","iban":"TEST_IBAN","bic":"TEST_BIC","amount":50.5,"dueDate":"01-01-2000","reference":"TEST_REFERENCE_NUMBER"}
+{"jsonDescription":"Pay Upon Invoice Payment Instructions","orderNumber":20001,"bankName":"TEST_BANK","accountHolder":"TEST_ACCOUNT_HOLDER","iban":"TEST_IBAN","bic":"TEST_BIC","amount":"50.5","dueDate":"01-01-2000","reference":"TEST_REFERENCE_NUMBER"}
 ';
 
         if (method_exists($this, 'assertStringContainsString')) {

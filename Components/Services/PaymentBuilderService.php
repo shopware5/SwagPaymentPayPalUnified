@@ -54,7 +54,7 @@ class PaymentBuilderService implements PaymentBuilderInterface
      */
     private $basketData;
 
-    /*
+    /**
      * @var array
      */
     private $userData;

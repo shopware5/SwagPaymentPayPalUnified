@@ -49,7 +49,7 @@ class PaymentInstructionService
         $model->setBankName($paymentInstruction->getRecipientBanking()->getBankName());
         $model->setBic($paymentInstruction->getRecipientBanking()->getBic());
         $model->setIban($paymentInstruction->getRecipientBanking()->getIban());
-        $model->setAmount($paymentInstruction->getAmount()->getValue());
+        $model->setAmount((string) $paymentInstruction->getAmount()->getValue());
         $model->setDueDate($paymentInstruction->getDueDate());
         $model->setReference($paymentInstruction->getReferenceNumber());
 
