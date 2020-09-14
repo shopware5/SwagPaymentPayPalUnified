@@ -1,5 +1,5 @@
 {
-    "name": "shopwareLabs/swag-payment-paypal-unified",
+    "name": "shopware-labs/swag-payment-paypal-unified",
     "type": "shopware-plugin",
     "description": "All PayPal payment methods in one plugin",
     "license": "MIT",

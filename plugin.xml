@@ -17,10 +17,12 @@
 
     <changelog version="3.0.0">
         <changes lang="de">
+            PT-10770 - Composer-Name des Plugin ist nun mit Composer 2 kompatibel;
             PT-11863 - Benötigte Mindestversion von Shopware auf 5.2.27 angehoben;
             PT-12040 - In-Shop Ratenzahlung Integration entfernt;
         </changes>
         <changes lang="en">
+            PT-10770 - Composer name of the plugin is now compatible with Composer 2;
             PT-11863 - Increased required minimum version of shopware to 5.2.27;
             PT-12040 - Removed in-shop installments integration;
         </changes>
