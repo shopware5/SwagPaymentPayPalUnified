@@ -1,6 +1,6 @@
 {extends file='parent:frontend/checkout/cart.tpl'}
 
-{* PayPal installments integration *}
+{* PayPal installments banner *}
 {block name='frontend_checkout_cart_premium'}
     {block name='frontend_checkout_cart_premium_paypal_unified_installments_banner'}
         {include file='frontend/paypal_unified/installments/banner/cart.tpl'}

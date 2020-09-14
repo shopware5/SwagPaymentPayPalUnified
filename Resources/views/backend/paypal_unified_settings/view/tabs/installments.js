@@ -3,7 +3,7 @@
 Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Installments', {
     extend: 'Ext.form.Panel',
     alias: 'widget.paypal-unified-settings-tabs-installments',
-    title: '{s name=title}PayPal installments integration{/s}',
+    title: '{s name=title}PayPal installments{/s}',
 
     anchor: '100%',
     bodyPadding: 10,
