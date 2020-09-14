@@ -157,7 +157,7 @@ class PreCommitChecks
             return;
         }
 
-        exec('./../../../vendor/phpstan/phpstan/phpstan.phar analyse .', $output, $return);
+        exec('./../../../vendor/bin/phpstan analyse .', $output, $return);
         if ($return !== 0) {
             $this->error = true;
         }

@@ -230,8 +230,6 @@ Ext.define('Shopware.apps.PaypalUnified.view.overview.Grid', {
                 return '{s name="type/plus"}Plus{/s}';
             case 'PayPalPlusInvoice':
                 return '{s name="type/invoice"}Invoice{/s}';
-            case 'PayPalInstallments':
-                return '{s name="type/installments"}Installments{/s}';
             case 'PayPalExpress':
                 return '{s name="type/express"}Express{/s}';
             case 'PayPalSmartPaymentButtons':

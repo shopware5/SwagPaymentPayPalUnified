@@ -23,10 +23,6 @@ final class PaymentStatus
      */
     const PAYMENT_STATUS_PAID = 12;
     /**
-     * @deprecated Deprecated since 2.5.0, will be removed in 3.0.0, use PAYMENT_STATUS_PAID instead
-     */
-    const PAYMENT_STATUS_APPROVED = self::PAYMENT_STATUS_PAID;
-    /**
      * The default status for open orders
      */
     const PAYMENT_STATUS_OPEN = 17;

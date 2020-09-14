@@ -9,7 +9,6 @@
 namespace SwagPaymentPayPalUnified\Components\Services;
 
 use Doctrine\DBAL\Connection;
-use SwagPaymentPayPalUnified\Components\PaymentStatus;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
@@ -33,33 +32,6 @@ class OrderDataService
     ) {
         $this->dbalConnection = $dbalConnection;
         $this->settingsService = $settingsService;
-    }
-
-    /**
-     * @param string $orderNumber
-     * @param int    $paymentStatusId
-     *
-     * @return bool
-     *
-     * @deprecated Deprecated since 2.0.1, will be removed in 3.0.0, no replacement implemented.
-     * Core functionality will be used from now on.
-     */
-    public function applyPaymentStatus($orderNumber, $paymentStatusId)
-    {
-        $builder = $this->dbalConnection->createQueryBuilder();
-        $builder->update('s_order', 'o')
-            ->set('o.cleared', ':paymentStatus')
-            ->where('o.ordernumber = :orderNumber')
-            ->setParameters([
-                ':orderNumber' => $orderNumber,
-                ':paymentStatus' => $paymentStatusId,
-            ]);
-
-        if ($paymentStatusId === PaymentStatus::PAYMENT_STATUS_PAID) {
-            $builder->set('o.cleareddate', 'NOW()');
-        }
-
-        return $builder->execute() === 1;
     }
 
     /**
@@ -132,14 +104,11 @@ class OrderDataService
     public function applyPaymentTypeAttribute($orderNumber, Payment $payment, $expressCheckout = false, $smartPaymentButtons = false)
     {
         $paymentType = PaymentType::PAYPAL_CLASSIC;
-        $payer = $payment->getPayer();
 
         if ($expressCheckout) {
             $paymentType = PaymentType::PAYPAL_EXPRESS;
         } elseif ($smartPaymentButtons) {
             $paymentType = PaymentType::PAYPAL_SMART_PAYMENT_BUTTONS;
-        } elseif ($payer && $payment->getPayer()->getExternalSelectedFundingInstrumentType() === 'CREDIT') {
-            $paymentType = PaymentType::PAYPAL_INSTALLMENTS;
         } elseif ($payment->getPaymentInstruction() !== null) {
             $paymentType = PaymentType::PAYPAL_INVOICE;
         } elseif ((bool) $this->settingsService->get('active', SettingsTable::PLUS)) {

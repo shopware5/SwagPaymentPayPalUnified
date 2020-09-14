@@ -116,7 +116,7 @@
 
             // Polyfill for older shopware versions
             $.getCookiePreference = function() {
-                return false;
+                return true;
             };
         },
 

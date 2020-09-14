@@ -49,10 +49,6 @@ trait SettingsHelperTrait
             $data['displayErrors'] = true;
         }
 
-        if (!isset($data['advertiseInstallments'])) {
-            $data['advertiseInstallments'] = false;
-        }
-
         if (!isset($data['brandName'])) {
             $data['brandName'] = 'TestBrandName';
         }
@@ -84,12 +80,8 @@ trait SettingsHelperTrait
             $data['shopId'] = 1;
         }
 
-        if (!isset($data['showLogo'])) {
-            $data['showLogo'] = 0;
-        }
-
-        if (!isset($data['intent'])) {
-            $data['intent'] = 0;
+        if (!isset($data['advertiseInstallments'])) {
+            $data['advertiseInstallments'] = false;
         }
 
         $model = new InstallmentsSettingsModel();

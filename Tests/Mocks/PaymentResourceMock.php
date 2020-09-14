@@ -13,10 +13,8 @@ use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PatchInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\PaymentResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
 use SwagPaymentPayPalUnified\Tests\Functional\Components\Backend\PaymentDetailsServiceTest;
-use SwagPaymentPayPalUnified\Tests\Functional\Subscriber\InstallmentsTest;
 use SwagPaymentPayPalUnified\Tests\Mocks\ResultSet\CreatePaymentSale;
 use SwagPaymentPayPalUnified\Tests\Mocks\ResultSet\GetPaymentAuthorization;
-use SwagPaymentPayPalUnified\Tests\Mocks\ResultSet\GetPaymentInstallments;
 use SwagPaymentPayPalUnified\Tests\Mocks\ResultSet\GetPaymentOrder;
 use SwagPaymentPayPalUnified\Tests\Mocks\ResultSet\GetPaymentSale;
 
@@ -61,10 +59,6 @@ class PaymentResourceMock extends PaymentResource
     {
         if ($paymentId === self::THROW_EXCEPTION) {
             throw new RequestException('get exception');
-        }
-
-        if ($paymentId === InstallmentsTest::INSTALLMENTS_PAYMENT_ID) {
-            return GetPaymentInstallments::get();
         }
 
         if ($paymentId === PaymentDetailsServiceTest::ORDER_ID) {

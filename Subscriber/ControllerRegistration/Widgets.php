@@ -31,20 +31,8 @@ class Widgets implements SubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            'Enlight_Controller_Dispatcher_ControllerPath_Widgets_PaypalUnifiedInstallments' => 'onGetInstallmentsControllerPath',
             'Enlight_Controller_Dispatcher_ControllerPath_Widgets_PaypalUnifiedExpressCheckout' => 'onGetEcControllerPath',
         ];
-    }
-
-    /**
-     * Handles the Enlight_Controller_Dispatcher_ControllerPath_Widgets_PaypalUnifiedInstallments event.
-     * Returns the path to the installments controller.
-     *
-     * @return string
-     */
-    public function onGetInstallmentsControllerPath()
-    {
-        return $this->pluginDirectory . '/Controllers/Widgets/PaypalUnifiedInstallments.php';
     }
 
     /**

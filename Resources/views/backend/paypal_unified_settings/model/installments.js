@@ -12,11 +12,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.model.Installments', {
         // {block name="backend/paypal_unified_settings/model/installments/fields"}{/block}
         { name: 'id', type: 'int' },
         { name: 'shopId', type: 'int' },
-        { name: 'active', type: 'bool' },
-        { name: 'presentmentTypeDetail', type: 'int' },
-        { name: 'presentmentTypeCart', type: 'int' },
-        { name: 'showLogo', type: 'bool' },
-        { name: 'intent', type: 'int' }
+        { name: 'advertiseInstallments', type: 'bool', defaultValue: true }
     ]
 });
 // {/block}

@@ -42,12 +42,6 @@
             <argument type="service" id="paypal_unified.client_service"/>
         </service>
 
-        <service id="paypal_unified.installments_resource"
-                 class="SwagPaymentPayPalUnified\PayPalBundle\Resources\InstallmentsResource"
-                 public="true">
-            <argument type="service" id="paypal_unified.client_service"/>
-        </service>
-
         <service id="paypal_unified.webhook_resource"
                  class="SwagPaymentPayPalUnified\PayPalBundle\Resources\WebhookResource"
                  public="true">

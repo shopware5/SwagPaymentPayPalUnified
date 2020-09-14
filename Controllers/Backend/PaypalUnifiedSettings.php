@@ -11,7 +11,6 @@ use SwagPaymentPayPalUnified\Components\Services\ExceptionHandlerService;
 use SwagPaymentPayPalUnified\Models\Settings\General as GeneralSettingsModel;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService;
-use SwagPaymentPayPalUnified\PayPalBundle\Structs\Installments\FinancingResponse;
 
 class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Controllers_Backend_Application
 {
@@ -117,37 +116,6 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
                 'message' => $error->getCompleteMessage(),
             ]);
         }
-    }
-
-    /**
-     * Makes a test request against the installments endpoint to test if the installments integration is available
-     */
-    public function testInstallmentsAvailabilityAction()
-    {
-        $installmentsRequestService = $this->get('paypal_unified.installments.installments_request_service');
-
-        try {
-            $this->configureClient();
-            $response = $installmentsRequestService->getList(200.0);
-            $financingResponse = FinancingResponse::fromArray($response['financing_options'][0]);
-        } catch (Exception $e) {
-            $error = $this->exceptionHandler->handle($e, 'get installments financing options');
-
-            $this->View()->assign([
-                'success' => false,
-                'message' => $error->getCompleteMessage(),
-            ]);
-
-            return;
-        }
-
-        if ($financingResponse->getQualifyingFinancingOptions()) {
-            $this->View()->assign('success', true);
-
-            return;
-        }
-
-        $this->View()->assign('success', false);
     }
 
     private function configureClient()

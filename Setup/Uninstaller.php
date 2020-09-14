@@ -54,7 +54,6 @@ class Uninstaller
     {
         $paymentMethodProvider = new PaymentMethodProvider($this->modelManager);
         $paymentMethodProvider->setPaymentMethodActiveFlag(false);
-        $paymentMethodProvider->setPaymentMethodActiveFlag(false, PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME);
     }
 
     private function removeAttributes()

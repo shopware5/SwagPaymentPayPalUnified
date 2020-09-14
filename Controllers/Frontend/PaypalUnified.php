@@ -12,7 +12,6 @@ use SwagPaymentPayPalUnified\Components\ErrorCodes;
 use SwagPaymentPayPalUnified\Components\ExceptionHandlerServiceInterface;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderInterface;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
-use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\PaymentStatus;
 use SwagPaymentPayPalUnified\Components\Services\OrderDataService;
 use SwagPaymentPayPalUnified\Components\Services\PaymentAddressService;
@@ -111,7 +110,6 @@ class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_F
         try {
             //Query all information
             $basketData = $orderData['sBasket'];
-            $selectedPaymentName = $orderData['sPayment']['name'];
 
             $requestParams = new PaymentBuilderParameters();
             $requestParams->setBasketData($basketData);
@@ -124,19 +122,8 @@ class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_F
                 $requestParams->setBasketUniqueId($basketUniqueId);
             }
 
-            /** @var Payment $payment */
-            $payment = null;
-
-            // For generic PayPal payments like PayPal or PayPal Plus ones,
-            // a different parameter than in installments for the payment creation is needed
-            if ($selectedPaymentName === PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME) {
-                $requestParams->setPaymentType(PaymentType::PAYPAL_CLASSIC);
-                $payment = $this->get('paypal_unified.payment_builder_service')->getPayment($requestParams);
-            } elseif ($selectedPaymentName === PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME) {
-                $this->client->setPartnerAttributionId(PartnerAttributionId::PAYPAL_INSTALLMENTS);
-                $requestParams->setPaymentType(PaymentType::PAYPAL_INSTALLMENTS);
-                $payment = $this->get('paypal_unified.installments.payment_builder_service')->getPayment($requestParams);
-            }
+            $requestParams->setPaymentType(PaymentType::PAYPAL_CLASSIC);
+            $payment = $this->get('paypal_unified.payment_builder_service')->getPayment($requestParams);
 
             $response = $this->paymentResource->create($payment);
 
@@ -226,15 +213,12 @@ class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_F
 
         $isPlus = (bool) $request->getParam('plus', false);
         $isExpressCheckout = (bool) $request->getParam('expressCheckout', false);
-        $isInstallments = (bool) $request->getParam('installments', false);
         $isSpbCheckout = (bool) $request->getParam('spbCheckout', false);
 
         if ($isPlus) {
             $this->client->setPartnerAttributionId(PartnerAttributionId::PAYPAL_PLUS);
         } elseif ($isExpressCheckout) {
             $this->client->setPartnerAttributionId(PartnerAttributionId::PAYPAL_EXPRESS_CHECKOUT);
-        } elseif ($isInstallments) {
-            $this->client->setPartnerAttributionId(PartnerAttributionId::PAYPAL_INSTALLMENTS);
         } elseif ($isSpbCheckout) {
             $this->client->setPartnerAttributionId(PartnerAttributionId::PAYPAL_SMART_PAYMENT_BUTTONS);
         }

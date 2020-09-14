@@ -6,6 +6,8 @@
  * file that was distributed with this source code.
  */
 
+use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
+
 return [
     [
         'id' => 9998,
@@ -38,7 +40,7 @@ return [
         'deviceType' => 'desktop',
         'payment' => [
             'id' => 7,
-            'name' => 'SwagPaymentPayPalUnified',
+            'name' => PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME,
             'description' => 'PayPal',
             'template' => '',
             'class' => '',
@@ -89,7 +91,7 @@ return [
         'deviceType' => 'desktop',
         'payment' => [
             'id' => 7,
-            'name' => 'SwagPaymentPayPalUnified',
+            'name' => PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME,
             'description' => 'PayPal',
             'template' => '',
             'class' => '',

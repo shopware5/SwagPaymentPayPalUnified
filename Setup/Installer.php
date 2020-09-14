@@ -73,7 +73,6 @@ class Installer
 
         $this->createDatabaseTables();
         $this->createUnifiedPaymentMethod();
-        $this->createInstallmentsPaymentMethod();
         $this->createAttributes();
         $this->createDocumentTemplates();
         $this->migrate();
@@ -184,29 +183,6 @@ class Installer
         $this->modelManager->flush($payment);
     }
 
-    private function createInstallmentsPaymentMethod()
-    {
-        $existingPayment = $this->modelManager->getRepository(Payment::class)->findOneBy([
-            'name' => PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME,
-        ]);
-
-        if ($existingPayment !== null) {
-            //If the payment does already exist, we don't need to add it again.
-            return;
-        }
-
-        $payment = new Payment();
-        $payment->setActive(false);
-        $payment->setPosition(-99);
-        $payment->setName(PaymentMethodProvider::PAYPAL_INSTALLMENTS_PAYMENT_METHOD_NAME);
-        $payment->setDescription('Ratenzahlung Powered by PayPal');
-        $payment->setAdditionalDescription('Wir ermöglichen Ihnen die Finanzierung Ihres Einkaufs mithilfe der Ratenzahlung Powered by PayPal. In Sekundenschnelle, vollständig online, vorbehaltlich Bonitätsprüfung.');
-        $payment->setAction('PaypalUnifiedInstallments');
-
-        $this->modelManager->persist($payment);
-        $this->modelManager->flush($payment);
-    }
-
     private function removeDocumentTemplates()
     {
         $sql = "DELETE FROM s_core_documents_box WHERE `name` LIKE 'PayPal_Unified%'";
@@ -239,24 +215,12 @@ class Installer
         $this->translation->write(
             2,
             'config_payment',
-            $translationKeys['SwagPaymentPayPalUnified'],
+            $translationKeys[PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME],
             [
                 'description' => 'PayPal',
                 'additionalDescription' => '<!-- PayPal Logo --><a href="https://www.paypal.com/de/cgi-bin/webscr?cmd=xpt/cps/popup/OLCWhatIsPayPal-outside" target="_blank" rel="noopener">'
                     . '<img src="{link file=\'frontend/_public/src/img/sidebar-paypal-generic.png\' fullPath}" alt="Logo \'PayPal recommended\'">'
                     . '</a><br><!-- PayPal Logo -->Paying with PayPal - easy, fast and secure.',
-            ],
-            true
-        );
-
-        $this->translation->write(
-            2,
-            'config_payment',
-            $translationKeys['SwagPaymentPayPalUnifiedInstallments'],
-            [
-                'description' => 'Installments powered by PayPal',
-                'additionalDescription' => 'We allow you to finance your purchase with installments powered by PayPal. '
-                    . 'Only a few seconds, completely online, conditional credit assessment.',
             ],
             true
         );
@@ -270,8 +234,8 @@ class Installer
         return $this->modelManager->getDBALQueryBuilder()
             ->select('name, id')
             ->from('s_core_paymentmeans', 'pm')
-            ->where("pm.name = 'SwagPaymentPayPalUnified'")
-            ->orWhere("pm.name = 'SwagPaymentPayPalUnifiedInstallments'")
+            ->where('pm.name = :name')
+            ->setParameter(':name', PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME)
             ->execute()
             ->fetchAll(\PDO::FETCH_KEY_PAIR);
     }
