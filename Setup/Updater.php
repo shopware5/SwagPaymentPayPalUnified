@@ -42,47 +42,47 @@ class Updater
      */
     public function update($oldVersion)
     {
-        if (version_compare($oldVersion, '1.0.2', '<=')) {
+        if (\version_compare($oldVersion, '1.0.2', '<=')) {
             $this->updateTo103();
         }
 
-        if (version_compare($oldVersion, '1.0.7', '<=')) {
+        if (\version_compare($oldVersion, '1.0.7', '<=')) {
             $this->updateTo110();
         }
 
-        if (version_compare($oldVersion, '1.1.0', '<=')) {
+        if (\version_compare($oldVersion, '1.1.0', '<=')) {
             $this->updateTo111();
         }
 
-        if (version_compare($oldVersion, '1.1.1', '<=')) {
+        if (\version_compare($oldVersion, '1.1.1', '<=')) {
             $this->updateTo112();
         }
 
-        if (version_compare($oldVersion, '2.0.3', '<=')) {
+        if (\version_compare($oldVersion, '2.0.3', '<=')) {
             $this->updateTo210();
         }
 
-        if (version_compare($oldVersion, '2.1.3', '<=')) {
+        if (\version_compare($oldVersion, '2.1.3', '<=')) {
             $this->updateTo220();
         }
 
-        if (version_compare($oldVersion, '2.3.0', '<=')) {
+        if (\version_compare($oldVersion, '2.3.0', '<=')) {
             $this->updateTo240();
         }
 
-        if (version_compare($oldVersion, '2.4.1', '<=')) {
+        if (\version_compare($oldVersion, '2.4.1', '<=')) {
             $this->updateTo250();
         }
 
-        if (version_compare($oldVersion, '2.6.0', '<=')) {
+        if (\version_compare($oldVersion, '2.6.0', '<=')) {
             $this->updateTo261();
         }
 
-        if (version_compare($oldVersion, '2.7.0', '<=')) {
+        if (\version_compare($oldVersion, '2.7.0', '<=')) {
             $this->updateTo270();
         }
 
-        if (version_compare($oldVersion, '3.0.0', '<=')) {
+        if (\version_compare($oldVersion, '3.0.0', '<=')) {
             $this->updateTo300();
         }
     }

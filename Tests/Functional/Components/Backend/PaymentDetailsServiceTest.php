@@ -75,7 +75,7 @@ class PaymentDetailsServiceTest extends TestCase
         /** @var Connection $connection */
         $connection = Shopware()->Container()->get('dbal_connection');
         $connection->executeQuery(
-            sprintf("INSERT INTO `s_core_paymentmeans` (`id`, `name`) VALUES ( %s, 'paypal');", $legacyPaymentId)
+            \sprintf("INSERT INTO `s_core_paymentmeans` (`id`, `name`) VALUES ( %s, 'paypal');", $legacyPaymentId)
         );
 
         $result = $this->createPaymentDetailService()->getPaymentDetails('', $legacyPaymentId, self::LEGACY_ID);

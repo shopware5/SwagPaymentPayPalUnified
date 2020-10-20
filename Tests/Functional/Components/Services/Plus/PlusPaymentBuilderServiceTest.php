@@ -21,14 +21,14 @@ class PlusPaymentBuilderServiceTest extends TestCase
     public function test_serviceIsAvailable()
     {
         $service = Shopware()->Container()->get('paypal_unified.plus.payment_builder_service');
-        static::assertSame(PlusPaymentBuilderService::class, get_class($service));
+        static::assertSame(PlusPaymentBuilderService::class, \get_class($service));
     }
 
     public function test_getPayment_has_plus_basketId()
     {
         $request = $this->getRequestData();
 
-        if (method_exists($this, 'assertStringContainsString')) {
+        if (\method_exists($this, 'assertStringContainsString')) {
             static::assertStringContainsString(
                 '/PaypalUnified/return/plus/1/basketId/' . BasketIdWhitelist::WHITELIST_IDS['PayPalPlus'],
                 $request->getRedirectUrls()->getReturnUrl()

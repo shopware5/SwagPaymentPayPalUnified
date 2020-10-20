@@ -151,7 +151,7 @@ class Sale extends RelatedResource
         $result->setProtectionEligibilityType($data['protection_eligibility_type']);
         $result->setReceiptId($data['receipt_id']);
 
-        if (is_array($data['transaction_fee'])) {
+        if (\is_array($data['transaction_fee'])) {
             $result->setTransactionFee(TransactionFee::fromArray($data['transaction_fee']));
         }
 

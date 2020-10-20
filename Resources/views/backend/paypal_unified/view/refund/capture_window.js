@@ -2,7 +2,7 @@
 // {block name="backend/paypal_unified/refund/capture_window"}
 Ext.define('Shopware.apps.PaypalUnified.view.refund.CaptureWindow', {
     extend: 'Enlight.app.Window',
-    title: '{s name=title}New Refund{/s}',
+    title: '{s name="title"}New Refund{/s}',
     alias: 'widget.paypal-unified-refund-capture-window',
 
     maximizable: false,
@@ -75,7 +75,7 @@ Ext.define('Shopware.apps.PaypalUnified.view.refund.CaptureWindow', {
             }, {
                 xtype: 'combo',
                 itemId: 'captureSelection',
-                fieldLabel: '{s name=field/captureSelection}Select capture{/s}',
+                fieldLabel: '{s name="field/captureSelection"}Select capture{/s}',
                 valueField: 'id',
                 displayField: 'description',
                 listeners: {
@@ -84,20 +84,20 @@ Ext.define('Shopware.apps.PaypalUnified.view.refund.CaptureWindow', {
             }, {
                 xtype: 'base-element-number',
                 itemId: 'currentAmount',
-                fieldLabel: '{s name=field/current}Amount{/s}',
-                helpText: '{s name=field/current/help}Enter the amount you would like to refund.{/s}',
+                fieldLabel: '{s name="field/current"}Amount{/s}',
+                helpText: '{s name="field/current/help"}Enter the amount you would like to refund.{/s}',
                 allowDecimals: true,
                 disabled: true,
                 minValue: 0.01
             }, {
                 xtype: 'textarea',
                 itemId: 'note',
-                fieldLabel: '{s name=field/description}Note{/s}',
+                fieldLabel: '{s name="field/description"}Note{/s}',
                 disabled: true,
                 grow: false
             }, {
                 xtype: 'base-element-button',
-                text: '{s name=field/button}Execute{/s}',
+                text: '{s name="field/button"}Execute{/s}',
                 itemId: 'executeButton',
                 region: 'right',
                 anchor: '100%',
@@ -153,16 +153,16 @@ Ext.define('Shopware.apps.PaypalUnified.view.refund.CaptureWindow', {
 
         if (amount <= 0) {
             Ext.MessageBox.alert(
-                '{s name=alert/title/amount}Invalid amount{/s}',
-                '{s name=alert/message/amountZero}The amount you have entered is invalid. Please enter an amount which is <b>greater than 0€</b>{/s}'
+                '{s name="alert/title/amount"}Invalid amount{/s}',
+                '{s name="alert/message/amountZero"}The amount you have entered is invalid. Please enter an amount which is <b>greater than 0€</b>{/s}'
             );
 
             return;
         }
 
         Ext.MessageBox.confirm(
-            '{s name=confirm/title}Execute refund?{/s}',
-            '{s name=confirm/message}Do you really want to refund this amount: {/s}<b>' + amountFormatted + '</b>?',
+            '{s name="confirm/title"}Execute refund?{/s}',
+            '{s name="confirm/message"}Do you really want to refund this amount: {/s}<b>' + amountFormatted + '</b>?',
             Ext.bind(me.onConfirmRefund, me)
         );
     },

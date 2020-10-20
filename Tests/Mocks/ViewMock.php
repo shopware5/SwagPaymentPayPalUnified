@@ -58,7 +58,7 @@ class ViewMock extends Enlight_View_Default
      */
     public function assign($spec, $value = null, $nocache = null, $scope = null)
     {
-        if (is_array($spec)) {
+        if (\is_array($spec)) {
             $this->assigns = $spec;
 
             return $this;

@@ -2,7 +2,7 @@
 // {block name="backend/paypal_unified_settings/window"}
 Ext.define('Shopware.apps.PaypalUnifiedSettings.view.Window', {
     extend: 'Enlight.app.Window',
-    title: '{s name=title}PayPal - Settings{/s}',
+    title: '{s name="title"}PayPal - Settings{/s}',
     alias: 'widget.paypal-unified-settings-window',
 
     height: '70%',

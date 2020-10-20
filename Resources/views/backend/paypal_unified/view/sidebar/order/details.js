@@ -3,7 +3,7 @@
 Ext.define('Shopware.apps.PaypalUnified.view.sidebar.order.Details', {
     extend: 'Ext.form.FieldSet',
     alias: 'widget.paypal-unified-sidebar-order-details',
-    title: '{s name=title}Order details{/s}',
+    title: '{s name="title"}Order details{/s}',
 
     anchor: '100%',
     margin: 5,
@@ -33,24 +33,24 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebar.order.Details', {
         return [{
             xtype: 'textfield',
             name: 'number',
-            fieldLabel: '{s name=field/number}Order number{/s}'
+            fieldLabel: '{s name="field/number"}Order number{/s}'
         }, {
             xtype: 'textfield',
             name: 'transactionId',
-            fieldLabel: '{s name=field/transactionId}Transaction ID{/s}'
+            fieldLabel: '{s name="field/transactionId"}Transaction ID{/s}'
         }, {
             xtype: 'textfield',
             name: 'currency',
-            fieldLabel: '{s name=field/currency}Currency{/s}'
+            fieldLabel: '{s name="field/currency"}Currency{/s}'
         }, {
             xtype: 'textfield',
             name: 'invoiceAmount',
             itemId: 'invoiceAmount',
-            fieldLabel: '{s name=field/invoiceAmount}Invoice amount{/s}'
+            fieldLabel: '{s name="field/invoiceAmount"}Invoice amount{/s}'
         }, {
             xtype: 'base-element-datetime',
             name: 'orderTime',
-            fieldLabel: '{s name=field/orderTime}Order time{/s}',
+            fieldLabel: '{s name="field/orderTime"}Order time{/s}',
             dateCfg: {
                 readOnly: true
             },
@@ -61,12 +61,12 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebar.order.Details', {
             xtype: 'textfield',
             name: 'orderStatus',
             itemId: 'orderStatus',
-            fieldLabel: '{s name=field/orderStatus}Order status{/s}'
+            fieldLabel: '{s name="field/orderStatus"}Order status{/s}'
         }, {
             xtype: 'textfield',
             name: 'paymentStatus',
             itemId: 'paymentStatus',
-            fieldLabel: '{s name=field/paymentStatus}Payment status{/s}'
+            fieldLabel: '{s name="field/paymentStatus"}Payment status{/s}'
         }];
     }
 });

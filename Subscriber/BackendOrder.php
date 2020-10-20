@@ -44,7 +44,7 @@ class BackendOrder implements SubscriberInterface
 
         $view = $args->getSubject()->View();
         $orders = $view->getAssign('data');
-        $orderIds = array_column($orders, 'id');
+        $orderIds = \array_column($orders, 'id');
 
         $query = $this->connection->createQueryBuilder();
         $query->select(['orderID', 'swag_paypal_unified_payment_type'])

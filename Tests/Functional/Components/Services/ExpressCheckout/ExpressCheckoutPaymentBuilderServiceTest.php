@@ -21,7 +21,7 @@ class ExpressCheckoutPaymentBuilderServiceTest extends TestCase
     public function test_serviceIsAvailable()
     {
         $service = Shopware()->Container()->get('paypal_unified.express_checkout.payment_builder_service');
-        static::assertSame(ExpressCheckoutPaymentBuilderService::class, get_class($service));
+        static::assertSame(ExpressCheckoutPaymentBuilderService::class, \get_class($service));
     }
 
     public function test_getPayment_has_currency()

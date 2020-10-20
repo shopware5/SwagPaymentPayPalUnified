@@ -2,7 +2,7 @@
 // {block name="backend/paypal_unified/refund/sale_window"}
 Ext.define('Shopware.apps.PaypalUnified.view.refund.SaleWindow', {
     extend: 'Enlight.app.Window',
-    title: '{s name=title}New Refund{/s}',
+    title: '{s name="title"}New Refund{/s}',
     alias: 'widget.paypal-unified-refund-sale-window',
 
     maximizable: false,
@@ -63,30 +63,30 @@ Ext.define('Shopware.apps.PaypalUnified.view.refund.SaleWindow', {
                 xtype: 'textfield',
                 itemId: 'maxAmount',
                 disabled: true,
-                fieldLabel: '{s name=field/max}Maximum amount{/s}',
-                helpText: '{s name=field/max/help}The maximum amount that can be refunded.{/s}'
+                fieldLabel: '{s name="field/max"}Maximum amount{/s}',
+                helpText: '{s name="field/max/help"}The maximum amount that can be refunded.{/s}'
             }, {
                 xtype: 'base-element-number',
                 itemId: 'currentAmount',
-                fieldLabel: '{s name=field/current}Amount{/s}',
-                helpText: '{s name=field/current/help}Enter the amount you would like to refund.{/s}',
+                fieldLabel: '{s name="field/current"}Amount{/s}',
+                helpText: '{s name="field/current/help"}Enter the amount you would like to refund.{/s}',
                 allowDecimals: true,
                 minValue: 0.01
             }, {
                 xtype: 'checkbox',
                 itemId: 'refundCompletely',
-                fieldLabel: '{s name=field/refundCompletely}Refund completely{/s}',
-                helpText: '{s name=field/refundCompletely/help}Enable this option to refund the complete sale. (This does not work for partially refunded sales){/s}',
+                fieldLabel: '{s name="field/refundCompletely"}Refund completely{/s}',
+                helpText: '{s name="field/refundCompletely/help"}Enable this option to refund the complete sale. (This does not work for partially refunded sales){/s}',
                 handler: Ext.bind(me.onCheckRefundCompletely, me)
             }, {
                 xtype: 'textfield',
                 itemId: 'invoiceNumber',
-                fieldLabel: '{s name=field/bookingNumber}Booking number{/s}',
-                helpText: '{s name=field/bookingNumber/help}You can enter a booking number if would like to identify this refund later.{/s}',
-                emptyText: '{s name=field/bookingNumber/empty}No booking number{/s}'
+                fieldLabel: '{s name="field/bookingNumber"}Booking number{/s}',
+                helpText: '{s name="field/bookingNumber/help"}You can enter a booking number if would like to identify this refund later.{/s}',
+                emptyText: '{s name="field/bookingNumber/empty"}No booking number{/s}'
             }, {
                 xtype: 'base-element-button',
-                text: '{s name=field/button}Execute{/s}',
+                text: '{s name="field/button"}Execute{/s}',
                 region: 'right',
                 anchor: '100%',
                 margin: 10,
@@ -112,8 +112,8 @@ Ext.define('Shopware.apps.PaypalUnified.view.refund.SaleWindow', {
 
         if (amount <= 0) {
             Ext.MessageBox.alert(
-                '{s name=alert/title/amount}Invalid amount{/s}',
-                '{s name=alert/message/amountZero}The amount you have entered is invalid. Please enter an amount which is <b>greater than 0€</b>{/s}'
+                '{s name="alert/title/amount"}Invalid amount{/s}',
+                '{s name="alert/message/amountZero"}The amount you have entered is invalid. Please enter an amount which is <b>greater than 0€</b>{/s}'
             );
 
             return;
@@ -121,16 +121,16 @@ Ext.define('Shopware.apps.PaypalUnified.view.refund.SaleWindow', {
 
         if (amount > maxAmount) {
             Ext.MessageBox.alert(
-                '{s name=alert/title/amount}Invalid amount{/s}',
-                '{s name=alert/message/amountMax}The amount you have entered is invalid. You can not refund an amount which is greater than {/s}' + maxAmountFormatted
+                '{s name="alert/title/amount"}Invalid amount{/s}',
+                '{s name="alert/message/amountMax"}The amount you have entered is invalid. You can not refund an amount which is greater than {/s}' + maxAmountFormatted
             );
 
             return;
         }
 
         Ext.MessageBox.confirm(
-            '{s name=confirm/title}Execute refund?{/s}',
-            '{s name=confirm/message}Do you really want to refund this amount: {/s}<b>' + amountFormatted + '</b>?',
+            '{s name="confirm/title"}Execute refund?{/s}',
+            '{s name="confirm/message"}Do you really want to refund this amount: {/s}<b>' + amountFormatted + '</b>?',
             Ext.bind(me.onConfirmRefund, me)
         );
     },

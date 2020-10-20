@@ -98,14 +98,14 @@ class InstallmentsBanner implements SubscriberInterface
     private function getAmountForPage(Request $request, View $view)
     {
         $amount = 0.0;
-        $controllerName = strtolower($request->getControllerName());
-        $actionName = strtolower($request->getActionName());
+        $controllerName = \strtolower($request->getControllerName());
+        $actionName = \strtolower($request->getActionName());
         $validCheckoutActions = ['cart', 'ajaxcart', 'ajax_cart'];
 
         if ($controllerName === 'detail' && $actionName === 'index') {
             $product = $view->getAssign('sArticle');
             $amount = (float) $product['price_numeric'];
-        } elseif ($controllerName === 'checkout' && in_array($actionName, $validCheckoutActions, true)) {
+        } elseif ($controllerName === 'checkout' && \in_array($actionName, $validCheckoutActions, true)) {
             $cart = $view->getAssign('sBasket');
             $amount = (float) $cart['AmountNumeric'];
         }

@@ -11,6 +11,11 @@ namespace SwagPaymentPayPalUnified\Tests\Functional;
 trait DatabaseTestCaseTrait
 {
     /**
+     * @var bool;
+     */
+    protected $shouldRollback = true;
+
+    /**
      * @before
      */
     public function startTransactionBefore()
@@ -25,6 +30,12 @@ trait DatabaseTestCaseTrait
      */
     public function rollbackTransactionAfter()
     {
+        if ($this->shouldRollback === false) {
+            $this->shouldRollback = true;
+
+            return;
+        }
+
         /** @var \Doctrine\DBAL\Connection $dbalConnection */
         $dbalConnection = Shopware()->Container()->get('dbal_connection');
         $dbalConnection->rollBack();

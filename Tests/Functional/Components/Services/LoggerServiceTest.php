@@ -23,7 +23,7 @@ class LoggerServiceTest extends TestCase
         $fileName = $this->getLogfile();
 
         //Reset the logfile
-        file_put_contents($fileName, '');
+        \file_put_contents($fileName, '');
 
         /** @var LoggerServiceInterface $loggerService */
         $loggerService = Shopware()->Container()->get('paypal_unified.logger_service');
@@ -39,7 +39,7 @@ class LoggerServiceTest extends TestCase
         $fileName = $this->getLogfile();
 
         //Reset the logfile
-        file_put_contents($fileName, '');
+        \file_put_contents($fileName, '');
 
         /** @var LoggerServiceInterface $loggerService */
         $loggerService = Shopware()->Container()->get('paypal_unified.logger_service');
@@ -57,7 +57,7 @@ class LoggerServiceTest extends TestCase
         $fileName = $this->getLogfile();
 
         //Reset the logfile
-        file_put_contents($fileName, '');
+        \file_put_contents($fileName, '');
 
         /** @var LoggerServiceInterface $loggerService */
         $loggerService = Shopware()->Container()->get('paypal_unified.logger_service');
@@ -68,7 +68,7 @@ class LoggerServiceTest extends TestCase
 
         $lastLine = $this->getLastLine($fileName);
 
-        if (method_exists($this, 'assertStringContainsString')) {
+        if (\method_exists($this, 'assertStringContainsString')) {
             static::assertStringContainsString('Test message', $lastLine);
 
             return;
@@ -81,7 +81,7 @@ class LoggerServiceTest extends TestCase
         $fileName = $this->getLogfile();
 
         //Reset the logfile
-        file_put_contents($fileName, '');
+        \file_put_contents($fileName, '');
 
         /** @var LoggerServiceInterface $loggerService */
         $loggerService = Shopware()->Container()->get('paypal_unified.logger_service');
@@ -97,7 +97,7 @@ class LoggerServiceTest extends TestCase
         $fileName = $this->getLogfile();
 
         //Reset the logfile
-        file_put_contents($fileName, '');
+        \file_put_contents($fileName, '');
 
         /** @var LoggerServiceInterface $loggerService */
         $loggerService = Shopware()->Container()->get('paypal_unified.logger_service');
@@ -115,7 +115,7 @@ class LoggerServiceTest extends TestCase
         $fileName = $this->getLogfile();
 
         //Reset the logfile
-        file_put_contents($fileName, '');
+        \file_put_contents($fileName, '');
 
         /** @var LoggerServiceInterface $loggerService */
         $loggerService = Shopware()->Container()->get('paypal_unified.logger_service');
@@ -126,7 +126,7 @@ class LoggerServiceTest extends TestCase
 
         $lastLine = $this->getLastLine($fileName);
 
-        if (method_exists($this, 'assertStringContainsString')) {
+        if (\method_exists($this, 'assertStringContainsString')) {
             static::assertStringContainsString('Test message', $lastLine);
 
             return;
@@ -139,7 +139,7 @@ class LoggerServiceTest extends TestCase
         $fileName = $this->getLogfile();
 
         //Reset the logfile
-        file_put_contents($fileName, '');
+        \file_put_contents($fileName, '');
 
         /** @var LoggerServiceInterface $loggerService */
         $loggerService = Shopware()->Container()->get('paypal_unified.logger_service');
@@ -148,7 +148,7 @@ class LoggerServiceTest extends TestCase
 
         $lastLine = $this->getLastLine($fileName);
 
-        if (method_exists($this, 'assertStringContainsString')) {
+        if (\method_exists($this, 'assertStringContainsString')) {
             static::assertStringContainsString('A very fatal error', $lastLine);
 
             return;
@@ -174,7 +174,7 @@ class LoggerServiceTest extends TestCase
     {
         $env = Shopware()->Container()->getParameter('kernel.environment');
 
-        $fileName = __DIR__ . '/../../../../../../../var/log/plugin_' . $env . '-' . date('Y-m-d') . '.log';
+        $fileName = __DIR__ . '/../../../../../../../var/log/plugin_' . $env . '-' . \date('Y-m-d') . '.log';
 
         return $fileName;
     }
@@ -186,8 +186,8 @@ class LoggerServiceTest extends TestCase
      */
     private function getLastLine($file)
     {
-        $lines = explode("\n", file_get_contents($file));
-        $lineCount = count($lines);
+        $lines = \explode("\n", \file_get_contents($file));
+        $lineCount = \count($lines);
 
         return $lines[$lineCount - 2]; //the actual last line is blank
     }

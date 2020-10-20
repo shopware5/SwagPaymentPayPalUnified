@@ -70,7 +70,7 @@ class PaymentDetailsService
 
         try {
             //Check for a legacy payment
-            if (in_array($paymentMethodId, $legacyPaymentIds, true)) {
+            if (\in_array($paymentMethodId, $legacyPaymentIds, true)) {
                 $viewParameter = $this->prepareLegacyDetails($transactionId);
             } else {
                 $viewParameter = $this->prepareUnifiedDetails($paymentId);

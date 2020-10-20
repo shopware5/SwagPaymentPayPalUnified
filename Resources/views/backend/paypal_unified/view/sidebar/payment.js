@@ -62,7 +62,7 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebar.Payment', {
         me.addressContainer = Ext.create('Shopware.apps.PaypalUnified.view.sidebar.payment.Address');
         me.cartGrid = Ext.create('Shopware.apps.PaypalUnified.view.sidebar.payment.Cart');
         me.invoiceContainer = Ext.create('Shopware.apps.PaypalUnified.view.sidebar.payment.Invoice');
-        me.legacyNotice = Shopware.Notification.createBlockMessage('{s name=legacyNotice}Legacy mode: not all information available{/s}', 'notice');
+        me.legacyNotice = Shopware.Notification.createBlockMessage('{s name="legacyNotice"}Legacy mode: not all information available{/s}', 'notice');
 
         me.legacyNotice.hide();
 

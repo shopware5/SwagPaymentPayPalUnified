@@ -67,7 +67,7 @@ class Account implements SubscriberInterface
         $allowedActions = ['index', 'payment'];
         $action = $controller->Request()->getActionName();
 
-        if (!in_array($action, $allowedActions, true)) {
+        if (!\in_array($action, $allowedActions, true)) {
             return;
         }
 

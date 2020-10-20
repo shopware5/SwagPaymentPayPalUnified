@@ -62,7 +62,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedWebhook extends Enlight_Control
 
         //Get and decode the post data from the request
         $postData = $this->request->getRawBody();
-        $postData = json_decode($postData, true);
+        $postData = \json_decode($postData, true);
 
         $this->logger->notify('[Webhook] Received webhook', ['payload' => $postData]);
 

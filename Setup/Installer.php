@@ -104,7 +104,7 @@ class Installer
 
     private function createDatabaseTables()
     {
-        $sql = file_get_contents($this->bootstrapPath . '/Setup/Assets/tables.sql');
+        $sql = \file_get_contents($this->bootstrapPath . '/Setup/Assets/tables.sql');
 
         $this->connection->query($sql);
     }
@@ -149,9 +149,9 @@ class Installer
 		";
 
         //Load the assets
-        $instructionsContent = file_get_contents($this->bootstrapPath . '/Setup/Assets/Document/PayPal_Unified_Instructions_Content.html');
-        $instructionsContentStyle = file_get_contents($this->bootstrapPath . '/Setup/Assets/Document/PayPal_Unified_Instructions_Content_Style.css');
-        $instructionsFooter = file_get_contents($this->bootstrapPath . '/Setup/Assets/Document/PayPal_Unified_Instructions_Footer.html');
+        $instructionsContent = \file_get_contents($this->bootstrapPath . '/Setup/Assets/Document/PayPal_Unified_Instructions_Content.html');
+        $instructionsContentStyle = \file_get_contents($this->bootstrapPath . '/Setup/Assets/Document/PayPal_Unified_Instructions_Content_Style.css');
+        $instructionsFooter = \file_get_contents($this->bootstrapPath . '/Setup/Assets/Document/PayPal_Unified_Instructions_Footer.html');
 
         $this->connection->executeQuery($sql, [
             'footerValue' => $instructionsFooter,
@@ -191,7 +191,7 @@ class Installer
 
     private function migrate()
     {
-        $sql = file_get_contents($this->bootstrapPath . '/Setup/Assets/migration.sql');
+        $sql = \file_get_contents($this->bootstrapPath . '/Setup/Assets/migration.sql');
 
         $this->connection->query($sql);
     }

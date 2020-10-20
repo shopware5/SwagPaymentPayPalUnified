@@ -70,7 +70,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedExpressCheckout extends Shopware
             /** @var sAdmin $admin */
             $admin = $this->dependencyProvider->getModule('admin');
             $countries = $admin->sGetCountryList();
-            $admin->sGetPremiumShippingcosts(reset($countries));
+            $admin->sGetPremiumShippingcosts(\reset($countries));
         }
 
         $basketData = $this->getBasket();

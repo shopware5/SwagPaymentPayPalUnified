@@ -45,7 +45,7 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebar.History', {
         me.salesGrid = Ext.create('Shopware.apps.PaypalUnified.view.sidebar.history.Grid');
         me.refundButton = Ext.create('Shopware.apps.PaypalUnified.view.sidebar.history.RefundButton');
         me.detailsContainer = Ext.create('Shopware.apps.PaypalUnified.view.sidebar.history.Details');
-        me.legacyNotice = Shopware.Notification.createBlockMessage('{s name=legacyNotice namespace=backend/paypal_unified/sidebar/payment}Legacy mode: not all information available{/s}', 'notice');
+        me.legacyNotice = Shopware.Notification.createBlockMessage('{s name="legacyNotice" namespace=backend/paypal_unified/sidebar/payment}Legacy mode: not all information available{/s}', 'notice');
 
         me.legacyNotice.hide();
 

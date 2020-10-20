@@ -94,7 +94,7 @@ class ExceptionHandlerServiceTest extends TestCase
             'test message',
             123,
             null,
-            json_encode(['error' => 'test error', 'error_description' => 'test error description'])
+            \json_encode(['error' => 'test error', 'error_description' => 'test error description'])
         );
 
         $error = $handler->handle($e, 'testing');
@@ -123,7 +123,7 @@ class ExceptionHandlerServiceTest extends TestCase
             'test message',
             123,
             null,
-            json_encode([])
+            \json_encode([])
         );
 
         $error = $handler->handle($e, 'testing');
@@ -146,7 +146,7 @@ class ExceptionHandlerServiceTest extends TestCase
             'test message',
             123,
             null,
-            json_encode([
+            \json_encode([
                 'name' => 'error name',
                 'message' => 'error message',
                 'information_link' => 'error link',
@@ -179,7 +179,7 @@ class ExceptionHandlerServiceTest extends TestCase
             'test message',
             123,
             null,
-            json_encode([
+            \json_encode([
                 'name' => 'error name',
                 'message' => 'error message',
                 'information_link' => 'error link',

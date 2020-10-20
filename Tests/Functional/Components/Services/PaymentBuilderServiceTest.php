@@ -333,7 +333,7 @@ class PaymentBuilderServiceTest extends TestCase
 
         $requestParameters = $requestService->getPayment($params);
 
-        if (method_exists($this, 'assertStringContainsString')) {
+        if (\method_exists($this, 'assertStringContainsString')) {
             static::assertStringContainsString(
                 '/PaypalUnified/return/basketId/MyUniqueBasketId',
                 $requestParameters->getRedirectUrls()->getReturnUrl()
@@ -447,8 +447,8 @@ class PaymentBuilderServiceTest extends TestCase
     {
         $requestParameters = $this->getRequestData();
 
-        static::assertNotFalse(stristr($requestParameters['redirect_urls']['return_url'], 'return'));
-        static::assertNotFalse(stristr($requestParameters['redirect_urls']['cancel_url'], 'cancel'));
+        static::assertNotFalse(\stristr($requestParameters['redirect_urls']['return_url'], 'return'));
+        static::assertNotFalse(\stristr($requestParameters['redirect_urls']['cancel_url'], 'cancel'));
     }
 
     public function test_getPayment_with_custom_products()
@@ -458,7 +458,7 @@ class PaymentBuilderServiceTest extends TestCase
         $customProductsOption = $requestParameters['transactions'][0]['item_list']['items'][0];
 
         // summed up price -> product price and configurations
-        static::assertSame(round(2 * 59.99 + 1 * 1 + 2 * 2 + 1 * 3, 2), (float) $customProductsOption['price']);
+        static::assertSame(\round(2 * 59.99 + 1 * 1 + 2 * 2 + 1 * 3, 2), (float) $customProductsOption['price']);
     }
 
     public function test_getPayment_express_checkout_without_cart()

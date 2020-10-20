@@ -223,7 +223,7 @@ class SmartPaymentButtonsSubscriberTest extends TestCase
         $this->getSubscriber()->addInfoToPaymentRequest($enlightEventArgs);
 
         static::assertSame(302, $response->getHttpResponseCode());
-        if (method_exists($this, 'assertStringContainsString')) {
+        if (\method_exists($this, 'assertStringContainsString')) {
             static::assertStringContainsString(
                 '/PaypalUnified/return/spbCheckout/1/paymentId//PayerID//basketId/',
                 $response->getHeader('Location')

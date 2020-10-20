@@ -2,7 +2,7 @@
 // {block name="backend/paypal_unified/capture/authorize"}
 Ext.define('Shopware.apps.PaypalUnified.view.capture.Authorize', {
     extend: 'Enlight.app.Window',
-    title: '{s name=title}Capture Payment{/s}',
+    title: '{s name="title"}Capture Payment{/s}',
     alias: 'widget.paypal-unified-capture-authorize',
 
     maximizable: false,
@@ -77,11 +77,11 @@ Ext.define('Shopware.apps.PaypalUnified.view.capture.Authorize', {
                 xtype: 'textfield',
                 itemId: 'maxAmount',
                 disabled: true,
-                fieldLabel: '{s name=field/maxAmount}Maximum amount{/s}'
+                fieldLabel: '{s name="field/maxAmount"}Maximum amount{/s}'
             }, {
                 xtype: 'base-element-number',
                 itemId: 'currentAmount',
-                fieldLabel: '{s name=field/currentAmount}Amount{/s}',
+                fieldLabel: '{s name="field/currentAmount"}Amount{/s}',
                 allowDecimals: true,
                 minValue: 0.01
             }, {
@@ -90,7 +90,7 @@ Ext.define('Shopware.apps.PaypalUnified.view.capture.Authorize', {
                 inputValue: true,
                 uncheckedValue: false,
                 checked: true,
-                fieldLabel: '{s name=field/isFinal}This is the final capture{/s}'
+                fieldLabel: '{s name="field/isFinal"}This is the final capture{/s}'
             }]
         });
 
@@ -106,13 +106,13 @@ Ext.define('Shopware.apps.PaypalUnified.view.capture.Authorize', {
 
             items: ['->', {
                 xtype: 'base-element-button',
-                text: '{s name=field/cancelButton}Cancel{/s}',
+                text: '{s name="field/cancelButton"}Cancel{/s}',
                 region: 'right',
                 cls: 'secondary',
                 handler: Ext.bind(me.close, me)
             }, {
                 xtype: 'base-element-button',
-                text: '{s name=field/captureButton}Capture payment{/s}',
+                text: '{s name="field/captureButton"}Capture payment{/s}',
                 region: 'right',
                 cls: 'primary',
                 handler: Ext.bind(me.captureButtonClick, me)

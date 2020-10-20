@@ -3,7 +3,7 @@
 Ext.define('Shopware.apps.PaypalUnified.view.sidebar.payment.Customer', {
     extend: 'Ext.form.FieldSet',
     alias: 'widget.paypal-unified-sidebar-payment-customer',
-    title: '{s name=title}Customer{/s}',
+    title: '{s name="title"}Customer{/s}',
 
     anchor: '100%',
     bodyPadding: 5,

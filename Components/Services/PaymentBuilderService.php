@@ -106,7 +106,7 @@ class PaymentBuilderService implements PaymentBuilderInterface
         $amount = new Amount();
         $amount->setDetails($this->getAmountDetails());
         $amount->setCurrency($this->basketData['sCurrencyName']);
-        $amount->setTotal(number_format($this->getTotalAmount(), 2));
+        $amount->setTotal(\number_format($this->getTotalAmount(), 2));
 
         $transactions = new Transactions();
         $transactions->setAmount($amount);
@@ -279,7 +279,7 @@ class PaymentBuilderService implements PaymentBuilderInterface
         if ($this->showGrossPrices() && !$this->useNetPriceCalculation()) {
             $amountDetails->setShipping($this->formatPrice($this->basketData['sShippingcostsWithTax']));
             $amountDetails->setSubTotal($this->formatPrice($this->basketData['Amount']));
-            $amountDetails->setTax(number_format(0, 2));
+            $amountDetails->setTax(\number_format(0, 2));
 
             return $amountDetails;
         }
@@ -351,7 +351,7 @@ class PaymentBuilderService implements PaymentBuilderInterface
      */
     private function formatPrice($price)
     {
-        return round((float) str_replace(',', '.', $price), 2);
+        return \round((float) \str_replace(',', '.', $price), 2);
     }
 
     /**
@@ -381,8 +381,8 @@ class PaymentBuilderService implements PaymentBuilderInterface
     {
         $brandName = (string) $this->settings->get('brand_name');
 
-        if (strlen($brandName) > 127) {
-            $brandName = substr($brandName, 0, 127);
+        if (\strlen($brandName) > 127) {
+            $brandName = \substr($brandName, 0, 127);
         }
 
         return $brandName;

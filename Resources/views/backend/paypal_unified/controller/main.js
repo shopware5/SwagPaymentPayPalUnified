@@ -105,14 +105,14 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
     onVoidAuthorization: function() {
         var me = this;
 
-        me.getSidebar().setLoading('{s name=sidebar/loading/voiding}Voiding payment...{/s}');
+        me.getSidebar().setLoading('{s name="sidebar/loading/voiding"}Voiding payment...{/s}');
         me.apiController.voidAuthorization(Ext.bind(me.voidCallback, me));
     },
 
     onVoidOrder: function() {
         var me = this;
 
-        me.getSidebar().setLoading('{s name=sidebar/loading/voiding}Voiding payment...{/s}');
+        me.getSidebar().setLoading('{s name="sidebar/loading/voiding"}Voiding payment...{/s}');
         me.apiController.voidOrder(Ext.bind(me.voidCallback, me));
     },
 
@@ -124,7 +124,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
             amount = data.amount,
             invoiceNumber = data.invoiceNumber;
 
-        me.getSidebar().setLoading('{s name=sidebar/loading/refunding}Refunding payment...{/s}');
+        me.getSidebar().setLoading('{s name="sidebar/loading/refunding"}Refunding payment...{/s}');
         me.apiController.refundSale(amount, invoiceNumber, Ext.bind(me.refundCallback, me));
     },
 
@@ -137,7 +137,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
             amount = data.amount,
             note = data.note;
 
-        me.getSidebar().setLoading('{s name=sidebar/loading/refunding}Refunding payment...{/s}');
+        me.getSidebar().setLoading('{s name="sidebar/loading/refunding"}Refunding payment...{/s}');
         me.apiController.refundCapture(captureId, amount, note, Ext.bind(me.refundCallback, me));
     },
 
@@ -148,7 +148,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
     onAuthorizePayment: function(amount, isFinal) {
         var me = this;
 
-        me.getSidebar().setLoading('{s name=sidebar/loading/authorizing}Authorizing payment...{/s}');
+        me.getSidebar().setLoading('{s name="sidebar/loading/authorizing"}Authorizing payment...{/s}');
 
         if (me.details.payment.intent === 'authorize') {
             me.apiController.captureAuthorization(amount, isFinal, Ext.bind(me.captureCallback, me));
@@ -162,11 +162,11 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
             responseObject = Ext.JSON.decode(response.responseText);
 
         if (Ext.isDefined(responseObject) && responseObject.success) {
-            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal{/s}', '{s name=growl/authorizeSuccess}The payment has been authorized successfully{/s}', me.window.title);
+            Shopware.Notification.createGrowlMessage('{s name="growl/title"}PayPal{/s}', '{s name="growl/authorizeSuccess"}The payment has been authorized successfully{/s}', me.window.title);
 
             me.loadDetails(me.record);
         } else {
-            Shopware.Notification.createStickyGrowlMessage({ title: '{s name=growl/title}PayPal{/s}', text: responseObject.message }, me.window.title);
+            Shopware.Notification.createStickyGrowlMessage({ title: '{s name="growl/title"}PayPal{/s}', text: responseObject.message }, me.window.title);
         }
 
         me.getSidebar().setLoading(false);
@@ -178,11 +178,11 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
             responseObject = Ext.JSON.decode(response.responseText);
 
         if (Ext.isDefined(responseObject) && responseObject.success) {
-            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal{/s}', '{s name=growl/voidSuccess}The payment has been voided successfully.{/s}', me.window.title);
+            Shopware.Notification.createGrowlMessage('{s name="growl/title"}PayPal{/s}', '{s name="growl/voidSuccess"}The payment has been voided successfully.{/s}', me.window.title);
 
             me.loadDetails(me.record);
         } else {
-            Shopware.Notification.createStickyGrowlMessage({ title: '{s name=growl/title}PayPal{/s}', text: responseObject.message }, me.window.title);
+            Shopware.Notification.createStickyGrowlMessage({ title: '{s name="growl/title"}PayPal{/s}', text: responseObject.message }, me.window.title);
         }
 
         me.getSidebar().setLoading(false);
@@ -200,7 +200,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
             details = Ext.JSON.decode(response.responseText);
 
         if (!Ext.isDefined(details) || !details.success) {
-            Shopware.Notification.createStickyGrowlMessage({ title: '{s name=growl/title}PayPal{/s}', text: details.message }, me.window.title);
+            Shopware.Notification.createStickyGrowlMessage({ title: '{s name="growl/title"}PayPal{/s}', text: details.message }, me.window.title);
 
             sidebar.setLoading(false);
             sidebar.disable();
@@ -273,9 +273,9 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
         if (Ext.isDefined(details) && details.success) {
             me.loadDetails(me.record);
 
-            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal{/s}', '{s name=growl/refundSuccess}The refund was successful{/s}', me.window.title);
+            Shopware.Notification.createGrowlMessage('{s name="growl/title"}PayPal{/s}', '{s name="growl/refundSuccess"}The refund was successful{/s}', me.window.title);
         } else {
-            Shopware.Notification.createStickyGrowlMessage({ title: '{s name=growl/title}PayPal{/s}', text: details.message }, me.window.title);
+            Shopware.Notification.createStickyGrowlMessage({ title: '{s name="growl/title"}PayPal{/s}', text: details.message }, me.window.title);
         }
 
         me.getSidebar().setLoading(false);
@@ -292,7 +292,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
             paymentMethodId = record.get('paymentId'),
             sidebar = me.getSidebar();
 
-        sidebar.setLoading('{s name=sidebar/loading/details}Requesting details from PayPal...{/s}');
+        sidebar.setLoading('{s name="sidebar/loading/details"}Requesting details from PayPal...{/s}');
 
         me.record = record;
         me.updateOrderDetails(record);

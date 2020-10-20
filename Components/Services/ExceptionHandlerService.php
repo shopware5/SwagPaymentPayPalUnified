@@ -40,7 +40,7 @@ class ExceptionHandlerService implements ExceptionHandlerServiceInterface
         $exceptionMessage = $e->getMessage();
 
         if (!($e instanceof RequestException)) {
-            $this->loggerService->error(sprintf(self::LOG_MESSAGE, $currentAction), [
+            $this->loggerService->error(\sprintf(self::LOG_MESSAGE, $currentAction), [
                 'message' => $exceptionMessage,
             ]);
 
@@ -59,8 +59,8 @@ class ExceptionHandlerService implements ExceptionHandlerServiceInterface
             }
         }
 
-        if (strpos($requestBody, self::WEBHOOK_ALREADY_EXISTS_ERROR) === false) {
-            $this->loggerService->error(sprintf(self::LOG_MESSAGE, $currentAction), [
+        if (\strpos($requestBody, self::WEBHOOK_ALREADY_EXISTS_ERROR) === false) {
+            $this->loggerService->error(\sprintf(self::LOG_MESSAGE, $currentAction), [
                 'message' => $exceptionMessage,
                 'payload' => $requestBody,
             ]);
@@ -73,16 +73,16 @@ class ExceptionHandlerService implements ExceptionHandlerServiceInterface
             );
         }
 
-        $requestBody = json_decode($requestBody, true);
+        $requestBody = \json_decode($requestBody, true);
 
-        if (!is_array($requestBody)) {
+        if (!\is_array($requestBody)) {
             return new PayPalApiException(
                 $e->getCode(),
                 self::DEFAULT_MESSAGE . $exceptionMessage
             );
         }
 
-        if (array_key_exists('error', $requestBody) && array_key_exists('error_description', $requestBody)) {
+        if (\array_key_exists('error', $requestBody) && \array_key_exists('error_description', $requestBody)) {
             $genericErrorStruct = GenericErrorResponse::fromArray($requestBody);
 
             return new PayPalApiException(

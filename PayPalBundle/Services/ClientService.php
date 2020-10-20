@@ -127,7 +127,7 @@ class ClientService
         $resourceUri = $this->baseUrl . $resourceUri;
 
         if ($jsonPayload) {
-            $data = json_encode($data);
+            $data = \json_encode($data);
             $this->setHeader('content-type', 'application/json');
         } else {
             unset($this->headers['content-type']);
@@ -166,7 +166,7 @@ class ClientService
 
         $this->logger->notify('Received data from ' . $resourceUri, ['payload' => $response]);
 
-        return json_decode($response, true);
+        return \json_decode($response, true);
     }
 
     /**

@@ -101,7 +101,7 @@ class TransactionHistoryBuilderService
         }
 
         //This is the maximum amount that can be refunded.
-        $result['maxRefundableAmount'] = round($maxAmount, 2);
+        $result['maxRefundableAmount'] = \round($maxAmount, 2);
 
         return $result;
     }
@@ -145,8 +145,8 @@ class TransactionHistoryBuilderService
             }
         }
 
-        $result['maxRefundableAmount'] = round($maxRefundableAmount, 2);
-        $result['maxAuthorizableAmount'] = round($maxAuthorizableAmount, 2);
+        $result['maxRefundableAmount'] = \round($maxRefundableAmount, 2);
+        $result['maxAuthorizableAmount'] = \round($maxAuthorizableAmount, 2);
 
         return $result;
     }

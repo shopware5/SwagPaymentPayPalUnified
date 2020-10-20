@@ -268,17 +268,17 @@ class Payment
         $result->setCreateTime($data['create_time']);
         $result->setUpdateTime($data['update_time']);
 
-        if (array_key_exists('amount', $data['transactions'][0])) {
+        if (\array_key_exists('amount', $data['transactions'][0])) {
             $result->setTransactions(Transactions::fromArray($data['transactions'][0]));
         } else {
             $result->setTransactions(Transactions::fromArray($data['transactions']));
         }
 
-        if (array_key_exists('payment_instruction', $data)) {
+        if (\array_key_exists('payment_instruction', $data)) {
             $result->setPaymentInstruction(PaymentInstruction::fromArray($data['payment_instruction']));
         }
 
-        if (array_key_exists('payer', $data)) {
+        if (\array_key_exists('payer', $data)) {
             $result->setPayer(Payer::fromArray($data['payer']));
         }
 

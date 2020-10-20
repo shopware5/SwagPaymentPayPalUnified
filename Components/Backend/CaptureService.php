@@ -186,7 +186,7 @@ class CaptureService
      */
     private function updateCapturePaymentStatus(array $captureData, $isFinal)
     {
-        if (strtolower($captureData['state']) === PaymentStatus::PAYMENT_COMPLETED) {
+        if (\strtolower($captureData['state']) === PaymentStatus::PAYMENT_COMPLETED) {
             if ($isFinal) {
                 $this->paymentStatusService->updatePaymentStatus(
                     $captureData['parent_payment'],

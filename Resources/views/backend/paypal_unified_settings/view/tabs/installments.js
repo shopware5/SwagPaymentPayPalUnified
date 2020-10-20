@@ -3,7 +3,7 @@
 Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Installments', {
     extend: 'Ext.form.Panel',
     alias: 'widget.paypal-unified-settings-tabs-installments',
-    title: '{s name=title}PayPal installments{/s}',
+    title: '{s name="title"}PayPal installments{/s}',
 
     anchor: '100%',
     bodyPadding: 10,
@@ -61,7 +61,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Installments', {
      * @returns { Ext.form.Container }
      */
     createNotice: function () {
-        var infoNotice = Shopware.Notification.createBlockMessage('{s name=description}Offer PayPal installments with 0% effective annual interest rate to your customers. Find out <a href="https://www.paypal.com/de/webapps/mpp/installments" title="https://www.paypal.com/de/webapps/mpp/installments" target="_blank">more here</a>.{/s}', 'info');
+        var infoNotice = Shopware.Notification.createBlockMessage('{s name="description"}Offer PayPal installments with 0% effective annual interest rate to your customers. Find out <a href="https://www.paypal.com/de/webapps/mpp/installments" title="https://www.paypal.com/de/webapps/mpp/installments" target="_blank">more here</a>.{/s}', 'info');
 
         // There is no style defined for the type "info" in the shopware backend stylesheet, therefore we have to apply it manually
         infoNotice.style = {

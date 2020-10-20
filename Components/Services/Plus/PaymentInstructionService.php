@@ -86,7 +86,7 @@ class PaymentInstructionService
         $modelArray = $model->toArray();
         unset($modelArray['id'], $modelArray['order']);
         $modelArray = ['jsonDescription' => 'Pay Upon Invoice Payment Instructions'] + $modelArray;
-        $instructionsJson = json_encode($modelArray);
+        $instructionsJson = \json_encode($modelArray);
 
         return "\n" . $instructionsJson . "\n";
     }

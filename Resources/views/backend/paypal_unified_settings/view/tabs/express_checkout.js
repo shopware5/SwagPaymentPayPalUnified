@@ -3,7 +3,7 @@
 Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.ExpressCheckout', {
     extend: 'Ext.form.Panel',
     alias: 'widget.paypal-unified-settings-tabs-express-checkout',
-    title: '{s name=title}PayPal Express Checkout integration{/s}',
+    title: '{s name="title"}PayPal Express Checkout integration{/s}',
 
     anchor: '100%',
     bodyPadding: 10,
@@ -120,7 +120,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.ExpressCheckout', {
      * @returns { Ext.form.Container }
      */
     createNotice: function () {
-        var infoNotice = Shopware.Notification.createBlockMessage('{s name=description}PayPal Express Checkout - the PayPal button on the product detail page for maximum conversion<br>Find more infos about the PayPal Express Shortcut here: <a href="https://www.paypal.com/de/webapps/mpp/express-checkout" title="https://www.paypal.com/de/webapps/mpp/express-checkout" target="_blank">https://www.paypal.com/de/webapps/mpp/express-checkout</a>{/s}', 'info');
+        var infoNotice = Shopware.Notification.createBlockMessage('{s name="description"}PayPal Express Checkout - the PayPal button on the product detail page for maximum conversion<br>Find more infos about the PayPal Express Shortcut here: <a href="https://www.paypal.com/de/webapps/mpp/express-checkout" title="https://www.paypal.com/de/webapps/mpp/express-checkout" target="_blank">https://www.paypal.com/de/webapps/mpp/express-checkout</a>{/s}', 'info');
 
         // There is no style defined for the type "info" in the shopware backend stylesheet, therefore we have to apply it manually
         infoNotice.style = {
@@ -166,8 +166,8 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.ExpressCheckout', {
     createEcDetailActivate: function() {
         return Ext.create('Ext.form.field.Checkbox', {
             name: 'detailActive',
-            fieldLabel: '{s name=field/ecDetailActivate}\'Pay now\' on detail page{/s}',
-            boxLabel: '{s name=field/ecDetailActivate/help}If this option is active, the Express Checkout button will be shown on each product detail page.{/s}',
+            fieldLabel: '{s name="field/ecDetailActivate"}\'Pay now\' on detail page{/s}',
+            boxLabel: '{s name="field/ecDetailActivate/help"}If this option is active, the Express Checkout button will be shown on each product detail page.{/s}',
             inputValue: true,
             uncheckedValue: false
         });
@@ -179,8 +179,8 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.ExpressCheckout', {
     createEcCartActivate: function() {
         return Ext.create('Ext.form.field.Checkbox', {
             name: 'cartActive',
-            fieldLabel: '{s name=field/ecCartActivate}\'Pay now\' on cart{/s}',
-            boxLabel: '{s name=field/ecCartActivate/help}If this option is active, the Express Checkout button will be shown on the cart.{/s}',
+            fieldLabel: '{s name="field/ecCartActivate"}\'Pay now\' on cart{/s}',
+            boxLabel: '{s name="field/ecCartActivate/help"}If this option is active, the Express Checkout button will be shown on the cart.{/s}',
             inputValue: true,
             uncheckedValue: false
         });
@@ -192,8 +192,8 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.ExpressCheckout', {
     createEcOffCanvasActivate: function() {
         return Ext.create('Ext.form.field.Checkbox', {
             name: 'offCanvasActive',
-            fieldLabel: '{s name=field/ecOffCanvasActivate}\'Pay now\' on Off-Canvas cart{/s}',
-            boxLabel: '{s name=field/ecOffCanvasActivate/help}If this option is active, the Express Checkout button will be shown on the Off-Canvas cart.{/s}',
+            fieldLabel: '{s name="field/ecOffCanvasActivate"}\'Pay now\' on Off-Canvas cart{/s}',
+            boxLabel: '{s name="field/ecOffCanvasActivate/help"}If this option is active, the Express Checkout button will be shown on the Off-Canvas cart.{/s}',
             inputValue: true,
             uncheckedValue: false
         });
@@ -205,8 +205,8 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.ExpressCheckout', {
     createEcLoginActivate: function() {
         return Ext.create('Ext.form.field.Checkbox', {
             name: 'loginActive',
-            fieldLabel: '{s name=field/ecLoginActivate}\'Pay now\' on login page{/s}',
-            boxLabel: '{s name=field/ecLoginActivate/help}If this option is active, the Express Checkout button will be shown on the login and register page.{/s}',
+            fieldLabel: '{s name="field/ecLoginActivate"}\'Pay now\' on login page{/s}',
+            boxLabel: '{s name="field/ecLoginActivate/help"}If this option is active, the Express Checkout button will be shown on the login and register page.{/s}',
             inputValue: true,
             uncheckedValue: false
         });
@@ -218,8 +218,8 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.ExpressCheckout', {
     createEcListingActivate: function() {
         return Ext.create('Ext.form.field.Checkbox', {
             name: 'listingActive',
-            fieldLabel: '{s name=field/ecListingActivate}\'Pay now\' on listing pages{/s}',
-            boxLabel: '{s name=field/ecListingActivate/help}If this option is active, the Express Checkout button will be shown on listing pages.{/s}',
+            fieldLabel: '{s name="field/ecListingActivate"}\'Pay now\' on listing pages{/s}',
+            boxLabel: '{s name="field/ecListingActivate/help"}If this option is active, the Express Checkout button will be shown on listing pages.{/s}',
             inputValue: true,
             uncheckedValue: false
         });
@@ -231,8 +231,8 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.ExpressCheckout', {
     createEcSubmitCart: function() {
         return Ext.create('Ext.form.field.Checkbox', {
             name: 'submitCart',
-            fieldLabel: '{s name=field/submitCart}Submit cart{/s}',
-            boxLabel: '{s name=field/submitCart/help}If this option is active, the cart will be submitted to PayPal for Express orders{/s}',
+            fieldLabel: '{s name="field/submitCart"}Submit cart{/s}',
+            boxLabel: '{s name="field/submitCart/help"}If this option is active, the cart will be submitted to PayPal for Express orders{/s}',
             inputValue: true,
             uncheckedValue: false
         });
@@ -244,7 +244,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.ExpressCheckout', {
     createEcButtonStyleColor: function() {
         return Ext.create('Ext.form.field.ComboBox', {
             name: 'buttonStyleColor',
-            fieldLabel: '{s name=field/ecButtonStyleColor}Button color{/s}',
+            fieldLabel: '{s name="field/ecButtonStyleColor"}Button color{/s}',
             store: Ext.create('Shopware.apps.PaypalUnifiedSettings.store.EcButtonStyleColor'),
             valueField: 'id'
         });
@@ -256,7 +256,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.ExpressCheckout', {
     createEcButtonStyleShape: function() {
         return Ext.create('Ext.form.field.ComboBox', {
             name: 'buttonStyleShape',
-            fieldLabel: '{s name=field/ecButtonStyleShape}Button shape{/s}',
+            fieldLabel: '{s name="field/ecButtonStyleShape"}Button shape{/s}',
             store: Ext.create('Shopware.apps.PaypalUnifiedSettings.store.EcButtonStyleShape'),
             valueField: 'id'
         });
@@ -268,7 +268,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.ExpressCheckout', {
     createEcButtonStyleSize: function() {
         return Ext.create('Ext.form.field.ComboBox', {
             name: 'buttonStyleSize',
-            fieldLabel: '{s name=field/ecButtonStyleSize}Button size{/s}',
+            fieldLabel: '{s name="field/ecButtonStyleSize"}Button size{/s}',
             store: Ext.create('Shopware.apps.PaypalUnifiedSettings.store.EcButtonStyleSize'),
             valueField: 'id'
         });
@@ -280,13 +280,13 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.ExpressCheckout', {
     createEcButtonLocale: function() {
         return Ext.create('Ext.form.field.Text', {
             name: 'buttonLocale',
-            fieldLabel: '{s name=field/ecButtonLocale}Button locale{/s}',
-            supportText: '{s name=field/ecButtonLocale/help}If not set, the shop locale will be used. Valid values could be found <a href="https://developer.paypal.com/docs/api/reference/locale-codes/" target="_blank">here</a>.{/s}',
+            fieldLabel: '{s name="field/ecButtonLocale"}Button locale{/s}',
+            supportText: '{s name="field/ecButtonLocale/help"}If not set, the shop locale will be used. Valid values could be found <a href="https://developer.paypal.com/docs/api/reference/locale-codes/" target="_blank">here</a>.{/s}',
             maxLength: 5,
             // {literal}
             regex: /[a-z]{2}_[A-Z]{2}/,
             // {/literal}
-            invalidText: '{s name=field/ecButtonLocale/invalid}The locale code must be exact five chars long and must have a format like "en_US"{/s}'
+            invalidText: '{s name="field/ecButtonLocale/invalid"}The locale code must be exact five chars long and must have a format like "en_US"{/s}'
         });
     }
 });

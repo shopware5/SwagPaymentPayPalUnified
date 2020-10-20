@@ -98,7 +98,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
      * @returns { Ext.form.Container }
      */
     createNotice: function () {
-        var infoNotice = Shopware.Notification.createBlockMessage('{s name=description}PayPal - the PayPal button in the checkout! Register for your PayPal business account here: <a href="https://www.paypal.com/de/webapps/mpp/express-checkout" title="https://www.paypal.com/de/webapps/mpp/express-checkout" target="_blank">https://www.paypal.com/de/webapps/mpp/express-checkout</a>{/s}', 'info');
+        var infoNotice = Shopware.Notification.createBlockMessage('{s name="description"}PayPal - the PayPal button in the checkout! Register for your PayPal business account here: <a href="https://www.paypal.com/de/webapps/mpp/express-checkout" title="https://www.paypal.com/de/webapps/mpp/express-checkout" target="_blank">https://www.paypal.com/de/webapps/mpp/express-checkout</a>{/s}', 'info');
 
         // There is no style defined for the type "info" in the shopware backend stylesheet, therefore we have to apply it manually
         infoNotice.style = {
@@ -241,8 +241,8 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
                 {
                     xtype: 'combobox',
                     name: 'landingPageType',
-                    helpText: '{s name=fieldset/landingPage/help}<u>Login</u><br>The PayPal site displays a login screen as landingpage.<br><br><u>Registration</u><br>The PayPal site displays a registration form as landingpage.{/s}',
-                    fieldLabel: '{s name=fieldset/landingPage/title}PayPal landingpage{/s}',
+                    helpText: '{s name="fieldset/landingPage/help"}<u>Login</u><br>The PayPal site displays a login screen as landingpage.<br><br><u>Registration</u><br>The PayPal site displays a registration form as landingpage.{/s}',
+                    fieldLabel: '{s name="fieldset/landingPage/title"}PayPal landingpage{/s}',
                     store: Ext.create('Shopware.apps.PaypalUnifiedSettings.store.LandingPageType'),
                     valueField: 'type',
                     value: 'Login'
@@ -285,15 +285,15 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
             items: [{
                 xtype: 'checkbox',
                 name: 'displayErrors',
-                helpText: '{s name=fieldset/errorHandling/displayErrors/help}If enabled, the communication error message will be displayed in the store front{/s}',
-                fieldLabel: '{s name=fieldset/errorHandling/displayErrors}Display errors{/s}',
+                helpText: '{s name="fieldset/errorHandling/displayErrors/help"}If enabled, the communication error message will be displayed in the store front{/s}',
+                fieldLabel: '{s name="fieldset/errorHandling/displayErrors"}Display errors{/s}',
                 inputValue: true,
                 uncheckedValue: false
             }, {
                 xtype: 'combobox',
                 name: 'logLevel',
-                helpText: '{s name=fieldset/errorHandling/logLevel/help}<u>Normal</u><br>Only errors will be logged to file.<br><br><u>Extended</u>Normal, Warning and Error messages will be logged to file. This is useful for debug environments.{/s}',
-                fieldLabel: '{s name=fieldset/errorHandling/logLevel}Logging{/s}',
+                helpText: '{s name="fieldset/errorHandling/logLevel/help"}<u>Normal</u><br>Only errors will be logged to file.<br><br><u>Extended</u>Normal, Warning and Error messages will be logged to file. This is useful for debug environments.{/s}',
+                fieldLabel: '{s name="fieldset/errorHandling/logLevel"}Logging{/s}',
                 store: Ext.create('Shopware.apps.PaypalUnifiedSettings.store.LogLevel'),
                 valueField: 'id',
                 value: 0

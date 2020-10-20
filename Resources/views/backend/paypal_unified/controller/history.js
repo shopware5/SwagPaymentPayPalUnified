@@ -66,7 +66,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.History', {
         this.getSidebar().setLoading(false);
 
         if (!success) {
-            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal{/s}', '{s name=growl/error}An error occurred while requesting the PayPal payment details{/s}');
+            Shopware.Notification.createGrowlMessage('{s name="growl/title"}PayPal{/s}', '{s name="growl/error"}An error occurred while requesting the PayPal payment details{/s}');
             return;
         }
 
@@ -82,7 +82,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.History', {
 
             this.updateFields(details);
         } else {
-            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal{/s}', responseObject.message);
+            Shopware.Notification.createGrowlMessage('{s name="growl/title"}PayPal{/s}', responseObject.message);
         }
 
         historyTab.detailsContainer.enable();
@@ -97,7 +97,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.History', {
         this.getSidebar().setLoading(false);
 
         if (!success) {
-            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal{/s}', '{s name=growl/error}An error occurred while requesting the PayPal payment details{/s}');
+            Shopware.Notification.createGrowlMessage('{s name="growl/title"}PayPal{/s}', '{s name="growl/error"}An error occurred while requesting the PayPal payment details{/s}');
             return;
         }
 
@@ -112,7 +112,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.History', {
 
             this.updateFields(details);
         } else {
-            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal{/s}', responseObject.message);
+            Shopware.Notification.createGrowlMessage('{s name="growl/title"}PayPal{/s}', responseObject.message);
         }
 
         historyTab.detailsContainer.enable();
@@ -127,7 +127,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.History', {
         this.getSidebar().setLoading(false);
 
         if (!success) {
-            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal{/s}', '{s name=growl/error}An error occurred while requesting the PayPal payment details{/s}');
+            Shopware.Notification.createGrowlMessage('{s name="growl/title"}PayPal{/s}', '{s name="growl/error"}An error occurred while requesting the PayPal payment details{/s}');
             return;
         }
 
@@ -144,7 +144,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.History', {
 
             this.updateFields(details);
         } else {
-            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal{/s}', responseObject.message);
+            Shopware.Notification.createGrowlMessage('{s name="growl/title"}PayPal{/s}', responseObject.message);
         }
 
         historyTab.detailsContainer.enable();
@@ -159,7 +159,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.History', {
         this.getSidebar().setLoading(false);
 
         if (!success) {
-            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal{/s}', '{s name=growl/error}An error occurred while requesting the PayPal payment details{/s}');
+            Shopware.Notification.createGrowlMessage('{s name="growl/title"}PayPal{/s}', '{s name="growl/error"}An error occurred while requesting the PayPal payment details{/s}');
             return;
         }
 
@@ -174,7 +174,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.History', {
 
             this.updateFields(details);
         } else {
-            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal{/s}', responseObject.message);
+            Shopware.Notification.createGrowlMessage('{s name="growl/title"}PayPal{/s}', responseObject.message);
         }
 
         historyTab.detailsContainer.enable();
@@ -189,7 +189,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.History', {
         this.getSidebar().setLoading(false);
 
         if (!success) {
-            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal{/s}', '{s name=growl/error}An error occurred while requesting the PayPal payment details{/s}');
+            Shopware.Notification.createGrowlMessage('{s name="growl/title"}PayPal{/s}', '{s name="growl/error"}An error occurred while requesting the PayPal payment details{/s}');
             return;
         }
 
@@ -204,7 +204,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.History', {
 
             this.updateFields(details);
         } else {
-            Shopware.Notification.createGrowlMessage('{s name=growl/title}PayPal{/s}', responseObject.message);
+            Shopware.Notification.createGrowlMessage('{s name="growl/title"}PayPal{/s}', responseObject.message);
         }
 
         historyTab.detailsContainer.enable();

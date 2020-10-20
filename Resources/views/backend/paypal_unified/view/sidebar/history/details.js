@@ -3,7 +3,7 @@
 Ext.define('Shopware.apps.PaypalUnified.view.sidebar.history.Details', {
     extend: 'Ext.form.FieldSet',
     alias: 'widget.paypal-unified-sidebar-history-details',
-    title: '{s name=title}Details{/s}',
+    title: '{s name="title"}Details{/s}',
 
     anchor: '100%',
     bodyPadding: 5,
