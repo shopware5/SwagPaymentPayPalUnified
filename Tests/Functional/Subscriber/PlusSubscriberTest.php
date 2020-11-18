@@ -314,7 +314,7 @@ class PlusSubscriberTest extends TestCase
         ]);
 
         $this->getSubscriber()->onPostDispatchCheckout($enlightEventArgs);
-        $paymentsForPaymentWall = json_decode($view->getAssign('paypalUnifiedPlusPaymentMethodsPaymentWall'), true)[0];
+        $paymentsForPaymentWall = \json_decode($view->getAssign('paypalUnifiedPlusPaymentMethodsPaymentWall'), true)[0];
 
         static::assertSame('http://4', $paymentsForPaymentWall['redirectUrl']);
         static::assertSame('Rechnung', $paymentsForPaymentWall['methodName']);

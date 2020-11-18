@@ -3,7 +3,7 @@
 Ext.define('Shopware.apps.PaypalUnified.view.sidebar.payment.Invoice', {
     extend: 'Ext.form.FieldSet',
     alias: 'widget.paypal-unified-sidebar-payment-invoice',
-    title: '{s name=title}Invoice amount{/s}',
+    title: '{s name="title"}Invoice amount{/s}',
 
     anchor: '100%',
     bodyPadding: 5,
@@ -35,17 +35,17 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebar.payment.Invoice', {
             xtype: 'textfield',
             name: 'total',
             itemId: 'total',
-            fieldLabel: '{s name=field/total}Total amount{/s}'
+            fieldLabel: '{s name="field/total"}Total amount{/s}'
         }, {
             xtype: 'textfield',
             name: 'subtotal',
             itemId: 'subtotal',
-            fieldLabel: '{s name=field/subtotal}Subtotal{/s}'
+            fieldLabel: '{s name="field/subtotal"}Subtotal{/s}'
         }, {
             xtype: 'textfield',
             name: 'shipping',
             itemId: 'shipping',
-            fieldLabel: '{s name=field/shipping}Shipping{/s}'
+            fieldLabel: '{s name="field/shipping"}Shipping{/s}'
         }];
     }
 });

@@ -52,7 +52,7 @@ class TokenService
      */
     private function getTokenFromCache($shopId)
     {
-        return unserialize($this->cacheManager->getCoreCache()->load(self::CACHE_ID . $shopId));
+        return \unserialize($this->cacheManager->getCoreCache()->load(self::CACHE_ID . $shopId));
     }
 
     /**
@@ -60,7 +60,7 @@ class TokenService
      */
     private function setToken(Token $token, $shopId)
     {
-        $this->cacheManager->getCoreCache()->save(serialize($token), self::CACHE_ID . $shopId);
+        $this->cacheManager->getCoreCache()->save(\serialize($token), self::CACHE_ID . $shopId);
     }
 
     /**

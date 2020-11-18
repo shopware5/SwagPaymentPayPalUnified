@@ -57,6 +57,6 @@ class OAuthCredentials
      */
     public function toString()
     {
-        return 'Basic ' . base64_encode($this->restId . ':' . $this->restSecret);
+        return 'Basic ' . \base64_encode($this->restId . ':' . $this->restSecret);
     }
 }

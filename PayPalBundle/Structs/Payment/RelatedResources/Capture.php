@@ -39,7 +39,7 @@ class Capture extends RelatedResource
         $result = new self();
         $result->prepare($result, $data, ResourceType::CAPTURE);
 
-        if (is_array($data['transaction_fee'])) {
+        if (\is_array($data['transaction_fee'])) {
             $result->setTransactionFee(TransactionFee::fromArray($data['transaction_fee']));
         }
 

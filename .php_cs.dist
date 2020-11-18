@@ -1,12 +1,6 @@
 <?php
 
 use PhpCsFixer\Config;
-use PhpCsFixerCustomFixers\Fixer\NoUnneededConcatenationFixer;
-use PhpCsFixerCustomFixers\Fixer\NoUselessCommentFixer;
-use PhpCsFixerCustomFixers\Fixer\OperatorLinebreakFixer;
-use PhpCsFixerCustomFixers\Fixer\PhpdocParamTypeFixer;
-use PhpCsFixerCustomFixers\Fixer\SingleSpaceAfterStatementFixer;
-use PhpCsFixerCustomFixers\Fixer\SingleSpaceBeforeStatementFixer;
 use PhpCsFixerCustomFixers\Fixers;
 
 $finder = PhpCsFixer\Finder::create()
@@ -47,11 +41,13 @@ return Config::create()
         'doctrine_annotation_spaces' => true,
         'no_superfluous_phpdoc_tags' => true,
         'php_unit_test_case_static_method_calls' => true,
-        NoUselessCommentFixer::name() => true,
-        NoUnneededConcatenationFixer::name() => true,
-        SingleSpaceAfterStatementFixer::name() => true,
-        SingleSpaceBeforeStatementFixer::name() => true,
-        PhpdocParamTypeFixer::name() => true,
-        OperatorLinebreakFixer::name() => ['only_booleans' => true],
+        'native_constant_invocation' => true,
+        'native_function_invocation' => true,
+        PhpCsFixerCustomFixers\Fixer\NoUselessCommentFixer::name() => true,
+        PhpCsFixerCustomFixers\Fixer\NoSuperfluousConcatenationFixer::name() => true,
+        PhpCsFixerCustomFixers\Fixer\SingleSpaceAfterStatementFixer::name() => true,
+        PhpCsFixerCustomFixers\Fixer\SingleSpaceBeforeStatementFixer::name() => true,
+        PhpCsFixerCustomFixers\Fixer\PhpdocParamTypeFixer::name() => true,
+        PhpCsFixerCustomFixers\Fixer\OperatorLinebreakFixer::name() => ['only_booleans' => true],
     ])
     ->setFinder($finder);

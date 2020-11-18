@@ -68,7 +68,7 @@ class SmartPaymentButtons implements SubscriberInterface
         $view = $args->getSubject()->View();
         $availableActions = ['confirm', 'shippingpayment'];
 
-        if (!in_array(strtolower($request->getActionName()), $availableActions, true)) {
+        if (!\in_array(\strtolower($request->getActionName()), $availableActions, true)) {
             return;
         }
 
@@ -97,7 +97,7 @@ class SmartPaymentButtons implements SubscriberInterface
         $view = $args->getSubject()->View();
         $availableActions = ['index', 'payment'];
 
-        if (!in_array(strtolower($request->getActionName()), $availableActions, true)) {
+        if (!\in_array(\strtolower($request->getActionName()), $availableActions, true)) {
             return;
         }
 
@@ -123,7 +123,7 @@ class SmartPaymentButtons implements SubscriberInterface
         $request = $args->getRequest();
         $view = $args->getSubject()->View();
 
-        if (strtolower($request->getActionName()) !== 'confirm' || !$request->getParam('spbCheckout', false)) {
+        if (\strtolower($request->getActionName()) !== 'confirm' || !$request->getParam('spbCheckout', false)) {
             return;
         }
 
@@ -137,7 +137,7 @@ class SmartPaymentButtons implements SubscriberInterface
     {
         $request = $args->getRequest();
 
-        if (strtolower($request->getActionName()) !== 'payment'
+        if (\strtolower($request->getActionName()) !== 'payment'
             || !$request->getParam('spbCheckout', false)
             || !$args->getResponse()->isRedirect()
         ) {

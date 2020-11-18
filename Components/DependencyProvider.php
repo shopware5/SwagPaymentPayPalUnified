@@ -89,6 +89,6 @@ class DependencyProvider
         $blacklistedShopwareVersions = ['5.6.0', '5.6.1', '5.6.2'];
         $currentShopwareVersion = $this->container->getParameter('shopware.release.version');
 
-        return in_array($currentShopwareVersion, $blacklistedShopwareVersions, true);
+        return \in_array($currentShopwareVersion, $blacklistedShopwareVersions, true);
     }
 }

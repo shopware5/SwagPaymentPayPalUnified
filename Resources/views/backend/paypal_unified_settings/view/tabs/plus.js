@@ -3,7 +3,7 @@
 Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Plus', {
     extend: 'Ext.form.Panel',
     alias: 'widget.paypal-unified-settings-tabs-paypal-plus',
-    title: '{s name=title}PayPal Plus Integration{/s}',
+    title: '{s name="title"}PayPal Plus Integration{/s}',
 
     anchor: '100%',
     bodyPadding: 10,
@@ -68,8 +68,8 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Plus', {
             {
                 xtype: 'checkbox',
                 name: 'active',
-                fieldLabel: '{s name=field/activate}Activate PayPal Plus{/s}',
-                boxLabel: '{s name=field/activate/help}Activate in order to enable the PayPal Plus integration for the selected shop.{/s}',
+                fieldLabel: '{s name="field/activate"}Activate PayPal Plus{/s}',
+                boxLabel: '{s name="field/activate/help"}Activate in order to enable the PayPal Plus integration for the selected shop.{/s}',
                 inputValue: true,
                 uncheckedValue: false,
                 handler: Ext.bind(me.onActivatePayPalPlus, me)
@@ -86,7 +86,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Plus', {
      * @returns { Ext.form.Container }
      */
     createNotice: function () {
-        var infoNotice = Shopware.Notification.createBlockMessage('{s name=description}PayPal Plus - the four most popular payment methods of German buyers: PayPal, direct debit, credit card and invoice! <br> You can get PayPal Plus here: <a href="https://www.paypal.de/plus" title="https://www.paypal.de/plus" target="_blank">https://www.paypal.de/plus</a>{/s}', 'info');
+        var infoNotice = Shopware.Notification.createBlockMessage('{s name="description"}PayPal Plus - the four most popular payment methods of German buyers: PayPal, direct debit, credit card and invoice! <br> You can get PayPal Plus here: <a href="https://www.paypal.de/plus" title="https://www.paypal.de/plus" target="_blank">https://www.paypal.de/plus</a>{/s}', 'info');
 
         // There is no style defined for the type "info" in the shopware backend stylesheet, therefore we have to apply it manually
         infoNotice.style = {
@@ -131,9 +131,9 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Plus', {
     createRestyleCheckbox: function() {
         return Ext.create('Ext.form.field.Checkbox', {
             name: 'restyle',
-            fieldLabel: '{s name=field/restyle}Restyle payment selection{/s}',
-            helpText: '{s name=field/restyle/help}Activate this option to apply the payment wall style to the whole payment selection.{/s}',
-            boxLabel: '{s name=field/restyle/boxLabel}Activate this option to restyle the payment selection.{/s}',
+            fieldLabel: '{s name="field/restyle"}Restyle payment selection{/s}',
+            helpText: '{s name="field/restyle/help"}Activate this option to apply the payment wall style to the whole payment selection.{/s}',
+            boxLabel: '{s name="field/restyle/boxLabel"}Activate this option to restyle the payment selection.{/s}',
             inputValue: true,
             uncheckedValue: false,
             disabled: true,
@@ -147,9 +147,9 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Plus', {
     createIntegrateThirdPartyMethodsCheckbox: function() {
         return Ext.create('Ext.form.field.Checkbox', {
             name: 'integrateThirdPartyMethods',
-            fieldLabel: '{s name=field/integrateThirdPartyMethods}Display other payments methods in iFrame{/s}',
-            helpText: "{s name=field/integrateThirdPartyMethods/help}Activate this option to display third party payment methods in the Payment Wall iFrame. Select the payment method you want to display there in 'Configuration' -> 'Payment methods' -> 'Free text fields'{/s}",
-            boxLabel: '{s name=field/integrateThirdPartyMethods/boxLabel}Activate this option to display third party methods in the Payment Wall iFrame.{/s}',
+            fieldLabel: '{s name="field/integrateThirdPartyMethods"}Display other payments methods in iFrame{/s}',
+            helpText: "{s name='field/integrateThirdPartyMethods/help'}Activate this option to display third party payment methods in the Payment Wall iFrame. Select the payment method you want to display there in 'Configuration' -> 'Payment methods' -> 'Free text fields'{/s}",
+            boxLabel: '{s name="field/integrateThirdPartyMethods/boxLabel"}Activate this option to display third party methods in the Payment Wall iFrame.{/s}',
             inputValue: true,
             uncheckedValue: false,
             disabled: true
@@ -162,8 +162,8 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Plus', {
     createPaymentNameField: function() {
         return Ext.create('Ext.form.field.Text', {
             name: 'paymentName',
-            fieldLabel: '{s name=field/paymentName}Overwrite payment method name{/s}',
-            helpText: '{s name=field/paymentName/help}With this setting you are able to overwrite the payment method name of PayPal.<br>Note: this will only have affect in the storefront view.{/s}',
+            fieldLabel: '{s name="field/paymentName"}Overwrite payment method name{/s}',
+            helpText: '{s name="field/paymentName/help"}With this setting you are able to overwrite the payment method name of PayPal.<br>Note: this will only have affect in the storefront view.{/s}',
             disabled: true
         });
     },
@@ -174,8 +174,8 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Plus', {
     createPaymentDescriptionField: function() {
         return Ext.create('Ext.form.field.Text', {
             name: 'paymentDescription',
-            fieldLabel: '{s name=field/paymentDescription}{/s}',
-            helpText: '{s name=field/paymentDescription/help}{/s}',
+            fieldLabel: '{s name="field/paymentDescription"}{/s}',
+            helpText: '{s name="field/paymentDescription/help"}{/s}',
             disabled: true
         });
     },

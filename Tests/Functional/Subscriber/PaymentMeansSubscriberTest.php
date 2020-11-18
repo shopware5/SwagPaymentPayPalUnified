@@ -25,7 +25,7 @@ class PaymentMeansSubscriberTest extends TestCase
     public function test_can_be_created()
     {
         $subscriber = $this->getSubscriber();
-        static::assertSame(PaymentMeans::class, get_class($subscriber));
+        static::assertSame(PaymentMeans::class, \get_class($subscriber));
     }
 
     public function test_getSubscribedEvents()

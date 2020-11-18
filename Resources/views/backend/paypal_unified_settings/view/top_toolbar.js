@@ -60,7 +60,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.TopToolbar', {
         selection = Ext.create('Shopware.form.field.SingleSelection', {
             store: store,
             name: 'shopId',
-            fieldLabel: '{s name=label/shop}Select shop{/s}',
+            fieldLabel: '{s name="label/shop"}Select shop{/s}',
             width: '33%',
             listeners: {
                 select: Ext.bind(me.onSelectShop, me)

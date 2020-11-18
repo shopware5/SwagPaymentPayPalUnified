@@ -17,7 +17,7 @@ class DependencyProviderTest extends TestCase
 {
     public function test_service_available()
     {
-        static::assertSame(DependencyProvider::class, get_class(Shopware()->Container()->get('paypal_unified.dependency_provider')));
+        static::assertSame(DependencyProvider::class, \get_class(Shopware()->Container()->get('paypal_unified.dependency_provider')));
     }
 
     public function test_can_be_constructed()
@@ -31,7 +31,7 @@ class DependencyProviderTest extends TestCase
     {
         $dp = new DependencyProvider(Shopware()->Container());
 
-        static::assertSame(DetachedShop::class, get_class($dp->getShop()));
+        static::assertSame(DetachedShop::class, \get_class($dp->getShop()));
     }
 
     public function test_getShop_return_null()

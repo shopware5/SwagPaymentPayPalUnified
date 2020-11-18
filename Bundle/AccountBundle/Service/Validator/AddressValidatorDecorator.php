@@ -46,7 +46,7 @@ class AddressValidatorDecorator implements AddressValidatorInterface
 
         $controllerName = $request->getControllerName();
         $payPalController = ['paypal_unified_express_checkout', 'paypalunifiedexpresscheckout'];
-        if (!in_array(strtolower($controllerName), $payPalController, true)) {
+        if (!\in_array(\strtolower($controllerName), $payPalController, true)) {
             $this->innerValidator->validate($address);
 
             return;
@@ -64,7 +64,7 @@ class AddressValidatorDecorator implements AddressValidatorInterface
 
             /** @var ConstraintViolationInterface $violation */
             foreach ($violations->getIterator() as $violation) {
-                if (!in_array($violation->getPropertyPath(), $allowedViolations, true)) {
+                if (!\in_array($violation->getPropertyPath(), $allowedViolations, true)) {
                     throw $exception;
                 }
             }

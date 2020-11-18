@@ -67,7 +67,7 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
             'action' => 'execute',
             'forceSecure' => 1,
         ]);
-        $url = str_replace('http://', 'https://', $url);
+        $url = \str_replace('http://', 'https://', $url);
 
         try {
             $this->configureClient();

@@ -102,8 +102,8 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebar.Toolbar', {
         var me = this;
 
         Ext.MessageBox.confirm(
-            '{s name=confirm/title}Void Payment?{/s}',
-            '{s name=confirm/message}Do you really want to void this payment?{/s}',
+            '{s name="confirm/title"}Void Payment?{/s}',
+            '{s name="confirm/message"}Do you really want to void this payment?{/s}',
             function (response) {
                 if (response === 'yes') {
                     me.intent === 'authorize' ? me.fireEvent('voidAuthorization') : me.fireEvent('voidOrder');

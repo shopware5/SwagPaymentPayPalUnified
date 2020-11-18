@@ -333,7 +333,7 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $errors = $this->loggerMock->getErrors();
         static::assertSame('patch exception', $errors['Could not patch the payment for express checkout due to a communication failure']['message']);
 
-        if (method_exists($this, 'assertStringContainsString')) {
+        if (\method_exists($this, 'assertStringContainsString')) {
             static::assertStringContainsString(
                 '/checkout/shippingPayment/paypal_unified_error_code/2/paypal_unified_error_name/0/paypal_unified_error_message/An+error+occurred%3A+patch+exception',
                 $response->getHeader('Location')
@@ -378,7 +378,7 @@ class ExpressCheckoutSubscriberTest extends TestCase
 
         static::assertSame(302, $response->getHttpResponseCode());
 
-        if (method_exists($this, 'assertStringContainsString')) {
+        if (\method_exists($this, 'assertStringContainsString')) {
             static::assertStringContainsString(
                 '/PaypalUnified/return/expressCheckout/1/paymentId//PayerID//basketId/',
                 $response->getHeader('Location')
@@ -425,7 +425,7 @@ class ExpressCheckoutSubscriberTest extends TestCase
 
         static::assertTrue($itemListPatchExists, 'ItemList patch must exist if submit cart for ECS is true');
         static::assertSame(302, $response->getHttpResponseCode());
-        if (method_exists($this, 'assertStringContainsString')) {
+        if (\method_exists($this, 'assertStringContainsString')) {
             static::assertStringContainsString(
                 '/PaypalUnified/return/expressCheckout/1/paymentId//PayerID//basketId/',
                 $response->getHeader('Location')

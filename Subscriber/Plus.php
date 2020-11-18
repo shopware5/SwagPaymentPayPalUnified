@@ -163,7 +163,8 @@ class Plus implements SubscriberInterface
             $view->assign('paypalUnifiedErrorMessage', $errorMessage);
         }
 
-        if (!array_key_exists('content', $view->getAssign('sBasket'))) {
+        $basket = $view->getAssign('sBasket');
+        if ($basket === null || !\array_key_exists('content', $basket)) {
             return;
         }
 
@@ -182,15 +183,19 @@ class Plus implements SubscriberInterface
         }
 
         $action = $request->getActionName();
-        if (!in_array($action, $this::$allowedActions, true)) {
+        if (!\in_array($action, $this::$allowedActions, true)) {
             $session->offsetUnset('paypalUnifiedCameFromPaymentSelection');
 
             return;
         }
 
+        $payments = $view->getAssign('sPayments');
+        if ($payments === null) {
+            return;
+        }
         $unifiedPaymentId = $this->paymentMethodProvider->getPaymentId($this->connection);
-        $paymentIds = array_column($view->getAssign('sPayments'), 'id');
-        if (!in_array($unifiedPaymentId, $paymentIds)) {
+        $paymentIds = \array_column($payments, 'id');
+        if (!\in_array($unifiedPaymentId, $paymentIds)) {
             return;
         }
 
@@ -236,7 +241,7 @@ class Plus implements SubscriberInterface
             return $paymentMethods;
         }
 
-        $paymentIds = array_column($paymentMethods, 'id');
+        $paymentIds = \array_column($paymentMethods, 'id');
 
         $queryBuilder = $this->connection->createQueryBuilder();
         $queryBuilder->select(
@@ -251,7 +256,7 @@ class Plus implements SubscriberInterface
         $attributes = $queryBuilder->execute()->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_UNIQUE);
 
         foreach ($paymentMethods as &$paymentMethod) {
-            if (array_key_exists($paymentMethod['id'], $attributes)) {
+            if (\array_key_exists($paymentMethod['id'], $attributes)) {
                 $attribute = $attributes[$paymentMethod['id']];
                 $paymentMethod['swag_paypal_unified_display_in_plus_iframe'] = (bool) $attribute['swag_paypal_unified_display_in_plus_iframe'];
                 $paymentMethod['swag_paypal_unified_plus_iframe_payment_logo'] = $attribute['swag_paypal_unified_plus_iframe_payment_logo'];
@@ -385,7 +390,7 @@ class Plus implements SubscriberInterface
         $plusLanguage = 'en_US';
         // use english as default, use german if the locale is from german speaking country (de_DE, de_AT, etc)
         // by now the PPP iFrame does not support other languages
-        if (strpos($languageIso, 'de_') === 0) {
+        if (\strpos($languageIso, 'de_') === 0) {
             $plusLanguage = 'de_DE';
         }
 
@@ -441,7 +446,7 @@ class Plus implements SubscriberInterface
                 continue;
             }
 
-            if (!array_key_exists('swag_paypal_unified_display_in_plus_iframe', $paymentMethod)) {
+            if (!\array_key_exists('swag_paypal_unified_display_in_plus_iframe', $paymentMethod)) {
                 continue;
             }
 
@@ -450,13 +455,13 @@ class Plus implements SubscriberInterface
                     'redirectUrl' => 'http://' . $paymentMethod['id'],
                     // 25 is the max length for payment name
                     // cut here, because the name is needed for a check in jQuery plugin
-                    'methodName' => substr($paymentMethod['description'], 0, 25),
+                    'methodName' => \substr($paymentMethod['description'], 0, 25),
                     'description' => $paymentMethod['additionaldescription'],
                     'imageUrl' => $paymentMethod['swag_paypal_unified_plus_iframe_payment_logo'],
                 ];
             }
         }
 
-        $view->assign('paypalUnifiedPlusPaymentMethodsPaymentWall', json_encode($paymentMethodsForPaymentWall));
+        $view->assign('paypalUnifiedPlusPaymentMethodsPaymentWall', \json_encode($paymentMethodsForPaymentWall));
     }
 }

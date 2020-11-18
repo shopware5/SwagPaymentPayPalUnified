@@ -222,7 +222,7 @@ class InContextSubscriberTest extends TestCase
         $subscriber->addInContextInfoToRequest($enlightEventArgs);
 
         static::assertSame(302, $response->getHttpResponseCode());
-        if (method_exists($this, 'assertStringContainsString')) {
+        if (\method_exists($this, 'assertStringContainsString')) {
             static::assertStringContainsString(
                 '/PaypalUnified/gateway/useInContext/1',
                 $response->getHeader('Location')

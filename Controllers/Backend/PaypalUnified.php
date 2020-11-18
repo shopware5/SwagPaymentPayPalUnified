@@ -206,7 +206,7 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
         $this->registerShopResource();
 
         $saleId = $this->Request()->getParam('id');
-        $totalAmount = number_format($this->Request()->getParam('amount'), 2);
+        $totalAmount = \number_format($this->Request()->getParam('amount'), 2);
         $invoiceNumber = $this->Request()->getParam('invoiceNumber');
         $refundCompletely = (bool) $this->Request()->getParam('refundCompletely');
         $currency = $this->Request()->getParam('currency');
@@ -255,7 +255,7 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
         $this->registerShopResource();
 
         $orderId = $this->Request()->getParam('id');
-        $amountToCapture = number_format($this->Request()->getParam('amount'), 2);
+        $amountToCapture = \number_format($this->Request()->getParam('amount'), 2);
         $currency = $this->Request()->getParam('currency');
         $isFinal = (bool) $this->Request()->getParam('isFinal');
 
@@ -271,7 +271,7 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
         $this->registerShopResource();
 
         $authorizationId = $this->Request()->getParam('id');
-        $amountToCapture = number_format($this->Request()->getParam('amount'), 2);
+        $amountToCapture = \number_format($this->Request()->getParam('amount'), 2);
         $currency = $this->Request()->getParam('currency');
         $isFinal = (bool) $this->Request()->getParam('isFinal');
 
@@ -287,7 +287,7 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
         $this->registerShopResource();
 
         $captureId = $this->Request()->getParam('id');
-        $totalAmount = number_format($this->Request()->getParam('amount'), 2);
+        $totalAmount = \number_format($this->Request()->getParam('amount'), 2);
         $description = $this->Request()->getParam('note');
         $currency = $this->Request()->getParam('currency');
 
@@ -363,7 +363,7 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
         $orderStatusNamespace = $this->container->get('snippets')->getNamespace('backend/static/order_status');
         $paymentStatusNamespace = $this->container->get('snippets')->getNamespace('backend/static/payment_status');
 
-        $orderList['data'] = array_map(static function ($order) use ($orderStatusNamespace, $paymentStatusNamespace) {
+        $orderList['data'] = \array_map(static function ($order) use ($orderStatusNamespace, $paymentStatusNamespace) {
             if (!isset($order['orderStatus']['description'])) {
                 $order['orderStatus']['description'] = $orderStatusNamespace->get($order['orderStatus']['name']);
             }
@@ -420,7 +420,7 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
         $fields = parent::getModelFields($model, $alias);
 
         if ($model === $this->model) {
-            $fields = array_merge(
+            $fields = \array_merge(
                 $fields,
                 [
                     'customer.email' => ['alias' => 'customer.email', 'type' => 'string'],
@@ -446,7 +446,7 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
             $paymentMethodProvider->getInstallmentPaymentId($connection),
         ];
 
-        $paymentIds = array_merge($paymentIds, $legacyPaymentIds);
+        $paymentIds = \array_merge($paymentIds, $legacyPaymentIds);
 
         $builder->innerJoin(
             'sOrder.payment',
@@ -497,6 +497,6 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
      */
     private function isFilterRequest(array $filters)
     {
-        return !in_array('search', array_column($filters, 'property'), true);
+        return !\in_array('search', \array_column($filters, 'property'), true);
     }
 }

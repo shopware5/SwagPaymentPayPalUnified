@@ -33,28 +33,28 @@ Ext.define('Shopware.apps.Config.view.form.DocumentPaypalUnified', {
 
         formItems[elementFieldSetIndex].items.push({
             xtype: 'tinymce',
-            fieldLabel: '{s name=document/detail/content_footer_label}Footer content{/s}',
+            fieldLabel: '{s name="document/detail/content_footer_label"}Footer content{/s}',
             labelWidth: 100,
             name: 'PayPal_Unified_Instructions_Footer_Value',
             hidden: true,
             translatable: true
         }, {
             xtype: 'textarea',
-            fieldLabel: '{s name=document/detail/style_footer_label}Footer style{/s}',
+            fieldLabel: '{s name="document/detail/style_footer_label"}Footer style{/s}',
             labelWidth: 100,
             name: 'PayPal_Unified_Instructions_Footer_Style',
             hidden: true,
             translatable: true
         }, {
             xtype: 'tinymce',
-            fieldLabel: '{s name=document/detail/content_content_info_label}Content info content{/s}',
+            fieldLabel: '{s name="document/detail/content_content_info_label"}Content info content{/s}',
             labelWidth: 100,
             name: 'PayPal_Unified_Instructions_Content_Value',
             hidden: true,
             translatable: true
         }, {
             xtype: 'textarea',
-            fieldLabel: '{s name=document/detail/style_content_info_label}Content info style{/s}',
+            fieldLabel: '{s name="document/detail/style_content_info_label"}Content info style{/s}',
             labelWidth: 100,
             name: 'PayPal_Unified_Instructions_Content_Style',
             hidden: true,

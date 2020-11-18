@@ -57,7 +57,7 @@ class VoidService
     {
         try {
             $voidData = $this->authorizationResource->void($authorizationId);
-            if (strtolower($voidData['state']) === PaymentStatus::PAYMENT_VOIDED) {
+            if (\strtolower($voidData['state']) === PaymentStatus::PAYMENT_VOIDED) {
                 $this->paymentStatusService->updatePaymentStatus(
                     $voidData['parent_payment'],
                     PaymentStatus::PAYMENT_STATUS_CANCELLED
@@ -88,7 +88,7 @@ class VoidService
     {
         try {
             $voidData = $this->orderResource->void($orderId);
-            if (strtolower($voidData['state']) === PaymentStatus::PAYMENT_VOIDED) {
+            if (\strtolower($voidData['state']) === PaymentStatus::PAYMENT_VOIDED) {
                 $this->paymentStatusService->updatePaymentStatus(
                     $voidData['parent_payment'],
                     PaymentStatus::PAYMENT_STATUS_CANCELLED

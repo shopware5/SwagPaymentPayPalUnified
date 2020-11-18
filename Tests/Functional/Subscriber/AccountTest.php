@@ -194,7 +194,7 @@ class AccountTest extends TestCase
         $customerData = $view->getAssign('sUserData');
 
         static::assertSame('PayPal, Lastschrift oder Kreditkarte', $customerData['additional']['payment']['description']);
-        if (method_exists($this, 'assertStringContainsString')) {
+        if (\method_exists($this, 'assertStringContainsString')) {
             static::assertStringContainsString(
                 '<br>Zahlung per Lastschrift oder Kreditkarte ist auch ohne PayPal Konto möglich',
                 $customerData['additional']['payment']['additionaldescription']
@@ -239,7 +239,7 @@ class AccountTest extends TestCase
 
         static::assertNotNull($unifiedPayment);
         static::assertSame('PayPal, Lastschrift oder Kreditkarte', $unifiedPayment['description']);
-        if (method_exists($this, 'assertStringContainsString')) {
+        if (\method_exists($this, 'assertStringContainsString')) {
             static::assertStringContainsString(
                 '<br>Zahlung per Lastschrift oder Kreditkarte ist auch ohne PayPal Konto möglich',
                 $unifiedPayment['additionaldescription']

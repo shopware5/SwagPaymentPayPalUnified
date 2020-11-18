@@ -59,7 +59,7 @@ class PaymentMethodProvider
             $paymentMethod->setActive($active);
 
             $this->modelManager->persist($paymentMethod);
-            $this->modelManager->flush($paymentMethod);
+            $this->modelManager->flush();
         }
     }
 

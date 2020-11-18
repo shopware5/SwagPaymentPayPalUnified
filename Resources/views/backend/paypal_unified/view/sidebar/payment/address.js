@@ -3,7 +3,7 @@
 Ext.define('Shopware.apps.PaypalUnified.view.sidebar.payment.Address', {
     extend: 'Ext.form.FieldSet',
     alias: 'widget.paypal-unified-sidebar-payment-address',
-    title: '{s name=title}Shipping address{/s}',
+    title: '{s name="title"}Shipping address{/s}',
 
     anchor: '100%',
     bodyPadding: 5,

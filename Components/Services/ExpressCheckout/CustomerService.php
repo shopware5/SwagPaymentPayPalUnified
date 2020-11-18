@@ -182,7 +182,7 @@ class CustomerService
     private function getSalutation()
     {
         $possibleSalutations = $this->shopwareConfig->get('shopsalutations');
-        $possibleSalutations = explode(',', $possibleSalutations);
+        $possibleSalutations = \explode(',', $possibleSalutations);
 
         // as PayPal does not provide a salutation, we have to set one of the possible options
         return isset($possibleSalutations[0]) ? $possibleSalutations[0] : 'mr';

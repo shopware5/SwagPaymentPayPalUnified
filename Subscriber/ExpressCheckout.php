@@ -151,14 +151,14 @@ class ExpressCheckout implements SubscriberInterface
         $view->assign('paypalUnifiedEcOffCanvasActive', $expressSettings->getOffCanvasActive());
 
         $request = $args->getRequest();
-        $controller = strtolower($request->getControllerName());
+        $controller = \strtolower($request->getControllerName());
         if ($controller !== 'checkout') {
             return;
         }
 
-        $action = strtolower($request->getActionName());
+        $action = \strtolower($request->getActionName());
         $allowedActions = ['cart', 'ajaxcart', 'ajax_cart', 'ajax_add_article', 'ajaxaddarticle'];
-        if (!in_array($action, $allowedActions, true)) {
+        if (!\in_array($action, $allowedActions, true)) {
             return;
         }
 
@@ -176,7 +176,7 @@ class ExpressCheckout implements SubscriberInterface
         $request = $args->getRequest();
         $view = $args->getSubject()->View();
 
-        if (strtolower($request->getActionName()) === 'confirm' && $request->getParam('expressCheckout', false)) {
+        if (\strtolower($request->getActionName()) === 'confirm' && $request->getParam('expressCheckout', false)) {
             $view->assign('paypalUnifiedExpressCheckout', true);
             $view->assign('paypalUnifiedExpressPaymentId', $request->getParam('paymentId'));
             $view->assign('paypalUnifiedExpressPayerId', $request->getParam('payerId'));
@@ -188,7 +188,7 @@ class ExpressCheckout implements SubscriberInterface
     {
         $request = $args->getRequest();
 
-        if (strtolower($request->getActionName()) === 'payment'
+        if (\strtolower($request->getActionName()) === 'payment'
             && $request->getParam('expressCheckout', false)
             && $args->getResponse()->isRedirect()
         ) {

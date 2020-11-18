@@ -49,7 +49,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.Toolbar', {
         var me = this;
 
         return Ext.create('Shopware.apps.Base.view.element.Button', {
-            text: '{s name=button/save}Save{/s}',
+            text: '{s name="button/save"}Save{/s}',
             cls: 'primary',
             handler: Ext.bind(me.onSaveButtonClick, me)
         });

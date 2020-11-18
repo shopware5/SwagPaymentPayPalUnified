@@ -24,7 +24,7 @@ class CustomerServiceTest extends TestCase
     public function test_service_is_available()
     {
         $service = Shopware()->Container()->get('paypal_unified.express_checkout.customer_service');
-        static::assertSame(CustomerService::class, get_class($service));
+        static::assertSame(CustomerService::class, \get_class($service));
     }
 
     public function test_construct()

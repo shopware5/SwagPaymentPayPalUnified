@@ -118,7 +118,7 @@ class Invoice implements SubscriberInterface
         }
 
         $vars['additional']['payment']['additionaldescription'] = $this->templateManager->fetch(
-            sprintf('string:%s', $vars['additional']['payment']['additionaldescription'])
+            \sprintf('string:%s', $vars['additional']['payment']['additionaldescription'])
         );
 
         return $vars;
