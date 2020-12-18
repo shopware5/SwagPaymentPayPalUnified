@@ -46,7 +46,7 @@ class CookieConsent implements SubscriberInterface
             'paypal-cookies',
             // PayPal Cookies are not handled by Shopware, because they are not set by the plugin.
             // Therefore we use a regex which should not affect other cookies
-            '/^paypal-cookie-consent-manager$/',
+            '/^paypal-cookie-consent-manager$|^paypalplus_session_v2$/',
             $this->snippetManager->getNamespace('frontend/paypal_unified/cookie_consent/cookie')->get('cookie/label'),
             CookieGroupStruct::TECHNICAL
         ));
