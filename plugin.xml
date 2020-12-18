@@ -16,8 +16,14 @@
     <description lang="en">This module offers you the most popular PayPal products from a single source: the PayPal Express button, PayPal PLUS, and banners for the new PayPal Installment Payment. And best of all, this module lets you use all products individually or simultaneously in your online store.</description>
 
     <changelog version="REPLACE_GLOBAL_WITH_NEXT_VERSION">
-        <changes lang="de">PT-12125 - Shopware 5.7 und PHP8 Kompatibilität;</changes>
-        <changes lang="en">PT-12125 - Shopware 5.7 and PHP8 compatibility;</changes>
+        <changes lang="de">
+            PT-12125 - Shopware 5.7 und PHP8 Kompatibilität;
+            PT-12208 - Fügt einen PayPal-Plus-Cookie zum Consent-Manager hinzu;
+        </changes>
+        <changes lang="en">
+            PT-12125 - Shopware 5.7 and PHP8 compatibility;
+            PT-12208 - Adds a PayPal Plus cookie to the Consent Manager;
+        </changes>
     </changelog>
 
     <changelog version="3.0.1">
