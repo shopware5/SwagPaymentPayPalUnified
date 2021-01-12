@@ -59,6 +59,22 @@ class DependencyProvider
     }
 
     /**
+     * @return \Enlight_Controller_Request_Request|null
+     */
+    public function getRequest()
+    {
+        /** @var \Enlight_Controller_Front $front */
+        $front = $this->container->get('front');
+
+        $request = $front->Request();
+        if ($request === null) {
+            return null;
+        }
+
+        return $request;
+    }
+
+    /**
      * @return string|null
      */
     public function createPaymentToken()
@@ -79,10 +95,10 @@ class DependencyProvider
      * sets the session cookie to another path than the original Session::createSession method.
      * This was fixed with Shopware 5.6.3, so these three versions are blacklisted for this feature.
      *
-     * @see \Shopware\Components\Cart\PaymentTokenSubscriber::onPreDispatchFrontend
-     * @see \Shopware\Components\DependencyInjection\Bridge\Session::createSession
-     *
      * @return bool
+     *
+     * @see \Shopware\Components\DependencyInjection\Bridge\Session::createSession
+     * @see \Shopware\Components\Cart\PaymentTokenSubscriber::onPreDispatchFrontend
      */
     private function isBlacklistedShopwareVersionsForPaymentToken()
     {

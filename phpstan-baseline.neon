@@ -191,11 +191,6 @@ parameters:
 			path: Controllers/Frontend/PaypalUnified.php
 
 		-
-			message: "#^Parameter \\#1 \\$orderNumber of method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\OrderDataService\\:\\:applyPaymentTypeAttribute\\(\\) expects string, int\\|string\\|false given\\.$#"
-			count: 1
-			path: Controllers/Frontend/PaypalUnified.php
-
-		-
 			message: "#^Parameter \\#1 \\$basket of method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\Validation\\\\BasketValidatorInterface\\:\\:validate\\(\\) expects array, array\\|null given\\.$#"
 			count: 1
 			path: Controllers/Frontend/PaypalUnified.php
