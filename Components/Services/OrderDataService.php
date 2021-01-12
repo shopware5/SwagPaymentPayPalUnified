@@ -100,6 +100,7 @@ class OrderDataService
      * @param bool   $smartPaymentButtons
      *
      * @see PaymentType
+     * @deprecated since 3.0.1. Will be removed with 4.0.0.
      */
     public function applyPaymentTypeAttribute($orderNumber, Payment $payment, $expressCheckout = false, $smartPaymentButtons = false)
     {

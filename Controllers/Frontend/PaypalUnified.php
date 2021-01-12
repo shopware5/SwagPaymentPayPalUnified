@@ -269,6 +269,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_F
 
         /** @var Payment $response */
         $response = Payment::fromArray($executionResponse);
+        $request->setParam('invoiceCheckout', $response->getPaymentInstruction() !== null);
 
         // if the order number is not sent to PayPal, save the order here
         if (!$sendOrderNumber) {
@@ -302,8 +303,6 @@ class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_F
             $instructionService = $this->get('paypal_unified.payment_instruction_service');
             $instructionService->createInstructions($orderNumber, $instructions);
         }
-
-        $orderDataService->applyPaymentTypeAttribute($orderNumber, $response, $isExpressCheckout, $isSpbCheckout);
 
         $redirectParameter = [
             'module' => 'frontend',

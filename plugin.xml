@@ -18,10 +18,12 @@
     <changelog version="REPLACE_GLOBAL_WITH_NEXT_VERSION">
         <changes lang="de">
             PT-12125 - Shopware 5.7 und PHP8 Kompatibilität;
+            PT-12178 - Der PayPal-Payment-Typ ist nun als Variable in der Bestellbestätigungs-Mail verfügbar;
             PT-12208 - Fügt einen PayPal-Plus-Cookie zum Consent-Manager hinzu;
         </changes>
         <changes lang="en">
             PT-12125 - Shopware 5.7 and PHP8 compatibility;
+            PT-12178 - The PayPal payment type is now available as a variable in the order confirmation mail;
             PT-12208 - Adds a PayPal Plus cookie to the Consent Manager;
         </changes>
     </changelog>

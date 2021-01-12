@@ -151,5 +151,10 @@
             <argument type="service" id="snippets"/>
             <tag name="shopware.event_subscriber"/>
         </service>
+
+        <service id="paypal_unified.subscriber.order" class="SwagPaymentPayPalUnified\Subscriber\Order" public="true">
+            <argument type="service" id="paypal_unified.dependency_provider"/>
+            <tag name="shopware.event_subscriber"/>
+        </service>
     </services>
 </container>
