@@ -16,7 +16,7 @@ parameters:
 			path: Components/DependencyProvider.php
 
 		-
-			message: "#^Cannot access offset 'value' on array\\|bool\\.$#"
+			message: "#^Cannot access offset 'value' on array\\|false\\.$#"
 			count: 1
 			path: Components/Document/InvoiceDocumentHandler.php
 
@@ -29,16 +29,6 @@ parameters:
 			message: "#^Property SwagPaymentPayPalUnified\\\\Components\\\\PaymentMethodProvider\\:\\:\\$modelManager \\(Shopware\\\\Components\\\\Model\\\\ModelManager\\) does not accept Shopware\\\\Components\\\\Model\\\\ModelManager\\|null\\.$#"
 			count: 1
 			path: Components/PaymentMethodProvider.php
-
-		-
-			message: "#^Cannot call method getBody\\(\\) on GuzzleHttp\\\\Message\\\\ResponseInterface\\|null\\.$#"
-			count: 1
-			path: Components/Services/ExceptionHandlerService.php
-
-		-
-			message: "#^Cannot call method getContents\\(\\) on GuzzleHttp\\\\Stream\\\\StreamInterface\\|null\\.$#"
-			count: 1
-			path: Components/Services/ExceptionHandlerService.php
 
 		-
 			message: "#^Cannot call method getPayerInfo\\(\\) on SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\Payer\\|null\\.$#"
@@ -91,17 +81,12 @@ parameters:
 			path: Components/Services/ExpressCheckout/ExpressCheckoutPaymentBuilderService.php
 
 		-
-			message: "#^Cannot call method fetchAll\\(\\) on Doctrine\\\\DBAL\\\\Driver\\\\Statement\\|int\\.$#"
+			message: "#^Cannot call method fetchAll\\(\\) on Doctrine\\\\DBAL\\\\Driver\\\\ResultStatement\\|int\\.$#"
 			count: 1
 			path: Components/Services/Legacy/LegacyService.php
 
 		-
-			message: "#^Cannot call method fetchColumn\\(\\) on Doctrine\\\\DBAL\\\\Driver\\\\Statement\\|int\\.$#"
-			count: 1
-			path: Components/Services/OrderDataService.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\OrderDataService\\:\\:getTransactionId\\(\\) should return string but returns bool\\|string\\.$#"
+			message: "#^Cannot call method fetchColumn\\(\\) on Doctrine\\\\DBAL\\\\Driver\\\\ResultStatement\\|int\\.$#"
 			count: 1
 			path: Components/Services/OrderDataService.php
 
@@ -146,7 +131,7 @@ parameters:
 			path: Components/Services/SettingsService.php
 
 		-
-			message: "#^Cannot call method fetchColumn\\(\\) on Doctrine\\\\DBAL\\\\Driver\\\\Statement\\|int\\.$#"
+			message: "#^Cannot call method fetchColumn\\(\\) on Doctrine\\\\DBAL\\\\Driver\\\\ResultStatement\\|int\\.$#"
 			count: 2
 			path: Components/Services/SettingsService.php
 
@@ -231,12 +216,12 @@ parameters:
 			path: PayPalBundle/Structs/Payment.php
 
 		-
-			message: "#^Cannot call method fetchAll\\(\\) on Doctrine\\\\DBAL\\\\Driver\\\\Statement\\|int\\.$#"
+			message: "#^Cannot call method fetchAll\\(\\) on Doctrine\\\\DBAL\\\\Driver\\\\ResultStatement\\|int\\.$#"
 			count: 1
 			path: Setup/Installer.php
 
 		-
-			message: "#^Cannot call method fetchAll\\(\\) on Doctrine\\\\DBAL\\\\Driver\\\\Statement\\|int\\.$#"
+			message: "#^Cannot call method fetchAll\\(\\) on Doctrine\\\\DBAL\\\\Driver\\\\ResultStatement\\|int\\.$#"
 			count: 1
 			path: Subscriber/BackendOrder.php
 
@@ -256,12 +241,12 @@ parameters:
 			path: Subscriber/InContext.php
 
 		-
-			message: "#^Cannot call method fetchColumn\\(\\) on Doctrine\\\\DBAL\\\\Driver\\\\Statement\\|int\\.$#"
+			message: "#^Cannot call method fetchColumn\\(\\) on Doctrine\\\\DBAL\\\\Driver\\\\ResultStatement\\|int\\.$#"
 			count: 1
 			path: Subscriber/PaymentMeans.php
 
 		-
-			message: "#^Cannot call method fetchAll\\(\\) on Doctrine\\\\DBAL\\\\Driver\\\\Statement\\|int\\.$#"
+			message: "#^Cannot call method fetchAll\\(\\) on Doctrine\\\\DBAL\\\\Driver\\\\ResultStatement\\|int\\.$#"
 			count: 1
 			path: Subscriber/Plus.php
 
