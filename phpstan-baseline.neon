@@ -16,21 +16,6 @@ parameters:
 			path: Components/DependencyProvider.php
 
 		-
-			message: "#^Cannot access offset 'value' on array\\|false\\.$#"
-			count: 1
-			path: Components/Document/InvoiceDocumentHandler.php
-
-		-
-			message: "#^Property SwagPaymentPayPalUnified\\\\Components\\\\PaymentBuilderParameters\\:\\:\\$paymentToken \\(string\\) does not accept string\\|null\\.$#"
-			count: 1
-			path: Components/PaymentBuilderParameters.php
-
-		-
-			message: "#^Property SwagPaymentPayPalUnified\\\\Components\\\\PaymentMethodProvider\\:\\:\\$modelManager \\(Shopware\\\\Components\\\\Model\\\\ModelManager\\) does not accept Shopware\\\\Components\\\\Model\\\\ModelManager\\|null\\.$#"
-			count: 1
-			path: Components/PaymentMethodProvider.php
-
-		-
 			message: "#^Cannot call method getPayerInfo\\(\\) on SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\Payer\\|null\\.$#"
 			count: 1
 			path: Components/Services/ExpressCheckout/CustomerService.php
@@ -81,16 +66,6 @@ parameters:
 			path: Components/Services/ExpressCheckout/ExpressCheckoutPaymentBuilderService.php
 
 		-
-			message: "#^Cannot call method fetchAll\\(\\) on Doctrine\\\\DBAL\\\\Driver\\\\ResultStatement\\|int\\.$#"
-			count: 1
-			path: Components/Services/Legacy/LegacyService.php
-
-		-
-			message: "#^Cannot call method fetchColumn\\(\\) on Doctrine\\\\DBAL\\\\Driver\\\\ResultStatement\\|int\\.$#"
-			count: 1
-			path: Components/Services/OrderDataService.php
-
-		-
 			message: "#^Parameter \\#1 \\$cancelUrl of method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\RedirectUrls\\:\\:setCancelUrl\\(\\) expects string, string\\|false given\\.$#"
 			count: 1
 			path: Components/Services/PaymentBuilderService.php
@@ -128,11 +103,6 @@ parameters:
 		-
 			message: "#^Property SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\SettingsService\\:\\:\\$shop \\(Shopware\\\\Models\\\\Shop\\\\DetachedShop\\) does not accept Shopware\\\\Models\\\\Shop\\\\DetachedShop\\|null\\.$#"
 			count: 1
-			path: Components/Services/SettingsService.php
-
-		-
-			message: "#^Cannot call method fetchColumn\\(\\) on Doctrine\\\\DBAL\\\\Driver\\\\ResultStatement\\|int\\.$#"
-			count: 2
 			path: Components/Services/SettingsService.php
 
 		-
@@ -216,16 +186,6 @@ parameters:
 			path: PayPalBundle/Structs/Payment.php
 
 		-
-			message: "#^Cannot call method fetchAll\\(\\) on Doctrine\\\\DBAL\\\\Driver\\\\ResultStatement\\|int\\.$#"
-			count: 1
-			path: Setup/Installer.php
-
-		-
-			message: "#^Cannot call method fetchAll\\(\\) on Doctrine\\\\DBAL\\\\Driver\\\\ResultStatement\\|int\\.$#"
-			count: 1
-			path: Subscriber/BackendOrder.php
-
-		-
 			message: "#^Property SwagPaymentPayPalUnified\\\\Subscriber\\\\Documents\\\\Invoice\\:\\:\\$translation \\(Shopware_Components_Translation\\) does not accept Shopware_Components_Translation\\|null\\.$#"
 			count: 1
 			path: Subscriber/Documents/Invoice.php
@@ -239,16 +199,6 @@ parameters:
 			message: "#^Cannot call method getLocale\\(\\) on Shopware\\\\Models\\\\Shop\\\\DetachedShop\\|null\\.$#"
 			count: 1
 			path: Subscriber/InContext.php
-
-		-
-			message: "#^Cannot call method fetchColumn\\(\\) on Doctrine\\\\DBAL\\\\Driver\\\\ResultStatement\\|int\\.$#"
-			count: 1
-			path: Subscriber/PaymentMeans.php
-
-		-
-			message: "#^Cannot call method fetchAll\\(\\) on Doctrine\\\\DBAL\\\\Driver\\\\ResultStatement\\|int\\.$#"
-			count: 1
-			path: Subscriber/Plus.php
 
 		-
 			message: "#^Cannot call method getLocale\\(\\) on Shopware\\\\Models\\\\Shop\\\\DetachedShop\\|null\\.$#"
@@ -309,4 +259,3 @@ parameters:
 			message: "#^Parameter \\#1 \\$modelManager of class SwagPaymentPayPalUnified\\\\Components\\\\PaymentMethodProvider constructor expects Shopware\\\\Components\\\\Model\\\\ModelManager\\|null, object\\|null given\\.$#"
 			count: 2
 			path: SwagPaymentPayPalUnified.php
-

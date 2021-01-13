@@ -99,7 +99,7 @@ class OrderTest extends TestCase
     private function getOrderSubscriber()
     {
         return new Order(
-            Shopware()->Container()->get('paypal_unified.dependency_provider')
+            Shopware()->Container()->get('front')
         );
     }
 }

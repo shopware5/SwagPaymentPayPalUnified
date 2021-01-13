@@ -9,19 +9,19 @@
 namespace SwagPaymentPayPalUnified\Subscriber;
 
 use Enlight\Event\SubscriberInterface;
-use SwagPaymentPayPalUnified\Components\DependencyProvider;
+use Enlight_Controller_Front;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 
 class Order implements SubscriberInterface
 {
     /**
-     * @var DependencyProvider
+     * @var Enlight_Controller_Front
      */
-    private $dependencyProvider;
+    private $front;
 
-    public function __construct(DependencyProvider $dependencyProvider)
+    public function __construct(Enlight_Controller_Front $front)
     {
-        $this->dependencyProvider = $dependencyProvider;
+        $this->front = $front;
     }
 
     /**
@@ -53,7 +53,7 @@ class Order implements SubscriberInterface
      */
     private function getPaymentType()
     {
-        $request = $this->dependencyProvider->getRequest();
+        $request = $this->front->Request();
         if ($request === null) {
             return null;
         }
