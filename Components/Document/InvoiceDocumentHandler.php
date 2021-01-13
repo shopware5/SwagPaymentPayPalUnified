@@ -109,6 +109,9 @@ class InvoiceDocumentHandler
         $query = 'SELECT * FROM s_core_documents_box WHERE id = ?';
 
         $rawFooter = $this->dbalConnection->fetchAssoc($query, [$footer['id']]);
+        if ($rawFooter === false) {
+            throw new \RuntimeException('PayPal footer not found');
+        }
 
         if (!empty($translation[1]['PayPal_Unified_Instructions_Content_Value'])) {
             $rawFooter['value'] = $translation[1]['PayPal_Unified_Instructions_Content_Value'];

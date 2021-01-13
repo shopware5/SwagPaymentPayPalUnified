@@ -59,22 +59,6 @@ class DependencyProvider
     }
 
     /**
-     * @return \Enlight_Controller_Request_Request|null
-     */
-    public function getRequest()
-    {
-        /** @var \Enlight_Controller_Front $front */
-        $front = $this->container->get('front');
-
-        $request = $front->Request();
-        if ($request === null) {
-            return null;
-        }
-
-        return $request;
-    }
-
-    /**
      * @return string|null
      */
     public function createPaymentToken()

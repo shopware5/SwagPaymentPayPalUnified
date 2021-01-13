@@ -31,7 +31,7 @@ class PaymentBuilderParameters
     private $paymentType;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $paymentToken;
 
