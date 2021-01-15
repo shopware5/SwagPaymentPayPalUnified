@@ -156,6 +156,7 @@
                  class="SwagPaymentPayPalUnified\Subscriber\Order"
                  public="true">
             <argument type="service" id="front"/>
+            <argument type="service" id="dbal_connection"/>
             <tag name="shopware.event_subscriber"/>
         </service>
     </services>
