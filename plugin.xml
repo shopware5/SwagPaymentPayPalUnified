@@ -5,7 +5,7 @@
     <label lang="de">PayPal</label>
     <label lang="en">PayPal</label>
 
-    <version>3.0.3</version>
+    <version>3.0.4</version>
     <copyright>(c) by shopware AG</copyright>
     <license>MIT</license>
     <link>http://store.shopware.com</link>
@@ -15,9 +15,14 @@
     <description lang="de">Dieses Modul bietet Ihnen die beliebtesten PayPal-Produkte aus einer Hand: Den PayPal Express-Button, PayPal PLUS, und Banner für die neue PayPal Ratenzahlung. Und das Beste daran: Mit diesem Modul können Sie alle Produkte einzeln oder gleichzeitig in Ihrem Online-Shop nutzen.</description>
     <description lang="en">This module offers you the most popular PayPal products from a single source: the PayPal Express button, PayPal PLUS, and banners for the new PayPal Installment Payment. And best of all, this module lets you use all products individually or simultaneously in your online store.</description>
 
+    <changelog version="3.0.4">
+        <changes lang="de">PT-12234 - Korrigiert das Setzen des PayPal-Payment-Typs für Rechnungskauf;</changes>
+        <changes lang="en">PT-12234 - Corrects setting the PayPal payment type for pay upon invoice;</changes>
+    </changelog>
+
     <changelog version="3.0.3">
         <changes lang="de">PT-12230 - Korrigiert das Setzen des PayPal-Payment-Typs;</changes>
-        <changes lang="en">PT-12230 - Corrects the setting of the PayPal payment type;</changes>
+        <changes lang="en">PT-12230 - Corrects setting the PayPal payment type;</changes>
     </changelog>
 
     <changelog version="3.0.2">

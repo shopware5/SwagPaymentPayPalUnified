@@ -12,6 +12,7 @@ use Doctrine\DBAL\Connection;
 use Shopware\Bundle\AttributeBundle\Service\CrudService;
 use Shopware\Components\Model\ModelManager;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
+use SwagPaymentPayPalUnified\Components\Services\Plus\PaymentInstructionService;
 use SwagPaymentPayPalUnified\Models\Settings\General as GeneralSettingsModel;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 
@@ -87,8 +88,13 @@ class Updater
         if (\version_compare($oldVersion, '3.0.0', '<=')) {
             $this->updateTo300();
         }
+
         if (\version_compare($oldVersion, '3.0.3', '<=')) {
             $this->updateTo303();
+        }
+
+        if (\version_compare($oldVersion, '3.0.4', '<=')) {
+            $this->updateTo304();
         }
     }
 
@@ -311,6 +317,31 @@ SQL;
         $this->connection->createQueryBuilder()
             ->update('s_order_attributes', 'sOrderAttributes')
             ->set('sOrderAttributes.swag_paypal_unified_payment_type', 'NULL')
+            ->where('sOrderAttributes.id IN (:attributeIds)')
+            ->setParameter('attributeIds', $orderAttributeIds, Connection::PARAM_INT_ARRAY)
+            ->execute();
+    }
+
+    private function updateTo304()
+    {
+        $orderAttributeIds = $this->connection->createQueryBuilder()
+            ->select(['sOrderAttributes.id'])
+            ->from('s_order_attributes', 'sOrderAttributes')
+            ->join('sOrderAttributes', 's_order', 'sOrder', 'sOrder.id = sOrderAttributes.orderID')
+            ->where('sOrder.paymentID = :paymentId')
+            ->andWhere('sOrderAttributes.swag_paypal_unified_payment_type LIKE :paymentType')
+            ->andWhere('sOrder.internalcomment LIKE :description')
+            ->andWhere('sOrder.ordertime > :orderTime')
+            ->setParameter('paymentId', (new PaymentMethodProvider())->getPaymentId($this->connection))
+            ->setParameter('paymentType', PaymentType::PAYPAL_PLUS)
+            ->setParameter('description', \sprintf('%%%s%%', PaymentInstructionService::INVOICE_INSTRUCTION_DESCRIPTION))
+            ->setParameter('orderTime', '2021-01-15 00:00:00') // Day of 3.0.3 release, which broke the applying of the payment type attribute for invoice
+            ->execute()
+            ->fetchAll(\PDO::FETCH_COLUMN);
+
+        $this->connection->createQueryBuilder()
+            ->update('s_order_attributes', 'sOrderAttributes')
+            ->set('sOrderAttributes.swag_paypal_unified_payment_type', \sprintf('"%s"', PaymentType::PAYPAL_INVOICE))
             ->where('sOrderAttributes.id IN (:attributeIds)')
             ->setParameter('attributeIds', $orderAttributeIds, Connection::PARAM_INT_ARRAY)
             ->execute();
