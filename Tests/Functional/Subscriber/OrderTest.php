@@ -99,6 +99,7 @@ class OrderTest extends TestCase
 
         $request = new \Enlight_Controller_Request_RequestHttp();
         $request->setParam('invoiceCheckout', true);
+        $request->setParam('plus', true);
 
         Shopware()->Front()->setRequest($request);
 

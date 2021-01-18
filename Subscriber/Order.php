@@ -82,10 +82,6 @@ class Order implements SubscriberInterface
         $isSpbCheckout = (bool) $request->getParam('spbCheckout', false);
         $isInvoice = (bool) $request->getParam('invoiceCheckout', false);
 
-        if ($isPlus) {
-            return PaymentType::PAYPAL_PLUS;
-        }
-
         if ($isExpressCheckout) {
             return PaymentType::PAYPAL_EXPRESS;
         }
@@ -96,6 +92,10 @@ class Order implements SubscriberInterface
 
         if ($isInvoice) {
             return PaymentType::PAYPAL_INVOICE;
+        }
+
+        if ($isPlus) {
+            return PaymentType::PAYPAL_PLUS;
         }
 
         return PaymentType::PAYPAL_CLASSIC;
