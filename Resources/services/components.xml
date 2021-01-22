@@ -67,6 +67,22 @@
 
         <service id="paypal_unified.transaction_history_builder_service"
                  class="SwagPaymentPayPalUnified\Components\Services\TransactionHistoryBuilderService"
-                 public="true"/>
+                 public="true">
+        </service>
+
+        <service id="paypal_unified.risk_management"
+                 class="SwagPaymentPayPalUnified\Components\Services\RiskManagement\RiskManagement"
+                 public="true">
+            <argument type="service" id="paypal_unified.dependency_provider"/>
+            <argument type="service" id="dbal_connection"/>
+        </service>
+
+        <service id="paypal_unified.risk_management_helper"
+                 class="SwagPaymentPayPalUnified\Components\Services\RiskManagement\RiskManagementHelper"
+                 public="true">
+            <argument type="service" id="dbal_connection"/>
+            <argument type="service" id="paypal_unified.dependency_provider"/>
+        </service>
+
     </services>
 </container>

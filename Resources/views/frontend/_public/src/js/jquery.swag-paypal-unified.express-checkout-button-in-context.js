@@ -98,7 +98,14 @@
              *
              * @type string
              */
-            paypalScriptLoadedSelector: 'paypal-checkout-js-loaded'
+            paypalScriptLoadedSelector: 'paypal-checkout-js-loaded',
+
+            /**
+             * Excluded products by the risk management.
+             *
+             * @type array|null
+             */
+            riskManagementMatchedProducts: null
         },
 
         /**
@@ -110,6 +117,10 @@
             var me = this;
 
             me.applyDataAttributes();
+
+            if (me.isProductExcludedByRiskManagement()) {
+                return;
+            }
 
             me.createButton();
 
@@ -126,6 +137,22 @@
          */
         onChangeVariant: function() {
             window.StateManager.addPlugin('*[data-paypalUnifiedEcButtonInContext="true"]', 'swagPayPalUnifiedExpressCheckoutButtonInContext');
+        },
+
+        /**
+         * Checks if the current product excluded by the risk management
+         *
+         * @return {boolean}
+         */
+        isProductExcludedByRiskManagement: function() {
+            var me = this,
+                productNumbers = me.opts.riskManagementMatchedProducts;
+
+            if (Array.isArray(productNumbers) && productNumbers.includes(me.opts.productNumber)) {
+                return true;
+            }
+
+            return false;
         },
 
         /**

@@ -1,5 +1,5 @@
 {block name='paypal_unified_installments_banner_cart'}
-    {if $paypalUnifiedInstallmentsBanner}
+    {if $paypalUnifiedInstallmentsBanner && $paypalIsNotAllowed === false}
         {block name='paypal_unified_installments_banner_cart_container'}
             <div data-paypalUnifiedInstallmentsBanner="true"
                  {block name='paypal_unified_installments_banner_data_attributes'}

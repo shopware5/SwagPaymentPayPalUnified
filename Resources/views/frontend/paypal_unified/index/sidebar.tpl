@@ -1,5 +1,5 @@
 {namespace name='frontend/paypal_unified/index/sidebar'}
-{if $paypalUnifiedShowLogo}
+{if $paypalUnifiedShowLogo  && $paypalIsNotAllowed === false}
     {block name='frontend_index_sidebar_paypal_unified_logo'}
         <div class="panel is--rounded paypal--sidebar">
             {block name='frontend_index_sidebar_paypal_unified_logo_body'}
@@ -19,7 +19,7 @@
     {/block}
 {/if}
 
-{if $paypalUnifiedInstallmentsBanner}
+{if $paypalUnifiedInstallmentsBanner && $paypalIsNotAllowed === false}
     {block name='frontend_index_sidebar_paypal_unified_installments_banner'}
         <div class="panel is--rounded paypal--sidebar">
             {block name='frontend_index_sidebar_paypal_unified_installments_banner_body'}

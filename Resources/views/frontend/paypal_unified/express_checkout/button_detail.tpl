@@ -15,6 +15,7 @@
                  data-paypalLanguage="{$paypalUnifiedLanguageIso}"
                  data-productNumber="{$sArticle.ordernumber}"
                  data-detailPage="true"
+                 data-riskManagementMatchedProducts='{$riskManagementMatchedProducts}'
                 {block name='paypal_unified_ec_button_container_detail_data'}{/block}>
             </div>
         {/block}

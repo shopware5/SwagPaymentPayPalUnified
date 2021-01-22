@@ -90,6 +90,7 @@
             <argument>%paypal_unified.plugin_dir%</argument>
             <argument type="service" id="paypal_unified.settings_service"/>
             <argument type="service" id="dbal_connection"/>
+            <argument type="service" id="paypal_unified.risk_management"/>
             <tag name="shopware.event_subscriber"/>
         </service>
 
@@ -159,5 +160,13 @@
             <argument type="service" id="dbal_connection"/>
             <tag name="shopware.event_subscriber"/>
         </service>
+
+        <service id="paypal_unified.subscriber.risk_management"
+                 class="SwagPaymentPayPalUnified\Subscriber\RiskManagement">
+            <argument type="service" id="paypal_unified.risk_management_helper"/>
+            <argument type="service" id="template"/>
+            <tag name="shopware.event_subscriber"/>
+        </service>
+
     </services>
 </container>

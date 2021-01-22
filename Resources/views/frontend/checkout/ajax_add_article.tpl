@@ -5,7 +5,7 @@
     {$smarty.block.parent}
 
     {block name='checkout_ajax_add_actions_checkout_paypal_unified_ec_button'}
-        {if $paypalUnifiedEcOffCanvasActive && $paypalUnifiedUseInContext !== null}
+        {if $paypalUnifiedEcOffCanvasActive && $paypalUnifiedUseInContext !== null && $paypalIsNotAllowed === false}
             {include file='frontend/paypal_unified/express_checkout/button_cart.tpl' paypalEcAjaxCart=true}
         {/if}
     {/block}
