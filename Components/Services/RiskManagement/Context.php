@@ -80,7 +80,7 @@ class Context
      */
     public function categoryIdsAreTheSame()
     {
-        return $this->sessionCategoryId === $this->eventCategoryId;
+        return (int) $this->sessionCategoryId === (int) $this->eventCategoryId;
     }
 
     /**
