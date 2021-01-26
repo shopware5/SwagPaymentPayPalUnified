@@ -13,6 +13,7 @@ use Doctrine\DBAL\Connection;
 use Enlight\Event\SubscriberInterface;
 use Enlight_View_Default;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
+use SwagPaymentPayPalUnified\Components\Services\RiskManagement\RiskManagementInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 
 class Frontend implements SubscriberInterface
@@ -38,17 +39,24 @@ class Frontend implements SubscriberInterface
     private $paymentMethodProvider;
 
     /**
+     * @var RiskManagementInterface
+     */
+    private $riskManagement;
+
+    /**
      * @param string $pluginDir
      */
     public function __construct(
         $pluginDir,
         SettingsServiceInterface $settingsService,
-        Connection $connection
+        Connection $connection,
+        RiskManagementInterface $riskManagement
     ) {
         $this->pluginDir = $pluginDir;
         $this->settingsService = $settingsService;
         $this->connection = $connection;
         $this->paymentMethodProvider = new PaymentMethodProvider();
+        $this->riskManagement = $riskManagement;
     }
 
     /**
@@ -100,8 +108,12 @@ class Frontend implements SubscriberInterface
         /** @var Enlight_View_Default $view */
         $view = $args->getSubject()->View();
 
+        $productId = $args->getSubject()->Request()->getParam('sArticle');
+        $category = $args->getSubject()->Request()->getParam('sCategory');
+
         //Assign shop specific and configurable values to the view.
         $view->assign('paypalUnifiedShowLogo', $showPayPalLogo);
+        $view->assign('paypalIsNotAllowed', $this->riskManagement->isPayPalNotAllowed($productId, $category));
     }
 
     /**

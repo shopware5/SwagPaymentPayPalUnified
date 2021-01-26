@@ -3,7 +3,7 @@
 {block name='frontend_listing_product_box_button_detail_container'}
     {$smarty.block.parent}
 
-    {if $paypalUnifiedEcListingActive}
+    {if $paypalUnifiedEcListingActive && $paypalIsNotAllowed === false}
         <div class="paypal-unified-ec--button-placeholder"></div>
     {/if}
 {/block}
