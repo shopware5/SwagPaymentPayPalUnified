@@ -29,6 +29,7 @@ class RiskManagementTest extends TestCase
     {
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_product_in_category.sql');
         Shopware()->Container()->get('dbal_connection')->exec($sql);
+        Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::CATEGORY_ID_SESSION_NAME, null);
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::PRODUCT_ID_SESSION_NAME, 212);
 
         $eventArgs = $this->getEventArgs();
@@ -42,6 +43,7 @@ class RiskManagementTest extends TestCase
     {
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_product_in_category.sql');
         Shopware()->Container()->get('dbal_connection')->exec($sql);
+        Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::CATEGORY_ID_SESSION_NAME, null);
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::PRODUCT_ID_SESSION_NAME, 178);
 
         $eventArgs = $this->getEventArgs();
@@ -55,19 +57,24 @@ class RiskManagementTest extends TestCase
     {
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_product_in_category.sql');
         Shopware()->Container()->get('dbal_connection')->exec($sql);
+        Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::PRODUCT_ID_SESSION_NAME, null);
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::CATEGORY_ID_SESSION_NAME, 7);
 
         $eventArgs = $this->getEventArgs();
         $eventArgs->set('value', 3);
 
+        $templateResult = Shopware()->Container()->get('template')->getTemplateVars('riskManagementMatchedProducts');
+
         static::assertNull($this->getSubscriber()->onCheckProductCategoryFrom($eventArgs));
         static::assertNull($eventArgs->getReturn());
+        static::assertNotEmpty($templateResult);
     }
 
     public function test_onCheckProductCategoryFrom_categoryIsAmongTheParents()
     {
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_product_in_category.sql');
         Shopware()->Container()->get('dbal_connection')->exec($sql);
+        Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::PRODUCT_ID_SESSION_NAME, null);
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::CATEGORY_ID_SESSION_NAME, 6);
 
         $eventArgs = $this->getEventArgs();
@@ -89,6 +96,7 @@ class RiskManagementTest extends TestCase
     {
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_product_attr_is.sql');
         Shopware()->Container()->get('dbal_connection')->exec($sql);
+        Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::CATEGORY_ID_SESSION_NAME, null);
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::PRODUCT_ID_SESSION_NAME, 178);
 
         $eventArgs = $this->getEventArgs();
@@ -102,6 +110,7 @@ class RiskManagementTest extends TestCase
     {
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_product_attr_is.sql');
         Shopware()->Container()->get('dbal_connection')->exec($sql);
+        Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::PRODUCT_ID_SESSION_NAME, null);
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::CATEGORY_ID_SESSION_NAME, 6);
 
         $eventArgs = $this->getEventArgs();
@@ -123,6 +132,7 @@ class RiskManagementTest extends TestCase
     {
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_product_attr_is.sql');
         Shopware()->Container()->get('dbal_connection')->exec($sql);
+        Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::CATEGORY_ID_SESSION_NAME, null);
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::PRODUCT_ID_SESSION_NAME, 178);
 
         $eventArgs = $this->getEventArgs();

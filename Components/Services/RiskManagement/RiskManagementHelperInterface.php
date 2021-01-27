@@ -48,4 +48,9 @@ interface RiskManagementHelperInterface
      * @return array
      */
     public function getProductOrdernumbersNotMatchedAttribute(Context $context);
+
+    /**
+     * @return array
+     */
+    public function getProductOrderNumbersInCategory(Context $context);
 }

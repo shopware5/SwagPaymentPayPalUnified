@@ -31,9 +31,10 @@ class FrontendSubscriberTest extends TestCase
     public function test_getSubscribedEvents_has_correct_events()
     {
         $events = Frontend::getSubscribedEvents();
-        static::assertCount(3, $events);
+        static::assertCount(4, $events);
         static::assertSame('onCollectJavascript', $events['Theme_Compiler_Collect_Plugin_Javascript']);
         static::assertSame('onPostDispatchSecure', $events['Enlight_Controller_Action_PostDispatchSecure_Frontend']);
+        static::assertSame('onLoadAjaxListing', $events['Enlight_Controller_Action_PreDispatch_Widgets_Listing']);
         static::assertSame('onCollectTemplateDir', $events['Theme_Inheritance_Template_Directories_Collected']);
     }
 
@@ -138,7 +139,7 @@ class FrontendSubscriberTest extends TestCase
         Shopware()->Container()->get('dbal_connection')->exec($sql);
 
         $controller = $this->createController();
-        $controller->Request()->setParam('sArticle', 99);
+        $controller->Request()->setParam('sArticle', 248);
 
         $eventArgs = new \Enlight_Controller_ActionEventArgs();
         $eventArgs->set('subject', $controller);
@@ -229,6 +230,51 @@ class FrontendSubscriberTest extends TestCase
 
         static::assertSame('["SW10178"]', $result);
 
+        static::assertFalse($controller->View()->getAssign('paypalIsNotAllowed'));
+    }
+
+    public function test_onLoadAjaxListing_shouldNotAssignToView()
+    {
+        Shopware()->Container()->get('template')->assign('paypalIsNotAllowed', null);
+        Shopware()->Container()->get('template')->assign('riskManagementMatchedProducts', null);
+
+        Shopware()->Front()->setRequest(new \Enlight_Controller_Request_RequestHttp());
+
+        $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_product_attr_is.sql');
+        Shopware()->Container()->get('dbal_connection')->exec($sql);
+
+        $controller = $this->createController();
+        $controller->Request()->setParam('sCategory', 6);
+        $controller->Request()->setActionName('someAction');
+
+        $eventArgs = new \Enlight_Controller_ActionEventArgs();
+        $eventArgs->set('subject', $controller);
+
+        $this->getSubscriber()->onLoadAjaxListing($eventArgs);
+
+        static::assertNull(Shopware()->Container()->get('template')->getTemplateVars('paypalIsNotAllowed'));
+        static::assertNull(Shopware()->Container()->get('template')->getTemplateVars('riskManagementMatchedProducts'));
+    }
+
+    public function test_onLoadAjaxListing_shouldAssignToView()
+    {
+        Shopware()->Front()->setRequest(new \Enlight_Controller_Request_RequestHttp());
+
+        $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_product_attr_is.sql');
+        Shopware()->Container()->get('dbal_connection')->exec($sql);
+
+        $controller = $this->createController();
+        $controller->Request()->setParam('sCategory', 6);
+        $controller->Request()->setActionName('listingCount');
+
+        $eventArgs = new \Enlight_Controller_ActionEventArgs();
+        $eventArgs->set('subject', $controller);
+
+        $this->getSubscriber()->onLoadAjaxListing($eventArgs);
+
+        $result = Shopware()->Container()->get('template')->getTemplateVars('riskManagementMatchedProducts');
+
+        static::assertSame('["SW10178"]', $result);
         static::assertFalse($controller->View()->getAssign('paypalIsNotAllowed'));
     }
 

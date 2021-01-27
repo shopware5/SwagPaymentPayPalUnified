@@ -67,6 +67,7 @@ class Frontend implements SubscriberInterface
         return [
             'Theme_Compiler_Collect_Plugin_Javascript' => 'onCollectJavascript',
             'Enlight_Controller_Action_PostDispatchSecure_Frontend' => 'onPostDispatchSecure',
+            'Enlight_Controller_Action_PreDispatch_Widgets_Listing' => 'onLoadAjaxListing',
             'Theme_Inheritance_Template_Directories_Collected' => 'onCollectTemplateDir',
         ];
     }
@@ -89,6 +90,18 @@ class Frontend implements SubscriberInterface
         ];
 
         return new ArrayCollection($jsPath);
+    }
+
+    public function onLoadAjaxListing(\Enlight_Controller_ActionEventArgs $args)
+    {
+        $controller = $args->getSubject();
+        if ($controller->Request()->getActionName() !== 'listingCount') {
+            return;
+        }
+
+        $category = $args->getSubject()->Request()->getParam('sCategory');
+
+        $controller->View()->assign('paypalIsNotAllowed', $this->riskManagement->isPayPalNotAllowed(null, $category));
     }
 
     public function onPostDispatchSecure(\Enlight_Controller_ActionEventArgs $args)
