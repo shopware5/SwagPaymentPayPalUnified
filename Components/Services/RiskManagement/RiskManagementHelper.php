@@ -165,6 +165,21 @@ class RiskManagementHelper implements RiskManagementHelperInterface
     /**
      * @return array
      */
+    public function getProductOrderNumbersInCategory(Context $context)
+    {
+        return $this->connection->createQueryBuilder()
+            ->select('detail.ordernumber')
+            ->from('s_articles_details', 'detail')
+            ->join('detail', 's_articles_categories_ro', 'categoryRelation', 'detail.articleID = categoryRelation.articleID')
+            ->where('categoryRelation.categoryID = :categoryId')
+            ->setParameter('categoryId', $context->getEventCategoryId())
+            ->execute()
+            ->fetchAll(\PDO::FETCH_COLUMN);
+    }
+
+    /**
+     * @return array
+     */
     private function getProductsInCategory(Context $context)
     {
         $subQuery = $this->connection->createQueryBuilder()

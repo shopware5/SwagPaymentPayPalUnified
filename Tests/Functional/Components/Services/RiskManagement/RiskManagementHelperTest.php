@@ -191,6 +191,26 @@ class RiskManagementHelperTest extends TestCase
         static::assertEmpty($result);
     }
 
+    public function test_getProductOrderNumbersInCategory_shouldReturnAEmptyArray()
+    {
+        $helper = $this->getHelper();
+        $context = $helper->createContext(new Attribute([]), 99);
+
+        $result = $helper->getProductOrderNumbersInCategory($context);
+
+        static::assertEmpty($result);
+    }
+
+    public function test_getProductOrderNumbersInCategory_shouldReturnANotEmptyArray()
+    {
+        $helper = $this->getHelper();
+        $context = $helper->createContext(new Attribute([]), 6);
+
+        $result = $helper->getProductOrderNumbersInCategory($context);
+
+        static::assertNotEmpty($result);
+    }
+
     /**
      * @return RiskManagementHelper
      */

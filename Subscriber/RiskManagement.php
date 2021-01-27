@@ -48,13 +48,24 @@ class RiskManagement implements SubscriberInterface
             $args->get('value')
         );
 
-        if (!$context->sessionProductIdIsNull() && !$this->riskManagementHelper->isProductInCategory($context)) {
+        if (!$context->sessionProductIdIsNull()) {
+            if ($this->riskManagementHelper->isProductInCategory($context)) {
+                $args->setReturn(true);
+
+                return true;
+            }
+
             return null;
         }
 
         if (!$context->sessionCategoryIdIsNull()
             && !$context->categoryIdsAreTheSame()
-            && !$this->riskManagementHelper->isCategoryAmongTheParents($context)) {
+            && !$this->riskManagementHelper->isCategoryAmongTheParents($context)
+        ) {
+            $products = $this->riskManagementHelper->getProductOrderNumbersInCategory($context);
+
+            $this->template->assign('riskManagementMatchedProducts', \json_encode($products));
+
             return null;
         }
 
