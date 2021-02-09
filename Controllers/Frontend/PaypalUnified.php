@@ -304,6 +304,8 @@ class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_F
             $instructionService->createInstructions($orderNumber, $instructions);
         }
 
+        $orderDataService->applyPaymentTypeAttribute((string) $orderNumber, $response, $isExpressCheckout, $isSpbCheckout);
+
         $redirectParameter = [
             'module' => 'frontend',
             'controller' => 'checkout',
