@@ -92,7 +92,7 @@ class PaymentMethodProvider
      */
     public function getPaymentId(Connection $connection)
     {
-        $sql = 'SELECT `id` FROM s_core_paymentmeans WHERE `name`=:paymentName';
+        $sql = 'SELECT `id` FROM s_core_paymentmeans WHERE `name`=:paymentName AND active = 1';
 
         return (int) $connection->fetchColumn($sql, [
             ':paymentName' => self::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME,
@@ -106,7 +106,7 @@ class PaymentMethodProvider
      */
     public function getInstallmentPaymentId(Connection $connection)
     {
-        $sql = 'SELECT `id` FROM s_core_paymentmeans WHERE `name`=:paymentName';
+        $sql = 'SELECT `id` FROM s_core_paymentmeans WHERE `name`=:paymentName AND active = 1';
 
         return (int) $connection->fetchColumn($sql, [
             ':paymentName' => 'SwagPaymentPayPalUnifiedInstallments',
