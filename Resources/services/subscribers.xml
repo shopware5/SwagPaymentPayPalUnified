@@ -162,7 +162,8 @@
         </service>
 
         <service id="paypal_unified.subscriber.risk_management"
-                 class="SwagPaymentPayPalUnified\Subscriber\RiskManagement">
+                 class="SwagPaymentPayPalUnified\Subscriber\RiskManagement"
+                 public="true">
             <argument type="service" id="paypal_unified.risk_management_helper"/>
             <argument type="service" id="template"/>
             <tag name="shopware.event_subscriber"/>
