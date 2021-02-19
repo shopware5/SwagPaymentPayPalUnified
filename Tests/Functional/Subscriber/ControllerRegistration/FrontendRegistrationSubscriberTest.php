@@ -13,13 +13,13 @@ use SwagPaymentPayPalUnified\Subscriber\ControllerRegistration\Frontend;
 
 class FrontendRegistrationSubscriberTest extends TestCase
 {
-    public function test_can_be_created()
+    public function testCanBeCreated()
     {
         $subscriber = new Frontend(Shopware()->Container()->getParameter('paypal_unified.plugin_dir'));
         static::assertNotNull($subscriber);
     }
 
-    public function test_getSubscribedEvents()
+    public function testGetSubscribedEvents()
     {
         $events = Frontend::getSubscribedEvents();
         static::assertCount(2, $events);
@@ -27,7 +27,7 @@ class FrontendRegistrationSubscriberTest extends TestCase
         static::assertSame('onGetUnifiedControllerPath', $events['Enlight_Controller_Dispatcher_ControllerPath_Frontend_PaypalUnified']);
     }
 
-    public function test_onGetWebhookControllerPath()
+    public function testOnGetWebhookControllerPath()
     {
         $subscriber = new Frontend(Shopware()->Container()->getParameter('paypal_unified.plugin_dir'));
         $path = $subscriber->onGetWebhookControllerPath();
@@ -35,7 +35,7 @@ class FrontendRegistrationSubscriberTest extends TestCase
         static::assertFileExists($path);
     }
 
-    public function test_onGetFrontendControllerPath()
+    public function testOnGetFrontendControllerPath()
     {
         $subscriber = new Frontend(Shopware()->Container()->getParameter('paypal_unified.plugin_dir'));
         $path = $subscriber->onGetUnifiedControllerPath();

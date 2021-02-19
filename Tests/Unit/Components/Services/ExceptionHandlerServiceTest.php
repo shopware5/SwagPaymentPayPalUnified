@@ -15,7 +15,7 @@ use SwagPaymentPayPalUnified\Tests\Mocks\LoggerMock;
 
 class ExceptionHandlerServiceTest extends TestCase
 {
-    public function test_create_service()
+    public function testCreateService()
     {
         $loggerMock = new LoggerMock();
         $result = $this->getHandler($loggerMock);
@@ -23,7 +23,7 @@ class ExceptionHandlerServiceTest extends TestCase
         static::assertInstanceOf(ExceptionHandlerService::class, $result);
     }
 
-    public function test_exception()
+    public function testException()
     {
         $loggerMock = new LoggerMock();
         $handler = $this->getHandler($loggerMock);
@@ -43,7 +43,7 @@ class ExceptionHandlerServiceTest extends TestCase
         static::assertEquals(['message' => 'test message'], $logErrors['Could not testing due to a communication failure']);
     }
 
-    public function test_requestException_without_body()
+    public function testRequestExceptionWithoutBody()
     {
         $loggerMock = new LoggerMock();
         $handler = $this->getHandler($loggerMock);
@@ -63,7 +63,7 @@ class ExceptionHandlerServiceTest extends TestCase
         static::assertEquals(['message' => 'test message', 'payload' => null], $logErrors['Could not testing due to a communication failure']);
     }
 
-    public function test_requestException_with_body_but_no_array()
+    public function testRequestExceptionWithBodyButNoArray()
     {
         $loggerMock = new LoggerMock();
         $handler = $this->getHandler($loggerMock);
@@ -86,7 +86,7 @@ class ExceptionHandlerServiceTest extends TestCase
         static::assertEquals(['message' => 'test message', 'payload' => 'test'], $logError);
     }
 
-    public function test_requestException_generic_error()
+    public function testRequestExceptionGenericError()
     {
         $loggerMock = new LoggerMock();
         $handler = $this->getHandler($loggerMock);
@@ -115,7 +115,7 @@ class ExceptionHandlerServiceTest extends TestCase
         );
     }
 
-    public function test_requestException_no_error_struct()
+    public function testRequestExceptionNoErrorStruct()
     {
         $loggerMock = new LoggerMock();
         $handler = $this->getHandler($loggerMock);
@@ -138,7 +138,7 @@ class ExceptionHandlerServiceTest extends TestCase
         static::assertEquals(['message' => 'test message', 'payload' => '[]'], $logError);
     }
 
-    public function test_requestException_error_response()
+    public function testRequestExceptionErrorResponse()
     {
         $loggerMock = new LoggerMock();
         $handler = $this->getHandler($loggerMock);
@@ -171,7 +171,7 @@ class ExceptionHandlerServiceTest extends TestCase
         );
     }
 
-    public function test_requestException_error_response_details()
+    public function testRequestExceptionErrorResponseDetails()
     {
         $loggerMock = new LoggerMock();
         $handler = $this->getHandler($loggerMock);

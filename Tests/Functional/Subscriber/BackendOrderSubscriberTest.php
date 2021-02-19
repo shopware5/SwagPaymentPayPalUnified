@@ -18,20 +18,20 @@ class BackendOrderSubscriberTest extends TestCase
 {
     use DatabaseTestCaseTrait;
 
-    public function test_can_be_created()
+    public function testCanBeCreated()
     {
         $subscriber = $this->getBackendOrderSubscriber();
         static::assertNotNull($subscriber);
     }
 
-    public function test_getSubscribedEvents_has_correct_events()
+    public function testGetSubscribedEventsHasCorrectEvents()
     {
         $events = BackendOrder::getSubscribedEvents();
         static::assertCount(1, $events);
         static::assertSame('onPostDispatchOrder', $events['Enlight_Controller_Action_PostDispatchSecure_Backend_Order']);
     }
 
-    public function test_onPostDispatchOrder_wrong_action()
+    public function testOnPostDispatchOrderWrongAction()
     {
         $view = new ViewMock(new \Enlight_Template_Manager());
         $request = new \Enlight_Controller_Request_RequestTestCase();
@@ -46,7 +46,7 @@ class BackendOrderSubscriberTest extends TestCase
         static::assertNull($result);
     }
 
-    public function test_onPostDispatchOrder_getList()
+    public function testOnPostDispatchOrderGetList()
     {
         $this->prepareOrderAttributes();
         $view = new ViewMock(new \Enlight_Template_Manager());

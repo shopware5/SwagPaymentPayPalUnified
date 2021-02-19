@@ -17,15 +17,15 @@ class RiskManagementTest extends TestCase
 {
     use DatabaseTestCaseTrait;
 
-    public function test_onCheckProductCategoryFrom()
+    public function testOnCheckProductCategoryFrom()
     {
         $eventArgs = $this->getEventArgs();
 
-        static::assertTrue($this->getSubscriber()->onCheckProductCategoryFrom($eventArgs));
-        static::assertTrue($eventArgs->getReturn());
+        static::assertNull($this->getSubscriber()->onCheckProductCategoryFrom($eventArgs));
+        static::assertNull($eventArgs->getReturn());
     }
 
-    public function test_onCheckProductCategoryFrom_productIsNotInCategory()
+    public function testOnCheckProductCategoryFromProductIsNotInCategory()
     {
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_product_in_category.sql');
         Shopware()->Container()->get('dbal_connection')->exec($sql);
@@ -39,12 +39,13 @@ class RiskManagementTest extends TestCase
         static::assertNull($eventArgs->getReturn());
     }
 
-    public function test_onCheckProductCategoryFrom_productIsInCategory()
+    public function testOnCheckProductCategoryFromProductIsInCategory()
     {
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_product_in_category.sql');
         Shopware()->Container()->get('dbal_connection')->exec($sql);
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::CATEGORY_ID_SESSION_NAME, null);
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::PRODUCT_ID_SESSION_NAME, 178);
+        $this->setRequestParameterToFront();
 
         $eventArgs = $this->getEventArgs();
         $eventArgs->set('value', 6);
@@ -53,29 +54,31 @@ class RiskManagementTest extends TestCase
         static::assertTrue($eventArgs->getReturn());
     }
 
-    public function test_onCheckProductCategoryFrom_categoryIsNotAmongTheParents()
+    public function testOnCheckProductCategoryFromCategoryIsNotAmongTheParents()
     {
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_product_in_category.sql');
         Shopware()->Container()->get('dbal_connection')->exec($sql);
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::PRODUCT_ID_SESSION_NAME, null);
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::CATEGORY_ID_SESSION_NAME, 7);
+        $this->setRequestParameterToFront('frontend', 'listing');
 
         $eventArgs = $this->getEventArgs();
         $eventArgs->set('value', 3);
 
-        $templateResult = Shopware()->Container()->get('template')->getTemplateVars('riskManagementMatchedProducts');
-
         static::assertNull($this->getSubscriber()->onCheckProductCategoryFrom($eventArgs));
         static::assertNull($eventArgs->getReturn());
+
+        $templateResult = Shopware()->Container()->get('template')->getTemplateVars('riskManagementMatchedProducts');
         static::assertNotEmpty($templateResult);
     }
 
-    public function test_onCheckProductCategoryFrom_categoryIsAmongTheParents()
+    public function testOnCheckProductCategoryFromCategoryIsAmongTheParents()
     {
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_product_in_category.sql');
         Shopware()->Container()->get('dbal_connection')->exec($sql);
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::PRODUCT_ID_SESSION_NAME, null);
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::CATEGORY_ID_SESSION_NAME, 6);
+        $this->setRequestParameterToFront('frontend', 'listing');
 
         $eventArgs = $this->getEventArgs();
         $eventArgs->set('value', 3);
@@ -84,20 +87,42 @@ class RiskManagementTest extends TestCase
         static::assertTrue($eventArgs->getReturn());
     }
 
-    public function test_onCheckRiskAttribIsNot()
+    public function testOnCheckProductCategoryFromIsNotInAcceptedList()
     {
-        $eventArgs = $this->getEventArgs();
+        Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::PRODUCT_ID_SESSION_NAME, null);
+        Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::CATEGORY_ID_SESSION_NAME, null);
+        $this->setRequestParameterToFront('frontend', 'listing', 'notAcceptedAction');
 
-        static::assertTrue($this->getSubscriber()->onCheckRiskAttribIsNot($eventArgs));
-        static::assertTrue($eventArgs->getReturn());
+        static::assertNull($this->getSubscriber()->onCheckProductCategoryFrom($this->getEventArgs()));
     }
 
-    public function test_onCheckRiskAttribIsNot_productAttributeMatched()
+    public function testOnCheckProductCategoryFromIsInAcceptedList()
+    {
+        Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::PRODUCT_ID_SESSION_NAME, null);
+        Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::CATEGORY_ID_SESSION_NAME, null);
+        $this->setRequestParameterToFront('frontend', 'listing');
+
+        static::assertTrue($this->getSubscriber()->onCheckProductCategoryFrom($this->getEventArgs()));
+    }
+
+    public function testOnCheckRiskAttribIsNot()
+    {
+        $eventArgs = $this->getEventArgs();
+        Shopware()->Container()->reset('front');
+
+        $this->setRequestParameterToFront('frontend', 'notAcceptedController');
+
+        static::assertNull($this->getSubscriber()->onCheckRiskAttribIsNot($eventArgs));
+        static::assertNull($eventArgs->getReturn());
+    }
+
+    public function testOnCheckRiskAttribIsNotProductAttributeMatched()
     {
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_product_attr_is.sql');
         Shopware()->Container()->get('dbal_connection')->exec($sql);
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::CATEGORY_ID_SESSION_NAME, null);
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::PRODUCT_ID_SESSION_NAME, 178);
+        $this->setRequestParameterToFront('frontend', 'listing');
 
         $eventArgs = $this->getEventArgs();
         $eventArgs->set('value', 'attr1|2');
@@ -106,7 +131,7 @@ class RiskManagementTest extends TestCase
         static::assertNull($eventArgs->getReturn());
     }
 
-    public function test_onCheckRiskAttribIsNot_productAttributeMatchedInCategory()
+    public function testOnCheckRiskAttribIsNotProductAttributeMatchedInCategory()
     {
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_product_attr_is.sql');
         Shopware()->Container()->get('dbal_connection')->exec($sql);
@@ -120,7 +145,7 @@ class RiskManagementTest extends TestCase
         static::assertNull($eventArgs->getReturn());
     }
 
-    public function test_onCheckRiskAttribIs()
+    public function testOnCheckRiskAttribIs()
     {
         $eventArgs = $this->getEventArgs();
 
@@ -128,12 +153,13 @@ class RiskManagementTest extends TestCase
         static::assertNull($eventArgs->getReturn());
     }
 
-    public function test_onCheckRiskAttribIs_product_returnshouldBeTrue()
+    public function testOnCheckRiskAttribIsProductReturnshouldBeTrue()
     {
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_product_attr_is.sql');
         Shopware()->Container()->get('dbal_connection')->exec($sql);
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::CATEGORY_ID_SESSION_NAME, null);
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::PRODUCT_ID_SESSION_NAME, 178);
+        $this->setRequestParameterToFront('frontend', 'listing');
 
         $eventArgs = $this->getEventArgs();
         $eventArgs->set('value', 'attr1|2');
@@ -142,13 +168,13 @@ class RiskManagementTest extends TestCase
         static::assertTrue($eventArgs->getReturn());
     }
 
-    public function test_onCheckRiskAttribIs_category_returnshouldBeNull_templateShouldContain()
+    public function testOnCheckRiskAttribIsCategoryReturnshouldBeNullTemplateShouldContain()
     {
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_product_attr_is.sql');
         Shopware()->Container()->get('dbal_connection')->exec($sql);
         Shopware()->Container()->get('session')->offsetUnset(RiskManagementInterface::PRODUCT_ID_SESSION_NAME);
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::CATEGORY_ID_SESSION_NAME, 6);
-
+        $this->setRequestParameterToFront('frontend', 'listing');
         $eventArgs = $this->getEventArgs();
         $eventArgs->set('value', 'attr1|2');
 
@@ -167,7 +193,8 @@ class RiskManagementTest extends TestCase
     {
         return new RiskManagement(
             Shopware()->Container()->get('paypal_unified.risk_management_helper'),
-            Shopware()->Container()->get('template')
+            Shopware()->Container()->get('template'),
+            Shopware()->Container()->get('paypal_unified.dependency_provider')
         );
     }
 
@@ -177,5 +204,13 @@ class RiskManagementTest extends TestCase
     private function getEventArgs()
     {
         return new \Enlight_Event_EventArgs();
+    }
+
+    private function setRequestParameterToFront($module = 'frontend', $controller = 'listing', $action = 'index')
+    {
+        Shopware()->Container()->get('front')->setRequest(new \Enlight_Controller_Request_RequestHttp());
+        Shopware()->Container()->get('front')->Request()->setActionName($action);
+        Shopware()->Container()->get('front')->Request()->setControllerName($controller);
+        Shopware()->Container()->get('front')->Request()->setModuleName($module);
     }
 }

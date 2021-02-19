@@ -16,7 +16,7 @@ class RiskManagementServiceTest extends TestCase
 {
     use DatabaseTestCaseTrait;
 
-    public function test_isPayPalNotAllowed()
+    public function testIsPayPalNotAllowed()
     {
         Shopware()->Front()->setRequest(new \Enlight_Controller_Request_RequestHttp());
         Shopware()->Front()->setResponse(new \Enlight_Controller_Response_ResponseHttp());
@@ -24,24 +24,28 @@ class RiskManagementServiceTest extends TestCase
         static::assertFalse($this->getRiskManagement()->isPayPalNotAllowed());
     }
 
-    public function test_isPayPalNotAllowed_testAttrIsNot()
+    public function testIsPayPalNotAllowedTestAttrIsNot()
     {
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_attr_is_not.sql');
         Shopware()->Container()->get('dbal_connection')->exec($sql);
 
-        Shopware()->Front()->setRequest(new \Enlight_Controller_Request_RequestHttp());
+        $request = new \Enlight_Controller_Request_RequestHttp();
+        $this->setRequestParameterToFront($request, 'frontend', 'listing');
+
         Shopware()->Front()->setResponse(new \Enlight_Controller_Response_ResponseHttp());
 
         static::assertFalse($this->getRiskManagement()->isPayPalNotAllowed(178));
         static::assertTrue($this->getRiskManagement()->isPayPalNotAllowed(37));
     }
 
-    public function test_isPayPalNotAllowed_testAttrIsNot_catagory()
+    public function testIsPayPalNotAllowedTestAttrIsNotCatagory()
     {
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_attr_is_not.sql');
         Shopware()->Container()->get('dbal_connection')->exec($sql);
 
-        Shopware()->Front()->setRequest(new \Enlight_Controller_Request_RequestHttp());
+        $request = new \Enlight_Controller_Request_RequestHttp();
+        $this->setRequestParameterToFront($request, 'frontend', 'detail');
+
         Shopware()->Front()->setResponse(new \Enlight_Controller_Response_ResponseHttp());
 
         static::assertFalse($this->getRiskManagement()->isPayPalNotAllowed(null, 6));
@@ -54,24 +58,28 @@ class RiskManagementServiceTest extends TestCase
         }
     }
 
-    public function test_isPayPalNotAllowed_testAttrIs()
+    public function testIsPayPalNotAllowedTestAttrIs()
     {
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_attr_is.sql');
         Shopware()->Container()->get('dbal_connection')->exec($sql);
 
-        Shopware()->Front()->setRequest(new \Enlight_Controller_Request_RequestHttp());
+        $request = new \Enlight_Controller_Request_RequestHttp();
+        $this->setRequestParameterToFront($request, 'frontend', 'detail');
+
         Shopware()->Front()->setResponse(new \Enlight_Controller_Response_ResponseHttp());
 
         static::assertTrue($this->getRiskManagement()->isPayPalNotAllowed(178));
         static::assertFalse($this->getRiskManagement()->isPayPalNotAllowed(37));
     }
 
-    public function test_isPayPalNotAllowed_testAttrIs_category()
+    public function testIsPayPalNotAllowedTestAttrIsCategory()
     {
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_attr_is.sql');
         Shopware()->Container()->get('dbal_connection')->exec($sql);
 
-        Shopware()->Front()->setRequest(new \Enlight_Controller_Request_RequestHttp());
+        $request = new \Enlight_Controller_Request_RequestHttp();
+        $this->setRequestParameterToFront($request, 'frontend', 'detail');
+
         Shopware()->Front()->setResponse(new \Enlight_Controller_Response_ResponseHttp());
 
         static::assertFalse($this->getRiskManagement()->isPayPalNotAllowed(null, 6));
@@ -84,23 +92,28 @@ class RiskManagementServiceTest extends TestCase
         }
     }
 
-    public function test_isPayPalNotAllowed_isProductInCategory()
+    public function testIsPayPalNotAllowedIsProductInCategory()
     {
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_product_in_category.sql');
         Shopware()->Container()->get('dbal_connection')->exec($sql);
 
-        Shopware()->Front()->setRequest(new \Enlight_Controller_Request_RequestHttp());
+        $request = new \Enlight_Controller_Request_RequestHttp();
+        $this->setRequestParameterToFront($request, 'frontend', 'detail');
+
         Shopware()->Front()->setResponse(new \Enlight_Controller_Response_ResponseHttp());
 
         static::assertTrue($this->getRiskManagement()->isPayPalNotAllowed('178'));
     }
 
-    public function test_isPayPalNotAllowed_isProductInCategory_byCategory()
+    public function testIsPayPalNotAllowedIsProductInCategoryByCategory()
     {
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_product_in_category.sql');
         Shopware()->Container()->get('dbal_connection')->exec($sql);
 
-        Shopware()->Front()->setRequest(new \Enlight_Controller_Request_RequestHttp());
+        $request = new \Enlight_Controller_Request_RequestHttp();
+        $this->setRequestParameterToFront($request, 'frontend', 'detail');
+
+        Shopware()->Front()->setRequest($request);
         Shopware()->Front()->setResponse(new \Enlight_Controller_Response_ResponseHttp());
 
         static::assertTrue($this->getRiskManagement()->isPayPalNotAllowed(null, '6'));
@@ -112,5 +125,17 @@ class RiskManagementServiceTest extends TestCase
             Shopware()->Container()->get('paypal_unified.dependency_provider'),
             Shopware()->Container()->get('dbal_connection')
         );
+    }
+
+    private function setRequestParameterToFront(
+        \Enlight_Controller_Request_RequestHttp $request,
+        $module = 'frontend',
+        $controller = 'listing',
+        $action = 'index'
+    ) {
+        Shopware()->Container()->get('front')->setRequest($request);
+        Shopware()->Container()->get('front')->Request()->setActionName($action);
+        Shopware()->Container()->get('front')->Request()->setControllerName($controller);
+        Shopware()->Container()->get('front')->Request()->setModuleName($module);
     }
 }

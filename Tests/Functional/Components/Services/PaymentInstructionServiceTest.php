@@ -29,12 +29,12 @@ class PaymentInstructionServiceTest extends TestCase
     const TEST_BANK_BANK_NAME = 'TEST_BANK';
     const TEST_BANK_ACCOUNT_HOLDER = 'TEST_ACCOUNT_HOLDER';
 
-    public function test_service_is_available()
+    public function testServiceIsAvailable()
     {
         static::assertNotNull(Shopware()->Container()->get('paypal_unified.payment_instruction_service'));
     }
 
-    public function test_getInstruction()
+    public function testGetInstruction()
     {
         /** @var PaymentInstructionService $instructionsService */
         $instructionsService = Shopware()->Container()->get('paypal_unified.payment_instruction_service');

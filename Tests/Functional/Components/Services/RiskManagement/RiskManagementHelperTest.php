@@ -19,7 +19,7 @@ class RiskManagementHelperTest extends TestCase
 {
     use DatabaseTestCaseTrait;
 
-    public function test_createAttribute()
+    public function testCreateAttribute()
     {
         $helper = $this->getHelper();
         $attribute = $helper->createAttribute('attr1|FooBar');
@@ -29,7 +29,7 @@ class RiskManagementHelperTest extends TestCase
         static::assertSame('FooBar', $attribute->getAttributeValue());
     }
 
-    public function test_createContext()
+    public function testCreateContext()
     {
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::PRODUCT_ID_SESSION_NAME, 178);
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::CATEGORY_ID_SESSION_NAME, 6);
@@ -45,7 +45,7 @@ class RiskManagementHelperTest extends TestCase
         static::assertSame(6, $context->getSessionCategoryId());
     }
 
-    public function test_isProductInCategory_shouldBeTrue()
+    public function testIsProductInCategoryShouldBeTrue()
     {
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::PRODUCT_ID_SESSION_NAME, 178);
 
@@ -57,7 +57,7 @@ class RiskManagementHelperTest extends TestCase
         static::assertTrue($result);
     }
 
-    public function test_isProductInCategory_shouldBeFalse()
+    public function testIsProductInCategoryShouldBeFalse()
     {
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::PRODUCT_ID_SESSION_NAME, 2);
 
@@ -69,7 +69,7 @@ class RiskManagementHelperTest extends TestCase
         static::assertfalse($result);
     }
 
-    public function test_isCategoryAmongTheParents_shouldBeTrue()
+    public function testIsCategoryAmongTheParentsShouldBeTrue()
     {
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::PRODUCT_ID_SESSION_NAME, 178);
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::CATEGORY_ID_SESSION_NAME, 6);
@@ -82,7 +82,7 @@ class RiskManagementHelperTest extends TestCase
         static::assertTrue($result);
     }
 
-    public function test_isCategoryAmongTheParents_shouldBeFalse()
+    public function testIsCategoryAmongTheParentsShouldBeFalse()
     {
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::PRODUCT_ID_SESSION_NAME, 178);
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::CATEGORY_ID_SESSION_NAME, 12);
@@ -95,7 +95,7 @@ class RiskManagementHelperTest extends TestCase
         static::assertfalse($result);
     }
 
-    public function test_hasProductAttributeValue_shouldBeTrue()
+    public function testHasProductAttributeValueShouldBeTrue()
     {
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::PRODUCT_ID_SESSION_NAME, 178);
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::CATEGORY_ID_SESSION_NAME, 6);
@@ -111,7 +111,7 @@ class RiskManagementHelperTest extends TestCase
         static::assertTrue($result);
     }
 
-    public function test_hasProductAttributeValue_shouldBeFalse()
+    public function testHasProductAttributeValueShouldBeFalse()
     {
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::PRODUCT_ID_SESSION_NAME, 178);
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::CATEGORY_ID_SESSION_NAME, 6);
@@ -124,7 +124,7 @@ class RiskManagementHelperTest extends TestCase
         static::assertFalse($result);
     }
 
-    public function test_getProductOrdernumbersMatchedAttribute()
+    public function testGetProductOrdernumbersMatchedAttribute()
     {
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::PRODUCT_ID_SESSION_NAME, 178);
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::CATEGORY_ID_SESSION_NAME, 6);
@@ -141,7 +141,7 @@ class RiskManagementHelperTest extends TestCase
         static::assertSame('SW10178', $result[0]);
     }
 
-    public function test_getProductIOrdernumbersNotMatchedAttribute()
+    public function testGetProductIOrdernumbersNotMatchedAttribute()
     {
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::PRODUCT_ID_SESSION_NAME, 178);
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::CATEGORY_ID_SESSION_NAME, 6);
@@ -161,7 +161,7 @@ class RiskManagementHelperTest extends TestCase
         static::assertSame('SW10178', $result[0]);
     }
 
-    public function test_hasProductAttributeValue_withInvalidAttribute()
+    public function testHasProductAttributeValueWithInvalidAttribute()
     {
         $helper = $this->getHelper();
         $context = $helper->createContext(new Attribute([]), 1);
@@ -171,7 +171,7 @@ class RiskManagementHelperTest extends TestCase
         static::assertFalse($result);
     }
 
-    public function test_getProductOrdernumbersMatchedAttribute_withInvalidAttribute()
+    public function testGetProductOrdernumbersMatchedAttributeWithInvalidAttribute()
     {
         $helper = $this->getHelper();
         $context = $helper->createContext(new Attribute([]), 1);
@@ -181,7 +181,7 @@ class RiskManagementHelperTest extends TestCase
         static::assertEmpty($result);
     }
 
-    public function test_getProductOrdernumbersNotMatchedAttribute_withInvalidAttribute()
+    public function testGetProductOrdernumbersNotMatchedAttributeWithInvalidAttribute()
     {
         $helper = $this->getHelper();
         $context = $helper->createContext(new Attribute([]), 1);
@@ -191,7 +191,7 @@ class RiskManagementHelperTest extends TestCase
         static::assertEmpty($result);
     }
 
-    public function test_getProductOrderNumbersInCategory_shouldReturnAEmptyArray()
+    public function testGetProductOrderNumbersInCategoryShouldReturnAEmptyArray()
     {
         $helper = $this->getHelper();
         $context = $helper->createContext(new Attribute([]), 99);
@@ -201,7 +201,7 @@ class RiskManagementHelperTest extends TestCase
         static::assertEmpty($result);
     }
 
-    public function test_getProductOrderNumbersInCategory_shouldReturnANotEmptyArray()
+    public function testGetProductOrderNumbersInCategoryShouldReturnANotEmptyArray()
     {
         $helper = $this->getHelper();
         $context = $helper->createContext(new Attribute([]), 6);

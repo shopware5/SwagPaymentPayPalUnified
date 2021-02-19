@@ -15,33 +15,33 @@ use SwagPaymentPayPalUnified\Components\DependencyProvider;
 
 class DependencyProviderTest extends TestCase
 {
-    public function test_service_available()
+    public function testServiceAvailable()
     {
         static::assertSame(DependencyProvider::class, \get_class(Shopware()->Container()->get('paypal_unified.dependency_provider')));
     }
 
-    public function test_can_be_constructed()
+    public function testCanBeConstructed()
     {
         $dp = new DependencyProvider(Shopware()->Container());
 
         static::assertNotNull($dp);
     }
 
-    public function test_getShop_return_shop()
+    public function testGetShopReturnShop()
     {
         $dp = new DependencyProvider(Shopware()->Container());
 
         static::assertSame(DetachedShop::class, \get_class($dp->getShop()));
     }
 
-    public function test_getShop_return_null()
+    public function testGetShopReturnNull()
     {
         $dp = new DependencyProvider(new ContainerMockWithNoShop());
 
         static::assertNull($dp->getShop());
     }
 
-    public function test_getModule_has_module()
+    public function testGetModuleHasModule()
     {
         $dp = new DependencyProvider(Shopware()->Container());
 

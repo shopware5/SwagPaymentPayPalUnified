@@ -14,20 +14,20 @@ use SwagPaymentPayPalUnified\Subscriber\CookieConsent;
 
 class CookieConsentTest extends TestCase
 {
-    public function test_can_be_created()
+    public function testCanBeCreated()
     {
         $subscriber = $this->getSubscriber();
         static::assertNotNull($subscriber);
     }
 
-    public function test_getSubscribedEvents_has_correct_events()
+    public function testGetSubscribedEventsHasCorrectEvents()
     {
         $events = CookieConsent::getSubscribedEvents();
         static::assertCount(1, $events);
         static::assertSame('addPayPalCookie', $events['CookieCollector_Collect_Cookies']);
     }
 
-    public function test_addPayPalCookie()
+    public function testAddPayPalCookie()
     {
         $cookieCollection = $this->getSubscriber()->addPayPalCookie();
         static::assertNotNull($cookieCollection);

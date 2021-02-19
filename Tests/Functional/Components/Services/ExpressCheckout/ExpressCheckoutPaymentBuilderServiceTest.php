@@ -18,13 +18,13 @@ use SwagPaymentPayPalUnified\Tests\Functional\Components\Services\Mock\SettingsS
 
 class ExpressCheckoutPaymentBuilderServiceTest extends TestCase
 {
-    public function test_serviceIsAvailable()
+    public function testServiceIsAvailable()
     {
         $service = Shopware()->Container()->get('paypal_unified.express_checkout.payment_builder_service');
         static::assertSame(ExpressCheckoutPaymentBuilderService::class, \get_class($service));
     }
 
-    public function test_getPayment_has_currency()
+    public function testGetPaymentHasCurrency()
     {
         $request = $this->getRequestData();
 
@@ -35,7 +35,7 @@ class ExpressCheckoutPaymentBuilderServiceTest extends TestCase
         }
     }
 
-    public function test_getPayment_has_plus_basketId()
+    public function testGetPaymentHasPlusBasketId()
     {
         $request = $this->getRequestData();
 

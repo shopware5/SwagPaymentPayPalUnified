@@ -22,20 +22,20 @@ class PaymentMeansSubscriberTest extends TestCase
     use PayPalUnifiedPaymentIdTrait;
     use SettingsHelperTrait;
 
-    public function test_can_be_created()
+    public function testCanBeCreated()
     {
         $subscriber = $this->getSubscriber();
         static::assertSame(PaymentMeans::class, \get_class($subscriber));
     }
 
-    public function test_getSubscribedEvents()
+    public function testGetSubscribedEvents()
     {
         $events = PaymentMeans::getSubscribedEvents();
         static::assertCount(1, $events);
         static::assertSame('onFilterPaymentMeans', $events['Shopware_Modules_Admin_GetPaymentMeans_DataFilter']);
     }
 
-    public function test_onFilterPaymentMeans_without_available_methods()
+    public function testOnFilterPaymentMeansWithoutAvailableMethods()
     {
         $subscriber = $this->getSubscriber();
 
@@ -45,7 +45,7 @@ class PaymentMeansSubscriberTest extends TestCase
         static::assertCount(0, $args->result);
     }
 
-    public function test_onFilterPaymentMeans_without_unified_method()
+    public function testOnFilterPaymentMeansWithoutUnifiedMethod()
     {
         $subscriber = $this->getSubscriber();
 
@@ -55,7 +55,7 @@ class PaymentMeansSubscriberTest extends TestCase
         static::assertCount(5, $args->result);
     }
 
-    public function test_onFilterPaymentMeans_has_unified_method()
+    public function testOnFilterPaymentMeansHasUnifiedMethod()
     {
         $subscriber = $this->getSubscriber(false);
         $this->createTestSettings();
@@ -68,7 +68,7 @@ class PaymentMeansSubscriberTest extends TestCase
         static::assertSame($this->getUnifiedPaymentId(), $result[5]['id']);
     }
 
-    public function test_onFilterPaymentMeans_has_no_unified_method_because_the_settings_dont_exist()
+    public function testOnFilterPaymentMeansHasNoUnifiedMethodBecauseTheSettingsDontExist()
     {
         $subscriber = $this->getSubscriber(false);
         $this->createTestSettings(false);

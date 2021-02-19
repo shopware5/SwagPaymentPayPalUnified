@@ -23,7 +23,7 @@ class SimpleBasketValidatorTest extends TestCase
      * @param float    $totalAmount
      * @param bool     $expectedResult
      */
-    public function test_is_valid($amountNumeric, $amountNetNumeric, $chargeVat, $totalAmount, $expectedResult)
+    public function testIsValid($amountNumeric, $amountNetNumeric, $chargeVat, $totalAmount, $expectedResult)
     {
         $basketData = [
             'AmountNumeric' => $amountNumeric,
@@ -56,7 +56,7 @@ class SimpleBasketValidatorTest extends TestCase
         ];
     }
 
-    public function test_is_invalid()
+    public function testIsInvalid()
     {
         $basketData = ['AmountNumeric' => 14.32];
         $userData = [];
@@ -72,7 +72,7 @@ class SimpleBasketValidatorTest extends TestCase
         static::assertFalse($this->getBasketValidator()->validate($basketData, $userData, $payment));
     }
 
-    public function test_is_valid_with_charge_vat()
+    public function testIsValidWithChargeVat()
     {
         $basketData = ['AmountNumeric' => 14.31, 'AmountWithTaxNumeric' => 17.03];
         $userData = ['additional' => ['charge_vat' => true]];
@@ -88,7 +88,7 @@ class SimpleBasketValidatorTest extends TestCase
         static::assertTrue($this->getBasketValidator()->validate($basketData, $userData, $payment));
     }
 
-    public function test_is_invalid_with_charge_vat()
+    public function testIsInvalidWithChargeVat()
     {
         $basketData = ['AmountNumeric' => 14.31, 'AmountWithTaxNumeric' => 17.03];
         $userData = ['additional' => ['charge_vat' => true]];

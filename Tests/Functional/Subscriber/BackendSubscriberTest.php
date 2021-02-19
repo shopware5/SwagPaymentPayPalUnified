@@ -16,13 +16,13 @@ use SwagPaymentPayPalUnified\Tests\Mocks\ViewMock;
 
 class BackendSubscriberTest extends TestCase
 {
-    public function test_can_be_created()
+    public function testCanBeCreated()
     {
         $subscriber = new Backend(__DIR__);
         static::assertNotNull($subscriber);
     }
 
-    public function test_getSubscribedEvents_has_correct_events()
+    public function testGetSubscribedEventsHasCorrectEvents()
     {
         $events = Backend::getSubscribedEvents();
         static::assertSame('onLoadBackendIndex', $events['Enlight_Controller_Action_PostDispatchSecure_Backend_Index']);
@@ -30,7 +30,7 @@ class BackendSubscriberTest extends TestCase
         static::assertCount(2, $events);
     }
 
-    public function test_onLoadBackendIndex_extends_template()
+    public function testOnLoadBackendIndexExtendsTemplate()
     {
         $subscriber = new Backend(Shopware()->Container()->getParameter('paypal_unified.plugin_dir'));
 
@@ -50,7 +50,7 @@ class BackendSubscriberTest extends TestCase
         static::assertCount(1, $view->getTemplateDir());
     }
 
-    public function test_onPostDispatchConfig_extends_template()
+    public function testOnPostDispatchConfigExtendsTemplate()
     {
         $subscriber = new Backend(Shopware()->Container()->getParameter('paypal_unified.plugin_dir'));
 

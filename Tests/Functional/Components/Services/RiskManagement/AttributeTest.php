@@ -13,7 +13,7 @@ use SwagPaymentPayPalUnified\Components\Services\RiskManagement\Attribute;
 
 class AttributeTest extends TestCase
 {
-    public function test_attribute_shouldBeNull()
+    public function testAttributeShouldBeNull()
     {
         $attribute = new Attribute([]);
 
@@ -21,7 +21,7 @@ class AttributeTest extends TestCase
         static::assertNull($attribute->getAttributeValue());
     }
 
-    public function test_attribute_shouldNotBeNull()
+    public function testAttributeShouldNotBeNull()
     {
         $attribute = new Attribute(['foo', 'bar']);
 

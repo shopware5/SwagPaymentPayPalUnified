@@ -21,14 +21,14 @@ class InContextSubscriberTest extends TestCase
     use DatabaseTestCaseTrait;
     use SettingsHelperTrait;
 
-    public function test_construct()
+    public function testConstruct()
     {
         $subscriber = $this->getSubscriber();
 
         static::assertNotNull($subscriber);
     }
 
-    public function test_getSubscribedEvents()
+    public function testGetSubscribedEvents()
     {
         $events = InContext::getSubscribedEvents();
 
@@ -38,7 +38,7 @@ class InContextSubscriberTest extends TestCase
         static::assertSame('addInContextInfoToRequest', $events['Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout'][1][0]);
     }
 
-    public function test_addInContextButton_return_wrong_action()
+    public function testAddInContextButtonReturnWrongAction()
     {
         $view = new ViewMock(new \Enlight_Template_Manager());
         $request = new \Enlight_Controller_Request_RequestTestCase();
@@ -54,7 +54,7 @@ class InContextSubscriberTest extends TestCase
         static::assertNull($view->getAssign('paypalUnifiedPaymentId'));
     }
 
-    public function test_addInContextButton_return_unified_inactive()
+    public function testAddInContextButtonReturnUnifiedInactive()
     {
         $paymentMethodProvider = new PaymentMethodProvider(Shopware()->Container()->get('models'));
         $paymentMethodProvider->setPaymentMethodActiveFlag(false);
@@ -77,7 +77,7 @@ class InContextSubscriberTest extends TestCase
         $paymentMethodProvider->setPaymentMethodActiveFlag(true);
     }
 
-    public function test_addInContextButton_return_payment_method_inactive()
+    public function testAddInContextButtonReturnPaymentMethodInactive()
     {
         $view = new ViewMock(new \Enlight_Template_Manager());
         $request = new \Enlight_Controller_Request_RequestTestCase();
@@ -95,7 +95,7 @@ class InContextSubscriberTest extends TestCase
         static::assertNull($view->getAssign('paypalUnifiedPaymentId'));
     }
 
-    public function test_addInContextButton_return_not_use_in_context()
+    public function testAddInContextButtonReturnNotUseInContext()
     {
         $view = new ViewMock(new \Enlight_Template_Manager());
         $request = new \Enlight_Controller_Request_RequestTestCase();
@@ -113,7 +113,7 @@ class InContextSubscriberTest extends TestCase
         static::assertNull($view->getAssign('paypalUnifiedPaymentId'));
     }
 
-    public function test_addInContextButton_return_no_ec_settings()
+    public function testAddInContextButtonReturnNoEcSettings()
     {
         $view = new ViewMock(new \Enlight_Template_Manager());
         $request = new \Enlight_Controller_Request_RequestTestCase();
@@ -131,7 +131,7 @@ class InContextSubscriberTest extends TestCase
         static::assertNull($view->getAssign('paypalUnifiedPaymentId'));
     }
 
-    public function test_addInContextButton_right_template_assigns()
+    public function testAddInContextButtonRightTemplateAssigns()
     {
         $view = new ViewMock(new \Enlight_Template_Manager());
         $request = new \Enlight_Controller_Request_RequestTestCase();
@@ -150,7 +150,7 @@ class InContextSubscriberTest extends TestCase
         static::assertTrue($view->getAssign('paypalUnifiedUseInContext'));
     }
 
-    public function test_addInContextInfoToRequest_returns_because_wrong_action()
+    public function testAddInContextInfoToRequestReturnsBecauseWrongAction()
     {
         $view = new ViewMock(new \Enlight_Template_Manager());
         $request = new \Enlight_Controller_Request_RequestTestCase();
@@ -166,7 +166,7 @@ class InContextSubscriberTest extends TestCase
         static::assertNull($subscriber->addInContextInfoToRequest($enlightEventArgs));
     }
 
-    public function test_addInContextInfoToRequest_returns_because_wrong_param()
+    public function testAddInContextInfoToRequestReturnsBecauseWrongParam()
     {
         $view = new ViewMock(new \Enlight_Template_Manager());
         $request = new \Enlight_Controller_Request_RequestTestCase();
@@ -182,7 +182,7 @@ class InContextSubscriberTest extends TestCase
         static::assertNull($subscriber->addInContextInfoToRequest($enlightEventArgs));
     }
 
-    public function test_addInContextInfoToRequest_returns_because_no_redirect()
+    public function testAddInContextInfoToRequestReturnsBecauseNoRedirect()
     {
         $view = new ViewMock(new \Enlight_Template_Manager());
         $request = new \Enlight_Controller_Request_RequestTestCase();
@@ -202,7 +202,7 @@ class InContextSubscriberTest extends TestCase
         static::assertNull($subscriber->addInContextInfoToRequest($enlightEventArgs));
     }
 
-    public function test_addInContextInfoToRequest_returns_because_redirect()
+    public function testAddInContextInfoToRequestReturnsBecauseRedirect()
     {
         $view = new ViewMock(new \Enlight_Template_Manager());
         $request = new \Enlight_Controller_Request_RequestTestCase();

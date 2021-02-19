@@ -29,13 +29,13 @@ class PlusSubscriberTest extends TestCase
     use DatabaseTestCaseTrait;
     use SettingsHelperTrait;
 
-    public function test_can_be_created()
+    public function testCanBeCreated()
     {
         $subscriber = $this->getSubscriber();
         static::assertNotNull($subscriber);
     }
 
-    public function test_getSubscribedEvents_has_correct_events()
+    public function testGetSubscribedEventsHasCorrectEvents()
     {
         $events = Plus::getSubscribedEvents();
         static::assertSame(
@@ -44,7 +44,7 @@ class PlusSubscriberTest extends TestCase
         );
     }
 
-    public function test_onPostDispatchCheckout_should_return_payment_method_inactive()
+    public function testOnPostDispatchCheckoutShouldReturnPaymentMethodInactive()
     {
         $paymentMethodProvider = new PaymentMethodProvider(Shopware()->Container()->get('models'));
         $paymentMethodProvider->setPaymentMethodActiveFlag(false);
@@ -64,7 +64,7 @@ class PlusSubscriberTest extends TestCase
         $paymentMethodProvider->setPaymentMethodActiveFlag(true);
     }
 
-    public function test_onPostDispatchCheckout_should_return_because_no_settings_exists()
+    public function testOnPostDispatchCheckoutShouldReturnBecauseNoSettingsExists()
     {
         $view = new ViewMock(new Enlight_Template_Manager());
         $request = new Enlight_Controller_Request_RequestTestCase();
@@ -79,7 +79,7 @@ class PlusSubscriberTest extends TestCase
         static::assertNull($view->getAssign('paypalUnifiedUsePlus'));
     }
 
-    public function test_onPostDispatchCheckout_should_return_because_is_express_checkout()
+    public function testOnPostDispatchCheckoutShouldReturnBecauseIsExpressCheckout()
     {
         $view = new ViewMock(new Enlight_Template_Manager());
         $request = new Enlight_Controller_Request_RequestTestCase();
@@ -97,7 +97,7 @@ class PlusSubscriberTest extends TestCase
         static::assertNull($view->getAssign('paypalUnifiedUsePlus'));
     }
 
-    public function test_onPostDispatchCheckout_should_return_because_the_action_is_invalid()
+    public function testOnPostDispatchCheckoutShouldReturnBecauseTheActionIsInvalid()
     {
         $request = new Enlight_Controller_Request_RequestTestCase();
         $request->setActionName('invalidSuperAction');
@@ -115,7 +115,7 @@ class PlusSubscriberTest extends TestCase
         static::assertNull($view->getAssign('paypalUnifiedUsePlus'));
     }
 
-    public function test_onPostDispatchCheckout_should_return_because_plus_is_inactive()
+    public function testOnPostDispatchCheckoutShouldReturnBecausePlusIsInactive()
     {
         $view = new ViewMock(new Enlight_Template_Manager());
         $request = new Enlight_Controller_Request_RequestTestCase();
@@ -133,7 +133,7 @@ class PlusSubscriberTest extends TestCase
         static::assertNull($view->getAssign('paypalUnifiedUsePlus'));
     }
 
-    public function test_onPostDispatchCheckout_should_assign_value_usePayPalPlus()
+    public function testOnPostDispatchCheckoutShouldAssignValueUsePayPalPlus()
     {
         $view = new ViewMock(new Enlight_Template_Manager());
         $request = new Enlight_Controller_Request_RequestTestCase();
@@ -156,7 +156,7 @@ class PlusSubscriberTest extends TestCase
         static::assertTrue((bool) $view->getAssign('paypalUnifiedUsePlus'));
     }
 
-    public function test_onPostDispatchCheckout_should_assign_error_code()
+    public function testOnPostDispatchCheckoutShouldAssignErrorCode()
     {
         $view = new ViewMock(new Enlight_Template_Manager());
         $request = new Enlight_Controller_Request_RequestTestCase();
@@ -181,7 +181,7 @@ class PlusSubscriberTest extends TestCase
         static::assertSame(5, $view->getAssign('paypalUnifiedErrorCode'));
     }
 
-    public function test_onPostDispatchCheckout_overwritePaymentName()
+    public function testOnPostDispatchCheckoutOverwritePaymentName()
     {
         $this->createTestSettings(true, true, false, false, true);
 
@@ -220,7 +220,7 @@ class PlusSubscriberTest extends TestCase
         );
     }
 
-    public function test_onPostDispatchSecure_handleShippingPaymentDispatch_could_not_create_payment_struct()
+    public function testOnPostDispatchSecureHandleShippingPaymentDispatchCouldNotCreatePaymentStruct()
     {
         $this->createTestSettings(true, true, true);
         $paymentMethodProvider = new PaymentMethodProvider(Shopware()->Container()->get('models'));
@@ -242,7 +242,7 @@ class PlusSubscriberTest extends TestCase
         static::assertNull($view->getAssign('paypalUnifiedRestylePaymentSelection'));
     }
 
-    public function test_onPostDispatchSecure_sets_restyle_correctly_if_setting_is_on()
+    public function testOnPostDispatchSecureSetsRestyleCorrectlyIfSettingIsOn()
     {
         $this->createTestSettings(true, true, true);
         $paymentMethodProvider = new PaymentMethodProvider(Shopware()->Container()->get('models'));
@@ -265,7 +265,7 @@ class PlusSubscriberTest extends TestCase
         static::assertTrue((bool) $view->getAssign('paypalUnifiedRestylePaymentSelection'));
     }
 
-    public function test_onPostDispatchSecure_sets_restyle_correctly_if_setting_is_off()
+    public function testOnPostDispatchSecureSetsRestyleCorrectlyIfSettingIsOff()
     {
         $this->createTestSettings();
         $paymentMethodProvider = new PaymentMethodProvider(Shopware()->Container()->get('models'));
@@ -287,7 +287,7 @@ class PlusSubscriberTest extends TestCase
         static::assertFalse((bool) $view->getAssign('paypalUnifiedRestylePaymentSelection'));
     }
 
-    public function test_onPostDispatchSecure_handleShippingPaymentDispatch_handleIntegratingThirdPartyMethods()
+    public function testOnPostDispatchSecureHandleShippingPaymentDispatchHandleIntegratingThirdPartyMethods()
     {
         $this->createTestSettings(true, true, false, true);
         $paymentMethodProvider = new PaymentMethodProvider(Shopware()->Container()->get('models'));
@@ -321,7 +321,7 @@ class PlusSubscriberTest extends TestCase
         static::assertSame('Sie zahlen einfach und bequem auf Rechnung.', $paymentsForPaymentWall['description']);
     }
 
-    public function test_onPostDispatchSecure_handleFinishDispatch()
+    public function testOnPostDispatchSecureHandleFinishDispatch()
     {
         $this->createTestSettings();
         $paymentMethodProvider = new PaymentMethodProvider(Shopware()->Container()->get('models'));
@@ -344,7 +344,7 @@ class PlusSubscriberTest extends TestCase
         static::assertSame('testTransactionId', $view->getAssign('sTransactionumber'));
     }
 
-    public function test_onPostDispatchSecure_handleFinishDispatch_add_paymentInstructions()
+    public function testOnPostDispatchSecureHandleFinishDispatchAddPaymentInstructions()
     {
         $this->createTestSettings();
         $paymentMethodProvider = new PaymentMethodProvider(Shopware()->Container()->get('models'));
@@ -369,7 +369,7 @@ class PlusSubscriberTest extends TestCase
         static::assertSame('testAccountHolder', $view->getAssign('paypalUnifiedPaymentInstructions')['accountHolder']);
     }
 
-    public function test_onPostDispatchSecure_handleConfirmDispatch()
+    public function testOnPostDispatchSecureHandleConfirmDispatch()
     {
         $this->createTestSettings();
         $paymentMethodProvider = new PaymentMethodProvider(Shopware()->Container()->get('models'));
@@ -396,7 +396,7 @@ class PlusSubscriberTest extends TestCase
         static::assertSame('de_DE', $view->getAssign('paypalUnifiedLanguageIso'));
     }
 
-    public function test_onPostDispatchSecure_handleConfirmDispatch_should_return_because_of_no_paymentStruct()
+    public function testOnPostDispatchSecureHandleConfirmDispatchShouldReturnBecauseOfNoPaymentStruct()
     {
         $this->createTestSettings();
         $paymentMethodProvider = new PaymentMethodProvider(Shopware()->Container()->get('models'));
@@ -422,7 +422,7 @@ class PlusSubscriberTest extends TestCase
         static::assertNull($viewAssignments['paypalUnifiedLanguageIso']);
     }
 
-    public function test_onPostDispatchSecure_handleConfirmDispatch_return_came_from_step_two()
+    public function testOnPostDispatchSecureHandleConfirmDispatchReturnCameFromStepTwo()
     {
         $session = Shopware()->Session();
         $this->createTestSettings();
@@ -453,7 +453,7 @@ class PlusSubscriberTest extends TestCase
         $session->offsetUnset('paypalUnifiedRemotePaymentId');
     }
 
-    public function test_addPaymentMethodsAttributes_payment_methods_inactive()
+    public function testAddPaymentMethodsAttributesPaymentMethodsInactive()
     {
         $paymentMethodProvider = new PaymentMethodProvider(Shopware()->Container()->get('models'));
         $paymentMethodProvider->setPaymentMethodActiveFlag(false);
@@ -470,7 +470,7 @@ class PlusSubscriberTest extends TestCase
         $paymentMethodProvider->setPaymentMethodActiveFlag(true);
     }
 
-    public function test_addPaymentMethodsAttributes_unified_inactive()
+    public function testAddPaymentMethodsAttributesUnifiedInactive()
     {
         $this->createTestSettings(false);
         $eventArgs = new Enlight_Event_EventArgs();
@@ -483,7 +483,7 @@ class PlusSubscriberTest extends TestCase
         static::assertEquals(['test' => 'foo'], $result);
     }
 
-    public function test_addPaymentMethodsAttributes_plus_inactive()
+    public function testAddPaymentMethodsAttributesPlusInactive()
     {
         $this->createTestSettings(true, false);
         $eventArgs = new Enlight_Event_EventArgs();
@@ -496,7 +496,7 @@ class PlusSubscriberTest extends TestCase
         static::assertEquals(['test' => 'foo'], $result);
     }
 
-    public function test_addPaymentMethodsAttributes_do_not_integrate_third_party_methods()
+    public function testAddPaymentMethodsAttributesDoNotIntegrateThirdPartyMethods()
     {
         $this->createTestSettings();
         $eventArgs = new Enlight_Event_EventArgs();
@@ -509,7 +509,7 @@ class PlusSubscriberTest extends TestCase
         static::assertEquals(['test' => 'foo'], $result);
     }
 
-    public function test_addPaymentMethodsAttributes_attribute_not_set()
+    public function testAddPaymentMethodsAttributesAttributeNotSet()
     {
         $this->createTestSettings(true, true, false, true);
         $eventArgs = new Enlight_Event_EventArgs();
@@ -527,7 +527,7 @@ class PlusSubscriberTest extends TestCase
         static::assertEquals([['id' => 5], ['id' => 6]], $result);
     }
 
-    public function test_addPaymentMethodsAttributes()
+    public function testAddPaymentMethodsAttributes()
     {
         $this->createTestSettings(true, true, false, true);
         Shopware()->Container()->get('dbal_connection')->executeQuery(

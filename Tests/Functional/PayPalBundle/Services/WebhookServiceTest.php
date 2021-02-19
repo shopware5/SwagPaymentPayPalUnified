@@ -15,14 +15,14 @@ use SwagPaymentPayPalUnified\WebhookHandlers\SaleComplete;
 
 class WebhookServiceTest extends TestCase
 {
-    public function test_service_available()
+    public function testServiceAvailable()
     {
         $service = Shopware()->Container()->get('paypal_unified.webhook_service');
 
         static::assertNotNull($service);
     }
 
-    public function test_register_webhook()
+    public function testRegisterWebhook()
     {
         $service = new WebhookService();
         $webhook = new SaleComplete(
@@ -38,7 +38,7 @@ class WebhookServiceTest extends TestCase
         );
     }
 
-    public function test_register_webhook_exception()
+    public function testRegisterWebhookException()
     {
         $service = new WebhookService();
         $webhook = new SaleComplete(
@@ -52,7 +52,7 @@ class WebhookServiceTest extends TestCase
         $service->registerWebhook($webhook);
     }
 
-    public function test_webhook_exists()
+    public function testWebhookExists()
     {
         $service = new WebhookService();
         $webhook = new SaleComplete(
@@ -65,7 +65,7 @@ class WebhookServiceTest extends TestCase
         static::assertTrue($service->handlerExists($webhook->getEventType()));
     }
 
-    public function test_webhook_not_exist()
+    public function testWebhookNotExist()
     {
         $service = new WebhookService();
         $webhook = new SaleComplete(
@@ -78,7 +78,7 @@ class WebhookServiceTest extends TestCase
         static::assertFalse($service->handlerExists('SHOULD_NOT_EXIST'));
     }
 
-    public function test_get_webhook_exception()
+    public function testGetWebhookException()
     {
         $service = new WebhookService();
 
@@ -86,7 +86,7 @@ class WebhookServiceTest extends TestCase
         $service->getWebhookHandler(null);
     }
 
-    public function test_get_webhook_handlers()
+    public function testGetWebhookHandlers()
     {
         $service = new WebhookService();
         $webhook = new SaleComplete(

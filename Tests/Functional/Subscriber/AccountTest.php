@@ -21,20 +21,20 @@ class AccountTest extends TestCase
     use DatabaseTestCaseTrait;
     use SettingsHelperTrait;
 
-    public function test_can_be_created()
+    public function testCanBeCreated()
     {
         $subscriber = $this->getSubscriber();
         static::assertNotNull($subscriber);
     }
 
-    public function test_getSubscribedEvents_has_correct_events()
+    public function testGetSubscribedEventsHasCorrectEvents()
     {
         $events = Account::getSubscribedEvents();
         static::assertCount(1, $events);
         static::assertSame('onPostDispatchAccount', $events['Enlight_Controller_Action_PostDispatchSecure_Frontend_Account']);
     }
 
-    public function test_onPostDispatchAccount_is_wrong_action()
+    public function testOnPostDispatchAccountIsWrongAction()
     {
         $subscriber = $this->getSubscriber();
 
@@ -55,7 +55,7 @@ class AccountTest extends TestCase
         static::assertSame('PayPal', $customerData['additional']['payment']['description']);
     }
 
-    public function test_onPostDispatchAccount_no_shop()
+    public function testOnPostDispatchAccountNoShop()
     {
         $subscriber = $this->getSubscriber();
         $shop = Shopware()->Container()->get('shop');
@@ -80,7 +80,7 @@ class AccountTest extends TestCase
         Shopware()->Container()->set('shop', $shop);
     }
 
-    public function test_onPostDispatchAccount_payment_method_inactive()
+    public function testOnPostDispatchAccountPaymentMethodInactive()
     {
         $paymentMethodProvider = new PaymentMethodProvider(Shopware()->Container()->get('models'));
         $paymentMethodProvider->setPaymentMethodActiveFlag(false);
@@ -105,7 +105,7 @@ class AccountTest extends TestCase
         $paymentMethodProvider->setPaymentMethodActiveFlag(true);
     }
 
-    public function test_onPostDispatchAccount_no_settings()
+    public function testOnPostDispatchAccountNoSettings()
     {
         $subscriber = $this->getSubscriber();
 
@@ -126,7 +126,7 @@ class AccountTest extends TestCase
         static::assertSame('PayPal', $customerData['additional']['payment']['description']);
     }
 
-    public function test_onPostDispatchAccount_plus_not_active()
+    public function testOnPostDispatchAccountPlusNotActive()
     {
         $subscriber = $this->getSubscriber();
 
@@ -149,7 +149,7 @@ class AccountTest extends TestCase
         static::assertSame('PayPal', $customerData['additional']['payment']['description']);
     }
 
-    public function test_onPostDispatchAccount_empty_string()
+    public function testOnPostDispatchAccountEmptyString()
     {
         $subscriber = $this->getSubscriber();
 
@@ -172,7 +172,7 @@ class AccountTest extends TestCase
         static::assertSame('PayPal', $customerData['additional']['payment']['description']);
     }
 
-    public function test_onPostDispatchAccount_customer_payment()
+    public function testOnPostDispatchAccountCustomerPayment()
     {
         $subscriber = $this->getSubscriber();
 
@@ -208,7 +208,7 @@ class AccountTest extends TestCase
         );
     }
 
-    public function test_onPostDispatchAccount_payment_methods()
+    public function testOnPostDispatchAccountPaymentMethods()
     {
         $subscriber = $this->getSubscriber();
 

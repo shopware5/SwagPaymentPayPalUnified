@@ -16,21 +16,21 @@ class LegacyServiceTest extends TestCase
 {
     use DatabaseTestCaseTrait;
 
-    public function test_construct()
+    public function testConstruct()
     {
         $service = new LegacyService(Shopware()->Container()->get('dbal_connection'));
 
         static::assertInstanceOf(LegacyService::class, $service);
     }
 
-    public function test_getClassicPaymentIds_returns_false_without_legacy_payment_methods()
+    public function testGetClassicPaymentIdsReturnsFalseWithoutLegacyPaymentMethods()
     {
         $service = Shopware()->Container()->get('paypal_unified.legacy_service');
 
         static::assertEmpty($service->getClassicPaymentIds());
     }
 
-    public function test_getClassicPaymentIds_returns_correct_id()
+    public function testGetClassicPaymentIdsReturnsCorrectId()
     {
         $this->insertClassicPayment();
 

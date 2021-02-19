@@ -22,13 +22,13 @@ class FrontendSubscriberTest extends TestCase
     use DatabaseTestCaseTrait;
     use SettingsHelperTrait;
 
-    public function test_can_be_created()
+    public function testCanBeCreated()
     {
         $subscriber = $this->getSubscriber();
         static::assertNotNull($subscriber);
     }
 
-    public function test_getSubscribedEvents_has_correct_events()
+    public function testGetSubscribedEventsHasCorrectEvents()
     {
         $events = Frontend::getSubscribedEvents();
         static::assertCount(4, $events);
@@ -38,7 +38,7 @@ class FrontendSubscriberTest extends TestCase
         static::assertSame('onCollectTemplateDir', $events['Theme_Inheritance_Template_Directories_Collected']);
     }
 
-    public function test_onCollectJavascript()
+    public function testOnCollectJavascript()
     {
         $javascripts = $this->getSubscriber()->onCollectJavascript();
 
@@ -49,7 +49,7 @@ class FrontendSubscriberTest extends TestCase
         static::assertCount(9, $javascripts);
     }
 
-    public function test_onPostDistpatchSecure_without_any_setttings()
+    public function testOnPostDistpatchSecureWithoutAnySetttings()
     {
         $subscriber = $this->getSubscriber();
 
@@ -64,7 +64,7 @@ class FrontendSubscriberTest extends TestCase
         static::assertNull($result);
     }
 
-    public function test_onPostDispatchSecure_return_setting_inactive()
+    public function testOnPostDispatchSecureReturnSettingInactive()
     {
         $subscriber = $this->getSubscriber();
         $this->createTestSettings(false);
@@ -80,7 +80,7 @@ class FrontendSubscriberTest extends TestCase
         static::assertNull($view->getAssign('paypalUnifiedShowLogo'));
     }
 
-    public function test_onPostDispatchSecure_payment_method_inactive()
+    public function testOnPostDispatchSecurePaymentMethodInactive()
     {
         $paymentMethodProvider = new PaymentMethodProvider(Shopware()->Container()->get('models'));
         $paymentMethodProvider->setPaymentMethodActiveFlag(false);
@@ -100,7 +100,7 @@ class FrontendSubscriberTest extends TestCase
         $paymentMethodProvider->setPaymentMethodActiveFlag(true);
     }
 
-    public function test_onPostDispatchSecure_assigns_variables_to_view()
+    public function testOnPostDispatchSecureAssignsVariablesToView()
     {
         $subscriber = $this->getSubscriber();
         $this->createTestSettings();
@@ -116,7 +116,7 @@ class FrontendSubscriberTest extends TestCase
         static::assertTrue((bool) $view->getAssign('paypalUnifiedShowLogo'));
     }
 
-    public function test_onCollectTemplateDir()
+    public function testOnCollectTemplateDir()
     {
         $subscriber = $this->getSubscriber();
         $returnValue = [];
@@ -131,10 +131,8 @@ class FrontendSubscriberTest extends TestCase
         static::assertDirectoryExists($returnValue[0]);
     }
 
-    public function test_onPostDispatchSecure_shouldAssignFalseToView()
+    public function testOnPostDispatchSecureShouldAssignFalseToView()
     {
-        Shopware()->Front()->setRequest(new \Enlight_Controller_Request_RequestHttp());
-
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_product_in_category.sql');
         Shopware()->Container()->get('dbal_connection')->exec($sql);
 
@@ -151,16 +149,20 @@ class FrontendSubscriberTest extends TestCase
         static::assertFalse($result);
     }
 
-    public function test_onPostDispatchSecure_shoudAssignDataToView_shouldBeTrue()
+    public function testOnPostDispatchSecureShoudAssignDataToViewShouldBeTrue()
     {
-        Shopware()->Front()->setRequest(new \Enlight_Controller_Request_RequestHttp());
-
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_product_in_category.sql');
         Shopware()->Container()->get('dbal_connection')->exec($sql);
 
         $controller = $this->createController();
         $controller->Request()->setParam('sArticle', 178);
 
+        $this->setRequestParameterToFront($controller->Request(), 'frontend', 'detail');
+
+        $controller->Request()->setControllerName('detail');
+        $controller->Request()->setActionName('index');
+        Shopware()->Front()->setRequest($controller->Request());
+
         $eventArgs = new \Enlight_Controller_ActionEventArgs();
         $eventArgs->set('subject', $controller);
 
@@ -171,16 +173,16 @@ class FrontendSubscriberTest extends TestCase
         static::assertTrue($result);
     }
 
-    public function test_onPostDispatchSecure_shoudAssignDataToView_shouldBeFalse()
+    public function testOnPostDispatchSecureShoudAssignDataToViewShouldBeFalse()
     {
-        Shopware()->Front()->setRequest(new \Enlight_Controller_Request_RequestHttp());
-
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_product_in_category.sql');
         Shopware()->Container()->get('dbal_connection')->exec($sql);
 
         $controller = $this->createController();
         $controller->Request()->setParam('sArticle', 112);
 
+        $this->setRequestParameterToFront($controller->Request(), 'frontend', 'detail');
+
         $eventArgs = new \Enlight_Controller_ActionEventArgs();
         $eventArgs->set('subject', $controller);
 
@@ -191,15 +193,15 @@ class FrontendSubscriberTest extends TestCase
         static::assertTrue($result);
     }
 
-    public function test_onPostDispatchSecure_shoudAssignDataToView_attr_shouldBeFalse()
+    public function testOnPostDispatchSecureShoudAssignDataToViewAttrShouldBeFalse()
     {
-        Shopware()->Front()->setRequest(new \Enlight_Controller_Request_RequestHttp());
-
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_product_attr_is.sql');
         Shopware()->Container()->get('dbal_connection')->exec($sql);
 
         $controller = $this->createController();
         $controller->Request()->setParam('sCategory', 36);
+
+        $this->setRequestParameterToFront($controller->Request());
 
         $eventArgs = new \Enlight_Controller_ActionEventArgs();
         $eventArgs->set('subject', $controller);
@@ -211,15 +213,15 @@ class FrontendSubscriberTest extends TestCase
         static::assertFalse($result);
     }
 
-    public function test_onPostDispatchSecure_shoudAssignDataToView_attr_shouldAddProductData()
+    public function testOnPostDispatchSecureShoudAssignDataToViewAttrShouldAddProductData()
     {
-        Shopware()->Front()->setRequest(new \Enlight_Controller_Request_RequestHttp());
-
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_product_attr_is.sql');
         Shopware()->Container()->get('dbal_connection')->exec($sql);
 
         $controller = $this->createController();
         $controller->Request()->setParam('sCategory', 6);
+
+        $this->setRequestParameterToFront($controller->Request());
 
         $eventArgs = new \Enlight_Controller_ActionEventArgs();
         $eventArgs->set('subject', $controller);
@@ -233,19 +235,18 @@ class FrontendSubscriberTest extends TestCase
         static::assertFalse($controller->View()->getAssign('paypalIsNotAllowed'));
     }
 
-    public function test_onLoadAjaxListing_shouldNotAssignToView()
+    public function testOnLoadAjaxListingShouldNotAssignToView()
     {
         Shopware()->Container()->get('template')->assign('paypalIsNotAllowed', null);
         Shopware()->Container()->get('template')->assign('riskManagementMatchedProducts', null);
-
-        Shopware()->Front()->setRequest(new \Enlight_Controller_Request_RequestHttp());
 
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_product_attr_is.sql');
         Shopware()->Container()->get('dbal_connection')->exec($sql);
 
         $controller = $this->createController();
         $controller->Request()->setParam('sCategory', 6);
-        $controller->Request()->setActionName('someAction');
+
+        $this->setRequestParameterToFront($controller->Request(), 'widget', 'listing', 'NotListingCount');
 
         $eventArgs = new \Enlight_Controller_ActionEventArgs();
         $eventArgs->set('subject', $controller);
@@ -256,16 +257,15 @@ class FrontendSubscriberTest extends TestCase
         static::assertNull(Shopware()->Container()->get('template')->getTemplateVars('riskManagementMatchedProducts'));
     }
 
-    public function test_onLoadAjaxListing_shouldAssignToView()
+    public function testOnLoadAjaxListingShouldAssignToView()
     {
-        Shopware()->Front()->setRequest(new \Enlight_Controller_Request_RequestHttp());
-
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_product_attr_is.sql');
         Shopware()->Container()->get('dbal_connection')->exec($sql);
 
         $controller = $this->createController();
         $controller->Request()->setParam('sCategory', 6);
-        $controller->Request()->setActionName('listingCount');
+
+        $this->setRequestParameterToFront($controller->Request(), 'widget', 'listing', 'listingCount');
 
         $eventArgs = new \Enlight_Controller_ActionEventArgs();
         $eventArgs->set('subject', $controller);
@@ -320,5 +320,17 @@ class FrontendSubscriberTest extends TestCase
         $controller->setFront(Shopware()->Front());
 
         return $controller;
+    }
+
+    private function setRequestParameterToFront(
+        \Enlight_Controller_Request_RequestHttp $request,
+        $module = 'frontend',
+        $controller = 'listing',
+        $action = 'index'
+    ) {
+        Shopware()->Container()->get('front')->setRequest($request);
+        Shopware()->Container()->get('front')->Request()->setActionName($action);
+        Shopware()->Container()->get('front')->Request()->setControllerName($controller);
+        Shopware()->Container()->get('front')->Request()->setModuleName($module);
     }
 }
