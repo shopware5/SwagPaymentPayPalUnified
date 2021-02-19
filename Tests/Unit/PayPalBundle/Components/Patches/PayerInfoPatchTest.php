@@ -15,21 +15,21 @@ use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Payer\PayerInfo;
 
 class PayerInfoPatchTest extends TestCase
 {
-    public function test_getPath()
+    public function testGetPath()
     {
         $patch = new PayerInfoPatch($this->getPayerInfo());
 
         static::assertSame('/payer/payer_info', $patch->getPath());
     }
 
-    public function test_getOperation()
+    public function testGetOperation()
     {
         $patch = new PayerInfoPatch($this->getPayerInfo());
 
         static::assertSame('replace', $patch->getOperation());
     }
 
-    public function test_getValue()
+    public function testGetValue()
     {
         $value = (new PayerInfoPatch($this->getPayerInfo()))->getValue();
 

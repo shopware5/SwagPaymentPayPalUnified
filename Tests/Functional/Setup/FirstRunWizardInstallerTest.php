@@ -17,7 +17,7 @@ class FirstRunWizardInstallerTest extends TestCase
 {
     use DatabaseTestCaseTrait;
 
-    public function test_installation_landingPageType_should_be_set()
+    public function testInstallationLandingPageTypeShouldBeSet()
     {
         $installer = $this->getFirstRunWizardInstaller();
         $connection = $this->getConnection();

@@ -13,20 +13,20 @@ use SwagPaymentPayPalUnified\Subscriber\Less;
 
 class LessSubscriberTest extends TestCase
 {
-    public function test_can_be_created()
+    public function testCanBeCreated()
     {
         $subscriber = new Less(__DIR__ . '../../../');
         static::assertNotNull($subscriber);
     }
 
-    public function test_onCollectLessFiles()
+    public function testOnCollectLessFiles()
     {
         $lessDefinitions = (new Less(__DIR__ . '../../../'))->onCollectLessFiles();
 
         static::assertCount(1, $lessDefinitions);
     }
 
-    public function test_getSubscribedEvents()
+    public function testGetSubscribedEvents()
     {
         $events = Less::getSubscribedEvents();
         static::assertCount(1, $events);

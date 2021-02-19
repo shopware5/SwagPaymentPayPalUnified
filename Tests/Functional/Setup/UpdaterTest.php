@@ -18,7 +18,7 @@ class UpdaterTest extends TestCase
 {
     use DatabaseTestCaseTrait;
 
-    public function test_updateTo303()
+    public function testUpdateTo303()
     {
         $sql = \file_get_contents(__DIR__ . '/_fixtures/orders.sql');
         Shopware()->Container()->get('dbal_connection')->exec($sql);
@@ -51,7 +51,7 @@ class UpdaterTest extends TestCase
         static::assertSame(PaymentType::PAYPAL_CLASSIC, $result[100083][0]); // should not be updated
     }
 
-    public function test_updateTo304()
+    public function testUpdateTo304()
     {
         $sql = \file_get_contents(__DIR__ . '/_fixtures/orders_invoice.sql');
         Shopware()->Container()->get('dbal_connection')->exec($sql);

@@ -38,6 +38,21 @@ class DependencyProvider
     }
 
     /**
+     * @return \Enlight_Controller_Front|null
+     */
+    public function getFront()
+    {
+        if ($this->container->has('front')) {
+            /** @var \Enlight_Controller_Front $front */
+            $front = $this->container->get('front');
+
+            return $front;
+        }
+
+        return null;
+    }
+
+    /**
      * Returns the module with the given name, if any exists.
      *
      * @param string $moduleName

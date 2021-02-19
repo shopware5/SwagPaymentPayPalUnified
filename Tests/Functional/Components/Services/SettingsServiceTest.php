@@ -32,12 +32,12 @@ class SettingsServiceTest extends TestCase
     const PLUS_ACTIVE = true;
     const ACTIVE = true;
 
-    public function test_service_available()
+    public function testServiceAvailable()
     {
         static::assertNotNull(Shopware()->Container()->get('paypal_unified.settings_service'));
     }
 
-    public function test_getGeneralSettings_byShopId()
+    public function testGetGeneralSettingsByShopId()
     {
         $this->createTestSettings();
 
@@ -51,7 +51,7 @@ class SettingsServiceTest extends TestCase
         static::assertSame(self::SHOW_SIDEBAR_LOGO, $settingsModel->getShowSidebarLogo());
     }
 
-    public function test_get()
+    public function testGet()
     {
         $this->createTestSettings();
 
@@ -61,7 +61,7 @@ class SettingsServiceTest extends TestCase
         static::assertSame(self::CLIENT_SECRET, $settingsService->get('client_secret'));
     }
 
-    public function test_get_without_shop_throws_exception()
+    public function testGetWithoutShopThrowsException()
     {
         $this->createTestSettings();
         $settingsService = new SettingsService(Shopware()->Container()->get('models'), new DependencyMock());
@@ -71,7 +71,7 @@ class SettingsServiceTest extends TestCase
         $settingsService->get('paypal_active');
     }
 
-    public function test_hasSettings_false()
+    public function testHasSettingsFalse()
     {
         /** @var SettingsServiceInterface $settingsService */
         $settingsService = Shopware()->Container()->get('paypal_unified.settings_service');
@@ -79,14 +79,14 @@ class SettingsServiceTest extends TestCase
         static::assertFalse($settingsService->hasSettings());
     }
 
-    public function test_hasSettings_false_because_no_shop_is_available()
+    public function testHasSettingsFalseBecauseNoShopIsAvailable()
     {
         $settingsService = new SettingsService(Shopware()->Container()->get('models'), new DependencyMock());
 
         static::assertFalse($settingsService->hasSettings());
     }
 
-    public function test_hasSettings_true()
+    public function testHasSettingsTrue()
     {
         $this->createTestSettings();
 
@@ -96,7 +96,7 @@ class SettingsServiceTest extends TestCase
         static::assertTrue($settingsService->hasSettings());
     }
 
-    public function test_getSettings_installments()
+    public function testGetSettingsInstallments()
     {
         $this->createInstallmentsTestSettings();
 
@@ -109,7 +109,7 @@ class SettingsServiceTest extends TestCase
         static::assertTrue($installmentsSettings->getAdvertiseInstallments());
     }
 
-    public function test_getSettings_plus()
+    public function testGetSettingsPlus()
     {
         $this->createPlusTestSettings();
 
@@ -123,7 +123,7 @@ class SettingsServiceTest extends TestCase
         static::assertTrue($plusSettings->getRestyle());
     }
 
-    public function test_hasSettings_installments()
+    public function testHasSettingsInstallments()
     {
         $this->createInstallmentsTestSettings();
 
@@ -133,7 +133,7 @@ class SettingsServiceTest extends TestCase
         static::assertTrue($settingsService->hasSettings(SettingsTable::INSTALLMENTS));
     }
 
-    public function test_hasSettings_plus()
+    public function testHasSettingsPlus()
     {
         $this->createPlusTestSettings();
 
@@ -143,7 +143,7 @@ class SettingsServiceTest extends TestCase
         static::assertTrue($settingsService->hasSettings(SettingsTable::PLUS));
     }
 
-    public function test_hasSettings_express()
+    public function testHasSettingsExpress()
     {
         $this->createExpressTestSettings();
 
@@ -153,7 +153,7 @@ class SettingsServiceTest extends TestCase
         static::assertTrue($settingsService->hasSettings(SettingsTable::EXPRESS_CHECKOUT));
     }
 
-    public function test_get_express()
+    public function testGetExpress()
     {
         $this->createExpressTestSettings();
 
@@ -166,7 +166,7 @@ class SettingsServiceTest extends TestCase
         static::assertTrue((bool) $settingsService->get('off_canvas_active', SettingsTable::EXPRESS_CHECKOUT));
     }
 
-    public function test_getSettings_returns_null_without_correct_table()
+    public function testGetSettingsReturnsNullWithoutCorrectTable()
     {
         /** @var SettingsServiceInterface $settingsService */
         $settingsService = Shopware()->Container()->get('paypal_unified.settings_service');
@@ -174,7 +174,7 @@ class SettingsServiceTest extends TestCase
         static::assertNull($settingsService->getSettings(self::SHOP_ID, 'THIS_TABLE_DOES_NOT_EXIST'));
     }
 
-    public function test_get_will_throw_exception_with_wrong_settings_type()
+    public function testGetWillThrowExceptionWithWrongSettingsType()
     {
         /** @var SettingsServiceInterface $settingsService */
         $settingsService = Shopware()->Container()->get('paypal_unified.settings_service');

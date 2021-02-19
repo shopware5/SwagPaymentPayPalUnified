@@ -116,32 +116,7 @@ parameters:
 			path: Controllers/Backend/PaypalUnified.php
 
 		-
-			message: "#^Parameter \\#1 \\$orderNumber of method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\OrderDataService\\:\\:setOrderState\\(\\) expects string, int\\|string\\|false given\\.$#"
-			count: 1
-			path: Controllers/Frontend/PaypalUnified.php
-
-		-
-			message: "#^Parameter \\#1 \\$orderNumber of method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\OrderDataService\\:\\:removeTransactionId\\(\\) expects string, int\\|string\\|false given\\.$#"
-			count: 1
-			path: Controllers/Frontend/PaypalUnified.php
-
-		-
 			message: "#^Cannot call method getResources\\(\\) on SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\Transactions\\\\RelatedResources\\|null\\.$#"
-			count: 1
-			path: Controllers/Frontend/PaypalUnified.php
-
-		-
-			message: "#^Parameter \\#1 \\$orderNumber of method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\OrderDataService\\:\\:applyTransactionId\\(\\) expects string, int\\|string\\|false given\\.$#"
-			count: 1
-			path: Controllers/Frontend/PaypalUnified.php
-
-		-
-			message: "#^Parameter \\#1 \\$orderNumber of method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\OrderDataService\\:\\:setClearedDate\\(\\) expects string, int\\|string\\|false given\\.$#"
-			count: 1
-			path: Controllers/Frontend/PaypalUnified.php
-
-		-
-			message: "#^Parameter \\#1 \\$orderNumber of method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\Plus\\\\PaymentInstructionService\\:\\:createInstructions\\(\\) expects string, int\\|string\\|false given\\.$#"
 			count: 1
 			path: Controllers/Frontend/PaypalUnified.php
 

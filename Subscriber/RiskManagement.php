@@ -9,6 +9,7 @@
 namespace SwagPaymentPayPalUnified\Subscriber;
 
 use Enlight\Event\SubscriberInterface;
+use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\Services\RiskManagement\RiskManagementHelperInterface;
 
 class RiskManagement implements SubscriberInterface
@@ -23,10 +24,19 @@ class RiskManagement implements SubscriberInterface
      */
     private $template;
 
-    public function __construct(RiskManagementHelperInterface $riskManagementHelper, \Enlight_Template_Manager $template)
-    {
+    /**
+     * @var DependencyProvider
+     */
+    private $dependencyProvider;
+
+    public function __construct(
+        RiskManagementHelperInterface $riskManagementHelper,
+        \Enlight_Template_Manager $template,
+        DependencyProvider $dependencyProvider
+    ) {
         $this->riskManagementHelper = $riskManagementHelper;
         $this->template = $template;
+        $this->dependencyProvider = $dependencyProvider;
     }
 
     public static function getSubscribedEvents()
@@ -43,6 +53,10 @@ class RiskManagement implements SubscriberInterface
      */
     public function onCheckProductCategoryFrom(\Enlight_Event_EventArgs $args)
     {
+        if (!$this->shouldContinueCheck()) {
+            return null;
+        }
+
         $context = $this->riskManagementHelper->createContext(
             $this->riskManagementHelper->createAttribute(),
             $args->get('value')
@@ -79,6 +93,10 @@ class RiskManagement implements SubscriberInterface
      */
     public function onCheckRiskAttribIsNot(\Enlight_Event_EventArgs $args)
     {
+        if (!$this->shouldContinueCheck()) {
+            return null;
+        }
+
         $context = $this->riskManagementHelper->createContext(
             $this->riskManagementHelper->createAttribute($args->get('value'))
         );
@@ -111,6 +129,10 @@ class RiskManagement implements SubscriberInterface
      */
     public function onCheckRiskAttribIs(\Enlight_Event_EventArgs $args)
     {
+        if (!$this->shouldContinueCheck()) {
+            return null;
+        }
+
         $context = $this->riskManagementHelper->createContext(
             $this->riskManagementHelper->createAttribute($args->get('value'))
         );
@@ -134,5 +156,49 @@ class RiskManagement implements SubscriberInterface
         }
 
         return null;
+    }
+
+    /**
+     * @return bool
+     */
+    private function shouldContinueCheck()
+    {
+        return \in_array($this->getControllerAction(), $this->getAcceptedControllerActions());
+    }
+
+    /**
+     * @return string
+     */
+    private function getControllerAction()
+    {
+        $frontendController = $this->dependencyProvider->getFront();
+        if ($frontendController === null) {
+            return '';
+        }
+
+        $request = $frontendController->Request();
+
+        if ($request === null) {
+            return '';
+        }
+
+        return \sprintf(
+            '%s::%s::%s',
+            $request->getModuleName(),
+            $request->getControllerName(),
+            $request->getActionName()
+        );
+    }
+
+    /**
+     * @return array
+     */
+    private function getAcceptedControllerActions()
+    {
+        return [
+            'frontend::detail::index',
+            'frontend::listing::index',
+            'widget::listing::listingCount',
+        ];
     }
 }

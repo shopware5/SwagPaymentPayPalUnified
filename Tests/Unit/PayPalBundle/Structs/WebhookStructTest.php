@@ -13,49 +13,49 @@ use SwagPaymentPayPalUnified\PayPalBundle\Structs\Webhook;
 
 class WebhookStructTest extends TestCase
 {
-    public function test_getId()
+    public function testGetId()
     {
         $struct = Webhook::fromArray(['id' => 10]);
 
         static::assertSame(10, $struct->getId());
     }
 
-    public function test_getCreationTime()
+    public function testGetCreationTime()
     {
         $struct = Webhook::fromArray(['create_time' => '01-01-1970']);
 
         static::assertSame('01-01-1970', $struct->getCreationTime());
     }
 
-    public function test_getResourceType()
+    public function testGetResourceType()
     {
         $struct = Webhook::fromArray(['resource_type' => 'Test']);
 
         static::assertSame('Test', $struct->getResourceType());
     }
 
-    public function test_getEventType()
+    public function testGetEventType()
     {
         $struct = Webhook::fromArray(['event_type' => 'Test-Event']);
 
         static::assertSame('Test-Event', $struct->getEventType());
     }
 
-    public function test_getSummary()
+    public function testGetSummary()
     {
         $struct = Webhook::fromArray(['summary' => 'Test notification triggered in PHPUnit']);
 
         static::assertSame('Test notification triggered in PHPUnit', $struct->getSummary());
     }
 
-    public function test_getResource()
+    public function testGetResource()
     {
         $struct = Webhook::fromArray(['resource' => ['name' => 'test']]);
 
         static::assertSame('test', $struct->getResource()['name']);
     }
 
-    public function test_toArray()
+    public function testToArray()
     {
         $data = [
             'create_time' => '01-01-1970',

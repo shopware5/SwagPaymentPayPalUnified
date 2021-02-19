@@ -16,7 +16,7 @@ class InstallerTest extends TestCase
 {
     use DatabaseTestCaseTrait;
 
-    public function test_order_attribute_available()
+    public function testOrderAttributeAvailable()
     {
         $query = "SELECT 1
                     FROM information_schema.COLUMNS
@@ -30,28 +30,28 @@ class InstallerTest extends TestCase
         static::assertTrue($columnAvailable);
     }
 
-    public function test_instructions_table_exists()
+    public function testInstructionsTableExists()
     {
         $query = "SHOW TABLES LIKE 'swag_payment_paypal_unified_payment_instruction'";
 
         static::assertCount(1, Shopware()->Db()->fetchAll($query));
     }
 
-    public function test_document_footer_template_exists()
+    public function testDocumentFooterTemplateExists()
     {
         $query = "SELECT id FROM s_core_documents_box WHERE `name` = 'PayPal_Unified_Instructions_Footer'";
 
         static::assertCount(1, Shopware()->Db()->fetchRow($query));
     }
 
-    public function test_document_content_template_exists()
+    public function testDocumentContentTemplateExists()
     {
         $query = "SELECT id FROM s_core_documents_box WHERE `name` = 'PayPal_Unified_Instructions_Content'";
 
         static::assertCount(1, Shopware()->Db()->fetchRow($query));
     }
 
-    public function test_settings_tables_exists()
+    public function testSettingsTablesExists()
     {
         $query = "SHOW TABLES LIKE 'swag_payment_paypal_unified_settings_express';";
         static::assertCount(1, Shopware()->Db()->fetchAll($query));

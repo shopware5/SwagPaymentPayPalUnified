@@ -14,14 +14,14 @@ use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 
 class PaymentMethodProviderTest extends TestCase
 {
-    public function test_get_payment_method()
+    public function testGetPaymentMethod()
     {
         $provider = new PaymentMethodProvider(Shopware()->Models());
 
         static::assertNotNull($provider->getPaymentMethodModel(), 'The payment method should not be null');
     }
 
-    public function test_set_payment_inactive()
+    public function testSetPaymentInactive()
     {
         $provider = new PaymentMethodProvider(Shopware()->Models());
         $provider->setPaymentMethodActiveFlag(false);
@@ -30,7 +30,7 @@ class PaymentMethodProviderTest extends TestCase
         static::assertFalse($payment->getActive());
     }
 
-    public function test_set_payment_active()
+    public function testSetPaymentActive()
     {
         $provider = new PaymentMethodProvider(Shopware()->Models());
         $provider->setPaymentMethodActiveFlag(true);
@@ -39,7 +39,7 @@ class PaymentMethodProviderTest extends TestCase
         static::assertTrue($payment->getActive());
     }
 
-    public function test_get_payment_id()
+    public function testGetPaymentId()
     {
         $provider = new PaymentMethodProvider(Shopware()->Models());
         $paymentIdQuery = 'SELECT pm.id FROM s_core_paymentmeans pm WHERE pm.name=:name';
@@ -55,7 +55,7 @@ class PaymentMethodProviderTest extends TestCase
         static::assertSame($paymentId, $provider->getPaymentId(Shopware()->Container()->get('dbal_connection')));
     }
 
-    public function test_get_payment_active()
+    public function testGetPaymentActive()
     {
         $activeFlag = (new PaymentMethodProvider(Shopware()->Models()))->getPaymentMethodActiveFlag(
             Shopware()->Container()->get('dbal_connection')

@@ -13,12 +13,12 @@ use SwagPaymentPayPalUnified\Components\Services\TransactionHistoryBuilderServic
 
 class TransactionsHistoryBuilderServiceTest extends TestCase
 {
-    public function test_service_available()
+    public function testServiceAvailable()
     {
         static::assertNotNull(Shopware()->Container()->get('paypal_unified.transaction_history_builder_service'));
     }
 
-    public function test_getSalesHistory_maxAmount()
+    public function testGetSalesHistoryMaxAmount()
     {
         /** @var TransactionHistoryBuilderService $historyBuilderService */
         $historyBuilderService = Shopware()->Container()->get('paypal_unified.transaction_history_builder_service');
@@ -28,7 +28,7 @@ class TransactionsHistoryBuilderServiceTest extends TestCase
         static::assertSame(16.939999999999998, $testHistory['maxRefundableAmount']);
     }
 
-    public function test_getSalesHistory_count()
+    public function testGetSalesHistoryCount()
     {
         /** @var TransactionHistoryBuilderService $historyBuilderService */
         $historyBuilderService = Shopware()->Container()->get('paypal_unified.transaction_history_builder_service');
@@ -38,7 +38,7 @@ class TransactionsHistoryBuilderServiceTest extends TestCase
         static::assertCount(4, $testHistory);
     }
 
-    public function test_getSalesHistory_first_entry()
+    public function testGetSalesHistoryFirstEntry()
     {
         /** @var TransactionHistoryBuilderService $historyBuilderService */
         $historyBuilderService = Shopware()->Container()->get('paypal_unified.transaction_history_builder_service');
@@ -53,7 +53,7 @@ class TransactionsHistoryBuilderServiceTest extends TestCase
         static::assertSame('EUR', $testSale['currency']);
     }
 
-    public function test_getAuthenticationHistory_count()
+    public function testGetAuthenticationHistoryCount()
     {
         /** @var TransactionHistoryBuilderService $historyBuilderService */
         $historyBuilderService = Shopware()->Container()->get('paypal_unified.transaction_history_builder_service');
@@ -63,7 +63,7 @@ class TransactionsHistoryBuilderServiceTest extends TestCase
         static::assertCount(11, $history);
     }
 
-    public function test_getOrderHistory_count()
+    public function testGetOrderHistoryCount()
     {
         /** @var TransactionHistoryBuilderService $historyBuilderService */
         $historyBuilderService = Shopware()->Container()->get('paypal_unified.transaction_history_builder_service');
@@ -73,7 +73,7 @@ class TransactionsHistoryBuilderServiceTest extends TestCase
         static::assertCount(5, $history);
     }
 
-    public function test_getTransactionHistory_exception()
+    public function testGetTransactionHistoryException()
     {
         /** @var TransactionHistoryBuilderService $historyBuilderService */
         $historyBuilderService = Shopware()->Container()->get('paypal_unified.transaction_history_builder_service');
@@ -85,7 +85,7 @@ class TransactionsHistoryBuilderServiceTest extends TestCase
         $historyBuilderService->getTransactionHistory($testPaymentData);
     }
 
-    public function test_getSalesHistory_last_entry()
+    public function testGetSalesHistoryLastEntry()
     {
         /** @var TransactionHistoryBuilderService $historyBuilderService */
         $historyBuilderService = Shopware()->Container()->get('paypal_unified.transaction_history_builder_service');

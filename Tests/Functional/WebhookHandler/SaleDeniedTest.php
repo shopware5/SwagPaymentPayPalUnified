@@ -32,7 +32,7 @@ class SaleDeniedTest extends TestCase
         Shopware()->Db()->executeUpdate($sql);
     }
 
-    public function test_can_construct()
+    public function testCanConstruct()
     {
         $instance = new SaleDenied(
             Shopware()->Container()->get('paypal_unified.logger_service'),
@@ -42,7 +42,7 @@ class SaleDeniedTest extends TestCase
         static::assertInstanceOf(SaleDenied::class, $instance);
     }
 
-    public function test_invoke_returns_true_because_the_order_status_has_been_updated()
+    public function testInvokeReturnsTrueBecauseTheOrderStatusHasBeenUpdated()
     {
         $instance = new SaleDenied(
             Shopware()->Container()->get('paypal_unified.logger_service'),
@@ -57,7 +57,7 @@ class SaleDeniedTest extends TestCase
         static::assertSame(PaymentStatus::PAYMENT_STATUS_OPEN, $status);
     }
 
-    public function test_invoke_returns_false_because_the_order_does_not_exist()
+    public function testInvokeReturnsFalseBecauseTheOrderDoesNotExist()
     {
         $instance = new SaleDenied(
             Shopware()->Container()->get('paypal_unified.logger_service'),
@@ -67,7 +67,7 @@ class SaleDeniedTest extends TestCase
         static::assertFalse($instance->invoke($this->getWebhookStruct('ORDER_NOT_AVAILABLE')));
     }
 
-    public function test_getEventType_is_correct()
+    public function testGetEventTypeIsCorrect()
     {
         $instance = new SaleDenied(
             Shopware()->Container()->get('paypal_unified.logger_service'),
@@ -76,7 +76,7 @@ class SaleDeniedTest extends TestCase
         static::assertSame(WebhookEventTypes::PAYMENT_SALE_DENIED, $instance->getEventType());
     }
 
-    public function test_invoke_will_return_false_without_active_entity_manager()
+    public function testInvokeWillReturnFalseWithoutActiveEntityManager()
     {
         $instance = new SaleDenied(
             Shopware()->Container()->get('paypal_unified.logger_service'),

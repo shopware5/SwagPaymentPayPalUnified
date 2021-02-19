@@ -21,13 +21,13 @@ class CustomerServiceTest extends TestCase
 {
     use DatabaseTestCaseTrait;
 
-    public function test_service_is_available()
+    public function testServiceIsAvailable()
     {
         $service = Shopware()->Container()->get('paypal_unified.express_checkout.customer_service');
         static::assertSame(CustomerService::class, \get_class($service));
     }
 
-    public function test_construct()
+    public function testConstruct()
     {
         $service = new CustomerService(
             Shopware()->Container()->get('config'),
@@ -42,7 +42,7 @@ class CustomerServiceTest extends TestCase
         static::assertNotNull($service);
     }
 
-    public function test_createNewCustomer()
+    public function testCreateNewCustomer()
     {
         $payment = new Payment();
 

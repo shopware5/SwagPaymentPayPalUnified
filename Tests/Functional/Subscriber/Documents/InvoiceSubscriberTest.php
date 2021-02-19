@@ -34,13 +34,13 @@ class InvoiceSubscriberTest extends TestCase
     const TEST_BANK_BANK_NAME = 'TEST_BANK';
     const TEST_BANK_ACCOUNT_HOLDER = 'TEST_ACCOUNT_HOLDER';
 
-    public function test_construct()
+    public function testConstruct()
     {
         $subscriber = $this->getSubscriber();
         static::assertNotNull($subscriber);
     }
 
-    public function test_construct_without_translator()
+    public function testConstructWithoutTranslator()
     {
         $translatorConstructor = (new \ReflectionClass('Shopware_Components_Translation'))->getConstructor();
         if ($translatorConstructor && !empty($translatorConstructor->getParameters())) {
@@ -57,7 +57,7 @@ class InvoiceSubscriberTest extends TestCase
         static::assertNotNull($subscriber);
     }
 
-    public function test_getSubscribedEvents()
+    public function testGetSubscribedEvents()
     {
         $events = Invoice::getSubscribedEvents();
 
@@ -66,7 +66,7 @@ class InvoiceSubscriberTest extends TestCase
         static::assertSame('onFilterMailVariables', $events['Shopware_Modules_Order_SendMail_FilterVariables']);
     }
 
-    public function test_onBeforeRenderDocument_returns_when_no_document_was_given()
+    public function testOnBeforeRenderDocumentReturnsWhenNoDocumentWasGiven()
     {
         $subscriber = $this->getSubscriber();
         $hookArgs = new HookArgsWithoutSubject();
@@ -74,7 +74,7 @@ class InvoiceSubscriberTest extends TestCase
         static::assertNull($subscriber->onBeforeRenderDocument($hookArgs));
     }
 
-    public function test_onBeforeRenderDocument_returns_when_wrong_payment_id_was_given()
+    public function testOnBeforeRenderDocumentReturnsWhenWrongPaymentIdWasGiven()
     {
         $subscriber = $this->getSubscriber();
 
@@ -83,7 +83,7 @@ class InvoiceSubscriberTest extends TestCase
         static::assertNull($subscriber->onBeforeRenderDocument($hookArgs));
     }
 
-    public function test_onBeforeRenderDocument_returns_when_wrong_payment_type()
+    public function testOnBeforeRenderDocumentReturnsWhenWrongPaymentType()
     {
         $subscriber = $this->getSubscriber();
 
@@ -93,7 +93,7 @@ class InvoiceSubscriberTest extends TestCase
         static::assertNull($subscriber->onBeforeRenderDocument($hookArgs));
     }
 
-    public function test_onBeforeRenderDocument_handleDocument()
+    public function testOnBeforeRenderDocumentHandleDocument()
     {
         $subscriber = $this->getSubscriber();
 
@@ -110,7 +110,7 @@ class InvoiceSubscriberTest extends TestCase
         static::assertNotNull($view->getVariable('PayPalUnifiedInvoiceInstruction'));
     }
 
-    public function test_onFilterMailVariables()
+    public function testOnFilterMailVariables()
     {
         $subscriber = $this->getSubscriber();
         $args = new \Enlight_Event_EventArgs();
@@ -133,7 +133,7 @@ class InvoiceSubscriberTest extends TestCase
         );
     }
 
-    public function test_onFilterMailVariables_shouldNotBeRendered()
+    public function testOnFilterMailVariablesShouldNotBeRendered()
     {
         $subscriber = $this->getSubscriber();
         $args = new \Enlight_Event_EventArgs();

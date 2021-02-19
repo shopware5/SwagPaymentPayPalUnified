@@ -18,19 +18,19 @@ use Symfony\Component\Validator\ConstraintViolationList;
 
 class AddressValidatorDecoratorTest extends TestCase
 {
-    public function test_construct()
+    public function testConstruct()
     {
         $validator = new AddressDecorator(new AddressValidatorMock(), Shopware()->Container()->get('front'));
         static::assertNotNull($validator);
     }
 
-    public function test_isValid_inner_validator()
+    public function testIsValidInnerValidator()
     {
         $validator = new AddressDecorator(new AddressValidatorMock(), Shopware()->Container()->get('front'));
         static::assertTrue($validator->isValid(new Address()));
     }
 
-    public function test_validate_return_without_request()
+    public function testValidateReturnWithoutRequest()
     {
         $front = new FrontMock();
 
@@ -38,7 +38,7 @@ class AddressValidatorDecoratorTest extends TestCase
         static::assertNull($validator->validate(new Address()));
     }
 
-    public function test_validate_return_with_wrong_controller_name()
+    public function testValidateReturnWithWrongControllerName()
     {
         $request = new \Enlight_Controller_Request_RequestTestCase();
         $request->setControllerName('fake');
@@ -49,7 +49,7 @@ class AddressValidatorDecoratorTest extends TestCase
         static::assertNull($validator->validate(new Address()));
     }
 
-    public function test_validate_throw_validation_exception_country()
+    public function testValidateThrowValidationExceptionCountry()
     {
         $request = new \Enlight_Controller_Request_RequestTestCase();
         $request->setControllerName('PaypalUnifiedExpressCheckout');
@@ -62,7 +62,7 @@ class AddressValidatorDecoratorTest extends TestCase
         $validator->validate(new Address());
     }
 
-    public function test_validate_throw_no_validation_exception()
+    public function testValidateThrowNoValidationException()
     {
         $request = new \Enlight_Controller_Request_RequestTestCase();
         $request->setControllerName('PaypalUnifiedExpressCheckout');

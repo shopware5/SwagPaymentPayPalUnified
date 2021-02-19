@@ -14,7 +14,7 @@ use SwagPaymentPayPalUnified\Components\Services\RiskManagement\Context;
 
 class ContextTest extends TestCase
 {
-    public function test_Context_shouldBeNull()
+    public function testContextShouldBeNull()
     {
         $context = new Context(new Attribute([]));
 
@@ -29,7 +29,7 @@ class ContextTest extends TestCase
         static::assertTrue($context->categoryIdsAreTheSame());
     }
 
-    public function test_Context_shouldNotBeNull()
+    public function testContextShouldNotBeNull()
     {
         $context = new Context(new Attribute([]), 12, 14, 16);
 
@@ -44,7 +44,7 @@ class ContextTest extends TestCase
         static::assertFalse($context->categoryIdsAreTheSame());
     }
 
-    public function test_Context_categoryIdsShouldBeTheSame()
+    public function testContextCategoryIdsShouldBeTheSame()
     {
         $context = new Context(new Attribute([]), 12, 14, 14);
 

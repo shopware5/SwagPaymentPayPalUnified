@@ -24,13 +24,13 @@ class InstallmentsBannerSubscriberTest extends TestCase
 
     const CLIENT_ID = 'testClientId';
 
-    public function test_can_be_created()
+    public function testCanBeCreated()
     {
         $subscriber = $this->getSubscriber();
         static::assertNotNull($subscriber);
     }
 
-    public function test_getSubscribedEvents_has_correct_events()
+    public function testGetSubscribedEventsHasCorrectEvents()
     {
         $events = InstallmentsBanner::getSubscribedEvents();
         static::assertCount(2, $events);
@@ -38,7 +38,7 @@ class InstallmentsBannerSubscriberTest extends TestCase
         static::assertSame('onPostDispatchSecure', $events['Enlight_Controller_Action_PostDispatchSecure_Widgets']);
     }
 
-    public function test_onPostDistpatchSecure_without_any_setttings()
+    public function testOnPostDistpatchSecureWithoutAnySetttings()
     {
         $subscriber = $this->getSubscriber();
 
@@ -54,7 +54,7 @@ class InstallmentsBannerSubscriberTest extends TestCase
         static::assertNull($view->getAssign('paypalUnifiedInstallmentsBanner'));
     }
 
-    public function test_onPostDispatchSecure_return_setting_inactive()
+    public function testOnPostDispatchSecureReturnSettingInactive()
     {
         $subscriber = $this->getSubscriber();
         $this->createTestSettings(false);
@@ -70,7 +70,7 @@ class InstallmentsBannerSubscriberTest extends TestCase
         static::assertNull($view->getAssign('paypalUnifiedInstallmentsBanner'));
     }
 
-    public function test_onPostDispatchSecure_payment_method_inactive()
+    public function testOnPostDispatchSecurePaymentMethodInactive()
     {
         $paymentMethodProvider = new PaymentMethodProvider(Shopware()->Container()->get('models'));
         $paymentMethodProvider->setPaymentMethodActiveFlag(false);
@@ -88,7 +88,7 @@ class InstallmentsBannerSubscriberTest extends TestCase
         static::assertNull($view->getAssign('paypalUnifiedInstallmentsBanner'));
     }
 
-    public function test_onPostDispatchSecure_installments_banner_inactive()
+    public function testOnPostDispatchSecureInstallmentsBannerInactive()
     {
         $paymentMethodProvider = new PaymentMethodProvider(Shopware()->Container()->get('models'));
         $paymentMethodProvider->setPaymentMethodActiveFlag(false);
@@ -106,7 +106,7 @@ class InstallmentsBannerSubscriberTest extends TestCase
         static::assertNull($view->getAssign('paypalUnifiedInstallmentsBanner'));
     }
 
-    public function test_onPostDispatchSecure_assigns_variables_to_view()
+    public function testOnPostDispatchSecureAssignsVariablesToView()
     {
         $subscriber = $this->getSubscriber();
         $this->createTestSettings();
@@ -128,7 +128,7 @@ class InstallmentsBannerSubscriberTest extends TestCase
         static::assertSame('EUR', $view->getAssign('paypalUnifiedInstallmentsBannerCurrency'));
     }
 
-    public function test_onPostDispatchSecure_assigns_variables_to_view_product_detail_page()
+    public function testOnPostDispatchSecureAssignsVariablesToViewProductDetailPage()
     {
         $subscriber = $this->getSubscriber();
         $this->createTestSettings();
@@ -152,7 +152,7 @@ class InstallmentsBannerSubscriberTest extends TestCase
         static::assertSame('EUR', $view->getAssign('paypalUnifiedInstallmentsBannerCurrency'));
     }
 
-    public function test_onPostDispatchSecure_assigns_variables_to_view_cart_page()
+    public function testOnPostDispatchSecureAssignsVariablesToViewCartPage()
     {
         $subscriber = $this->getSubscriber();
         $this->createTestSettings();

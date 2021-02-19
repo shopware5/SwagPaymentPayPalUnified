@@ -18,7 +18,7 @@ class LoggerServiceTest extends TestCase
     use DatabaseTestCaseTrait;
     use SettingsHelperTrait;
 
-    public function test_warning_returns_without_settings()
+    public function testWarningReturnsWithoutSettings()
     {
         $fileName = $this->getLogfile();
 
@@ -34,7 +34,7 @@ class LoggerServiceTest extends TestCase
         static::assertEmpty($lastLine);
     }
 
-    public function test_warning_returns_without_required_log_level()
+    public function testWarningReturnsWithoutRequiredLogLevel()
     {
         $fileName = $this->getLogfile();
 
@@ -52,7 +52,7 @@ class LoggerServiceTest extends TestCase
         static::assertEmpty($lastLine);
     }
 
-    public function test_warning_adds_line()
+    public function testWarningAddsLine()
     {
         $fileName = $this->getLogfile();
 
@@ -76,7 +76,7 @@ class LoggerServiceTest extends TestCase
         static::assertContains('Test message', $lastLine);
     }
 
-    public function test_notify_returns_without_settings()
+    public function testNotifyReturnsWithoutSettings()
     {
         $fileName = $this->getLogfile();
 
@@ -92,7 +92,7 @@ class LoggerServiceTest extends TestCase
         static::assertEmpty($lastLine);
     }
 
-    public function test_notify_returns_without_required_log_level()
+    public function testNotifyReturnsWithoutRequiredLogLevel()
     {
         $fileName = $this->getLogfile();
 
@@ -110,7 +110,7 @@ class LoggerServiceTest extends TestCase
         static::assertEmpty($lastLine);
     }
 
-    public function test_notify_adds_line()
+    public function testNotifyAddsLine()
     {
         $fileName = $this->getLogfile();
 
@@ -134,7 +134,7 @@ class LoggerServiceTest extends TestCase
         static::assertContains('Test message', $lastLine);
     }
 
-    public function test_error_adds_line()
+    public function testErrorAddsLine()
     {
         $fileName = $this->getLogfile();
 

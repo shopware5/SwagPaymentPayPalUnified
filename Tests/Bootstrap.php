@@ -32,7 +32,7 @@ class PayPalUnifiedTestKernel extends \Shopware\Kernel
         }
 
         if (!self::isPluginInstalledAndActivated()) {
-            die('Error: The plugin is not installed or activated, tests aborted!');
+            exit('Error: The plugin is not installed or activated, tests aborted!');
         }
 
         Shopware()->Loader()->registerNamespace('SwagPaymentPayPalUnified', __DIR__ . '/../');

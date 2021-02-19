@@ -27,7 +27,7 @@ class OrderDataServiceTest extends TestCase
     const ORDER_NUMBER = 99999;
     const TEST_TRANSACTION_ID = 'FAKE-PAYPAL-TRANSACTION-ID';
 
-    public function test_order_data_service_test_is_available()
+    public function testOrderDataServiceTestIsAvailable()
     {
         $this->importFixturesBefore();
 
@@ -36,7 +36,7 @@ class OrderDataServiceTest extends TestCase
         static::assertInstanceOf(OrderDataService::class, $orderDataService);
     }
 
-    public function test_order_cleared_date_is_set()
+    public function testOrderClearedDateIsSet()
     {
         $this->importFixturesBefore();
 
@@ -51,7 +51,7 @@ class OrderDataServiceTest extends TestCase
         static::assertTrue($orderCleared);
     }
 
-    public function test_should_update_transaction_id()
+    public function testShouldUpdateTransactionId()
     {
         $this->importFixturesBefore();
 
@@ -66,7 +66,7 @@ class OrderDataServiceTest extends TestCase
         static::assertSame(self::TEST_TRANSACTION_ID, $updatedOrder[0]['transactionID']);
     }
 
-    public function test_getTransactionId_returns_correct_id()
+    public function testGetTransactionIdReturnsCorrectId()
     {
         $this->importFixturesBefore();
 
@@ -77,7 +77,7 @@ class OrderDataServiceTest extends TestCase
         static::assertSame(self::TEST_TRANSACTION_ID, $orderDataService->getTransactionId(self::ORDER_NUMBER));
     }
 
-    public function test_applyPaymentTypeAttribute_invoice()
+    public function testApplyPaymentTypeAttributeInvoice()
     {
         $this->importFixturesBefore();
 
@@ -97,7 +97,7 @@ class OrderDataServiceTest extends TestCase
         static::assertSame(PaymentType::PAYPAL_INVOICE, $updatedAttribute);
     }
 
-    public function test_applyPaymentTypeAttribute_plus()
+    public function testApplyPaymentTypeAttributePlus()
     {
         $this->importFixturesBefore();
 
@@ -113,7 +113,7 @@ class OrderDataServiceTest extends TestCase
         static::assertSame(PaymentType::PAYPAL_PLUS, $updatedAttribute);
     }
 
-    public function test_applyPaymentAttribute_classic()
+    public function testApplyPaymentAttributeClassic()
     {
         $this->importFixturesBefore();
 
@@ -127,7 +127,7 @@ class OrderDataServiceTest extends TestCase
         static::assertSame(PaymentType::PAYPAL_CLASSIC, $updatedAttribute);
     }
 
-    public function test_applyPaymentAttribute_express_checkout()
+    public function testApplyPaymentAttributeExpressCheckout()
     {
         $this->importFixturesBefore();
 

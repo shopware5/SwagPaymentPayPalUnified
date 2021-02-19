@@ -23,12 +23,12 @@ class PaymentAddressServiceTest extends TestCase
     const TEST_USER_EMAIL = 'test@example.com';
     const TEST_ADDRESS_PHONE = '123456789';
 
-    public function test_service_available()
+    public function testServiceAvailable()
     {
         static::assertNotNull(Shopware()->Container()->get('paypal_unified.payment_address_service'));
     }
 
-    public function test_getShippingAddress_success()
+    public function testGetShippingAddressSuccess()
     {
         $testAddressData = [
             'shippingaddress' => [
@@ -58,7 +58,7 @@ class PaymentAddressServiceTest extends TestCase
         static::assertNull($testAddress->getState());
     }
 
-    public function test_getShippingAddress_attach_state()
+    public function testGetShippingAddressAttachState()
     {
         $testAddressData = [
             'shippingaddress' => [
@@ -85,7 +85,7 @@ class PaymentAddressServiceTest extends TestCase
         static::assertSame(self::TEST_ADDRESS_STATE, $testAddress->getState());
     }
 
-    public function test_getPayerInfo_result()
+    public function testGetPayerInfoResult()
     {
         $testAddressData = [
             'billingaddress' => [

@@ -228,7 +228,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_F
 
         // if the order number should be send to PayPal do it before the execute
         if ($sendOrderNumber) {
-            $orderNumber = $this->saveOrder($paymentId, $paymentId, PaymentStatus::PAYMENT_STATUS_OPEN);
+            $orderNumber = (string) $this->saveOrder($paymentId, $paymentId, PaymentStatus::PAYMENT_STATUS_OPEN);
             $patchOrderNumber = $this->settingsService->get('order_number_prefix') . $orderNumber;
 
             /** @var PaymentOrderNumberPatch $paymentPatch */
@@ -273,7 +273,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_F
 
         // if the order number is not sent to PayPal, save the order here
         if (!$sendOrderNumber) {
-            $orderNumber = $this->saveOrder($paymentId, $paymentId, PaymentStatus::PAYMENT_STATUS_OPEN);
+            $orderNumber = (string) $this->saveOrder($paymentId, $paymentId, PaymentStatus::PAYMENT_STATUS_OPEN);
         }
 
         /** @var RelatedResource $relatedResource */

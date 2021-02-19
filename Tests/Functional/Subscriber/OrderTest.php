@@ -15,7 +15,7 @@ use SwagPaymentPayPalUnified\Subscriber\Order;
 
 class OrderTest extends TestCase
 {
-    public function test_onFilterOrderAttributes_shouldAdd_noPaymentType()
+    public function testOnFilterOrderAttributesShouldAddNoPaymentType()
     {
         $eventArgs = new \Enlight_Event_EventArgs(['orderParams' => ['paymentID' => 1]]);
 
@@ -30,7 +30,7 @@ class OrderTest extends TestCase
         static::assertNull($result);
     }
 
-    public function test_onFilterOrderAttributes_shouldAddAPaymentType_classic()
+    public function testOnFilterOrderAttributesShouldAddAPaymentTypeClassic()
     {
         $eventArgs = $this->getEventArgs();
 
@@ -45,7 +45,7 @@ class OrderTest extends TestCase
         static::assertSame(PaymentType::PAYPAL_CLASSIC, $result);
     }
 
-    public function test_onFilterOrderAttributes_shouldAddAPaymentType_plus()
+    public function testOnFilterOrderAttributesShouldAddAPaymentTypePlus()
     {
         $eventArgs = $this->getEventArgs();
 
@@ -61,7 +61,7 @@ class OrderTest extends TestCase
         static::assertSame(PaymentType::PAYPAL_PLUS, $result);
     }
 
-    public function test_onFilterOrderAttributes_shouldAddAPaymentType_express()
+    public function testOnFilterOrderAttributesShouldAddAPaymentTypeExpress()
     {
         $eventArgs = $this->getEventArgs();
 
@@ -77,7 +77,7 @@ class OrderTest extends TestCase
         static::assertSame(PaymentType::PAYPAL_EXPRESS, $result);
     }
 
-    public function test_onFilterOrderAttributes_shouldAddAPaymentType_smartPaymentButton()
+    public function testOnFilterOrderAttributesShouldAddAPaymentTypeSmartPaymentButton()
     {
         $eventArgs = $this->getEventArgs();
 
@@ -93,7 +93,7 @@ class OrderTest extends TestCase
         static::assertSame(PaymentType::PAYPAL_SMART_PAYMENT_BUTTONS, $result);
     }
 
-    public function test_onFilterOrderAttributes_shouldAddAPaymentType_invoice()
+    public function testOnFilterOrderAttributesShouldAddAPaymentTypeInvoice()
     {
         $eventArgs = $this->getEventArgs();
 
