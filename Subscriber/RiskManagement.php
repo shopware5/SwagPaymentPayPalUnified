@@ -8,8 +8,10 @@
 
 namespace SwagPaymentPayPalUnified\Subscriber;
 
+use Doctrine\DBAL\Connection;
 use Enlight\Event\SubscriberInterface;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
+use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\Services\RiskManagement\RiskManagementHelperInterface;
 
 class RiskManagement implements SubscriberInterface
@@ -29,14 +31,21 @@ class RiskManagement implements SubscriberInterface
      */
     private $dependencyProvider;
 
+    /**
+     * @var Connection
+     */
+    private $connection;
+
     public function __construct(
         RiskManagementHelperInterface $riskManagementHelper,
         \Enlight_Template_Manager $template,
-        DependencyProvider $dependencyProvider
+        DependencyProvider $dependencyProvider,
+        Connection $connection
     ) {
         $this->riskManagementHelper = $riskManagementHelper;
         $this->template = $template;
         $this->dependencyProvider = $dependencyProvider;
+        $this->connection = $connection;
     }
 
     public static function getSubscribedEvents()
@@ -53,7 +62,7 @@ class RiskManagement implements SubscriberInterface
      */
     public function onCheckProductCategoryFrom(\Enlight_Event_EventArgs $args)
     {
-        if (!$this->shouldContinueCheck()) {
+        if (!$this->shouldContinueCheck($args->get('paymentID'))) {
             return null;
         }
 
@@ -93,7 +102,7 @@ class RiskManagement implements SubscriberInterface
      */
     public function onCheckRiskAttribIsNot(\Enlight_Event_EventArgs $args)
     {
-        if (!$this->shouldContinueCheck()) {
+        if (!$this->shouldContinueCheck($args->get('paymentID'))) {
             return null;
         }
 
@@ -129,7 +138,7 @@ class RiskManagement implements SubscriberInterface
      */
     public function onCheckRiskAttribIs(\Enlight_Event_EventArgs $args)
     {
-        if (!$this->shouldContinueCheck()) {
+        if (!$this->shouldContinueCheck($args->get('paymentID'))) {
             return null;
         }
 
@@ -159,11 +168,21 @@ class RiskManagement implements SubscriberInterface
     }
 
     /**
+     * @param int $paymentId
+     *
      * @return bool
      */
-    private function shouldContinueCheck()
+    private function shouldContinueCheck($paymentId)
     {
-        return \in_array($this->getControllerAction(), $this->getAcceptedControllerActions());
+        if (!\in_array($this->getControllerAction(), $this->getAcceptedControllerActions())) {
+            return false;
+        }
+
+        if ((int) $paymentId !== (new PaymentMethodProvider())->getPaymentId($this->connection)) {
+            return false;
+        }
+
+        return true;
     }
 
     /**

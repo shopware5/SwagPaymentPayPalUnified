@@ -9,6 +9,8 @@
 namespace SwagPaymentPayPalUnified\Components\Services\RiskManagement;
 
 use Doctrine\DBAL\Connection;
+use Shopware\Bundle\AttributeBundle\Service\CrudService;
+use Shopware\Bundle\AttributeBundle\Service\CrudServiceInterface;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 
 class RiskManagementHelper implements RiskManagementHelperInterface
@@ -23,10 +25,16 @@ class RiskManagementHelper implements RiskManagementHelperInterface
      */
     private $dependencyProvider;
 
-    public function __construct(Connection $connection, DependencyProvider $dependencyProvider)
+    /**
+     * @var CrudServiceInterface
+     */
+    private $crudService;
+
+    public function __construct(Connection $connection, DependencyProvider $dependencyProvider, CrudService $crudService)
     {
         $this->connection = $connection;
         $this->dependencyProvider = $dependencyProvider;
+        $this->crudService = $crudService;
     }
 
     /**
@@ -38,7 +46,11 @@ class RiskManagementHelper implements RiskManagementHelperInterface
     {
         $attributeRuleArray = [];
         if ($attributeRule !== null) {
-            $attributeRuleArray = \explode('|', $attributeRule);
+            $tmpAttributeRuleArray = \explode('|', $attributeRule);
+
+            if ($this->checkAttributeColumn($tmpAttributeRuleArray)) {
+                $attributeRuleArray = $tmpAttributeRuleArray;
+            }
         }
 
         return new Attribute($attributeRuleArray);
@@ -199,5 +211,18 @@ class RiskManagementHelper implements RiskManagementHelperInterface
             ->setParameter('subQuery', $subQuery)
             ->execute()
             ->fetchAll(\PDO::FETCH_COLUMN);
+    }
+
+    /**
+     * @return bool
+     */
+    private function checkAttributeColumn(array $attributeKeyAndValue)
+    {
+        $attribute = $this->crudService->get('s_articles_attributes', $attributeKeyAndValue[0]);
+        if ($attribute === null) {
+            return false;
+        }
+
+        return true;
     }
 }

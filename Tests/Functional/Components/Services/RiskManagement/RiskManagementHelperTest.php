@@ -218,7 +218,8 @@ class RiskManagementHelperTest extends TestCase
     {
         return new RiskManagementHelper(
             Shopware()->Container()->get('dbal_connection'),
-            Shopware()->Container()->get('paypal_unified.dependency_provider')
+            Shopware()->Container()->get('paypal_unified.dependency_provider'),
+            Shopware()->Container()->get('shopware_attribute.crud_service')
         );
     }
 }

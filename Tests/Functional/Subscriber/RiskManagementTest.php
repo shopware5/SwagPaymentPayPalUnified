@@ -9,6 +9,7 @@
 namespace SwagPaymentPayPalUnified\Tests\Functional\Subscriber;
 
 use PHPUnit\Framework\TestCase;
+use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\Services\RiskManagement\RiskManagementInterface;
 use SwagPaymentPayPalUnified\Subscriber\RiskManagement;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
@@ -186,6 +187,52 @@ class RiskManagementTest extends TestCase
         static::assertSame('["SW10178"]', $result);
     }
 
+    public function testOnCheckRiskAttribIsInvalidProductAttributeMatched()
+    {
+        $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_invalid_product_attr_is.sql');
+        Shopware()->Container()->get('dbal_connection')->exec($sql);
+        Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::CATEGORY_ID_SESSION_NAME, null);
+        Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::PRODUCT_ID_SESSION_NAME, 178);
+        $this->setRequestParameterToFront('frontend', 'listing');
+
+        $eventArgs = $this->getEventArgs();
+        $eventArgs->set('value', 'invalidAttr|2');
+
+        static::assertNull($this->getSubscriber()->onCheckRiskAttribIs($eventArgs));
+        static::assertNull($eventArgs->getReturn());
+    }
+
+    public function testOnCheckRiskAttribIsInvalidEmptyProductAttributeMatched()
+    {
+        $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_invalid_empty_product_attr_is.sql');
+        Shopware()->Container()->get('dbal_connection')->exec($sql);
+        Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::CATEGORY_ID_SESSION_NAME, null);
+        Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::PRODUCT_ID_SESSION_NAME, 178);
+        $this->setRequestParameterToFront('frontend', 'listing');
+
+        $eventArgs = $this->getEventArgs();
+        $eventArgs->set('value', '');
+
+        static::assertNull($this->getSubscriber()->onCheckRiskAttribIs($eventArgs));
+        static::assertNull($eventArgs->getReturn());
+    }
+
+    public function testShouldContinueCheckWithInvalidPaymentId()
+    {
+        $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_product_attr_is.sql');
+        Shopware()->Container()->get('dbal_connection')->exec($sql);
+        Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::CATEGORY_ID_SESSION_NAME, null);
+        Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::PRODUCT_ID_SESSION_NAME, 178);
+        $this->setRequestParameterToFront('frontend', 'listing');
+
+        $eventArgs = $this->getEventArgs();
+        $eventArgs->set('paymentID', 112);
+        $eventArgs->set('value', '');
+
+        static::assertNull($this->getSubscriber()->onCheckRiskAttribIs($eventArgs));
+        static::assertNull($eventArgs->getReturn());
+    }
+
     /**
      * @return RiskManagement
      */
@@ -194,7 +241,8 @@ class RiskManagementTest extends TestCase
         return new RiskManagement(
             Shopware()->Container()->get('paypal_unified.risk_management_helper'),
             Shopware()->Container()->get('template'),
-            Shopware()->Container()->get('paypal_unified.dependency_provider')
+            Shopware()->Container()->get('paypal_unified.dependency_provider'),
+            Shopware()->Container()->get('dbal_connection')
         );
     }
 
@@ -203,7 +251,10 @@ class RiskManagementTest extends TestCase
      */
     private function getEventArgs()
     {
-        return new \Enlight_Event_EventArgs();
+        $eventArgs = new \Enlight_Event_EventArgs();
+        $eventArgs->set('paymentID', (new PaymentMethodProvider())->getPaymentId(Shopware()->Container()->get('dbal_connection')));
+
+        return $eventArgs;
     }
 
     private function setRequestParameterToFront($module = 'frontend', $controller = 'listing', $action = 'index')

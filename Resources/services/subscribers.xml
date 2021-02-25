@@ -167,6 +167,7 @@
             <argument type="service" id="paypal_unified.risk_management_helper"/>
             <argument type="service" id="template"/>
             <argument type="service" id="paypal_unified.dependency_provider" />
+            <argument type="service" id="dbal_connection"/>
             <tag name="shopware.event_subscriber"/>
         </service>
 
