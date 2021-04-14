@@ -53,7 +53,7 @@ class PaymentAddressService
     /**
      * @return Address
      */
-    private function getBillingAddress(array $userData)
+    public function getBillingAddress(array $userData)
     {
         $billingAddress = $userData['billingaddress'];
         $billingAddress['countryiso'] = $userData['additional']['country']['countryiso'];
