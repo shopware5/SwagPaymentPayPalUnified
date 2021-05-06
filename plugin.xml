@@ -15,6 +15,15 @@
     <description lang="de">Dieses Modul bietet Ihnen die beliebtesten PayPal-Produkte aus einer Hand: Den PayPal Express-Button, PayPal PLUS, und Banner für die neue PayPal Ratenzahlung. Und das Beste daran: Mit diesem Modul können Sie alle Produkte einzeln oder gleichzeitig in Ihrem Online-Shop nutzen.</description>
     <description lang="en">This module offers you the most popular PayPal products from a single source: the PayPal Express button, PayPal PLUS, and banners for the new PayPal Installment Payment. And best of all, this module lets you use all products individually or simultaneously in your online store.</description>
 
+    <changelog version="REPLACE_GLOBAL_WITH_NEXT_VERSION">
+        <changes lang="de">
+            PT-12341 - Behebt fehlerhaftes Verhalten des Ratenzahlungsbanners;
+        </changes>
+        <changes lang="en">
+            PT-12341 - Fixes incorrect behavior of the installment banner;
+        </changes>
+    </changelog>
+
     <changelog version="3.1.2">
         <changes lang="de">
             PT-12286 - Behebt Fehler im Risiko Management;

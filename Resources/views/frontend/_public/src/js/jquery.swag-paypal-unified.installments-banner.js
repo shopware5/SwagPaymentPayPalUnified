@@ -78,11 +78,6 @@
                 return;
             }
 
-            this.checkGetCookiePreference();
-            if (this.isPayPalAllowed() === false) {
-                return;
-            }
-
             this.applyDataAttributes();
             $.publish('plugin/swagPayPalUnifiedInstallmentsBanner/init', this);
 
@@ -107,43 +102,6 @@
                     }
                 }
             }).render(this.$el.get(0));
-        },
-
-        checkGetCookiePreference: function() {
-            if ($.isFunction($.getCookiePreference)) {
-                return;
-            }
-
-            // Polyfill for older shopware versions
-            $.getCookiePreference = function() {
-                return true;
-            };
-        },
-
-        isPayPalAllowed: function() {
-            var me = this;
-
-            me.cookieValue = me.getCookie();
-
-            return me.cookieValue || $.getCookiePreference('paypal-cookies');
-        },
-
-        getCookie: function() {
-            var name = "allowCookie=",
-                decodedCookie = decodeURIComponent(document.cookie),
-                cookieArray = decodedCookie.split(';');
-
-            for (var i = 0; i < cookieArray.length; i++) {
-                var cookie = cookieArray[i];
-                while (cookie.charAt(0) === ' ') {
-                    cookie = cookie.substring(1);
-                }
-                if (cookie.indexOf(name) === 0) {
-                    return cookie.substring(name.length, cookie.length);
-                }
-            }
-
-            return null;
         },
 
         destroy: function() {
