@@ -126,6 +126,11 @@ class Frontend implements SubscriberInterface
 
         //Assign shop specific and configurable values to the view.
         $view->assign('paypalUnifiedShowLogo', $showPayPalLogo);
+
+        if (!$this->shouldCheckRiskManagement($args)) {
+            return;
+        }
+
         $view->assign('paypalIsNotAllowed', $this->riskManagement->isPayPalNotAllowed($productId, $category));
     }
 
@@ -138,5 +143,26 @@ class Frontend implements SubscriberInterface
         $dirs[] = $this->pluginDir . '/Resources/views/';
 
         $args->setReturn($dirs);
+    }
+
+    /**
+     * @return bool
+     */
+    private function shouldCheckRiskManagement(\Enlight_Controller_ActionEventArgs $args)
+    {
+        $controllerName = $args->getSubject()->Request()->getControllerName();
+        $actionName = $args->getSubject()->Request()->getActionName();
+
+        $rejectedActionList = [
+            'edit',
+            'ajaxSelection',
+            'ajaxSave',
+        ];
+
+        if ($controllerName === 'address' && \in_array($actionName, $rejectedActionList, true)) {
+            return false;
+        }
+
+        return true;
     }
 }
