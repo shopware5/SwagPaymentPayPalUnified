@@ -279,6 +279,39 @@ class FrontendSubscriberTest extends TestCase
     }
 
     /**
+     * @param string $actionName
+     *
+     * @dataProvider onchangeAddressShouldNotAssignToViewDataProvider
+     */
+    public function testOnchangeAddressShouldNotAssignToView($actionName)
+    {
+        $controller = $this->createController();
+        $controller->Request()->setActionName('ajaxSave');
+        $controller->Request()->setControllerName('address');
+
+        $this->setRequestParameterToFront($controller->Request(), 'frontend', 'address', $actionName);
+
+        $eventArgs = new \Enlight_Controller_ActionEventArgs();
+        $eventArgs->set('subject', $controller);
+
+        $this->getSubscriber()->onPostDispatchSecure($eventArgs);
+
+        static::assertNull($controller->View()->getAssign('paypalIsNotAllowed'));
+    }
+
+    /**
+     * @return array
+     */
+    public function onchangeAddressShouldNotAssignToViewDataProvider()
+    {
+        return [
+            ['edit'],
+            ['ajaxSelection'],
+            ['ajaxSave'],
+        ];
+    }
+
+    /**
      * @return Frontend
      */
     private function getSubscriber()
