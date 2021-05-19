@@ -21,9 +21,15 @@ class PaymentInstructionService
      */
     private $modelManager;
 
-    public function __construct(ModelManager $modelManager)
+    /**
+     * @var \Enlight_Event_EventManager
+     */
+    private $eventManager;
+
+    public function __construct(ModelManager $modelManager, \Enlight_Event_EventManager $eventManager)
     {
         $this->modelManager = $modelManager;
+        $this->eventManager = $eventManager;
     }
 
     /**
@@ -33,11 +39,8 @@ class PaymentInstructionService
      */
     public function getInstructions($orderNumber)
     {
-        /** @var PaymentInstructionModel $instructionModel */
-        $instructionModel = $this->modelManager->getRepository(PaymentInstructionModel::class)
+        return $this->modelManager->getRepository(PaymentInstructionModel::class)
             ->findOneBy(['orderNumber' => $orderNumber]);
-
-        return $instructionModel;
     }
 
     /**
@@ -59,6 +62,14 @@ class PaymentInstructionService
         $this->modelManager->flush();
 
         $this->setInstructionToInternalComment($orderNumber, $model);
+
+        $this->eventManager->notify(
+            'SwagPaymentPayPalUnified_CreatePaymentInstructions',
+            [
+                'ordernumber' => $orderNumber,
+                'paymentInstruction' => $paymentInstruction,
+            ]
+        );
     }
 
     /**
