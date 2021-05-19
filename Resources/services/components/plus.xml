@@ -20,6 +20,7 @@
                  class="SwagPaymentPayPalUnified\Components\Services\Plus\PaymentInstructionService"
                  public="true">
             <argument type="service" id="models"/>
+            <argument type="service" id="events"/>
         </service>
     </services>
 </container>

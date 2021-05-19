@@ -17,9 +17,11 @@
 
     <changelog version="REPLACE_GLOBAL_WITH_NEXT_VERSION">
         <changes lang="de">
+            PT-12279 - Löst ein neues Event während des Erstellen der Rechnungsanweisung aus;
             PT-12341 - Behebt fehlerhaftes Verhalten des Ratenzahlungsbanners;
         </changes>
         <changes lang="en">
+            PT-12279 - Triggers a new event during the creation of the invoice instruction;
             PT-12341 - Fixes incorrect behavior of the installment banner;
         </changes>
     </changelog>
