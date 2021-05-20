@@ -5,6 +5,7 @@
                  {block name='paypal_unified_installments_banner_data_attributes'}
                  data-amount="{$paypalUnifiedInstallmentsBannerAmount}"
                  data-currency="{$paypalUnifiedInstallmentsBannerCurrency}"
+                 data-buyerCountry="{$paypalUnifiedInstallmentsBannerBuyerCountry}"
                  {/block}
                  class="paypal-unified-installments-banner--product-detail">
             </div>

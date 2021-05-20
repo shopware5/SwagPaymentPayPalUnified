@@ -69,16 +69,25 @@
              *  - black
              *  - white
              */
-            textColor: 'black'
+            textColor: 'black',
+
+            /**
+             * Buyer country used to get the right banner language
+             *
+             * @type string|null
+             */
+            buyerCountry: null,
         },
 
         init: function() {
+            this.applyDataAttributes();
+
             this.payPalInstallmentsBannerJS = window.payPalInstallmentsBannerJS;
-            if (this.payPalInstallmentsBannerJS === undefined) {
+
+            if (this.payPalInstallmentsBannerJS === undefined || !this.opts.buyerCountry) {
                 return;
             }
 
-            this.applyDataAttributes();
             $.publish('plugin/swagPayPalUnifiedInstallmentsBanner/init', this);
 
             this.createBanner();
@@ -90,6 +99,7 @@
             this.payPalInstallmentsBannerJS.Messages({
                 amount: this.opts.amount,
                 currency: this.opts.currency,
+                buyerCountry: this.opts.buyerCountry,
                 style: {
                     layout: this.opts.layout,
                     color: this.opts.color,

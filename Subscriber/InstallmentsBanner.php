@@ -73,9 +73,9 @@ class InstallmentsBanner implements SubscriberInterface
             return;
         }
 
-        $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag($this->connection);
-        $advertiseInstallments = $swUnifiedActive && (bool) $this->settingsService->get('advertise_installments', SettingsTable::INSTALLMENTS);
-        if ($advertiseInstallments === false) {
+        $shopContext = $this->contextService->getShopContext();
+        $shopLocale = $shopContext->getShop()->getLocale()->getLocale();
+        if ($this->advertiseInstallments($shopLocale) === false) {
             return;
         }
 
@@ -84,12 +84,14 @@ class InstallmentsBanner implements SubscriberInterface
 
         $clientId = $this->settingsService->get('client_id');
         $amount = $this->getAmountForPage($args->getRequest(), $view);
-        $currency = $this->contextService->getShopContext()->getCurrency()->getCurrency();
+        $currency = $shopContext->getCurrency()->getCurrency();
+        $buyerCountry = $this->getBuyerCountryByCurrencyAndShopCountryIso($currency, $shopLocale);
 
-        $view->assign('paypalUnifiedInstallmentsBanner', $advertiseInstallments);
+        $view->assign('paypalUnifiedInstallmentsBanner', true);
         $view->assign('paypalUnifiedInstallmentsBannerClientId', $clientId);
         $view->assign('paypalUnifiedInstallmentsBannerAmount', $amount);
         $view->assign('paypalUnifiedInstallmentsBannerCurrency', $currency);
+        $view->assign('paypalUnifiedInstallmentsBannerBuyerCountry', $buyerCountry);
     }
 
     /**
@@ -111,5 +113,64 @@ class InstallmentsBanner implements SubscriberInterface
         }
 
         return $amount;
+    }
+
+    /**
+     * @param string $countryIso
+     *
+     * @return bool
+     */
+    private function isInstallmentsCountry($countryIso)
+    {
+        $countryCodes = [
+            'de_de',
+            'en_au',
+            'en_gb',
+            'en_us',
+            'fr_fr',
+        ];
+
+        return \in_array(\strtolower($countryIso), $countryCodes, true);
+    }
+
+    /**
+     * @param string $shopLocale
+     *
+     * @return bool
+     */
+    private function advertiseInstallments($shopLocale)
+    {
+        $isInstallmentsCountry = $this->isInstallmentsCountry($shopLocale);
+
+        $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag($this->connection);
+
+        return $swUnifiedActive
+            && (bool) $this->settingsService->get('advertise_installments', SettingsTable::INSTALLMENTS)
+            && $isInstallmentsCountry;
+    }
+
+    /**
+     * @param string $currency
+     * @param string $countryIso
+     *
+     * @return string|null
+     */
+    private function getBuyerCountryByCurrencyAndShopCountryIso($currency, $countryIso)
+    {
+        $key = \strtolower(\sprintf('%s_%s', $currency, $countryIso));
+
+        $currencies = [
+            'aud_en_au' => 'AU',
+            'eur_de_de' => 'DE',
+            'eur_fr_fr' => 'FR',
+            'gbp_en_gb' => 'GB',
+            'usd_en_us' => 'US',
+        ];
+
+        if (!isset($currencies[$key])) {
+            return null;
+        }
+
+        return $currencies[$key];
     }
 }

@@ -19,11 +19,13 @@
         <changes lang="de">
             PT-12279 - Löst ein neues Event während des Erstellen der Rechnungsanweisung aus;
             PT-12341 - Behebt fehlerhaftes Verhalten des Ratenzahlungsbanners;
+            PT-12345 - Verbessert das Verhalten des Ratenzahlungsbanners;
             PT-12346 - Behebt Fehler während der Adressänderung;
         </changes>
         <changes lang="en">
             PT-12279 - Triggers a new event during the creation of the invoice instruction;
             PT-12341 - Fixes incorrect behavior of the installment banner;
+            PT-12345 - Improves the behaviour of the instalment banner;
             PT-12346 - Fixes errors during the address change;
         </changes>
     </changelog>
