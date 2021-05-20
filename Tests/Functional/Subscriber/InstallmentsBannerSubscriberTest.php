@@ -10,6 +10,7 @@ namespace SwagPaymentPayPalUnified\Tests\Functional\Subscriber;
 
 use Enlight_Template_Manager;
 use PHPUnit\Framework\TestCase;
+use Shopware\Bundle\StoreFrontBundle\Service\Core\ContextService;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Subscriber\InstallmentsBanner;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
@@ -174,6 +175,57 @@ class InstallmentsBannerSubscriberTest extends TestCase
         static::assertSame(self::CLIENT_ID, $view->getAssign('paypalUnifiedInstallmentsBannerClientId'));
         static::assertSame($cartAmount, $view->getAssign('paypalUnifiedInstallmentsBannerAmount'));
         static::assertSame('EUR', $view->getAssign('paypalUnifiedInstallmentsBannerCurrency'));
+    }
+
+    public function testOnPostDispatchSecureAssignsBuyerCountryDEToView()
+    {
+        $subscriber = $this->getSubscriber();
+        $this->createTestSettings();
+
+        $view = new ViewMock(new Enlight_Template_Manager());
+        $request = new \Enlight_Controller_Request_RequestTestCase();
+        $request->setControllerName('detail');
+        $request->setActionName('index');
+        $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
+            'subject' => new DummyController($request, $view),
+            'request' => $request,
+        ]);
+
+        $subscriber->onPostDispatchSecure($enlightEventArgs);
+
+        static::assertSame('DE', $view->getAssign('paypalUnifiedInstallmentsBannerBuyerCountry'));
+    }
+
+    public function testOnPostDispatchSecureAssignsBuyerCountryGBToView()
+    {
+        $subscriber = $this->getSubscriber();
+        $this->createTestSettings();
+
+        $sql = \file_get_contents(__DIR__ . '/_fixtures/install_great_britan_pounds.sql');
+        Shopware()->Container()->get('dbal_connection')->exec($sql);
+
+        $contextService = Shopware()->Container()->get('shopware_storefront.context_service');
+        $tmpShopContext = $contextService->getShopContext();
+        $shopContext = $contextService->createShopContext(2, 3, 'EK');
+
+        $reflectionProperty = (new \ReflectionClass(ContextService::class))->getProperty('context');
+        $reflectionProperty->setAccessible(true);
+        $reflectionProperty->setValue($contextService, $shopContext);
+
+        $view = new ViewMock(new Enlight_Template_Manager());
+        $request = new \Enlight_Controller_Request_RequestTestCase();
+        $request->setControllerName('detail');
+        $request->setActionName('index');
+        $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
+            'subject' => new DummyController($request, $view),
+            'request' => $request,
+        ]);
+
+        $subscriber->onPostDispatchSecure($enlightEventArgs);
+
+        $reflectionProperty->setValue($contextService, $tmpShopContext);
+
+        static::assertSame('GB', $view->getAssign('paypalUnifiedInstallmentsBannerBuyerCountry'));
     }
 
     /**

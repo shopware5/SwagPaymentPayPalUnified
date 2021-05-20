@@ -7,6 +7,7 @@
                  data-color="gray"
                  data-amount="{$paypalUnifiedInstallmentsBannerAmount}"
                  data-currency="{$paypalUnifiedInstallmentsBannerCurrency}"
+                 data-buyerCountry="{$paypalUnifiedInstallmentsBannerBuyerCountry}"
                  {/block}
                  class="paypal-unified-installments-banner--cart">
             </div>

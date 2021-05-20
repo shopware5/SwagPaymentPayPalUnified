@@ -28,6 +28,7 @@
                          {block name='paypal_unified_installments_banner_data_attributes'}
                          data-ratio="1x1"
                          data-currency="{$paypalUnifiedInstallmentsBannerCurrency}"
+                         data-buyerCountry="{$paypalUnifiedInstallmentsBannerBuyerCountry}"
                          {/block}>
                     </div>
                 </div>
