@@ -17,8 +17,5 @@ parameters:
             '#Access to an undefined property Shopware_Models_Document_Order::#'
         - # Since we have to support Shopware 5.2 we can not use return types
             '#Method .* has no return typehint specified#'
-        - # Is in fact never null. Would need a core change
-            '#Cannot call method .* on Enlight_View_Default\|null#'
-        - '#Parameter .* expects Enlight_View_Default, Enlight_View_Default\|null given#'
         - # Needs some custom extension to recognize the return value correctly
             '#Cannot call method fetch.*\(\) on Doctrine\\DBAL\\Driver\\ResultStatement\|int#'

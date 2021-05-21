@@ -12,6 +12,7 @@ use SwagPaymentPayPalUnified\Components\ErrorCodes;
 use SwagPaymentPayPalUnified\Components\ExceptionHandlerServiceInterface;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderInterface;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
+use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\PartnerAttributionId;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
@@ -53,6 +54,8 @@ class Shopware_Controllers_Widgets_PaypalUnifiedExpressCheckout extends Shopware
     {
         /** @var sBasket $basket */
         $basket = $this->dependencyProvider->getModule('basket');
+
+        $this->setPaymentIdToSession();
 
         //If the PayPal express button on the detail page was clicked, the addProduct equals true.
         //That means, that it has to be added manually to the basket.
@@ -157,5 +160,17 @@ class Shopware_Controllers_Widgets_PaypalUnifiedExpressCheckout extends Shopware
         }
 
         $this->redirect($redirectData);
+    }
+
+    private function setPaymentIdToSession()
+    {
+        $paymentMethodProvider = new PaymentMethodProvider();
+        $dbalConnection = $this->get('dbal_connection');
+
+        // Set PayPal as paymentMethod
+        $this->dependencyProvider->getSession()->offsetSet(
+            'sPaymentID',
+            $paymentMethodProvider->getPaymentId($dbalConnection)
+        );
     }
 }

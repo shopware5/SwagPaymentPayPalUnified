@@ -83,7 +83,7 @@ class InstallmentsBanner implements SubscriberInterface
         $view = $args->getSubject()->View();
 
         $clientId = $this->settingsService->get('client_id');
-        $amount = $this->getAmountForPage($args->getRequest(), $view);
+        $amount = $this->getAmountForPage($args->getSubject()->Request(), $view);
         $currency = $shopContext->getCurrency()->getCurrency();
         $buyerCountry = $this->getBuyerCountryByCurrencyAndShopCountryIso($currency, $shopLocale);
 
