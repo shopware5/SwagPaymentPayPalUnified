@@ -13,14 +13,16 @@ use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Subscriber\Frontend;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
+use SwagPaymentPayPalUnified\Tests\Functional\ResetSessionTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\SettingsHelperTrait;
 use SwagPaymentPayPalUnified\Tests\Mocks\DummyController;
 use SwagPaymentPayPalUnified\Tests\Mocks\ViewMock;
 
 class FrontendSubscriberTest extends TestCase
 {
-    use DatabaseTestCaseTrait;
+    use ResetSessionTrait;
     use SettingsHelperTrait;
+    use DatabaseTestCaseTrait;
 
     public function testCanBeCreated()
     {
@@ -133,6 +135,10 @@ class FrontendSubscriberTest extends TestCase
 
     public function testOnPostDispatchSecureShouldAssignFalseToView()
     {
+        $this->resetSession();
+
+        Shopware()->Front()->setRequest(new \Enlight_Controller_Request_RequestHttp());
+
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_product_in_category.sql');
         Shopware()->Container()->get('dbal_connection')->exec($sql);
 
@@ -149,8 +155,10 @@ class FrontendSubscriberTest extends TestCase
         static::assertFalse($result);
     }
 
-    public function testOnPostDispatchSecureShoudAssignDataToViewShouldBeTrue()
+    public function testOnPostDispatchSecureShouldAssignDataToViewShouldBeTrue()
     {
+        Shopware()->Front()->setRequest(new \Enlight_Controller_Request_RequestHttp());
+
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_product_in_category.sql');
         Shopware()->Container()->get('dbal_connection')->exec($sql);
 
@@ -173,8 +181,10 @@ class FrontendSubscriberTest extends TestCase
         static::assertTrue($result);
     }
 
-    public function testOnPostDispatchSecureShoudAssignDataToViewShouldBeFalse()
+    public function testOnPostDispatchSecureShouldAssignDataToViewShouldBeFalse()
     {
+        Shopware()->Front()->setRequest(new \Enlight_Controller_Request_RequestHttp());
+
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_product_in_category.sql');
         Shopware()->Container()->get('dbal_connection')->exec($sql);
 
@@ -193,8 +203,10 @@ class FrontendSubscriberTest extends TestCase
         static::assertTrue($result);
     }
 
-    public function testOnPostDispatchSecureShoudAssignDataToViewAttrShouldBeFalse()
+    public function testOnPostDispatchSecureShouldAssignDataToViewAttrShouldBeFalse()
     {
+        Shopware()->Front()->setRequest(new \Enlight_Controller_Request_RequestHttp());
+
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_product_attr_is.sql');
         Shopware()->Container()->get('dbal_connection')->exec($sql);
 
@@ -213,8 +225,10 @@ class FrontendSubscriberTest extends TestCase
         static::assertFalse($result);
     }
 
-    public function testOnPostDispatchSecureShoudAssignDataToViewAttrShouldAddProductData()
+    public function testOnPostDispatchSecureShouldAssignDataToViewAttrShouldAddProductData()
     {
+        Shopware()->Front()->setRequest(new \Enlight_Controller_Request_RequestHttp());
+
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_product_attr_is.sql');
         Shopware()->Container()->get('dbal_connection')->exec($sql);
 
