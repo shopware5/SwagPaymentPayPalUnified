@@ -322,6 +322,7 @@ class FrontendSubscriberTest extends TestCase
             ['edit'],
             ['ajaxSelection'],
             ['ajaxSave'],
+            ['handleExtra'],
         ];
     }
 

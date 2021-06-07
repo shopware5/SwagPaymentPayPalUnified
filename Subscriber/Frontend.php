@@ -157,6 +157,7 @@ class Frontend implements SubscriberInterface
             'edit',
             'ajaxSelection',
             'ajaxSave',
+            'handleExtra',
         ];
 
         if ($controllerName === 'address' && \in_array($actionName, $rejectedActionList, true)) {
