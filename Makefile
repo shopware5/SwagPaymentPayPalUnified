@@ -1,12 +1,15 @@
 .DEFAULT_GOAL := help
 
 filter := "default"
+dirname := $(notdir $(CURDIR))
+envprefix := $(shell echo "$(dirname)" | tr A-Z a-z)
+envname := $(envprefix)test
 
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 .PHONY: help
 
-init: composer-install install-hooks install-plugin install-test-environment ## install the plugin SwagPaymentPayPalUnified with pre commit hook, requirements and the test environment
+init: composer-install install-hooks install-plugin install-test-environment ## install the plugin with pre commit hook, requirements and the test environment
 
 composer-install: ## Install composer requirements
 	@echo "Install composer requirements"
@@ -16,9 +19,9 @@ install-hooks: ## Install pre commit hooks
 	@echo "Install pre commit hooks"
 	.githooks/install_hooks.sh
 
-install-plugin: .refresh-plugin-list ## Install and activate the SwagPaymentPayPalUnified plugin
+install-plugin: .refresh-plugin-list ## Install and activate the plugin
 	@echo "Install the plugin"
-	./../../../bin/console sw:plugin:install SwagPaymentPayPalUnified --activate -c
+	./../../../bin/console sw:plugin:install $(dirname) --activate -c
 
 install-test-environment: ## Installs the plugin test environment
 	@echo "Install the test environment"
@@ -26,9 +29,9 @@ install-test-environment: ## Installs the plugin test environment
 
 run-tests: ## Execute the php unit tests... (You can use the filter parameter "make run-tests filter=yourFilterPhrase")
 ifeq ($(filter), "default")
-	SHOPWARE_ENV=swagpaymentpaypalunifiedtest ./../../../vendor/phpunit/phpunit/phpunit --verbose
+	SHOPWARE_ENV=$(envname) ./../../../vendor/phpunit/phpunit/phpunit --verbose
 else
-	SHOPWARE_ENV=swagpaymentpaypalunifiedtest ./../../../vendor/phpunit/phpunit/phpunit --verbose --filter $(filter)
+	SHOPWARE_ENV=$(envname) ./../../../vendor/phpunit/phpunit/phpunit --verbose --filter $(filter)
 endif
 
 fix-cs: ## Run the code style fixer
