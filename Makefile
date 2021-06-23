@@ -26,18 +26,21 @@ install-test-environment: ## Installs the plugin test environment
 
 run-tests: ## Execute the php unit tests... (You can use the filter parameter "make run-tests filter=yourFilterPhrase")
 ifeq ($(filter), "default")
-	SHOPWARE_ENV=swagpaymentpaypalunifiedtest /home/dennis/www/shopware/vendor/phpunit/phpunit/phpunit --verbose
+	SHOPWARE_ENV=swagpaymentpaypalunifiedtest ./../../../vendor/phpunit/phpunit/phpunit --verbose
 else
-	SHOPWARE_ENV=swagpaymentpaypalunifiedtest /home/dennis/www/shopware/vendor/phpunit/phpunit/phpunit --verbose --filter $(filter)
+	SHOPWARE_ENV=swagpaymentpaypalunifiedtest ./../../../vendor/phpunit/phpunit/phpunit --verbose --filter $(filter)
 endif
 
 fix-cs: ## Run the code style fixer
 	./../../../vendor/bin/php-cs-fixer fix
 
-phpstan: ## Run PHPstan
+fix-cs-dry: ## Run the code style fixer in dry mode
+	./../../../vendor/bin/php-cs-fixer fix --dry-run -v
+
+phpstan: ## Run PHPStan
 	./../../../vendor/bin/phpstan analyse .
 
-phpstan-generate-baseline: ## Run PHPstan
+phpstan-generate-baseline: ## Run PHPStan and generate a baseline file
 	./../../../vendor/bin/phpstan analyse . --generate-baseline
 
 .refresh-plugin-list:

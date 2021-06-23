@@ -24,28 +24,22 @@ stages:
     - Coverage
     - Shopware Versions
 
-default:
-    image: shopware/5-continuous:7.3
-
 PHP analyze:
     stage: Code Style Check
-    before_script: [ ]
+    image: shopware/5-continuous:7.4
     script:
         - zip -rq plugin.zip .
         - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.shopware.com/shopware/5/product/shopware.git shopware --depth=1 -b ${CHECKOUT_SHOPWARE_BRANCH}
         - unzip -q plugin.zip -d shopware/custom/plugins/SwagPaymentPayPalUnified
         - cd shopware
-        - /entrypoint supervisord &>/dev/null &
-        - cp /usr/local/bin/composer composer.phar
-        - php composer.phar install
-        - vendor/bin/php-cs-fixer fix --dry-run -v --config=custom/plugins/SwagPaymentPayPalUnified/.php_cs.dist --format=junit | tee php-cs-fixer.xml
-        - vendor/bin/phpstan analyse custom/plugins/SwagPaymentPayPalUnified -c custom/plugins/SwagPaymentPayPalUnified/phpstan.neon
-    artifacts:
-        reports:
-            junit: shopware/php-cs-fixer.xml
+        - composer install
+        - cd custom/plugins/SwagPaymentPayPalUnified
+        - make fix-cs-dry
+        - make phpstan
 
 Code Coverage:
     extends: .SW 5.7 default
+    image: shopware/5-continuous:7.4
     stage: Coverage
     needs: [ PHP analyze ]
     script:
@@ -236,9 +230,11 @@ SW 5.6:
         - /entrypoint supervisord &>/dev/null &
         - cd custom/plugins/SwagPaymentPayPalUnified
 
-SW 5.7 PHP 7.3:
+SW 5.7 PHP 7.4:
     extends: .SW 5.7 default
-    image: shopware/5-continuous:7.3
+    only:
+        - master
+    image: shopware/5-continuous:7.4
     script:
         - php ../../../vendor/bin/phpunit
             --configuration phpunit.xml.dist

@@ -160,6 +160,7 @@ class PreCommitChecks
         exec('./../../../vendor/bin/phpstan analyse .', $output, $return);
         if ($return !== 0) {
             $this->error = true;
+            $this->writeln('> PHPStan errors found');
         }
 
         $this->writeln();
