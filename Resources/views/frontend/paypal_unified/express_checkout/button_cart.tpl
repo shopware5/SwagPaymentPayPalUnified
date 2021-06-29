@@ -15,6 +15,7 @@
                  data-paypalLanguage="{$paypalUnifiedLanguageIso}"
                  data-cart="true"
                  data-riskManagementMatchedProducts='{$riskManagementMatchedProducts}'
+                 data-esdProducts='{$paypalUnifiedEsdProducts}'
                 {block name='paypal_unified_ec_button_container_cart_data'}{/block}>
             </div>
         {/block}

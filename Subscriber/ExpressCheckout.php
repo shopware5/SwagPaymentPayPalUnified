@@ -21,6 +21,7 @@ use SwagPaymentPayPalUnified\Components\PaymentBuilderInterface;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\Services\PaymentAddressService;
+use SwagPaymentPayPalUnified\Components\Services\RiskManagement\EsdProductCheckerInterface;
 use SwagPaymentPayPalUnified\Models\Settings\ExpressCheckout as ExpressSettingsModel;
 use SwagPaymentPayPalUnified\Models\Settings\General as GeneralSettingsModel;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PaymentAddressPatch;
@@ -85,6 +86,11 @@ class ExpressCheckout implements SubscriberInterface
      */
     private $dependencyProvider;
 
+    /**
+     * @var EsdProductCheckerInterface
+     */
+    private $esdProductChecker;
+
     public function __construct(
         SettingsServiceInterface $settingsService,
         Session $session,
@@ -94,7 +100,8 @@ class ExpressCheckout implements SubscriberInterface
         ExceptionHandlerServiceInterface $exceptionHandlerService,
         Connection $connection,
         ClientService $clientService,
-        DependencyProvider $dependencyProvider
+        DependencyProvider $dependencyProvider,
+        EsdProductCheckerInterface $esdProductChecker
     ) {
         $this->settingsService = $settingsService;
         $this->session = $session;
@@ -106,6 +113,7 @@ class ExpressCheckout implements SubscriberInterface
         $this->connection = $connection;
         $this->clientService = $clientService;
         $this->dependencyProvider = $dependencyProvider;
+        $this->esdProductChecker = $esdProductChecker;
     }
 
     /**
@@ -146,6 +154,13 @@ class ExpressCheckout implements SubscriberInterface
         }
 
         $view = $args->getSubject()->View();
+        $cart = $view->getAssign('sBasket');
+
+        $cartProductIds = $this->getProductIdsFromBasket($cart['content']);
+        if ($this->esdProductChecker->checkForEsdProducts($cartProductIds) === true) {
+            return;
+        }
+
         $view->assign('paypalUnifiedEcCartActive', $expressSettings->getCartActive());
         $view->assign('paypalUnifiedModeSandbox', $generalSettings->getSandbox());
         $view->assign('paypalUnifiedEcOffCanvasActive', $expressSettings->getOffCanvasActive());
@@ -175,6 +190,12 @@ class ExpressCheckout implements SubscriberInterface
     {
         $request = $args->getRequest();
         $view = $args->getSubject()->View();
+
+        $cart = $view->getAssign('sBasket');
+        $cartProductIds = $this->getProductIdsFromBasket($cart['content']);
+        if ($this->esdProductChecker->checkForEsdProducts($cartProductIds) === true) {
+            return;
+        }
 
         if (\strtolower($request->getActionName()) === 'confirm' && $request->getParam('expressCheckout', false)) {
             $view->assign('paypalUnifiedExpressCheckout', true);
@@ -216,6 +237,10 @@ class ExpressCheckout implements SubscriberInterface
 
     public function addExpressCheckoutButtonDetail(ActionEventArgs $args)
     {
+        if ($args->getSubject()->View()->getAssign('sArticle')['esd'] === true) {
+            return;
+        }
+
         $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag($this->connection);
         if (!$swUnifiedActive) {
             return;
@@ -261,14 +286,21 @@ class ExpressCheckout implements SubscriberInterface
             return;
         }
 
+        if ($this->isUserLoggedIn()) {
+            return;
+        }
+
         $view = $args->getSubject()->View();
 
-        if (!$this->isUserLoggedIn()) {
-            $view->assign('paypalUnifiedEcListingActive', true);
-            $this->addEcButtonBehaviour($view, $generalSettings);
-            $this->addEcButtonStyleInfo($view, $expressSettings);
-            $view->assign('paypalUnifiedEcButtonStyleSize', 'small');
-        }
+        $categoryId = (int) $args->getSubject()->Request()->getParam('sCategory');
+
+        $esdProductNumbers = $this->esdProductChecker->getEsdProductNumbers($categoryId);
+
+        $view->assign('paypalUnifiedEsdProducts', \json_encode($esdProductNumbers));
+        $view->assign('paypalUnifiedEcListingActive', true);
+        $this->addEcButtonBehaviour($view, $generalSettings);
+        $this->addEcButtonStyleInfo($view, $expressSettings);
+        $view->assign('paypalUnifiedEcButtonStyleSize', 'small');
     }
 
     public function addExpressCheckoutButtonLogin(ActionEventArgs $args)
@@ -292,6 +324,12 @@ class ExpressCheckout implements SubscriberInterface
 
         $view = $args->getSubject()->View();
         $requestParams = $args->getRequest()->getParams();
+
+        $sBasket = $this->dependencyProvider->getModule('Basket')->sGetBasket();
+        $productIds = $this->getProductIdsFromBasket($sBasket['content']);
+        if ($this->esdProductChecker->checkForEsdProducts($productIds) === true) {
+            return;
+        }
 
         $targetAction = $requestParams['sTargetAction'];
         if ($requestParams['sTarget'] === 'checkout' && ($targetAction === 'confirm' || $targetAction === 'shippingPayment')) {
@@ -397,5 +435,21 @@ class ExpressCheckout implements SubscriberInterface
     private function isUserLoggedIn()
     {
         return (bool) $this->session->get('sUserId');
+    }
+
+    /**
+     * @param array|null $content
+     *
+     * @return array
+     */
+    private function getProductIdsFromBasket($content)
+    {
+        if ($content === null) {
+            return [];
+        }
+
+        return array_map(function (array $product) {
+            return (int) $product['articleID'];
+        }, $content);
     }
 }

@@ -16,6 +16,7 @@
                  data-productNumber="{$sArticle.ordernumber}"
                  data-detailPage="true"
                  data-riskManagementMatchedProducts='{$riskManagementMatchedProducts}'
+                 data-esdProducts='{$paypalUnifiedEsdProducts}'
                 {block name='paypal_unified_ec_button_container_detail_data'}{/block}>
             </div>
         {/block}
