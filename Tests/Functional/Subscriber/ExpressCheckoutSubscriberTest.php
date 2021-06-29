@@ -11,6 +11,7 @@ namespace SwagPaymentPayPalUnified\Tests\Functional\Subscriber;
 use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\Services\ExceptionHandlerService;
+use SwagPaymentPayPalUnified\Components\Services\RiskManagement\EsdProductChecker;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PaymentItemsPatch;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\PaymentResource;
 use SwagPaymentPayPalUnified\Subscriber\ExpressCheckout as ExpressCheckoutSubscriber;
@@ -158,7 +159,7 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $request = new \Enlight_Controller_Request_RequestTestCase();
         $request->setActionName('cart');
         $request->setControllerName('checkout');
-        $view->assign('sBasket', ['content' => 'foo']);
+        $view->assign('sBasket', ['content' => [[]]]);
 
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
             'subject' => new DummyController($request, $view),
@@ -179,7 +180,7 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $request = new \Enlight_Controller_Request_RequestTestCase();
         $request->setActionName('ajaxCart');
         $request->setControllerName('checkout');
-        $view->assign('sBasket', ['content' => 'foo']);
+        $view->assign('sBasket', ['content' => [[]]]);
 
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
             'subject' => new DummyController($request, $view),
@@ -192,6 +193,35 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $subscriber->addExpressCheckoutButtonCart($enlightEventArgs);
 
         static::assertTrue($view->getAssign('paypalUnifiedModeSandbox'));
+    }
+
+    public function testAddExpressCheckoutButtonCartShouldReturnBecauseEsdProductIsInBasket()
+    {
+        $view = new ViewMock(new \Enlight_Template_Manager());
+        $request = new \Enlight_Controller_Request_RequestTestCase();
+        $request->setActionName('ajaxCart');
+        $request->setControllerName('checkout');
+
+        $basket = Shopware()->Modules()->Basket();
+        $basket->sDeleteBasket();
+        $basket->sAddArticle('SW10196');
+
+        $view->assign('sBasket', $basket->sGetBasket());
+
+        $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
+            'subject' => new DummyController($request, $view),
+            'request' => $request,
+        ]);
+
+        $this->importSettings(true, true, true, true);
+
+        $subscriber = $this->getSubscriber();
+        $subscriber->addExpressCheckoutButtonCart($enlightEventArgs);
+
+        static::assertNull($view->getAssign('paypalUnifiedEcCartActive'));
+        static::assertNull($view->getAssign('paypalUnifiedModeSandbox'));
+        static::assertNull($view->getAssign('paypalUnifiedEcOffCanvasActive'));
+        static::assertNull($view->getAssign('paypalUnifiedUseInContext'));
     }
 
     public function testAddEcInfoOnConfirmReturnWrongAction()
@@ -249,6 +279,35 @@ class ExpressCheckoutSubscriberTest extends TestCase
         static::assertSame('TEST_PAYMENT_ID', $view->getAssign('paypalUnifiedExpressPaymentId'));
         static::assertSame('TEST_PAYER_ID', $view->getAssign('paypalUnifiedExpressPayerId'));
         static::assertTrue($view->getAssign('paypalUnifiedExpressCheckout'));
+    }
+
+    public function testAddEcInfoOnConfirmShouldReturnBecauseEsdProductIsInBasket()
+    {
+        $basket = Shopware()->Modules()->Basket();
+        $basket->sDeleteBasket();
+        $basket->sAddArticle('SW10196');
+
+        $view = new ViewMock(new \Enlight_Template_Manager());
+        $request = new \Enlight_Controller_Request_RequestTestCase();
+        $request->setActionName('confirm');
+        $request->setParam('paymentId', 'TEST_PAYMENT_ID');
+        $request->setParam('payerId', 'TEST_PAYER_ID');
+        $request->setParam('expressCheckout', true);
+        $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
+            'subject' => new DummyController($request, $view),
+            'request' => $request,
+        ]);
+
+        $view->assign('sBasket', $basket->sGetBasket());
+
+        $this->importSettings(true, true, true, true);
+
+        $subscriber = $this->getSubscriber();
+        $subscriber->addEcInfoOnConfirm($enlightEventArgs);
+
+        static::assertNull($view->getAssign('paypalUnifiedExpressPaymentId'));
+        static::assertNull($view->getAssign('paypalUnifiedExpressPayerId'));
+        static::assertNull($view->getAssign('paypalUnifiedExpressCheckout'));
     }
 
     public function testAddPaymentInfoToRequestReturnWrongAction()
@@ -510,6 +569,22 @@ class ExpressCheckoutSubscriberTest extends TestCase
         static::assertTrue($view->getAssign('paypalUnifiedEcDetailActive'));
     }
 
+    public function testAddExpressCheckoutButtonDetailShouldReturnBecauseEsdProduct()
+    {
+        $view = new ViewMock(new \Enlight_Template_Manager());
+        $view->assign('sArticle', ['esd' => true]);
+        $enlightEventArgs = $this->createEventArgs($view);
+        $enlightEventArgs->getSubject()->setRequest(new \Enlight_Controller_Request_RequestHttp());
+        Shopware()->Container()->get('session')->offsetUnset('sUserId');
+
+        $this->importSettings(true, true, true);
+
+        $subscriber = $this->getSubscriber();
+        $subscriber->addExpressCheckoutButtonDetail($enlightEventArgs);
+
+        static::assertNull($view->getAssign('paypalUnifiedEcDetailActive'));
+    }
+
     public function testAddExpressCheckoutButtonListingReturnPaymentMethodInactive()
     {
         $paymentMethodProvider = new PaymentMethodProvider(Shopware()->Container()->get('models'));
@@ -578,6 +653,20 @@ class ExpressCheckoutSubscriberTest extends TestCase
 
         static::assertSame($view->getAssign('paypalUnifiedEcButtonStyleSize'), 'small');
         static::assertTrue($view->getAssign('paypalUnifiedEcListingActive'));
+    }
+
+    public function testAddExpressCheckoutButtonListingAssignsEsdProductNumbers()
+    {
+        $view = new ViewMock(new \Enlight_Template_Manager());
+        $enlightEventArgs = $this->createEventArgs($view);
+        $enlightEventArgs->getSubject()->Request()->setParam('sCategory', 10);
+
+        $this->importSettings(true, false, false, false, false, false, true);
+
+        $subscriber = $this->getSubscriber();
+        $subscriber->addExpressCheckoutButtonListing($enlightEventArgs);
+
+        static::assertSame('["SW10196"]', $view->getAssign('paypalUnifiedEsdProducts'));
     }
 
     public function testAddExpressCheckoutButtonLoginReturnPaymentMethodInactive()
@@ -743,7 +832,8 @@ class ExpressCheckoutSubscriberTest extends TestCase
             new ExceptionHandlerService($this->loggerMock),
             Shopware()->Container()->get('dbal_connection'),
             Shopware()->Container()->get('paypal_unified.client_service'),
-            Shopware()->Container()->get('paypal_unified.dependency_provider')
+            Shopware()->Container()->get('paypal_unified.dependency_provider'),
+            Shopware()->Container()->get(EsdProductChecker::class)
         );
     }
 

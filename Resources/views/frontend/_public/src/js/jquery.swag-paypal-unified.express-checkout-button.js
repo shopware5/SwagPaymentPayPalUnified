@@ -105,7 +105,14 @@
              *
              * @type array|null
              */
-            riskManagementMatchedProducts: null
+            riskManagementMatchedProducts: null,
+
+            /**
+             * Excluded esd products.
+             *
+             * @type array|null
+             */
+            esdProducts: null,
         },
 
         /**
@@ -118,7 +125,7 @@
 
             me.applyDataAttributes();
 
-            if (me.isProductExcludedByRiskManagement()) {
+            if (me.isProductExcluded()) {
                 return;
             }
 
@@ -144,10 +151,12 @@
          *
          * @return {boolean}
          */
-        isProductExcludedByRiskManagement: function() {
+        isProductExcluded: function() {
             var me = this,
-                productNumbers = me.opts.riskManagementMatchedProducts;
-
+                productNumbers = [].concat(
+                    me.opts.riskManagementMatchedProducts,
+                    me.opts.esdProducts
+                );
             if (Array.isArray(productNumbers) && productNumbers.includes(me.opts.productNumber)) {
                 return true;
             }
