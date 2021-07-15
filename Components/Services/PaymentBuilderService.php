@@ -327,8 +327,7 @@ class PaymentBuilderService implements PaymentBuilderInterface
             return false;
         }
 
-        if (empty($this->userData['shippingaddress']['ustid'])
-            && !empty($this->userData['billingaddress']['ustid'])
+        if (!empty($this->userData['shippingaddress']['ustid'])
             && !empty($this->userData['additional']['country']['taxfree_ustid'])) {
             return true;
         }

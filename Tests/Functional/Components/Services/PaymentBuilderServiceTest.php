@@ -191,8 +191,7 @@ class PaymentBuilderServiceTest extends TestCase
         // Should match
         $userData['additional']['countryShipping']['taxfree'] = null;
         $userData['additional']['countryShipping']['taxfree_ustid'] = '1';
-        $userData['shippingaddress']['ustid'] = null;
-        $userData['billingaddress']['ustid'] = '1';
+        $userData['shippingaddress']['ustid'] = '1';
         $userData['additional']['country']['taxfree_ustid'] = '1';
 
         $userData['additional']['countryShipping']['taxfree'] = false;
@@ -418,7 +417,7 @@ class PaymentBuilderServiceTest extends TestCase
         static::assertNull($requestParameters['transactions'][0]['amount']['details']['tax']);
     }
 
-    public function testGetPaymentWithTaxFreeCompaniesWithVatIdBilling()
+    public function testGetPaymentWithTaxFreeCompaniesWithVatIdShipping()
     {
         $settingService = new SettingsServicePaymentBuilderServiceMock(false, 0);
         $requestService = $this->getRequestService($settingService);
@@ -428,7 +427,7 @@ class PaymentBuilderServiceTest extends TestCase
 
         $userData['additional']['countryShipping']['taxfree_ustid'] = '1';
         $userData['additional']['country']['taxfree_ustid'] = '1';
-        $userData['billingaddress']['ustid'] = 'VATID123';
+        $userData['shippingaddress']['ustid'] = 'VATID123';
 
         $params = new PaymentBuilderParameters();
         $params->setBasketData($basketData);
