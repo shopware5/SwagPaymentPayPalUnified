@@ -6,16 +6,6 @@ parameters:
 			path: Components/DependencyProvider.php
 
 		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\DependencyProvider\\:\\:getSession\\(\\) should return Enlight_Components_Session_Namespace but returns object\\|null\\.$#"
-			count: 1
-			path: Components/DependencyProvider.php
-
-		-
-			message: "#^Cannot call method generate\\(\\) on object\\|null\\.$#"
-			count: 1
-			path: Components/DependencyProvider.php
-
-		-
 			message: "#^Cannot call method getPayerInfo\\(\\) on SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\Payer\\|null\\.$#"
 			count: 1
 			path: Components/Services/ExpressCheckout/CustomerService.php
@@ -111,11 +101,6 @@ parameters:
 			path: Components/Services/TransactionHistoryBuilderService.php
 
 		-
-			message: "#^Cannot call method getNamespace\\(\\) on object\\|null\\.$#"
-			count: 2
-			path: Controllers/Backend/PaypalUnified.php
-
-		-
 			message: "#^Cannot call method getResources\\(\\) on SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\Transactions\\\\RelatedResources\\|null\\.$#"
 			count: 1
 			path: Controllers/Frontend/PaypalUnified.php
@@ -179,58 +164,3 @@ parameters:
 			message: "#^Cannot call method getLocale\\(\\) on Shopware\\\\Models\\\\Shop\\\\DetachedShop\\|null\\.$#"
 			count: 1
 			path: Subscriber/Plus.php
-
-		-
-			message: "#^Parameter \\#1 \\$modelManager of class SwagPaymentPayPalUnified\\\\Setup\\\\Installer constructor expects Shopware\\\\Components\\\\Model\\\\ModelManager, object\\|null given\\.$#"
-			count: 1
-			path: SwagPaymentPayPalUnified.php
-
-		-
-			message: "#^Parameter \\#2 \\$connection of class SwagPaymentPayPalUnified\\\\Setup\\\\Installer constructor expects Doctrine\\\\DBAL\\\\Connection, object\\|null given\\.$#"
-			count: 1
-			path: SwagPaymentPayPalUnified.php
-
-		-
-			message: "#^Parameter \\#3 \\$attributeCrudService of class SwagPaymentPayPalUnified\\\\Setup\\\\Installer constructor expects Shopware\\\\Bundle\\\\AttributeBundle\\\\Service\\\\CrudService, object\\|null given\\.$#"
-			count: 1
-			path: SwagPaymentPayPalUnified.php
-
-		-
-			message: "#^Parameter \\#4 \\$translation of class SwagPaymentPayPalUnified\\\\Setup\\\\Installer constructor expects Shopware_Components_Translation, object\\|null given\\.$#"
-			count: 1
-			path: SwagPaymentPayPalUnified.php
-
-		-
-			message: "#^Parameter \\#1 \\$attributeCrudService of class SwagPaymentPayPalUnified\\\\Setup\\\\Uninstaller constructor expects Shopware\\\\Bundle\\\\AttributeBundle\\\\Service\\\\CrudService, object\\|null given\\.$#"
-			count: 1
-			path: SwagPaymentPayPalUnified.php
-
-		-
-			message: "#^Parameter \\#2 \\$modelManager of class SwagPaymentPayPalUnified\\\\Setup\\\\Uninstaller constructor expects Shopware\\\\Components\\\\Model\\\\ModelManager, object\\|null given\\.$#"
-			count: 1
-			path: SwagPaymentPayPalUnified.php
-
-		-
-			message: "#^Parameter \\#3 \\$connection of class SwagPaymentPayPalUnified\\\\Setup\\\\Uninstaller constructor expects Doctrine\\\\DBAL\\\\Connection, object\\|null given\\.$#"
-			count: 1
-			path: SwagPaymentPayPalUnified.php
-
-		-
-			message: "#^Parameter \\#1 \\$attributeCrudService of class SwagPaymentPayPalUnified\\\\Setup\\\\Updater constructor expects Shopware\\\\Bundle\\\\AttributeBundle\\\\Service\\\\CrudService, object\\|null given\\.$#"
-			count: 1
-			path: SwagPaymentPayPalUnified.php
-
-		-
-			message: "#^Parameter \\#2 \\$modelManager of class SwagPaymentPayPalUnified\\\\Setup\\\\Updater constructor expects Shopware\\\\Components\\\\Model\\\\ModelManager, object\\|null given\\.$#"
-			count: 1
-			path: SwagPaymentPayPalUnified.php
-
-		-
-			message: "#^Parameter \\#3 \\$connection of class SwagPaymentPayPalUnified\\\\Setup\\\\Updater constructor expects Doctrine\\\\DBAL\\\\Connection, object\\|null given\\.$#"
-			count: 1
-			path: SwagPaymentPayPalUnified.php
-
-		-
-			message: "#^Parameter \\#1 \\$modelManager of class SwagPaymentPayPalUnified\\\\Components\\\\PaymentMethodProvider constructor expects Shopware\\\\Components\\\\Model\\\\ModelManager\\|null, object\\|null given\\.$#"
-			count: 2
-			path: SwagPaymentPayPalUnified.php

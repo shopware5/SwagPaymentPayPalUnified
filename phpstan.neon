@@ -10,6 +10,11 @@ parameters:
         - .githooks
         - Tests
 
+    symfony:
+        constant_hassers: false
+        container_xml_path: '../../../var/cache/production____REVISION___/container.xml'
+        console_application_loader: ../../../tests/phpstan-console-application.php
+
     ignoreErrors:
         - # Since Shopware 5.3.4 this class has constructor parameter
             '#Class Shopware_Components_Translation constructor invoked with 0 parameters, 2 required#'

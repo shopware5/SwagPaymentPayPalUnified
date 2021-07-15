@@ -25,14 +25,11 @@ stages:
     - Shopware Versions
 
 PHP analyze:
+    extends: .SW 5.7 default
     stage: Code Style Check
     image: shopware/5-continuous:7.4
     script:
-        - zip -rq plugin.zip .
-        - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.shopware.com/shopware/5/product/shopware.git shopware --depth=1 -b ${CHECKOUT_SHOPWARE_BRANCH}
-        - unzip -q plugin.zip -d shopware/custom/plugins/SwagPaymentPayPalUnified
-        - cd shopware
-        - composer install
+        - php bin/console -e production
         - cd custom/plugins/SwagPaymentPayPalUnified
         - make fix-cs-dry
         - make phpstan
@@ -43,6 +40,7 @@ Code Coverage:
     stage: Coverage
     needs: [ PHP analyze ]
     script:
+        - cd custom/plugins/SwagPaymentPayPalUnified
         - php -d pcov.enabled=1 -d pcov.directory=$CI_PROJECT_DIR
             ../../../vendor/bin/phpunit
             --configuration phpunit.xml.dist
@@ -210,7 +208,6 @@ SW 5.6:
 
 .SW 5.7 default:
     stage: Shopware Versions
-    needs: [ PHP analyze ]
     services:
         -   name: mysql:5.7
             alias: mysql
@@ -228,22 +225,25 @@ SW 5.6:
         - php bin/console sw:plugin:install --activate SwagPaymentPayPalUnified
         - php bin/console sw:cache:clear
         - /entrypoint supervisord &>/dev/null &
-        - cd custom/plugins/SwagPaymentPayPalUnified
 
 SW 5.7 PHP 7.4:
     extends: .SW 5.7 default
+    needs: [ PHP analyze ]
     only:
         - master
     image: shopware/5-continuous:7.4
     script:
+        - cd custom/plugins/SwagPaymentPayPalUnified
         - php ../../../vendor/bin/phpunit
             --configuration phpunit.xml.dist
             --colors=never
 
 SW 5.7 PHP 8.0:
     extends: .SW 5.7 default
+    needs: [ PHP analyze ]
     image: gitlab.shopware.com:5005/shopware/5/product/image/continuous:8.0
     script:
+        - cd custom/plugins/SwagPaymentPayPalUnified
         - php ../../../vendor/bin/phpunit
             --configuration phpunit.xml.dist
             --colors=never

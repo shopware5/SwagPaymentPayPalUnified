@@ -18,9 +18,11 @@
     <changelog version="REPLACE_GLOBAL_WITH_NEXT_VERSION">
         <changes lang="de">
             PT-10683 - PayPal Express Button berücksichtigt nun auch ESD Produkte;
+            PT-12405 - Berechnung der Nettopreis-Benutzung für Länder mit "Steuerfrei für Unternehmen"-Option korrigiert;
         </changes>
         <changes lang="en">
             PT-10683 - PayPal Express button now also considers ESD products;
+            PT-12405 - Fixed calculation of net price usage for countries with "Tax free for companies" option;
         </changes>
     </changelog>
 
