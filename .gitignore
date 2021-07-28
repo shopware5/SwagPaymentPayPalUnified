@@ -2,3 +2,5 @@
 /.idea
 /templates_c
 /.phpunit.result.cache
+.psh.yml.override
+.php_cs.cache

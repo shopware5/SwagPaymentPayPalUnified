@@ -157,6 +157,9 @@ class ExpressCheckout implements SubscriberInterface
         $cart = $view->getAssign('sBasket');
 
         $cartProductIds = $this->getProductIdsFromBasket($cart['content']);
+        if ($cartProductIds === []) {
+            return;
+        }
         if ($this->esdProductChecker->checkForEsdProducts($cartProductIds) === true) {
             return;
         }
@@ -193,6 +196,9 @@ class ExpressCheckout implements SubscriberInterface
 
         $cart = $view->getAssign('sBasket');
         $cartProductIds = $this->getProductIdsFromBasket($cart['content']);
+        if ($cartProductIds === []) {
+            return;
+        }
         if ($this->esdProductChecker->checkForEsdProducts($cartProductIds) === true) {
             return;
         }
