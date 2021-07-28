@@ -201,6 +201,7 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $request = new \Enlight_Controller_Request_RequestTestCase();
         $request->setActionName('ajaxCart');
         $request->setControllerName('checkout');
+        Shopware()->Container()->get('front')->setRequest($request);
 
         $basket = Shopware()->Modules()->Basket();
         $basket->sDeleteBasket();
@@ -266,6 +267,9 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $request->setParam('paymentId', 'TEST_PAYMENT_ID');
         $request->setParam('payerId', 'TEST_PAYER_ID');
         $request->setParam('expressCheckout', true);
+
+        $view->assign('sBasket', ['content' => [['articleID' => 2]]]);
+
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
             'subject' => new DummyController($request, $view),
             'request' => $request,
@@ -293,6 +297,7 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $request->setParam('paymentId', 'TEST_PAYMENT_ID');
         $request->setParam('payerId', 'TEST_PAYER_ID');
         $request->setParam('expressCheckout', true);
+        Shopware()->Container()->get('front')->setRequest($request);
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
             'subject' => new DummyController($request, $view),
             'request' => $request,

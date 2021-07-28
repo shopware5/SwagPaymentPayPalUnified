@@ -2,45 +2,51 @@ variables:
     DOCKER_DRIVER: overlay2
     DOCKER_HOST: "tcp://docker:2375"
     DOCKER_TLS_CERTDIR: "/certs"
-    MYSQL_ROOT_PASSWORD: app
+    MYSQL_ROOT_PASSWORD: root
     MYSQL_USER: app
     MYSQL_PASSWORD: app
     MYSQL_DATABASE: shopware
     WEB_DOCUMENT_ROOT: $CI_PROJECT_DIR/
     GIT_STRATEGY: clone
     CHECKOUT_SHOPWARE_BRANCH: "5.7"
-    CHECKOUT_COOKIE_CONSENT_MANAGER_BRANCH: "master"
-    DB_USER: "app"
-    DB_PASSWORD: "app"
-    DB_HOST: "mysql"
-    DB_PORT: 3306
-    DB_NAME: shopware
-    SW_HOST: "localhost"
-    SW_BASE_PATH: ""
-    ELASTICSEARCH_HOST: elasticsearch
+    PLUGIN_NAME: SwagPaymentPayPalUnified
 
 stages:
-    - Code Style Check
-    - Coverage
+    - Code Analysis
+    - PHPUnit
     - Shopware Versions
 
+default:
+    image: gitlab.shopware.com:5005/shopware/5/product/image/continuous:7.4
+    services:
+        -   name: mysql:5.7
+            alias: mysql
+    before_script:
+        - zip -rq plugin.zip .
+        - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.shopware.com/shopware/5/product/shopware.git shopware --depth=1 -b ${CHECKOUT_SHOPWARE_BRANCH}
+        - unzip -q plugin.zip -d shopware/custom/plugins/${PLUGIN_NAME}
+        - cd shopware
+        - cp .env.dist .env
+        - make init
+        - php bin/console sw:plugin:refresh
+        - php bin/console sw:plugin:list
+        - php bin/console sw:plugin:install --activate ${PLUGIN_NAME}
+        - php bin/console sw:cache:clear
+        - /entrypoint supervisord &>/dev/null &
+
 PHP analyze:
-    extends: .SW 5.7 default
-    stage: Code Style Check
-    image: shopware/5-continuous:7.4
+    stage: Code Analysis
     script:
         - php bin/console -e production
-        - cd custom/plugins/SwagPaymentPayPalUnified
+        - cd custom/plugins/${PLUGIN_NAME}
         - make fix-cs-dry
         - make phpstan
 
 Code Coverage:
-    extends: .SW 5.7 default
-    image: shopware/5-continuous:7.4
-    stage: Coverage
+    stage: PHPUnit
     needs: [ PHP analyze ]
     script:
-        - cd custom/plugins/SwagPaymentPayPalUnified
+        - cd custom/plugins/${PLUGIN_NAME}
         - php -d pcov.enabled=1 -d pcov.directory=$CI_PROJECT_DIR
             ../../../vendor/bin/phpunit
             --configuration phpunit.xml.dist
@@ -49,14 +55,11 @@ Code Coverage:
             --coverage-text=build/artifacts/phpunit-coverage-text
         - cat build/artifacts/phpunit-coverage-text | sed -e '/\\Shopware\\.*/d' -e '/\s*Methods:\s*\d*/d'
     coverage: '/^\s*Lines:\s*(\d+(?:\.\d+)?%)/'
-    services:
-        -   name: mysql:5.7
-            alias: mysql
     artifacts:
         paths:
-            - shopware/custom/plugins/SwagPaymentPayPalUnified/build/artifacts/*
+            - shopware/custom/plugins/${PLUGIN_NAME}/build/artifacts/*
         reports:
-            junit: shopware/custom/plugins/SwagPaymentPayPalUnified/build/artifacts/phpunit.junit.xml
+            junit: shopware/custom/plugins/${PLUGIN_NAME}/build/artifacts/phpunit.junit.xml
 
 SW 5.2:
     stage: Shopware Versions
@@ -65,10 +68,11 @@ SW 5.2:
     variables:
         CHECKOUT_SHOPWARE_BRANCH: "5.2"
         CHECKOUT_COOKIE_CONSENT_MANAGER_BRANCH: "5.2.11-5.2.27"
+    before_script: [ ]
     script:
         - zip -rq plugin.zip .
         - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.shopware.com/shopware/5/product/shopware.git shopware --depth=1 -b ${CHECKOUT_SHOPWARE_BRANCH}
-        - unzip -q plugin.zip -d shopware/custom/plugins/SwagPaymentPayPalUnified
+        - unzip -q plugin.zip -d shopware/custom/plugins/${PLUGIN_NAME}
         - cd shopware
         - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.shopware.com/shopware/5/product/swagcookieconsentmanager.git custom/plugins/SwagCookieConsentManager -b ${CHECKOUT_COOKIE_CONSENT_MANAGER_BRANCH}
         - /entrypoint supervisord &>/dev/null &
@@ -76,10 +80,10 @@ SW 5.2:
         - ant -f build/build.xml build-unit -Dapp.path="" -Dapp.host="localhost" -Ddb.host="mysql" -Ddb.port=3306 -Ddb.name="shopware" -Ddb.user="app" -Ddb.password="app"
         - php bin/console sw:plugin:refresh
         - php bin/console sw:plugin:list
-        - php bin/console sw:plugin:install --activate SwagPaymentPayPalUnified
+        - php bin/console sw:plugin:install --activate ${PLUGIN_NAME}
         - php bin/console sw:plugin:install --activate SwagCookieConsentManager
         - php bin/console sw:cache:clear -e testing
-        - cd custom/plugins/SwagPaymentPayPalUnified
+        - cd custom/plugins/${PLUGIN_NAME}
         - php ../../../vendor/bin/phpunit
             --configuration phpunit.xml.dist
             --colors=never
@@ -97,19 +101,20 @@ SW 5.3:
         CHECKOUT_COOKIE_CONSENT_MANAGER_BRANCH: "5.3.5-5.3.7"
     only:
         - master
+    before_script: [ ]
     script:
         - zip -rq plugin.zip .
         - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.shopware.com/shopware/5/product/shopware.git shopware --depth=1 -b ${CHECKOUT_SHOPWARE_BRANCH}
-        - unzip -q plugin.zip -d shopware/custom/plugins/SwagPaymentPayPalUnified
+        - unzip -q plugin.zip -d shopware/custom/plugins/${PLUGIN_NAME}
         - cd shopware
         - /entrypoint supervisord &>/dev/null &
         - ./psh.phar init --SW_HOST="localhost"
         - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.shopware.com/shopware/5/product/swagcookieconsentmanager.git custom/plugins/SwagCookieConsentManager -b ${CHECKOUT_COOKIE_CONSENT_MANAGER_BRANCH}
         - php bin/console sw:plugin:refresh
-        - php bin/console sw:plugin:install --activate SwagPaymentPayPalUnified
+        - php bin/console sw:plugin:install --activate ${PLUGIN_NAME}
         - php bin/console sw:plugin:install --activate SwagCookieConsentManager
         - php bin/console sw:cache:clear -e testing
-        - cd custom/plugins/SwagPaymentPayPalUnified
+        - cd custom/plugins/${PLUGIN_NAME}
         - php ../../../vendor/bin/phpunit
             --configuration phpunit.xml.dist
             --colors=never
@@ -127,19 +132,20 @@ SW 5.4:
         CHECKOUT_COOKIE_CONSENT_MANAGER_BRANCH: "5.4.6"
     only:
         - master
+    before_script: [ ]
     script:
         - zip -rq plugin.zip .
         - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.shopware.com/shopware/5/product/shopware.git shopware --depth=1 -b ${CHECKOUT_SHOPWARE_BRANCH}
-        - unzip -q plugin.zip -d shopware/custom/plugins/SwagPaymentPayPalUnified
+        - unzip -q plugin.zip -d shopware/custom/plugins/${PLUGIN_NAME}
         - cd shopware
         - /entrypoint supervisord &>/dev/null &
         - ./psh.phar init --SW_HOST="localhost"
         - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.shopware.com/shopware/5/product/swagcookieconsentmanager.git custom/plugins/SwagCookieConsentManager -b ${CHECKOUT_COOKIE_CONSENT_MANAGER_BRANCH}
         - php bin/console sw:plugin:refresh
-        - php bin/console sw:plugin:install --activate SwagPaymentPayPalUnified
+        - php bin/console sw:plugin:install --activate ${PLUGIN_NAME}
         - php bin/console sw:plugin:install --activate SwagCookieConsentManager
         - php bin/console sw:cache:clear -e testing
-        - cd custom/plugins/SwagPaymentPayPalUnified
+        - cd custom/plugins/${PLUGIN_NAME}
         - php ../../../vendor/bin/phpunit
             --configuration phpunit.xml.dist
             --colors=never
@@ -157,19 +163,20 @@ SW 5.5:
         CHECKOUT_COOKIE_CONSENT_MANAGER_BRANCH: "5.5.0-5.5.10"
     only:
         - master
+    before_script: [ ]
     script:
         - zip -rq plugin.zip .
         - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.shopware.com/shopware/5/product/shopware.git shopware --depth=1 -b ${CHECKOUT_SHOPWARE_BRANCH}
-        - unzip -q plugin.zip -d shopware/custom/plugins/SwagPaymentPayPalUnified
+        - unzip -q plugin.zip -d shopware/custom/plugins/${PLUGIN_NAME}
         - cd shopware
         - /entrypoint supervisord &>/dev/null &
         - ./psh.phar init --SW_HOST="localhost"
         - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.shopware.com/shopware/5/product/swagcookieconsentmanager.git custom/plugins/SwagCookieConsentManager -b ${CHECKOUT_COOKIE_CONSENT_MANAGER_BRANCH}
         - php bin/console sw:plugin:refresh
-        - php bin/console sw:plugin:install --activate SwagPaymentPayPalUnified
+        - php bin/console sw:plugin:install --activate ${PLUGIN_NAME}
         - php bin/console sw:plugin:install --activate SwagCookieConsentManager
         - php bin/console sw:cache:clear -e testing
-        - cd custom/plugins/SwagPaymentPayPalUnified
+        - cd custom/plugins/${PLUGIN_NAME}
         - php ../../../vendor/bin/phpunit
             --configuration phpunit.xml.dist
             --colors=never
@@ -181,69 +188,45 @@ SW 5.5:
 SW 5.6:
     stage: Shopware Versions
     needs: [ PHP analyze ]
-    image: shopware/5-continuous:7.2
+    image: gitlab.shopware.com:5005/shopware/5/product/image/continuous:7.2
     variables:
         CHECKOUT_SHOPWARE_BRANCH: "5.6"
     only:
         - master
+    before_script: [ ]
     script:
         - zip -rq plugin.zip .
         - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.shopware.com/shopware/5/product/shopware.git shopware --depth=1 -b ${CHECKOUT_SHOPWARE_BRANCH}
-        - unzip -q plugin.zip -d shopware/custom/plugins/SwagPaymentPayPalUnified
+        - unzip -q plugin.zip -d shopware/custom/plugins/${PLUGIN_NAME}
         - cd shopware
         - /entrypoint supervisord &>/dev/null &
         - ./psh.phar init --SW_HOST="localhost"
         - php bin/console sw:plugin:refresh
         - php bin/console sw:plugin:list
-        - php bin/console sw:plugin:install --activate SwagPaymentPayPalUnified
+        - php bin/console sw:plugin:install --activate ${PLUGIN_NAME}
         - php bin/console sw:cache:clear -e testing
-        - cd custom/plugins/SwagPaymentPayPalUnified
+        - cd custom/plugins/${PLUGIN_NAME}
         - php ../../../vendor/bin/phpunit
             --configuration phpunit.xml.dist
             --colors=never
-    coverage: '/^\s*Lines:\s*(\d+(?:\.\d+)?%)/'
     services:
         -   name: mysql:5.7
             alias: mysql
 
 .SW 5.7 default:
-    stage: Shopware Versions
-    services:
-        -   name: mysql:5.7
-            alias: mysql
-    variables:
-        CHECKOUT_SHOPWARE_BRANCH: "5.7"
-    before_script:
-        - zip -rq plugin.zip .
-        - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.shopware.com/shopware/5/product/shopware.git shopware --depth=1 -b ${CHECKOUT_SHOPWARE_BRANCH}
-        - unzip -q plugin.zip -d shopware/custom/plugins/SwagPaymentPayPalUnified
-        - cd shopware
-        - cp .env.dist .env
-        - make init
-        - php bin/console sw:plugin:refresh
-        - php bin/console sw:plugin:list
-        - php bin/console sw:plugin:install --activate SwagPaymentPayPalUnified
-        - php bin/console sw:cache:clear
-        - /entrypoint supervisord &>/dev/null &
+    stage: PHPUnit
+    needs: [PHP analyze]
+    script:
+        - cd custom/plugins/${PLUGIN_NAME}
+        - php ../../../vendor/bin/phpunit
+            --configuration phpunit.xml.dist
+            --colors=never
 
 SW 5.7 PHP 7.4:
     extends: .SW 5.7 default
-    needs: [ PHP analyze ]
     only:
         - master
-    image: shopware/5-continuous:7.4
-    script:
-        - cd custom/plugins/SwagPaymentPayPalUnified
-        - php ../../../vendor/bin/phpunit
-            --configuration phpunit.xml.dist
-            --colors=never
 
 SW 5.7 PHP 8.0:
     extends: .SW 5.7 default
-    needs: [ PHP analyze ]
     image: gitlab.shopware.com:5005/shopware/5/product/image/continuous:8.0
-    script:
-        - cd custom/plugins/SwagPaymentPayPalUnified
-        - php ../../../vendor/bin/phpunit
-            --configuration phpunit.xml.dist
-            --colors=never
