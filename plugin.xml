@@ -17,11 +17,11 @@
 
     <changelog version="3.2.0">
         <changes lang="de">
-            PT-10683 - PayPal Express Button berücksichtigt nun auch ESD Produkte;
+            PT-10683 - PayPal Express Button ist nun für ESD Produkte deaktiviert, da diese ein Kundenkonto benötigen;
             PT-12405 - Berechnung der Nettopreis-Benutzung für Länder mit "Steuerfrei für Unternehmen"-Option korrigiert;
         </changes>
         <changes lang="en">
-            PT-10683 - PayPal Express button now also considers ESD products;
+            PT-10683 - PayPal Express button is now disabled for ESD products, as those need a customer account;
             PT-12405 - Fixed calculation of net price usage for countries with "Tax free for companies" option;
         </changes>
     </changelog>
