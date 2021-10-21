@@ -11,10 +11,14 @@ namespace SwagPaymentPayPalUnified\PayPalBundle\Components;
 /**
  * No complete table names can be declared below to avoid references to the actual plugin.
  */
-class SettingsTable
+final class SettingsTable
 {
     const GENERAL = 'general';
     const EXPRESS_CHECKOUT = 'express';
     const INSTALLMENTS = 'installments';
     const PLUS = 'plus';
+
+    private function __construct()
+    {
+    }
 }

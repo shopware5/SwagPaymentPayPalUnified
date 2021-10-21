@@ -51,7 +51,7 @@ class PaymentResource
 
         return $this->clientService->sendRequest(
             RequestType::POST,
-            RequestUri::PAYMENT_RESOURCE . '/' . $paymentId . '/execute',
+            sprintf('%s/%s/execute', RequestUri::PAYMENT_RESOURCE, $paymentId),
             $requestData
         );
     }
@@ -65,7 +65,10 @@ class PaymentResource
      */
     public function get($paymentId)
     {
-        return $this->clientService->sendRequest(RequestType::GET, RequestUri::PAYMENT_RESOURCE . '/' . $paymentId);
+        return $this->clientService->sendRequest(
+            RequestType::GET,
+            sprintf('%s/%s', RequestUri::PAYMENT_RESOURCE, $paymentId)
+        );
     }
 
     /**
@@ -87,7 +90,7 @@ class PaymentResource
 
         $this->clientService->sendRequest(
             RequestType::PATCH,
-            RequestUri::PAYMENT_RESOURCE . '/' . $paymentId,
+            sprintf('%s/%s', RequestUri::PAYMENT_RESOURCE, $paymentId),
             $requestData
         );
     }

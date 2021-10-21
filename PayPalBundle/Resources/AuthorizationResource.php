@@ -32,7 +32,10 @@ class AuthorizationResource
      */
     public function get($id)
     {
-        return $this->clientService->sendRequest(RequestType::GET, RequestUri::AUTHORIZATION_RESOURCE . '/' . $id);
+        return $this->clientService->sendRequest(
+            RequestType::GET,
+            sprintf('%s/%s', RequestUri::AUTHORIZATION_RESOURCE, $id)
+        );
     }
 
     /**
@@ -42,7 +45,10 @@ class AuthorizationResource
      */
     public function void($id)
     {
-        return $this->clientService->sendRequest(RequestType::POST, RequestUri::AUTHORIZATION_RESOURCE . '/' . $id . '/void');
+        return $this->clientService->sendRequest(
+            RequestType::POST,
+            sprintf('%s/%s/void', RequestUri::AUTHORIZATION_RESOURCE, $id)
+        );
     }
 
     /**
@@ -54,6 +60,10 @@ class AuthorizationResource
     {
         $requestData = $capture->toArray();
 
-        return $this->clientService->sendRequest(RequestType::POST, RequestUri::AUTHORIZATION_RESOURCE . '/' . $id . '/capture', $requestData);
+        return $this->clientService->sendRequest(
+            RequestType::POST,
+            sprintf('%s/%s/capture', RequestUri::AUTHORIZATION_RESOURCE, $id),
+            $requestData
+        );
     }
 }

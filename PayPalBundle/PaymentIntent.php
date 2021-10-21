@@ -8,9 +8,13 @@
 
 namespace SwagPaymentPayPalUnified\PayPalBundle;
 
-class PaymentIntent
+final class PaymentIntent
 {
     const SALE = 'sale';
     const AUTHORIZE = 'authorize';
     const ORDER = 'order';
+
+    private function __construct()
+    {
+    }
 }

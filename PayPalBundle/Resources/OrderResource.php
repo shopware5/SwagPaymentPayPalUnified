@@ -32,7 +32,7 @@ class OrderResource
      */
     public function get($id)
     {
-        return $this->clientService->sendRequest(RequestType::GET, RequestUri::ORDER_RESOURCE . '/' . $id);
+        return $this->clientService->sendRequest(RequestType::GET, sprintf('%s/%s', RequestUri::ORDER_RESOURCE, $id));
     }
 
     /**
@@ -44,7 +44,11 @@ class OrderResource
     {
         $requestData = $capture->toArray();
 
-        return $this->clientService->sendRequest(RequestType::POST, RequestUri::ORDER_RESOURCE . '/' . $id . '/capture', $requestData);
+        return $this->clientService->sendRequest(
+            RequestType::POST,
+            sprintf('%s/%s/capture', RequestUri::ORDER_RESOURCE, $id),
+            $requestData
+        );
     }
 
     /**
@@ -54,6 +58,9 @@ class OrderResource
      */
     public function void($id)
     {
-        return $this->clientService->sendRequest(RequestType::POST, RequestUri::ORDER_RESOURCE . '/' . $id . '/do-void');
+        return $this->clientService->sendRequest(
+            RequestType::POST,
+            sprintf('%s/%s/do-void', RequestUri::ORDER_RESOURCE, $id)
+        );
     }
 }

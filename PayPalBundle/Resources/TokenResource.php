@@ -37,8 +37,6 @@ class TokenResource
         //Set the header temporarily for this request
         $this->client->setHeader('Authorization', $credentials->toString());
 
-        $response = $this->client->sendRequest(RequestType::POST, RequestUri::TOKEN_RESOURCE, $data, false);
-
-        return $response;
+        return $this->client->sendRequest(RequestType::POST, RequestUri::TOKEN_RESOURCE, $data, false);
     }
 }

@@ -102,15 +102,16 @@ class ClientService
      * Sends a request and returns the response.
      * The type can be obtained from RequestType.php
      *
-     * @param string $type
-     * @param string $resourceUri
-     * @param bool   $jsonPayload
+     * @param string     $type
+     * @param string     $resourceUri
+     * @param array|null $data
+     * @param bool       $jsonPayload
      *
      * @throws RequestException
      *
      * @return array
      */
-    public function sendRequest($type, $resourceUri, array $data = [], $jsonPayload = true)
+    public function sendRequest($type, $resourceUri, $data = [], $jsonPayload = true)
     {
         if (!$this->getHeader('Authorization')) {
             $environment = (bool) $this->settingsService->get('sandbox');

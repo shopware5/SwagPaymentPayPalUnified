@@ -32,7 +32,7 @@ class CaptureResource
      */
     public function get($id)
     {
-        return $this->clientService->sendRequest(RequestType::GET, RequestUri::CAPTURE_RESOURCE . '/' . $id);
+        return $this->clientService->sendRequest(RequestType::GET, sprintf('%s/%s', RequestUri::CAPTURE_RESOURCE, $id));
     }
 
     /**
@@ -44,6 +44,10 @@ class CaptureResource
     {
         $requestData = $refund->toArray();
 
-        return $this->clientService->sendRequest(RequestType::POST, RequestUri::CAPTURE_RESOURCE . '/' . $id . '/refund', $requestData);
+        return $this->clientService->sendRequest(
+            RequestType::POST,
+            sprintf('%s/%s/refund', RequestUri::CAPTURE_RESOURCE, $id),
+            $requestData
+        );
     }
 }

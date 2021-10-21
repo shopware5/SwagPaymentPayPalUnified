@@ -32,7 +32,7 @@ class SaleResource
      */
     public function get($saleId)
     {
-        return $this->clientService->sendRequest(RequestType::GET, RequestUri::SALE_RESOURCE . '/' . $saleId);
+        return $this->clientService->sendRequest(RequestType::GET, sprintf('%s/%s', RequestUri::SALE_RESOURCE, $saleId));
     }
 
     /**
@@ -44,6 +44,10 @@ class SaleResource
     {
         $requestData = $refund->toArray();
 
-        return $this->clientService->sendRequest(RequestType::POST, RequestUri::SALE_RESOURCE . '/' . $saleId . '/refund', $requestData);
+        return $this->clientService->sendRequest(
+            RequestType::POST,
+            sprintf('%s/%s/refund', RequestUri::SALE_RESOURCE, $saleId),
+            $requestData
+        );
     }
 }

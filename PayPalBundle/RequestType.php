@@ -8,7 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\PayPalBundle;
 
-class RequestType
+final class RequestType
 {
     const GET = 'GET';
     const POST = 'POST';
@@ -16,4 +16,8 @@ class RequestType
     const PATCH = 'PATCH';
     const HEAD = 'HEAD';
     const DELETE = 'DELETE';
+
+    private function __construct()
+    {
+    }
 }

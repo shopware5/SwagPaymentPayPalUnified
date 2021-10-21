@@ -8,7 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\PayPalBundle;
 
-class PartnerAttributionId
+final class PartnerAttributionId
 {
     /**
      * Shopware Partner Id for PayPal Classic
@@ -29,4 +29,8 @@ class PartnerAttributionId
      * Shopware Partner Id for PayPal Smart Payment Buttons
      */
     const PAYPAL_SMART_PAYMENT_BUTTONS = 'Shopware_Cart_SPB_5native';
+
+    private function __construct()
+    {
+    }
 }
