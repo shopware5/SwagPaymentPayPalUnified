@@ -18,7 +18,6 @@ use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\PartnerAttributionId;
 use SwagPaymentPayPalUnified\PayPalBundle\RequestType;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\OAuthCredentials;
-use SwagPaymentPayPalUnified\PayPalBundle\Structs\Token;
 
 class ClientService
 {
@@ -128,6 +127,9 @@ class ClientService
 
         if ($jsonPayload) {
             $data = \json_encode($data);
+            if (!\is_string($data)) {
+                $data = null;
+            }
             $this->setHeader('content-type', 'application/json');
         } else {
             unset($this->headers['content-type']);

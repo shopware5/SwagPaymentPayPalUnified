@@ -8,7 +8,9 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Mocks;
 
-class ClientService extends \SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService
+use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService as OriginalClientService;
+
+class ClientService extends OriginalClientService
 {
     /**
      * @var array

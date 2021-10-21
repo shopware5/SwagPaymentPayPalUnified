@@ -37,6 +37,9 @@ default:
 PHP analyze:
     stage: Code Analysis
     script:
+        - composer require --dev phpcompatibility/php-compatibility
+        - ./vendor/bin/phpcs --config-set installed_paths vendor/phpcompatibility/php-compatibility
+        - ./vendor/bin/phpcs -p custom/plugins/${PLUGIN_NAME} --standard=PHPCompatibility --runtime-set testVersion 5.6
         - php bin/console -e production
         - cd custom/plugins/${PLUGIN_NAME}
         - make fix-cs-dry
@@ -54,7 +57,6 @@ Code Coverage:
             --colors=never
             --coverage-text=build/artifacts/phpunit-coverage-text
         - cat build/artifacts/phpunit-coverage-text | sed -e '/\\Shopware\\.*/d' -e '/\s*Methods:\s*\d*/d'
-    coverage: '/^\s*Lines:\s*(\d+(?:\.\d+)?%)/'
     artifacts:
         paths:
             - shopware/custom/plugins/${PLUGIN_NAME}/build/artifacts/*
@@ -70,6 +72,8 @@ SW 5.2:
         CHECKOUT_COOKIE_CONSENT_MANAGER_BRANCH: "5.2.11-5.2.27"
     before_script: [ ]
     script:
+        - sed -i 's/^mozilla\/DST_Root_CA_X3.crt$/!mozilla\/DST_Root_CA_X3.crt/' /etc/ca-certificates.conf # https://letsencrypt.org/docs/dst-root-ca-x3-expiration-september-2021/
+        - update-ca-certificates -f
         - zip -rq plugin.zip .
         - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.shopware.com/shopware/5/product/shopware.git shopware --depth=1 -b ${CHECKOUT_SHOPWARE_BRANCH}
         - unzip -q plugin.zip -d shopware/custom/plugins/${PLUGIN_NAME}
@@ -87,7 +91,7 @@ SW 5.2:
         - php ../../../vendor/bin/phpunit
             --configuration phpunit.xml.dist
             --colors=never
-    coverage: '/^\s*Lines:\s*(\d+(?:\.\d+)?%)/'
+            --verbose
     services:
         -   name: mysql:5.7
             alias: mysql
@@ -103,6 +107,8 @@ SW 5.3:
         - master
     before_script: [ ]
     script:
+        - sed -i 's/^mozilla\/DST_Root_CA_X3.crt$/!mozilla\/DST_Root_CA_X3.crt/' /etc/ca-certificates.conf # https://letsencrypt.org/docs/dst-root-ca-x3-expiration-september-2021/
+        - update-ca-certificates -f
         - zip -rq plugin.zip .
         - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.shopware.com/shopware/5/product/shopware.git shopware --depth=1 -b ${CHECKOUT_SHOPWARE_BRANCH}
         - unzip -q plugin.zip -d shopware/custom/plugins/${PLUGIN_NAME}
@@ -118,7 +124,7 @@ SW 5.3:
         - php ../../../vendor/bin/phpunit
             --configuration phpunit.xml.dist
             --colors=never
-    coverage: '/^\s*Lines:\s*(\d+(?:\.\d+)?%)/'
+            --verbose
     services:
         -   name: mysql:5.7
             alias: mysql
@@ -134,6 +140,8 @@ SW 5.4:
         - master
     before_script: [ ]
     script:
+        - sed -i 's/^mozilla\/DST_Root_CA_X3.crt$/!mozilla\/DST_Root_CA_X3.crt/' /etc/ca-certificates.conf # https://letsencrypt.org/docs/dst-root-ca-x3-expiration-september-2021/
+        - update-ca-certificates -f
         - zip -rq plugin.zip .
         - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.shopware.com/shopware/5/product/shopware.git shopware --depth=1 -b ${CHECKOUT_SHOPWARE_BRANCH}
         - unzip -q plugin.zip -d shopware/custom/plugins/${PLUGIN_NAME}
@@ -149,7 +157,7 @@ SW 5.4:
         - php ../../../vendor/bin/phpunit
             --configuration phpunit.xml.dist
             --colors=never
-    coverage: '/^\s*Lines:\s*(\d+(?:\.\d+)?%)/'
+            --verbose
     services:
         -   name: mysql:5.7
             alias: mysql
@@ -165,6 +173,8 @@ SW 5.5:
         - master
     before_script: [ ]
     script:
+        - sed -i 's/^mozilla\/DST_Root_CA_X3.crt$/!mozilla\/DST_Root_CA_X3.crt/' /etc/ca-certificates.conf # https://letsencrypt.org/docs/dst-root-ca-x3-expiration-september-2021/
+        - update-ca-certificates -f
         - zip -rq plugin.zip .
         - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.shopware.com/shopware/5/product/shopware.git shopware --depth=1 -b ${CHECKOUT_SHOPWARE_BRANCH}
         - unzip -q plugin.zip -d shopware/custom/plugins/${PLUGIN_NAME}
@@ -180,7 +190,7 @@ SW 5.5:
         - php ../../../vendor/bin/phpunit
             --configuration phpunit.xml.dist
             --colors=never
-    coverage: '/^\s*Lines:\s*(\d+(?:\.\d+)?%)/'
+            --verbose
     services:
         -   name: mysql:5.7
             alias: mysql
@@ -209,6 +219,7 @@ SW 5.6:
         - php ../../../vendor/bin/phpunit
             --configuration phpunit.xml.dist
             --colors=never
+            --verbose
     services:
         -   name: mysql:5.7
             alias: mysql
@@ -221,6 +232,7 @@ SW 5.6:
         - php ../../../vendor/bin/phpunit
             --configuration phpunit.xml.dist
             --colors=never
+            --verbose
 
 SW 5.7 PHP 7.4:
     extends: .SW 5.7 default

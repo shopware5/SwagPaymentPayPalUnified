@@ -12,8 +12,11 @@ parameters:
 
     symfony:
         constant_hassers: false
-        container_xml_path: '../../../var/cache/production____REVISION___/container.xml'
+        container_xml_path: ../../../var/cache/production____REVISION___/container.xml
         console_application_loader: ../../../tests/phpstan-console-application.php
+    doctrine:
+        repositoryClass: Shopware\Components\Model\ModelRepository
+        objectManagerLoader: ../../../tests/phpstan-doctrine-model-manager.php
 
     ignoreErrors:
         - # Since Shopware 5.3.4 this class has constructor parameter
@@ -22,5 +25,5 @@ parameters:
             '#Access to an undefined property Shopware_Models_Document_Order::#'
         - # Since we have to support Shopware 5.2 we can not use return types
             '#Method .* has no return typehint specified#'
-        - # Needs some custom extension to recognize the return value correctly
-            '#Cannot call method fetch.*\(\) on Doctrine\\DBAL\\Driver\\ResultStatement\|int#'
+        # Needs some improvements in the doctrine PHPStan extensions: see https://github.com/phpstan/phpstan-doctrine/pull/167
+        - '#Cannot call method fetch.*\(\) on Doctrine\\DBAL\\.*Statement\|int#'
