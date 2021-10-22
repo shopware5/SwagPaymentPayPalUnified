@@ -39,7 +39,7 @@ class PaymentInstruction extends ModelEntity
     /**
      * @var Order
      * @ORM\OneToOne(targetEntity="Shopware\Models\Order\Order")
-     * @ORM\JoinColumn(name="order_number", referencedColumnName="ordernumber")
+     * @ORM\JoinColumn(name="order_number", referencedColumnName="ordernumber", nullable=false)
      */
     private $order;
 

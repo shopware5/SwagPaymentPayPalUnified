@@ -121,21 +121,6 @@ parameters:
 			path: Controllers/Frontend/PaypalUnifiedWebhook.php
 
 		-
-			message: "#^Parameter \\#3 \\$content of method Shopware\\\\Components\\\\HttpClient\\\\GuzzleHttpClient\\:\\:post\\(\\) expects array\\|string\\|null, array\\|string\\|false given\\.$#"
-			count: 1
-			path: PayPalBundle/Services/ClientService.php
-
-		-
-			message: "#^Parameter \\#3 \\$content of method Shopware\\\\Components\\\\HttpClient\\\\GuzzleHttpClient\\:\\:patch\\(\\) expects array\\|string\\|null, array\\|string\\|false given\\.$#"
-			count: 1
-			path: PayPalBundle/Services/ClientService.php
-
-		-
-			message: "#^Parameter \\#3 \\$content of method Shopware\\\\Components\\\\HttpClient\\\\GuzzleHttpClient\\:\\:put\\(\\) expects array\\|string\\|null, array\\|string\\|false given\\.$#"
-			count: 1
-			path: PayPalBundle/Services/ClientService.php
-
-		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Services\\\\WebhookService\\:\\:getWebhookHandlers\\(\\) should return array\\<SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Components\\\\Webhook\\\\WebhookHandler\\> but returns array\\<SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Components\\\\Webhook\\\\WebhookHandler\\|null\\>\\.$#"
 			count: 1
 			path: PayPalBundle/Services/WebhookService.php

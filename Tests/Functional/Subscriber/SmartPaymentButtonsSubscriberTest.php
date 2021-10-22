@@ -237,7 +237,16 @@ class SmartPaymentButtonsSubscriberTest extends TestCase
         );
     }
 
-    public function testaddSmartPaymentButtonMarks()
+    public function validActions()
+    {
+        return [['index'], ['payment']];
+    }
+
+    /**
+     * @param string $action
+     * @dataProvider validActions
+     */
+    public function testaddSmartPaymentButtonMarks($action)
     {
         $this->insertGeneralSettingsFromArray([
             'shopId' => 1,
@@ -247,8 +256,7 @@ class SmartPaymentButtonsSubscriberTest extends TestCase
         $view = new ViewMock(new Enlight_Template_Manager());
         $request = new Enlight_Controller_Request_RequestTestCase();
 
-        $validActions = ['index', 'payment'];
-        $request->setActionName($validActions[\random_int(0, 1)]);
+        $request->setActionName($action);
 
         $enlightEventArgs = new Enlight_Controller_ActionEventArgs([
             'subject' => new DummyController($request, $view),
@@ -279,7 +287,11 @@ class SmartPaymentButtonsSubscriberTest extends TestCase
         static::assertNull($view->getAssign('paypalUnifiedUseSmartPaymentButtonMarks'));
     }
 
-    public function testaddSmartPaymentButtonMarksSpbDisabled()
+    /**
+     * @param string $action
+     * @dataProvider validActions
+     */
+    public function testaddSmartPaymentButtonMarksSpbDisabled($action)
     {
         $this->insertGeneralSettingsFromArray([
             'shopId' => 1,
@@ -289,30 +301,7 @@ class SmartPaymentButtonsSubscriberTest extends TestCase
         $view = new ViewMock(new Enlight_Template_Manager());
         $request = new Enlight_Controller_Request_RequestTestCase();
 
-        $validActions = ['index', 'payment'];
-        $request->setActionName($validActions[\random_int(0, 1)]);
-
-        $enlightEventArgs = new Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
-            'request' => $request,
-        ]);
-
-        $this->getSubscriber()->addSmartPaymentButtonMarks($enlightEventArgs);
-        static::assertNull($view->getAssign('paypalUnifiedUseSmartPaymentButtonMarks'));
-    }
-
-    public function testaddSmartPaymentButtonMarksGermanMerchantLocation()
-    {
-        $this->insertGeneralSettingsFromArray([
-            'shopId' => 1,
-            'useSmartPaymentButtons' => true,
-            'merchantLocation' => 'germany',
-        ]);
-        $view = new ViewMock(new Enlight_Template_Manager());
-        $request = new Enlight_Controller_Request_RequestTestCase();
-
-        $validActions = ['index', 'payment'];
-        $request->setActionName($validActions[\random_int(0, 1)]);
+        $request->setActionName($action);
 
         $enlightEventArgs = new Enlight_Controller_ActionEventArgs([
             'subject' => new DummyController($request, $view),
@@ -324,14 +313,38 @@ class SmartPaymentButtonsSubscriberTest extends TestCase
     }
 
     /**
-     * @param Enlight_Controller_Request_RequestTestCase   $request
-     * @param ViewMock                                     $view
-     * @param Enlight_Controller_Response_ResponseTestCase $response
-     *
+     * @param string $action
+     * @dataProvider validActions
+     */
+    public function testaddSmartPaymentButtonMarksGermanMerchantLocation($action)
+    {
+        $this->insertGeneralSettingsFromArray([
+            'shopId' => 1,
+            'useSmartPaymentButtons' => true,
+            'merchantLocation' => 'germany',
+        ]);
+        $view = new ViewMock(new Enlight_Template_Manager());
+        $request = new Enlight_Controller_Request_RequestTestCase();
+
+        $request->setActionName($action);
+
+        $enlightEventArgs = new Enlight_Controller_ActionEventArgs([
+            'subject' => new DummyController($request, $view),
+            'request' => $request,
+        ]);
+
+        $this->getSubscriber()->addSmartPaymentButtonMarks($enlightEventArgs);
+        static::assertNull($view->getAssign('paypalUnifiedUseSmartPaymentButtonMarks'));
+    }
+
+    /**
      * @return Enlight_Controller_ActionEventArgs
      */
-    private function getEnlightEventArgs($request, $view, $response)
-    {
+    private function getEnlightEventArgs(
+        Enlight_Controller_Request_RequestTestCase $request,
+        ViewMock $view,
+        Enlight_Controller_Response_ResponseTestCase $response
+    ) {
         return new Enlight_Controller_ActionEventArgs([
             'subject' => new DummyController($request, $view, $response),
             'request' => $request,

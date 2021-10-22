@@ -27,7 +27,7 @@ class Plus extends ModelEntity
     private $id;
 
     /**
-     * @var string
+     * @var int
      * @ORM\Column(name="shop_id", type="integer", nullable=false)
      */
     private $shopId;
@@ -52,7 +52,7 @@ class Plus extends ModelEntity
 
     /**
      * @var string|null
-     * @ORM\Column(name="payment_name", type="string")
+     * @ORM\Column(name="payment_name", type="string", nullable=true)
      */
     private $paymentName;
 
@@ -71,7 +71,7 @@ class Plus extends ModelEntity
     }
 
     /**
-     * @return string
+     * @return int
      */
     public function getShopId()
     {
@@ -79,7 +79,7 @@ class Plus extends ModelEntity
     }
 
     /**
-     * @param string $shopId
+     * @param int $shopId
      */
     public function setShopId($shopId)
     {
