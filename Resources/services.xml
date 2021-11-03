@@ -10,6 +10,7 @@
         <import resource="services/decorators.xml"/>
         <import resource="services/paypal_bundle.xml"/>
         <import resource="services/resources.xml"/>
+        <import resource="services/resources_v2.xml"/>
         <import resource="services/subscribers.xml"/>
     </imports>
 </container>

@@ -8,14 +8,17 @@
 
 namespace SwagPaymentPayPalUnified\Components\Services;
 
-use Shopware\Components\Cart\PaymentTokenService;
-use Shopware\Components\Routing\RouterInterface;
 use Shopware_Components_Snippet_Manager as SnippetManager;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderInterface;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
+use SwagPaymentPayPalUnified\Components\Services\Common\CartHelper;
+use SwagPaymentPayPalUnified\Components\Services\Common\CustomerHelper;
+use SwagPaymentPayPalUnified\Components\Services\Common\PriceFormatter;
+use SwagPaymentPayPalUnified\Components\Services\Common\ReturnUrlHelper;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
+use SwagPaymentPayPalUnified\PayPalBundle\PaymentIntent;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\ApplicationContext;
@@ -29,11 +32,6 @@ use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Transactions\ItemList\
 
 class PaymentBuilderService implements PaymentBuilderInterface
 {
-    /**
-     * @var RouterInterface
-     */
-    protected $router;
-
     /**
      * @var SettingsServiceInterface
      */
@@ -50,6 +48,11 @@ class PaymentBuilderService implements PaymentBuilderInterface
     protected $dependencyProvider;
 
     /**
+     * @var ReturnUrlHelper
+     */
+    protected $returnUrlHelper;
+
+    /**
      * @var array
      */
     private $basketData;
@@ -64,16 +67,37 @@ class PaymentBuilderService implements PaymentBuilderInterface
      */
     private $snippetManager;
 
+    /**
+     * @var PriceFormatter
+     */
+    private $priceFormatter;
+
+    /**
+     * @var CustomerHelper
+     */
+    private $customerHelper;
+
+    /**
+     * @var CartHelper
+     */
+    private $cartHelper;
+
     public function __construct(
-        RouterInterface $router,
         SettingsServiceInterface $settingsService,
         SnippetManager $snippetManager,
-        DependencyProvider $dependencyProvider
+        DependencyProvider $dependencyProvider,
+        PriceFormatter $priceFormatter,
+        CustomerHelper $customerHelper,
+        CartHelper $cartHelper,
+        ReturnUrlHelper $returnUrlHelper
     ) {
-        $this->router = $router;
         $this->settings = $settingsService;
         $this->dependencyProvider = $dependencyProvider;
         $this->snippetManager = $snippetManager;
+        $this->priceFormatter = $priceFormatter;
+        $this->customerHelper = $customerHelper;
+        $this->cartHelper = $cartHelper;
+        $this->returnUrlHelper = $returnUrlHelper;
     }
 
     /**
@@ -93,20 +117,20 @@ class PaymentBuilderService implements PaymentBuilderInterface
         if ($paymentType === PaymentType::PAYPAL_EXPRESS || $paymentType === PaymentType::PAYPAL_CLASSIC) {
             $requestParameters->setIntent($this->getIntentAsString((int) $this->settings->get('intent', SettingsTable::EXPRESS_CHECKOUT)));
         } else {
-            $requestParameters->setIntent('sale');
+            $requestParameters->setIntent(PaymentIntent::SALE);
         }
 
         $payer = new Payer();
         $payer->setPaymentMethod('paypal');
 
         $redirectUrls = new RedirectUrls();
-        $redirectUrls->setCancelUrl($this->getRedirectUrl('cancel'));
-        $redirectUrls->setReturnUrl($this->getRedirectUrl('return'));
+        $redirectUrls->setCancelUrl($this->returnUrlHelper->getCancelUrl($params->getBasketUniqueId(), $params->getPaymentToken()));
+        $redirectUrls->setReturnUrl($this->returnUrlHelper->getReturnUrl($params->getBasketUniqueId(), $params->getPaymentToken()));
 
         $amount = new Amount();
         $amount->setDetails($this->getAmountDetails());
         $amount->setCurrency($this->basketData['sCurrencyName']);
-        $amount->setTotal(\number_format($this->getTotalAmount(), 2));
+        $amount->setTotal($this->cartHelper->getTotalAmount($this->basketData, $params->getUserData()));
 
         $transactions = new Transactions();
         $transactions->setAmount($amount);
@@ -136,33 +160,14 @@ class PaymentBuilderService implements PaymentBuilderInterface
     {
         switch ($intent) {
             case 0:
-                return 'sale';
+                return PaymentIntent::SALE;
             case 1:
-                return 'authorize';
+                return PaymentIntent::AUTHORIZE;
             case 2:
-                return 'order';
+                return PaymentIntent::ORDER;
             default:
-                throw new \RuntimeException('The intent-type ' . $intent . ' is not supported!');
+                throw new \RuntimeException(sprintf('The intent-type %d is not supported!', $intent));
         }
-    }
-
-    /**
-     * @return float
-     */
-    private function getTotalAmount()
-    {
-        //Case 1: Show gross prices in shopware and don't exclude country tax
-        if ($this->showGrossPrices() && !$this->useNetPriceCalculation()) {
-            return $this->formatPrice($this->basketData['AmountNumeric']);
-        }
-
-        //Case 2: Show net prices in shopware and don't exclude country tax
-        if (!$this->showGrossPrices() && !$this->useNetPriceCalculation()) {
-            return $this->formatPrice($this->basketData['AmountWithTaxNumeric']);
-        }
-
-        //Case 3: No tax handling at all, just use the net amounts.
-        return $this->formatPrice($this->basketData['AmountNetNumeric']);
     }
 
     private function setItemList(Transactions $transactions)
@@ -190,9 +195,9 @@ class PaymentBuilderService implements PaymentBuilderInterface
             $name = $basketItem['articlename'];
             $quantity = (int) $basketItem['quantity'];
 
-            $price = $this->showGrossPrices() === true
-                ? $this->formatPrice($basketItem['price'])
-                : $this->formatPrice($basketItem['netprice']);
+            $price = $this->customerHelper->hasGrossPrices($this->userData) === true
+                ? $this->priceFormatter->roundPrice($basketItem['price'])
+                : $this->priceFormatter->roundPrice($basketItem['netprice']);
 
             // In the following part, we modify the CustomProducts positions.
             // All position prices of the Custom Products configuration are added up, so that no items with 0€ are committed to PayPal
@@ -221,7 +226,7 @@ class PaymentBuilderService implements PaymentBuilderInterface
 
                         /** @var Item $mainProduct */
                         $mainProduct = $list[$customProductMainLineItemKey];
-                        $mainProduct->setPrice($mainProduct->getPrice() + $price);
+                        $mainProduct->setPrice((float) $mainProduct->getPrice() + $price);
                         continue 2;
                 }
             }
@@ -243,114 +248,34 @@ class PaymentBuilderService implements PaymentBuilderInterface
     }
 
     /**
-     * @param string $action
-     *
-     * @return false|string
-     */
-    private function getRedirectUrl($action)
-    {
-        $routingParameters = [
-            'controller' => 'PaypalUnified',
-            'action' => $action,
-            'forceSecure' => true,
-        ];
-
-        // Shopware 5.3+ supports cart validation.
-        if ($this->requestParams->getBasketUniqueId()) {
-            $routingParameters['basketId'] = $this->requestParams->getBasketUniqueId();
-        }
-
-        // Shopware 5.6+ supports session restoring
-        $token = $this->requestParams->getPaymentToken();
-        if ($token !== null) {
-            $routingParameters[PaymentTokenService::TYPE_PAYMENT_TOKEN] = $token;
-        }
-
-        return $this->router->assemble($routingParameters);
-    }
-
-    /**
      * @return Details
      */
     private function getAmountDetails()
     {
         $amountDetails = new Details();
 
-        if ($this->showGrossPrices() && !$this->useNetPriceCalculation()) {
-            $amountDetails->setShipping($this->formatPrice($this->basketData['sShippingcostsWithTax']));
-            $amountDetails->setSubTotal($this->formatPrice($this->basketData['Amount']));
+        if ($this->customerHelper->hasGrossPrices($this->userData) && !$this->customerHelper->useNetPriceCalculation($this->userData)) {
+            $amountDetails->setShipping($this->priceFormatter->formatPrice($this->basketData['sShippingcostsWithTax']));
+            $amountDetails->setSubTotal($this->priceFormatter->formatPrice($this->basketData['Amount']));
             $amountDetails->setTax(\number_format(0, 2));
 
             return $amountDetails;
         }
 
         //Case 2: Show net prices in shopware and don't exclude country tax
-        if (!$this->showGrossPrices() && !$this->useNetPriceCalculation()) {
-            $amountDetails->setShipping($this->formatPrice($this->basketData['sShippingcostsNet']));
-            $amountDetails->setSubTotal($this->formatPrice($this->basketData['AmountNet']));
+        if (!$this->customerHelper->hasGrossPrices($this->userData) && !$this->customerHelper->useNetPriceCalculation($this->userData)) {
+            $amountDetails->setShipping($this->priceFormatter->formatPrice($this->basketData['sShippingcostsNet']));
+            $amountDetails->setSubTotal($this->priceFormatter->formatPrice($this->basketData['AmountNet']));
             $amountDetails->setTax($this->basketData['sAmountTax']);
 
             return $amountDetails;
         }
 
         //Case 3: No tax handling at all, just use the net amounts.
-        $amountDetails->setShipping($this->formatPrice($this->basketData['sShippingcostsNet']));
-        $amountDetails->setSubTotal($this->formatPrice($this->basketData['AmountNet']));
+        $amountDetails->setShipping($this->priceFormatter->formatPrice($this->basketData['sShippingcostsNet']));
+        $amountDetails->setSubTotal($this->priceFormatter->formatPrice($this->basketData['AmountNet']));
 
         return $amountDetails;
-    }
-
-    /**
-     * Returns a value indicating whether or not the current customer
-     * uses the net price instead of the gross price.
-     *
-     * @return bool
-     */
-    private function showGrossPrices()
-    {
-        return (bool) $this->userData['additional']['show_net'];
-    }
-
-    /**
-     * Returns a value indicating whether or not only the net prices without
-     * any tax should be used in the total amount object.
-     *
-     * @return bool
-     */
-    private function useNetPriceCalculation()
-    {
-        if (!empty($this->userData['additional']['countryShipping']['taxfree'])) {
-            return true;
-        }
-
-        if (empty($this->userData['additional']['countryShipping']['taxfree_ustid'])) {
-            return false;
-        }
-
-        if (!empty($this->userData['shippingaddress']['ustid'])
-            && !empty($this->userData['additional']['country']['taxfree_ustid'])) {
-            return true;
-        }
-
-        if (empty($this->userData['shippingaddress']['ustid'])) {
-            return false;
-        }
-
-        if ($this->userData[self::CUSTOMER_GROUP_USE_GROSS_PRICES]) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * @param float|string $price
-     *
-     * @return float
-     */
-    private function formatPrice($price)
-    {
-        return \round((float) \str_replace(',', '.', $price), 2);
     }
 
     /**

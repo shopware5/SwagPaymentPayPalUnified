@@ -1,0 +1,33 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="https://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service id="paypal_unified.paypal_order_builder_service"
+                 class="SwagPaymentPayPalUnified\Components\Services\PayPalOrderBuilderService"
+                 public="true">
+            <argument type="service" id="paypal_unified.settings_service"/>
+            <argument type="service" id="paypal_unified.paypal_order.item_list_provider"/>
+            <argument type="service" id="paypal_unified.paypal_order.amount_provider"/>
+            <argument type="service" id="paypal_unified.common.return_url_helper"/>
+        </service>
+
+        <service id="paypal_unified.paypal_order.item_list_provider"
+                 class="SwagPaymentPayPalUnified\Components\Services\PayPalOrder\ItemListProvider">
+            <argument type="service" id="paypal_unified.logger_service"/>
+            <argument type="service" id="snippets"/>
+            <argument type="service" id="paypal_unified.common.price_formatter"/>
+            <argument type="service" id="paypal_unified.common.customer_helper"/>
+        </service>
+
+        <service id="paypal_unified.paypal_order.amount_provider"
+                 class="SwagPaymentPayPalUnified\Components\Services\PayPalOrder\AmountProvider">
+            <argument type="service" id="paypal_unified.common.cart_helper"/>
+            <argument type="service" id="paypal_unified.common.customer_helper"/>
+            <argument type="service" id="paypal_unified.common.price_formatter"/>
+        </service>
+
+    </services>
+</container>

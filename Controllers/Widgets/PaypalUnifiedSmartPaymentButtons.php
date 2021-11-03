@@ -10,8 +10,8 @@ use Shopware\Components\HttpClient\RequestException;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
 use SwagPaymentPayPalUnified\Components\ExceptionHandlerServiceInterface;
-use SwagPaymentPayPalUnified\Components\PaymentBuilderInterface;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
+use SwagPaymentPayPalUnified\Components\Services\Common\CustomerHelper;
 use SwagPaymentPayPalUnified\Components\Services\PaymentAddressService;
 use SwagPaymentPayPalUnified\Components\Services\PaymentTokenExtractor;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PayerInfoPatch;
@@ -68,7 +68,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedSmartPaymentButtons extends Shop
 
         $basketData = $orderData['sBasket'];
         $userData = $orderData['sUserData'];
-        $userData[PaymentBuilderInterface::CUSTOMER_GROUP_USE_GROSS_PRICES] = (bool) $session->get('sUserGroupData', ['tax' => 1])['tax'];
+        $userData[CustomerHelper::CUSTOMER_GROUP_USE_GROSS_PRICES] = (bool) $session->get('sUserGroupData', ['tax' => 1])['tax'];
 
         $requestParams = new PaymentBuilderParameters();
         $requestParams->setBasketData($basketData);

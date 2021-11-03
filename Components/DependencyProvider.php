@@ -26,15 +26,19 @@ class DependencyProvider
     }
 
     /**
-     * @return Shop|null
+     * @return Shop
      */
     public function getShop()
     {
-        if ($this->container->has('shop')) {
-            return $this->container->get('shop');
+        if (!$this->container->has('shop')) {
+            throw new \RuntimeException('Shop not initialized in DI container');
+        }
+        $shop = $this->container->get('shop');
+        if (!$shop instanceof Shop) {
+            throw new \RuntimeException('Shop not initialized in DI container');
         }
 
-        return null;
+        return $shop;
     }
 
     /**
@@ -43,10 +47,7 @@ class DependencyProvider
     public function getFront()
     {
         if ($this->container->has('front')) {
-            /** @var \Enlight_Controller_Front $front */
-            $front = $this->container->get('front');
-
-            return $front;
+            return $this->container->get('front');
         }
 
         return null;

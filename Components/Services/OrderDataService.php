@@ -134,7 +134,7 @@ class OrderDataService
     }
 
     /**
-     * @param int $orderNumber
+     * @param string $orderNumber
      *
      * @return string
      */
@@ -146,6 +146,6 @@ class OrderDataService
             ->where('o.ordernumber = :orderNumber')
             ->setParameter(':orderNumber', $orderNumber);
 
-        return $builder->execute()->fetchColumn();
+        return (string) $builder->execute()->fetchColumn();
     }
 }

@@ -10,7 +10,6 @@ namespace SwagPaymentPayPalUnified\Subscriber;
 
 use Enlight\Event\SubscriberInterface;
 use Enlight_Controller_ActionEventArgs as ActionEventArgs;
-use Enlight_View_Default;
 
 class Backend implements SubscriberInterface
 {
@@ -44,7 +43,6 @@ class Backend implements SubscriberInterface
      */
     public function onLoadBackendIndex(ActionEventArgs $args)
     {
-        /** @var Enlight_View_Default $view */
         $view = $args->getSubject()->View();
         $view->addTemplateDir($this->pluginDir . '/Resources/views/');
         $view->extendsTemplate('backend/paypal_unified/menu_icon.tpl');
@@ -52,7 +50,6 @@ class Backend implements SubscriberInterface
 
     public function onPostDispatchConfig(ActionEventArgs $arguments)
     {
-        /* @var Enlight_View_Default $view */
         $view = $arguments->getSubject()->View();
 
         if ($arguments->getRequest()->getActionName() === 'load') {

@@ -1,0 +1,32 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service id="paypal_unified.v2.authorization_resource"
+                 class="SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\AuthorizationResource"
+                 public="true">
+            <argument type="service" id="paypal_unified.client_service"/>
+        </service>
+
+        <service id="paypal_unified.v2.capture_resource"
+                 class="SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\CaptureResource"
+                 public="true">
+            <argument type="service" id="paypal_unified.client_service"/>
+        </service>
+
+        <service id="paypal_unified.v2.order_resource"
+                 class="SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\OrderResource"
+                 public="true">
+            <argument type="service" id="paypal_unified.client_service"/>
+        </service>
+
+        <service id="paypal_unified.v2.refund_resource"
+                 class="SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\RefundResource"
+                 public="true">
+            <argument type="service" id="paypal_unified.client_service"/>
+        </service>
+    </services>
+</container>

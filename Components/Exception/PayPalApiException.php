@@ -27,7 +27,7 @@ class PayPalApiException extends \Exception
     }
 
     /**
-     * @return string
+     * @return string|int
      */
     public function getName()
     {

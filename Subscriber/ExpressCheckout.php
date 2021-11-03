@@ -20,6 +20,7 @@ use SwagPaymentPayPalUnified\Components\ExceptionHandlerServiceInterface;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderInterface;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
+use SwagPaymentPayPalUnified\Components\Services\Common\CustomerHelper;
 use SwagPaymentPayPalUnified\Components\Services\PaymentAddressService;
 use SwagPaymentPayPalUnified\Components\Services\RiskManagement\EsdProductCheckerInterface;
 use SwagPaymentPayPalUnified\Models\Settings\ExpressCheckout as ExpressSettingsModel;
@@ -356,7 +357,7 @@ class ExpressCheckout implements SubscriberInterface
         $orderVariables = $this->session->get('sOrderVariables');
         $userData = $orderVariables['sUserData'];
         $basketData = $orderVariables['sBasket'];
-        $userData[PaymentBuilderInterface::CUSTOMER_GROUP_USE_GROSS_PRICES] = (bool) $this->dependencyProvider->getSession()
+        $userData[CustomerHelper::CUSTOMER_GROUP_USE_GROSS_PRICES] = (bool) $this->dependencyProvider->getSession()
             ->get('sUserGroupData', ['tax' => 1])['tax'];
 
         $shippingAddress = $this->paymentAddressService->getShippingAddress($userData);

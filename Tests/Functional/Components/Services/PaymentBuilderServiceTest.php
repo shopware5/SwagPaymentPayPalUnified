@@ -9,8 +9,8 @@
 namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services;
 
 use PHPUnit\Framework\TestCase;
-use SwagPaymentPayPalUnified\Components\PaymentBuilderInterface;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
+use SwagPaymentPayPalUnified\Components\Services\Common\CustomerHelper;
 use SwagPaymentPayPalUnified\Components\Services\PaymentBuilderService;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
@@ -112,7 +112,7 @@ class PaymentBuilderServiceTest extends TestCase
 
         $basketData = $this->getBasketDataArray();
         $userData = $this->getUserDataAsArray();
-        $userData[PaymentBuilderInterface::CUSTOMER_GROUP_USE_GROSS_PRICES] = false;
+        $userData[CustomerHelper::CUSTOMER_GROUP_USE_GROSS_PRICES] = false;
         $userData['additional']['countryShipping']['taxfree'] = '1';
 
         $params = new PaymentBuilderParameters();
@@ -136,7 +136,7 @@ class PaymentBuilderServiceTest extends TestCase
         // Should match
         $userData['additional']['countryShipping']['taxfree'] = true;
 
-        $userData[PaymentBuilderInterface::CUSTOMER_GROUP_USE_GROSS_PRICES] = false;
+        $userData[CustomerHelper::CUSTOMER_GROUP_USE_GROSS_PRICES] = false;
         $userData['additional']['countryShipping']['taxfree_ustid'] = null;
         $userData['shippingaddress']['ustid'] = null;
         $userData['billingaddress']['ustid'] = null;
@@ -164,7 +164,7 @@ class PaymentBuilderServiceTest extends TestCase
         $userData['additional']['countryShipping']['taxfree'] = null;
         $userData['additional']['countryShipping']['taxfree_ustid'] = null;
 
-        $userData[PaymentBuilderInterface::CUSTOMER_GROUP_USE_GROSS_PRICES] = false;
+        $userData[CustomerHelper::CUSTOMER_GROUP_USE_GROSS_PRICES] = false;
         $userData['additional']['countryShipping']['taxfree'] = false;
         $userData['shippingaddress']['ustid'] = null;
         $userData['billingaddress']['ustid'] = null;
@@ -221,7 +221,7 @@ class PaymentBuilderServiceTest extends TestCase
         $userData['shippingaddress']['ustid'] = null;
 
         $userData['additional']['country']['taxfree_ustid'] = '1';
-        $userData[PaymentBuilderInterface::CUSTOMER_GROUP_USE_GROSS_PRICES] = true;
+        $userData[CustomerHelper::CUSTOMER_GROUP_USE_GROSS_PRICES] = true;
 
         $params = new PaymentBuilderParameters();
         $params->setBasketData($basketData);
@@ -246,7 +246,7 @@ class PaymentBuilderServiceTest extends TestCase
         $userData['additional']['countryShipping']['taxfree_ustid'] = '1';
         $userData['billingaddress']['ustid'] = null;
         $userData['shippingaddress']['ustid'] = null;
-        $userData[PaymentBuilderInterface::CUSTOMER_GROUP_USE_GROSS_PRICES] = true;
+        $userData[CustomerHelper::CUSTOMER_GROUP_USE_GROSS_PRICES] = true;
 
         $userData['additional']['country']['taxfree_ustid'] = '1';
 
@@ -274,7 +274,7 @@ class PaymentBuilderServiceTest extends TestCase
         $userData['additional']['countryShipping']['taxfree_ustid'] = '1';
         $userData['billingaddress']['ustid'] = null;
         $userData['shippingaddress']['ustid'] = '1';
-        $userData[PaymentBuilderInterface::CUSTOMER_GROUP_USE_GROSS_PRICES] = false;
+        $userData[CustomerHelper::CUSTOMER_GROUP_USE_GROSS_PRICES] = false;
         $userData['additional']['country']['taxfree_ustid'] = '1';
 
         $params = new PaymentBuilderParameters();
@@ -299,7 +299,7 @@ class PaymentBuilderServiceTest extends TestCase
         $userData['billingaddress']['ustid'] = null;
 
         $userData['additional']['countryShipping']['taxfree_ustid'] = '1';
-        $userData[PaymentBuilderInterface::CUSTOMER_GROUP_USE_GROSS_PRICES] = true;
+        $userData[CustomerHelper::CUSTOMER_GROUP_USE_GROSS_PRICES] = true;
 
         $userData['shippingaddress']['ustid'] = null;
         $userData['additional']['countryShipping']['taxfree'] = null;
@@ -402,7 +402,7 @@ class PaymentBuilderServiceTest extends TestCase
 
         $userData['additional']['countryShipping']['taxfree_ustid'] = '1';
         $userData['shippingaddress']['ustid'] = 'VATID123';
-        $userData[PaymentBuilderInterface::CUSTOMER_GROUP_USE_GROSS_PRICES] = false;
+        $userData[CustomerHelper::CUSTOMER_GROUP_USE_GROSS_PRICES] = false;
 
         $params = new PaymentBuilderParameters();
         $params->setBasketData($basketData);
@@ -638,7 +638,7 @@ class PaymentBuilderServiceTest extends TestCase
     private function getUserDataAsArray()
     {
         return [
-            PaymentBuilderInterface::CUSTOMER_GROUP_USE_GROSS_PRICES => true,
+            CustomerHelper::CUSTOMER_GROUP_USE_GROSS_PRICES => true,
             'additional' => [
                 'show_net' => true,
                 'countryShipping' => [

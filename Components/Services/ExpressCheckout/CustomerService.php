@@ -100,7 +100,7 @@ class CustomerService
         $address = $payerInfo->getBillingAddress();
         $countryId = $this->getCountryId($address->getCountryCode());
         $stateId = null;
-        if ($address->getState()) {
+        if (\is_string($address->getState())) {
             $stateId = $this->getStateId($countryId, $address->getState());
         }
 

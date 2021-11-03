@@ -71,17 +71,12 @@ class Account implements SubscriberInterface
             return;
         }
 
-        $shop = $this->dependencyProvider->getShop();
-        if ($shop === null) {
-            return;
-        }
-
         $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag($this->connection);
         if (!$swUnifiedActive) {
             return;
         }
 
-        $shopId = $shop->getId();
+        $shopId = $this->dependencyProvider->getShop()->getId();
         /** @var Plus|null $plusSettings */
         $plusSettings = $this->settingsService->getSettings($shopId, SettingsTable::PLUS);
 

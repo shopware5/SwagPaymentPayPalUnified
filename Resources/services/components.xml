@@ -5,8 +5,10 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <imports>
+        <import resource="components/common.xml"/>
         <import resource="components/express_checkout.xml"/>
         <import resource="components/legacy.xml"/>
+        <import resource="components/paypal_order.xml"/>
         <import resource="components/plus.xml"/>
         <import resource="components/validation.xml"/>
     </imports>
@@ -46,10 +48,13 @@
         <service id="paypal_unified.payment_builder_service"
                  class="SwagPaymentPayPalUnified\Components\Services\PaymentBuilderService"
                  public="true">
-            <argument type="service" id="router"/>
             <argument type="service" id="paypal_unified.settings_service"/>
             <argument type="service" id="snippets"/>
             <argument type="service" id="paypal_unified.dependency_provider"/>
+            <argument type="service" id="paypal_unified.common.price_formatter"/>
+            <argument type="service" id="paypal_unified.common.customer_helper"/>
+            <argument type="service" id="paypal_unified.common.cart_helper"/>
+            <argument type="service" id="paypal_unified.common.return_url_helper"/>
         </service>
 
         <service id="paypal_unified.payment_status_service"

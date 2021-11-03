@@ -8,14 +8,40 @@
 
 namespace SwagPaymentPayPalUnified\Components\Services\ExpressCheckout;
 
-use Shopware\Components\Cart\PaymentTokenService;
+use Shopware_Components_Snippet_Manager as SnippetManager;
+use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
+use SwagPaymentPayPalUnified\Components\Services\Common\CartHelper;
+use SwagPaymentPayPalUnified\Components\Services\Common\CustomerHelper;
+use SwagPaymentPayPalUnified\Components\Services\Common\PriceFormatter;
+use SwagPaymentPayPalUnified\Components\Services\Common\ReturnUrlHelper;
 use SwagPaymentPayPalUnified\Components\Services\PaymentBuilderService;
 use SwagPaymentPayPalUnified\Components\Services\Validation\BasketIdWhitelist;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
 
 class ExpressCheckoutPaymentBuilderService extends PaymentBuilderService
 {
+    public function __construct(
+        SettingsServiceInterface $settingsService,
+        SnippetManager $snippetManager,
+        DependencyProvider $dependencyProvider,
+        PriceFormatter $priceFormatter,
+        CustomerHelper $customerHelper,
+        CartHelper $cartHelper,
+        ReturnUrlHelper $returnUrlHelper
+    ) {
+        parent::__construct(
+            $settingsService,
+            $snippetManager,
+            $dependencyProvider,
+            $priceFormatter,
+            $customerHelper,
+            $cartHelper,
+            $returnUrlHelper
+        );
+    }
+
     /**
      * @param string|null $currency
      *
@@ -29,15 +55,14 @@ class ExpressCheckoutPaymentBuilderService extends PaymentBuilderService
         $redirectUrls->setReturnUrl($this->getReturnUrl());
         $redirectUrls->setCancelUrl($this->getCancelUrl());
 
-        //Since we used the sBasket module earlier, the currencies might not be available,
-        //but paypal needs them.
-        if (!$payment->getTransactions()->getAmount()->getCurrency()) {
+        // Since we used the sBasket module earlier, the currencies might not be available but PayPal needs them.
+        if (!$payment->getTransactions()->getAmount()->getCurrency() && \is_string($currency)) {
             $payment->getTransactions()->getAmount()->setCurrency($currency);
         }
 
         if ($payment->getTransactions()->getItemList() !== null) {
             foreach ($payment->getTransactions()->getItemList()->getItems() as $item) {
-                if (!$item->getCurrency()) {
+                if (!$item->getCurrency() && \is_string($currency)) {
                     $item->setCurrency($currency);
                 }
             }
@@ -47,44 +72,32 @@ class ExpressCheckoutPaymentBuilderService extends PaymentBuilderService
     }
 
     /**
-     * @return false|string
+     * @return string
      */
     private function getReturnUrl()
     {
-        $routingParameters = [
-            'module' => 'frontend',
-            'controller' => 'PaypalUnifiedExpressCheckout',
-            'action' => 'expressCheckoutReturn',
-            'forceSecure' => true,
-            'basketId' => BasketIdWhitelist::WHITELIST_IDS['PayPalExpress'], //PayPal Express Checkout basket Id
-        ];
-
-        // Shopware 5.6+ supports session restoring
-        $token = $this->requestParams->getPaymentToken();
-        if ($token !== null) {
-            $routingParameters[PaymentTokenService::TYPE_PAYMENT_TOKEN] = $token;
-        }
-
-        return $this->router->assemble($routingParameters);
+        return $this->returnUrlHelper->getReturnUrl(
+            BasketIdWhitelist::WHITELIST_IDS['PayPalExpress'], //PayPal Express Checkout basket Id,
+            $this->requestParams->getPaymentToken(),
+            [
+                'controller' => 'PaypalUnifiedExpressCheckout',
+                'action' => 'expressCheckoutReturn',
+            ]
+        );
     }
 
     /**
-     * @return false|string
+     * @return string
      */
     private function getCancelUrl()
     {
-        $routingParameters = [
-            'controller' => 'checkout',
-            'action' => 'cart',
-            'forceSecure' => true,
-        ];
-
-        // Shopware 5.6+ supports session restoring
-        $token = $this->requestParams->getPaymentToken();
-        if ($token !== null) {
-            $routingParameters['swPaymentToken'] = $token;
-        }
-
-        return $this->router->assemble($routingParameters);
+        return $this->returnUrlHelper->getCancelUrl(
+            null,
+            $this->requestParams->getPaymentToken(),
+            [
+                'controller' => 'checkout',
+                'action' => 'cart',
+            ]
+        );
     }
 }

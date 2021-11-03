@@ -99,7 +99,7 @@ class Frontend implements SubscriberInterface
             return;
         }
 
-        $category = $args->getSubject()->Request()->getParam('sCategory');
+        $category = $controller->Request()->getParam('sCategory');
 
         $controller->View()->assign('paypalIsNotAllowed', $this->riskManagement->isPayPalNotAllowed(null, $category));
     }

@@ -43,12 +43,9 @@ class PaymentMethodProvider
             throw new \RuntimeException('ModelManager not defined in PaymentMethodProvider');
         }
 
-        /** @var Payment|null $payment */
-        $payment = $this->modelManager->getRepository(Payment::class)->findOneBy([
+        return $this->modelManager->getRepository(Payment::class)->findOneBy([
             'name' => self::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME,
         ]);
-
-        return $payment;
     }
 
     /**
