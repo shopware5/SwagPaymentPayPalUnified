@@ -81,6 +81,11 @@ class PaymentMeansSubscriberTest extends TestCase
         static::assertNotContains($this->getUnifiedPaymentId(), $result);
     }
 
+    /**
+     * @param bool $mockSettings
+     *
+     * @return PaymentMeans
+     */
     private function getSubscriber($mockSettings = true)
     {
         if ($mockSettings) {
@@ -127,10 +132,12 @@ class SettingsServiceMock implements SettingsServiceInterface
 
     public function hasSettings($settingsTable = SettingsTable::GENERAL)
     {
+        return false;
     }
 
     public function getSettings($shopId = null, $settingsTable = SettingsTable::GENERAL)
     {
+        return null;
     }
 
     public function refreshDependencies()
@@ -139,6 +146,9 @@ class SettingsServiceMock implements SettingsServiceInterface
 }
 class EventArgsMockWithoutReturn extends \Enlight_Event_EventArgs
 {
+    /**
+     * @var array
+     */
     public $result;
 
     public function getReturn()
@@ -146,6 +156,9 @@ class EventArgsMockWithoutReturn extends \Enlight_Event_EventArgs
         return [];
     }
 
+    /**
+     * @param array $result
+     */
     public function setReturn($result)
     {
         $this->result = $result;
@@ -153,6 +166,9 @@ class EventArgsMockWithoutReturn extends \Enlight_Event_EventArgs
 }
 class EventArgsMockWithoutUnifiedReturn extends \Enlight_Event_EventArgs
 {
+    /**
+     * @var array
+     */
     public $result;
 
     public function getReturn()
@@ -166,6 +182,9 @@ class EventArgsMockWithoutUnifiedReturn extends \Enlight_Event_EventArgs
         ];
     }
 
+    /**
+     * @param array $result
+     */
     public function setReturn($result)
     {
         $this->result = $result;
@@ -175,6 +194,9 @@ class EventArgsMockWithUnifiedReturn extends \Enlight_Event_EventArgs
 {
     use PayPalUnifiedPaymentIdTrait;
 
+    /**
+     * @var array
+     */
     public $result;
 
     public function getReturn()
@@ -191,6 +213,9 @@ class EventArgsMockWithUnifiedReturn extends \Enlight_Event_EventArgs
         ];
     }
 
+    /**
+     * @param array $result
+     */
     public function setReturn($result)
     {
         $this->result = $result;

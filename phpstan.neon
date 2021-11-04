@@ -7,7 +7,6 @@ parameters:
     excludes_analyse:
         - vendor
         - .githooks
-        - Tests
 
     symfony:
         constant_hassers: false
@@ -26,3 +25,9 @@ parameters:
             '#Method .* has no return typehint specified#'
         # Needs some improvements in the doctrine PHPStan extensions: see https://github.com/phpstan/phpstan-doctrine/pull/167
         - '#Cannot call method fetch.*\(\) on Doctrine\\DBAL\\.*Statement\|int#'
+        - # Has different type in older PHPUnit versions needs for older Shopware versions
+            message: '#Parameter \#2 \$haystack of static method PHPUnit\\Framework\\Assert::assertContains\(\) expects iterable, string given#'
+            path: Tests
+        - # Compatibititly trait for different Shopware versions
+            message: '#Call to an undefined method Enlight_Components_Session_Namespace::reset\(\)#'
+            path: Tests/Functional/ResetSessionTrait.php

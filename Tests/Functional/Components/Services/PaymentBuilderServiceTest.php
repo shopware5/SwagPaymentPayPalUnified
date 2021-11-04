@@ -20,7 +20,7 @@ class PaymentBuilderServiceTest extends TestCase
 {
     public function testIsBasketServiceAvailable()
     {
-        $settingService = new SettingsServicePaymentBuilderServiceMock(PaymentType::PAYPAL_CLASSIC, 0);
+        $settingService = new SettingsServicePaymentBuilderServiceMock(false, 0);
 
         $requestService = $this->getRequestService($settingService);
 
@@ -77,7 +77,7 @@ class PaymentBuilderServiceTest extends TestCase
         static::assertSame('EUR', $requestParameters['transactions'][0]['amount']['currency']);
         static::assertSame('114.99', $requestParameters['transactions'][0]['amount']['total']);
         // test the amount details
-        static::assertSame('55', $requestParameters['transactions'][0]['amount']['details']['shipping']);
+        static::assertSame('55.00', $requestParameters['transactions'][0]['amount']['details']['shipping']);
         static::assertSame('59.99', $requestParameters['transactions'][0]['amount']['details']['subtotal']);
         static::assertSame('0.00', $requestParameters['transactions'][0]['amount']['details']['tax']);
     }
@@ -387,7 +387,7 @@ class PaymentBuilderServiceTest extends TestCase
         $requestParameters = $requestParameters->toArray();
 
         static::assertSame('114.99', $requestParameters['transactions'][0]['amount']['total']);
-        static::assertSame('55', $requestParameters['transactions'][0]['amount']['details']['shipping']);
+        static::assertSame('55.00', $requestParameters['transactions'][0]['amount']['details']['shipping']);
         static::assertSame('59.99', $requestParameters['transactions'][0]['amount']['details']['subtotal']);
         static::assertSame('0.00', $requestParameters['transactions'][0]['amount']['details']['tax']);
     }
@@ -544,6 +544,7 @@ class PaymentBuilderServiceTest extends TestCase
     /**
      * @param string $paymentType
      * @param int    $intent
+     * @param bool   $longBrandName
      *
      * @return array
      */
@@ -574,11 +575,23 @@ class PaymentBuilderServiceTest extends TestCase
      */
     private function getRequestService(SettingsServiceInterface $settingService)
     {
-        $router = Shopware()->Container()->get('router');
-        $snippetManager = Shopware()->Container()->get('snippets');
-        $dependencyProvider = Shopware()->Container()->get('paypal_unified.dependency_provider');
+        $container = Shopware()->Container();
+        $snippetManager = $container->get('snippets');
+        $dependencyProvider = $container->get('paypal_unified.dependency_provider');
+        $priceFormatter = $container->get('paypal_unified.common.price_formatter');
+        $customerHelper = $container->get('paypal_unified.common.customer_helper');
+        $cartHelper = $container->get('paypal_unified.common.cart_helper');
+        $returnUrlHelper = $container->get('paypal_unified.common.return_url_helper');
 
-        return new PaymentBuilderService($router, $settingService, $snippetManager, $dependencyProvider);
+        return new PaymentBuilderService(
+            $settingService,
+            $snippetManager,
+            $dependencyProvider,
+            $priceFormatter,
+            $customerHelper,
+            $cartHelper,
+            $returnUrlHelper
+        );
     }
 
     /**

@@ -38,9 +38,9 @@ class BackendRegistrationSubscriberTest extends TestCase
 
         static::assertFileExists($backendControllerPath);
 
-        /** @var \Enlight_Template_Manager $template */
         $template = Shopware()->Container()->get('template');
         $templateDirs = $template->getTemplateDir();
+        static::assertTrue(\is_array($templateDirs));
 
         //Do not use the absolute path, since it's different from machine to machine
         if (\method_exists($this, 'assertStringContainsString')) {
@@ -58,9 +58,9 @@ class BackendRegistrationSubscriberTest extends TestCase
 
         static::assertFileExists($backendControllerPath);
 
-        /** @var \Enlight_Template_Manager $template */
         $template = Shopware()->Container()->get('template');
         $templateDirs = $template->getTemplateDir();
+        static::assertTrue(\is_array($templateDirs));
 
         //Do not use the absolute path, since it's different from machine to machine
         if (\method_exists($this, 'assertStringContainsString')) {

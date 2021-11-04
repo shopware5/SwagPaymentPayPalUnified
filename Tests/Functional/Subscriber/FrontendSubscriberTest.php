@@ -140,6 +140,7 @@ class FrontendSubscriberTest extends TestCase
         Shopware()->Front()->setRequest(new \Enlight_Controller_Request_RequestHttp());
 
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_product_in_category.sql');
+        static::assertTrue(\is_string($sql));
         Shopware()->Container()->get('dbal_connection')->exec($sql);
 
         $controller = $this->createController();
@@ -160,6 +161,7 @@ class FrontendSubscriberTest extends TestCase
         Shopware()->Front()->setRequest(new \Enlight_Controller_Request_RequestHttp());
 
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_product_in_category.sql');
+        static::assertTrue(\is_string($sql));
         Shopware()->Container()->get('dbal_connection')->exec($sql);
 
         $controller = $this->createController();
@@ -186,6 +188,7 @@ class FrontendSubscriberTest extends TestCase
         Shopware()->Front()->setRequest(new \Enlight_Controller_Request_RequestHttp());
 
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_product_in_category.sql');
+        static::assertTrue(\is_string($sql));
         Shopware()->Container()->get('dbal_connection')->exec($sql);
 
         $controller = $this->createController();
@@ -208,6 +211,7 @@ class FrontendSubscriberTest extends TestCase
         Shopware()->Front()->setRequest(new \Enlight_Controller_Request_RequestHttp());
 
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_product_attr_is.sql');
+        static::assertTrue(\is_string($sql));
         Shopware()->Container()->get('dbal_connection')->exec($sql);
 
         $controller = $this->createController();
@@ -230,6 +234,7 @@ class FrontendSubscriberTest extends TestCase
         Shopware()->Front()->setRequest(new \Enlight_Controller_Request_RequestHttp());
 
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_product_attr_is.sql');
+        static::assertTrue(\is_string($sql));
         Shopware()->Container()->get('dbal_connection')->exec($sql);
 
         $controller = $this->createController();
@@ -251,10 +256,8 @@ class FrontendSubscriberTest extends TestCase
 
     public function testOnLoadAjaxListingShouldNotAssignToView()
     {
-        Shopware()->Container()->get('template')->assign('paypalIsNotAllowed', null);
-        Shopware()->Container()->get('template')->assign('riskManagementMatchedProducts', null);
-
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_product_attr_is.sql');
+        static::assertTrue(\is_string($sql));
         Shopware()->Container()->get('dbal_connection')->exec($sql);
 
         $controller = $this->createController();
@@ -267,13 +270,13 @@ class FrontendSubscriberTest extends TestCase
 
         $this->getSubscriber()->onLoadAjaxListing($eventArgs);
 
-        static::assertNull(Shopware()->Container()->get('template')->getTemplateVars('paypalIsNotAllowed'));
-        static::assertNull(Shopware()->Container()->get('template')->getTemplateVars('riskManagementMatchedProducts'));
+        static::assertNull($controller->View()->getAssign('paypalIsNotAllowed'));
     }
 
     public function testOnLoadAjaxListingShouldAssignToView()
     {
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_product_attr_is.sql');
+        static::assertTrue(\is_string($sql));
         Shopware()->Container()->get('dbal_connection')->exec($sql);
 
         $controller = $this->createController();
@@ -360,7 +363,7 @@ class FrontendSubscriberTest extends TestCase
     private function createController()
     {
         $request = new \Enlight_Controller_Request_RequestTestCase();
-        $response = new \Enlight_Controller_Response_ResponseHttp();
+        $response = new \Enlight_Controller_Response_ResponseTestCase();
         $view = new \Enlight_View_Default(new \Enlight_Template_Manager());
 
         $controller = new DummyController($request, $view, $response);
@@ -370,15 +373,20 @@ class FrontendSubscriberTest extends TestCase
         return $controller;
     }
 
+    /**
+     * @param string $module
+     * @param string $controller
+     * @param string $action
+     */
     private function setRequestParameterToFront(
         \Enlight_Controller_Request_RequestHttp $request,
         $module = 'frontend',
         $controller = 'listing',
         $action = 'index'
     ) {
+        $request->setActionName($action);
+        $request->setControllerName($controller);
+        $request->setModuleName($module);
         Shopware()->Container()->get('front')->setRequest($request);
-        Shopware()->Container()->get('front')->Request()->setActionName($action);
-        Shopware()->Container()->get('front')->Request()->setControllerName($controller);
-        Shopware()->Container()->get('front')->Request()->setModuleName($module);
     }
 }

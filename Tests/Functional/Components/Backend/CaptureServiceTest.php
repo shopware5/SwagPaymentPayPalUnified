@@ -45,8 +45,8 @@ class CaptureServiceTest extends TestCase
             true
         );
 
-        /** @var Order $order */
         $order = $this->modelManager->getRepository(Order::class)->find($orderId);
+        static::assertInstanceOf(Order::class, $order);
         static::assertSame(PaymentStatus::PAYMENT_STATUS_PAID, $order->getPaymentStatus()->getId());
         static::assertNotNull($order->getClearedDate());
         static::assertTrue($result['success']);
@@ -62,8 +62,8 @@ class CaptureServiceTest extends TestCase
             false
         );
 
-        /** @var Order $order */
         $order = $this->modelManager->getRepository(Order::class)->find($orderId);
+        static::assertInstanceOf(Order::class, $order);
         static::assertSame(PaymentStatus::PAYMENT_STATUS_PARTIALLY_PAID, $order->getPaymentStatus()->getId());
         static::assertNotNull($order->getClearedDate());
         static::assertTrue($result['success']);
@@ -79,8 +79,8 @@ class CaptureServiceTest extends TestCase
             true
         );
 
-        /** @var Order $order */
         $order = $this->modelManager->getRepository(Order::class)->find($orderId);
+        static::assertInstanceOf(Order::class, $order);
         static::assertSame(PaymentStatus::PAYMENT_STATUS_OPEN, $order->getPaymentStatus()->getId());
         static::assertFalse($result['success']);
     }
@@ -95,8 +95,8 @@ class CaptureServiceTest extends TestCase
             true
         );
 
-        /** @var Order $order */
         $order = $this->modelManager->getRepository(Order::class)->find($orderId);
+        static::assertInstanceOf(Order::class, $order);
         static::assertSame(PaymentStatus::PAYMENT_STATUS_PAID, $order->getPaymentStatus()->getId());
         static::assertNotNull($order->getClearedDate());
         static::assertTrue($result['success']);
@@ -112,8 +112,8 @@ class CaptureServiceTest extends TestCase
             true
         );
 
-        /** @var Order $order */
         $order = $this->modelManager->getRepository(Order::class)->find($orderId);
+        static::assertInstanceOf(Order::class, $order);
         static::assertSame(PaymentStatus::PAYMENT_STATUS_OPEN, $order->getPaymentStatus()->getId());
         static::assertFalse($result['success']);
     }
@@ -128,8 +128,8 @@ class CaptureServiceTest extends TestCase
             ''
         );
 
-        /** @var Order $order */
         $order = $this->modelManager->getRepository(Order::class)->find($orderId);
+        static::assertInstanceOf(Order::class, $order);
         static::assertSame(PaymentStatus::PAYMENT_STATUS_REFUNDED, $order->getPaymentStatus()->getId());
         static::assertTrue($result['success']);
     }
@@ -144,8 +144,8 @@ class CaptureServiceTest extends TestCase
             ''
         );
 
-        /** @var Order $order */
         $order = $this->modelManager->getRepository(Order::class)->find($orderId);
+        static::assertInstanceOf(Order::class, $order);
         static::assertSame(PaymentStatus::PAYMENT_STATUS_OPEN, $order->getPaymentStatus()->getId());
         static::assertFalse($result['success']);
     }

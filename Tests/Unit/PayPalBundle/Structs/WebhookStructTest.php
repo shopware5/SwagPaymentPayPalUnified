@@ -15,9 +15,9 @@ class WebhookStructTest extends TestCase
 {
     public function testGetId()
     {
-        $struct = Webhook::fromArray(['id' => 10]);
+        $struct = Webhook::fromArray(['id' => '10']);
 
-        static::assertSame(10, $struct->getId());
+        static::assertSame('10', $struct->getId());
     }
 
     public function testGetCreationTime()

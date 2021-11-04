@@ -21,6 +21,7 @@ class PaypalUnifiedExpressCheckoutTest extends TestCase
     public function testCreatePaymentActionShouldNotAddPaymentDiscountToBasket()
     {
         $sql = \file_get_contents(__DIR__ . '/_fixtures/paypal_settings.sql');
+        static::assertTrue(\is_string($sql));
         Shopware()->Container()->get('dbal_connection')->exec($sql);
 
         $sql = 'UPDATE s_core_paymentmeans SET debit_percent = -10 WHERE id = 5';

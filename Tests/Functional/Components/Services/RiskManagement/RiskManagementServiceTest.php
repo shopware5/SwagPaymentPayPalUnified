@@ -27,6 +27,7 @@ class RiskManagementServiceTest extends TestCase
     public function testIsPayPalNotAllowedTestAttrIsNot()
     {
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_attr_is_not.sql');
+        static::assertTrue(\is_string($sql));
         Shopware()->Container()->get('dbal_connection')->exec($sql);
 
         $request = new \Enlight_Controller_Request_RequestHttp();
@@ -41,6 +42,7 @@ class RiskManagementServiceTest extends TestCase
     public function testIsPayPalNotAllowedTestAttrIsNotCatagory()
     {
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_attr_is_not.sql');
+        static::assertTrue(\is_string($sql));
         Shopware()->Container()->get('dbal_connection')->exec($sql);
 
         $request = new \Enlight_Controller_Request_RequestHttp();
@@ -51,7 +53,7 @@ class RiskManagementServiceTest extends TestCase
         static::assertFalse($this->getRiskManagement()->isPayPalNotAllowed(null, 6));
 
         $expectedResult = require __DIR__ . '/_fixtures/testAttrIsNot_category_result.php';
-        $result = \json_decode(Shopware()->Container()->get('template')->getTemplateVars('riskManagementMatchedProducts'), 'array');
+        $result = \json_decode(Shopware()->Container()->get('template')->getTemplateVars('riskManagementMatchedProducts'), true);
 
         foreach ($expectedResult as $index => $resultItem) {
             static::assertSame($resultItem, $result[$index]);
@@ -61,6 +63,7 @@ class RiskManagementServiceTest extends TestCase
     public function testIsPayPalNotAllowedTestAttrIs()
     {
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_attr_is.sql');
+        static::assertTrue(\is_string($sql));
         Shopware()->Container()->get('dbal_connection')->exec($sql);
 
         $request = new \Enlight_Controller_Request_RequestHttp();
@@ -75,6 +78,7 @@ class RiskManagementServiceTest extends TestCase
     public function testIsPayPalNotAllowedTestAttrIsCategory()
     {
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_attr_is.sql');
+        static::assertTrue(\is_string($sql));
         Shopware()->Container()->get('dbal_connection')->exec($sql);
 
         $request = new \Enlight_Controller_Request_RequestHttp();
@@ -85,7 +89,7 @@ class RiskManagementServiceTest extends TestCase
         static::assertFalse($this->getRiskManagement()->isPayPalNotAllowed(null, 6));
 
         $expectedResult = ['SW10178'];
-        $result = \json_decode(Shopware()->Container()->get('template')->getTemplateVars('riskManagementMatchedProducts'), 'array');
+        $result = \json_decode(Shopware()->Container()->get('template')->getTemplateVars('riskManagementMatchedProducts'), true);
 
         foreach ($result as $index => $resultItem) {
             static::assertSame($resultItem, $expectedResult[$index]);
@@ -95,6 +99,7 @@ class RiskManagementServiceTest extends TestCase
     public function testIsPayPalNotAllowedIsProductInCategory()
     {
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_product_in_category.sql');
+        static::assertTrue(\is_string($sql));
         Shopware()->Container()->get('dbal_connection')->exec($sql);
 
         $request = new \Enlight_Controller_Request_RequestHttp();
@@ -108,6 +113,7 @@ class RiskManagementServiceTest extends TestCase
     public function testIsPayPalNotAllowedIsProductInCategoryByCategory()
     {
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_product_in_category.sql');
+        static::assertTrue(\is_string($sql));
         Shopware()->Container()->get('dbal_connection')->exec($sql);
 
         $request = new \Enlight_Controller_Request_RequestHttp();
@@ -127,15 +133,20 @@ class RiskManagementServiceTest extends TestCase
         );
     }
 
+    /**
+     * @param string $module
+     * @param string $controller
+     * @param string $action
+     */
     private function setRequestParameterToFront(
         \Enlight_Controller_Request_RequestHttp $request,
         $module = 'frontend',
         $controller = 'listing',
         $action = 'index'
     ) {
+        $request->setActionName($action);
+        $request->setControllerName($controller);
+        $request->setModuleName($module);
         Shopware()->Container()->get('front')->setRequest($request);
-        Shopware()->Container()->get('front')->Request()->setActionName($action);
-        Shopware()->Container()->get('front')->Request()->setControllerName($controller);
-        Shopware()->Container()->get('front')->Request()->setModuleName($module);
     }
 }

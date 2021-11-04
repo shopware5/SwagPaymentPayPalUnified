@@ -25,7 +25,7 @@ class InvoiceSubscriberTest extends TestCase
     use DatabaseTestCaseTrait;
     use PayPalUnifiedPaymentIdTrait;
 
-    const TEST_ORDER_NUMBER = 20001;
+    const TEST_ORDER_NUMBER = '20001';
     const TEST_AMOUNT_VALUE = 50.5;
     const TEST_DUE_DATE = '01-01-2000';
     const TEST_REFERENCE = 'TEST_REFERENCE_NUMBER';
@@ -104,7 +104,6 @@ class InvoiceSubscriberTest extends TestCase
 
         $subscriber->onBeforeRenderDocument($hookArgs);
 
-        /** @var \Enlight_Template_Manager $view */
         $view = $hookArgs->getTemplate();
 
         static::assertNotNull($view->getVariable('PayPalUnifiedInvoiceInstruction'));

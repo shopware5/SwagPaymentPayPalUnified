@@ -8,8 +8,8 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Unit\Components;
 
-use Doctrine\DBAL\Connection;
 use PHPUnit\Framework\TestCase;
+use Shopware\Models\Payment\Payment;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 
 class PaymentMethodProviderTest extends TestCase
@@ -27,6 +27,7 @@ class PaymentMethodProviderTest extends TestCase
         $provider->setPaymentMethodActiveFlag(false);
 
         $payment = $provider->getPaymentMethodModel();
+        static::assertInstanceOf(Payment::class, $payment);
         static::assertFalse($payment->getActive());
     }
 
@@ -36,6 +37,7 @@ class PaymentMethodProviderTest extends TestCase
         $provider->setPaymentMethodActiveFlag(true);
 
         $payment = $provider->getPaymentMethodModel();
+        static::assertInstanceOf(Payment::class, $payment);
         static::assertTrue($payment->getActive());
     }
 
@@ -44,7 +46,6 @@ class PaymentMethodProviderTest extends TestCase
         $provider = new PaymentMethodProvider(Shopware()->Models());
         $paymentIdQuery = 'SELECT pm.id FROM s_core_paymentmeans pm WHERE pm.name=:name';
 
-        /** @var Connection $connection */
         $connection = Shopware()->Container()->get('dbal_connection');
 
         $paymentId = (int) $connection->executeQuery(

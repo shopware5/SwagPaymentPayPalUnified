@@ -9,7 +9,6 @@
 namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services;
 
 use PHPUnit\Framework\TestCase;
-use SwagPaymentPayPalUnified\Components\Services\TransactionHistoryBuilderService;
 
 class TransactionsHistoryBuilderServiceTest extends TestCase
 {
@@ -20,7 +19,6 @@ class TransactionsHistoryBuilderServiceTest extends TestCase
 
     public function testGetSalesHistoryMaxAmount()
     {
-        /** @var TransactionHistoryBuilderService $historyBuilderService */
         $historyBuilderService = Shopware()->Container()->get('paypal_unified.transaction_history_builder_service');
         $testPaymentData = $this->getTestSalePaymentDetails();
 
@@ -30,7 +28,6 @@ class TransactionsHistoryBuilderServiceTest extends TestCase
 
     public function testGetSalesHistoryCount()
     {
-        /** @var TransactionHistoryBuilderService $historyBuilderService */
         $historyBuilderService = Shopware()->Container()->get('paypal_unified.transaction_history_builder_service');
         $testPaymentData = $this->getTestSalePaymentDetails();
 
@@ -40,7 +37,6 @@ class TransactionsHistoryBuilderServiceTest extends TestCase
 
     public function testGetSalesHistoryFirstEntry()
     {
-        /** @var TransactionHistoryBuilderService $historyBuilderService */
         $historyBuilderService = Shopware()->Container()->get('paypal_unified.transaction_history_builder_service');
         $testPaymentData = $this->getTestSalePaymentDetails();
 
@@ -55,7 +51,6 @@ class TransactionsHistoryBuilderServiceTest extends TestCase
 
     public function testGetAuthenticationHistoryCount()
     {
-        /** @var TransactionHistoryBuilderService $historyBuilderService */
         $historyBuilderService = Shopware()->Container()->get('paypal_unified.transaction_history_builder_service');
         $testPaymentData = $this->getTestAuthenticationPaymentDetails();
 
@@ -65,7 +60,6 @@ class TransactionsHistoryBuilderServiceTest extends TestCase
 
     public function testGetOrderHistoryCount()
     {
-        /** @var TransactionHistoryBuilderService $historyBuilderService */
         $historyBuilderService = Shopware()->Container()->get('paypal_unified.transaction_history_builder_service');
         $testPaymentData = $this->getTestOrderPaymentDetails();
 
@@ -75,7 +69,6 @@ class TransactionsHistoryBuilderServiceTest extends TestCase
 
     public function testGetTransactionHistoryException()
     {
-        /** @var TransactionHistoryBuilderService $historyBuilderService */
         $historyBuilderService = Shopware()->Container()->get('paypal_unified.transaction_history_builder_service');
         $testPaymentData = $this->getTestSalePaymentDetails();
         $testPaymentData['intent'] = 'ERROR';
@@ -87,7 +80,6 @@ class TransactionsHistoryBuilderServiceTest extends TestCase
 
     public function testGetSalesHistoryLastEntry()
     {
-        /** @var TransactionHistoryBuilderService $historyBuilderService */
         $historyBuilderService = Shopware()->Container()->get('paypal_unified.transaction_history_builder_service');
         $testPaymentData = $this->getTestSalePaymentDetails();
 

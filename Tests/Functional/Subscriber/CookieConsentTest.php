@@ -32,14 +32,20 @@ class CookieConsentTest extends TestCase
         $cookieCollection = $this->getSubscriber()->addPayPalCookie();
         static::assertNotNull($cookieCollection);
 
-        /** @var CookieStruct|null $cookie */
         $cookie = $cookieCollection->first();
         static::assertInstanceOf(CookieStruct::class, $cookie);
         static::assertSame('paypal-cookies', $cookie->getName());
 
         $matchingPattern = $cookie->getMatchingPattern();
-        static::stringContains($matchingPattern, 'paypal-cookie-consent-manager');
-        static::stringContains($matchingPattern, 'paypalplus_session_v2');
+        if (\method_exists($this, 'assertStringContainsString')) {
+            static::assertStringContainsString('paypal-cookie-consent-manager', $matchingPattern);
+            static::assertStringContainsString('paypalplus_session_v2', $matchingPattern);
+
+            return;
+        }
+
+        static::assertContains('paypal-cookie-consent-manager', $matchingPattern);
+        static::assertContains('paypalplus_session_v2', $matchingPattern);
     }
 
     /**

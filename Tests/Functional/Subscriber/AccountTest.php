@@ -55,31 +55,6 @@ class AccountTest extends TestCase
         static::assertSame('PayPal', $customerData['additional']['payment']['description']);
     }
 
-    public function testOnPostDispatchAccountNoShop()
-    {
-        $subscriber = $this->getSubscriber();
-        $shop = Shopware()->Container()->get('shop');
-
-        Shopware()->Container()->reset('shop');
-
-        $view = new ViewMock(
-            new \Enlight_Template_Manager()
-        );
-        $view->assign($this->getAccountViewAssigns());
-
-        $request = new \Enlight_Controller_Request_RequestTestCase();
-        $request->setActionName('payment');
-
-        $eventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
-        ]);
-
-        $subscriber->onPostDispatchAccount($eventArgs);
-        $customerData = $view->getAssign('sUserData');
-        static::assertSame('PayPal', $customerData['additional']['payment']['description']);
-        Shopware()->Container()->set('shop', $shop);
-    }
-
     public function testOnPostDispatchAccountPaymentMethodInactive()
     {
         $paymentMethodProvider = new PaymentMethodProvider(Shopware()->Container()->get('models'));
@@ -227,7 +202,7 @@ class AccountTest extends TestCase
         ]);
 
         $subscriber->onPostDispatchAccount($eventArgs);
-        /** @var array $paymentMethods */
+
         $paymentMethods = $view->getAssign('sPaymentMeans');
 
         $unifiedPayment = null;

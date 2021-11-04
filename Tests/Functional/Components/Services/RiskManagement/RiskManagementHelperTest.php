@@ -101,6 +101,7 @@ class RiskManagementHelperTest extends TestCase
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::CATEGORY_ID_SESSION_NAME, 6);
 
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_attr_is.sql');
+        static::assertTrue(\is_string($sql));
         Shopware()->Container()->get('dbal_connection')->exec($sql);
 
         $helper = $this->getHelper();
@@ -130,6 +131,7 @@ class RiskManagementHelperTest extends TestCase
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::CATEGORY_ID_SESSION_NAME, 6);
 
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_attr_is.sql');
+        static::assertTrue(\is_string($sql));
         Shopware()->Container()->get('dbal_connection')->exec($sql);
 
         $helper = $this->getHelper();

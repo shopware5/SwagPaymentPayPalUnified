@@ -20,7 +20,7 @@ class SaleRefundedTest extends TestCase
 {
     use DatabaseTestCaseTrait;
 
-    const TEST_ORDER_ID = 15;
+    const TEST_ORDER_ID = '15';
 
     /**
      * @before

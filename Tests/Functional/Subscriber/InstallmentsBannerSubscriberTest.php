@@ -202,6 +202,7 @@ class InstallmentsBannerSubscriberTest extends TestCase
         $this->createTestSettings();
 
         $sql = \file_get_contents(__DIR__ . '/_fixtures/install_great_britan_pounds.sql');
+        static::assertTrue(\is_string($sql));
         Shopware()->Container()->get('dbal_connection')->exec($sql);
 
         $contextService = Shopware()->Container()->get('shopware_storefront.context_service');
@@ -242,6 +243,7 @@ class InstallmentsBannerSubscriberTest extends TestCase
 
     /**
      * @param bool $active
+     * @param bool $advertiseInstallments
      */
     private function createTestSettings($active = true, $advertiseInstallments = true)
     {

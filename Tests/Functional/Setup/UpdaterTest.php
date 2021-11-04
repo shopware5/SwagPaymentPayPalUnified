@@ -21,6 +21,7 @@ class UpdaterTest extends TestCase
     public function testUpdateTo303()
     {
         $sql = \file_get_contents(__DIR__ . '/_fixtures/orders.sql');
+        static::assertTrue(\is_string($sql));
         Shopware()->Container()->get('dbal_connection')->exec($sql);
 
         $updater = new Updater(
@@ -54,6 +55,7 @@ class UpdaterTest extends TestCase
     public function testUpdateTo304()
     {
         $sql = \file_get_contents(__DIR__ . '/_fixtures/orders_invoice.sql');
+        static::assertTrue(\is_string($sql));
         Shopware()->Container()->get('dbal_connection')->exec($sql);
 
         $updater = new Updater(

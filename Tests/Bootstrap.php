@@ -20,7 +20,6 @@ class PayPalUnifiedTestKernel extends \Shopware\Kernel
         $container = $kernel->getContainer();
         $container->get('plugins')->Core()->ErrorHandler()->registerErrorHandler(\E_ALL | \E_STRICT);
 
-        /** @var \Shopware\Models\Shop\Repository $repository */
         $repository = $container->get('models')->getRepository(Shop::class);
 
         if ($container->has('shopware.components.shop_registration_service')) {
@@ -43,7 +42,6 @@ class PayPalUnifiedTestKernel extends \Shopware\Kernel
      */
     private static function isPluginInstalledAndActivated()
     {
-        /** @var \Doctrine\DBAL\Connection $db */
         $db = Shopware()->Container()->get('dbal_connection');
 
         $sql = "SELECT active FROM s_core_plugins WHERE name='SwagPaymentPayPalUnified'";

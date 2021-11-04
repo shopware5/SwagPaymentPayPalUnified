@@ -8,7 +8,6 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services\ExpressCheckout;
 
-use Doctrine\DBAL\Connection;
 use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\Components\Services\ExpressCheckout\CustomerService;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Common\Address;
@@ -82,9 +81,13 @@ class CustomerServiceTest extends TestCase
         static::assertNotNull(Shopware()->Container()->get('session')->get('sUserId'));
     }
 
+    /**
+     * @param string $mail
+     *
+     * @return array<array<string, mixed>>
+     */
     private function getUserByMail($mail = 'phpunit@test.com')
     {
-        /** @var Connection $db */
         $db = Shopware()->Container()->get('dbal_connection');
 
         $sql = 'SELECT * FROM s_user WHERE email=:emailAddress';

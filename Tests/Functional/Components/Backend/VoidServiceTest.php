@@ -40,8 +40,8 @@ class VoidServiceTest extends TestCase
 
         $result = $this->createVoidService()->voidOrder('');
 
-        /** @var Order $order */
         $order = $this->modelManager->getRepository(Order::class)->find($orderId);
+        static::assertInstanceOf(Order::class, $order);
         static::assertSame(PaymentStatus::PAYMENT_STATUS_CANCELLED, $order->getPaymentStatus()->getId());
         static::assertTrue($result['success']);
     }
@@ -52,8 +52,8 @@ class VoidServiceTest extends TestCase
 
         $result = $this->createVoidService()->voidOrder(OrderResourceMock::THROW_EXCEPTION);
 
-        /** @var Order $order */
         $order = $this->modelManager->getRepository(Order::class)->find($orderId);
+        static::assertInstanceOf(Order::class, $order);
         static::assertSame(PaymentStatus::PAYMENT_STATUS_OPEN, $order->getPaymentStatus()->getId());
         static::assertFalse($result['success']);
     }
@@ -64,8 +64,8 @@ class VoidServiceTest extends TestCase
 
         $result = $this->createVoidService()->voidAuthorization('');
 
-        /** @var Order $order */
         $order = $this->modelManager->getRepository(Order::class)->find($orderId);
+        static::assertInstanceOf(Order::class, $order);
         static::assertSame(PaymentStatus::PAYMENT_STATUS_CANCELLED, $order->getPaymentStatus()->getId());
         static::assertTrue($result['success']);
     }
@@ -76,8 +76,8 @@ class VoidServiceTest extends TestCase
 
         $result = $this->createVoidService()->voidAuthorization(AuthorizationResourceMock::THROW_EXCEPTION);
 
-        /** @var Order $order */
         $order = $this->modelManager->getRepository(Order::class)->find($orderId);
+        static::assertInstanceOf(Order::class, $order);
         static::assertSame(PaymentStatus::PAYMENT_STATUS_OPEN, $order->getPaymentStatus()->getId());
         static::assertFalse($result['success']);
     }

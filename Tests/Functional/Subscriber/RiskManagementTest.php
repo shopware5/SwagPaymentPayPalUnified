@@ -29,6 +29,7 @@ class RiskManagementTest extends TestCase
     public function testOnCheckProductCategoryFromProductIsNotInCategory()
     {
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_product_in_category.sql');
+        static::assertTrue(\is_string($sql));
         Shopware()->Container()->get('dbal_connection')->exec($sql);
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::CATEGORY_ID_SESSION_NAME, null);
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::PRODUCT_ID_SESSION_NAME, 212);
@@ -43,6 +44,7 @@ class RiskManagementTest extends TestCase
     public function testOnCheckProductCategoryFromProductIsInCategory()
     {
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_product_in_category.sql');
+        static::assertTrue(\is_string($sql));
         Shopware()->Container()->get('dbal_connection')->exec($sql);
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::CATEGORY_ID_SESSION_NAME, null);
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::PRODUCT_ID_SESSION_NAME, 178);
@@ -58,6 +60,7 @@ class RiskManagementTest extends TestCase
     public function testOnCheckProductCategoryFromCategoryIsNotAmongTheParents()
     {
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_product_in_category.sql');
+        static::assertTrue(\is_string($sql));
         Shopware()->Container()->get('dbal_connection')->exec($sql);
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::PRODUCT_ID_SESSION_NAME, null);
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::CATEGORY_ID_SESSION_NAME, 7);
@@ -76,6 +79,7 @@ class RiskManagementTest extends TestCase
     public function testOnCheckProductCategoryFromCategoryIsAmongTheParents()
     {
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_product_in_category.sql');
+        static::assertTrue(\is_string($sql));
         Shopware()->Container()->get('dbal_connection')->exec($sql);
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::PRODUCT_ID_SESSION_NAME, null);
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::CATEGORY_ID_SESSION_NAME, 6);
@@ -120,6 +124,7 @@ class RiskManagementTest extends TestCase
     public function testOnCheckRiskAttribIsNotProductAttributeMatched()
     {
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_product_attr_is.sql');
+        static::assertTrue(\is_string($sql));
         Shopware()->Container()->get('dbal_connection')->exec($sql);
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::CATEGORY_ID_SESSION_NAME, null);
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::PRODUCT_ID_SESSION_NAME, 178);
@@ -135,6 +140,7 @@ class RiskManagementTest extends TestCase
     public function testOnCheckRiskAttribIsNotProductAttributeMatchedInCategory()
     {
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_product_attr_is.sql');
+        static::assertTrue(\is_string($sql));
         Shopware()->Container()->get('dbal_connection')->exec($sql);
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::PRODUCT_ID_SESSION_NAME, null);
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::CATEGORY_ID_SESSION_NAME, 6);
@@ -157,6 +163,7 @@ class RiskManagementTest extends TestCase
     public function testOnCheckRiskAttribIsProductReturnshouldBeTrue()
     {
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_product_attr_is.sql');
+        static::assertTrue(\is_string($sql));
         Shopware()->Container()->get('dbal_connection')->exec($sql);
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::CATEGORY_ID_SESSION_NAME, null);
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::PRODUCT_ID_SESSION_NAME, 178);
@@ -172,6 +179,7 @@ class RiskManagementTest extends TestCase
     public function testOnCheckRiskAttribIsCategoryReturnshouldBeNullTemplateShouldContain()
     {
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_product_attr_is.sql');
+        static::assertTrue(\is_string($sql));
         Shopware()->Container()->get('dbal_connection')->exec($sql);
         Shopware()->Container()->get('session')->offsetUnset(RiskManagementInterface::PRODUCT_ID_SESSION_NAME);
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::CATEGORY_ID_SESSION_NAME, 6);
@@ -190,6 +198,7 @@ class RiskManagementTest extends TestCase
     public function testOnCheckRiskAttribIsInvalidProductAttributeMatched()
     {
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_invalid_product_attr_is.sql');
+        static::assertTrue(\is_string($sql));
         Shopware()->Container()->get('dbal_connection')->exec($sql);
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::CATEGORY_ID_SESSION_NAME, null);
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::PRODUCT_ID_SESSION_NAME, 178);
@@ -205,6 +214,7 @@ class RiskManagementTest extends TestCase
     public function testOnCheckRiskAttribIsInvalidEmptyProductAttributeMatched()
     {
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_invalid_empty_product_attr_is.sql');
+        static::assertTrue(\is_string($sql));
         Shopware()->Container()->get('dbal_connection')->exec($sql);
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::CATEGORY_ID_SESSION_NAME, null);
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::PRODUCT_ID_SESSION_NAME, 178);
@@ -220,6 +230,7 @@ class RiskManagementTest extends TestCase
     public function testShouldContinueCheckWithInvalidPaymentId()
     {
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_product_attr_is.sql');
+        static::assertTrue(\is_string($sql));
         Shopware()->Container()->get('dbal_connection')->exec($sql);
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::CATEGORY_ID_SESSION_NAME, null);
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::PRODUCT_ID_SESSION_NAME, 178);
@@ -257,11 +268,17 @@ class RiskManagementTest extends TestCase
         return $eventArgs;
     }
 
+    /**
+     * @param string $module
+     * @param string $controller
+     * @param string $action
+     */
     private function setRequestParameterToFront($module = 'frontend', $controller = 'listing', $action = 'index')
     {
-        Shopware()->Container()->get('front')->setRequest(new \Enlight_Controller_Request_RequestHttp());
-        Shopware()->Container()->get('front')->Request()->setActionName($action);
-        Shopware()->Container()->get('front')->Request()->setControllerName($controller);
-        Shopware()->Container()->get('front')->Request()->setModuleName($module);
+        $request = new \Enlight_Controller_Request_RequestHttp();
+        $request->setActionName($action);
+        $request->setControllerName($controller);
+        $request->setModuleName($module);
+        Shopware()->Container()->get('front')->setRequest($request);
     }
 }

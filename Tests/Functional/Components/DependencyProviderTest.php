@@ -36,9 +36,10 @@ class DependencyProviderTest extends TestCase
 
     public function testGetShopReturnNull()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Shop not initialized in DI container');
         $dp = new DependencyProvider(new ContainerMockWithNoShop());
-
-        static::assertNull($dp->getShop());
+        $dp->getShop();
     }
 
     public function testGetModuleHasModule()

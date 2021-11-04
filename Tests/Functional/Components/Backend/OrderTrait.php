@@ -12,6 +12,7 @@ use Shopware\Components\Model\ModelManager;
 use Shopware\Models\Dispatch\Dispatch;
 use Shopware\Models\Order\Order;
 use Shopware\Models\Order\Status;
+use Shopware\Models\Payment\Payment;
 use Shopware\Models\Shop\Shop;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\PaymentStatus;
@@ -31,11 +32,16 @@ trait OrderTrait
     protected function createOrder($temporaryId)
     {
         $orderStatus = $this->modelManager->getRepository(Status::class)->find(0);
+        self::assertInstanceOf(Status::class, $orderStatus);
         $paymentStatus = $this->modelManager->getRepository(Status::class)->find(PaymentStatus::PAYMENT_STATUS_OPEN);
+        self::assertInstanceOf(Status::class, $paymentStatus);
         $dispatch = $this->modelManager->getRepository(Dispatch::class)->findOneBy([]);
+        self::assertInstanceOf(Dispatch::class, $dispatch);
         $shop = $this->modelManager->getRepository(Shop::class)->find(1);
+        self::assertInstanceOf(Shop::class, $shop);
 
         $paymentMethod = (new PaymentMethodProvider($this->modelManager))->getPaymentMethodModel();
+        self::assertInstanceOf(Payment::class, $paymentMethod);
 
         $order = new Order();
         $order->setOrderStatus($orderStatus);

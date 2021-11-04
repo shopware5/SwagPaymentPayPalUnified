@@ -52,6 +52,7 @@ class ExpressCheckoutSubscriberTest extends TestCase
         static::assertCount(6, $events);
 
         static::assertSame('addExpressCheckoutButtonCart', $events['Enlight_Controller_Action_PostDispatchSecure_Frontend']);
+        static::assertTrue(\is_array($events['Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout']));
         static::assertCount(2, $events['Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout']);
         static::assertSame('addExpressCheckoutButtonDetail', $events['Enlight_Controller_Action_PostDispatchSecure_Frontend_Detail']);
         static::assertSame('addExpressCheckoutButtonListing', $events['Enlight_Controller_Action_PostDispatchSecure_Frontend_Listing']);
@@ -434,6 +435,7 @@ class ExpressCheckoutSubscriberTest extends TestCase
 
         $subscriber->addPaymentInfoToRequest($enlightEventArgs);
 
+        static::assertInstanceOf(PaymentResourceMock::class, $this->paymentResource);
         foreach ($this->paymentResource->getPatches() as $patch) {
             if ($patch instanceof PaymentItemsPatch) {
                 static::fail('No ItemList patch allowed if submit cart for ECS is false');
@@ -480,6 +482,7 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $subscriber->addPaymentInfoToRequest($enlightEventArgs);
 
         $itemListPatchExists = false;
+        static::assertInstanceOf(PaymentResourceMock::class, $this->paymentResource);
         foreach ($this->paymentResource->getPatches() as $patch) {
             if ($patch instanceof PaymentItemsPatch) {
                 $itemListPatchExists = true;
@@ -785,6 +788,7 @@ class ExpressCheckoutSubscriberTest extends TestCase
      * @param bool $sandboxMode
      * @param bool $ecLoginActive
      * @param bool $ecOffCanvasActive
+     * @param bool $ecListingActive
      * @param bool $ecSubmitCart
      */
     private function importSettings(

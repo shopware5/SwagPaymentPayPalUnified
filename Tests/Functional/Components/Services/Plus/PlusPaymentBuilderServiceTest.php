@@ -6,7 +6,7 @@
  * file that was distributed with this source code.
  */
 
-namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services\ExpressCheckout;
+namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services\Plus;
 
 use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
@@ -14,6 +14,7 @@ use SwagPaymentPayPalUnified\Components\Services\Plus\PlusPaymentBuilderService;
 use SwagPaymentPayPalUnified\Components\Services\Validation\BasketIdWhitelist;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Transactions\ShipmentDetails;
 use SwagPaymentPayPalUnified\Tests\Functional\Components\Services\Mock\SettingsServicePaymentBuilderServiceMock;
 
 class PlusPaymentBuilderServiceTest extends TestCase
@@ -63,7 +64,9 @@ class PlusPaymentBuilderServiceTest extends TestCase
 
         $request = $this->getRequestData($eddDays);
 
-        static::assertSame($expectedDate, $request->getTransactions()->getShipmentDetails()->getEstimatedDeliveryDate());
+        $shipmentDetails = $request->getTransactions()->getShipmentDetails();
+        static::assertInstanceOf(ShipmentDetails::class, $shipmentDetails);
+        static::assertSame($expectedDate, $shipmentDetails->getEstimatedDeliveryDate());
 
         $this->deleteEddAttribute();
     }
@@ -94,12 +97,25 @@ class PlusPaymentBuilderServiceTest extends TestCase
      */
     private function getPlusPaymentBuilder(SettingsServiceInterface $settingService)
     {
-        $router = Shopware()->Container()->get('router');
+        $container = Shopware()->Container();
         $crudService = Shopware()->Container()->get('shopware_attribute.crud_service');
-        $snippetManager = Shopware()->Container()->get('snippets');
-        $dependencyProvider = Shopware()->Container()->get('paypal_unified.dependency_provider');
+        $snippetManager = $container->get('snippets');
+        $dependencyProvider = $container->get('paypal_unified.dependency_provider');
+        $priceFormatter = $container->get('paypal_unified.common.price_formatter');
+        $customerHelper = $container->get('paypal_unified.common.customer_helper');
+        $cartHelper = $container->get('paypal_unified.common.cart_helper');
+        $returnUrlHelper = $container->get('paypal_unified.common.return_url_helper');
 
-        return new PlusPaymentBuilderService($router, $settingService, $crudService, $snippetManager, $dependencyProvider);
+        return new PlusPaymentBuilderService(
+            $settingService,
+            $crudService,
+            $snippetManager,
+            $dependencyProvider,
+            $priceFormatter,
+            $customerHelper,
+            $cartHelper,
+            $returnUrlHelper
+        );
     }
 
     /**

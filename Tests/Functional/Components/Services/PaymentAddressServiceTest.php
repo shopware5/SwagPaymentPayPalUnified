@@ -9,7 +9,6 @@
 namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services;
 
 use PHPUnit\Framework\TestCase;
-use SwagPaymentPayPalUnified\Components\Services\PaymentAddressService;
 
 class PaymentAddressServiceTest extends TestCase
 {
@@ -45,7 +44,6 @@ class PaymentAddressServiceTest extends TestCase
             ],
         ];
 
-        /** @var PaymentAddressService $addressService */
         $addressService = Shopware()->Container()->get('paypal_unified.payment_address_service');
         $testAddress = $addressService->getShippingAddress($testAddressData);
 
@@ -78,7 +76,6 @@ class PaymentAddressServiceTest extends TestCase
             ],
         ];
 
-        /** @var PaymentAddressService $addressService */
         $addressService = Shopware()->Container()->get('paypal_unified.payment_address_service');
         $testAddress = $addressService->getShippingAddress($testAddressData);
 
@@ -109,7 +106,6 @@ class PaymentAddressServiceTest extends TestCase
             ],
         ];
 
-        /** @var PaymentAddressService $addressService */
         $addressService = Shopware()->Container()->get('paypal_unified.payment_address_service');
         $payerInfo = $addressService->getPayerInfo($testAddressData);
 

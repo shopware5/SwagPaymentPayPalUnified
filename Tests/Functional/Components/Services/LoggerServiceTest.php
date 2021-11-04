@@ -9,7 +9,6 @@
 namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services;
 
 use PHPUnit\Framework\TestCase;
-use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\SettingsHelperTrait;
 
@@ -25,7 +24,6 @@ class LoggerServiceTest extends TestCase
         //Reset the logfile
         \file_put_contents($fileName, '');
 
-        /** @var LoggerServiceInterface $loggerService */
         $loggerService = Shopware()->Container()->get('paypal_unified.logger_service');
 
         $loggerService->warning('Test message');
@@ -41,7 +39,6 @@ class LoggerServiceTest extends TestCase
         //Reset the logfile
         \file_put_contents($fileName, '');
 
-        /** @var LoggerServiceInterface $loggerService */
         $loggerService = Shopware()->Container()->get('paypal_unified.logger_service');
 
         $this->insertTestSettings(2);
@@ -59,7 +56,6 @@ class LoggerServiceTest extends TestCase
         //Reset the logfile
         \file_put_contents($fileName, '');
 
-        /** @var LoggerServiceInterface $loggerService */
         $loggerService = Shopware()->Container()->get('paypal_unified.logger_service');
 
         $this->insertTestSettings();
@@ -83,7 +79,6 @@ class LoggerServiceTest extends TestCase
         //Reset the logfile
         \file_put_contents($fileName, '');
 
-        /** @var LoggerServiceInterface $loggerService */
         $loggerService = Shopware()->Container()->get('paypal_unified.logger_service');
 
         $loggerService->notify('Test message');
@@ -99,7 +94,6 @@ class LoggerServiceTest extends TestCase
         //Reset the logfile
         \file_put_contents($fileName, '');
 
-        /** @var LoggerServiceInterface $loggerService */
         $loggerService = Shopware()->Container()->get('paypal_unified.logger_service');
 
         $this->insertTestSettings(2);
@@ -117,7 +111,6 @@ class LoggerServiceTest extends TestCase
         //Reset the logfile
         \file_put_contents($fileName, '');
 
-        /** @var LoggerServiceInterface $loggerService */
         $loggerService = Shopware()->Container()->get('paypal_unified.logger_service');
 
         $this->insertTestSettings();
@@ -141,7 +134,6 @@ class LoggerServiceTest extends TestCase
         //Reset the logfile
         \file_put_contents($fileName, '');
 
-        /** @var LoggerServiceInterface $loggerService */
         $loggerService = Shopware()->Container()->get('paypal_unified.logger_service');
 
         $loggerService->error('A very fatal error');
@@ -186,7 +178,10 @@ class LoggerServiceTest extends TestCase
      */
     private function getLastLine($file)
     {
-        $lines = \explode("\n", \file_get_contents($file));
+        $content = \file_get_contents($file);
+        static::assertTrue(\is_string($content));
+        $lines = \explode("\n", $content);
+        static::assertTrue(\is_array($lines));
         $lineCount = \count($lines);
 
         return $lines[$lineCount - 2]; //the actual last line is blank

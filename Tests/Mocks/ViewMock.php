@@ -33,6 +33,8 @@ class ViewMock extends Enlight_View_Default
     public function addTemplateDir($templateDir, $key = null)
     {
         $this->templates[] = $templateDir;
+
+        return $this;
     }
 
     /**
@@ -48,7 +50,7 @@ class ViewMock extends Enlight_View_Default
      */
     public function loadTemplate($path)
     {
-        $this->loadedTemplates = $path;
+        $this->loadedTemplates[] = $path;
 
         return $this;
     }

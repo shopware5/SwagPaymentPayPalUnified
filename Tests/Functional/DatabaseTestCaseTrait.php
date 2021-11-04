@@ -20,7 +20,6 @@ trait DatabaseTestCaseTrait
      */
     public function startTransactionBefore()
     {
-        /** @var \Doctrine\DBAL\Connection $dbalConnection */
         $dbalConnection = Shopware()->Container()->get('dbal_connection');
         $dbalConnection->beginTransaction();
     }
@@ -36,7 +35,6 @@ trait DatabaseTestCaseTrait
             return;
         }
 
-        /** @var \Doctrine\DBAL\Connection $dbalConnection */
         $dbalConnection = Shopware()->Container()->get('dbal_connection');
         $dbalConnection->rollBack();
     }
