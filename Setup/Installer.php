@@ -177,7 +177,7 @@ class Installer
         $payment->setName(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
         $payment->setDescription('PayPal');
         $payment->setAdditionalDescription($this->getUnifiedPaymentLogo() . 'Bezahlung per PayPal - einfach, schnell und sicher.');
-        $payment->setAction('PaypalUnified');
+        $payment->setAction('PaypalUnifiedV2');
 
         $this->modelManager->persist($payment);
         $this->modelManager->flush($payment);

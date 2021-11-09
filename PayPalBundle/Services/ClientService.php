@@ -11,6 +11,7 @@ namespace SwagPaymentPayPalUnified\PayPalBundle\Services;
 use Shopware\Components\HttpClient\GuzzleFactory;
 use Shopware\Components\HttpClient\GuzzleHttpClient as GuzzleClient;
 use Shopware\Components\HttpClient\RequestException;
+use Shopware\Models\Shop\Shop;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\PayPalBundle\BaseURL;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
@@ -69,6 +70,10 @@ class ClientService
         $this->client = new GuzzleClient($factory);
 
         $shop = $dependencyProvider->getShop();
+
+        if (!$shop instanceof Shop) {
+            throw new \UnexpectedValueException(sprintf('Tried to access %s, but it\'s not set in the DIC.', Shop::class));
+        }
 
         //Backend does not have any active shop. In order to authenticate there, please use
         //the "configure()"-function instead.

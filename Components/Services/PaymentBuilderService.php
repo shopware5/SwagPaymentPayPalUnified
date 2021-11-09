@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\Components\Services;
 
+use Shopware\Models\Shop\Shop;
 use Shopware_Components_Snippet_Manager as SnippetManager;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderInterface;
@@ -286,9 +287,14 @@ class PaymentBuilderService implements PaymentBuilderInterface
     private function getApplicationContext($paymentType)
     {
         $applicationContext = new ApplicationContext();
+        $shop = $this->dependencyProvider->getShop();
+
+        if (!$shop instanceof Shop) {
+            throw new \UnexpectedValueException(sprintf('Tried to access %s, but it\'s not set in the DIC.', Shop::class));
+        }
 
         $applicationContext->setBrandName($this->getBrandName());
-        $applicationContext->setLocale($this->dependencyProvider->getShop()->getLocale()->getLocale());
+        $applicationContext->setLocale($shop->getLocale()->getLocale());
         $applicationContext->setLandingPage($this->getLandingPage());
 
         if ($paymentType === PaymentType::PAYPAL_EXPRESS || $paymentType === PaymentType::PAYPAL_SMART_PAYMENT_BUTTONS) {

@@ -14,6 +14,7 @@ use Enlight_Components_Session_Namespace as Session;
 use Enlight_Controller_ActionEventArgs as ActionEventArgs;
 use Enlight_View_Default as ViewEngine;
 use Exception;
+use Shopware\Models\Shop\Shop;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
 use SwagPaymentPayPalUnified\Components\ExceptionHandlerServiceInterface;
@@ -387,7 +388,13 @@ class ExpressCheckout implements SubscriberInterface
      */
     private function getExpressCheckoutButtonLanguage(ExpressSettingsModel $expressSettings)
     {
-        $locale = $this->dependencyProvider->getShop()->getLocale()->getLocale();
+        $shop = $this->dependencyProvider->getShop();
+
+        if (!$shop instanceof Shop) {
+            throw new \UnexpectedValueException(sprintf('Tried to access %s, but it\'s not set in the DIC.', Shop::class));
+        }
+
+        $locale = $shop->getLocale()->getLocale();
         $buttonLocaleFromSetting = (string) $expressSettings->getButtonLocale();
 
         if ($buttonLocaleFromSetting !== '') {

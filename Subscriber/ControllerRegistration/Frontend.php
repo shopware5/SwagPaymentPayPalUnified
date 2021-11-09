@@ -32,6 +32,7 @@ class Frontend implements SubscriberInterface
     {
         return [
             'Enlight_Controller_Dispatcher_ControllerPath_Frontend_PaypalUnified' => 'onGetUnifiedControllerPath',
+            'Enlight_Controller_Dispatcher_ControllerPath_Frontend_PaypalUnifiedV2' => 'onGetUnifiedControllerPathV2',
             'Enlight_Controller_Dispatcher_ControllerPath_Frontend_PaypalUnifiedWebhook' => 'onGetWebhookControllerPath',
         ];
     }
@@ -45,6 +46,11 @@ class Frontend implements SubscriberInterface
     public function onGetUnifiedControllerPath()
     {
         return $this->pluginDirectory . '/Controllers/Frontend/PaypalUnified.php';
+    }
+
+    public function onGetUnifiedControllerPathV2()
+    {
+        return $this->pluginDirectory . '/Controllers/Frontend/PaypalUnifiedV2.php';
     }
 
     /**

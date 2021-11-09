@@ -11,6 +11,7 @@ namespace SwagPaymentPayPalUnified\Subscriber;
 use Doctrine\DBAL\Connection;
 use Enlight\Event\SubscriberInterface;
 use Enlight_Controller_ActionEventArgs as ActionEventArgs;
+use Shopware\Models\Shop\Shop;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Models\Settings\Plus;
@@ -76,7 +77,14 @@ class Account implements SubscriberInterface
             return;
         }
 
-        $shopId = $this->dependencyProvider->getShop()->getId();
+        $shop = $this->dependencyProvider->getShop();
+
+        if (!$shop instanceof Shop) {
+            throw new \UnexpectedValueException(sprintf('Tried to access %s, but it\'s not set in the DIC.', Shop::class));
+        }
+
+        $shopId = $shop->getId();
+
         /** @var Plus|null $plusSettings */
         $plusSettings = $this->settingsService->getSettings($shopId, SettingsTable::PLUS);
 

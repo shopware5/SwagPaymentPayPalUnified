@@ -28,5 +28,12 @@
                  public="true">
             <argument type="service" id="paypal_unified.client_service"/>
         </service>
+
+        <service id="paypal_unified.redirect_data_builder_factory"
+                 class="SwagPaymentPayPalUnified\Components\Services\Validation\RedirectDataBuilderFactory"
+                 public="true">
+            <argument type="service" id="paypal_unified.exception_handler_service"></argument>
+            <argument type="service" id="paypal_unified.settings_service"></argument>
+        </service>
     </services>
 </container>

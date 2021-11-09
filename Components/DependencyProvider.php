@@ -26,16 +26,18 @@ class DependencyProvider
     }
 
     /**
-     * @return Shop
+     * @return Shop|null
      */
     public function getShop()
     {
         if (!$this->container->has('shop')) {
-            throw new \RuntimeException('Shop not initialized in DI container');
+            return null;
         }
+
         $shop = $this->container->get('shop');
+
         if (!$shop instanceof Shop) {
-            throw new \RuntimeException('Shop not initialized in DI container');
+            return null;
         }
 
         return $shop;

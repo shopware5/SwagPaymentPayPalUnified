@@ -10,6 +10,7 @@ namespace SwagPaymentPayPalUnified\Subscriber;
 
 use Doctrine\DBAL\Connection;
 use Enlight\Event\SubscriberInterface;
+use Shopware\Models\Shop\Shop;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Models\Settings\ExpressCheckout as ExpressSettingsModel;
@@ -124,7 +125,13 @@ class InContext implements SubscriberInterface
      */
     private function getInContextButtonLanguage(ExpressSettingsModel $expressSettings)
     {
-        $locale = $this->dependencyProvider->getShop()->getLocale()->getLocale();
+        $shop = $this->dependencyProvider->getShop();
+
+        if (!$shop instanceof Shop) {
+            throw new \UnexpectedValueException(sprintf('Tried to access %s, but it\'s not set in the DIC.', Shop::class));
+        }
+
+        $locale = $shop->getLocale()->getLocale();
         $buttonLocaleFromSetting = (string) $expressSettings->getButtonLocale();
 
         if ($buttonLocaleFromSetting !== '') {

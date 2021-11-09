@@ -10,6 +10,7 @@ namespace SwagPaymentPayPalUnified\Subscriber;
 
 use Doctrine\DBAL\Connection;
 use Enlight\Event\SubscriberInterface;
+use Shopware\Models\Shop\Shop;
 use Shopware_Components_Snippet_Manager as SnippetManager;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\ExceptionHandlerServiceInterface;
@@ -386,7 +387,13 @@ class Plus implements SubscriberInterface
      */
     private function getPaymentWallLanguage()
     {
-        $languageIso = $this->dependencyProvider->getShop()->getLocale()->getLocale();
+        $shop = $this->dependencyProvider->getShop();
+
+        if (!$shop instanceof Shop) {
+            throw new \UnexpectedValueException(sprintf('Tried to access %s, but it\'s not set in the DIC.', Shop::class));
+        }
+
+        $languageIso = $shop->getLocale()->getLocale();
 
         $plusLanguage = 'en_US';
         // use english as default, use german if the locale is from german speaking country (de_DE, de_AT, etc)

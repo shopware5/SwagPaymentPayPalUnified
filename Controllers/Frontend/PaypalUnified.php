@@ -499,7 +499,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_F
             return false;
         }
 
-        return $legacyValidator->validate($this->getBasket(), $this->getUser(), $payment);
+        return $legacyValidator->validate($this->getBasket(), $this->getUser(), (float) $payment->getTransactions()->getAmount()->getTotal());
     }
 
     /**

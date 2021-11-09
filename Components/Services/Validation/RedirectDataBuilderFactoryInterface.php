@@ -8,14 +8,10 @@
 
 namespace SwagPaymentPayPalUnified\Components\Services\Validation;
 
-interface BasketValidatorInterface
+interface RedirectDataBuilderFactoryInterface
 {
     /**
-     * Validates the basket using the shopware basket and the payment response from PayPal
-     *
-     * @param float $total
-     *
-     * @return bool
+     * @return RedirectDataBuilder
      */
-    public function validate(array $basket, array $customer, $total);
+    public function createRedirectDataBuilder();
 }

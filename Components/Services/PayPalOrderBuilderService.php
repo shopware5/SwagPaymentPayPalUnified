@@ -70,7 +70,8 @@ class PayPalOrderBuilderService
             $parameter->getCustomer()
         );
         $applicationContext = $this->createApplicationContext();
-        $applicationContext->setReturnUrl($this->returnUrlHelper->getReturnUrl($parameter->getBasketUniqueId(), $parameter->getPaymentToken()));
+
+        $applicationContext->setReturnUrl($this->returnUrlHelper->getReturnUrl($parameter->getBasketUniqueId(), $parameter->getPaymentToken(), ['controller' => 'PaypalUnifiedV2']));
         $applicationContext->setCancelUrl($this->returnUrlHelper->getCancelUrl($parameter->getBasketUniqueId(), $parameter->getPaymentToken()));
 
         $order = new Order();

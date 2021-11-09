@@ -21,7 +21,8 @@ install-hooks: ## Install pre commit hooks
 
 install-plugin: .refresh-plugin-list ## Install and activate the plugin
 	@echo "Install the plugin"
-	./../../../bin/console sw:plugin:install $(dirname) --activate -c
+	./../../../bin/console sw:plugin:install $(dirname) --activate
+	./../../../bin/console sw:cache:clear
 
 install-test-environment: ## Installs the plugin test environment
 	@echo "Install the test environment"

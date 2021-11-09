@@ -43,7 +43,7 @@ class SimpleBasketValidatorTest extends TestCase
         $transactions->setAmount($amount);
         $payment->setTransactions($transactions);
 
-        static::assertSame($expectedResult, $this->getBasketValidator()->validate($basketData, $userData, $payment));
+        static::assertSame($expectedResult, $this->getBasketValidator()->validate($basketData, $userData, (float) $payment->getTransactions()->getAmount()->getTotal()));
     }
 
     public function is_valid_test_dataProvider()
@@ -69,7 +69,7 @@ class SimpleBasketValidatorTest extends TestCase
         $transactions->setAmount($amount);
         $payment->setTransactions($transactions);
 
-        static::assertFalse($this->getBasketValidator()->validate($basketData, $userData, $payment));
+        static::assertFalse($this->getBasketValidator()->validate($basketData, $userData, (float) $payment->getTransactions()->getAmount()->getTotal()));
     }
 
     public function testIsValidWithChargeVat()
@@ -85,7 +85,7 @@ class SimpleBasketValidatorTest extends TestCase
         $transactions->setAmount($amount);
         $payment->setTransactions($transactions);
 
-        static::assertTrue($this->getBasketValidator()->validate($basketData, $userData, $payment));
+        static::assertTrue($this->getBasketValidator()->validate($basketData, $userData, (float) $payment->getTransactions()->getAmount()->getTotal()));
     }
 
     public function testIsInvalidWithChargeVat()
@@ -101,7 +101,7 @@ class SimpleBasketValidatorTest extends TestCase
         $transactions->setAmount($amount);
         $payment->setTransactions($transactions);
 
-        static::assertFalse($this->getBasketValidator()->validate($basketData, $userData, $payment));
+        static::assertFalse($this->getBasketValidator()->validate($basketData, $userData, (float) $payment->getTransactions()->getAmount()->getTotal()));
     }
 
     /**
