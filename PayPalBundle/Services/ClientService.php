@@ -48,14 +48,19 @@ class ClientService
     private $client;
 
     /**
-     * @var int
-     */
-    private $shopId;
-
-    /**
      * @var SettingsServiceInterface
      */
     private $settingsService;
+
+    /**
+     * @var DependencyProvider
+     */
+    private $dependencyProvider;
+
+    /**
+     * @var int
+     */
+    private $shopId;
 
     public function __construct(
         SettingsServiceInterface $settingsService,
@@ -68,20 +73,13 @@ class ClientService
         $this->tokenService = $tokenService;
         $this->logger = $logger;
         $this->client = new GuzzleClient($factory);
-
-        $shop = $dependencyProvider->getShop();
-
-        if (!$shop instanceof Shop) {
-            throw new \UnexpectedValueException(sprintf('Tried to access %s, but it\'s not set in the DIC.', Shop::class));
-        }
+        $this->dependencyProvider = $dependencyProvider;
 
         //Backend does not have any active shop. In order to authenticate there, please use
         //the "configure()"-function instead.
         if (!$this->settingsService->hasSettings() || !$this->settingsService->get('active')) {
             return;
         }
-
-        $this->shopId = $shop->getId();
 
         $environment = (bool) $this->settingsService->get('sandbox');
         $environment === true ? $this->baseUrl = BaseURL::SANDBOX : $this->baseUrl = BaseURL::LIVE;
@@ -212,8 +210,15 @@ class ClientService
      */
     private function createAuthentication(OAuthCredentials $credentials)
     {
+        $shop = $this->dependencyProvider->getShop();
+        $shopId = $this->shopId;
+
+        if ($shop instanceof Shop) {
+            $shopId = $shop->getId();
+        }
+
         try {
-            $token = $this->tokenService->getToken($this, $credentials, $this->shopId);
+            $token = $this->tokenService->getToken($this, $credentials, $shopId);
             $this->setHeader('Authorization', $token->getTokenType() . ' ' . $token->getAccessToken());
         } catch (RequestException $requestException) {
             $this->logger->error('Could not create authentication - request exception', [

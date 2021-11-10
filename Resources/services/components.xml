@@ -96,5 +96,11 @@
             <argument type="service" id="dbal_connection"/>
         </service>
 
+        <service id="paypal_unified.payment_controller_helper"
+                 class="SwagPaymentPayPalUnified\Components\Services\PaymentControllerHelper"
+                 public="true">
+            <argument type="service" id="paypal_unified.dependency_provider"/>
+        </service>
+
     </services>
 </container>

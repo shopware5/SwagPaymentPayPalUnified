@@ -4,6 +4,20 @@
     $.plugin('swagPayPalUnifiedExpressCheckoutButton', {
         defaults: {
             /**
+             * @type string
+             */
+            sdkUrl: 'https://www.paypal.com/sdk/js',
+
+            currency: '',
+
+            /**
+             * The API client-ID identifying a merchant.
+             *
+             * @type string
+             */
+            clientId: '',
+
+            /**
              * Depending on the mode, the library will load the PSP from different locations. live will
              * load it from paypal.com whereas sandbox will load it from sandbox.paypal.com. The
              * library will also emit warning to the console if the mode is sandbox (in live mode it will
@@ -22,7 +36,17 @@
              *
              * @type string
              */
-            createPaymentUrl: '',
+            createOrderUrl: '',
+
+            /**
+             * @type string
+             */
+            onApproveUrl: '',
+
+            /**
+             * @type string
+             */
+            confirmUrl: '',
 
             /**
              * size of the button
@@ -64,6 +88,22 @@
              * @type boolean
              */
             tagline: false,
+
+            /**
+             * TODO: Translate this
+             *
+             * Button label: https://developer.paypal.com/docs/business/checkout/reference/style-guide/#label
+             *
+             *  @type string
+             */
+            label: 'checkout',
+
+            /**
+             * Button layout: https://developer.paypal.com/docs/business/checkout/reference/style-guide/#layout
+             *
+             *  @type string
+             */
+            layout: 'horizontal',
 
             /**
              * The language ISO (ISO_639) for the payment wall.
@@ -157,7 +197,8 @@
                     me.opts.riskManagementMatchedProducts,
                     me.opts.esdProducts
                 );
-            if (Array.isArray(productNumbers) && productNumbers.includes(me.opts.productNumber)) {
+
+            if (Array.isArray(productNumbers) && $.inArray(me.opts.productNumber, productNumbers) >= 0) {
                 return true;
             }
 
@@ -169,16 +210,11 @@
          */
         createButton: function() {
             var me = this,
-                paypalScriptUrl = 'https://www.paypalobjects.com/api/checkout.min.js',
                 $head = $('head');
-
-            if (me.opts.paypalMode === 'sandbox') {
-                paypalScriptUrl = 'https://www.paypalobjects.com/api/checkout.js';
-            }
 
             if (!$head.data(me.opts.paypalScriptLoadedSelector)) {
                 $.ajax({
-                    url: paypalScriptUrl,
+                    url: me.renderSdkUrl(me.opts.clientId, me.opts.currency),
                     dataType: 'script',
                     cache: true,
                     success: function() {
@@ -191,6 +227,31 @@
             }
         },
 
+        renderSdkUrl: function(clientId, currency) {
+            var me = this,
+                params = {};
+
+            if (clientId) {
+                params.clientId = clientId;
+            } else {
+                params.clientId = 'sb';
+            }
+
+            if (currency) {
+                params.currency = currency;
+            }
+
+            if (me.opts.paypalMode === 'sandbox') {
+                params.debug = true;
+            }
+
+            if (params.length < 1) {
+                return me.opts.sdkUrl;
+            }
+
+            return me.opts.sdkUrl + '?' + $.param(params, true);
+        },
+
         /**
          * Renders the ECS button
          */
@@ -199,9 +260,11 @@
 
             // wait for the PayPal javascript to be loaded
             me.buffer(function() {
-                me.expressCheckoutButton = paypal.Button.render(me.createPayPalButtonConfiguration(), me.$el.get(0));
+                me.expressCheckoutButton = paypal
+                    .Buttons(me.createPayPalButtonConfiguration())
+                    .render(me.$el.get(0));
 
-                $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonCart/createButton', [ me, me.expressCheckoutButton ]);
+                $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonCart/createButton', [me, me.expressCheckoutButton]);
             });
         },
 
@@ -216,122 +279,84 @@
 
             config = {
                 /**
-                 * environment property of the button
-                 */
-                env: me.opts.paypalMode,
-
-                /**
                  * styling of the button
                  */
                 style: {
                     size: me.opts.size,
                     shape: me.opts.shape,
                     color: me.opts.color,
-                    tagline: me.opts.tagline
+                    layout: me.opts.layout,
+                    label: me.opts.label,
+                    tagline: me.opts.tagline,
                 },
-
-                locale: me.opts.paypalLanguage,
 
                 /**
                  * listener for the button
                  */
-                payment: $.proxy(me.onPayPalPayment, me),
+                createOrder: $.proxy(me.createOrder, me),
 
-                /**
-                 * only needed for overlay solution
-                 * called if the customer accepts the payment
-                 */
-                onAuthorize: $.noop
+                onApprove: $.proxy(me.onApprove, me),
             };
 
-            $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonCart/createConfig', [ me, config ]);
+            $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonCart/createConfig', [me, config]);
 
             return config;
         },
 
         /**
-         * Callback method for the "payment" function of the button.
-         * Calls an action which creates the payment and redirects to the paypal page.
+         * This method dispatches a request to the `\Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout`-controller (default)
+         * which initialises an order at PayPal.
          */
-        onPayPalPayment: function() {
-            var me = this,
-                token,
-                form;
-
-            $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonCart/beforeCreatePayment', me);
-
-            if (CSRF.checkToken()) {
-                token = CSRF.getToken();
-            }
-
-            form = me.createCreatePaymentForm(token);
-
-            $.loadingIndicator.open({
-                openOverlay: true,
-                closeOnClick: false
-            });
-
-            // delay the call, so the loading indicator will show up on mobile
-            me.buffer(function() {
-                form.submit();
-            });
-
-            $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonCart/createPayment', me);
-        },
-
-        /**
-         * Creates the form which calls the action.
-         * Appends a new form which stores further required information that are being
-         * used in the action later on.
-         *
-         * @param {String} token
-         * @return {Object}
-         */
-        createCreatePaymentForm: function(token) {
-            var me = this,
-                $form,
-                createField = function(name, val) {
-                    return $('<input>', {
-                        type: 'hidden',
-                        name: name,
-                        value: val
-                    });
-                };
-
-            $form = $('<form>', {
-                action: me.opts.createPaymentUrl,
-                method: 'POST'
-            });
-
-            createField('__csrf_token', token).appendTo($form);
-
-            if (me.opts.detailPage) {
-                createField('addProduct', true).appendTo($form);
-                createField('productNumber', me.getProductNumber()).appendTo($form);
-                createField('productQuantity', me.getProductQuantity()).appendTo($form);
-            }
-
-            $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonCart/createRequestForm', [ me, $form ]);
-
-            $form.appendTo($('body'));
-
-            return $form;
-        },
-
-        /**
-         * Helper function that returns the current product number.
-         * Will only be used on the product detail page
-         *
-         * @returns {String}
-         */
-        getProductNumber: function() {
+        createOrder: function(data, actions) {
             var me = this;
 
-            if (me.opts.productNumber === null) {
-                throw new Error('Property productNumber is not set');
-            }
+            $.loadingIndicator.open({
+                closeOnClick: false,
+                delay: 100
+            });
 
-            return me.opts.productNumber;
+            return new Promise(function(resolve, reject) {
+                $.ajax({
+                    url: me.opts.createOrderUrl,
+                    data: {
+                        addProduct: me.opts.detailPage,
+                        productNumber: me.opts.productNumber,
+                        productQuantity: $(me.opts.productQuantitySelector).val(),
+                    },
+                    success: function(response) {
+                        resolve(response.orderId);
+                    },
+                    failure: function() {
+                        reject();
+                    },
+                });
+            });
+        },
+
+        /**
+         * This method dispatches a request to the `\Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout`-controller (default)
+         * which creates a new customer account and also logs the user in.
+         */
+        onApprove: function(data, actions) {
+            var me = this;
+
+            return new Promise(function(resolve, reject) {
+                $.ajax({
+                    url: me.opts.onApproveUrl,
+                    data: data,
+                    success: function(response) {
+                        var url = me.opts.confirmUrl +
+                            '?expressCheckout=' + response.expressCheckout +
+                            '&orderId=' + response.orderId;
+
+                        actions.redirect(url);
+                        resolve();
+                    },
+                    failure: function() {
+                        reject();
+                    },
+                });
+            });
         },
 
         /**

@@ -1,16 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Cannot call method getPayerInfo\\(\\) on SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\Payer\\|null\\.$#"
-			count: 1
-			path: Components/Services/ExpressCheckout/CustomerService.php
-
-		-
-			message: "#^Cannot call method setPost\\(\\) on Enlight_Controller_Request_Request\\|null\\.$#"
-			count: 2
-			path: Components/Services/ExpressCheckout/CustomerService.php
-
-		-
 			message: "#^Cannot call method getCountry\\(\\) on Shopware\\\\Models\\\\Customer\\\\Address\\|null\\.$#"
 			count: 1
 			path: Components/Services/ExpressCheckout/CustomerService.php

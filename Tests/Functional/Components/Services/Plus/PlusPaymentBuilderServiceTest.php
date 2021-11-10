@@ -97,25 +97,7 @@ class PlusPaymentBuilderServiceTest extends TestCase
      */
     private function getPlusPaymentBuilder(SettingsServiceInterface $settingService)
     {
-        $container = Shopware()->Container();
-        $crudService = Shopware()->Container()->get('shopware_attribute.crud_service');
-        $snippetManager = $container->get('snippets');
-        $dependencyProvider = $container->get('paypal_unified.dependency_provider');
-        $priceFormatter = $container->get('paypal_unified.common.price_formatter');
-        $customerHelper = $container->get('paypal_unified.common.customer_helper');
-        $cartHelper = $container->get('paypal_unified.common.cart_helper');
-        $returnUrlHelper = $container->get('paypal_unified.common.return_url_helper');
-
-        return new PlusPaymentBuilderService(
-            $settingService,
-            $crudService,
-            $snippetManager,
-            $dependencyProvider,
-            $priceFormatter,
-            $customerHelper,
-            $cartHelper,
-            $returnUrlHelper
-        );
+        return Shopware()->Container()->get('paypal_unified.plus.payment_builder_service');
     }
 
     /**

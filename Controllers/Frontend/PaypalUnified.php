@@ -34,6 +34,9 @@ use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Instruction\PaymentIns
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\RelatedResources\RelatedResource;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * @deprecated replaced with \Shopware_Controllers_Frontend_PaypalUnifiedV2
+ */
 class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_Frontend_Payment
 {
     /**
@@ -304,7 +307,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_F
             $instructionService->createInstructions($orderNumber, $instructions);
         }
 
-        $orderDataService->applyPaymentTypeAttribute((string) $orderNumber, $response, $isExpressCheckout, $isSpbCheckout);
+        $orderDataService->applyPaymentTypeAttribute($orderNumber, PaymentType::PAYPAL_CLASSIC);
 
         $redirectParameter = [
             'module' => 'frontend',

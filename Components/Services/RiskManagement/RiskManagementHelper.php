@@ -10,7 +10,6 @@ namespace SwagPaymentPayPalUnified\Components\Services\RiskManagement;
 
 use Doctrine\DBAL\Connection;
 use Shopware\Bundle\AttributeBundle\Service\CrudService;
-use Shopware\Bundle\AttributeBundle\Service\CrudServiceInterface;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 
 class RiskManagementHelper implements RiskManagementHelperInterface
@@ -26,7 +25,7 @@ class RiskManagementHelper implements RiskManagementHelperInterface
     private $dependencyProvider;
 
     /**
-     * @var CrudServiceInterface
+     * @var CrudService
      */
     private $crudService;
 

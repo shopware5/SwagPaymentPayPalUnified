@@ -1,2 +1,0 @@
-INSERT INTO `swag_payment_paypal_unified_settings_general` (`id`, `shop_id`, `active`, `client_id`, `client_secret`, `sandbox`, `show_sidebar_logo`, `brand_name`, `landing_page_type`, `send_order_number`, `order_number_prefix`, `use_in_context`, `log_level`, `display_errors`, `advertise_returns`, `use_smart_payment_buttons`, `merchant_location`, `submit_cart`) VALUES
-(1,	1,	1,	'AnyPayPalClientId',	'AnyPayPalClientSecret',	1,	0,	'',	'Login',	0,	'',	1,	0,	0,	0,	0,	'germany',	1);

@@ -81,7 +81,8 @@
             <argument type="service" id="dbal_connection"/>
             <argument type="service" id="paypal_unified.client_service"/>
             <argument type="service" id="paypal_unified.dependency_provider"/>
-            <argument type="service" id="SwagPaymentPayPalUnified\Components\Services\RiskManagement\EsdProductChecker"/>
+            <argument type="service"
+                      id="SwagPaymentPayPalUnified\Components\Services\RiskManagement\EsdProductChecker"/>
             <tag name="shopware.event_subscriber"/>
         </service>
 
@@ -167,7 +168,7 @@
                  public="true">
             <argument type="service" id="paypal_unified.risk_management_helper"/>
             <argument type="service" id="template"/>
-            <argument type="service" id="paypal_unified.dependency_provider" />
+            <argument type="service" id="paypal_unified.dependency_provider"/>
             <argument type="service" id="dbal_connection"/>
             <tag name="shopware.event_subscriber"/>
         </service>

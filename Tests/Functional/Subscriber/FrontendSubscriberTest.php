@@ -48,7 +48,7 @@ class FrontendSubscriberTest extends TestCase
             static::assertFileExists($script);
         }
 
-        static::assertCount(9, $javascripts);
+        static::assertCount(8, $javascripts);
     }
 
     public function testOnPostDistpatchSecureWithoutAnySetttings()

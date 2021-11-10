@@ -11,9 +11,16 @@ namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services\ExpressC
 use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\Components\Services\ExpressCheckout\CustomerService;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Common\Address;
-use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
-use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Payer;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Payer\PayerInfo;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\Payer;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\Payer\Name;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\Payer\Phone;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\Payer\Phone\PhoneNumber;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Payee;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Shipping;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Shipping\Address as ShippingAddress;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Shipping\Name as ShippingName;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 
 class CustomerServiceTest extends TestCase
@@ -43,15 +50,25 @@ class CustomerServiceTest extends TestCase
 
     public function testCreateNewCustomer()
     {
-        $payment = new Payment();
+        $orderStruct = new Order();
 
         $payer = new Payer();
         $payerInfo = new PayerInfo();
-        $payerInfo->setFirstName('Shopware');
-        $payerInfo->setLastName('PHPUnit');
-        $payerInfo->setPhone('0123456789');
-        $payerInfo->setEmail('phpunit@test.com');
-        $payerInfo->setPayerId('TestUser');
+
+        $name = new Name();
+        $name->setGivenName('Shopware');
+        $name->setSurname('PHPUnit');
+
+        $phoneNumber = new PhoneNumber();
+        $phoneNumber->setNationalNumber('0123456789');
+
+        $phone = new Phone();
+        $phone->setPhoneNumber($phoneNumber);
+
+        $payer->setName($name);
+        $payer->setPhone($phone);
+        $payer->setEmailAddress('phpunit@test.com');
+        $payer->setPayerId('TestUser');
 
         $billingAddress = new Address();
         $billingAddress->setCountryCode('DE');
@@ -63,13 +80,37 @@ class CustomerServiceTest extends TestCase
         $billingAddress->setCity('Schöppingen');
 
         $payerInfo->setBillingAddress($billingAddress);
-        $payer->setPayerInfo($payerInfo);
-        $payment->setPayer($payer);
+        $orderStruct->setPayer($payer);
+
+        $displayData = new Payee\DisplayData();
+
+        $payee = new Payee();
+        $payee->setEmailAddress('phpunit@test.com');
+        $payee->setDisplayData($displayData);
+
+        $shippingName = new ShippingName();
+        $shippingName->setFullName('Shopware PHPUnit');
+
+        $shippingAddress = new ShippingAddress();
+        $shippingAddress->setCountryCode($billingAddress->getCountryCode());
+        $shippingAddress->setPostalCode($billingAddress->getPostalCode());
+        $shippingAddress->setAddressLine1($billingAddress->getLine1());
+        $shippingAddress->setAddressLine2($billingAddress->getLine2());
+        $shippingAddress->setAdminArea2($billingAddress->getCity());
+
+        $shipping = new Shipping();
+        $shipping->setName($shippingName);
+        $shipping->setAddress($shippingAddress);
+
+        $purchaseUnit = new Order\PurchaseUnit();
+        $purchaseUnit->setPayee($payee);
+        $purchaseUnit->setShipping($shipping);
 
         $service = $this->getCustomerService();
 
+        $orderStruct->setPurchaseUnits([$purchaseUnit]);
         $this->setFrontRequest();
-        $service->createNewCustomer($payment);
+        $service->createNewCustomer($orderStruct);
 
         $user = $this->getUserByMail()[0];
 

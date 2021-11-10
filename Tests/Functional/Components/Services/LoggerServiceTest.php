@@ -64,6 +64,8 @@ class LoggerServiceTest extends TestCase
 
         $lastLine = $this->getLastLine($fileName);
 
+        static::assertNotNull($lastLine);
+
         if (\method_exists($this, 'assertStringContainsString')) {
             static::assertStringContainsString('Test message', $lastLine);
 
@@ -118,6 +120,8 @@ class LoggerServiceTest extends TestCase
         $loggerService->notify('Test message');
 
         $lastLine = $this->getLastLine($fileName);
+
+        static::assertNotNull($lastLine);
 
         if (\method_exists($this, 'assertStringContainsString')) {
             static::assertStringContainsString('Test message', $lastLine);

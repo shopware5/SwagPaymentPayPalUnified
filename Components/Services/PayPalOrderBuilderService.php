@@ -13,6 +13,7 @@ use SwagPaymentPayPalUnified\Components\Services\Common\ReturnUrlHelper;
 use SwagPaymentPayPalUnified\Components\Services\PayPalOrder\AmountProvider;
 use SwagPaymentPayPalUnified\Components\Services\PayPalOrder\ItemListProvider;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
+use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\ApplicationContext;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\Payer;
@@ -61,24 +62,36 @@ class PayPalOrderBuilderService
     /**
      * @return Order
      */
-    public function getOrder(PayPalOrderBuilderParameter $parameter)
+    public function getOrder(PayPalOrderBuilderParameter $orderParameter)
     {
         $intent = $this->getIntent();
-        $payer = $this->createPayer($parameter->getCustomer());
-        $purchaseUnit = $this->createPurchaseUnit(
-            $parameter->getCart(),
-            $parameter->getCustomer()
-        );
+        $payer = $this->createPayer($orderParameter->getCustomer());
+
+        $purchaseUnit = $this->createPurchaseUnit($orderParameter->getCart(), $orderParameter->getCustomer());
+
+        if ($orderParameter->getPaymentType() !== PaymentType::PAYPAL_EXPRESS_V2) {
+            $billingAddress = $this->createBillingAddress($orderParameter->getCustomer());
+            $payer->setAddress($billingAddress);
+
+            $shippingAddress = $this->createShipping($orderParameter->getCustomer());
+            $purchaseUnit->setShipping($shippingAddress);
+        }
+
         $applicationContext = $this->createApplicationContext();
 
-        $applicationContext->setReturnUrl($this->returnUrlHelper->getReturnUrl($parameter->getBasketUniqueId(), $parameter->getPaymentToken(), ['controller' => 'PaypalUnifiedV2']));
-        $applicationContext->setCancelUrl($this->returnUrlHelper->getCancelUrl($parameter->getBasketUniqueId(), $parameter->getPaymentToken()));
+        $applicationContext->setReturnUrl($this->returnUrlHelper->getReturnUrl($orderParameter->getBasketUniqueId(), $orderParameter->getPaymentToken()));
+        $applicationContext->setCancelUrl($this->returnUrlHelper->getCancelUrl($orderParameter->getBasketUniqueId(), $orderParameter->getPaymentToken()));
 
         $order = new Order();
         $order->setIntent($intent);
         $order->setPayer($payer);
         $order->setPurchaseUnits([$purchaseUnit]);
         $order->setApplicationContext($applicationContext);
+
+        if ($orderParameter->getPaymentType() === PaymentType::PAYPAL_EXPRESS_V2) {
+            $order->getApplicationContext()->setShippingPreference(ApplicationContext::SHIPPING_PREFERENCE_GET_FROM_FILE);
+            $order->getApplicationContext()->setUserAction(ApplicationContext::USER_ACTION_CONTINUE);
+        }
 
         return $order;
     }
@@ -88,7 +101,7 @@ class PayPalOrderBuilderService
      */
     private function getIntent()
     {
-        // TODO: Get intent from settings
+        // TODO: Get intent from settings PT-12488
         $intent = PaymentIntentV2::CAPTURE;
 
         if (!\in_array($intent, [PaymentIntentV2::CAPTURE, PaymentIntentV2::AUTHORIZE], true)) {
@@ -105,15 +118,13 @@ class PayPalOrderBuilderService
     {
         $customerData = $customer['additional']['user'];
 
-        $payer = new Payer();
-        $payer->setEmailAddress($customerData['email']);
         $name = new PayerName();
         $name->setGivenName($customerData['firstname']);
         $name->setSurname($customerData['lastname']);
-        $payer->setName($name);
 
-        $address = $this->createBillingAddress($customer, new PayerAddress());
-        $payer->setAddress($address);
+        $payer = new Payer();
+        $payer->setEmailAddress($customerData['email']);
+        $payer->setName($name);
 
         return $payer;
     }
@@ -123,8 +134,10 @@ class PayPalOrderBuilderService
      *
      * @return PayerAddress
      */
-    private function createBillingAddress(array $customer, PayerAddress $address)
+    private function createBillingAddress(array $customer)
     {
+        $address = new PayerAddress();
+
         $billingAddress = $customer['billingaddress'];
 
         $address->setAddressLine1($billingAddress['street']);
@@ -160,8 +173,6 @@ class PayPalOrderBuilderService
         $amount = $this->amountProvider->createAmount($cart, $purchaseUnit, $customer);
         $purchaseUnit->setAmount($amount);
 
-        $purchaseUnit->setShipping($this->createShipping($customer));
-
         return $purchaseUnit;
     }
 
@@ -173,8 +184,8 @@ class PayPalOrderBuilderService
         if (!\array_key_exists('shippingaddress', $customer)) {
             throw new \RuntimeException(sprintf('Customer with ID "%s" has no shipping address', $customer['additional']['user']['id']));
         }
-        $shippingAddress = $customer['shippingaddress'];
 
+        $shippingAddress = $customer['shippingaddress'];
         $shipping = new Shipping();
 
         $address = $this->createShippingAddress($customer, new ShippingAddress());
@@ -239,7 +250,7 @@ class PayPalOrderBuilderService
      */
     private function getLandingPageType()
     {
-        // TODO implement setting for this
+        // TODO implement setting for this PT-12488
         return ApplicationContext::LANDING_PAGE_TYPE_NO_PREFERENCE;
     }
 }

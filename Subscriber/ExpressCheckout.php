@@ -124,11 +124,10 @@ class ExpressCheckout implements SubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            'Enlight_Controller_Action_PostDispatchSecure_Frontend' => 'addExpressCheckoutButtonCart',
             'Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout' => [
-                ['addEcInfoOnConfirm'],
-                ['addPaymentInfoToRequest', 100],
+                ['addExpressOrderInfoOnConfirm'],
             ],
+            'Enlight_Controller_Action_PostDispatchSecure_Frontend' => 'addExpressCheckoutButtonCart',
             'Enlight_Controller_Action_PostDispatchSecure_Frontend_Detail' => 'addExpressCheckoutButtonDetail',
             'Enlight_Controller_Action_PostDispatchSecure_Frontend_Listing' => 'addExpressCheckoutButtonListing',
             'Enlight_Controller_Action_PreDispatch_Widgets_Listing' => 'addExpressCheckoutButtonListing',
@@ -191,7 +190,7 @@ class ExpressCheckout implements SubscriberInterface
         }
     }
 
-    public function addEcInfoOnConfirm(ActionEventArgs $args)
+    public function addExpressOrderInfoOnConfirm(ActionEventArgs $args)
     {
         $request = $args->getRequest();
         $view = $args->getSubject()->View();
@@ -207,38 +206,16 @@ class ExpressCheckout implements SubscriberInterface
 
         if (\strtolower($request->getActionName()) === 'confirm' && $request->getParam('expressCheckout', false)) {
             $view->assign('paypalUnifiedExpressCheckout', true);
-            $view->assign('paypalUnifiedExpressPaymentId', $request->getParam('paymentId'));
+            $view->assign('paypalUnifiedExpressOrderId', $request->getParam('orderId'));
             $view->assign('paypalUnifiedExpressPayerId', $request->getParam('payerId'));
             $view->assign('paypalUnifiedExpressBasketId', $request->getParam('basketId'));
         }
-    }
 
-    public function addPaymentInfoToRequest(ActionEventArgs $args)
-    {
-        $request = $args->getRequest();
-
-        if (\strtolower($request->getActionName()) === 'payment'
-            && $request->getParam('expressCheckout', false)
-            && $args->getResponse()->isRedirect()
-        ) {
-            $paymentId = $request->getParam('paymentId');
-
-            try {
-                $this->patchAddressAndAmount($paymentId);
-            } catch (Exception $exception) {
-                $redirectData = $this->handlePaymentPatchException($exception);
-                $args->getSubject()->redirect($redirectData);
-
-                return;
-            }
-
+        if (\strtolower($request->getActionName()) === 'payment' && $request->getParam('expressCheckout', false) && $args->getResponse()->isRedirect()) {
             $args->getSubject()->redirect([
-                'controller' => 'PaypalUnified',
-                'action' => 'return',
-                'expressCheckout' => true,
-                'paymentId' => $paymentId,
-                'PayerID' => $request->getParam('payerId'),
-                'basketId' => $request->getParam('basketId'),
+                'controller' => 'PaypalUnifiedV2ExpressCheckout',
+                'action' => 'expressCheckoutFinish',
+                'orderId' => $request->getParam('orderId'),
             ]);
         }
     }
@@ -407,7 +384,15 @@ class ExpressCheckout implements SubscriberInterface
     private function addEcButtonBehaviour(ViewEngine $view, GeneralSettingsModel $generalSettings)
     {
         $view->assign('paypalUnifiedModeSandbox', $generalSettings->getSandbox());
-        $view->assign('paypalUnifiedUseInContext', $generalSettings->getUseInContext());
+        $view->assign('paypalUnifiedClientId', $generalSettings->getClientId());
+
+        $shop = $this->dependencyProvider->getShop();
+
+        if (!$shop instanceof Shop) {
+            throw new \UnexpectedValueException(sprintf('Expected instance of %s, got null.', Shop::class));
+        }
+
+        $view->assign('paypalUnifiedCurrency', $shop->getCurrency()->getCurrency());
     }
 
     private function addEcButtonStyleInfo(ViewEngine $view, ExpressSettingsModel $expressSettings)

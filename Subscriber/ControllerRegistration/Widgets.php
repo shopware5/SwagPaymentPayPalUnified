@@ -31,18 +31,15 @@ class Widgets implements SubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            'Enlight_Controller_Dispatcher_ControllerPath_Widgets_PaypalUnifiedExpressCheckout' => 'onGetEcControllerPath',
+            'Enlight_Controller_Dispatcher_ControllerPath_Widgets_PaypalUnifiedV2ExpressCheckout' => 'onGetEcV2ControllerPath',
         ];
     }
 
     /**
-     * Handles the Enlight_Controller_Dispatcher_ControllerPath_Widgets_PaypalUnifiedExpressCheckout event.
-     * Returns the path to the express checkout controller.
-     *
      * @return string
      */
-    public function onGetEcControllerPath()
+    public function onGetEcV2ControllerPath()
     {
-        return $this->pluginDirectory . '/Controllers/Widgets/PaypalUnifiedExpressCheckout.php';
+        return $this->pluginDirectory . '/Controllers/Widgets/PaypalUnifiedV2ExpressCheckout.php';
     }
 }

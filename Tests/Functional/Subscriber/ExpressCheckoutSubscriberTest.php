@@ -12,7 +12,6 @@ use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\Services\ExceptionHandlerService;
 use SwagPaymentPayPalUnified\Components\Services\RiskManagement\EsdProductChecker;
-use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PaymentItemsPatch;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\PaymentResource;
 use SwagPaymentPayPalUnified\Subscriber\ExpressCheckout as ExpressCheckoutSubscriber;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
@@ -53,7 +52,7 @@ class ExpressCheckoutSubscriberTest extends TestCase
 
         static::assertSame('addExpressCheckoutButtonCart', $events['Enlight_Controller_Action_PostDispatchSecure_Frontend']);
         static::assertTrue(\is_array($events['Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout']));
-        static::assertCount(2, $events['Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout']);
+        static::assertCount(1, $events['Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout']);
         static::assertSame('addExpressCheckoutButtonDetail', $events['Enlight_Controller_Action_PostDispatchSecure_Frontend_Detail']);
         static::assertSame('addExpressCheckoutButtonListing', $events['Enlight_Controller_Action_PostDispatchSecure_Frontend_Listing']);
         static::assertSame('addExpressCheckoutButtonLogin', $events['Enlight_Controller_Action_PostDispatch_Frontend_Register']);
@@ -200,15 +199,6 @@ class ExpressCheckoutSubscriberTest extends TestCase
     {
         $view = new ViewMock(new \Enlight_Template_Manager());
         $request = new \Enlight_Controller_Request_RequestTestCase();
-        $request->setActionName('ajaxCart');
-        $request->setControllerName('checkout');
-        Shopware()->Container()->get('front')->setRequest($request);
-
-        $basket = Shopware()->Modules()->Basket();
-        $basket->sDeleteBasket();
-        $basket->sAddArticle('SW10196');
-
-        $view->assign('sBasket', $basket->sGetBasket());
 
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
             'subject' => new DummyController($request, $view),
@@ -217,7 +207,12 @@ class ExpressCheckoutSubscriberTest extends TestCase
 
         $this->importSettings(true, true, true, true);
 
-        $subscriber = $this->getSubscriber();
+        $subscriber = $this->getSubscriber(
+            false,
+            static::createConfiguredMock(EsdProductChecker::class, [
+                'checkForEsdProducts' => true,
+            ])
+        );
         $subscriber->addExpressCheckoutButtonCart($enlightEventArgs);
 
         static::assertNull($view->getAssign('paypalUnifiedEcCartActive'));
@@ -238,7 +233,7 @@ class ExpressCheckoutSubscriberTest extends TestCase
         ]);
 
         $subscriber = $this->getSubscriber();
-        $subscriber->addEcInfoOnConfirm($enlightEventArgs);
+        $subscriber->addExpressOrderInfoOnConfirm($enlightEventArgs);
 
         static::assertNull($view->getAssign('paypalUnifiedExpressPaymentId'));
     }
@@ -255,7 +250,7 @@ class ExpressCheckoutSubscriberTest extends TestCase
         ]);
 
         $subscriber = $this->getSubscriber();
-        $subscriber->addEcInfoOnConfirm($enlightEventArgs);
+        $subscriber->addExpressOrderInfoOnConfirm($enlightEventArgs);
 
         static::assertNull($view->getAssign('paypalUnifiedExpressPaymentId'));
     }
@@ -265,7 +260,7 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $view = new ViewMock(new \Enlight_Template_Manager());
         $request = new \Enlight_Controller_Request_RequestTestCase();
         $request->setActionName('confirm');
-        $request->setParam('paymentId', 'TEST_PAYMENT_ID');
+        $request->setParam('orderId', 'TEST_PAYMENT_ID');
         $request->setParam('payerId', 'TEST_PAYER_ID');
         $request->setParam('expressCheckout', true);
 
@@ -279,9 +274,9 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $this->importSettings(true, true, true, true);
 
         $subscriber = $this->getSubscriber();
-        $subscriber->addEcInfoOnConfirm($enlightEventArgs);
+        $subscriber->addExpressOrderInfoOnConfirm($enlightEventArgs);
 
-        static::assertSame('TEST_PAYMENT_ID', $view->getAssign('paypalUnifiedExpressPaymentId'));
+        static::assertSame('TEST_PAYMENT_ID', $view->getAssign('paypalUnifiedExpressOrderId'));
         static::assertSame('TEST_PAYER_ID', $view->getAssign('paypalUnifiedExpressPayerId'));
         static::assertTrue($view->getAssign('paypalUnifiedExpressCheckout'));
     }
@@ -289,13 +284,11 @@ class ExpressCheckoutSubscriberTest extends TestCase
     public function testAddEcInfoOnConfirmShouldReturnBecauseEsdProductIsInBasket()
     {
         $basket = Shopware()->Modules()->Basket();
-        $basket->sDeleteBasket();
-        $basket->sAddArticle('SW10196');
 
         $view = new ViewMock(new \Enlight_Template_Manager());
         $request = new \Enlight_Controller_Request_RequestTestCase();
         $request->setActionName('confirm');
-        $request->setParam('paymentId', 'TEST_PAYMENT_ID');
+        $request->setParam('orderId', 'TEST_PAYMENT_ID');
         $request->setParam('payerId', 'TEST_PAYER_ID');
         $request->setParam('expressCheckout', true);
         Shopware()->Container()->get('front')->setRequest($request);
@@ -308,14 +301,22 @@ class ExpressCheckoutSubscriberTest extends TestCase
 
         $this->importSettings(true, true, true, true);
 
-        $subscriber = $this->getSubscriber();
-        $subscriber->addEcInfoOnConfirm($enlightEventArgs);
+        $subscriber = $this->getSubscriber(
+            false,
+            static::createConfiguredMock(EsdProductChecker::class, [
+                'checkForEsdProducts' => true,
+            ])
+        );
+        $subscriber->addExpressOrderInfoOnConfirm($enlightEventArgs);
 
         static::assertNull($view->getAssign('paypalUnifiedExpressPaymentId'));
         static::assertNull($view->getAssign('paypalUnifiedExpressPayerId'));
         static::assertNull($view->getAssign('paypalUnifiedExpressCheckout'));
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testAddPaymentInfoToRequestReturnWrongAction()
     {
         $view = new ViewMock(new \Enlight_Template_Manager());
@@ -329,9 +330,12 @@ class ExpressCheckoutSubscriberTest extends TestCase
 
         $subscriber = $this->getSubscriber();
 
-        static::assertNull($subscriber->addPaymentInfoToRequest($enlightEventArgs));
+        $subscriber->addExpressOrderInfoOnConfirm($enlightEventArgs);
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testAddPaymentInfoToRequestReturnWrongParam()
     {
         $view = new ViewMock(new \Enlight_Template_Manager());
@@ -345,9 +349,12 @@ class ExpressCheckoutSubscriberTest extends TestCase
 
         $subscriber = $this->getSubscriber();
 
-        static::assertNull($subscriber->addPaymentInfoToRequest($enlightEventArgs));
+        $subscriber->addExpressOrderInfoOnConfirm($enlightEventArgs);
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testAddPaymentInfoToRequestReturnNoRedirect()
     {
         $view = new ViewMock(new \Enlight_Template_Manager());
@@ -365,145 +372,7 @@ class ExpressCheckoutSubscriberTest extends TestCase
 
         $subscriber = $this->getSubscriber();
 
-        static::assertNull($subscriber->addPaymentInfoToRequest($enlightEventArgs));
-    }
-
-    public function testAddPaymentInfoToRequestLogsError()
-    {
-        $session = Shopware()->Session();
-        $session->offsetSet('sOrderVariables', require __DIR__ . '/_fixtures/sOrderVariables.php');
-        $view = new ViewMock(new \Enlight_Template_Manager());
-        $request = new \Enlight_Controller_Request_RequestTestCase();
-        $request->setActionName('payment');
-        $request->setParam('expressCheckout', true);
-        $request->setParam('paymentId', PaymentResourceMock::THROW_EXCEPTION);
-
-        $response = new \Enlight_Controller_Response_ResponseTestCase();
-        $response->setHttpResponseCode(302);
-
-        $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view, $response),
-            'request' => $request,
-            'response' => $response,
-        ]);
-
-        $this->importSettings();
-
-        $subscriber = $this->getSubscriber(true);
-
-        $subscriber->addPaymentInfoToRequest($enlightEventArgs);
-
-        static::assertSame(302, $response->getHttpResponseCode());
-
-        $errors = $this->loggerMock->getErrors();
-        static::assertSame('patch exception', $errors['Could not patch the payment for express checkout due to a communication failure']['message']);
-
-        if (\method_exists($this, 'assertStringContainsString')) {
-            static::assertStringContainsString(
-                '/checkout/shippingPayment/paypal_unified_error_code/2/paypal_unified_error_name/0/paypal_unified_error_message/An+error+occurred%3A+patch+exception',
-                $response->getHeader('Location')
-            );
-
-            return;
-        }
-        static::assertContains(
-            '/checkout/shippingPayment/paypal_unified_error_code/2/paypal_unified_error_name/0/paypal_unified_error_message/An+error+occurred%3A+patch+exception',
-            $response->getHeader('Location')
-        );
-    }
-
-    public function testAddPaymentInfoToRequest()
-    {
-        $session = Shopware()->Session();
-        $session->offsetSet('sOrderVariables', require __DIR__ . '/_fixtures/sOrderVariables.php');
-        $view = new ViewMock(new \Enlight_Template_Manager());
-        $request = new \Enlight_Controller_Request_RequestTestCase();
-        $request->setActionName('payment');
-        $request->setParam('expressCheckout', true);
-
-        $response = new \Enlight_Controller_Response_ResponseTestCase();
-        $response->setHttpResponseCode(302);
-
-        $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view, $response),
-            'request' => $request,
-            'response' => $response,
-        ]);
-
-        $this->importSettings();
-        $subscriber = $this->getSubscriber(true);
-
-        $subscriber->addPaymentInfoToRequest($enlightEventArgs);
-
-        static::assertInstanceOf(PaymentResourceMock::class, $this->paymentResource);
-        foreach ($this->paymentResource->getPatches() as $patch) {
-            if ($patch instanceof PaymentItemsPatch) {
-                static::fail('No ItemList patch allowed if submit cart for ECS is false');
-            }
-        }
-
-        static::assertSame(302, $response->getHttpResponseCode());
-
-        if (\method_exists($this, 'assertStringContainsString')) {
-            static::assertStringContainsString(
-                '/PaypalUnified/return/expressCheckout/1/paymentId//PayerID//basketId/',
-                $response->getHeader('Location')
-            );
-
-            return;
-        }
-        static::assertContains(
-            '/PaypalUnified/return/expressCheckout/1/paymentId//PayerID//basketId/',
-            $response->getHeader('Location')
-        );
-    }
-
-    public function testAddPaymentInfoToRequestShouldPatchItemList()
-    {
-        $session = Shopware()->Session();
-        $session->offsetSet('sOrderVariables', require __DIR__ . '/_fixtures/sOrderVariables.php');
-        $view = new ViewMock(new \Enlight_Template_Manager());
-        $request = new \Enlight_Controller_Request_RequestTestCase();
-        $request->setActionName('payment');
-        $request->setParam('expressCheckout', true);
-
-        $response = new \Enlight_Controller_Response_ResponseTestCase();
-        $response->setHttpResponseCode(302);
-
-        $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view, $response),
-            'request' => $request,
-            'response' => $response,
-        ]);
-
-        $this->importSettings(false, false, false, false, false, false, false, true);
-        $subscriber = $this->getSubscriber(true);
-
-        $subscriber->addPaymentInfoToRequest($enlightEventArgs);
-
-        $itemListPatchExists = false;
-        static::assertInstanceOf(PaymentResourceMock::class, $this->paymentResource);
-        foreach ($this->paymentResource->getPatches() as $patch) {
-            if ($patch instanceof PaymentItemsPatch) {
-                $itemListPatchExists = true;
-                break;
-            }
-        }
-
-        static::assertTrue($itemListPatchExists, 'ItemList patch must exist if submit cart for ECS is true');
-        static::assertSame(302, $response->getHttpResponseCode());
-        if (\method_exists($this, 'assertStringContainsString')) {
-            static::assertStringContainsString(
-                '/PaypalUnified/return/expressCheckout/1/paymentId//PayerID//basketId/',
-                $response->getHeader('Location')
-            );
-
-            return;
-        }
-        static::assertContains(
-            '/PaypalUnified/return/expressCheckout/1/paymentId//PayerID//basketId/',
-            $response->getHeader('Location')
-        );
+        $subscriber->addExpressOrderInfoOnConfirm($enlightEventArgs);
     }
 
     public function testAddExpressCheckoutButtonDetailReturnPaymentMethodInactive()
@@ -818,18 +687,26 @@ class ExpressCheckoutSubscriberTest extends TestCase
     }
 
     /**
-     * @param bool $usePaymentResourceMock
+     * @param bool                   $usePaymentResourceMock
+     * @param EsdProductChecker|null $esdProductChecker
+     *
+     * @throws \Exception
      *
      * @return ExpressCheckoutSubscriber
      */
-    private function getSubscriber($usePaymentResourceMock = false)
+    private function getSubscriber($usePaymentResourceMock = false, $esdProductChecker = null)
     {
         Shopware()->Container()->set('paypal_unified.client_service', new ClientService());
 
         $this->paymentResource = Shopware()->Container()->get('paypal_unified.payment_resource');
         $this->loggerMock = new LoggerMock();
+
         if ($usePaymentResourceMock) {
             $this->paymentResource = new PaymentResourceMock();
+        }
+
+        if (!$esdProductChecker instanceof EsdProductChecker) {
+            $esdProductChecker = Shopware()->Container()->get(EsdProductChecker::class);
         }
 
         return new ExpressCheckoutSubscriber(
@@ -842,7 +719,7 @@ class ExpressCheckoutSubscriberTest extends TestCase
             Shopware()->Container()->get('dbal_connection'),
             Shopware()->Container()->get('paypal_unified.client_service'),
             Shopware()->Container()->get('paypal_unified.dependency_provider'),
-            Shopware()->Container()->get(EsdProductChecker::class)
+            $esdProductChecker
         );
     }
 

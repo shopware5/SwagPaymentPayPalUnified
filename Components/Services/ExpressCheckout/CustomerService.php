@@ -22,7 +22,7 @@ use Shopware\Models\Customer\Customer;
 use Shopware_Components_Config as ShopwareConfig;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
-use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
 use Symfony\Component\Form\FormFactoryInterface;
 
 class CustomerService
@@ -91,33 +91,35 @@ class CustomerService
         $this->dependencyProvider = $dependencyProvider;
     }
 
-    public function createNewCustomer(Payment $paymentStruct)
+    public function createNewCustomer(Order $orderStruct)
     {
         $this->adminModule = $this->dependencyProvider->getModule('admin');
 
-        $payerInfo = $paymentStruct->getPayer()->getPayerInfo();
+        $payer = $orderStruct->getPayer();
         $salutation = $this->getSalutation();
-        $address = $payerInfo->getBillingAddress();
+        $address = $orderStruct->getPurchaseUnits()[0]->getShipping()->getAddress();
         $countryId = $this->getCountryId($address->getCountryCode());
+        $phone = $payer->getPhone();
         $stateId = null;
-        if (\is_string($address->getState())) {
-            $stateId = $this->getStateId($countryId, $address->getState());
+
+        if (\is_string($address->getAdminArea1())) {
+            $stateId = $this->getStateId($countryId, $address->getAdminArea1());
         }
 
         $customerData = [
-            'email' => $payerInfo->getEmail(),
-            'password' => $payerInfo->getPayerId(),
+            'email' => $payer->getEmailAddress(),
+            'password' => $payer->getPayerId(),
             'accountmode' => 1,
             'salutation' => $salutation,
-            'firstname' => $payerInfo->getFirstName(),
-            'lastname' => $payerInfo->getLastName(),
-            'street' => $address->getLine1(),
-            'additionalAddressLine1' => $address->getLine2(),
+            'firstname' => $payer->getName()->getGivenName(),
+            'lastname' => $payer->getName()->getSurname(),
+            'street' => $address->getAddressLine1(),
+            'additionalAddressLine1' => $address->getAddressLine2(),
             'zipcode' => $address->getPostalCode(),
-            'city' => $address->getCity(),
+            'city' => $address->getAdminArea2(),
             'country' => $countryId,
             'state' => $stateId,
-            'phone' => $payerInfo->getPhone(),
+            'phone' => $phone !== null ? $phone->getPhoneNumber()->getNationalNumber() : null,
         ];
 
         $customerModel = $this->registerCustomer($customerData);
@@ -191,6 +193,11 @@ class CustomerService
     private function loginCustomer(Customer $customerModel)
     {
         $request = $this->front->Request();
+
+        if (!$request instanceof \Enlight_Controller_Request_Request) {
+            throw new \UnexpectedValueException(sprintf('Expected instance of %s, got null', \Enlight_Controller_Request_Request::class));
+        }
+
         $request->setPost('email', $customerModel->getEmail());
         $request->setPost('passwordMD5', $customerModel->getPassword());
         $this->adminModule->sLogin(true);

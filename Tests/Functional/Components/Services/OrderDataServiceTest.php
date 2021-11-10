@@ -11,8 +11,6 @@ namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services;
 use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\Components\Services\OrderDataService;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
-use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
-use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\PaymentInstruction;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\SettingsHelperTrait;
 
@@ -78,17 +76,12 @@ class OrderDataServiceTest extends TestCase
 
         $orderDataService = $this->getOrderDataService();
 
-        $payment = new Payment();
-        $paymentInstruction = new PaymentInstruction();
-        $paymentInstruction->setDueDate('12-12-1991');
-        $payment->setPaymentInstruction($paymentInstruction);
-
-        $orderDataService->applyPaymentTypeAttribute(self::ORDER_NUMBER, $payment);
+        $orderDataService->applyPaymentTypeAttribute(self::ORDER_NUMBER, PaymentType::PAYPAL_INVOICE_V2);
 
         $dbalConnection = Shopware()->Container()->get('dbal_connection');
         $updatedAttribute = $dbalConnection->executeQuery('SELECT swag_paypal_unified_payment_type FROM s_order_attributes WHERE orderID=9999')->fetchColumn();
 
-        static::assertSame(PaymentType::PAYPAL_INVOICE, $updatedAttribute);
+        static::assertSame(PaymentType::PAYPAL_INVOICE_V2, $updatedAttribute);
     }
 
     public function testApplyPaymentTypeAttributePlus()
@@ -98,12 +91,12 @@ class OrderDataServiceTest extends TestCase
         $orderDataService = $this->getOrderDataService();
         $this->createTestSettings();
 
-        $orderDataService->applyPaymentTypeAttribute(self::ORDER_NUMBER, new Payment());
+        $orderDataService->applyPaymentTypeAttribute(self::ORDER_NUMBER, PaymentType::PAYPAL_PLUS_V2);
 
         $dbalConnection = Shopware()->Container()->get('dbal_connection');
         $updatedAttribute = $dbalConnection->executeQuery('SELECT swag_paypal_unified_payment_type FROM s_order_attributes WHERE orderID=9999')->fetchColumn();
 
-        static::assertSame(PaymentType::PAYPAL_PLUS, $updatedAttribute);
+        static::assertSame(PaymentType::PAYPAL_PLUS_V2, $updatedAttribute);
     }
 
     public function testApplyPaymentAttributeClassic()
@@ -111,12 +104,12 @@ class OrderDataServiceTest extends TestCase
         $this->importFixturesBefore();
 
         $orderDataService = $this->getOrderDataService();
-        $orderDataService->applyPaymentTypeAttribute(self::ORDER_NUMBER, new Payment());
+        $orderDataService->applyPaymentTypeAttribute(self::ORDER_NUMBER, PaymentType::PAYPAL_CLASSIC_V2);
 
         $dbalConnection = Shopware()->Container()->get('dbal_connection');
         $updatedAttribute = $dbalConnection->executeQuery('SELECT swag_paypal_unified_payment_type FROM s_order_attributes WHERE orderID=9999')->fetchColumn();
 
-        static::assertSame(PaymentType::PAYPAL_CLASSIC, $updatedAttribute);
+        static::assertSame(PaymentType::PAYPAL_CLASSIC_V2, $updatedAttribute);
     }
 
     public function testApplyPaymentAttributeExpressCheckout()
@@ -124,12 +117,12 @@ class OrderDataServiceTest extends TestCase
         $this->importFixturesBefore();
 
         $orderDataService = $this->getOrderDataService();
-        $orderDataService->applyPaymentTypeAttribute(self::ORDER_NUMBER, new Payment(), true);
+        $orderDataService->applyPaymentTypeAttribute(self::ORDER_NUMBER, PaymentType::PAYPAL_EXPRESS_V2);
 
         $dbalConnection = Shopware()->Container()->get('dbal_connection');
         $updatedAttribute = $dbalConnection->executeQuery('SELECT swag_paypal_unified_payment_type FROM s_order_attributes WHERE orderID=9999')->fetchColumn();
 
-        static::assertSame(PaymentType::PAYPAL_EXPRESS, $updatedAttribute);
+        static::assertSame(PaymentType::PAYPAL_EXPRESS_V2, $updatedAttribute);
     }
 
     private function createTestSettings()

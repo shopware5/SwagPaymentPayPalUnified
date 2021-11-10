@@ -125,8 +125,8 @@ class PaymentBuilderService implements PaymentBuilderInterface
         $payer->setPaymentMethod('paypal');
 
         $redirectUrls = new RedirectUrls();
-        $redirectUrls->setCancelUrl($this->returnUrlHelper->getCancelUrl($params->getBasketUniqueId(), $params->getPaymentToken()));
-        $redirectUrls->setReturnUrl($this->returnUrlHelper->getReturnUrl($params->getBasketUniqueId(), $params->getPaymentToken()));
+        $redirectUrls->setCancelUrl($this->returnUrlHelper->getCancelUrl($params->getBasketUniqueId(), $params->getPaymentToken(), ['controller' => 'PaypalUnified']));
+        $redirectUrls->setReturnUrl($this->returnUrlHelper->getReturnUrl($params->getBasketUniqueId(), $params->getPaymentToken(), ['controller' => 'PaypalUnified']));
 
         $amount = new Amount();
         $amount->setDetails($this->getAmountDetails());
@@ -138,6 +138,7 @@ class PaymentBuilderService implements PaymentBuilderInterface
 
         $submitCartGeneral = (bool) $this->settings->get('submit_cart');
         $submitCartEcs = (bool) $this->settings->get('submit_cart', SettingsTable::EXPRESS_CHECKOUT);
+
         if ($paymentType !== PaymentType::PAYPAL_EXPRESS && $submitCartGeneral) {
             $this->setItemList($transactions);
         } elseif ($paymentType === PaymentType::PAYPAL_EXPRESS && $submitCartEcs) {

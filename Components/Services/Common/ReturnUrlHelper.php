@@ -55,7 +55,7 @@ class ReturnUrlHelper
     private function getRedirectUrl($action, $basketUniqueId, $paymentToken, array $additionalParameter = [])
     {
         $routingParameters = [
-            'controller' => 'PaypalUnified',
+            'controller' => 'PaypalUnifiedV2',
             'action' => $action,
             'forceSecure' => true,
         ];

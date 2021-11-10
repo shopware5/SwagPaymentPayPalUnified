@@ -10,18 +10,23 @@ namespace SwagPaymentPayPalUnified\Tests\Functional\Controller\Frontend;
 
 require_once __DIR__ . '/../../../../Controllers/Frontend/PaypalUnifiedV2.php';
 
+use Enlight_Components_Session_Namespace as ShopwareSession;
 use PHPUnit\Framework\TestCase;
+use Shopware\Components\BasketSignature\BasketPersister;
+use Shopware\Components\BasketSignature\BasketSignatureGenerator;
 use Shopware\Components\DependencyInjection\Container;
 use Shopware\Components\HttpClient\RequestException;
 use Shopware_Controllers_Frontend_PaypalUnifiedV2;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
+use SwagPaymentPayPalUnified\Components\Services\Common\CartPersister;
+use SwagPaymentPayPalUnified\Components\Services\PaymentControllerHelper;
 use SwagPaymentPayPalUnified\Components\Services\PayPalOrderBuilderService;
 use SwagPaymentPayPalUnified\Components\Services\Validation\RedirectDataBuilder;
 use SwagPaymentPayPalUnified\Components\Services\Validation\RedirectDataBuilderFactory;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\OrderResource;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class PaypalUnifiedV2Test extends TestCase
 {
@@ -41,10 +46,17 @@ class PaypalUnifiedV2Test extends TestCase
         $orderResourceCommunicationFailure,
         $expectedErrorCode
     ) {
-        $session = static::createMock(SessionInterface::class);
+        $session = static::createMock(ShopwareSession::class);
         $session->method('get')
             ->will(static::returnValueMap([
+                ['expressData', null, null],
                 ['sOrderVariables', null, $orderData],
+            ]));
+
+        $session->method('offsetGet')
+            ->will(static::returnValueMap([
+                ['sOrderVariables', \is_array($orderData) ? new \ArrayObject($orderData) : null],
+                ['sUserId', 1],
             ]));
 
         $dependencyProvider = static::createConfiguredMock(DependencyProvider::class, [
@@ -86,14 +98,39 @@ class PaypalUnifiedV2Test extends TestCase
                 ->willThrowException(new RequestException());
         }
 
+        $paymentControllerHelper = static::createConfiguredMock(PaymentControllerHelper::class, [
+            'setGrossPriceFallback' => [],
+        ]);
+
+        $signatureGenerator = null;
+
+        if (\class_exists('Shopware\Components\BasketSignature\BasketSignatureGenerator')) {
+            $signatureGenerator = static::createMock(BasketSignatureGenerator::class);
+            $signatureGenerator->method('generateSignature')
+                ->willReturn([]);
+        }
+
+        $basketPersister = null;
+
+        if (\class_exists('Shopware\Components\BasketSignature\BasketPersister')) {
+            $basketPersister = static::createMock(BasketPersister::class);
+        }
+
+        $cartPersister = static::createMock(CartPersister::class);
+
         $container = static::createMock(Container::class);
         $container->method('get')
             ->will(static::returnValueMap([
-                ['paypal_unified.dependency_provider', Container::EXCEPTION_ON_INVALID_REFERENCE, $dependencyProvider],
-                ['paypal_unified.redirect_data_builder_factory', Container::EXCEPTION_ON_INVALID_REFERENCE, $redirectDataBuilderFactory],
-                ['config', Container::EXCEPTION_ON_INVALID_REFERENCE, $configService],
-                ['paypal_unified.paypal_order_builder_service', Container::EXCEPTION_ON_INVALID_REFERENCE, $orderBuilderService],
-                ['paypal_unified.v2.order_resource', Container::EXCEPTION_ON_INVALID_REFERENCE, $orderResource],
+                ['paypal_unified.dependency_provider', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $dependencyProvider],
+                ['paypal_unified.redirect_data_builder_factory', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $redirectDataBuilderFactory],
+                ['config', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $configService],
+                ['paypal_unified.paypal_order_builder_service', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $orderBuilderService],
+                ['paypal_unified.v2.order_resource', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $orderResource],
+                ['paypal_unified.payment_controller_helper', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $paymentControllerHelper],
+                ['session', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $session],
+                ['basket_signature_generator', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $signatureGenerator],
+                ['basket_persister', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $basketPersister],
+                ['paypal_unified.common.cart_persister', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $cartPersister],
             ]));
 
         $controller = $this->getController($container);

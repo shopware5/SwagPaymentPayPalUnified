@@ -21,6 +21,8 @@ use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\PaymentResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
 
+// TODO: This class needs a new V2-sibling as well
+
 class Shopware_Controllers_Widgets_PaypalUnifiedSmartPaymentButtons extends Shopware_Controllers_Frontend_Payment
 {
     /**

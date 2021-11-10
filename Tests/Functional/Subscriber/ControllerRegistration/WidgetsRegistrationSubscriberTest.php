@@ -23,13 +23,13 @@ class WidgetsRegistrationSubscriberTest extends TestCase
     {
         $events = Widgets::getSubscribedEvents();
         static::assertCount(1, $events);
-        static::assertSame('onGetEcControllerPath', $events['Enlight_Controller_Dispatcher_ControllerPath_Widgets_PaypalUnifiedExpressCheckout']);
+        static::assertSame('onGetEcV2ControllerPath', $events['Enlight_Controller_Dispatcher_ControllerPath_Widgets_PaypalUnifiedV2ExpressCheckout']);
     }
 
     public function testOnGetEcControllerPath()
     {
         $subscriber = new Widgets(Shopware()->Container()->getParameter('paypal_unified.plugin_dir'));
-        $path = $subscriber->onGetEcControllerPath();
+        $path = $subscriber->onGetEcV2ControllerPath();
 
         static::assertFileExists($path);
     }

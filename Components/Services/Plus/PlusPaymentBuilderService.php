@@ -8,7 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\Components\Services\Plus;
 
-use Shopware\Bundle\AttributeBundle\Service\CrudServiceInterface;
+use Shopware\Bundle\AttributeBundle\Service\CrudService;
 use Shopware_Components_Snippet_Manager as SnippetManager;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
@@ -27,13 +27,13 @@ class PlusPaymentBuilderService extends PaymentBuilderService
     const EDD_ATTRIBUTE_COLUMN_NAME = 'swag_paypal_estimated_delivery_date_days';
 
     /**
-     * @var CrudServiceInterface
+     * @var CrudService
      */
     private $attributeService;
 
     public function __construct(
         SettingsServiceInterface $settingsService,
-        CrudServiceInterface $crudService,
+        CrudService $crudService,
         SnippetManager $snippetManager,
         DependencyProvider $dependencyProvider,
         PriceFormatter $priceFormatter,
@@ -74,7 +74,7 @@ class PlusPaymentBuilderService extends PaymentBuilderService
         return $this->returnUrlHelper->getReturnUrl(
             BasketIdWhitelist::WHITELIST_IDS['PayPalPlus'],
             $this->requestParams->getPaymentToken(),
-            ['plus' => true]
+            ['plus' => true, 'controller' => 'PaypalUnified']
         );
     }
 

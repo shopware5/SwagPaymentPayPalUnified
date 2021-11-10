@@ -2,13 +2,9 @@
     <div class="paypal-unified-ec--outer-button-container">
         {block name='paypal_unified_ec_button_container_cart_inner'}
             <div class="paypal-unified-ec--button-container{if $isLoginPage} left{else} right{/if}"
-                {if $paypalUnifiedUseInContext}
-                 data-paypalUnifiedEcButtonInContext="true"
-                {else}
                  data-paypalUnifiedEcButton="true"
-                {/if}
                  data-paypalMode="{if $paypalUnifiedModeSandbox}sandbox{else}production{/if}"
-                 data-createPaymentUrl="{url module=widgets controller=PaypalUnifiedExpressCheckout action=createPayment forceSecure}"
+                 data-createPaymentUrl="{url module=widgets controller=PaypalUnifiedV2ExpressCheckout action=createOrder forceSecure}"
                  data-color="{$paypalUnifiedEcButtonStyleColor}"
                  data-shape="{$paypalUnifiedEcButtonStyleShape}"
                  data-size="{$paypalUnifiedEcButtonStyleSize}"
@@ -16,7 +12,7 @@
                  data-cart="true"
                  data-riskManagementMatchedProducts='{$riskManagementMatchedProducts}'
                  data-esdProducts='{$paypalUnifiedEsdProducts}'
-                {block name='paypal_unified_ec_button_container_cart_data'}{/block}>
+                    {block name='paypal_unified_ec_button_container_cart_data'}{/block}>
             </div>
         {/block}
     </div>
@@ -30,19 +26,10 @@
             var asyncConf = ~~("{$theme.asyncJavascriptLoading}");
             if (typeof document.asyncReady === 'function' && asyncConf) {
                 document.asyncReady(function() {
-                    {if $paypalUnifiedUseInContext}
-                        window.StateManager.addPlugin('*[data-paypalUnifiedEcButtonInContext="true"]*[data-cart="true"]', 'swagPayPalUnifiedExpressCheckoutButtonInContext');
-                    {else}
-                        window.StateManager.addPlugin('*[data-paypalUnifiedEcButton="true"]*[data-cart="true"]', 'swagPayPalUnifiedExpressCheckoutButton');
-                    {/if}
-
+                    window.StateManager.addPlugin('*[data-paypalUnifiedEcButton="true"]*[data-cart="true"]', 'swagPayPalUnifiedExpressCheckoutButton');
                 });
             } else {
-                {if $paypalUnifiedUseInContext}
-                    window.StateManager.addPlugin('*[data-paypalUnifiedEcButtonInContext="true"]*[data-cart="true"]', 'swagPayPalUnifiedExpressCheckoutButtonInContext');
-                {else}
-                    window.StateManager.addPlugin('*[data-paypalUnifiedEcButton="true"]*[data-cart="true"]', 'swagPayPalUnifiedExpressCheckoutButton');
-                {/if}
+                window.StateManager.addPlugin('*[data-paypalUnifiedEcButton="true"]*[data-cart="true"]', 'swagPayPalUnifiedExpressCheckoutButton');
             }
         </script>
     {/if}
