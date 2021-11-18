@@ -42,13 +42,9 @@ class FrontendSubscriberTest extends TestCase
 
     public function testOnCollectJavascript()
     {
-        $javascripts = $this->getSubscriber()->onCollectJavascript();
-
-        foreach ($javascripts as $script) {
+        foreach ($this->getSubscriber()->onCollectJavascript() as $script) {
             static::assertFileExists($script);
         }
-
-        static::assertCount(8, $javascripts);
     }
 
     public function testOnPostDistpatchSecureWithoutAnySetttings()

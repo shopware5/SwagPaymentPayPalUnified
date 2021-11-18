@@ -91,21 +91,27 @@
 
         createButtons: function() {
             var me = this,
-                baseUrl = 'https://www.paypal.com/sdk/js?client-id=',
-                scriptUrl = baseUrl + me.opts.clientId + '&currency=' + me.opts.currency + '&components=buttons,marks&commit=false',
-                $head = $('head');
+                $head = $('head'),
+                baseUrl = 'https://www.paypal.com/sdk/js',
+                params = {
+                    'client-id': me.opts.clientId
+                };
 
             /**
              * If marks only are displayed, remove unnecessary parameters
              * But still load buttons and marks so the buttons are present on the window paypal object
              */
             if (me.opts.marksOnly) {
-                scriptUrl = baseUrl + me.opts.clientId + '&components=marks';
+                params.components = 'marks';
+            } else {
+                params.components = 'marks,buttons';
+                params.commit = false;
+                params.currency = me.opts.currency;
             }
 
             if (!$head.hasClass(me.opts.scriptLoadedClass)) {
                 $.ajax({
-                    url: scriptUrl,
+                    url: baseUrl + '?' + $.param(params, true),
                     dataType: 'script',
                     cache: true,
                     success: function() {
@@ -180,9 +186,11 @@
         },
 
         onApprove: function(data, actions) {
-            var paymentId = data.paymentID,
-                payerId = data.payerID,
-                confirmUrl = this.opts.checkoutConfirmUrl + '?paymentId=' + paymentId + '&payerId=' + payerId + '&basketId=' + this.opts.basketId;
+            var confirmUrl = this.opts.checkoutConfirmUrl + '?' + $.param({
+                orderId: data.orderID,
+                payerId: data.payerID,
+                basketId: this.opts.basketId,
+            }, true);
 
             $.loadingIndicator.open({
                 openOverlay: true,

@@ -128,7 +128,7 @@ class SmartPaymentButtons implements SubscriberInterface
         }
 
         $view->assign('paypalUnifiedSpbCheckout', true);
-        $view->assign('paypalUnifiedSpbPaymentId', $request->getParam('paymentId'));
+        $view->assign('paypalUnifiedSpbOrderId', $request->getParam('orderId'));
         $view->assign('paypalUnifiedSpbPayerId', $request->getParam('payerId'));
         $view->assign('paypalUnifiedSpbBasketId', $request->getParam('basketId'));
     }
@@ -145,10 +145,10 @@ class SmartPaymentButtons implements SubscriberInterface
         }
 
         $args->getSubject()->redirect([
-            'controller' => 'PaypalUnified',
+            'controller' => 'PaypalUnifiedV2',
             'action' => 'return',
             'spbCheckout' => true,
-            'paymentId' => $request->getParam('paymentId'),
+            'token' => $request->getParam('orderId'),
             'PayerID' => $request->getParam('payerId'),
             'basketId' => $request->getParam('basketId'),
         ]);

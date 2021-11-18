@@ -178,7 +178,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends Shopware_Controllers
 
         if ($sendShopwareOrderNumber) {
             $shopwareOrderNumber = (string) $this->saveOrder($payPalOrderId, $payPalOrderId, PaymentStatus::PAYMENT_STATUS_OPEN);
-            $this->orderDataService->applyPaymentTypeAttribute($shopwareOrderNumber, PaymentType::PAYPAL_CLASSIC_V2);
+            $this->orderDataService->applyPaymentTypeAttribute($shopwareOrderNumber, $this->getPaymentType());
 
             $orderNumberPrefix = $this->settingsService->get('order_number_prefix');
 
@@ -222,7 +222,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends Shopware_Controllers
 
         if (!$sendShopwareOrderNumber) {
             $shopwareOrderNumber = (string) $this->saveOrder($payPalOrderId, $payPalOrderId, PaymentStatus::PAYMENT_STATUS_OPEN);
-            $this->orderDataService->applyPaymentTypeAttribute($shopwareOrderNumber, PaymentType::PAYPAL_CLASSIC_V2);
+            $this->orderDataService->applyPaymentTypeAttribute($shopwareOrderNumber, $this->getPaymentType());
         }
 
         $this->redirect([
@@ -231,6 +231,15 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends Shopware_Controllers
             'action' => 'finish',
             'sUniqueID' => $payPalOrderId,
         ]);
+    }
+
+    private function getPaymentType()
+    {
+        if ($this->request->getParam('spbCheckout', false)) {
+            return PaymentType::PAYPAL_SMART_PAYMENT_BUTTONS_V2;
+        }
+
+        return PaymentType::PAYPAL_CLASSIC_V2;
     }
 
     /**
@@ -250,7 +259,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends Shopware_Controllers
      */
     private function shouldUseExtendedBasketValidator($cartId = null)
     {
-        if ($cartId === null) {
+        if (!$cartId || $cartId === 'null') {
             return false;
         }
 

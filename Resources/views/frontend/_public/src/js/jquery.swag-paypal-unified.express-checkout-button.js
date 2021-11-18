@@ -90,8 +90,6 @@
             tagline: false,
 
             /**
-             * TODO: Translate this
-             *
              * Button label: https://developer.paypal.com/docs/business/checkout/reference/style-guide/#label
              *
              *  @type string
@@ -232,9 +230,9 @@
                 params = {};
 
             if (clientId) {
-                params.clientId = clientId;
+                params['client-id'] = clientId;
             } else {
-                params.clientId = 'sb';
+                params['client-id'] = 'sb';
             }
 
             if (currency) {
@@ -315,22 +313,16 @@
                 delay: 100
             });
 
-            return new Promise(function(resolve, reject) {
-                $.ajax({
-                    url: me.opts.createOrderUrl,
-                    data: {
-                        addProduct: me.opts.detailPage,
-                        productNumber: me.opts.productNumber,
-                        productQuantity: $(me.opts.productQuantitySelector).val(),
-                    },
-                    success: function(response) {
-                        resolve(response.orderId);
-                    },
-                    failure: function() {
-                        reject();
-                    },
-                });
-            });
+            return $.ajax({
+                url: me.opts.createOrderUrl,
+                data: {
+                    addProduct: true,
+                    productNumber: me.opts.productNumber,
+                    productQuantity: $(me.opts.productQuantitySelector).val(),
+                },
+            }).then(function(response) {
+                return response.orderId;
+            }).promise();
         },
 
         /**
@@ -340,23 +332,17 @@
         onApprove: function(data, actions) {
             var me = this;
 
-            return new Promise(function(resolve, reject) {
-                $.ajax({
-                    url: me.opts.onApproveUrl,
-                    data: data,
-                    success: function(response) {
-                        var url = me.opts.confirmUrl +
-                            '?expressCheckout=' + response.expressCheckout +
-                            '&orderId=' + response.orderId;
-
-                        actions.redirect(url);
-                        resolve();
-                    },
-                    failure: function() {
-                        reject();
-                    },
+            return $.ajax({
+                url: me.opts.onApproveUrl,
+                data: data,
+            }).then(function(response) {
+                var url = me.opts.confirmUrl + '?' + $.param({
+                    expressCheckout: response.expressCheckout,
+                    orderId: response.orderId,
                 });
-            });
+
+                actions.redirect(url);
+            }).promise();
         },
 
         /**

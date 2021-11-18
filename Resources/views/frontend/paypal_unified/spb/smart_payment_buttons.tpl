@@ -12,7 +12,7 @@
                      data-paypalUnifiedSmartPaymentButtons="true"
                      data-clientId="{$paypalUnifiedSpbClientId}"
                      data-currency="{$paypalUnifiedSpbCurrency}"
-                     data-createPaymentUrl="{url module=widgets controller=PaypalUnifiedSmartPaymentButtons action=createPayment forceSecure}"
+                     data-createPaymentUrl="{url module=widgets controller=PaypalUnifiedV2SmartPaymentButtons action=createOrder forceSecure}"
                      data-checkoutConfirmUrl="{url module=frontend controller=checkout action=confirm spbCheckout=1 forceSecure}">
                 </div>
             {/if}

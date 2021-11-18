@@ -159,7 +159,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2ExpressCheckout extends Shopw
     {
         $orderNumber = (string) $this->saveOrder($payPalOrderId, $payPalOrderId, PaymentStatus::PAYMENT_STATUS_OPEN);
 
-        $this->orderDataService->applyPaymentTypeAttribute($orderNumber, PaymentType::PAYPAL_CLASSIC_V2);
+        $this->orderDataService->applyPaymentTypeAttribute($orderNumber, PaymentType::PAYPAL_EXPRESS_V2);
 
         return $orderNumber;
     }
