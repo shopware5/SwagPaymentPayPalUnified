@@ -43,12 +43,13 @@ class InContext implements SubscriberInterface
     public function __construct(
         Connection $connection,
         SettingsServiceInterface $settingsService,
-        DependencyProvider $dependencyProvider
+        DependencyProvider $dependencyProvider,
+        PaymentMethodProvider $paymentMethodProvider
     ) {
-        $this->paymentMethodProvider = new PaymentMethodProvider();
         $this->connection = $connection;
         $this->settingsService = $settingsService;
         $this->dependencyProvider = $dependencyProvider;
+        $this->paymentMethodProvider = $paymentMethodProvider;
     }
 
     /**
@@ -74,7 +75,7 @@ class InContext implements SubscriberInterface
             return;
         }
 
-        $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag($this->connection);
+        $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
         if (!$swUnifiedActive) {
             return;
         }
@@ -96,7 +97,7 @@ class InContext implements SubscriberInterface
         }
 
         $view = $controller->View();
-        $view->assign('paypalUnifiedPaymentId', $this->paymentMethodProvider->getPaymentId($this->connection));
+        $view->assign('paypalUnifiedPaymentId', $this->paymentMethodProvider->getPaymentId(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME));
         $view->assign('paypalUnifiedModeSandbox', $settings->getSandbox());
         $view->assign('paypalUnifiedUseInContext', $settings->getUseInContext());
         $view->assign('paypalUnifiedEcButtonStyleColor', $expressSettings->getButtonStyleColor());

@@ -18,7 +18,8 @@ trait PayPalUnifiedPaymentIdTrait
     protected function getUnifiedPaymentId()
     {
         $connection = Shopware()->Container()->get('dbal_connection');
+        $modelManager = Shopware()->Container()->get('models');
 
-        return (new PaymentMethodProvider())->getPaymentId($connection);
+        return (new PaymentMethodProvider($connection, $modelManager))->getPaymentId(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
     }
 }

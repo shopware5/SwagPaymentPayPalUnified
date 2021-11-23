@@ -43,12 +43,13 @@ class InstallmentsBanner implements SubscriberInterface
     public function __construct(
         SettingsServiceInterface $settingsService,
         Connection $connection,
-        ContextServiceInterface $contextService
+        ContextServiceInterface $contextService,
+        PaymentMethodProvider $paymentMethodProvider
     ) {
         $this->settingsService = $settingsService;
         $this->connection = $connection;
-        $this->paymentMethodProvider = new PaymentMethodProvider();
         $this->contextService = $contextService;
+        $this->paymentMethodProvider = $paymentMethodProvider;
     }
 
     /**
@@ -142,7 +143,7 @@ class InstallmentsBanner implements SubscriberInterface
     {
         $isInstallmentsCountry = $this->isInstallmentsCountry($shopLocale);
 
-        $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag($this->connection);
+        $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
 
         return $swUnifiedActive
             && (bool) $this->settingsService->get('advertise_installments', SettingsTable::INSTALLMENTS)

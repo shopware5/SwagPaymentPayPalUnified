@@ -30,11 +30,21 @@ class Uninstaller
      */
     private $connection;
 
-    public function __construct(CrudService $attributeCrudService, ModelManager $modelManager, Connection $connection)
-    {
+    /**
+     * @var PaymentMethodProvider
+     */
+    private $paymentMethodProvider;
+
+    public function __construct(
+        CrudService $attributeCrudService,
+        ModelManager $modelManager,
+        Connection $connection,
+        PaymentMethodProvider $paymentMethodProvider
+    ) {
         $this->attributeCrudService = $attributeCrudService;
         $this->modelManager = $modelManager;
         $this->connection = $connection;
+        $this->paymentMethodProvider = $paymentMethodProvider;
     }
 
     /**
@@ -52,8 +62,8 @@ class Uninstaller
 
     private function deactivatePayments()
     {
-        $paymentMethodProvider = new PaymentMethodProvider($this->modelManager);
-        $paymentMethodProvider->setPaymentMethodActiveFlag(false);
+        $this->paymentMethodProvider->setPaymentMethodActiveFlag(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME, false);
+        $this->paymentMethodProvider->setPaymentMethodActiveFlag(PaymentMethodProvider::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME, false);
     }
 
     private function removeAttributes()

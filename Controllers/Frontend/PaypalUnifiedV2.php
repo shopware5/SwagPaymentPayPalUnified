@@ -10,8 +10,8 @@ use Shopware\Components\HttpClient\RequestException;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
 use SwagPaymentPayPalUnified\Components\PaymentStatus;
-use SwagPaymentPayPalUnified\Components\PayPalOrderBuilderParameter;
-use SwagPaymentPayPalUnified\Components\Services\Common\CartPersister;
+use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\PayPalOrderParameterFacadeInterface;
+use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\ShopwareOrderData;
 use SwagPaymentPayPalUnified\Components\Services\OrderDataService;
 use SwagPaymentPayPalUnified\Components\Services\PaymentControllerHelper;
 use SwagPaymentPayPalUnified\Components\Services\PayPalOrderBuilderService;
@@ -68,9 +68,9 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends Shopware_Controllers
     private $orderDataService;
 
     /**
-     * @var CartPersister
+     * @var PayPalOrderParameterFacadeInterface
      */
-    private $cartPersister;
+    private $payPalOrderParameterFacade;
 
     public function preDispatch()
     {
@@ -82,16 +82,16 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends Shopware_Controllers
         $this->settingsService = $this->get('paypal_unified.settings_service');
         $this->paymentControllerHelper = $this->get('paypal_unified.payment_controller_helper');
         $this->orderDataService = $this->get('paypal_unified.order_data_service');
-        $this->cartPersister = $this->get('paypal_unified.common.cart_persister');
+        $this->payPalOrderParameterFacade = $this->get('paypal_unified.paypal_order_parameter_facade');
     }
 
     public function indexAction()
     {
         $session = $this->dependencyProvider->getSession();
 
-        $shopwareOrderData = $session->get('sOrderVariables');
+        $shopwareSessionOrderData = $session->get('sOrderVariables');
 
-        if ($shopwareOrderData === null) {
+        if ($shopwareSessionOrderData === null) {
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
                 ->setCode(ErrorCodes::NO_ORDER_TO_PROCESS);
 
@@ -109,13 +109,8 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends Shopware_Controllers
             return;
         }
 
-        $orderParams = new PayPalOrderBuilderParameter(
-            $this->paymentControllerHelper->setGrossPriceFallback($shopwareOrderData['sUserData']),
-            $shopwareOrderData['sBasket'],
-            PaymentType::PAYPAL_CLASSIC_V2,
-            $this->cartPersister->persist($shopwareOrderData['sBasket'], $session->get('sUserId')),
-            $this->dependencyProvider->createPaymentToken()
-        );
+        $shopwareOrderData = new ShopwareOrderData($shopwareSessionOrderData['sUserData'], $shopwareSessionOrderData['sBasket']);
+        $orderParams = $this->payPalOrderParameterFacade->createPayPalOrderParameter(PaymentType::PAYPAL_CLASSIC_V2, $shopwareOrderData);
 
         try {
             $payPalOrderData = $this->orderBuilderService->getOrder($orderParams);

@@ -32,12 +32,12 @@ class CartHelper
     public function getTotalAmount(array $cart, array $customer)
     {
         //Case 1: Show gross prices in shopware and don't exclude country tax
-        if ($this->customerHelper->hasGrossPrices($customer) && !$this->customerHelper->useNetPriceCalculation($customer)) {
+        if ($this->customerHelper->shouldUseNetPrice($customer) && !$this->customerHelper->hasNetPriceCaluclationIndicator($customer)) {
             return $this->priceFormatter->formatPrice($cart['AmountNumeric']);
         }
 
         //Case 2: Show net prices in shopware and don't exclude country tax
-        if (!$this->customerHelper->hasGrossPrices($customer) && !$this->customerHelper->useNetPriceCalculation($customer)) {
+        if (!$this->customerHelper->shouldUseNetPrice($customer) && !$this->customerHelper->hasNetPriceCaluclationIndicator($customer)) {
             return $this->priceFormatter->formatPrice($cart['AmountWithTaxNumeric']);
         }
 

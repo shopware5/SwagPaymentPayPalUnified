@@ -80,8 +80,12 @@ class FrontendSubscriberTest extends TestCase
 
     public function testOnPostDispatchSecurePaymentMethodInactive()
     {
-        $paymentMethodProvider = new PaymentMethodProvider(Shopware()->Container()->get('models'));
-        $paymentMethodProvider->setPaymentMethodActiveFlag(false);
+        $paymentMethodProvider = new PaymentMethodProvider(
+            Shopware()->Container()->get('dbal_connection'),
+            Shopware()->Container()->get('models')
+        );
+
+        $paymentMethodProvider->setPaymentMethodActiveFlag(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME, false);
         $subscriber = $this->getSubscriber();
         $this->createTestSettings();
 
@@ -95,7 +99,7 @@ class FrontendSubscriberTest extends TestCase
 
         static::assertFalse($view->getAssign('paypalUnifiedShowLogo'));
 
-        $paymentMethodProvider->setPaymentMethodActiveFlag(true);
+        $paymentMethodProvider->setPaymentMethodActiveFlag(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME, true);
     }
 
     public function testOnPostDispatchSecureAssignsVariablesToView()
@@ -334,7 +338,8 @@ class FrontendSubscriberTest extends TestCase
             Shopware()->Container()->getParameter('paypal_unified.plugin_dir'),
             Shopware()->Container()->get('paypal_unified.settings_service'),
             Shopware()->Container()->get('dbal_connection'),
-            Shopware()->Container()->get('paypal_unified.risk_management')
+            Shopware()->Container()->get('paypal_unified.risk_management'),
+            Shopware()->Container()->get('paypal_unified.payment_method_provider')
         );
     }
 

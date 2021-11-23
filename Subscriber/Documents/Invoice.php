@@ -45,12 +45,18 @@ class Invoice implements SubscriberInterface
      */
     private $templateManager;
 
+    /**
+     * @var PaymentMethodProvider
+     */
+    private $paymentMethodProvider;
+
     public function __construct(
         PaymentInstructionService $paymentInstructionService,
         Connection $dbalConnection,
         SnippetManager $snippetManager,
         Shopware_Components_Translation $translation = null,
-        Template $templateManager
+        Template $templateManager,
+        PaymentMethodProvider $paymentMethodProvider
     ) {
         $this->paymentInstructionsService = $paymentInstructionService;
         $this->dbalConnection = $dbalConnection;
@@ -61,6 +67,7 @@ class Invoice implements SubscriberInterface
         if ($this->translation === null) {
             $this->translation = new Shopware_Components_Translation();
         }
+        $this->paymentMethodProvider = $paymentMethodProvider;
     }
 
     /**
@@ -83,7 +90,7 @@ class Invoice implements SubscriberInterface
             return;
         }
 
-        $unifiedPaymentId = (new PaymentMethodProvider())->getPaymentId($this->dbalConnection);
+        $unifiedPaymentId = $this->paymentMethodProvider->getPaymentId(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
 
         $orderPaymentMethodId = (int) $document->_order->payment['id'];
 

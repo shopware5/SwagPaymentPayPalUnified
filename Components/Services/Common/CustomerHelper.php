@@ -18,7 +18,7 @@ class CustomerHelper
      *
      * @return bool
      */
-    public function hasGrossPrices(array $customer)
+    public function shouldUseNetPrice(array $customer)
     {
         return (bool) $customer['additional']['show_net'];
     }
@@ -29,7 +29,7 @@ class CustomerHelper
      *
      * @return bool
      */
-    public function useNetPriceCalculation(array $customer)
+    public function hasNetPriceCaluclationIndicator(array $customer)
     {
         if (!empty($customer['additional']['countryShipping']['taxfree'])) {
             return true;

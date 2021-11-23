@@ -11,6 +11,7 @@ namespace SwagPaymentPayPalUnified\Tests\Functional\Setup;
 use Doctrine\DBAL\Connection;
 use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
+use SwagPaymentPayPalUnified\Setup\PaymentModelCreator;
 use SwagPaymentPayPalUnified\Setup\Updater;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 
@@ -27,7 +28,9 @@ class UpdaterTest extends TestCase
         $updater = new Updater(
             Shopware()->Container()->get('shopware_attribute.crud_service'),
             Shopware()->Container()->get('models'),
-            Shopware()->Container()->get('dbal_connection')
+            Shopware()->Container()->get('dbal_connection'),
+            Shopware()->Container()->get('paypal_unified.payment_method_provider'),
+            new PaymentModelCreator()
         );
 
         $reflectionMethod = (new \ReflectionClass(Updater::class))->getMethod('updateTo303');
@@ -61,7 +64,9 @@ class UpdaterTest extends TestCase
         $updater = new Updater(
             Shopware()->Container()->get('shopware_attribute.crud_service'),
             Shopware()->Container()->get('models'),
-            Shopware()->Container()->get('dbal_connection')
+            Shopware()->Container()->get('dbal_connection'),
+            Shopware()->Container()->get('paypal_unified.payment_method_provider'),
+            new PaymentModelCreator()
         );
 
         $reflectionMethod = (new \ReflectionClass(Updater::class))->getMethod('updateTo304');

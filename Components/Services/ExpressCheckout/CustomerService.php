@@ -79,16 +79,17 @@ class CustomerService
         ContextServiceInterface $contextService,
         RegisterServiceInterface $registerService,
         Enlight_Controller_Front $front,
-        DependencyProvider $dependencyProvider
+        DependencyProvider $dependencyProvider,
+        PaymentMethodProvider $paymentMethodProvider
     ) {
         $this->shopwareConfig = $shopwareConfig;
         $this->connection = $connection;
         $this->formFactory = $formFactory;
         $this->contextService = $contextService;
         $this->registerService = $registerService;
-        $this->paymentMethodProvider = new PaymentMethodProvider();
         $this->front = $front;
         $this->dependencyProvider = $dependencyProvider;
+        $this->paymentMethodProvider = $paymentMethodProvider;
     }
 
     public function createNewCustomer(Order $orderStruct)
@@ -161,7 +162,7 @@ class CustomerService
         $form = $this->formFactory->create(PersonalFormType::class, $customer);
         $form->submit($customerData);
 
-        $customer->setPaymentId($this->paymentMethodProvider->getPaymentId($this->connection));
+        $customer->setPaymentId($this->paymentMethodProvider->getPaymentId(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME));
 
         $address = new Address();
         $form = $this->formFactory->create(AddressFormType::class, $address);

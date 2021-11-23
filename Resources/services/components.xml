@@ -79,7 +79,7 @@
                  class="SwagPaymentPayPalUnified\Components\Services\RiskManagement\RiskManagement"
                  public="true">
             <argument type="service" id="paypal_unified.dependency_provider"/>
-            <argument type="service" id="dbal_connection"/>
+            <argument type="service" id="paypal_unified.payment_method_provider"/>
         </service>
 
         <service id="paypal_unified.risk_management_helper"
@@ -100,6 +100,21 @@
                  class="SwagPaymentPayPalUnified\Components\Services\PaymentControllerHelper"
                  public="true">
             <argument type="service" id="paypal_unified.dependency_provider"/>
+        </service>
+
+        <service id="paypal_unified.payment_method_provider"
+                class="SwagPaymentPayPalUnified\Components\PaymentMethodProvider"
+                public="true">
+            <argument type="service" id="dbal_connection"/>
+            <argument type="service" id="models"/>
+        </service>
+
+        <service id="paypal_unified.paypal_order_parameter_facade"
+                 class="SwagPaymentPayPalUnified\Components\PayPalOrderParameter\PayPalOrderParameterFacade"
+                 public="true">
+            <argument type="service" id="paypal_unified.payment_controller_helper"/>
+            <argument type="service" id="paypal_unified.dependency_provider"/>
+            <argument type="service" id="paypal_unified.common.cart_persister"/>
         </service>
 
     </services>

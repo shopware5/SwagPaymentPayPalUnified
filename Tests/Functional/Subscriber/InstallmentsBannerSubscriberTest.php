@@ -73,8 +73,8 @@ class InstallmentsBannerSubscriberTest extends TestCase
 
     public function testOnPostDispatchSecurePaymentMethodInactive()
     {
-        $paymentMethodProvider = new PaymentMethodProvider(Shopware()->Container()->get('models'));
-        $paymentMethodProvider->setPaymentMethodActiveFlag(false);
+        $paymentMethodProvider = $this->getPaymentMethodProvider();
+        $paymentMethodProvider->setPaymentMethodActiveFlag(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME, false);
         $subscriber = $this->getSubscriber();
         $this->createTestSettings();
 
@@ -91,8 +91,8 @@ class InstallmentsBannerSubscriberTest extends TestCase
 
     public function testOnPostDispatchSecureInstallmentsBannerInactive()
     {
-        $paymentMethodProvider = new PaymentMethodProvider(Shopware()->Container()->get('models'));
-        $paymentMethodProvider->setPaymentMethodActiveFlag(false);
+        $paymentMethodProvider = $this->getPaymentMethodProvider();
+        $paymentMethodProvider->setPaymentMethodActiveFlag(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME, false);
         $subscriber = $this->getSubscriber();
         $this->createTestSettings(true, false);
 
@@ -237,7 +237,8 @@ class InstallmentsBannerSubscriberTest extends TestCase
         return new InstallmentsBanner(
             Shopware()->Container()->get('paypal_unified.settings_service'),
             Shopware()->Container()->get('dbal_connection'),
-            Shopware()->Container()->get('shopware_storefront.context_service')
+            Shopware()->Container()->get('shopware_storefront.context_service'),
+            Shopware()->Container()->get('paypal_unified.payment_method_provider')
         );
     }
 
@@ -257,5 +258,13 @@ class InstallmentsBannerSubscriberTest extends TestCase
             'shopId' => 1,
             'advertiseInstallments' => $advertiseInstallments,
         ]);
+    }
+
+    private function getPaymentMethodProvider()
+    {
+        return new PaymentMethodProvider(
+            Shopware()->Container()->get('dbal_connection'),
+            Shopware()->Container()->get('models')
+        );
     }
 }

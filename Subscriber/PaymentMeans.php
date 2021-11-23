@@ -38,11 +38,11 @@ class PaymentMeans implements SubscriberInterface
     public function __construct(
         Connection $connection,
         SettingsServiceInterface $settingsService,
-        \Enlight_Components_Session_Namespace $session
+        \Enlight_Components_Session_Namespace $session,
+        PaymentMethodProvider $paymentMethodProvider
     ) {
         $this->connection = $connection;
-        $paymentMethodProvider = new PaymentMethodProvider();
-        $this->unifiedPaymentId = $paymentMethodProvider->getPaymentId($connection);
+        $this->unifiedPaymentId = $paymentMethodProvider->getPaymentId(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
         $this->settingsService = $settingsService;
         $this->session = $session;
     }

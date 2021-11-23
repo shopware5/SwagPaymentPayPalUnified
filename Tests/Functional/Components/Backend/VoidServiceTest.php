@@ -32,6 +32,7 @@ class VoidServiceTest extends TestCase
     public function before()
     {
         $this->modelManager = Shopware()->Container()->get('models');
+        $this->connection = Shopware()->Container()->get('dbal_connection');
     }
 
     public function testVoidOrder()

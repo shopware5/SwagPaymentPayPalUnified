@@ -46,8 +46,8 @@ class PlusSubscriberTest extends TestCase
 
     public function testOnPostDispatchCheckoutShouldReturnPaymentMethodInactive()
     {
-        $paymentMethodProvider = new PaymentMethodProvider(Shopware()->Container()->get('models'));
-        $paymentMethodProvider->setPaymentMethodActiveFlag(false);
+        $paymentMethodProvider = $this->getPaymentMethodProvider();
+        $paymentMethodProvider->setPaymentMethodActiveFlag(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME, false);
 
         $view = new ViewMock(new Enlight_Template_Manager());
         $request = new Enlight_Controller_Request_RequestTestCase();
@@ -61,7 +61,7 @@ class PlusSubscriberTest extends TestCase
 
         static::assertNull($view->getAssign('paypalUnifiedUsePlus'));
 
-        $paymentMethodProvider->setPaymentMethodActiveFlag(true);
+        $paymentMethodProvider->setPaymentMethodActiveFlag(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME, true);
     }
 
     public function testOnPostDispatchCheckoutShouldReturnBecauseNoSettingsExists()
@@ -140,8 +140,8 @@ class PlusSubscriberTest extends TestCase
         $request->setActionName('finish');
         $response = new Enlight_Controller_Response_ResponseTestCase();
 
-        $paymentMethodProvider = new PaymentMethodProvider(Shopware()->Container()->get('models'));
-        $unifiedPaymentId = $paymentMethodProvider->getPaymentId(Shopware()->Container()->get('dbal_connection'));
+        $paymentMethodProvider = $this->getPaymentMethodProvider();
+        $unifiedPaymentId = $paymentMethodProvider->getPaymentId(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
         $view->assign('sPayments', [$unifiedPaymentId => ['id' => $unifiedPaymentId]]);
         $view->assign('sBasket', ['content' => []]);
 
@@ -164,8 +164,8 @@ class PlusSubscriberTest extends TestCase
         $request->setParam('paypal_unified_error_code', 5);
         $response = new Enlight_Controller_Response_ResponseTestCase();
 
-        $paymentMethodProvider = new PaymentMethodProvider(Shopware()->Container()->get('models'));
-        $unifiedPaymentId = $paymentMethodProvider->getPaymentId(Shopware()->Container()->get('dbal_connection'));
+        $paymentMethodProvider = $this->getPaymentMethodProvider();
+        $unifiedPaymentId = $paymentMethodProvider->getPaymentId(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
         $view->assign('sPayments', [$unifiedPaymentId => ['id' => $unifiedPaymentId]]);
         $view->assign('sBasket', ['content' => []]);
 
@@ -185,8 +185,8 @@ class PlusSubscriberTest extends TestCase
     {
         $this->createTestSettings(true, true, false, false, true);
 
-        $paymentMethodProvider = new PaymentMethodProvider(Shopware()->Container()->get('models'));
-        $unifiedPaymentId = $paymentMethodProvider->getPaymentId(Shopware()->Container()->get('dbal_connection'));
+        $paymentMethodProvider = $this->getPaymentMethodProvider();
+        $unifiedPaymentId = $paymentMethodProvider->getPaymentId(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
 
         $view = new ViewMock(new Enlight_Template_Manager());
         $view->assign('sPayment', ['id' => $unifiedPaymentId]);
@@ -223,8 +223,8 @@ class PlusSubscriberTest extends TestCase
     public function testOnPostDispatchSecureHandleShippingPaymentDispatchCouldNotCreatePaymentStruct()
     {
         $this->createTestSettings(true, true, true);
-        $paymentMethodProvider = new PaymentMethodProvider(Shopware()->Container()->get('models'));
-        $unifiedPaymentId = $paymentMethodProvider->getPaymentId(Shopware()->Container()->get('dbal_connection'));
+        $paymentMethodProvider = $this->getPaymentMethodProvider();
+        $unifiedPaymentId = $paymentMethodProvider->getPaymentId(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
 
         $view = new ViewMock(new Enlight_Template_Manager());
         $view->assign('sPayment', ['id' => $unifiedPaymentId]);
@@ -245,8 +245,8 @@ class PlusSubscriberTest extends TestCase
     public function testOnPostDispatchSecureSetsRestyleCorrectlyIfSettingIsOn()
     {
         $this->createTestSettings(true, true, true);
-        $paymentMethodProvider = new PaymentMethodProvider(Shopware()->Container()->get('models'));
-        $unifiedPaymentId = $paymentMethodProvider->getPaymentId(Shopware()->Container()->get('dbal_connection'));
+        $paymentMethodProvider = $this->getPaymentMethodProvider();
+        $unifiedPaymentId = $paymentMethodProvider->getPaymentId(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
 
         $view = new ViewMock(new Enlight_Template_Manager());
         $view->assign('sPayment', ['id' => $unifiedPaymentId]);
@@ -268,8 +268,8 @@ class PlusSubscriberTest extends TestCase
     public function testOnPostDispatchSecureSetsRestyleCorrectlyIfSettingIsOff()
     {
         $this->createTestSettings();
-        $paymentMethodProvider = new PaymentMethodProvider(Shopware()->Container()->get('models'));
-        $unifiedPaymentId = $paymentMethodProvider->getPaymentId(Shopware()->Container()->get('dbal_connection'));
+        $paymentMethodProvider = $this->getPaymentMethodProvider();
+        $unifiedPaymentId = $paymentMethodProvider->getPaymentId(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
 
         $view = new ViewMock(new Enlight_Template_Manager());
         $view->assign('sPayment', ['id' => $unifiedPaymentId]);
@@ -290,8 +290,8 @@ class PlusSubscriberTest extends TestCase
     public function testOnPostDispatchSecureHandleShippingPaymentDispatchHandleIntegratingThirdPartyMethods()
     {
         $this->createTestSettings(true, true, false, true);
-        $paymentMethodProvider = new PaymentMethodProvider(Shopware()->Container()->get('models'));
-        $unifiedPaymentId = $paymentMethodProvider->getPaymentId(Shopware()->Container()->get('dbal_connection'));
+        $paymentMethodProvider = $this->getPaymentMethodProvider();
+        $unifiedPaymentId = $paymentMethodProvider->getPaymentId(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
 
         $view = new ViewMock(new Enlight_Template_Manager());
         $view->assign('sPayment', ['id' => $unifiedPaymentId]);
@@ -324,8 +324,8 @@ class PlusSubscriberTest extends TestCase
     public function testOnPostDispatchSecureHandleFinishDispatch()
     {
         $this->createTestSettings();
-        $paymentMethodProvider = new PaymentMethodProvider(Shopware()->Container()->get('models'));
-        $unifiedPaymentId = $paymentMethodProvider->getPaymentId(Shopware()->Container()->get('dbal_connection'));
+        $paymentMethodProvider = $this->getPaymentMethodProvider();
+        $unifiedPaymentId = $paymentMethodProvider->getPaymentId(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
 
         $view = new ViewMock(new Enlight_Template_Manager());
         $view->assign('sPayment', ['id' => $unifiedPaymentId]);
@@ -347,8 +347,8 @@ class PlusSubscriberTest extends TestCase
     public function testOnPostDispatchSecureHandleFinishDispatchAddPaymentInstructions()
     {
         $this->createTestSettings();
-        $paymentMethodProvider = new PaymentMethodProvider(Shopware()->Container()->get('models'));
-        $unifiedPaymentId = $paymentMethodProvider->getPaymentId(Shopware()->Container()->get('dbal_connection'));
+        $paymentMethodProvider = $this->getPaymentMethodProvider();
+        $unifiedPaymentId = $paymentMethodProvider->getPaymentId(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
 
         $view = new ViewMock(new Enlight_Template_Manager());
         $view->assign('sPayment', ['id' => $unifiedPaymentId]);
@@ -372,8 +372,8 @@ class PlusSubscriberTest extends TestCase
     public function testOnPostDispatchSecureHandleConfirmDispatch()
     {
         $this->createTestSettings();
-        $paymentMethodProvider = new PaymentMethodProvider(Shopware()->Container()->get('models'));
-        $unifiedPaymentId = $paymentMethodProvider->getPaymentId(Shopware()->Container()->get('dbal_connection'));
+        $paymentMethodProvider = $this->getPaymentMethodProvider();
+        $unifiedPaymentId = $paymentMethodProvider->getPaymentId(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
 
         $view = new ViewMock(new Enlight_Template_Manager());
         $view->assign('sPayment', ['id' => $unifiedPaymentId]);
@@ -399,8 +399,8 @@ class PlusSubscriberTest extends TestCase
     public function testOnPostDispatchSecureHandleConfirmDispatchShouldReturnBecauseOfNoPaymentStruct()
     {
         $this->createTestSettings();
-        $paymentMethodProvider = new PaymentMethodProvider(Shopware()->Container()->get('models'));
-        $unifiedPaymentId = $paymentMethodProvider->getPaymentId(Shopware()->Container()->get('dbal_connection'));
+        $paymentMethodProvider = $this->getPaymentMethodProvider();
+        $unifiedPaymentId = $paymentMethodProvider->getPaymentId(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
 
         $view = new ViewMock(new Enlight_Template_Manager());
         $view->assign('sPayment', ['id' => $unifiedPaymentId]);
@@ -426,8 +426,8 @@ class PlusSubscriberTest extends TestCase
     {
         $session = Shopware()->Session();
         $this->createTestSettings();
-        $paymentMethodProvider = new PaymentMethodProvider(Shopware()->Container()->get('models'));
-        $unifiedPaymentId = $paymentMethodProvider->getPaymentId(Shopware()->Container()->get('dbal_connection'));
+        $paymentMethodProvider = $this->getPaymentMethodProvider();
+        $unifiedPaymentId = $paymentMethodProvider->getPaymentId(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
         $session->offsetSet('paypalUnifiedCameFromPaymentSelection', true);
         $session->offsetSet('paypalUnifiedRemotePaymentId', 'PAY-TestRemotePaymentId');
 
@@ -455,8 +455,8 @@ class PlusSubscriberTest extends TestCase
 
     public function testAddPaymentMethodsAttributesPaymentMethodsInactive()
     {
-        $paymentMethodProvider = new PaymentMethodProvider(Shopware()->Container()->get('models'));
-        $paymentMethodProvider->setPaymentMethodActiveFlag(false);
+        $paymentMethodProvider = $this->getPaymentMethodProvider();
+        $paymentMethodProvider->setPaymentMethodActiveFlag(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME, false);
 
         $eventArgs = new Enlight_Event_EventArgs();
         $eventArgs->setReturn([
@@ -467,7 +467,7 @@ class PlusSubscriberTest extends TestCase
 
         static::assertEquals(['test' => 'foo'], $result);
 
-        $paymentMethodProvider->setPaymentMethodActiveFlag(true);
+        $paymentMethodProvider->setPaymentMethodActiveFlag(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME, true);
     }
 
     public function testAddPaymentMethodsAttributesUnifiedInactive()
@@ -629,7 +629,19 @@ class PlusSubscriberTest extends TestCase
             Shopware()->Container()->get('paypal_unified.plus.payment_builder_service'),
             Shopware()->Container()->get('paypal_unified.client_service'),
             new PaymentResourceMock(),
-            Shopware()->Container()->get('paypal_unified.exception_handler_service')
+            Shopware()->Container()->get('paypal_unified.exception_handler_service'),
+            Shopware()->Container()->get('paypal_unified.payment_method_provider')
+        );
+    }
+
+    private function getPaymentMethodProvider()
+    {
+        $connection = Shopware()->Container()->get('dbal_connection');
+        $modelManager = Shopware()->Container()->get('models');
+
+        return new PaymentMethodProvider(
+            $connection,
+            $modelManager
         );
     }
 }

@@ -16,34 +16,34 @@ class PaymentMethodProviderTest extends TestCase
 {
     public function testGetPaymentMethod()
     {
-        $provider = new PaymentMethodProvider(Shopware()->Models());
+        $provider = $this->getPaymentMethodProvider();
 
-        static::assertNotNull($provider->getPaymentMethodModel(), 'The payment method should not be null');
+        static::assertNotNull($provider->getPaymentMethodModel(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME), 'The payment method should not be null');
     }
 
     public function testSetPaymentInactive()
     {
-        $provider = new PaymentMethodProvider(Shopware()->Models());
-        $provider->setPaymentMethodActiveFlag(false);
+        $provider = $this->getPaymentMethodProvider();
+        $provider->setPaymentMethodActiveFlag(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME, false);
 
-        $payment = $provider->getPaymentMethodModel();
+        $payment = $provider->getPaymentMethodModel(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
         static::assertInstanceOf(Payment::class, $payment);
         static::assertFalse($payment->getActive());
     }
 
     public function testSetPaymentActive()
     {
-        $provider = new PaymentMethodProvider(Shopware()->Models());
-        $provider->setPaymentMethodActiveFlag(true);
+        $provider = $this->getPaymentMethodProvider();
+        $provider->setPaymentMethodActiveFlag(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME, true);
 
-        $payment = $provider->getPaymentMethodModel();
+        $payment = $provider->getPaymentMethodModel(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
         static::assertInstanceOf(Payment::class, $payment);
         static::assertTrue($payment->getActive());
     }
 
     public function testGetPaymentId()
     {
-        $provider = new PaymentMethodProvider(Shopware()->Models());
+        $provider = $this->getPaymentMethodProvider();
         $paymentIdQuery = 'SELECT pm.id FROM s_core_paymentmeans pm WHERE pm.name=:name';
 
         $connection = Shopware()->Container()->get('dbal_connection');
@@ -53,15 +53,21 @@ class PaymentMethodProviderTest extends TestCase
             [':name' => PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME]
         )->fetchColumn();
 
-        static::assertSame($paymentId, $provider->getPaymentId(Shopware()->Container()->get('dbal_connection')));
+        static::assertSame($paymentId, $provider->getPaymentId(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME));
     }
 
     public function testGetPaymentActive()
     {
-        $activeFlag = (new PaymentMethodProvider(Shopware()->Models()))->getPaymentMethodActiveFlag(
-            Shopware()->Container()->get('dbal_connection')
-        );
+        $activeFlag = $this->getPaymentMethodProvider()->getPaymentMethodActiveFlag(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
 
         static::assertTrue($activeFlag);
+    }
+
+    private function getPaymentMethodProvider()
+    {
+        return new PaymentMethodProvider(
+            Shopware()->Container()->get('dbal_connection'),
+            Shopware()->Models()
+        );
     }
 }

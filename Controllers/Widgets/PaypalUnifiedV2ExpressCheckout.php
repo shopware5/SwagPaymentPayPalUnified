@@ -9,8 +9,8 @@
 use Shopware\Components\HttpClient\RequestException;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
-use SwagPaymentPayPalUnified\Components\PayPalOrderBuilderParameter;
-use SwagPaymentPayPalUnified\Components\Services\Common\CartPersister;
+use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\PayPalOrderParameterFacadeInterface;
+use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\ShopwareOrderData;
 use SwagPaymentPayPalUnified\Components\Services\ExpressCheckout\CustomerService;
 use SwagPaymentPayPalUnified\Components\Services\PaymentControllerHelper;
 use SwagPaymentPayPalUnified\Components\Services\PayPalOrderBuilderService;
@@ -19,6 +19,9 @@ use SwagPaymentPayPalUnified\PayPalBundle\PartnerAttributionId;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\OrderResource;
 
+/**
+ * @phpstan-import-type CheckoutBasketArray from \Shopware_Controllers_Frontend_Checkout
+ */
 class Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout extends Shopware_Controllers_Frontend_Checkout
 {
     /**
@@ -47,9 +50,9 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout extends Shopwa
     private $paymentControllerHelper;
 
     /**
-     * @var CartPersister
+     * @var PayPalOrderParameterFacadeInterface
      */
-    private $cartPersister;
+    private $payPalOrderParameterFacade;
 
     public function preDispatch()
     {
@@ -62,7 +65,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout extends Shopwa
         $this->orderResource = $this->get('paypal_unified.v2.order_resource');
         $this->redirectDataBuilderFactory = $this->get('paypal_unified.redirect_data_builder_factory');
         $this->paymentControllerHelper = $this->get('paypal_unified.payment_controller_helper');
-        $this->cartPersister = $this->get('paypal_unified.common.cart_persister');
+        $this->payPalOrderParameterFacade = $this->get('paypal_unified.paypal_order_parameter_facade');
     }
 
     public function createOrderAction()
@@ -73,16 +76,12 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout extends Shopwa
             $this->addProductToCart();
         }
 
-        $cart = $this->getBasket();
-        $userData = $this->getUserData();
+        /** @phpstan-var CheckoutBasketArray $basketData */
+        $basketData = $this->getBasket() ?: [];
+        $userData = $this->getUserData() ?: [];
 
-        $orderParams = new PayPalOrderBuilderParameter(
-            $this->paymentControllerHelper->setGrossPriceFallback($userData),
-            $cart,
-            PaymentType::PAYPAL_EXPRESS_V2,
-            $this->cartPersister->persist($cart, $this->session->get('sUserId')),
-            $this->dependencyProvider->createPaymentToken()
-        );
+        $shopwareOrderData = new ShopwareOrderData($userData, $basketData);
+        $orderParams = $this->payPalOrderParameterFacade->createPayPalOrderParameter(PaymentType::PAYPAL_EXPRESS_V2, $shopwareOrderData);
 
         try {
             $payPalOrderData = $this->orderBuilderService->getOrder($orderParams);

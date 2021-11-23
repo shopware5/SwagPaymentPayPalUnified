@@ -12,6 +12,8 @@
             <argument type="service" id="paypal_unified.paypal_order.item_list_provider"/>
             <argument type="service" id="paypal_unified.paypal_order.amount_provider"/>
             <argument type="service" id="paypal_unified.common.return_url_helper"/>
+            <argument type="service" id="shopware_storefront.context_service"/>
+            <argument type="service" id="paypal_unified.phone_number_builder"/>
         </service>
 
         <service id="paypal_unified.paypal_order.item_list_provider"
@@ -29,5 +31,10 @@
             <argument type="service" id="paypal_unified.common.price_formatter"/>
         </service>
 
+        <service id="paypal_unified.phone_number_builder"
+                 class="SwagPaymentPayPalUnified\Components\Services\PhoneNumberBuilder"
+                 public="true">
+            <argument type="service" id="paypal_unified.logger_service"/>
+        </service>
     </services>
 </container>

@@ -36,16 +36,23 @@ class RiskManagement implements SubscriberInterface
      */
     private $connection;
 
+    /**
+     * @var PaymentMethodProvider
+     */
+    private $paymentMethodProvider;
+
     public function __construct(
         RiskManagementHelperInterface $riskManagementHelper,
         \Enlight_Template_Manager $template,
         DependencyProvider $dependencyProvider,
-        Connection $connection
+        Connection $connection,
+        PaymentMethodProvider $paymentMethodProvider
     ) {
         $this->riskManagementHelper = $riskManagementHelper;
         $this->template = $template;
         $this->dependencyProvider = $dependencyProvider;
         $this->connection = $connection;
+        $this->paymentMethodProvider = $paymentMethodProvider;
     }
 
     public static function getSubscribedEvents()
@@ -178,7 +185,7 @@ class RiskManagement implements SubscriberInterface
             return false;
         }
 
-        if ((int) $paymentId !== (new PaymentMethodProvider())->getPaymentId($this->connection)) {
+        if ((int) $paymentId !== $this->paymentMethodProvider->getPaymentId(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME)) {
             return false;
         }
 

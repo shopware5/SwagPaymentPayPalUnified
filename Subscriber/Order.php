@@ -31,11 +31,14 @@ class Order implements SubscriberInterface
      */
     private $paymentMethodProvider;
 
-    public function __construct(Enlight_Controller_Front $front, Connection $connection)
-    {
+    public function __construct(
+        Enlight_Controller_Front $front,
+        Connection $connection,
+        PaymentMethodProvider $paymentMethodProvider
+    ) {
         $this->front = $front;
         $this->connection = $connection;
-        $this->paymentMethodProvider = new PaymentMethodProvider();
+        $this->paymentMethodProvider = $paymentMethodProvider;
     }
 
     /**
@@ -51,7 +54,7 @@ class Order implements SubscriberInterface
     public function onFilterOrderAttributes(\Enlight_Event_EventArgs $args)
     {
         $orderParams = $args->get('orderParams');
-        $payPalPaymentId = $this->paymentMethodProvider->getPaymentId($this->connection);
+        $payPalPaymentId = $this->paymentMethodProvider->getPaymentId(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
         if ((int) $orderParams['paymentID'] !== $payPalPaymentId) {
             return;
         }

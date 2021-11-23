@@ -101,9 +101,9 @@ class Plus implements SubscriberInterface
         PaymentBuilderInterface $paymentBuilderService,
         ClientService $clientService,
         PaymentResource $paymentResource,
-        ExceptionHandlerServiceInterface $exceptionHandlerService
+        ExceptionHandlerServiceInterface $exceptionHandlerService,
+        PaymentMethodProvider $paymentMethodProvider
     ) {
-        $this->paymentMethodProvider = new PaymentMethodProvider();
         $this->settingsService = $settingsService;
         $this->dependencyProvider = $dependencyProvider;
         $this->snippetManager = $snippetManager;
@@ -114,6 +114,7 @@ class Plus implements SubscriberInterface
         $this->clientService = $clientService;
         $this->paymentResource = $paymentResource;
         $this->exceptionHandlerService = $exceptionHandlerService;
+        $this->paymentMethodProvider = $paymentMethodProvider;
     }
 
     /**
@@ -132,7 +133,7 @@ class Plus implements SubscriberInterface
      */
     public function onPostDispatchCheckout(\Enlight_Controller_ActionEventArgs $args)
     {
-        $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag($this->connection);
+        $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
         if (!$swUnifiedActive) {
             return;
         }
@@ -195,7 +196,7 @@ class Plus implements SubscriberInterface
         if ($payments === null) {
             return;
         }
-        $unifiedPaymentId = $this->paymentMethodProvider->getPaymentId($this->connection);
+        $unifiedPaymentId = $this->paymentMethodProvider->getPaymentId(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
         $paymentIds = \array_column($payments, 'id');
         if (!\in_array($unifiedPaymentId, $paymentIds)) {
             return;
@@ -223,7 +224,7 @@ class Plus implements SubscriberInterface
     {
         $paymentMethods = $args->getReturn();
 
-        $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag($this->connection);
+        $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
         if (!$swUnifiedActive) {
             return $paymentMethods;
         }
@@ -300,7 +301,7 @@ class Plus implements SubscriberInterface
         $remotePaymentId = $session->get('paypalUnifiedRemotePaymentId');
 
         $view->assign('paypalUnifiedCameFromPaymentSelection', $cameFromPaymentSelection);
-        $view->assign('paypalUnifiedPaymentId', $this->paymentMethodProvider->getPaymentId($this->connection));
+        $view->assign('paypalUnifiedPaymentId', $this->paymentMethodProvider->getPaymentId(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME));
 
         //If the payment has already been created in the payment selection,
         //we don't have to do anything else.
@@ -334,7 +335,7 @@ class Plus implements SubscriberInterface
         }
 
         $view->assign('paypalUnifiedModeSandbox', $this->settingsService->get('sandbox'));
-        $view->assign('paypalUnifiedPaymentId', $this->paymentMethodProvider->getPaymentId($this->connection));
+        $view->assign('paypalUnifiedPaymentId', $this->paymentMethodProvider->getPaymentId(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME));
         $view->assign('paypalUnifiedRemotePaymentId', $paymentStruct->getId());
         $view->assign('paypalUnifiedApprovalUrl', $paymentStruct->getLinks()[1]->getHref());
         $view->assign('paypalUnifiedLanguageIso', $this->getPaymentWallLanguage());
@@ -407,7 +408,7 @@ class Plus implements SubscriberInterface
 
     private function overwritePaymentName(\Enlight_View_Default $view)
     {
-        $unifiedPaymentId = $this->paymentMethodProvider->getPaymentId($this->connection);
+        $unifiedPaymentId = $this->paymentMethodProvider->getPaymentId(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
         $paymentName = $this->settingsService->get('payment_name', SettingsTable::PLUS);
         $paymentDescription = $this->settingsService->get('payment_description', SettingsTable::PLUS);
 

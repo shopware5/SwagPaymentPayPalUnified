@@ -92,14 +92,16 @@ class PaymentMeansSubscriberTest extends TestCase
             return new PaymentMeans(
                 Shopware()->Container()->get('dbal_connection'),
                 new SettingsServiceMock(),
-                Shopware()->Container()->get('session')
+                Shopware()->Container()->get('session'),
+                Shopware()->Container()->get('paypal_unified.payment_method_provider')
             );
         }
 
         return new PaymentMeans(
             Shopware()->Container()->get('dbal_connection'),
             Shopware()->Container()->get('paypal_unified.settings_service'),
-            Shopware()->Container()->get('session')
+            Shopware()->Container()->get('session'),
+            Shopware()->Container()->get('paypal_unified.payment_method_provider')
         );
     }
 

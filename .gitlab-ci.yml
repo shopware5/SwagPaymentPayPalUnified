@@ -25,6 +25,8 @@ default:
     image: gitlab.shopware.com:5005/shopware/5/product/image/continuous:7.4
 
 .prepare_files_script: &prepare_files_script
+    - composer install --no-dev
+    - composer dump-autoload
     - zip -rq plugin.zip .
     - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.shopware.com/shopware/5/product/shopware.git shopware --depth=1 -b ${CHECKOUT_SHOPWARE_BRANCH}
     - unzip -q plugin.zip -d shopware/custom/plugins/${PLUGIN_NAME}
@@ -125,13 +127,17 @@ PHP analyze:
 Code Coverage:
     extends: .phpunit_base
     script:
-        - php -d pcov.enabled=1 -d pcov.directory=$CI_PROJECT_DIR
+        - php -d pcov.enabled="1" -d pcov.directory="${CI_PROJECT_DIR}" -d pcov.exclude='~(vendor|Tests)~'
             ../../../vendor/bin/phpunit
             --configuration="phpunit.xml.dist"
-            --log-junit="build/artifacts/phpunit.junit.xml"
             --colors="never"
-            --coverage-text="build/artifacts/phpunit-coverage-text"
-        - cat build/artifacts/phpunit-coverage-text | sed -e '/\\Shopware\\.*/d' -e '/\s*Methods:\s*\d*/d'
+            --log-junit="${ARTIFACTS_ROOT}/phpunit.junit.xml"
+            --coverage-cobertura=${ARTIFACTS_ROOT}/phpunit-coverage.cobertura.xml
+        - sed -i 's/\/shopware\/custom\/plugins\/SwagPaymentPayPalUnified//' ${ARTIFACTS_ROOT}/phpunit-coverage.cobertura.xml # Remove the shopware installation part from the <sources> tag, so the coverage paths are relative to the original plugin root again, not the one inside custom/plugins.
+    artifacts:
+        reports:
+            junit: ${ARTIFACTS_ROOT}/*.junit.xml
+            cobertura: ${ARTIFACTS_ROOT}/*.cobertura.xml
 
 SW 5.2:
     extends: .phpunit_base_pre_v53

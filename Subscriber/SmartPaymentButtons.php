@@ -42,12 +42,13 @@ class SmartPaymentButtons implements SubscriberInterface
     public function __construct(
         SettingsServiceInterface $settingsService,
         Connection $connection,
-        SnippetManager $snippetManager
+        SnippetManager $snippetManager,
+        PaymentMethodProvider $paymentMethodProvider
     ) {
         $this->settingsService = $settingsService;
         $this->connection = $connection;
         $this->snippetManager = $snippetManager;
-        $this->paymentMethodProvider = new PaymentMethodProvider();
+        $this->paymentMethodProvider = $paymentMethodProvider;
     }
 
     public static function getSubscribedEvents()
@@ -88,7 +89,7 @@ class SmartPaymentButtons implements SubscriberInterface
         $view->assign('paypalUnifiedUseSmartPaymentButtons', true);
         $view->assign('paypalUnifiedSpbClientId', $generalSettings->getClientId());
         $view->assign('paypalUnifiedSpbCurrency', $view->getAssign('sBasket')['sCurrencyName']);
-        $view->assign('paypalUnifiedPaymentId', $this->paymentMethodProvider->getPaymentId($this->connection));
+        $view->assign('paypalUnifiedPaymentId', $this->paymentMethodProvider->getPaymentId(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME));
     }
 
     public function addSmartPaymentButtonMarks(ActionEventArgs $args)
@@ -115,7 +116,7 @@ class SmartPaymentButtons implements SubscriberInterface
 
         $view->assign('paypalUnifiedUseSmartPaymentButtonMarks', true);
         $view->assign('paypalUnifiedSpbClientId', $generalSettings->getClientId());
-        $view->assign('paypalUnifiedPaymentId', $this->paymentMethodProvider->getPaymentId($this->connection));
+        $view->assign('paypalUnifiedPaymentId', $this->paymentMethodProvider->getPaymentId(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME));
     }
 
     public function addSpbInfoOnConfirm(ActionEventArgs $args)
@@ -159,7 +160,7 @@ class SmartPaymentButtons implements SubscriberInterface
      */
     private function changePaymentDescription(View $view, $paymentsViewParameter)
     {
-        $unifiedPaymentId = $this->paymentMethodProvider->getPaymentId($this->connection);
+        $unifiedPaymentId = $this->paymentMethodProvider->getPaymentId(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
         $paymentMethods = $view->getAssign($paymentsViewParameter);
 
         $paymentDescription = $this->snippetManager->getNamespace('frontend/paypal_unified/smart_payment_buttons/payment')->get('description');
