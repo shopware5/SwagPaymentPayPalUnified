@@ -11,7 +11,7 @@ namespace SwagPaymentPayPalUnified\Components;
 use Enlight_Components_Session_Namespace as ShopwareSession;
 use Shopware\Components\Cart\PaymentTokenService;
 use Shopware\Components\DependencyInjection\Container as DIContainer;
-use Shopware\Models\Shop\DetachedShop;
+use Shopware\Models\Shop\Shop;
 
 class DependencyProvider
 {
@@ -26,7 +26,7 @@ class DependencyProvider
     }
 
     /**
-     * @return DetachedShop|null
+     * @return Shop|null
      */
     public function getShop()
     {

@@ -1,9 +1,139 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\DependencyProvider\\:\\:getShop\\(\\) should return Shopware\\\\Models\\\\Shop\\\\DetachedShop\\|null but returns object\\|null\\.$#"
+			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Backend\\\\CaptureService\\:\\:captureAuthorization\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
-			path: Components/DependencyProvider.php
+			path: Components/Backend/CaptureService.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Backend\\\\CaptureService\\:\\:captureOrder\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Components/Backend/CaptureService.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Backend\\\\CaptureService\\:\\:refundCapture\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Components/Backend/CaptureService.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Backend\\\\CaptureService\\:\\:updateCapturePaymentStatus\\(\\) has parameter \\$captureData with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Components/Backend/CaptureService.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Backend\\\\PaymentDetailsService\\:\\:getPaymentDetails\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Components/Backend/PaymentDetailsService.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Backend\\\\PaymentDetailsService\\:\\:prepareLegacyDetails\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Components/Backend/PaymentDetailsService.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Backend\\\\PaymentDetailsService\\:\\:prepareUnifiedDetails\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Components/Backend/PaymentDetailsService.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Backend\\\\VoidService\\:\\:voidAuthorization\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Components/Backend/VoidService.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Backend\\\\VoidService\\:\\:voidOrder\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Components/Backend/VoidService.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Document\\\\InvoiceDocumentHandler\\:\\:getInvoiceContainer\\(\\) has parameter \\$containers with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Components/Document/InvoiceDocumentHandler.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Document\\\\InvoiceDocumentHandler\\:\\:getInvoiceContainer\\(\\) has parameter \\$orderData with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Components/Document/InvoiceDocumentHandler.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Document\\\\InvoiceDocumentHandler\\:\\:getInvoiceContainer\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Components/Document/InvoiceDocumentHandler.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Document\\\\InvoiceDocumentHandler\\:\\:overwritePaymentName\\(\\) has parameter \\$orderData with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Components/Document/InvoiceDocumentHandler.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Document\\\\InvoiceDocumentHandler\\:\\:overwritePaymentName\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Components/Document/InvoiceDocumentHandler.php
+
+		-
+			message: "#^PHPDoc tag @var for variable \\$containerData has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Components/Document/InvoiceDocumentHandler.php
+
+		-
+			message: "#^PHPDoc tag @var for variable \\$orderData has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Components/Document/InvoiceDocumentHandler.php
+
+		-
+			message: "#^PHPDoc tag @var for variable \\$templateContainers has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Components/Document/InvoiceDocumentHandler.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\PaymentBuilderParameters\\:\\:getBasketData\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Components/PaymentBuilderParameters.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\PaymentBuilderParameters\\:\\:getUserData\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Components/PaymentBuilderParameters.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\PaymentBuilderParameters\\:\\:setBasketData\\(\\) has parameter \\$basketData with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Components/PaymentBuilderParameters.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\PaymentBuilderParameters\\:\\:setUserData\\(\\) has parameter \\$userData with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Components/PaymentBuilderParameters.php
+
+		-
+			message: "#^Property SwagPaymentPayPalUnified\\\\Components\\\\PaymentBuilderParameters\\:\\:\\$basketData type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Components/PaymentBuilderParameters.php
+
+		-
+			message: "#^Property SwagPaymentPayPalUnified\\\\Components\\\\PaymentBuilderParameters\\:\\:\\$userData type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Components/PaymentBuilderParameters.php
+
+		-
+			message: "#^Cannot call method getArea\\(\\) on Shopware\\\\Models\\\\Country\\\\Country\\|null\\.$#"
+			count: 1
+			path: Components/Services/ExpressCheckout/CustomerService.php
+
+		-
+			message: "#^Cannot call method getCountry\\(\\) on Shopware\\\\Models\\\\Customer\\\\Address\\|null\\.$#"
+			count: 1
+			path: Components/Services/ExpressCheckout/CustomerService.php
+
+		-
+			message: "#^Cannot call method getId\\(\\) on Shopware\\\\Models\\\\Country\\\\Area\\|null\\.$#"
+			count: 1
+			path: Components/Services/ExpressCheckout/CustomerService.php
+
+		-
+			message: "#^Cannot call method getId\\(\\) on Shopware\\\\Models\\\\Country\\\\Country\\|null\\.$#"
+			count: 1
+			path: Components/Services/ExpressCheckout/CustomerService.php
 
 		-
 			message: "#^Cannot call method getPayerInfo\\(\\) on SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\Payer\\|null\\.$#"
@@ -16,29 +146,9 @@ parameters:
 			path: Components/Services/ExpressCheckout/CustomerService.php
 
 		-
-			message: "#^Cannot call method getCountry\\(\\) on Shopware\\\\Models\\\\Customer\\\\Address\\|null\\.$#"
+			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\ExpressCheckout\\\\CustomerService\\:\\:registerCustomer\\(\\) has parameter \\$customerData with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: Components/Services/ExpressCheckout/CustomerService.php
-
-		-
-			message: "#^Cannot call method getId\\(\\) on Shopware\\\\Models\\\\Country\\\\Country\\|null\\.$#"
-			count: 1
-			path: Components/Services/ExpressCheckout/CustomerService.php
-
-		-
-			message: "#^Cannot call method getArea\\(\\) on Shopware\\\\Models\\\\Country\\\\Country\\|null\\.$#"
-			count: 1
-			path: Components/Services/ExpressCheckout/CustomerService.php
-
-		-
-			message: "#^Cannot call method getId\\(\\) on Shopware\\\\Models\\\\Country\\\\Area\\|null\\.$#"
-			count: 1
-			path: Components/Services/ExpressCheckout/CustomerService.php
-
-		-
-			message: "#^Parameter \\#1 \\$returnUrl of method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\RedirectUrls\\:\\:setReturnUrl\\(\\) expects string, string\\|false given\\.$#"
-			count: 1
-			path: Components/Services/ExpressCheckout/ExpressCheckoutPaymentBuilderService.php
 
 		-
 			message: "#^Parameter \\#1 \\$cancelUrl of method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\RedirectUrls\\:\\:setCancelUrl\\(\\) expects string, string\\|false given\\.$#"
@@ -56,6 +166,56 @@ parameters:
 			path: Components/Services/ExpressCheckout/ExpressCheckoutPaymentBuilderService.php
 
 		-
+			message: "#^Parameter \\#1 \\$returnUrl of method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\RedirectUrls\\:\\:setReturnUrl\\(\\) expects string, string\\|false given\\.$#"
+			count: 1
+			path: Components/Services/ExpressCheckout/ExpressCheckoutPaymentBuilderService.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\Legacy\\\\LegacyService\\:\\:getClassicPaymentIds\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Components/Services/Legacy/LegacyService.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\LoggerService\\:\\:error\\(\\) has parameter \\$context with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Components/Services/LoggerService.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\LoggerService\\:\\:notify\\(\\) has parameter \\$context with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Components/Services/LoggerService.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\LoggerService\\:\\:warning\\(\\) has parameter \\$context with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Components/Services/LoggerService.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\PaymentAddressService\\:\\:getBillingAddress\\(\\) has parameter \\$userData with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Components/Services/PaymentAddressService.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\PaymentAddressService\\:\\:getPayerInfo\\(\\) has parameter \\$userData with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Components/Services/PaymentAddressService.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\PaymentAddressService\\:\\:getShippingAddress\\(\\) has parameter \\$userData with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Components/Services/PaymentAddressService.php
+
+		-
+			message: "#^Cannot call method getLocale\\(\\) on Shopware\\\\Models\\\\Shop\\\\Shop\\|null\\.$#"
+			count: 1
+			path: Components/Services/PaymentBuilderService.php
+
+		-
+			message: "#^PHPDoc tag @var for variable \\$basketContent has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Components/Services/PaymentBuilderService.php
+
+		-
 			message: "#^Parameter \\#1 \\$cancelUrl of method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\RedirectUrls\\:\\:setCancelUrl\\(\\) expects string, string\\|false given\\.$#"
 			count: 1
 			path: Components/Services/PaymentBuilderService.php
@@ -71,7 +231,12 @@ parameters:
 			path: Components/Services/PaymentBuilderService.php
 
 		-
-			message: "#^Cannot call method getLocale\\(\\) on Shopware\\\\Models\\\\Shop\\\\DetachedShop\\|null\\.$#"
+			message: "#^Property SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\PaymentBuilderService\\:\\:\\$basketData type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Components/Services/PaymentBuilderService.php
+
+		-
+			message: "#^Property SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\PaymentBuilderService\\:\\:\\$userData type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: Components/Services/PaymentBuilderService.php
 
@@ -79,6 +244,16 @@ parameters:
 			message: "#^Parameter \\#1 \\$paymentStatus of method Shopware\\\\Models\\\\Order\\\\Order\\:\\:setPaymentStatus\\(\\) expects Shopware\\\\Models\\\\Order\\\\Status, Shopware\\\\Models\\\\Order\\\\Status\\|null given\\.$#"
 			count: 1
 			path: Components/Services/PaymentStatusService.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\Plus\\\\PlusPaymentBuilderService\\:\\:getEddValue\\(\\) has parameter \\$basketData with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Components/Services/Plus/PlusPaymentBuilderService.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\Plus\\\\PlusPaymentBuilderService\\:\\:getShipmentDetails\\(\\) has parameter \\$basketData with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Components/Services/Plus/PlusPaymentBuilderService.php
 
 		-
 			message: "#^Parameter \\#1 \\$returnUrl of method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\RedirectUrls\\:\\:setReturnUrl\\(\\) expects string, string\\|false given\\.$#"
@@ -91,7 +266,72 @@ parameters:
 			path: Components/Services/Plus/PlusPaymentBuilderService.php
 
 		-
-			message: "#^Property SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\SettingsService\\:\\:\\$shop \\(Shopware\\\\Models\\\\Shop\\\\DetachedShop\\) does not accept Shopware\\\\Models\\\\Shop\\\\DetachedShop\\|null\\.$#"
+			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\RiskManagement\\\\Attribute\\:\\:__construct\\(\\) has parameter \\$attributeKeyAndValue with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Components/Services/RiskManagement/Attribute.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\RiskManagement\\\\EsdProductChecker\\:\\:checkForEsdProducts\\(\\) has parameter \\$productIds with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Components/Services/RiskManagement/EsdProductChecker.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\RiskManagement\\\\EsdProductChecker\\:\\:getEsdProductNumbers\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Components/Services/RiskManagement/EsdProductChecker.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\RiskManagement\\\\EsdProductCheckerInterface\\:\\:checkForEsdProducts\\(\\) has parameter \\$productIds with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Components/Services/RiskManagement/EsdProductCheckerInterface.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\RiskManagement\\\\EsdProductCheckerInterface\\:\\:getEsdProductNumbers\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Components/Services/RiskManagement/EsdProductCheckerInterface.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\RiskManagement\\\\RiskManagementHelper\\:\\:checkAttributeColumn\\(\\) has parameter \\$attributeKeyAndValue with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Components/Services/RiskManagement/RiskManagementHelper.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\RiskManagement\\\\RiskManagementHelper\\:\\:getProductOrderNumbersInCategory\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Components/Services/RiskManagement/RiskManagementHelper.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\RiskManagement\\\\RiskManagementHelper\\:\\:getProductOrdernumbersMatchedAttribute\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Components/Services/RiskManagement/RiskManagementHelper.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\RiskManagement\\\\RiskManagementHelper\\:\\:getProductOrdernumbersNotMatchedAttribute\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Components/Services/RiskManagement/RiskManagementHelper.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\RiskManagement\\\\RiskManagementHelper\\:\\:getProductsInCategory\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Components/Services/RiskManagement/RiskManagementHelper.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\RiskManagement\\\\RiskManagementHelperInterface\\:\\:getProductOrderNumbersInCategory\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Components/Services/RiskManagement/RiskManagementHelperInterface.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\RiskManagement\\\\RiskManagementHelperInterface\\:\\:getProductOrdernumbersMatchedAttribute\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Components/Services/RiskManagement/RiskManagementHelperInterface.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\RiskManagement\\\\RiskManagementHelperInterface\\:\\:getProductOrdernumbersNotMatchedAttribute\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Components/Services/RiskManagement/RiskManagementHelperInterface.php
+
+		-
+			message: "#^Property SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\SettingsService\\:\\:\\$shop \\(Shopware\\\\Models\\\\Shop\\\\DetachedShop\\) does not accept Shopware\\\\Models\\\\Shop\\\\Shop\\|null\\.$#"
 			count: 1
 			path: Components/Services/SettingsService.php
 
@@ -99,6 +339,131 @@ parameters:
 			message: "#^Cannot call method getResources\\(\\) on SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\Transactions\\\\RelatedResources\\|null\\.$#"
 			count: 1
 			path: Components/Services/TransactionHistoryBuilderService.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\TransactionHistoryBuilderService\\:\\:getAuthorizationHistory\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Components/Services/TransactionHistoryBuilderService.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\TransactionHistoryBuilderService\\:\\:getLegacyHistory\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Components/Services/TransactionHistoryBuilderService.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\TransactionHistoryBuilderService\\:\\:getSalesHistory\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Components/Services/TransactionHistoryBuilderService.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\TransactionHistoryBuilderService\\:\\:getTransactionHistory\\(\\) has parameter \\$paymentDetails with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Components/Services/TransactionHistoryBuilderService.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\TransactionHistoryBuilderService\\:\\:getTransactionHistory\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Components/Services/TransactionHistoryBuilderService.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\Validation\\\\BasketValidatorInterface\\:\\:validate\\(\\) has parameter \\$basket with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Components/Services/Validation/BasketValidatorInterface.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\Validation\\\\BasketValidatorInterface\\:\\:validate\\(\\) has parameter \\$customer with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Components/Services/Validation/BasketValidatorInterface.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\Validation\\\\SimpleBasketValidator\\:\\:validate\\(\\) has parameter \\$basket with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Components/Services/Validation/SimpleBasketValidator.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\Validation\\\\SimpleBasketValidator\\:\\:validate\\(\\) has parameter \\$customer with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Components/Services/Validation/SimpleBasketValidator.php
+
+		-
+			message: "#^Class Shopware_Controllers_Backend_PaypalUnified extends generic class Shopware_Controllers_Backend_Application but does not specify its types\\: TEntityClass$#"
+			count: 1
+			path: Controllers/Backend/PaypalUnified.php
+
+		-
+			message: "#^Method Shopware_Controllers_Backend_PaypalUnified\\:\\:getFilterConditions\\(\\) has parameter \\$filters with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Controllers/Backend/PaypalUnified.php
+
+		-
+			message: "#^Method Shopware_Controllers_Backend_PaypalUnified\\:\\:getFilterConditions\\(\\) has parameter \\$whiteList with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Controllers/Backend/PaypalUnified.php
+
+		-
+			message: "#^Method Shopware_Controllers_Backend_PaypalUnified\\:\\:getFilterConditions\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Controllers/Backend/PaypalUnified.php
+
+		-
+			message: "#^Method Shopware_Controllers_Backend_PaypalUnified\\:\\:getList\\(\\) has parameter \\$filter with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Controllers/Backend/PaypalUnified.php
+
+		-
+			message: "#^Method Shopware_Controllers_Backend_PaypalUnified\\:\\:getList\\(\\) has parameter \\$sort with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Controllers/Backend/PaypalUnified.php
+
+		-
+			message: "#^Method Shopware_Controllers_Backend_PaypalUnified\\:\\:getList\\(\\) has parameter \\$wholeParams with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Controllers/Backend/PaypalUnified.php
+
+		-
+			message: "#^Method Shopware_Controllers_Backend_PaypalUnified\\:\\:getList\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Controllers/Backend/PaypalUnified.php
+
+		-
+			message: "#^Method Shopware_Controllers_Backend_PaypalUnified\\:\\:getModelFields\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Controllers/Backend/PaypalUnified.php
+
+		-
+			message: "#^Method Shopware_Controllers_Backend_PaypalUnified\\:\\:isFilterRequest\\(\\) has parameter \\$filters with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Controllers/Backend/PaypalUnified.php
+
+		-
+			message: "#^Property Shopware_Controllers_Backend_PaypalUnified\\:\\:\\$filterFields type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Controllers/Backend/PaypalUnified.php
+
+		-
+			message: "#^Class Shopware_Controllers_Backend_PaypalUnifiedExpressSettings extends generic class Shopware_Controllers_Backend_Application but does not specify its types\\: TEntityClass$#"
+			count: 1
+			path: Controllers/Backend/PaypalUnifiedExpressSettings.php
+
+		-
+			message: "#^Class Shopware_Controllers_Backend_PaypalUnifiedGeneralSettings extends generic class Shopware_Controllers_Backend_Application but does not specify its types\\: TEntityClass$#"
+			count: 1
+			path: Controllers/Backend/PaypalUnifiedGeneralSettings.php
+
+		-
+			message: "#^Class Shopware_Controllers_Backend_PaypalUnifiedInstallmentsSettings extends generic class Shopware_Controllers_Backend_Application but does not specify its types\\: TEntityClass$#"
+			count: 1
+			path: Controllers/Backend/PaypalUnifiedInstallmentsSettings.php
+
+		-
+			message: "#^Class Shopware_Controllers_Backend_PaypalUnifiedPlusSettings extends generic class Shopware_Controllers_Backend_Application but does not specify its types\\: TEntityClass$#"
+			count: 1
+			path: Controllers/Backend/PaypalUnifiedPlusSettings.php
+
+		-
+			message: "#^Class Shopware_Controllers_Backend_PaypalUnifiedSettings extends generic class Shopware_Controllers_Backend_Application but does not specify its types\\: TEntityClass$#"
+			count: 1
+			path: Controllers/Backend/PaypalUnifiedSettings.php
 
 		-
 			message: "#^Cannot call method getResources\\(\\) on SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\Transactions\\\\RelatedResources\\|null\\.$#"
@@ -121,9 +486,204 @@ parameters:
 			path: Controllers/Frontend/PaypalUnifiedWebhook.php
 
 		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\Models\\\\PaymentInstruction\\:\\:toArray\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Models/PaymentInstruction.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\Models\\\\Settings\\\\ExpressCheckout\\:\\:toArray\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Models/Settings/ExpressCheckout.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\Models\\\\Settings\\\\General\\:\\:toArray\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Models/Settings/General.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\Models\\\\Settings\\\\Installments\\:\\:toArray\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Models/Settings/Installments.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\Models\\\\Settings\\\\Plus\\:\\:toArray\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Models/Settings/Plus.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Components\\\\LoggerServiceInterface\\:\\:error\\(\\) has parameter \\$context with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Components/LoggerServiceInterface.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Components\\\\LoggerServiceInterface\\:\\:notify\\(\\) has parameter \\$context with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Components/LoggerServiceInterface.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Components\\\\LoggerServiceInterface\\:\\:warning\\(\\) has parameter \\$context with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Components/LoggerServiceInterface.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Components\\\\Patches\\\\PaymentItemsPatch\\:\\:__construct\\(\\) has parameter \\$items with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Components/Patches/PaymentItemsPatch.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Resources\\\\AuthorizationResource\\:\\:capture\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Resources/AuthorizationResource.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Resources\\\\AuthorizationResource\\:\\:get\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Resources/AuthorizationResource.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Resources\\\\AuthorizationResource\\:\\:void\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Resources/AuthorizationResource.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Resources\\\\CaptureResource\\:\\:get\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Resources/CaptureResource.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Resources\\\\CaptureResource\\:\\:refund\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Resources/CaptureResource.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Resources\\\\OrderResource\\:\\:capture\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Resources/OrderResource.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Resources\\\\OrderResource\\:\\:get\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Resources/OrderResource.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Resources\\\\OrderResource\\:\\:void\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Resources/OrderResource.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Resources\\\\PaymentResource\\:\\:create\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Resources/PaymentResource.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Resources\\\\PaymentResource\\:\\:execute\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Resources/PaymentResource.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Resources\\\\PaymentResource\\:\\:get\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Resources/PaymentResource.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Resources\\\\RefundResource\\:\\:get\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Resources/RefundResource.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Resources\\\\SaleResource\\:\\:get\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Resources/SaleResource.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Resources\\\\SaleResource\\:\\:refund\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Resources/SaleResource.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Resources\\\\TokenResource\\:\\:get\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Resources/TokenResource.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Resources\\\\WebhookResource\\:\\:create\\(\\) has parameter \\$events with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Resources/WebhookResource.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Resources\\\\WebhookResource\\:\\:create\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Resources/WebhookResource.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Resources\\\\WebhookResource\\:\\:getList\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Resources/WebhookResource.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Services\\\\ClientService\\:\\:configure\\(\\) has parameter \\$settings with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Services/ClientService.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Services\\\\ClientService\\:\\:sendRequest\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Services/ClientService.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Services\\\\ClientService\\:\\:sendRequest\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Services/ClientService.php
+
+		-
+			message: "#^Property SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Services\\\\ClientService\\:\\:\\$headers type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Services/ClientService.php
+
+		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Services\\\\WebhookService\\:\\:getWebhookHandlers\\(\\) should return array\\<SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Components\\\\Webhook\\\\WebhookHandler\\> but returns array\\<SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Components\\\\Webhook\\\\WebhookHandler\\|null\\>\\.$#"
 			count: 1
 			path: PayPalBundle/Services/WebhookService.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Common\\\\Address\\:\\:fromArray\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Structs/Common/Address.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Common\\\\Address\\:\\:toArray\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Structs/Common/Address.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Common\\\\Link\\:\\:fromArray\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Structs/Common/Link.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Common\\\\Link\\:\\:toArray\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Structs/Common/Link.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\ErrorResponse\\:\\:fromArray\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Structs/ErrorResponse.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\ErrorResponse\\:\\:toArray\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Structs/ErrorResponse.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\ErrorResponse\\\\Detail\\:\\:fromArray\\(\\) has parameter \\$detail with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Structs/ErrorResponse/Detail.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\GenericErrorResponse\\:\\:fromArray\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Structs/GenericErrorResponse.php
 
 		-
 			message: "#^Cannot call method toArray\\(\\) on SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\Payer\\|null\\.$#"
@@ -131,21 +691,317 @@ parameters:
 			path: PayPalBundle/Structs/Payment.php
 
 		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\:\\:fromArray\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Structs/Payment.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\:\\:toArray\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Structs/Payment.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\ApplicationContext\\:\\:toArray\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Structs/Payment/ApplicationContext.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\Capture\\:\\:toArray\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Structs/Payment/Capture.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\CaptureRefund\\:\\:toArray\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Structs/Payment/CaptureRefund.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\Instruction\\\\Amount\\:\\:fromArray\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Structs/Payment/Instruction/Amount.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\Instruction\\\\RecipientBanking\\:\\:fromArray\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Structs/Payment/Instruction/RecipientBanking.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\Payer\\:\\:fromArray\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Structs/Payment/Payer.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\Payer\\:\\:toArray\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Structs/Payment/Payer.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\Payer\\\\PayerInfo\\:\\:fromArray\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Structs/Payment/Payer/PayerInfo.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\Payer\\\\PayerInfo\\:\\:toArray\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Structs/Payment/Payer/PayerInfo.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\PaymentInstruction\\:\\:fromArray\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Structs/Payment/PaymentInstruction.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\RedirectUrls\\:\\:fromArray\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Structs/Payment/RedirectUrls.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\RedirectUrls\\:\\:toArray\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Structs/Payment/RedirectUrls.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\RelatedResources\\\\Authorization\\:\\:fromArray\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Structs/Payment/RelatedResources/Authorization.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\RelatedResources\\\\Capture\\:\\:fromArray\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Structs/Payment/RelatedResources/Capture.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\RelatedResources\\\\Order\\:\\:fromArray\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Structs/Payment/RelatedResources/Order.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\RelatedResources\\\\Refund\\:\\:fromArray\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Structs/Payment/RelatedResources/Refund.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\RelatedResources\\\\RelatedResource\\:\\:prepare\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Structs/Payment/RelatedResources/RelatedResource.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\RelatedResources\\\\Sale\\:\\:fromArray\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Structs/Payment/RelatedResources/Sale.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\RelatedResources\\\\TransactionFee\\:\\:fromArray\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Structs/Payment/RelatedResources/TransactionFee.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\SaleRefund\\:\\:toArray\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Structs/Payment/SaleRefund.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\Transactions\\:\\:fromArray\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Structs/Payment/Transactions.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\Transactions\\:\\:toArray\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Structs/Payment/Transactions.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\Transactions\\\\Amount\\:\\:fromArray\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Structs/Payment/Transactions/Amount.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\Transactions\\\\Amount\\:\\:toArray\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Structs/Payment/Transactions/Amount.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\Transactions\\\\Amount\\\\Details\\:\\:fromArray\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Structs/Payment/Transactions/Amount/Details.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\Transactions\\\\Amount\\\\Details\\:\\:toArray\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Structs/Payment/Transactions/Amount/Details.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\Transactions\\\\ItemList\\:\\:fromArray\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Structs/Payment/Transactions/ItemList.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\Transactions\\\\ItemList\\:\\:toArray\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Structs/Payment/Transactions/ItemList.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\Transactions\\\\ItemList\\\\Item\\:\\:fromArray\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Structs/Payment/Transactions/ItemList/Item.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\Transactions\\\\ItemList\\\\Item\\:\\:toArray\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Structs/Payment/Transactions/ItemList/Item.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\Transactions\\\\ItemList\\\\ShippingAddress\\:\\:fromArray\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Structs/Payment/Transactions/ItemList/ShippingAddress.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\Transactions\\\\ItemList\\\\ShippingAddress\\:\\:toArray\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Structs/Payment/Transactions/ItemList/ShippingAddress.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\Transactions\\\\RelatedResources\\:\\:fromArray\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Structs/Payment/Transactions/RelatedResources.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\Transactions\\\\ShipmentDetails\\:\\:fromArray\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Structs/Payment/Transactions/ShipmentDetails.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\Transactions\\\\ShipmentDetails\\:\\:toArray\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Structs/Payment/Transactions/ShipmentDetails.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Token\\:\\:fromArray\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Structs/Token.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Webhook\\:\\:fromArray\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Structs/Webhook.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Webhook\\:\\:getResource\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Structs/Webhook.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Webhook\\:\\:setResource\\(\\) has parameter \\$resource with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Structs/Webhook.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Webhook\\:\\:toArray\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Structs/Webhook.php
+
+		-
+			message: "#^Property SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Webhook\\:\\:\\$resource type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: PayPalBundle/Structs/Webhook.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\Setup\\\\FirstRunWizardInstaller\\:\\:saveConfiguration\\(\\) has parameter \\$configuration with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Setup/FirstRunWizardInstaller.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\Setup\\\\Installer\\:\\:getTranslationKeys\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Setup/Installer.php
+
+		-
+			message: "#^PHPDoc tag @var for variable \\$translationKeys has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Setup/Installer.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\Subscriber\\\\CookieConsent\\:\\:addPayPalCookie\\(\\) return type has no value type specified in iterable type Shopware\\\\Bundle\\\\CookieBundle\\\\CookieCollection\\.$#"
+			count: 1
+			path: Subscriber/CookieConsent.php
+
+		-
 			message: "#^Property SwagPaymentPayPalUnified\\\\Subscriber\\\\Documents\\\\Invoice\\:\\:\\$translation \\(Shopware_Components_Translation\\) does not accept Shopware_Components_Translation\\|null\\.$#"
 			count: 1
 			path: Subscriber/Documents/Invoice.php
 
 		-
-			message: "#^Cannot call method getLocale\\(\\) on Shopware\\\\Models\\\\Shop\\\\DetachedShop\\|null\\.$#"
+			message: "#^Cannot call method getLocale\\(\\) on Shopware\\\\Models\\\\Shop\\\\Shop\\|null\\.$#"
 			count: 1
 			path: Subscriber/ExpressCheckout.php
 
 		-
-			message: "#^Cannot call method getLocale\\(\\) on Shopware\\\\Models\\\\Shop\\\\DetachedShop\\|null\\.$#"
+			message: "#^Method SwagPaymentPayPalUnified\\\\Subscriber\\\\ExpressCheckout\\:\\:getProductIdsFromBasket\\(\\) has parameter \\$content with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Subscriber/ExpressCheckout.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\Subscriber\\\\ExpressCheckout\\:\\:getProductIdsFromBasket\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Subscriber/ExpressCheckout.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\Subscriber\\\\ExpressCheckout\\:\\:handlePaymentPatchException\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Subscriber/ExpressCheckout.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\Subscriber\\\\Frontend\\:\\:onCollectJavascript\\(\\) return type with generic class Doctrine\\\\Common\\\\Collections\\\\ArrayCollection does not specify its types\\: TKey, T$#"
+			count: 1
+			path: Subscriber/Frontend.php
+
+		-
+			message: "#^Cannot call method getLocale\\(\\) on Shopware\\\\Models\\\\Shop\\\\Shop\\|null\\.$#"
 			count: 1
 			path: Subscriber/InContext.php
 
 		-
-			message: "#^Cannot call method getLocale\\(\\) on Shopware\\\\Models\\\\Shop\\\\DetachedShop\\|null\\.$#"
+			message: "#^Method SwagPaymentPayPalUnified\\\\Subscriber\\\\Less\\:\\:onCollectLessFiles\\(\\) return type with generic class Doctrine\\\\Common\\\\Collections\\\\ArrayCollection does not specify its types\\: TKey, T$#"
+			count: 1
+			path: Subscriber/Less.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\Subscriber\\\\PaymentMeans\\:\\:getCustomerData\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Subscriber/PaymentMeans.php
+
+		-
+			message: "#^PHPDoc tag @var for variable \\$availableMethods has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Subscriber/PaymentMeans.php
+
+		-
+			message: "#^Cannot call method getLocale\\(\\) on Shopware\\\\Models\\\\Shop\\\\Shop\\|null\\.$#"
 			count: 1
 			path: Subscriber/Plus.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\Subscriber\\\\Plus\\:\\:addPaymentMethodsAttributes\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Subscriber/Plus.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\Subscriber\\\\Plus\\:\\:createPayment\\(\\) has parameter \\$basketData with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Subscriber/Plus.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\Subscriber\\\\Plus\\:\\:createPayment\\(\\) has parameter \\$userData with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Subscriber/Plus.php
+
+		-
+			message: "#^Property SwagPaymentPayPalUnified\\\\Subscriber\\\\Plus\\:\\:\\$allowedActions type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Subscriber/Plus.php
+
+		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\Subscriber\\\\RiskManagement\\:\\:getAcceptedControllerActions\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Subscriber/RiskManagement.php
+

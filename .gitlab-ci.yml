@@ -17,6 +17,8 @@ stages:
     - Shopware Versions
 
 default:
+    tags:
+        - t3.medium
     image: gitlab.shopware.com:5005/shopware/5/product/image/continuous:7.4
     services:
         -   name: mysql:5.7
@@ -42,6 +44,10 @@ PHP analyze:
         - ./vendor/bin/phpcs -p custom/plugins/${PLUGIN_NAME} --standard=PHPCompatibility --runtime-set testVersion 5.6
         - php bin/console -e production
         - cd custom/plugins/${PLUGIN_NAME}
+        - >
+            if [ $CI_PIPELINE_SOURCE == "schedule" ]; then
+                sed -i "s|reportUnmatchedIgnoredErrors: true|reportUnmatchedIgnoredErrors: false|g" phpstan.neon
+            fi
         - make fix-cs-dry
         - make phpstan
 
