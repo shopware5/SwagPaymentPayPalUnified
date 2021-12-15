@@ -11,6 +11,9 @@ namespace SwagPaymentPayPalUnified\Components\Services\Common;
 use Shopware\Components\BasketSignature\BasketPersister;
 use Shopware\Components\BasketSignature\BasketSignatureGeneratorInterface;
 
+/**
+ * @phpstan-import-type CheckoutBasketArray from \Shopware_Controllers_Frontend_Checkout
+ */
 class CartPersister
 {
     /**
@@ -33,6 +36,8 @@ class CartPersister
 
     /**
      * @param int|null $customerId
+     *
+     * @phpstan-param CheckoutBasketArray $cart
      *
      * @return string|null
      */

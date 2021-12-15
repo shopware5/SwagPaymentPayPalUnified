@@ -19,6 +19,8 @@ use Shopware\Components\HttpClient\RequestException;
 use Shopware_Controllers_Frontend_PaypalUnifiedV2;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
+use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\PayPalOrderParameter;
+use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\PayPalOrderParameterFacadeInterface;
 use SwagPaymentPayPalUnified\Components\Services\Common\CartPersister;
 use SwagPaymentPayPalUnified\Components\Services\PaymentControllerHelper;
 use SwagPaymentPayPalUnified\Components\Services\PayPalOrderBuilderService;
@@ -117,6 +119,9 @@ class PaypalUnifiedV2Test extends TestCase
         }
 
         $cartPersister = static::createMock(CartPersister::class);
+        $orderParameterFacade = static::createConfiguredMock(PayPalOrderParameterFacadeInterface::class, [
+            'createPayPalOrderParameter' => static::createMock(PayPalOrderParameter::class),
+        ]);
 
         $container = static::createMock(Container::class);
         $container->method('get')
@@ -131,6 +136,7 @@ class PaypalUnifiedV2Test extends TestCase
                 ['basket_signature_generator', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $signatureGenerator],
                 ['basket_persister', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $basketPersister],
                 ['paypal_unified.common.cart_persister', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $cartPersister],
+                ['paypal_unified.paypal_order_parameter_facade', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $orderParameterFacade],
             ]));
 
         $controller = $this->getController($container);

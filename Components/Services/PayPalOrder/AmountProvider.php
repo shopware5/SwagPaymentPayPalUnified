@@ -108,19 +108,23 @@ class AmountProvider
         $shipping = new BreakdownShipping();
         $shipping->setCurrencyCode($currencyCode);
         $taxTotal = null;
+        $provideTaxTotal = $this->itemsUseNetPrice($purchaseUnit->getItems());
 
-        if ($this->customerHelper->hasGrossPrices($customer) && !$this->customerHelper->useNetPriceCalculation($customer)) {
-            $shipping->setValue($cart['sShippingcostsWithTax']);
-        } elseif (!$this->customerHelper->hasGrossPrices($customer) && !$this->customerHelper->useNetPriceCalculation($customer)) {
+        if ($this->customerHelper->shouldUseNetPrice($customer) && !$this->customerHelper->hasNetPriceCaluclationIndicator($customer)) {
+            $shipping->setValue($this->priceFormatter->formatPrice($cart['sShippingcostsWithTax']));
+        } elseif (!$this->customerHelper->shouldUseNetPrice($customer) && !$this->customerHelper->hasNetPriceCaluclationIndicator($customer)) {
             //Case 2: Show net prices in shopware and don't exclude country tax
-            $shipping->setValue($cart['sShippingcostsNet']);
+            $shipping->setValue($this->priceFormatter->formatPrice($cart['sShippingcostsNet']));
+            $provideTaxTotal = true;
+        } else {
+            //Case 3: No tax handling at all, just use the net amounts.
+            $shipping->setValue($this->priceFormatter->formatPrice($cart['sShippingcostsNet']));
+        }
 
+        if ($provideTaxTotal) {
             $taxTotal = new TaxTotal();
             $taxTotal->setCurrencyCode($currencyCode);
             $taxTotal->setValue($this->priceFormatter->formatPrice($cart['sAmountTax']));
-        } else {
-            //Case 3: No tax handling at all, just use the net amounts.
-            $shipping->setValue($cart['sShippingcostsNet']);
         }
 
         $discount = new Discount();
@@ -134,5 +138,25 @@ class AmountProvider
         $breakdown->setDiscount($discount);
 
         return $breakdown;
+    }
+
+    /**
+     * @param Item[]|null $items
+     *
+     * @return bool
+     */
+    private function itemsUseNetPrice($items)
+    {
+        if (empty($items)) {
+            return false;
+        }
+
+        foreach ($items as $item) {
+            if ($item->getTax() !== null && !empty($item->getTaxRate())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

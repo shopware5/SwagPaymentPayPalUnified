@@ -15,51 +15,59 @@ use Shopware\Models\Payment\Payment;
 class PaymentMethodProvider
 {
     /**
-     * The technical name of the unified payment method.
+     * The technical names of the unified payment methods.
      */
     const PAYPAL_UNIFIED_PAYMENT_METHOD_NAME = 'SwagPaymentPayPalUnified';
 
+    const PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME = 'SwagPaymentPayPalUnifiedPayUponInvoice';
+
     /**
-     * @var ModelManager|null
+     * @deprecated
+     */
+    const PAYPAL_UNIFIED_INSTALLMENTS_METHOD_NAME = 'SwagPaymentPayPalUnifiedInstallments';
+
+    const PAYMENT_ID_QUERY = 'SELECT `id` FROM s_core_paymentmeans WHERE `name`=:paymentName AND active = 1';
+
+    /**
+     * @var ModelManager
      */
     private $modelManager;
 
     /**
-     * @param ModelManager $modelManager
+     * @var Connection
      */
-    public function __construct(ModelManager $modelManager = null)
+    private $connection;
+
+    public function __construct(Connection $connection, ModelManager $modelManager)
     {
+        $this->connection = $connection;
         $this->modelManager = $modelManager;
     }
 
     /**
-     * @see PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME
+     * @param string $paymentMethodName
      *
      * @return Payment|null
+     *
+     * @see PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME or PaymentMethodProvider::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME
      */
-    public function getPaymentMethodModel()
+    public function getPaymentMethodModel($paymentMethodName)
     {
-        if ($this->modelManager === null) {
-            throw new \RuntimeException('ModelManager not defined in PaymentMethodProvider');
-        }
-
         return $this->modelManager->getRepository(Payment::class)->findOneBy([
-            'name' => self::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME,
+            'name' => $paymentMethodName,
         ]);
     }
 
     /**
-     * @see PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME
+     * @param bool   $active
+     * @param string $paymentMethodName
      *
-     * @param bool $active
+     * @see PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME or PaymentMethodProvider::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME
      */
-    public function setPaymentMethodActiveFlag($active)
+    public function setPaymentMethodActiveFlag($paymentMethodName, $active)
     {
-        if ($this->modelManager === null) {
-            throw new \RuntimeException('ModelManager not defined in PaymentMethodProvider');
-        }
+        $paymentMethod = $this->getPaymentMethodModel($paymentMethodName);
 
-        $paymentMethod = $this->getPaymentMethodModel();
         if ($paymentMethod) {
             $paymentMethod->setActive($active);
 
@@ -69,44 +77,32 @@ class PaymentMethodProvider
     }
 
     /**
-     * @see PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME
+     * @param string $paymentMethodName
      *
      * @return bool
+     *
+     * @see PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME or PaymentMethodProvider::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME
      */
-    public function getPaymentMethodActiveFlag(Connection $connection)
+    public function getPaymentMethodActiveFlag($paymentMethodName)
     {
         $sql = 'SELECT `active` FROM s_core_paymentmeans WHERE `name`=:paymentName';
 
-        return (bool) $connection->fetchColumn($sql, [
-            ':paymentName' => self::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME,
+        return (bool) $this->connection->fetchColumn($sql, [
+            ':paymentName' => $paymentMethodName,
         ]);
     }
 
     /**
-     * @see PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME
+     * @param string $paymentMethodName
      *
      * @return int
-     */
-    public function getPaymentId(Connection $connection)
-    {
-        $sql = 'SELECT `id` FROM s_core_paymentmeans WHERE `name`=:paymentName AND active = 1';
-
-        return (int) $connection->fetchColumn($sql, [
-            ':paymentName' => self::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME,
-        ]);
-    }
-
-    /**
-     * @deprecated since 3.0.0. Will be removed with 4.0.0. Only used for managing old installment payments in the backend module
      *
-     * @return int
+     * @see PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME or PaymentMethodProvider::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME
      */
-    public function getInstallmentPaymentId(Connection $connection)
+    public function getPaymentId($paymentMethodName)
     {
-        $sql = 'SELECT `id` FROM s_core_paymentmeans WHERE `name`=:paymentName AND active = 1';
-
-        return (int) $connection->fetchColumn($sql, [
-            ':paymentName' => 'SwagPaymentPayPalUnifiedInstallments',
+        return (int) $this->connection->fetchColumn(self::PAYMENT_ID_QUERY, [
+            ':paymentName' => $paymentMethodName,
         ]);
     }
 }

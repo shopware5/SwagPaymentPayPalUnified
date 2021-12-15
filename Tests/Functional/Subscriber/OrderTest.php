@@ -117,7 +117,8 @@ class OrderTest extends TestCase
     {
         return new Order(
             Shopware()->Container()->get('front'),
-            Shopware()->Container()->get('dbal_connection')
+            Shopware()->Container()->get('dbal_connection'),
+            Shopware()->Container()->get('paypal_unified.payment_method_provider')
         );
     }
 
@@ -126,7 +127,10 @@ class OrderTest extends TestCase
      */
     private function getPaymentId()
     {
-        return (new PaymentMethodProvider())->getPaymentId(Shopware()->Container()->get('dbal_connection'));
+        $connection = Shopware()->Container()->get('dbal_connection');
+        $modelManager = Shopware()->Container()->get('models');
+
+        return (new PaymentMethodProvider($connection, $modelManager))->getPaymentId(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
     }
 
     /**

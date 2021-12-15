@@ -43,12 +43,13 @@ class Account implements SubscriberInterface
     public function __construct(
         Connection $connection,
         SettingsServiceInterface $settingsService,
-        DependencyProvider $dependencyProvider
+        DependencyProvider $dependencyProvider,
+        PaymentMethodProvider $paymentMethodProvider
     ) {
         $this->connection = $connection;
         $this->settingsService = $settingsService;
         $this->dependencyProvider = $dependencyProvider;
-        $this->paymentMethodProvider = new PaymentMethodProvider();
+        $this->paymentMethodProvider = $paymentMethodProvider;
     }
 
     /**
@@ -72,7 +73,7 @@ class Account implements SubscriberInterface
             return;
         }
 
-        $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag($this->connection);
+        $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
         if (!$swUnifiedActive) {
             return;
         }
@@ -100,7 +101,7 @@ class Account implements SubscriberInterface
         }
 
         $view = $controller->View();
-        $unifiedPaymentId = $this->paymentMethodProvider->getPaymentId($this->connection);
+        $unifiedPaymentId = $this->paymentMethodProvider->getPaymentId(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
 
         $customerData = $view->getAssign('sUserData');
         $customerPayment = $customerData['additional']['payment'];

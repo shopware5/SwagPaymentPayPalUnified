@@ -11,6 +11,7 @@ namespace SwagPaymentPayPalUnified\PayPalBundle\V2\Api;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\ApplicationContext;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\Link;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\Payer;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\PayPalApiStruct;
 
@@ -60,6 +61,16 @@ class Order extends PayPalApiStruct
      * @var Link[]
      */
     protected $links;
+
+    /**
+     * @var PaymentSource|null
+     */
+    protected $paymentSource;
+
+    /**
+     * @var string
+     */
+    protected $processingInstruction;
 
     /**
      * @return string
@@ -217,5 +228,37 @@ class Order extends PayPalApiStruct
     public function setLinks(array $links)
     {
         $this->links = $links;
+    }
+
+    /**
+     * @return PaymentSource|null
+     */
+    public function getPaymentSource()
+    {
+        return $this->paymentSource;
+    }
+
+    /**
+     * @param PaymentSource|null $paymentSource
+     */
+    public function setPaymentSource($paymentSource)
+    {
+        $this->paymentSource = $paymentSource;
+    }
+
+    /**
+     * @return string
+     */
+    public function getProcessingInstruction()
+    {
+        return $this->processingInstruction;
+    }
+
+    /**
+     * @param string $processingInstruction
+     */
+    public function setProcessingInstruction($processingInstruction)
+    {
+        $this->processingInstruction = $processingInstruction;
     }
 }

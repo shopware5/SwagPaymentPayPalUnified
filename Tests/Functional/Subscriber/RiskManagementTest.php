@@ -253,7 +253,8 @@ class RiskManagementTest extends TestCase
             Shopware()->Container()->get('paypal_unified.risk_management_helper'),
             Shopware()->Container()->get('template'),
             Shopware()->Container()->get('paypal_unified.dependency_provider'),
-            Shopware()->Container()->get('dbal_connection')
+            Shopware()->Container()->get('dbal_connection'),
+            Shopware()->Container()->get('paypal_unified.payment_method_provider')
         );
     }
 
@@ -263,7 +264,8 @@ class RiskManagementTest extends TestCase
     private function getEventArgs()
     {
         $eventArgs = new \Enlight_Event_EventArgs();
-        $eventArgs->set('paymentID', (new PaymentMethodProvider())->getPaymentId(Shopware()->Container()->get('dbal_connection')));
+        $paymentMethodProvider = Shopware()->Container()->get('paypal_unified.payment_method_provider');
+        $eventArgs->set('paymentID', $paymentMethodProvider->getPaymentId(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME));
 
         return $eventArgs;
     }

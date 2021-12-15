@@ -9,8 +9,7 @@
 use Shopware\Components\HttpClient\RequestException;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
-use SwagPaymentPayPalUnified\Components\PayPalOrderBuilderParameter;
-use SwagPaymentPayPalUnified\Components\Services\Common\CartPersister;
+use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\PayPalOrderParameterFacade;
 use SwagPaymentPayPalUnified\Components\Services\PaymentControllerHelper;
 use SwagPaymentPayPalUnified\Components\Services\PayPalOrderBuilderService;
 use SwagPaymentPayPalUnified\Components\Services\Validation\RedirectDataBuilderFactory;
@@ -51,9 +50,9 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2SmartPaymentButtons extends Sh
     private $paymentControllerHelper;
 
     /**
-     * @var CartPersister
+     * @var PayPalOrderParameterFacade
      */
-    private $cartPersister;
+    private $payPalOrderParameterFacade;
 
     public function preDispatch()
     {
@@ -67,7 +66,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2SmartPaymentButtons extends Sh
         $this->paymentControllerHelper = $this->get('paypal_unified.payment_controller_helper');
         $this->dependencyProvider = $this->get('paypal_unified.dependency_provider');
         $this->shopwareConfig = $this->get('config');
-        $this->cartPersister = $this->get('paypal_unified.common.cart_persister');
+        $this->payPalOrderParameterFacade = $this->get('paypal_unified.paypal_order_parameter_facade');
     }
 
     public function createOrderAction()
@@ -93,14 +92,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2SmartPaymentButtons extends Sh
             return;
         }
 
-        $orderParams = new PayPalOrderBuilderParameter(
-            $this->paymentControllerHelper->setGrossPriceFallback($shopwareOrderData['sUserData']),
-            $shopwareOrderData['sBasket'],
-            PaymentType::PAYPAL_SMART_PAYMENT_BUTTONS_V2,
-            $this->cartPersister->persist($shopwareOrderData['sBasket'], $session->get('sUserId')),
-            $this->dependencyProvider->createPaymentToken()
-        );
-
+        $orderParams = $this->payPalOrderParameterFacade->createPayPalOrderParameter(PaymentType::PAYPAL_SMART_PAYMENT_BUTTONS_V2, $shopwareOrderData);
         $payPalOrderData = $this->orderBuilderService->getOrder($orderParams);
 
         try {

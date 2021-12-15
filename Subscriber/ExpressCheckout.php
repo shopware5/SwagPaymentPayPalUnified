@@ -103,7 +103,8 @@ class ExpressCheckout implements SubscriberInterface
         Connection $connection,
         ClientService $clientService,
         DependencyProvider $dependencyProvider,
-        EsdProductCheckerInterface $esdProductChecker
+        EsdProductCheckerInterface $esdProductChecker,
+        PaymentMethodProvider $paymentMethodProvider
     ) {
         $this->settingsService = $settingsService;
         $this->session = $session;
@@ -111,11 +112,11 @@ class ExpressCheckout implements SubscriberInterface
         $this->paymentAddressService = $addressRequestService;
         $this->paymentBuilder = $paymentBuilder;
         $this->exceptionHandlerService = $exceptionHandlerService;
-        $this->paymentMethodProvider = new PaymentMethodProvider();
         $this->connection = $connection;
         $this->clientService = $clientService;
         $this->dependencyProvider = $dependencyProvider;
         $this->esdProductChecker = $esdProductChecker;
+        $this->paymentMethodProvider = $paymentMethodProvider;
     }
 
     /**
@@ -137,7 +138,7 @@ class ExpressCheckout implements SubscriberInterface
 
     public function addExpressCheckoutButtonCart(ActionEventArgs $args)
     {
-        $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag($this->connection);
+        $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
         if (!$swUnifiedActive) {
             return;
         }
@@ -226,7 +227,7 @@ class ExpressCheckout implements SubscriberInterface
             return;
         }
 
-        $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag($this->connection);
+        $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
         if (!$swUnifiedActive) {
             return;
         }
@@ -254,7 +255,7 @@ class ExpressCheckout implements SubscriberInterface
 
     public function addExpressCheckoutButtonListing(ActionEventArgs $args)
     {
-        $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag($this->connection);
+        $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
         if (!$swUnifiedActive) {
             return;
         }
@@ -290,7 +291,7 @@ class ExpressCheckout implements SubscriberInterface
 
     public function addExpressCheckoutButtonLogin(ActionEventArgs $args)
     {
-        $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag($this->connection);
+        $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
         if (!$swUnifiedActive) {
             return;
         }

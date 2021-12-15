@@ -13,6 +13,7 @@ use SwagPaymentPayPalUnified\Components\Services\Common\CustomerHelper;
 use SwagPaymentPayPalUnified\Components\Services\Common\PriceFormatter;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Item;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Item\Tax;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Item\UnitAmount;
 
 class ItemListProvider
@@ -50,9 +51,11 @@ class ItemListProvider
     }
 
     /**
+     * @param bool $enforceNetPrice
+     *
      * @return Item[]|null
      */
-    public function getItemList(array $cart, array $customer)
+    public function getItemList(array $cart, array $customer, $enforceNetPrice)
     {
         $lineItems = $cart['content'];
         if ($lineItems === []) {
@@ -71,7 +74,7 @@ class ItemListProvider
             $label = $lineItem['articlename'];
             $number = (string) $lineItem['ordernumber'];
             $quantity = $lineItem['quantity'];
-            $value = $this->customerHelper->hasGrossPrices($customer) === true
+            $value = $this->customerHelper->shouldUseNetPrice($customer) === true || $enforceNetPrice
                 ? $this->priceFormatter->roundPrice($lineItem['price'])
                 : $this->priceFormatter->roundPrice($lineItem['netprice']);
 
@@ -117,6 +120,16 @@ class ItemListProvider
             $item->setUnitAmount($unitAmount);
             $item->setQuantity($quantity);
 
+            if ((int) $lineItem['esdarticle'] > 0) {
+                $item->setCategory('DIGITAL_GOODS');
+            } else {
+                $item->setCategory('PHYSICAL_GOODS');
+            }
+
+            if ($enforceNetPrice) {
+                $this->setTaxInformation($currency, $lineItem, $item);
+            }
+
             $items[] = $item;
         }
 
@@ -156,5 +169,23 @@ class ItemListProvider
             $this->loggerService->warning($e->getMessage(), ['lineItem' => $lineItem]);
             $item->setSku(\mb_substr($number, 0, Item::MAX_LENGTH_SKU));
         }
+    }
+
+    /**
+     * @param string $currency
+     *
+     * @return void
+     */
+    private function setTaxInformation($currency, array $lineItem, Item $item)
+    {
+        $tax = new Tax();
+
+        $tax->setCurrencyCode($currency);
+        $tax->setValue(\str_replace(',', '.', $lineItem['tax']));
+
+        $item->getUnitAmount()->setValue(\str_replace(',', '.', $lineItem['amountnet']));
+
+        $item->setTax($tax);
+        $item->setTaxRate($lineItem['tax_rate']);
     }
 }

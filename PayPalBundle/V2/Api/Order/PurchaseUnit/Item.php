@@ -33,6 +33,11 @@ class Item extends PayPalApiStruct
     protected $tax;
 
     /**
+     * @var string|null
+     */
+    protected $taxRate;
+
+    /**
      * @var int
      */
     protected $quantity;
@@ -41,6 +46,13 @@ class Item extends PayPalApiStruct
      * @var string|null
      */
     protected $sku;
+
+    /**
+     * @var string|null
+     *
+     * @see https://developer.paypal.com/docs/api/orders/v2/#definition-item
+     */
+    protected $category;
 
     /**
      * @return string
@@ -142,5 +154,37 @@ class Item extends PayPalApiStruct
         }
 
         $this->sku = $sku;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getCategory()
+    {
+        return $this->category;
+    }
+
+    /**
+     * @param string|null $category
+     */
+    public function setCategory($category)
+    {
+        $this->category = $category;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getTaxRate()
+    {
+        return $this->taxRate;
+    }
+
+    /**
+     * @param string|null $taxRate
+     */
+    public function setTaxRate($taxRate)
+    {
+        $this->taxRate = $taxRate;
     }
 }

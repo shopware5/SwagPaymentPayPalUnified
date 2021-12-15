@@ -57,8 +57,12 @@ class InContextSubscriberTest extends TestCase
 
     public function testAddInContextButtonReturnUnifiedInactive()
     {
-        $paymentMethodProvider = new PaymentMethodProvider(Shopware()->Container()->get('models'));
-        $paymentMethodProvider->setPaymentMethodActiveFlag(false);
+        $paymentMethodProvider = new PaymentMethodProvider(
+            Shopware()->Container()->get('dbal_connection'),
+            Shopware()->Container()->get('models')
+        );
+
+        $paymentMethodProvider->setPaymentMethodActiveFlag(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME, false);
 
         $view = new ViewMock(new \Enlight_Template_Manager());
         $request = new \Enlight_Controller_Request_RequestTestCase();
@@ -75,7 +79,7 @@ class InContextSubscriberTest extends TestCase
 
         static::assertNull($view->getAssign('paypalUnifiedPaymentId'));
 
-        $paymentMethodProvider->setPaymentMethodActiveFlag(true);
+        $paymentMethodProvider->setPaymentMethodActiveFlag(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME, true);
     }
 
     public function testAddInContextButtonReturnPaymentMethodInactive()
@@ -264,7 +268,8 @@ class InContextSubscriberTest extends TestCase
         return new InContext(
             Shopware()->Container()->get('dbal_connection'),
             Shopware()->Container()->get('paypal_unified.settings_service'),
-            Shopware()->Container()->get('paypal_unified.dependency_provider')
+            Shopware()->Container()->get('paypal_unified.dependency_provider'),
+            Shopware()->Container()->get('paypal_unified.payment_method_provider')
         );
     }
 }

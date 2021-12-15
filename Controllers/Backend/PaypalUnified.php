@@ -436,14 +436,14 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
      */
     private function prepareOrderQueryBuilder(QueryBuilder $builder)
     {
-        $paymentMethodProvider = new PaymentMethodProvider($this->get('models'));
+        $paymentMethodProvider = $this->get('paypal_unified.payment_method_provider');
         $connection = $this->get('dbal_connection');
 
         // If there was PayPal classic installed earlier, those orders have to be queried.
         $legacyPaymentIds = $this->get('paypal_unified.legacy_service')->getClassicPaymentIds();
         $paymentIds = [
-            $paymentMethodProvider->getPaymentId($connection),
-            $paymentMethodProvider->getInstallmentPaymentId($connection),
+            $paymentMethodProvider->getPaymentId(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME),
+            $paymentMethodProvider->getPaymentId(PaymentMethodProvider::PAYPAL_UNIFIED_INSTALLMENTS_METHOD_NAME),
         ];
 
         $paymentIds = \array_merge($paymentIds, $legacyPaymentIds);

@@ -18,6 +18,11 @@ class PhoneNumber extends PayPalApiStruct
     protected $nationalNumber;
 
     /**
+     * @var string
+     */
+    protected $countryCode;
+
+    /**
      * @return string
      */
     public function getNationalNumber()
@@ -33,5 +38,21 @@ class PhoneNumber extends PayPalApiStruct
     public function setNationalNumber($nationalNumber)
     {
         $this->nationalNumber = $nationalNumber;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCountryCode()
+    {
+        return $this->countryCode;
+    }
+
+    /**
+     * @param string $countryCode
+     */
+    public function setCountryCode($countryCode)
+    {
+        $this->countryCode = $countryCode;
     }
 }

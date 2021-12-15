@@ -60,8 +60,8 @@ class ExpressCheckoutSubscriberTest extends TestCase
 
     public function testAddExpressCheckoutButtonCartReturnPaymentMethodInactive()
     {
-        $paymentMethodProvider = new PaymentMethodProvider(Shopware()->Container()->get('models'));
-        $paymentMethodProvider->setPaymentMethodActiveFlag(false);
+        $paymentMethodProvider = $this->getPaymentMethodProvider();
+        $paymentMethodProvider->setPaymentMethodActiveFlag(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME, false);
 
         $view = new ViewMock(new \Enlight_Template_Manager());
         $request = new \Enlight_Controller_Request_RequestTestCase();
@@ -76,7 +76,7 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $subscriber->addExpressCheckoutButtonCart($enlightEventArgs);
 
         static::assertNull($view->getAssign('paypalUnifiedUseInContext'));
-        $paymentMethodProvider->setPaymentMethodActiveFlag(true);
+        $paymentMethodProvider->setPaymentMethodActiveFlag(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME, true);
     }
 
     public function testAddExpressCheckoutButtonCartReturnUnifiedInactive()
@@ -377,8 +377,8 @@ class ExpressCheckoutSubscriberTest extends TestCase
 
     public function testAddExpressCheckoutButtonDetailReturnPaymentMethodInactive()
     {
-        $paymentMethodProvider = new PaymentMethodProvider(Shopware()->Container()->get('models'));
-        $paymentMethodProvider->setPaymentMethodActiveFlag(false);
+        $paymentMethodProvider = $this->getPaymentMethodProvider();
+        $paymentMethodProvider->setPaymentMethodActiveFlag(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME, false);
 
         $view = new ViewMock(new \Enlight_Template_Manager());
         $enlightEventArgs = $this->createEventArgs($view);
@@ -389,7 +389,7 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $subscriber->addExpressCheckoutButtonDetail($enlightEventArgs);
 
         static::assertNull($view->getAssign('paypalUnifiedEcDetailActive'));
-        $paymentMethodProvider->setPaymentMethodActiveFlag(true);
+        $paymentMethodProvider->setPaymentMethodActiveFlag(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME, true);
     }
 
     public function testAddExpressCheckoutButtonDetailReturnUnifiedInactive()
@@ -464,8 +464,8 @@ class ExpressCheckoutSubscriberTest extends TestCase
 
     public function testAddExpressCheckoutButtonListingReturnPaymentMethodInactive()
     {
-        $paymentMethodProvider = new PaymentMethodProvider(Shopware()->Container()->get('models'));
-        $paymentMethodProvider->setPaymentMethodActiveFlag(false);
+        $paymentMethodProvider = $this->getPaymentMethodProvider();
+        $paymentMethodProvider->setPaymentMethodActiveFlag(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME, false);
 
         $view = new ViewMock(new \Enlight_Template_Manager());
         $enlightEventArgs = $this->createEventArgs($view);
@@ -476,7 +476,7 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $subscriber->addExpressCheckoutButtonListing($enlightEventArgs);
 
         static::assertNull($view->getAssign('paypalUnifiedEcDetailActive'));
-        $paymentMethodProvider->setPaymentMethodActiveFlag(true);
+        $paymentMethodProvider->setPaymentMethodActiveFlag(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME, true);
     }
 
     public function testAddExpressCheckoutButtonListingReturnUnifiedInactive()
@@ -548,8 +548,8 @@ class ExpressCheckoutSubscriberTest extends TestCase
 
     public function testAddExpressCheckoutButtonLoginReturnPaymentMethodInactive()
     {
-        $paymentMethodProvider = new PaymentMethodProvider(Shopware()->Container()->get('models'));
-        $paymentMethodProvider->setPaymentMethodActiveFlag(false);
+        $paymentMethodProvider = $this->getPaymentMethodProvider();
+        $paymentMethodProvider->setPaymentMethodActiveFlag(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME, false);
 
         $view = new ViewMock(new \Enlight_Template_Manager());
         $enlightEventArgs = $this->createEventArgs($view);
@@ -560,7 +560,7 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $subscriber->addExpressCheckoutButtonLogin($enlightEventArgs);
 
         static::assertNull($view->getAssign('paypalUnifiedEcLoginActive'));
-        $paymentMethodProvider->setPaymentMethodActiveFlag(true);
+        $paymentMethodProvider->setPaymentMethodActiveFlag(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME, true);
     }
 
     public function testAddExpressCheckoutButtonLoginReturnUnifiedInactive()
@@ -719,7 +719,8 @@ class ExpressCheckoutSubscriberTest extends TestCase
             Shopware()->Container()->get('dbal_connection'),
             Shopware()->Container()->get('paypal_unified.client_service'),
             Shopware()->Container()->get('paypal_unified.dependency_provider'),
-            $esdProductChecker
+            $esdProductChecker,
+            Shopware()->Container()->get('paypal_unified.payment_method_provider')
         );
     }
 
@@ -731,5 +732,13 @@ class ExpressCheckoutSubscriberTest extends TestCase
         return new \Enlight_Controller_ActionEventArgs([
             'subject' => new DummyController(new \Enlight_Controller_Request_RequestTestCase(), $view),
         ]);
+    }
+
+    private function getPaymentMethodProvider()
+    {
+        return new PaymentMethodProvider(
+            Shopware()->Container()->get('dbal_connection'),
+            Shopware()->Container()->get('models')
+        );
     }
 }

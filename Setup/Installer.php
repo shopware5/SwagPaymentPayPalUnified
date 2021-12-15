@@ -44,6 +44,16 @@ class Installer
     private $translation;
 
     /**
+     * @var PaymentMethodProvider
+     */
+    private $paymentMethodProvider;
+
+    /**
+     * @var PaymentModelCreator
+     */
+    private $paymentModelCreator;
+
+    /**
      * @param string $bootstrapPath
      */
     public function __construct(
@@ -51,12 +61,16 @@ class Installer
         Connection $connection,
         CrudService $attributeCrudService,
         Shopware_Components_Translation $translation,
+        PaymentMethodProvider $paymentMethodProvider,
+        PaymentModelCreator $paymentModelCreator,
         $bootstrapPath
     ) {
         $this->modelManager = $modelManager;
         $this->connection = $connection;
         $this->attributeCrudService = $attributeCrudService;
         $this->translation = $translation;
+        $this->paymentMethodProvider = $paymentMethodProvider;
+        $this->paymentModelCreator = $paymentModelCreator;
         $this->bootstrapPath = $bootstrapPath;
     }
 
@@ -72,7 +86,7 @@ class Installer
         }
 
         $this->createDatabaseTables();
-        $this->createUnifiedPaymentMethod();
+        $this->createUnifiedPaymentMethods();
         $this->createAttributes();
         $this->createDocumentTemplates();
         $this->migrate();
@@ -160,29 +174,6 @@ class Installer
         ]);
     }
 
-    private function createUnifiedPaymentMethod()
-    {
-        $existingPayment = $this->modelManager->getRepository(Payment::class)->findOneBy([
-            'name' => PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME,
-        ]);
-
-        if ($existingPayment !== null) {
-            //If the payment does already exist, we don't need to add it again.
-            return;
-        }
-
-        $payment = new Payment();
-        $payment->setActive(false);
-        $payment->setPosition(-100);
-        $payment->setName(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
-        $payment->setDescription('PayPal');
-        $payment->setAdditionalDescription($this->getUnifiedPaymentLogo() . 'Bezahlung per PayPal - einfach, schnell und sicher.');
-        $payment->setAction('PaypalUnifiedV2');
-
-        $this->modelManager->persist($payment);
-        $this->modelManager->flush($payment);
-    }
-
     private function removeDocumentTemplates()
     {
         $sql = "DELETE FROM s_core_documents_box WHERE `name` LIKE 'PayPal_Unified%'";
@@ -194,17 +185,6 @@ class Installer
         $sql = \file_get_contents($this->bootstrapPath . '/Setup/Assets/migration.sql');
 
         $this->connection->query($sql);
-    }
-
-    /**
-     * @return string
-     */
-    private function getUnifiedPaymentLogo()
-    {
-        return '<!-- PayPal Logo -->'
-        . '<a href="https://www.paypal.com/de/cgi-bin/webscr?cmd=xpt/cps/popup/OLCWhatIsPayPal-outside" target="_blank" rel="noopener">'
-        . '<img src="{link file=\'frontend/_public/src/img/sidebar-paypal-generic.png\' fullPath}" alt="Logo \'PayPal empfohlen\'">'
-        . '</a><br><!-- PayPal Logo -->';
     }
 
     private function writeTranslation()
@@ -238,5 +218,27 @@ class Installer
             ->setParameter(':name', PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME)
             ->execute()
             ->fetchAll(\PDO::FETCH_KEY_PAIR);
+    }
+
+    private function createUnifiedPaymentMethods()
+    {
+        $paymentMethodsNameArray = [
+            PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME,
+            PaymentMethodProvider::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME,
+        ];
+
+        foreach ($paymentMethodsNameArray as $paymentMethodName) {
+            $payment = $this->paymentMethodProvider->getPaymentMethodModel($paymentMethodName);
+
+            if ($payment instanceof Payment) {
+                // If the payment does already exist, we don't need to add it again.
+                continue;
+            }
+
+            $payment = $this->paymentModelCreator->createModel($paymentMethodName);
+
+            $this->modelManager->persist($payment);
+            $this->modelManager->flush($payment);
+        }
     }
 }

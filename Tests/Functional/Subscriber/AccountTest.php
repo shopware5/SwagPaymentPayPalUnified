@@ -57,8 +57,11 @@ class AccountTest extends TestCase
 
     public function testOnPostDispatchAccountPaymentMethodInactive()
     {
-        $paymentMethodProvider = new PaymentMethodProvider(Shopware()->Container()->get('models'));
-        $paymentMethodProvider->setPaymentMethodActiveFlag(false);
+        $paymentMethodProvider = new PaymentMethodProvider(
+            Shopware()->Container()->get('dbal_connection'),
+            Shopware()->Container()->get('models')
+        );
+        $paymentMethodProvider->setPaymentMethodActiveFlag(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME, false);
         $subscriber = $this->getSubscriber();
 
         $view = new ViewMock(
@@ -77,7 +80,7 @@ class AccountTest extends TestCase
         $customerData = $view->getAssign('sUserData');
         static::assertSame('PayPal', $customerData['additional']['payment']['description']);
 
-        $paymentMethodProvider->setPaymentMethodActiveFlag(true);
+        $paymentMethodProvider->setPaymentMethodActiveFlag(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME, true);
     }
 
     public function testOnPostDispatchAccountNoSettings()
@@ -233,13 +236,12 @@ class AccountTest extends TestCase
      */
     private function getSubscriber()
     {
-        $subscriber = new Account(
+        return new Account(
             Shopware()->Container()->get('dbal_connection'),
             Shopware()->Container()->get('paypal_unified.settings_service'),
-            Shopware()->Container()->get('paypal_unified.dependency_provider')
+            Shopware()->Container()->get('paypal_unified.dependency_provider'),
+            Shopware()->Container()->get('paypal_unified.payment_method_provider')
         );
-
-        return $subscriber;
     }
 
     /**

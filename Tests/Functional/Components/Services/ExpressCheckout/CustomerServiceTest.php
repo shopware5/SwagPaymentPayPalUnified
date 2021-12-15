@@ -42,7 +42,8 @@ class CustomerServiceTest extends TestCase
             Shopware()->Container()->get('shopware_storefront.context_service'),
             Shopware()->Container()->get('shopware_account.register_service'),
             Shopware()->Container()->get('front'),
-            Shopware()->Container()->get('paypal_unified.dependency_provider')
+            Shopware()->Container()->get('paypal_unified.dependency_provider'),
+            Shopware()->Container()->get('paypal_unified.payment_method_provider')
         );
 
         static::assertNotNull($service);

@@ -6,9 +6,9 @@
  * file that was distributed with this source code.
  */
 
-namespace SwagPaymentPayPalUnified\Components;
+namespace SwagPaymentPayPalUnified\Components\PayPalOrderParameter;
 
-class PayPalOrderBuilderParameter
+class PayPalOrderParameter
 {
     /**
      * @var array

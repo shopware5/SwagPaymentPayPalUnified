@@ -23,10 +23,10 @@
 {block name='frontend_checkout_confirm_left_payment_method'}
     {if $sUserData.additional.payment.id == $paypalUnifiedPaymentId && ($paypalUnifiedSpbCheckout || $paypalUnifiedUseSmartPaymentButtons)}
         <p class="payment--method-info">
-            <strong class="payment--title">{s name="ConfirmInfoPaymentMethod" namespace="frontend/checkout/confirm"}{/s}</strong>
+            <strong
+                class="payment--title">{s name="ConfirmInfoPaymentMethod" namespace="frontend/checkout/confirm"}{/s}</strong>
             <span id="spbMarksContainer" class="payment--method-info"></span>
         </p>
-
         {if !$sUserData.additional.payment.esdactive && {config name="showEsd"}}
             <p class="payment--confirm-esd">{s name="ConfirmInfoInstantDownload" namespace="frontend/checkout/confirm"}{/s}</p>
         {/if}
@@ -107,4 +107,18 @@
             {$smarty.block.parent}
         {/if}
     {/block}
+{/block}
+
+{block name="frontend_index_footer"}
+    {$smarty.block.parent}
+
+    {if $usePayPalInvoiceFraudNet}
+        <div data-paypalUnifiedFraudNet="true"
+             data-fraudNetSessionId="{$fraudNetSessionId}"
+             data-fraudNetFlowId="{$fraudNetFlowId}"
+        ></div>
+        <noscript>
+            <img src="https://c.paypal.com/v1/r/d/b/ns?f={$fraudNetSessionId}&s={$fraudNetFlowId}&js=0&r=1"/>
+        </noscript>
+    {/if}
 {/block}

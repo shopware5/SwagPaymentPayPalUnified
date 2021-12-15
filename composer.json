@@ -14,5 +14,8 @@
             "type": "vcs",
             "url": "https://github.com/shopwareLabs/plugin-dev-tools"
         }
-    ]
+    ],
+    "require": {
+        "giggsey/libphonenumber-for-php": "^8.12"
+    }
 }

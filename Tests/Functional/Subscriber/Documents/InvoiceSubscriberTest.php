@@ -52,7 +52,8 @@ class InvoiceSubscriberTest extends TestCase
             Shopware()->Container()->get('dbal_connection'),
             Shopware()->Container()->get('snippets'),
             null,
-            Shopware()->Container()->get('template')
+            Shopware()->Container()->get('template'),
+            Shopware()->Container()->get('paypal_unified.payment_method_provider')
         );
         static::assertNotNull($subscriber);
     }
@@ -162,7 +163,8 @@ class InvoiceSubscriberTest extends TestCase
             Shopware()->Container()->get('dbal_connection'),
             Shopware()->Container()->get('snippets'),
             $this->getTranslationService(),
-            Shopware()->Container()->get('template')
+            Shopware()->Container()->get('template'),
+            Shopware()->Container()->get('paypal_unified.payment_method_provider')
         );
     }
 

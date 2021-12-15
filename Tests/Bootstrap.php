@@ -14,6 +14,8 @@ class PayPalUnifiedTestKernel extends \Shopware\Kernel
 {
     public static function start()
     {
+        require_once __DIR__ . '/../vendor/autoload.php';
+
         $kernel = new self(\getenv('SHOPWARE_ENV') ?: 'testing', true);
         $kernel->boot();
 

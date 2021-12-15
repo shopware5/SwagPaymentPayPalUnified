@@ -50,13 +50,14 @@ class Frontend implements SubscriberInterface
         $pluginDir,
         SettingsServiceInterface $settingsService,
         Connection $connection,
-        RiskManagementInterface $riskManagement
+        RiskManagementInterface $riskManagement,
+        PaymentMethodProvider $paymentMethodProvider
     ) {
         $this->pluginDir = $pluginDir;
         $this->settingsService = $settingsService;
         $this->connection = $connection;
-        $this->paymentMethodProvider = new PaymentMethodProvider();
         $this->riskManagement = $riskManagement;
+        $this->paymentMethodProvider = $paymentMethodProvider;
     }
 
     /**
@@ -86,6 +87,7 @@ class Frontend implements SubscriberInterface
             $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.in-context-checkout.js',
             $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.smart-payment-buttons.js',
             $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.installments-banner.js',
+            $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified-fraudnet.js',
         ];
 
         return new ArrayCollection($jsPath);
@@ -114,7 +116,7 @@ class Frontend implements SubscriberInterface
             return;
         }
 
-        $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag($this->connection);
+        $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
         $showPayPalLogo = $swUnifiedActive && (bool) $this->settingsService->get('show_sidebar_logo');
 
         /** @var Enlight_View_Default $view */

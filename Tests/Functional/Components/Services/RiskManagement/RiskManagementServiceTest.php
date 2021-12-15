@@ -129,7 +129,7 @@ class RiskManagementServiceTest extends TestCase
     {
         return new RiskManagement(
             Shopware()->Container()->get('paypal_unified.dependency_provider'),
-            Shopware()->Container()->get('dbal_connection')
+            Shopware()->Container()->get('paypal_unified.payment_method_provider')
         );
     }
 

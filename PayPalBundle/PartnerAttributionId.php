@@ -30,6 +30,8 @@ final class PartnerAttributionId
      */
     const PAYPAL_SMART_PAYMENT_BUTTONS = 'Shopware_Cart_SPB_5native';
 
+    const PAYPAL_PAY_UPON_INVOICE = 'shopwareAG_Cart_Shopware5_PPCP';
+
     private function __construct()
     {
     }
