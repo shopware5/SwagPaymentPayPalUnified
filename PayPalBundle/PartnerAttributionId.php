@@ -30,7 +30,10 @@ final class PartnerAttributionId
      */
     const PAYPAL_SMART_PAYMENT_BUTTONS = 'Shopware_Cart_SPB_5native';
 
-    const PAYPAL_PAY_UPON_INVOICE = 'shopwareAG_Cart_Shopware5_PPCP';
+    /**
+     * Shopware Partner Id for all PayPal API V2 transactions
+     */
+    const PAYPAL_ALL_V2 = 'shopwareAG_Cart_Shopware5_PPCP';
 
     private function __construct()
     {

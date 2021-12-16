@@ -96,7 +96,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2SmartPaymentButtons extends Sh
         $payPalOrderData = $this->orderBuilderService->getOrder($orderParams);
 
         try {
-            $payPalOrder = $this->orderResource->create($payPalOrderData, PartnerAttributionId::PAYPAL_SMART_PAYMENT_BUTTONS, false);
+            $payPalOrder = $this->orderResource->create($payPalOrderData, PartnerAttributionId::PAYPAL_ALL_V2, false);
         } catch (RequestException $exception) {
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
                 ->setCode(ErrorCodes::COMMUNICATION_FAILURE)

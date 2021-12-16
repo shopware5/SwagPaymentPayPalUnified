@@ -23,6 +23,7 @@ use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Common\Link;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Patch;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Patches\OrderAddInvoiceIdPatch;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\PaymentIntentV2;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\OrderResource;
 
 class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends Shopware_Controllers_Frontend_Payment
@@ -114,7 +115,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends Shopware_Controllers
 
         try {
             $payPalOrderData = $this->orderBuilderService->getOrder($orderParams);
-            $payPalOrder = $this->orderResource->create($payPalOrderData, PartnerAttributionId::PAYPAL_CLASSIC, false);
+            $payPalOrder = $this->orderResource->create($payPalOrderData, PartnerAttributionId::PAYPAL_ALL_V2, false);
         } catch (RequestException $exception) {
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
                 ->setCode(ErrorCodes::COMMUNICATION_FAILURE)
@@ -175,7 +176,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends Shopware_Controllers
             $shopwareOrderNumber = (string) $this->saveOrder($payPalOrderId, $payPalOrderId, PaymentStatus::PAYMENT_STATUS_OPEN);
             $this->orderDataService->applyPaymentTypeAttribute($shopwareOrderNumber, $this->getPaymentType());
 
-            $orderNumberPrefix = $this->settingsService->get('order_number_prefix');
+            $orderNumberPrefix = $this->settingsService->get(SettingsServiceInterface::SETTING_ORDER_NUMBER_PREFIX);
 
             $invoiceIdPatch = new OrderAddInvoiceIdPatch();
             $invoiceIdPatch->setOp(Patch::OPERATION_ADD);
@@ -196,7 +197,11 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends Shopware_Controllers
         }
 
         try {
-            $this->orderResource->capture($payPalOrder->getId(), PartnerAttributionId::PAYPAL_CLASSIC, false);
+            if ($this->settingsService->get(SettingsServiceInterface::SETTING_INTENT) === PaymentIntentV2::CAPTURE) {
+                $this->orderResource->capture($payPalOrder->getId(), PartnerAttributionId::PAYPAL_ALL_V2, false);
+            } elseif ($this->settingsService->get(SettingsServiceInterface::SETTING_INTENT) === PaymentIntentV2::AUTHORIZE) {
+                $this->orderResource->authorize($payPalOrder->getId(), PartnerAttributionId::PAYPAL_ALL_V2, false);
+            }
         } catch (RequestException $exception) {
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
                 ->setCode(ErrorCodes::COMMUNICATION_FAILURE)
@@ -226,6 +231,14 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends Shopware_Controllers
             'action' => 'finish',
             'sUniqueID' => $payPalOrderId,
         ]);
+    }
+
+    public function cancelAction()
+    {
+        $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
+            ->setCode(ErrorCodes::CANCELED_BY_USER);
+
+        $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
     }
 
     private function getPaymentType()
@@ -288,7 +301,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends Shopware_Controllers
      */
     private function getSendOrdernumber()
     {
-        return $this->settingsService->get('send_order_number');
+        return $this->settingsService->get(SettingsServiceInterface::SETTING_SEND_ORDER_NUMBER);
     }
 
     /**

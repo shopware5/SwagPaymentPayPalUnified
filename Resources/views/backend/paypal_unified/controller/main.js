@@ -6,10 +6,13 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
     /**
      * @type { Array }
      */
-    refs: [
-        { ref: 'sidebar', selector: 'paypal-unified-overview-sidebar' },
-        { ref: 'grid', selector: 'paypal-unified-overview-grid' }
-    ],
+    refs: [{
+        ref: 'window', selector: 'paypal-unified-overview-window'
+    }, {
+        ref: 'sidebar', selector: 'paypal-unified-overview-sidebar'
+    }, {
+        ref: 'grid', selector: 'paypal-unified-overview-grid '
+    }],
 
     /**
      * @type { Shopware.apps.PaypalUnified.view.overview.Window }
@@ -35,6 +38,16 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
      * @type { Shopware.apps.PaypalUnified.controller.Api }
      */
     apiController: null,
+
+    /**
+     * @type { Array }
+     */
+    apiV2Types: [
+        'PayPalClassicV2',
+        'PayPalPlusInvoiceV2',
+        'PayPalExpressV2',
+        'PayPalSmartPaymentButtonsV2'
+    ],
 
     init: function() {
         var me = this;
@@ -166,7 +179,10 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
 
             me.loadDetails(me.record);
         } else {
-            Shopware.Notification.createStickyGrowlMessage({ title: '{s name="growl/title"}PayPal{/s}', text: responseObject.message }, me.window.title);
+            Shopware.Notification.createStickyGrowlMessage({
+                title: '{s name="growl/title"}PayPal{/s}',
+                text: responseObject.message
+            }, me.window.title);
         }
 
         me.getSidebar().setLoading(false);
@@ -182,7 +198,10 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
 
             me.loadDetails(me.record);
         } else {
-            Shopware.Notification.createStickyGrowlMessage({ title: '{s name="growl/title"}PayPal{/s}', text: responseObject.message }, me.window.title);
+            Shopware.Notification.createStickyGrowlMessage({
+                title: '{s name="growl/title"}PayPal{/s}',
+                text: responseObject.message
+            }, me.window.title);
         }
 
         me.getSidebar().setLoading(false);
@@ -197,10 +216,16 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
     paymentDetailsCallback: function(options, success, response) {
         var me = this,
             sidebar = me.getSidebar(),
+            window = me.getWindow(),
             details = Ext.JSON.decode(response.responseText);
 
+        window.changeSidebar(window.sidebarNames.SIDEBAR_V1);
+
         if (!Ext.isDefined(details) || !details.success) {
-            Shopware.Notification.createStickyGrowlMessage({ title: '{s name="growl/title"}PayPal{/s}', text: details.message }, me.window.title);
+            Shopware.Notification.createStickyGrowlMessage({
+                title: '{s name="growl/title"}PayPal{/s}',
+                text: details.message
+            }, me.window.title);
 
             sidebar.setLoading(false);
             sidebar.disable();
@@ -275,7 +300,10 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
 
             Shopware.Notification.createGrowlMessage('{s name="growl/title"}PayPal{/s}', '{s name="growl/refundSuccess"}The refund was successful{/s}', me.window.title);
         } else {
-            Shopware.Notification.createStickyGrowlMessage({ title: '{s name="growl/title"}PayPal{/s}', text: details.message }, me.window.title);
+            Shopware.Notification.createStickyGrowlMessage({
+                title: '{s name="growl/title"}PayPal{/s}',
+                text: details.message
+            }, me.window.title);
         }
 
         me.getSidebar().setLoading(false);
@@ -290,15 +318,22 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
             paymentId = record.get('temporaryId'), // The plugin stores the PayPal-PaymentId as temporaryId.
             transactionId = record.get('transactionId'), // The plugin stores the PayPal-PaymentId as temporaryId.
             paymentMethodId = record.get('paymentId'),
-            sidebar = me.getSidebar();
-
-        sidebar.setLoading('{s name="sidebar/loading/details"}Requesting details from PayPal...{/s}');
+            paymentType = record.get('paymentType'),
+            window = me.getWindow();
 
         me.record = record;
+
+        if (Ext.Array.contains(me.apiV2Types, paymentType)) {
+            return;
+        }
+
+        window.changeSidebar(window.sidebarNames.SIDEBAR_V1);
+        me.apiController.getPaymentById(paymentId, paymentMethodId, transactionId, Ext.bind(me.paymentDetailsCallback, me));
+
+        window.getCurrentSidebar().setLoading('{s name="sidebar/loading/details"}Requesting details from PayPal...{/s}')
+
         me.updateOrderDetails(record);
         me.updateCustomerDetails(record);
-
-        me.apiController.getPaymentById(paymentId, paymentMethodId, transactionId, Ext.bind(me.paymentDetailsCallback, me));
     },
 
     /**
@@ -306,9 +341,10 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
      */
     updateOrderDetails: function(record) {
         var me = this,
-            sidebar = me.getSidebar();
+            window = me.getWindow(),
+            sidebar = window.getCurrentSidebar();
 
-        sidebar.orderTab.loadRecord(record);
+        sidebar.getShopwareOrderTab().loadRecord(record);
 
         // Manually update the following fields.
         sidebar.down('#orderStatus').setValue(record.getOrderStatus().first().get('description'));
@@ -322,7 +358,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
     updateCustomerDetails: function(record) {
         var me = this,
             customer = record.getCustomer().first().raw, // we use the "raw" property, since the base customer model does not include firstname or lastname.
-            customerContainer = me.getSidebar().orderTab.customerContainer;
+            customerContainer = me.getWindow().getCurrentSidebar().getShopwareOrderTab().customerContainer;
 
         customerContainer.down('#salutation').setValue(customer.salutation);
         customerContainer.down('#firstname').setValue(customer.firstname);
@@ -602,6 +638,6 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
      */
     getDetails: function() {
         return this.details;
-    }
+    },
 });
 // {/block}

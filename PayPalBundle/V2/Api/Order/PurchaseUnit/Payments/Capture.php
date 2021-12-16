@@ -29,7 +29,7 @@ class Capture extends Payment
     protected $sellerProtection;
 
     /**
-     * @var bool
+     * @var bool|null
      */
     protected $finalCapture;
 
@@ -112,7 +112,7 @@ class Capture extends Payment
     }
 
     /**
-     * @return bool
+     * @return bool|null
      */
     public function isFinalCapture()
     {
@@ -120,7 +120,7 @@ class Capture extends Payment
     }
 
     /**
-     * @param bool $finalCapture
+     * @param bool|null $finalCapture
      *
      * @return void
      */
@@ -130,7 +130,7 @@ class Capture extends Payment
     }
 
     /**
-     * @return \SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Payments\Capture\SellerReceivableBreakdown
+     * @return SellerReceivableBreakdown
      */
     public function getSellerReceivableBreakdown()
     {

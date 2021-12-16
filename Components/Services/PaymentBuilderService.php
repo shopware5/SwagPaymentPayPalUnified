@@ -116,7 +116,9 @@ class PaymentBuilderService implements PaymentBuilderInterface
         $applicationContext = $this->getApplicationContext($paymentType);
 
         if ($paymentType === PaymentType::PAYPAL_EXPRESS || $paymentType === PaymentType::PAYPAL_CLASSIC) {
-            $requestParameters->setIntent($this->getIntentAsString((int) $this->settings->get('intent', SettingsTable::EXPRESS_CHECKOUT)));
+            $requestParameters->setIntent(
+                $this->getIntentAsString($this->settings->get(SettingsServiceInterface::SETTING_INTENT))
+            );
         } else {
             $requestParameters->setIntent(PaymentIntent::SALE);
         }
@@ -136,8 +138,8 @@ class PaymentBuilderService implements PaymentBuilderInterface
         $transactions = new Transactions();
         $transactions->setAmount($amount);
 
-        $submitCartGeneral = (bool) $this->settings->get('submit_cart');
-        $submitCartEcs = (bool) $this->settings->get('submit_cart', SettingsTable::EXPRESS_CHECKOUT);
+        $submitCartGeneral = (bool) $this->settings->get(SettingsServiceInterface::SETTING_SUBMIT_CART);
+        $submitCartEcs = (bool) $this->settings->get(SettingsServiceInterface::SETTING_SUBMIT_CART, SettingsTable::EXPRESS_CHECKOUT);
 
         if ($paymentType !== PaymentType::PAYPAL_EXPRESS && $submitCartGeneral) {
             $this->setItemList($transactions);
@@ -310,7 +312,7 @@ class PaymentBuilderService implements PaymentBuilderInterface
      */
     private function getBrandName()
     {
-        $brandName = (string) $this->settings->get('brand_name');
+        $brandName = (string) $this->settings->get(SettingsServiceInterface::SETTING_BRAND_NAME);
 
         if (\strlen($brandName) > 127) {
             $brandName = \substr($brandName, 0, 127);
@@ -324,6 +326,6 @@ class PaymentBuilderService implements PaymentBuilderInterface
      */
     private function getLandingPage()
     {
-        return (string) $this->settings->get('landing_page_type');
+        return (string) $this->settings->get(SettingsServiceInterface::SETTING_LANDING_PAGE_TYPE);
     }
 }

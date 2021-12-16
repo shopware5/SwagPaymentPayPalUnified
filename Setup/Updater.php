@@ -381,6 +381,20 @@ SQL;
 
         $this->modelManager->persist($payment);
         $this->modelManager->flush($payment);
+
+        if (!$this->checkIfColumnExist('swag_payment_paypal_unified_settings_general', 'intent')) {
+            $this->connection->executeQuery(
+                'ALTER TABLE `swag_payment_paypal_unified_settings_general`
+                ADD `intent` varchar(255);'
+            );
+        }
+
+        if ($this->checkIfColumnExist('swag_payment_paypal_unified_settings_express', 'intent')) {
+            $this->connection->executeQuery(
+                'ALTER TABLE `swag_payment_paypal_unified_settings_express`
+                DROP COLUMN `intent`;'
+            );
+        }
     }
 
     /**

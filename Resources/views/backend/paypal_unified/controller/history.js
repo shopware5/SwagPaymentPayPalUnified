@@ -3,23 +3,23 @@
 Ext.define('Shopware.apps.PaypalUnified.controller.History', {
     extend: 'Enlight.app.Controller',
 
-    refs: [
-        { ref: 'sidebar', selector: 'paypal-unified-overview-sidebar' }
-    ],
+    refs: [{
+        ref: 'sidebar', selector: 'paypal-unified-overview-sidebar'
+    }],
 
     /**
      * @type { Shopware.apps.PaypalUnified.controller.Api }
      */
     apiController: null,
 
-    init: function () {
+    init: function() {
         this.apiController = this.getController('Api');
 
         this.createComponentControl();
         this.callParent(arguments);
     },
 
-    createComponentControl: function () {
+    createComponentControl: function() {
         this.control({
             'paypal-unified-sidebar-history-grid': {
                 'select': this.onSelectHistoryGridRecord
@@ -31,7 +31,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.History', {
      * @param { Ext.selection.RowModel } element
      * @param { Ext.data.Model } record
      */
-    onSelectHistoryGridRecord: function (element, record) {
+    onSelectHistoryGridRecord: function(element, record) {
         var id = record.get('id'),
             type = record.get('type');
 
@@ -62,7 +62,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.History', {
      * @param { Boolean } success
      * @param { Object } response
      */
-    saleDetailsCallback: function (options, success, response) {
+    saleDetailsCallback: function(options, success, response) {
         this.getSidebar().setLoading(false);
 
         if (!success) {
@@ -93,7 +93,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.History', {
      * @param { Boolean } success
      * @param { Object } response
      */
-    refundDetailsCallback: function (options, success, response) {
+    refundDetailsCallback: function(options, success, response) {
         this.getSidebar().setLoading(false);
 
         if (!success) {
@@ -123,7 +123,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.History', {
      * @param { Boolean } success
      * @param { Object } response
      */
-    captureDetailsCallback: function (options, success, response) {
+    captureDetailsCallback: function(options, success, response) {
         this.getSidebar().setLoading(false);
 
         if (!success) {
@@ -155,7 +155,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.History', {
      * @param { Boolean } success
      * @param { Object } response
      */
-    orderDetailsCallback: function (options, success, response) {
+    orderDetailsCallback: function(options, success, response) {
         this.getSidebar().setLoading(false);
 
         if (!success) {
@@ -185,7 +185,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.History', {
      * @param { Boolean } success
      * @param { Object } response
      */
-    authorizationDetailsCallback: function (options, success, response) {
+    authorizationDetailsCallback: function(options, success, response) {
         this.getSidebar().setLoading(false);
 
         if (!success) {
@@ -216,7 +216,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.History', {
      *
      * @param { Object } details
      */
-    updateFields: function (details) {
+    updateFields: function(details) {
         var historyTab = this.getSidebar().historyTab;
 
         // Update time

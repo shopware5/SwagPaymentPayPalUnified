@@ -64,7 +64,7 @@ class PaymentMeans implements SubscriberInterface
 
         foreach ($availableMethods as $index => $paymentMethod) {
             if ((int) $paymentMethod['id'] === $this->unifiedPaymentId
-                && (!$this->settingsService->hasSettings() || !$this->settingsService->get('active'))
+                && (!$this->settingsService->hasSettings() || !$this->settingsService->get(SettingsServiceInterface::SETTING_ACTIVE))
             ) {
                 //Force unset the payment method, because it's not available without any settings.
                 unset($availableMethods[$index]);

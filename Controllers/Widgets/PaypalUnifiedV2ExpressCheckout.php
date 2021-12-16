@@ -86,7 +86,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout extends Shopwa
         try {
             $payPalOrderData = $this->orderBuilderService->getOrder($orderParams);
 
-            $payPalOrder = $this->orderResource->create($payPalOrderData, PartnerAttributionId::PAYPAL_EXPRESS_CHECKOUT, false);
+            $payPalOrder = $this->orderResource->create($payPalOrderData, PartnerAttributionId::PAYPAL_ALL_V2, false);
         } catch (RequestException $exception) {
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
                 ->setCode(ErrorCodes::COMMUNICATION_FAILURE)

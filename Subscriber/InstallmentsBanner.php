@@ -69,7 +69,7 @@ class InstallmentsBanner implements SubscriberInterface
             return;
         }
 
-        $active = (bool) $this->settingsService->get('active');
+        $active = (bool) $this->settingsService->get(SettingsServiceInterface::SETTING_ACTIVE);
         if (!$active) {
             return;
         }
@@ -83,7 +83,7 @@ class InstallmentsBanner implements SubscriberInterface
         /** @var View $view */
         $view = $args->getSubject()->View();
 
-        $clientId = $this->settingsService->get('client_id');
+        $clientId = $this->settingsService->get(SettingsServiceInterface::SETTING_CLIENT_ID);
         $amount = $this->getAmountForPage($args->getSubject()->Request(), $view);
         $currency = $shopContext->getCurrency()->getCurrency();
         $buyerCountry = $this->getBuyerCountryByCurrencyAndShopCountryIso($currency, $shopLocale);
@@ -146,7 +146,7 @@ class InstallmentsBanner implements SubscriberInterface
         $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
 
         return $swUnifiedActive
-            && (bool) $this->settingsService->get('advertise_installments', SettingsTable::INSTALLMENTS)
+            && (bool) $this->settingsService->get(SettingsServiceInterface::SETTING_ADVERTISE_INSTALLMENTS, SettingsTable::INSTALLMENTS)
             && $isInstallmentsCountry;
     }
 
