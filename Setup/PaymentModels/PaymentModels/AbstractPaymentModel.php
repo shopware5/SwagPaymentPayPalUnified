@@ -9,8 +9,9 @@
 namespace SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentModels;
 
 use Shopware\Models\Payment\Payment;
+use Shopware\Models\Plugin\Plugin;
 
-interface PaymentModelInterface
+abstract class AbstractPaymentModel
 {
     const POSITION_PAYPAL_CLASSIC = -100;
     const POSITION_PAY_UPON_INVOICE = -99;
@@ -31,7 +32,17 @@ interface PaymentModelInterface
     const ACTION_PAYPAL_APM = 'PaypalUnifiedApm';
 
     /**
+     * @var Plugin
+     */
+    protected $plugin;
+
+    public function __construct(Plugin $plugin)
+    {
+        $this->plugin = $plugin;
+    }
+
+    /**
      * @return Payment
      */
-    public function create();
+    abstract public function create();
 }

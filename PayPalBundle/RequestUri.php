@@ -18,6 +18,9 @@ final class RequestUri
     const AUTHORIZATION_RESOURCE = 'v1/payments/authorization';
     const CAPTURE_RESOURCE = 'v1/payments/capture';
     const ORDER_RESOURCE = 'v1/payments/orders';
+    const CREDENTIALS_RESOURCE = 'v1/customer/partners/%s/merchant-integrations/credentials';
+    const MERCHANT_INTEGRATIONS_RESOURCE = 'v1/customer/partners/%s/merchant-integrations/%s';
+    const USER_INFO_RESOURCE = 'v1/identity/oauth2/userinfo';
 
     private function __construct()
     {

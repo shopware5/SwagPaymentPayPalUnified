@@ -15,6 +15,8 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.model.General', {
         { name: 'active', type: 'bool' },
         { name: 'clientId', type: 'string' },
         { name: 'clientSecret', type: 'string' },
+        { name: 'sandboxClientId', type: 'string' },
+        { name: 'sandboxClientSecret', type: 'string' },
         { name: 'sandbox', type: 'bool' },
         { name: 'showSidebarLogo', type: 'bool' },
         { name: 'brandName', type: 'string' },

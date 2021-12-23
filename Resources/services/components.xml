@@ -121,6 +121,14 @@
             <argument type="service" id="paypal_unified.common.cart_persister"/>
         </service>
 
+        <service id="paypal_unified.onboarding_status_service"
+                 class="SwagPaymentPayPalUnified\Components\Services\OnboardingStatusService"
+                 public="true">
+            <argument type="service" id="paypal_unified.settings_service"/>
+            <argument type="service" id="models"/>
+            <argument type="service" id="paypal_unified.merchant_integrations_resource"/>
+        </service>
+
         <service id="paypal_unified.button_locale_service"
                  class="SwagPaymentPayPalUnified\Components\ButtonLocaleService"
                  public="true">

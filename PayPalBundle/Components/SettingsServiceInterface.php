@@ -20,6 +20,8 @@ interface SettingsServiceInterface
     const SETTING_SANDBOX = 'sandbox';
     const SETTING_CLIENT_ID = 'client_id';
     const SETTING_CLIENT_SECRET = 'client_secret';
+    const SETTING_SANDBOX_CLIENT_ID = 'sandbox_client_id';
+    const SETTING_SANDBOX_CLIENT_SECRET = 'sandbox_client_secret';
     const SETTING_SHOW_SIDEBAR_LOGO = 'show_sidebar_logo';
     const SETTING_ADVERTISE_INSTALLMENTS = 'advertise_installments';
     const SETTING_MERCHANT_LOCATION = 'merchant_location';

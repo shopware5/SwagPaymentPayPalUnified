@@ -11,7 +11,7 @@ namespace SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentModels;
 use Shopware\Models\Payment\Payment;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 
-class Eps implements PaymentModelInterface
+class Eps extends AbstractPaymentModel
 {
     /**
      * {@inheritDoc}
@@ -19,12 +19,13 @@ class Eps implements PaymentModelInterface
     public function create()
     {
         $payment = new Payment();
-        $payment->setActive(true);
+        $payment->setActive(false);
         $payment->setPosition(self::POSITION_EPS);
         $payment->setName(PaymentMethodProviderInterface::EPS_METHOD_NAME);
         $payment->setDescription('eps');
         $payment->setAdditionalDescription($this->getDescription());
         $payment->setAction(self::ACTION_PAYPAL_APM);
+        $payment->setPlugin($this->plugin);
 
         return $payment;
     }

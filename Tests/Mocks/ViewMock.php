@@ -20,11 +20,6 @@ class ViewMock extends Enlight_View_Default
     /**
      * @var array
      */
-    private $loadedTemplates = [];
-
-    /**
-     * @var array
-     */
     private $assigns = [];
 
     /**
@@ -43,16 +38,6 @@ class ViewMock extends Enlight_View_Default
     public function getTemplateDir()
     {
         return $this->templates;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function loadTemplate($path)
-    {
-        $this->loadedTemplates[] = $path;
-
-        return $this;
     }
 
     /**
@@ -80,13 +65,5 @@ class ViewMock extends Enlight_View_Default
         }
 
         return $this->assigns[$spec];
-    }
-
-    /**
-     * @return array<mixed>
-     */
-    public function getLoadedTemplates()
-    {
-        return $this->loadedTemplates;
     }
 }

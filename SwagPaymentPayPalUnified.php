@@ -26,7 +26,6 @@ use SwagPaymentPayPalUnified\Components\DependencyInjection\PaymentSourceValueHa
 use SwagPaymentPayPalUnified\Components\DependencyInjection\RiskManagementValidatorCompilerPass;
 use SwagPaymentPayPalUnified\Components\DependencyInjection\RiskManagementValueCompilerPass;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
-use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Setup\Installer;
 use SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentModelFactory;
 use SwagPaymentPayPalUnified\Setup\Uninstaller;
@@ -67,7 +66,7 @@ class SwagPaymentPayPalUnified extends Plugin
             $this->container->get('shopware_attribute.crud_service'),
             $translation,
             $this->getPaymentMethodProvider(),
-            $this->getPaymentModelFactory(),
+            new PaymentModelFactory($context->getPlugin()),
             $this->getPath()
         );
 
@@ -100,7 +99,7 @@ class SwagPaymentPayPalUnified extends Plugin
             $this->container->get('models'),
             $this->container->get('dbal_connection'),
             $this->getPaymentMethodProvider(),
-            $this->getPaymentModelFactory()
+            new PaymentModelFactory($context->getPlugin())
         );
         $updater->update($context->getCurrentVersion());
 
@@ -112,8 +111,9 @@ class SwagPaymentPayPalUnified extends Plugin
      */
     public function activate(ActivateContext $context)
     {
-        $this->getPaymentMethodProvider()->setPaymentMethodActiveFlag(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME, true);
-        $this->getPaymentMethodProvider()->setPaymentMethodActiveFlag(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME, true);
+        foreach ($this->getPaymentMethodProvider()->getAllUnifiedNames() as $unifiedName) {
+            $this->getPaymentMethodProvider()->setPaymentMethodActiveFlag($unifiedName, true);
+        }
 
         $context->scheduleClearCache(ActivateContext::CACHE_LIST_ALL);
     }
@@ -123,8 +123,9 @@ class SwagPaymentPayPalUnified extends Plugin
      */
     public function deactivate(DeactivateContext $context)
     {
-        $this->getPaymentMethodProvider()->setPaymentMethodActiveFlag(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME, false);
-        $this->getPaymentMethodProvider()->setPaymentMethodActiveFlag(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME, false);
+        foreach ($this->getPaymentMethodProvider()->getAllUnifiedNames() as $unifiedName) {
+            $this->getPaymentMethodProvider()->setPaymentMethodActiveFlag($unifiedName, false);
+        }
 
         $context->scheduleClearCache(DeactivateContext::CACHE_LIST_ALL);
     }
@@ -135,10 +136,5 @@ class SwagPaymentPayPalUnified extends Plugin
             $this->container->get('dbal_connection'),
             $this->container->get('models')
         );
-    }
-
-    private function getPaymentModelFactory()
-    {
-        return new PaymentModelFactory();
     }
 }

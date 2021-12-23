@@ -11,7 +11,7 @@ namespace SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentModels;
 use Shopware\Models\Payment\Payment;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 
-class Ideal implements PaymentModelInterface
+class Ideal extends AbstractPaymentModel
 {
     /**
      * {@inheritDoc}
@@ -19,12 +19,13 @@ class Ideal implements PaymentModelInterface
     public function create()
     {
         $payment = new Payment();
-        $payment->setActive(true);
+        $payment->setActive(false);
         $payment->setPosition(self::POSITION_IDEAL);
         $payment->setName(PaymentMethodProviderInterface::IDEAL_METHOD_NAME);
         $payment->setDescription('iDEAL');
         $payment->setAdditionalDescription($this->getDescription());
         $payment->setAction(self::ACTION_PAYPAL_APM);
+        $payment->setPlugin($this->plugin);
 
         return $payment;
     }

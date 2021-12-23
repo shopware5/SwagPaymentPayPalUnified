@@ -17,6 +17,15 @@ final class SettingsTable
     const EXPRESS_CHECKOUT = 'express';
     const INSTALLMENTS = 'installments';
     const PLUS = 'plus';
+    const PAY_UPON_INVOICE = 'pay_upon_invoice';
+
+    const FULL = [
+        self::GENERAL => 'swag_payment_paypal_unified_settings_general',
+        self::EXPRESS_CHECKOUT => 'swag_payment_paypal_unified_settings_express',
+        self::INSTALLMENTS => 'swag_payment_paypal_unified_settings_installments',
+        self::PLUS => 'swag_payment_paypal_unified_settings_plus',
+        self::PAY_UPON_INVOICE => 'swag_payment_paypal_unified_settings_pay_upon_invoice',
+    ];
 
     private function __construct()
     {

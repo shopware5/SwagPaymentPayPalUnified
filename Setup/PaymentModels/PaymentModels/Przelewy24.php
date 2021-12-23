@@ -11,7 +11,7 @@ namespace SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentModels;
 use Shopware\Models\Payment\Payment;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 
-class Przelewy24 implements PaymentModelInterface
+class Przelewy24 extends AbstractPaymentModel
 {
     /**
      * {@inheritDoc}
@@ -19,12 +19,13 @@ class Przelewy24 implements PaymentModelInterface
     public function create()
     {
         $payment = new Payment();
-        $payment->setActive(true);
+        $payment->setActive(false);
         $payment->setPosition(self::POSITION_P24);
         $payment->setName(PaymentMethodProviderInterface::P24_METHOD_NAME);
         $payment->setDescription('Przelewy24');
         $payment->setAdditionalDescription($this->getDescription());
         $payment->setAction(self::ACTION_PAYPAL_APM);
+        $payment->setPlugin($this->plugin);
 
         return $payment;
     }

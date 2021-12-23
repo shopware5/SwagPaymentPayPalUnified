@@ -27,7 +27,7 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebarV2.order.fieldset.paypalTran
     },
 
     /**
-     * @param paypalOrderData { Object }
+     * @param { Object } paypalOrderData
      */
     setOrderData: function (paypalOrderData) {
         this.customerId.setValue(paypalOrderData.payer.payer_id);

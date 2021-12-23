@@ -21,7 +21,7 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebarV2.order.fieldset.paypalTran
     },
 
     /**
-     * @param paypalOrderData { Object }
+     * @param { Object } paypalOrderData
      */
     setOrderData: function (paypalOrderData) {
         var purchaseUnit = paypalOrderData.purchase_units[0];

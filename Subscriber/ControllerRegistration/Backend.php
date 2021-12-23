@@ -44,6 +44,7 @@ class Backend implements SubscriberInterface
             'Enlight_Controller_Dispatcher_ControllerPath_Backend_PaypalUnifiedExpressSettings' => 'onGetBackendExpressSettingsControllerPath',
             'Enlight_Controller_Dispatcher_ControllerPath_Backend_PaypalUnifiedInstallmentsSettings' => 'onGetBackendInstallmentsSettingsControllerPath',
             'Enlight_Controller_Dispatcher_ControllerPath_Backend_PaypalUnifiedPlusSettings' => 'onGetBackendPlusSettingsControllerPath',
+            'Enlight_Controller_Dispatcher_ControllerPath_Backend_PaypalUnifiedPayUponInvoiceSettings' => 'onGetBackendPayUponInvoiceControllerPath',
         ];
     }
 
@@ -115,5 +116,16 @@ class Backend implements SubscriberInterface
     public function onGetBackendPlusSettingsControllerPath()
     {
         return $this->pluginDirectory . '/Controllers/Backend/PaypalUnifiedPlusSettings.php';
+    }
+
+    /**
+     * Handles the Enlight_Controller_Dispatcher_ControllerPath_Backend_PaypalUnifiedPayUponInvoiceSettings event.
+     * Returns the path to the backend application controller.
+     *
+     * @return string
+     */
+    public function onGetBackendPayUponInvoiceControllerPath()
+    {
+        return $this->pluginDirectory . '/Controllers/Backend/PaypalUnifiedPayUponInvoiceSettings.php';
     }
 }

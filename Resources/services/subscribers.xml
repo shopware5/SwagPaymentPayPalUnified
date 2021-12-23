@@ -53,6 +53,7 @@
                  class="SwagPaymentPayPalUnified\Subscriber\Backend"
                  public="true">
             <argument>%paypal_unified.plugin_dir%</argument>
+            <argument type="service" id="paypal_unified.nonce_service"/>
             <tag name="shopware.event_subscriber"/>
         </service>
 
@@ -181,6 +182,7 @@
             <argument type="service" id="paypal_unified.dependency_provider"/>
             <argument type="service" id="validator"/>
             <argument type="service" id="shopware_storefront.context_service"/>
+            <argument type="service" id="paypal_unified.settings_service"/>
             <tag name="shopware.event_subscriber"/>
         </service>
 

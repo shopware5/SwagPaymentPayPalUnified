@@ -254,16 +254,17 @@ class Plus implements SubscriberInterface
         $paymentIds = array_column($paymentMethods, 'id');
 
         $queryBuilder = $this->connection->createQueryBuilder();
-        $queryBuilder->select(
+        $statement = $queryBuilder->select(
             'paymentmeanID',
             'swag_paypal_unified_display_in_plus_iframe',
             'swag_paypal_unified_plus_iframe_payment_logo'
         )
             ->from('s_core_paymentmeans_attributes')
             ->where('paymentmeanID IN(:paymentIds)')
-            ->setParameter('paymentIds', $paymentIds, Connection::PARAM_INT_ARRAY);
+            ->setParameter('paymentIds', $paymentIds, Connection::PARAM_INT_ARRAY)
+            ->execute();
 
-        $attributes = $queryBuilder->execute()->fetchAll(PDO::FETCH_GROUP | PDO::FETCH_UNIQUE);
+        $attributes = $statement->fetchAll(PDO::FETCH_GROUP | PDO::FETCH_UNIQUE);
 
         foreach ($paymentMethods as &$paymentMethod) {
             if (\array_key_exists($paymentMethod['id'], $attributes)) {

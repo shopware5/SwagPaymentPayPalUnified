@@ -118,11 +118,12 @@ class OrderDataService
     public function getTransactionId($orderNumber)
     {
         $builder = $this->dbalConnection->createQueryBuilder();
-        $builder->select('o.transactionId')
+        $statement = $builder->select('o.transactionId')
             ->from('s_order', 'o')
             ->where('o.ordernumber = :orderNumber')
-            ->setParameter(':orderNumber', $orderNumber);
+            ->setParameter(':orderNumber', $orderNumber)
+            ->execute();
 
-        return (string) $builder->execute()->fetchColumn();
+        return (string) $statement->fetchColumn();
     }
 }

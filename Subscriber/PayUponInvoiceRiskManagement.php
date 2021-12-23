@@ -13,6 +13,10 @@ use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
+use SwagPaymentPayPalUnified\Models\Settings\General;
+use SwagPaymentPayPalUnified\Models\Settings\PayUponInvoice;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use Symfony\Component\Validator\Constraints\Collection;
 use Symfony\Component\Validator\Constraints\EqualTo;
 use Symfony\Component\Validator\Constraints\NotBlank;
@@ -41,16 +45,23 @@ class PayUponInvoiceRiskManagement implements SubscriberInterface
      */
     private $contextService;
 
+    /**
+     * @var SettingsServiceInterface
+     */
+    private $settingsService;
+
     public function __construct(
         PaymentMethodProvider $paymentMethodProvider,
         DependencyProvider $dependencyProvider,
         ValidatorInterface $validator,
-        ContextServiceInterface $contextService
+        ContextServiceInterface $contextService,
+        SettingsServiceInterface $settingsService
     ) {
         $this->paymentMethodProvider = $paymentMethodProvider;
         $this->dependencyProvider = $dependencyProvider;
         $this->validator = $validator;
         $this->contextService = $contextService;
+        $this->settingsService = $settingsService;
     }
 
     /**
@@ -70,13 +81,33 @@ class PayUponInvoiceRiskManagement implements SubscriberInterface
             return true;
         }
 
-        $basket = $args->get('basket');
-        $user = $args->get('user');
         $paymentId = $this->paymentMethodProvider->getPaymentId(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME);
 
         if ((int) $args->get('paymentID') !== $paymentId) {
             return false;
         }
+
+        $generalSettings = $this->settingsService->getSettings($this->contextService->getShopContext()->getShop()->getId());
+
+        if (!$generalSettings instanceof General) {
+            return true;
+        }
+
+        $payUponInvoiceSettings = $this->settingsService->getSettings($this->contextService->getShopContext()->getShop()->getId(), SettingsTable::PAY_UPON_INVOICE);
+
+        if (!$payUponInvoiceSettings instanceof PayUponInvoice) {
+            return true;
+        }
+
+        $payUponInvoiceActive = $payUponInvoiceSettings->isActive();
+        $onboardingCompleted = $generalSettings->getSandbox() ? $payUponInvoiceSettings->isSandboxOnboardingCompleted() : $payUponInvoiceSettings->isOnboardingCompleted();
+
+        if (!$payUponInvoiceActive || !$onboardingCompleted) {
+            return true;
+        }
+
+        $basket = $args->get('basket');
+        $user = $args->get('user');
 
         if (empty($basket)) {
             $basket = [

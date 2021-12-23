@@ -61,7 +61,9 @@ class UpdateTo400
         $this->moveIntent();
         $this->addButtonStyleToGeneralSettings();
         $this->installNewPaymentMethods();
+        $this->addPayUponInvoiceSettingsTable();
         $this->insertDefaultButtonStyle();
+        $this->addSandboxCredentialsToGeneralSettings();
     }
 
     private function moveIntent()
@@ -117,6 +119,26 @@ class UpdateTo400
         (new PaymentInstaller($this->paymentMethodProvider, $this->paymentModelFactory, $this->modelManager))->installPayments();
     }
 
+    private function addPayUponInvoiceSettingsTable()
+    {
+        if (!$this->connection->getSchemaManager()->tablesExist(['swag_payment_paypal_unified_settings_pay_upon_invoice'])) {
+            $this->connection->executeQuery(
+                <<<'SQL'
+CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_settings_pay_upon_invoice (
+    `id`                           INT(11)    UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `shop_id`                      INT(11)    NOT NULL,
+    `onboarding_completed`         TINYINT(1) NOT NULL,
+    `sandbox_onboarding_completed` TINYINT(1) NOT NULL,
+    `active`                       TINYINT(1) NOT NULL
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COLLATE = utf8_unicode_ci;
+SQL
+            );
+        }
+    }
+
     private function insertDefaultButtonStyle()
     {
         $this->connection->executeQuery(
@@ -127,5 +149,22 @@ class UpdateTo400
                         `button_locale` = ""
                     ;'
         );
+    }
+
+    private function addSandboxCredentialsToGeneralSettings()
+    {
+        if (!$this->columnService->checkIfColumnExist('swag_payment_paypal_unified_settings_general', 'sandbox_client_id')) {
+            $this->connection->executeQuery(
+                'ALTER TABLE `swag_payment_paypal_unified_settings_general`
+                ADD `sandbox_client_id` varchar(255) NULL;'
+            );
+        }
+
+        if (!$this->columnService->checkIfColumnExist('swag_payment_paypal_unified_settings_general', 'sandbox_client_secret')) {
+            $this->connection->executeQuery(
+                'ALTER TABLE `swag_payment_paypal_unified_settings_general`
+                ADD `sandbox_client_secret` varchar(255) NULL;'
+            );
+        }
     }
 }

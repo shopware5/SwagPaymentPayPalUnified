@@ -119,9 +119,9 @@ Ext.define('Shopware.apps.PaypalUnified.controller.ApiV2', {
     },
 
     /**
-     * @param request { Object }
-     * @param opts { Object }
-     * @param response { Object }
+     * @param { Object } request
+     * @param { Object } opts
+     * @param { Object } response
      */
     orderDetailsV2Callback: function(request, opts, response) {
         var responseObject = Ext.JSON.decode(response.responseText);
@@ -136,7 +136,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.ApiV2', {
     },
 
     /**
-     * @param paypalOrderData { Object }
+     * @param { Object } paypalOrderData
      */
     showV2Data: function(paypalOrderData) {
         var window = this.getWindow(),
@@ -177,7 +177,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.ApiV2', {
     },
 
     /**
-     * @param buttonValue { String }
+     * @param { String } buttonValue
      */
     cancelAuthorization: function(buttonValue) {
         if (buttonValue !== 'ok') {
@@ -194,9 +194,9 @@ Ext.define('Shopware.apps.PaypalUnified.controller.ApiV2', {
     },
 
     /**
-     * @param response { Object }
-     * @param request { Object }
-     * @param window { Ext.window.Window }
+     * @param { Object } response
+     * @param { Object } request
+     * @param { Ext.window.Window } window
      */
     afterCancelAuthorization: function(response, request, window) {
         try {
@@ -234,7 +234,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.ApiV2', {
     },
 
     /**
-     * @param window { Ext.window.Window }
+     * @param { Ext.window.Window } window
      */
     onExecuteCapture: function(window) {
         var form = window.getForm();
@@ -248,7 +248,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.ApiV2', {
     },
 
     /**
-     * @param window { Ext.window.Window }
+     * @param { Ext.window.Window } window
      */
     onExecuteRefund: function(window) {
         var form = window.getForm(),
@@ -266,9 +266,9 @@ Ext.define('Shopware.apps.PaypalUnified.controller.ApiV2', {
     },
 
     /**
-     * @param response { Object }
-     * @param request { Object }
-     * @param window { Ext.window.Window }
+     * @param { Object } response
+     * @param { Object } request
+     * @param { Ext.window.Window } window
      */
     valuesResponse: function(response, request, window) {
         try {
@@ -292,7 +292,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.ApiV2', {
     },
 
     /**
-     * @param selectedItem { Object }
+     * @param { Object } selectedItem
      */
     onHistoryGridChange: function(selectedItem) {
         this.getPaymentDetailFieldset().setPaymentDetails(selectedItem);

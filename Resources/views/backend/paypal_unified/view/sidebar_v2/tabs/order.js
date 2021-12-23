@@ -23,7 +23,7 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebarV2.tabs.Order', {
     },
 
     /**
-     * @param paypalOrderData { Object }
+     * @param { Object } paypalOrderData
      */
     setOrderData: function(paypalOrderData) {
         this.paypalTransactioinTab.setOrderData(paypalOrderData);

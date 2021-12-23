@@ -33,14 +33,14 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebarV2.order.fieldset.paymentHis
     },
 
     /**
-     * @param paypalOrderData { Object }
+     * @param { Object } paypalOrderData
      */
     setOrderData: function(paypalOrderData) {
         // Do nothing
     },
 
     /**
-     * @param payment { Ext.data.Model }
+     * @param { Ext.data.Model } payment
      */
     setPaymentDetails: function(payment) {
         this.paymentType.setValue(payment.raw.type);

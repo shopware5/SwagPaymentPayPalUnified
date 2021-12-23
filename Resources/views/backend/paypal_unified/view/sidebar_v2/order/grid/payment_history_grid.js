@@ -44,7 +44,7 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebarV2.order.grid.PaymentHistory
     },
 
     /**
-     * @param storeData { Array }
+     * @param { Array } storeData
      */
     setStore: function(storeData) {
         var store = this.createStore(storeData);
@@ -53,7 +53,7 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebarV2.order.grid.PaymentHistory
     },
 
     /**
-     * @param storeData { Array }
+     * @param { Array } storeData
      */
     createStore: function(storeData) {
         return Ext.create('Ext.data.Store', {
@@ -63,9 +63,9 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebarV2.order.grid.PaymentHistory
     },
 
     /**
-     * @param value { Number }
-     * @param style { Object }
-     * @param record { Ext.data.Model }
+     * @param { Number } value
+     * @param { Object } style
+     * @param { Ext.data.Model } record
      *
      * @return { string }
      */
@@ -74,7 +74,7 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebarV2.order.grid.PaymentHistory
     },
 
     /**
-     * @param value { string }
+     * @param { string } value
      *
      * @return { string }
      */
@@ -83,7 +83,7 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebarV2.order.grid.PaymentHistory
     },
 
     /**
-     * @param paypalOrderData { Object }
+     * @param { Object } paypalOrderData
      */
     setOrderData: function(paypalOrderData) {
         var me = this,
@@ -116,8 +116,8 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebarV2.order.grid.PaymentHistory
     },
 
     /**
-     * @param grid { Ext.grid.Panel }
-     * @param selectedRecords { Array }
+     * @param { Ext.grid.Panel } grid
+     * @param { Array } selectedRecords
      */
     onSelectionChange: function(grid, selectedRecords) {
         if (!selectedRecords.length) {

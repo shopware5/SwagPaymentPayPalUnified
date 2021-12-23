@@ -16,6 +16,7 @@ use SwagPaymentPayPalUnified\Models\Settings;
 use SwagPaymentPayPalUnified\Models\Settings\ExpressCheckout;
 use SwagPaymentPayPalUnified\Models\Settings\General;
 use SwagPaymentPayPalUnified\Models\Settings\Installments;
+use SwagPaymentPayPalUnified\Models\Settings\PayUponInvoice;
 use SwagPaymentPayPalUnified\Models\Settings\Plus;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
@@ -73,34 +74,30 @@ class SettingsService implements SettingsServiceInterface
             $shopId = $this->shop->getId();
         }
 
+        $baseCriteria = [
+            'shopId' => $shopId,
+        ];
+
         switch ($settingsType) {
-            case SettingsTable::GENERAL:
-                $generalSettings = $this->modelManager->getRepository(General::class)->findOneBy(
-                    ['shopId' => $shopId]
-                );
-
-                return $generalSettings;
             case SettingsTable::EXPRESS_CHECKOUT:
-                $expressSettings = $this->modelManager->getRepository(ExpressCheckout::class)->findOneBy(
-                    ['shopId' => $shopId]
-                );
-
-                return $expressSettings;
+                $entity = ExpressCheckout::class;
+                break;
             case SettingsTable::INSTALLMENTS:
-                $installmentsSettings = $this->modelManager->getRepository(Installments::class)->findOneBy(
-                    ['shopId' => $shopId]
-                );
-
-                return $installmentsSettings;
+                $entity = Installments::class;
+                break;
             case SettingsTable::PLUS:
-                $plusSettings = $this->modelManager->getRepository(Plus::class)->findOneBy(
-                    ['shopId' => $shopId]
-                );
-
-                return $plusSettings;
+                $entity = Plus::class;
+                break;
+            case SettingsTable::PAY_UPON_INVOICE:
+                $entity = PayUponInvoice::class;
+                break;
+            default:
+                $entity = General::class;
         }
 
-        return null;
+        return $this->modelManager
+            ->getRepository($entity)
+            ->findOneBy($baseCriteria);
     }
 
     /**
@@ -158,17 +155,10 @@ class SettingsService implements SettingsServiceInterface
      */
     private function getTableByType($settingsType)
     {
-        switch ($settingsType) {
-            case SettingsTable::GENERAL:
-                return 'swag_payment_paypal_unified_settings_general';
-            case SettingsTable::EXPRESS_CHECKOUT:
-                return 'swag_payment_paypal_unified_settings_express';
-            case SettingsTable::INSTALLMENTS:
-                return 'swag_payment_paypal_unified_settings_installments';
-            case SettingsTable::PLUS:
-                return 'swag_payment_paypal_unified_settings_plus';
-            default:
-                throw new \RuntimeException('The provided table ' . $settingsType . ' is not supported');
+        if (\array_key_exists($settingsType, SettingsTable::FULL)) {
+            return SettingsTable::FULL[$settingsType];
         }
+
+        throw new \RuntimeException('The provided table ' . $settingsType . ' is not supported');
     }
 }
