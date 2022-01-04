@@ -10,6 +10,7 @@ namespace SwagPaymentPayPalUnified\Subscriber;
 
 use Doctrine\DBAL\Connection;
 use Enlight\Event\SubscriberInterface;
+use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
 use Shopware\Models\Shop\Shop;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
@@ -40,16 +41,23 @@ class InContext implements SubscriberInterface
      */
     private $dependencyProvider;
 
+    /**
+     * @var ContextServiceInterface
+     */
+    private $contextService;
+
     public function __construct(
         Connection $connection,
         SettingsServiceInterface $settingsService,
         DependencyProvider $dependencyProvider,
-        PaymentMethodProvider $paymentMethodProvider
+        PaymentMethodProvider $paymentMethodProvider,
+        ContextServiceInterface $contextService
     ) {
         $this->connection = $connection;
         $this->settingsService = $settingsService;
         $this->dependencyProvider = $dependencyProvider;
         $this->paymentMethodProvider = $paymentMethodProvider;
+        $this->contextService = $contextService;
     }
 
     /**
@@ -104,6 +112,9 @@ class InContext implements SubscriberInterface
         $view->assign('paypalUnifiedEcButtonStyleShape', $expressSettings->getButtonStyleShape());
         $view->assign('paypalUnifiedEcButtonStyleSize', $expressSettings->getButtonStyleSize());
         $view->assign('paypalUnifiedLanguageIso', $this->getInContextButtonLanguage($expressSettings));
+        $view->assign('paypalUnifiedClientId', $settings->getClientId());
+        $view->assign('paypalUnifiedCurrency', $this->contextService->getContext()->getCurrency()->getCurrency());
+        $view->assign('paypalUnifiedIntent', $this->settingsService->get(SettingsServiceInterface::SETTING_INTENT));
     }
 
     public function addInContextInfoToRequest(\Enlight_Controller_ActionEventArgs $args)

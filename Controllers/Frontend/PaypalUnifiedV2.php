@@ -84,6 +84,12 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends Shopware_Controllers
         $this->paymentControllerHelper = $this->get('paypal_unified.payment_controller_helper');
         $this->orderDataService = $this->get('paypal_unified.order_data_service');
         $this->payPalOrderParameterFacade = $this->get('paypal_unified.paypal_order_parameter_facade');
+
+        if ($this->Request()->isXmlHttpRequest()) {
+            $this->Front()->Plugins()->ViewRenderer()->setNoRender();
+            $this->Front()->Plugins()->Json()->setRenderer();
+            $this->View()->setTemplate();
+        }
     }
 
     public function indexAction()
@@ -130,6 +136,13 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends Shopware_Controllers
                 ->setException($exception);
 
             $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
+
+            return;
+        }
+
+        if ($this->Request()->isXmlHttpRequest()) {
+            $this->view->assign('token', $payPalOrder->getId());
+            $this->view->assign('basketId', $orderParams->getBasketUniqueId());
 
             return;
         }
@@ -223,6 +236,12 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends Shopware_Controllers
         if (!$sendShopwareOrderNumber) {
             $shopwareOrderNumber = (string) $this->saveOrder($payPalOrderId, $payPalOrderId, PaymentStatus::PAYMENT_STATUS_OPEN);
             $this->orderDataService->applyPaymentTypeAttribute($shopwareOrderNumber, $this->getPaymentType());
+        }
+
+        if ($this->Request()->isXmlHttpRequest()) {
+            $this->view->assign('paypalOrderId', $payPalOrderId);
+
+            return;
         }
 
         $this->redirect([

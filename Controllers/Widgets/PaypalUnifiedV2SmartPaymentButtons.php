@@ -10,6 +10,7 @@ use Shopware\Components\HttpClient\RequestException;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\PayPalOrderParameterFacade;
+use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\ShopwareOrderData;
 use SwagPaymentPayPalUnified\Components\Services\PaymentControllerHelper;
 use SwagPaymentPayPalUnified\Components\Services\PayPalOrderBuilderService;
 use SwagPaymentPayPalUnified\Components\Services\Validation\RedirectDataBuilderFactory;
@@ -72,9 +73,9 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2SmartPaymentButtons extends Sh
     public function createOrderAction()
     {
         $session = $this->dependencyProvider->getSession();
-        $shopwareOrderData = $session->get('sOrderVariables');
+        $shopwareSessionOrderData = $session->get('sOrderVariables');
 
-        if ($shopwareOrderData === null) {
+        if ($shopwareSessionOrderData === null) {
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
                 ->setCode(ErrorCodes::NO_ORDER_TO_PROCESS);
 
@@ -92,6 +93,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2SmartPaymentButtons extends Sh
             return;
         }
 
+        $shopwareOrderData = new ShopwareOrderData($shopwareSessionOrderData['sUserData'], $shopwareSessionOrderData['sBasket']);
         $orderParams = $this->payPalOrderParameterFacade->createPayPalOrderParameter(PaymentType::PAYPAL_SMART_PAYMENT_BUTTONS_V2, $shopwareOrderData);
         $payPalOrderData = $this->orderBuilderService->getOrder($orderParams);
 
