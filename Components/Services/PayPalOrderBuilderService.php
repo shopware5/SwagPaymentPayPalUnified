@@ -100,6 +100,20 @@ class PayPalOrderBuilderService
     }
 
     /**
+     * @return string
+     */
+    private function getIntent()
+    {
+        $intent = $this->settings->get(SettingsServiceInterface::SETTING_INTENT);
+
+        if (!\in_array($intent, [PaymentIntentV2::CAPTURE, PaymentIntentV2::AUTHORIZE], true)) {
+            throw new \RuntimeException(sprintf('The intent %s is not supported!', $intent));
+        }
+
+        return $intent;
+    }
+
+    /**
      * @return Payer
      */
     private function createPayer(PayPalOrderParameter $orderParameter)
@@ -158,7 +172,7 @@ class PayPalOrderBuilderService
     private function createPurchaseUnits(PayPalOrderParameter $orderParameter)
     {
         $purchaseUnit = new PurchaseUnit();
-        $submitCart = $this->settings->get('submit_cart') || $orderParameter->getPaymentType() === PaymentType::PAYPAL_PAY_UPON_INVOICE_V2;
+        $submitCart = $this->settings->get(SettingsServiceInterface::SETTING_SUBMIT_CART) || $orderParameter->getPaymentType() === PaymentType::PAYPAL_PAY_UPON_INVOICE_V2;
 
         if ($submitCart) {
             $purchaseUnit->setItems($this->itemListProvider->getItemList(
@@ -268,7 +282,7 @@ class PayPalOrderBuilderService
     private function createApplicationContext(PayPalOrderParameter $orderParameter)
     {
         $applicationContext = new ApplicationContext();
-        $applicationContext->setBrandName((string) $this->settings->get('brand_name'));
+        $applicationContext->setBrandName((string) $this->settings->get(SettingsServiceInterface::SETTING_BRAND_NAME));
         $applicationContext->setLandingPage($this->getLandingPageType());
 
         $applicationContext->setReturnUrl($this->returnUrlHelper->getReturnUrl($orderParameter->getBasketUniqueId(), $orderParameter->getPaymentToken()));
@@ -295,7 +309,7 @@ class PayPalOrderBuilderService
             \str_replace('_', '-', $shop->getLocale()->getLocale())
         );
 
-        if ($brandName = $this->settings->get('brand_name')) {
+        if ($brandName = $this->settings->get(SettingsServiceInterface::SETTING_BRAND_NAME)) {
             $experienceContext->setBrandName($brandName);
         }
 
@@ -338,20 +352,5 @@ class PayPalOrderBuilderService
         $paymentSource->setPayUponInvoice($payUponInvoice);
 
         return $paymentSource;
-    }
-
-    /**
-     * @return string
-     */
-    private function getIntent()
-    {
-        // TODO: (PT-12488) Get intent from settings
-        $intent = PaymentIntentV2::CAPTURE;
-
-        if (!\in_array($intent, [PaymentIntentV2::CAPTURE, PaymentIntentV2::AUTHORIZE], true)) {
-            throw new \RuntimeException(sprintf('The intent %d is not supported!', $intent));
-        }
-
-        return $intent;
     }
 }

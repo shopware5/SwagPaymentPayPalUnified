@@ -93,12 +93,6 @@ class ExpressCheckout extends ModelEntity
     private $submitCart;
 
     /**
-     * @var int
-     * @ORM\Column(name="intent", type="integer")
-     */
-    private $intent;
-
-    /**
      * @return int
      */
     public function getId()
@@ -288,22 +282,6 @@ class ExpressCheckout extends ModelEntity
     public function setSubmitCart($submitCart)
     {
         $this->submitCart = $submitCart;
-    }
-
-    /**
-     * @return int
-     */
-    public function getIntent()
-    {
-        return $this->intent;
-    }
-
-    /**
-     * @param int $intent
-     */
-    public function setIntent($intent)
-    {
-        $this->intent = $intent;
     }
 
     /**

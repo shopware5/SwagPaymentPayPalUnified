@@ -15,6 +15,7 @@ use SwagPaymentPayPalUnified\Components\Services\SettingsService;
 use SwagPaymentPayPalUnified\Models\Settings\General;
 use SwagPaymentPayPalUnified\Models\Settings\Installments as InstallmentsSettingsModel;
 use SwagPaymentPayPalUnified\Models\Settings\Plus as PlusSettingsModel;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\SettingsHelperTrait;
@@ -56,8 +57,8 @@ class SettingsServiceTest extends TestCase
         $this->createTestSettings();
 
         $settingsService = Shopware()->Container()->get('paypal_unified.settings_service');
-        static::assertSame(self::CLIENT_ID, $settingsService->get('client_id'));
-        static::assertSame(self::CLIENT_SECRET, $settingsService->get('client_secret'));
+        static::assertSame(self::CLIENT_ID, $settingsService->get(SettingsServiceInterface::SETTING_CLIENT_ID));
+        static::assertSame(self::CLIENT_SECRET, $settingsService->get(SettingsServiceInterface::SETTING_CLIENT_SECRET));
     }
 
     public function testGetWithoutShopThrowsException()
@@ -67,7 +68,7 @@ class SettingsServiceTest extends TestCase
 
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Could not retrieve a single setting without a shop instance.');
-        $settingsService->get('paypal_active');
+        $settingsService->get(SettingsServiceInterface::SETTING_INTENT);
     }
 
     public function testHasSettingsFalse()
@@ -151,10 +152,10 @@ class SettingsServiceTest extends TestCase
 
         $settingsService = Shopware()->Container()->get('paypal_unified.settings_service');
 
-        static::assertTrue((bool) $settingsService->get('cart_active', SettingsTable::EXPRESS_CHECKOUT));
-        static::assertTrue((bool) $settingsService->get('detail_active', SettingsTable::EXPRESS_CHECKOUT));
-        static::assertTrue((bool) $settingsService->get('login_active', SettingsTable::EXPRESS_CHECKOUT));
-        static::assertTrue((bool) $settingsService->get('off_canvas_active', SettingsTable::EXPRESS_CHECKOUT));
+        static::assertTrue((bool) $settingsService->get(SettingsServiceInterface::SETTING_CART_ACTIVE, SettingsTable::EXPRESS_CHECKOUT));
+        static::assertTrue((bool) $settingsService->get(SettingsServiceInterface::SETTING_DETAIL_ACTIVE, SettingsTable::EXPRESS_CHECKOUT));
+        static::assertTrue((bool) $settingsService->get(SettingsServiceInterface::SETTING_LOGIN_ACTIVE, SettingsTable::EXPRESS_CHECKOUT));
+        static::assertTrue((bool) $settingsService->get(SettingsServiceInterface::SETTING_OFF_CANVAS_ACTIVE, SettingsTable::EXPRESS_CHECKOUT));
     }
 
     public function testGetSettingsReturnsNullWithoutCorrectTable()
@@ -169,7 +170,7 @@ class SettingsServiceTest extends TestCase
         $settingsService = Shopware()->Container()->get('paypal_unified.settings_service');
 
         $this->expectException(\RuntimeException::class);
-        $settingsService->get('test', 'THIS_TABLE_DOES_NOT_EXIST');
+        $settingsService->get(SettingsServiceInterface::SETTING_INTENT, 'THIS_TABLE_DOES_NOT_EXIST');
     }
 
     private function createTestSettings()

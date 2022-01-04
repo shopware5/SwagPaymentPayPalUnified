@@ -90,7 +90,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2PayUponInvoice extends Shopwa
             // We set a random invoice ID here, it will be updated later.
             $orderData->getPurchaseUnits()[0]->setInvoiceId(bin2hex((string) \openssl_random_pseudo_bytes(8)));
 
-            $paypalOrder = $this->orderResource->create($orderData, PartnerAttributionId::PAYPAL_PAY_UPON_INVOICE, false);
+            $paypalOrder = $this->orderResource->create($orderData, PartnerAttributionId::PAYPAL_ALL_V2, false);
         } catch (RequestException $exception) {
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
                 ->setCode(ErrorCodes::COMMUNICATION_FAILURE)

@@ -1,5 +1,6 @@
-CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_settings_general (
-    `id`                        INT(11)      UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_settings_general
+(
+    `id`                        INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     `shop_id`                   INT(11)      NOT NULL,
     `active`                    TINYINT(1),
     `client_id`                 VARCHAR(255),
@@ -16,14 +17,16 @@ CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_settings_general (
     `advertise_returns`         TINYINT(1)   NOT NULL,
     `use_smart_payment_buttons` TINYINT(1)   NOT NULL,
     `merchant_location`         VARCHAR(255) NOT NULL,
-    `submit_cart`               TINYINT(1)   NOT NULL
+    `submit_cart`               TINYINT(1)   NOT NULL,
+    `intent`                    VARCHAR(255)
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COLLATE = utf8_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_settings_installments (
-    `id`                     INT(11)    UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_settings_installments
+(
+    `id`                     INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     `shop_id`                INT(11)    NOT NULL,
     `advertise_installments` TINYINT(1) NOT NULL
 )
@@ -31,8 +34,9 @@ CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_settings_installments (
     DEFAULT CHARSET = utf8
     COLLATE = utf8_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_settings_express (
-    `id`                 INT(11)    UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_settings_express
+(
+    `id`                 INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     `shop_id`            INT(11)    NOT NULL,
     `detail_active`      TINYINT(1) NOT NULL,
     `cart_active`        TINYINT(1) NOT NULL,
@@ -43,15 +47,15 @@ CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_settings_express (
     `button_style_shape` VARCHAR(255),
     `button_style_size`  VARCHAR(255),
     `button_locale`      VARCHAR(5),
-    `submit_cart`        TINYINT(1) NOT NULL,
-    `intent`             INT(11)    NOT NULL
+    `submit_cart`        TINYINT(1) NOT NULL
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COLLATE = utf8_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_settings_plus (
-    `id`                            INT(11)    UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_settings_plus
+(
+    `id`                            INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     `shop_id`                       INT(11)    NOT NULL,
     `active`                        TINYINT(1),
     `restyle`                       TINYINT(1) NOT NULL,
@@ -63,8 +67,9 @@ CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_settings_plus (
     DEFAULT CHARSET = utf8
     COLLATE = utf8_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_payment_instruction (
-    `id`             INT(11)      UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_payment_instruction
+(
+    `id`             INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     `order_number`   VARCHAR(255) NOT NULL,
     `bank_name`      VARCHAR(255) NOT NULL,
     `account_holder` VARCHAR(255) NOT NULL,

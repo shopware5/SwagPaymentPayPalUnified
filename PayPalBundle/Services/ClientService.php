@@ -77,11 +77,11 @@ class ClientService
 
         //Backend does not have any active shop. In order to authenticate there, please use
         //the "configure()"-function instead.
-        if (!$this->settingsService->hasSettings() || !$this->settingsService->get('active')) {
+        if (!$this->settingsService->hasSettings() || !$this->settingsService->get(SettingsServiceInterface::SETTING_ACTIVE)) {
             return;
         }
 
-        $environment = (bool) $this->settingsService->get('sandbox');
+        $environment = (bool) $this->settingsService->get(SettingsServiceInterface::SETTING_SANDBOX);
         $environment === true ? $this->baseUrl = BaseURL::SANDBOX : $this->baseUrl = BaseURL::LIVE;
 
         //Set Partner-Attribution-Id
@@ -117,13 +117,13 @@ class ClientService
     public function sendRequest($type, $resourceUri, $data = [], $jsonPayload = true)
     {
         if (!$this->getHeader('Authorization')) {
-            $environment = (bool) $this->settingsService->get('sandbox');
+            $environment = (bool) $this->settingsService->get(SettingsServiceInterface::SETTING_SANDBOX);
             $environment === true ? $this->baseUrl = BaseURL::SANDBOX : $this->baseUrl = BaseURL::LIVE;
 
             //Create authentication
             $credentials = new OAuthCredentials();
-            $credentials->setRestId($this->settingsService->get('client_id'));
-            $credentials->setRestSecret($this->settingsService->get('client_secret'));
+            $credentials->setRestId($this->settingsService->get(SettingsServiceInterface::SETTING_CLIENT_ID));
+            $credentials->setRestSecret($this->settingsService->get(SettingsServiceInterface::SETTING_CLIENT_SECRET));
             $this->createAuthentication($credentials);
         }
 

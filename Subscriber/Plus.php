@@ -138,7 +138,7 @@ class Plus implements SubscriberInterface
             return;
         }
 
-        $unifiedActive = (bool) $this->settingsService->get('active');
+        $unifiedActive = (bool) $this->settingsService->get(SettingsServiceInterface::SETTING_ACTIVE);
         if (!$unifiedActive) {
             return;
         }
@@ -176,11 +176,11 @@ class Plus implements SubscriberInterface
             return;
         }
 
-        if ((string) $this->settingsService->get('merchant_location') !== General::MERCHANT_LOCATION_GERMANY) {
+        if ((string) $this->settingsService->get(SettingsServiceInterface::SETTING_MERCHANT_LOCATION) !== General::MERCHANT_LOCATION_GERMANY) {
             return;
         }
 
-        $usePayPalPlus = (bool) $this->settingsService->get('active', SettingsTable::PLUS);
+        $usePayPalPlus = (bool) $this->settingsService->get(SettingsServiceInterface::SETTING_ACTIVE, SettingsTable::PLUS);
         if (!$usePayPalPlus || $controller->Response()->isRedirect()) {
             return;
         }
@@ -229,17 +229,17 @@ class Plus implements SubscriberInterface
             return $paymentMethods;
         }
 
-        $unifiedActive = (bool) $this->settingsService->get('active');
+        $unifiedActive = (bool) $this->settingsService->get(SettingsServiceInterface::SETTING_ACTIVE);
         if (!$unifiedActive) {
             return $paymentMethods;
         }
 
-        $usePayPalPlus = (bool) $this->settingsService->get('active', SettingsTable::PLUS);
+        $usePayPalPlus = (bool) $this->settingsService->get(SettingsServiceInterface::SETTING_ACTIVE, SettingsTable::PLUS);
         if (!$usePayPalPlus) {
             return $paymentMethods;
         }
 
-        $integrateThirdPartyMethods = (bool) $this->settingsService->get('integrate_third_party_methods', SettingsTable::PLUS);
+        $integrateThirdPartyMethods = (bool) $this->settingsService->get(SettingsServiceInterface::SETTING_INTEGRATE_THIRD_PARTY_METHODS, SettingsTable::PLUS);
         if (!$integrateThirdPartyMethods) {
             return $paymentMethods;
         }
@@ -317,7 +317,7 @@ class Plus implements SubscriberInterface
             return;
         }
 
-        $view->assign('paypalUnifiedModeSandbox', $this->settingsService->get('sandbox'));
+        $view->assign('paypalUnifiedModeSandbox', $this->settingsService->get(SettingsServiceInterface::SETTING_SANDBOX));
         $view->assign('paypalUnifiedRemotePaymentId', $paymentStruct->getId());
         $view->assign('paypalUnifiedApprovalUrl', $paymentStruct->getLinks()[1]->getHref());
         $view->assign('paypalUnifiedLanguageIso', $this->getPaymentWallLanguage());
@@ -334,7 +334,7 @@ class Plus implements SubscriberInterface
             return;
         }
 
-        $view->assign('paypalUnifiedModeSandbox', $this->settingsService->get('sandbox'));
+        $view->assign('paypalUnifiedModeSandbox', $this->settingsService->get(SettingsServiceInterface::SETTING_SANDBOX));
         $view->assign('paypalUnifiedPaymentId', $this->paymentMethodProvider->getPaymentId(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME));
         $view->assign('paypalUnifiedRemotePaymentId', $paymentStruct->getId());
         $view->assign('paypalUnifiedApprovalUrl', $paymentStruct->getLinks()[1]->getHref());
@@ -344,10 +344,10 @@ class Plus implements SubscriberInterface
         //the payment has already been created and can be used on the confirm page.
         $session->offsetSet('paypalUnifiedRemotePaymentId', $paymentStruct->getId());
 
-        $restylePaymentSelection = (bool) $this->settingsService->get('restyle', SettingsTable::PLUS);
+        $restylePaymentSelection = (bool) $this->settingsService->get(SettingsServiceInterface::SETTING_RESTYLE, SettingsTable::PLUS);
         $view->assign('paypalUnifiedRestylePaymentSelection', $restylePaymentSelection);
 
-        $integrateThirdPartyMethods = (bool) $this->settingsService->get('integrate_third_party_methods', SettingsTable::PLUS);
+        $integrateThirdPartyMethods = (bool) $this->settingsService->get(SettingsServiceInterface::SETTING_INTEGRATE_THIRD_PARTY_METHODS, SettingsTable::PLUS);
         if (!$integrateThirdPartyMethods) {
             return;
         }
@@ -409,8 +409,8 @@ class Plus implements SubscriberInterface
     private function overwritePaymentName(\Enlight_View_Default $view)
     {
         $unifiedPaymentId = $this->paymentMethodProvider->getPaymentId(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
-        $paymentName = $this->settingsService->get('payment_name', SettingsTable::PLUS);
-        $paymentDescription = $this->settingsService->get('payment_description', SettingsTable::PLUS);
+        $paymentName = $this->settingsService->get(SettingsServiceInterface::SETTING_PAYMENT_NAME, SettingsTable::PLUS);
+        $paymentDescription = $this->settingsService->get(SettingsServiceInterface::SETTING_PAYMENT_DESCRIPTION, SettingsTable::PLUS);
 
         if ($paymentName === '' || $paymentName === null) {
             return;

@@ -1,14 +1,8 @@
 // {namespace name="backend/paypal_unified/overview/sidebar"}
 // {block name="backend/paypal_unified/overview/sidebar"}
 Ext.define('Shopware.apps.PaypalUnified.view.overview.Sidebar', {
-    extend: 'Ext.tab.Panel',
+    extend: 'Shopware.apps.PaypalUnified.view.overview.AbstractSidebar',
     alias: 'widget.paypal-unified-overview-sidebar',
-
-    region: 'east',
-    layout: 'anchor',
-    disabled: true,
-    flex: 0.4,
-    height: '100%',
 
     /**
      * @type { Shopware.apps.PaypalUnified.view.sidebar.Order }
@@ -30,7 +24,7 @@ Ext.define('Shopware.apps.PaypalUnified.view.overview.Sidebar', {
      */
     toolbar: null,
 
-    initComponent: function () {
+    initComponent: function() {
         var me = this;
 
         me.items = me.createItems();
@@ -42,11 +36,13 @@ Ext.define('Shopware.apps.PaypalUnified.view.overview.Sidebar', {
     /**
      * @returns { Array }
      */
-    createItems: function () {
+    createItems: function() {
         var me = this,
             items = [];
 
         me.orderTab = Ext.create('Shopware.apps.PaypalUnified.view.sidebar.Order');
+        me.shopwareOrderTab = me.orderTab;
+
         me.paymentTab = Ext.create('Shopware.apps.PaypalUnified.view.sidebar.Payment');
         me.historyTab = Ext.create('Shopware.apps.PaypalUnified.view.sidebar.History');
 
@@ -60,7 +56,7 @@ Ext.define('Shopware.apps.PaypalUnified.view.overview.Sidebar', {
     /**
      * @returns { Shopware.apps.PaypalUnified.view.sidebar.Toolbar }
      */
-    createToolbar: function () {
+    createToolbar: function() {
         var me = this;
 
         me.toolbar = Ext.create('Shopware.apps.PaypalUnified.view.sidebar.Toolbar');

@@ -111,13 +111,13 @@ class Frontend implements SubscriberInterface
             return;
         }
 
-        $active = (bool) $this->settingsService->get('active');
+        $active = (bool) $this->settingsService->get(SettingsServiceInterface::SETTING_ACTIVE);
         if (!$active) {
             return;
         }
 
         $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
-        $showPayPalLogo = $swUnifiedActive && (bool) $this->settingsService->get('show_sidebar_logo');
+        $showPayPalLogo = $swUnifiedActive && (bool) $this->settingsService->get(SettingsServiceInterface::SETTING_SHOW_SIDEBAR_LOGO);
 
         /** @var Enlight_View_Default $view */
         $view = $args->getSubject()->View();

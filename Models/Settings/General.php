@@ -126,6 +126,12 @@ class General extends ModelEntity
     private $submitCart;
 
     /**
+     * @var string
+     * @ORM\Column(name="intent", type="string", nullable=false)
+     */
+    private $intent;
+
+    /**
      * @return int
      */
     public function getId()
@@ -395,6 +401,24 @@ class General extends ModelEntity
     public function setSubmitCart($submitCart)
     {
         $this->submitCart = $submitCart;
+    }
+
+    /**
+     * @return string
+     */
+    public function getIntent()
+    {
+        return $this->intent;
+    }
+
+    /**
+     * @param string $intent
+     *
+     * @return void
+     */
+    public function setIntent($intent)
+    {
+        $this->intent = $intent;
     }
 
     /**

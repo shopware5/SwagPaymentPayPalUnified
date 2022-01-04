@@ -350,7 +350,7 @@ class ExpressCheckout implements SubscriberInterface
         $paymentStruct = $this->paymentBuilder->getPayment($requestParams);
         $amountPatch = new PaymentAmountPatch($paymentStruct->getTransactions()->getAmount());
 
-        $this->clientService->setPartnerAttributionId(PartnerAttributionId::PAYPAL_EXPRESS_CHECKOUT);
+        $this->clientService->setPartnerAttributionId(PartnerAttributionId::PAYPAL_ALL_V2);
 
         $patches = [$addressPatch, $amountPatch];
         $itemList = $paymentStruct->getTransactions()->getItemList();
@@ -413,7 +413,7 @@ class ExpressCheckout implements SubscriberInterface
         $name = null;
         $error = $this->exceptionHandlerService->handle($exception, 'patch the payment for express checkout');
 
-        if ($this->settingsService->hasSettings() && $this->settingsService->get('display_errors')) {
+        if ($this->settingsService->hasSettings() && $this->settingsService->get(SettingsServiceInterface::SETTING_DISPLAY_ERRORS)) {
             $message = $error->getMessage();
             $name = $error->getName();
         }

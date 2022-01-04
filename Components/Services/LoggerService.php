@@ -39,7 +39,7 @@ class LoggerService implements LoggerServiceInterface
             return;
         }
 
-        if ((int) $this->settings->get('log_level') === 1) {
+        if ((int) $this->settings->get(SettingsServiceInterface::SETTING_LOG_LEVEL) === 1) {
             $finalMessage = 'PayPal: ' . $message;
             $this->logger->warning($finalMessage, $context);
         }
@@ -54,7 +54,7 @@ class LoggerService implements LoggerServiceInterface
             return;
         }
 
-        if ((int) $this->settings->get('log_level') === 1) {
+        if ((int) $this->settings->get(SettingsServiceInterface::SETTING_LOG_LEVEL) === 1) {
             $finalMessage = 'PayPal: ' . $message;
             $this->logger->notice($finalMessage, $context);
         }

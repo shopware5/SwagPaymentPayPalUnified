@@ -203,6 +203,21 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
             items: [
                 {
                     xtype: 'combobox',
+                    name: 'intent',
+                    fieldLabel: '{s name="intent/behaviour/label"}Payment acquisition{/s}',
+                    valueField: 'id',
+                    value: 'CAPTURE',
+                    helpText: '{s name="fieldset/behaviour/merchantLocation/help"}Choose your merchant location. Depending on this, different features are available to you.{/s}',
+                    store: Ext.create('Ext.data.Store', {
+                        fields: ['id', 'text'],
+                        data: [
+                            { id: 'CAPTURE', text: '{s name="intent/behaviour/immediately"}(CAPTURE) Complete payment immediately{/s}' },
+                            { id: 'AUTHORIZE', text: '{s name="intent/behaviour/later"}(AUTHORIZE) Delayed payment collection{/s}' },
+                        ]
+                    }),
+                },
+                {
+                    xtype: 'combobox',
                     name: 'merchantLocation',
                     fieldLabel: '{s name="fieldset/behaviour/merchantLocation"}Merchant location{/s}',
                     helpText: '{s name="fieldset/behaviour/merchantLocation/help"}Choose your merchant location. Depending on this, different features are available to you.{/s}',
