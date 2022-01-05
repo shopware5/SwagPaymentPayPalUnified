@@ -9,7 +9,6 @@
 use SwagPaymentPayPalUnified\Components\ExceptionHandlerServiceInterface;
 use SwagPaymentPayPalUnified\Components\Services\ExceptionHandlerService;
 use SwagPaymentPayPalUnified\Models\Settings\General as GeneralSettingsModel;
-use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService;
 
 class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Controllers_Backend_Application
@@ -23,11 +22,6 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
      * {@inheritdoc}
      */
     protected $alias = 'settings';
-
-    /**
-     * @var SettingsServiceInterface
-     */
-    private $settingsService;
 
     /**
      * @var ClientService
@@ -44,7 +38,6 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
      */
     public function preDispatch()
     {
-        $this->settingsService = $this->get('paypal_unified.settings_service');
         $this->clientService = $this->get('paypal_unified.client_service');
         $this->exceptionHandler = $this->get('paypal_unified.exception_handler_service');
 

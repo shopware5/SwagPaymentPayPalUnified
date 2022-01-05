@@ -8,7 +8,6 @@
 
 namespace SwagPaymentPayPalUnified\Subscriber;
 
-use Doctrine\DBAL\Connection;
 use Enlight\Event\SubscriberInterface;
 use Enlight_Components_Session_Namespace as Session;
 use Enlight_Controller_ActionEventArgs as ActionEventArgs;
@@ -74,11 +73,6 @@ class ExpressCheckout implements SubscriberInterface
     private $paymentMethodProvider;
 
     /**
-     * @var Connection
-     */
-    private $connection;
-
-    /**
      * @var ClientService
      */
     private $clientService;
@@ -100,7 +94,6 @@ class ExpressCheckout implements SubscriberInterface
         PaymentAddressService $addressRequestService,
         PaymentBuilderInterface $paymentBuilder,
         ExceptionHandlerServiceInterface $exceptionHandlerService,
-        Connection $connection,
         ClientService $clientService,
         DependencyProvider $dependencyProvider,
         EsdProductCheckerInterface $esdProductChecker,
@@ -112,7 +105,6 @@ class ExpressCheckout implements SubscriberInterface
         $this->paymentAddressService = $addressRequestService;
         $this->paymentBuilder = $paymentBuilder;
         $this->exceptionHandlerService = $exceptionHandlerService;
-        $this->connection = $connection;
         $this->clientService = $clientService;
         $this->dependencyProvider = $dependencyProvider;
         $this->esdProductChecker = $esdProductChecker;

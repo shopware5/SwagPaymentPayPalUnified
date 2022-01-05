@@ -9,7 +9,6 @@
 namespace SwagPaymentPayPalUnified\Subscriber;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\DBAL\Connection;
 use Enlight\Event\SubscriberInterface;
 use Enlight_View_Default;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
@@ -29,11 +28,6 @@ class Frontend implements SubscriberInterface
     private $settingsService;
 
     /**
-     * @var Connection
-     */
-    private $connection;
-
-    /**
      * @var PaymentMethodProvider
      */
     private $paymentMethodProvider;
@@ -49,13 +43,11 @@ class Frontend implements SubscriberInterface
     public function __construct(
         $pluginDir,
         SettingsServiceInterface $settingsService,
-        Connection $connection,
         RiskManagementInterface $riskManagement,
         PaymentMethodProvider $paymentMethodProvider
     ) {
         $this->pluginDir = $pluginDir;
         $this->settingsService = $settingsService;
-        $this->connection = $connection;
         $this->riskManagement = $riskManagement;
         $this->paymentMethodProvider = $paymentMethodProvider;
     }

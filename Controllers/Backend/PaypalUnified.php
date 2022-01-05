@@ -28,7 +28,7 @@ use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Transactions\Amount;
 class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Backend_Application
 {
     /**
-     * @var string
+     * {@inheritdoc}
      */
     protected $model = Order::class;
 

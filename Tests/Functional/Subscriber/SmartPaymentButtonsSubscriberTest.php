@@ -54,7 +54,7 @@ class SmartPaymentButtonsSubscriberTest extends TestCase
         $request->setActionName('finish');
 
         $enlightEventArgs = new Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
             'request' => $request,
         ]);
 
@@ -73,7 +73,7 @@ class SmartPaymentButtonsSubscriberTest extends TestCase
         $request->setActionName('confirm');
 
         $enlightEventArgs = new Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
             'request' => $request,
         ]);
 
@@ -92,7 +92,7 @@ class SmartPaymentButtonsSubscriberTest extends TestCase
         $request->setActionName('confirm');
 
         $enlightEventArgs = new Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
             'request' => $request,
         ]);
 
@@ -112,7 +112,7 @@ class SmartPaymentButtonsSubscriberTest extends TestCase
         $request->setActionName('confirm');
 
         $enlightEventArgs = new Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
             'request' => $request,
         ]);
 
@@ -127,7 +127,7 @@ class SmartPaymentButtonsSubscriberTest extends TestCase
         $request->setActionName('checkout');
 
         $enlightEventArgs = new Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
             'request' => $request,
         ]);
 
@@ -142,7 +142,7 @@ class SmartPaymentButtonsSubscriberTest extends TestCase
         $request->setActionName('confirm');
 
         $enlightEventArgs = new Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
             'request' => $request,
         ]);
 
@@ -158,7 +158,7 @@ class SmartPaymentButtonsSubscriberTest extends TestCase
         $request->setParam('spbCheckout', true);
 
         $enlightEventArgs = new Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
             'request' => $request,
         ]);
 
@@ -259,7 +259,7 @@ class SmartPaymentButtonsSubscriberTest extends TestCase
         $request->setActionName($action);
 
         $enlightEventArgs = new Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
             'request' => $request,
         ]);
 
@@ -279,7 +279,7 @@ class SmartPaymentButtonsSubscriberTest extends TestCase
         $request->setActionName('confirm');
 
         $enlightEventArgs = new Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
             'request' => $request,
         ]);
 
@@ -304,7 +304,7 @@ class SmartPaymentButtonsSubscriberTest extends TestCase
         $request->setActionName($action);
 
         $enlightEventArgs = new Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
             'request' => $request,
         ]);
 
@@ -329,7 +329,7 @@ class SmartPaymentButtonsSubscriberTest extends TestCase
         $request->setActionName($action);
 
         $enlightEventArgs = new Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
             'request' => $request,
         ]);
 
@@ -359,7 +359,6 @@ class SmartPaymentButtonsSubscriberTest extends TestCase
     {
         return new SmartPaymentButtons(
             Shopware()->Container()->get('paypal_unified.settings_service'),
-            Shopware()->Container()->get('dbal_connection'),
             Shopware()->Container()->get('snippets'),
             Shopware()->Container()->get('paypal_unified.payment_method_provider')
         );

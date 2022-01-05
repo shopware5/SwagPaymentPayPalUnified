@@ -4,7 +4,7 @@ includes:
 parameters:
     level: 8
     reportUnmatchedIgnoredErrors: true
-    excludes_analyse:
+    excludePaths:
         - vendor
         - .githooks
 
@@ -22,7 +22,7 @@ parameters:
         - # Properties are called with magic __get
             '#Access to an undefined property Shopware_Models_Document_Order::#'
         - # Since we have to support Shopware 5.2 we can not use return types
-            '#Method .* has no return typehint specified#'
+            '#Method .* has no return type specified#'
         # Needs some improvements in the doctrine PHPStan extensions: see https://github.com/phpstan/phpstan-doctrine/pull/167
         - '#Cannot call method fetch.*\(\) on Doctrine\\DBAL\\.*Statement\|int#'
         - # Has different type in older PHPUnit versions needs for older Shopware versions

@@ -120,7 +120,7 @@ class PayUponInvoiceRiskManagementTest extends TestCase
     }
 
     /**
-     * @return \Generator<array>
+     * @return \Generator<array<mixed>>
      */
     public function returnValueProvider()
     {
@@ -141,7 +141,7 @@ class PayUponInvoiceRiskManagementTest extends TestCase
     }
 
     /**
-     * @return \Generator<array>
+     * @return \Generator<array<mixed>>
      */
     public function paymentMethodProvider()
     {

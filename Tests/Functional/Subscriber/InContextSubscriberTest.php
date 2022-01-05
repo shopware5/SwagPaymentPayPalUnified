@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Subscriber;
 
+use Enlight_Controller_Response_ResponseTestCase;
 use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Subscriber\InContext;
@@ -35,6 +36,9 @@ class InContextSubscriberTest extends TestCase
         static::assertTrue(\is_array($events['Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout']));
         static::assertCount(2, $events['Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout']);
 
+        static::assertTrue(\is_array($events['Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout'][0]));
+        static::assertTrue(\is_array($events['Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout'][1]));
+
         static::assertSame('addInContextButton', $events['Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout'][0][0]);
         static::assertSame('addInContextInfoToRequest', $events['Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout'][1][0]);
     }
@@ -46,7 +50,7 @@ class InContextSubscriberTest extends TestCase
         $request->setActionName('foo');
 
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view, null),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
         ]);
 
         $subscriber = $this->getSubscriber();
@@ -69,7 +73,7 @@ class InContextSubscriberTest extends TestCase
         $request->setActionName('confirm');
 
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view, null),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
         ]);
 
         $this->importSettings();
@@ -89,7 +93,7 @@ class InContextSubscriberTest extends TestCase
         $request->setActionName('confirm');
 
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view, null),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
         ]);
 
         $this->importSettings();
@@ -107,7 +111,7 @@ class InContextSubscriberTest extends TestCase
         $request->setActionName('confirm');
 
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view, null),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
         ]);
 
         $this->importSettings(true);
@@ -125,7 +129,7 @@ class InContextSubscriberTest extends TestCase
         $request->setActionName('confirm');
 
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view, null),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
         ]);
 
         $this->importSettings(true, true, false, false);
@@ -143,7 +147,7 @@ class InContextSubscriberTest extends TestCase
         $request->setActionName('confirm');
 
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view, null),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
         ]);
 
         $this->importSettings(true, true, true);
@@ -162,7 +166,7 @@ class InContextSubscriberTest extends TestCase
         $request->setActionName('fake');
 
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
             'request' => $request,
         ]);
 
@@ -178,7 +182,7 @@ class InContextSubscriberTest extends TestCase
         $request->setActionName('payment');
 
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
             'request' => $request,
         ]);
 
@@ -197,7 +201,7 @@ class InContextSubscriberTest extends TestCase
         $response = new \Enlight_Controller_Response_ResponseTestCase();
 
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
             'request' => $request,
             'response' => $response,
         ]);
@@ -266,7 +270,6 @@ class InContextSubscriberTest extends TestCase
     private function getSubscriber()
     {
         return new InContext(
-            Shopware()->Container()->get('dbal_connection'),
             Shopware()->Container()->get('paypal_unified.settings_service'),
             Shopware()->Container()->get('paypal_unified.dependency_provider'),
             Shopware()->Container()->get('paypal_unified.payment_method_provider'),

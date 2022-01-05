@@ -8,7 +8,6 @@
 
 namespace SwagPaymentPayPalUnified\Subscriber;
 
-use Doctrine\DBAL\Connection;
 use Enlight\Event\SubscriberInterface;
 use Enlight_Controller_Front;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
@@ -22,22 +21,15 @@ class Order implements SubscriberInterface
     private $front;
 
     /**
-     * @var Connection
-     */
-    private $connection;
-
-    /**
      * @var PaymentMethodProvider
      */
     private $paymentMethodProvider;
 
     public function __construct(
         Enlight_Controller_Front $front,
-        Connection $connection,
         PaymentMethodProvider $paymentMethodProvider
     ) {
         $this->front = $front;
-        $this->connection = $connection;
         $this->paymentMethodProvider = $paymentMethodProvider;
     }
 

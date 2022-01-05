@@ -8,7 +8,6 @@
 
 namespace SwagPaymentPayPalUnified\Subscriber;
 
-use Doctrine\DBAL\Connection;
 use Enlight\Event\SubscriberInterface;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
 use Shopware\Models\Shop\Shop;
@@ -27,11 +26,6 @@ class InContext implements SubscriberInterface
     private $paymentMethodProvider;
 
     /**
-     * @var Connection
-     */
-    private $connection;
-
-    /**
      * @var SettingsServiceInterface
      */
     private $settingsService;
@@ -47,13 +41,11 @@ class InContext implements SubscriberInterface
     private $contextService;
 
     public function __construct(
-        Connection $connection,
         SettingsServiceInterface $settingsService,
         DependencyProvider $dependencyProvider,
         PaymentMethodProvider $paymentMethodProvider,
         ContextServiceInterface $contextService
     ) {
-        $this->connection = $connection;
         $this->settingsService = $settingsService;
         $this->dependencyProvider = $dependencyProvider;
         $this->paymentMethodProvider = $paymentMethodProvider;

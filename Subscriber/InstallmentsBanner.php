@@ -8,7 +8,6 @@
 
 namespace SwagPaymentPayPalUnified\Subscriber;
 
-use Doctrine\DBAL\Connection;
 use Enlight\Event\SubscriberInterface;
 use Enlight_Controller_ActionEventArgs as ActionEventArgs;
 use Enlight_Controller_Request_Request as Request;
@@ -26,11 +25,6 @@ class InstallmentsBanner implements SubscriberInterface
     private $settingsService;
 
     /**
-     * @var Connection
-     */
-    private $connection;
-
-    /**
      * @var PaymentMethodProvider
      */
     private $paymentMethodProvider;
@@ -42,12 +36,10 @@ class InstallmentsBanner implements SubscriberInterface
 
     public function __construct(
         SettingsServiceInterface $settingsService,
-        Connection $connection,
         ContextServiceInterface $contextService,
         PaymentMethodProvider $paymentMethodProvider
     ) {
         $this->settingsService = $settingsService;
-        $this->connection = $connection;
         $this->contextService = $contextService;
         $this->paymentMethodProvider = $paymentMethodProvider;
     }

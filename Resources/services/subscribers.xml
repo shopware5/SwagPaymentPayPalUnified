@@ -43,7 +43,6 @@
         <service id="paypal_unified.subscriber.controller.account"
                  class="SwagPaymentPayPalUnified\Subscriber\Account"
                  public="true">
-            <argument type="service" id="dbal_connection"/>
             <argument type="service" id="paypal_unified.settings_service"/>
             <argument type="service" id="paypal_unified.dependency_provider"/>
             <argument type="service" id="paypal_unified.payment_method_provider"/>
@@ -80,7 +79,6 @@
             <argument type="service" id="paypal_unified.payment_address_service"/>
             <argument type="service" id="paypal_unified.express_checkout.payment_builder_service"/>
             <argument type="service" id="paypal_unified.exception_handler_service"/>
-            <argument type="service" id="dbal_connection"/>
             <argument type="service" id="paypal_unified.client_service"/>
             <argument type="service" id="paypal_unified.dependency_provider"/>
             <argument type="service"
@@ -94,7 +92,6 @@
                  public="true">
             <argument>%paypal_unified.plugin_dir%</argument>
             <argument type="service" id="paypal_unified.settings_service"/>
-            <argument type="service" id="dbal_connection"/>
             <argument type="service" id="paypal_unified.risk_management"/>
             <argument type="service" id="paypal_unified.payment_method_provider"/>
             <tag name="shopware.event_subscriber"/>
@@ -103,7 +100,6 @@
         <service id="paypal_unified.subscriber.in_context"
                  class="SwagPaymentPayPalUnified\Subscriber\InContext"
                  public="true">
-            <argument type="service" id="dbal_connection"/>
             <argument type="service" id="paypal_unified.settings_service"/>
             <argument type="service" id="paypal_unified.dependency_provider"/>
             <argument type="service" id="paypal_unified.payment_method_provider"/>
@@ -115,7 +111,6 @@
                  class="SwagPaymentPayPalUnified\Subscriber\InstallmentsBanner"
                  public="true">
             <argument type="service" id="paypal_unified.settings_service"/>
-            <argument type="service" id="dbal_connection"/>
             <argument type="service" id="shopware_storefront.context_service"/>
             <argument type="service" id="paypal_unified.payment_method_provider"/>
             <tag name="shopware.event_subscriber"/>
@@ -131,9 +126,7 @@
         <service id="paypal_unified.subscriber.payment_means"
                  class="SwagPaymentPayPalUnified\Subscriber\PaymentMeans"
                  public="true">
-            <argument type="service" id="dbal_connection"/>
             <argument type="service" id="paypal_unified.settings_service"/>
-            <argument type="service" id="session"/>
             <argument type="service" id="paypal_unified.payment_method_provider"/>
             <tag name="shopware.event_subscriber"/>
         </service>
@@ -159,7 +152,6 @@
                  class="SwagPaymentPayPalUnified\Subscriber\SmartPaymentButtons"
                  public="true">
             <argument type="service" id="paypal_unified.settings_service"/>
-            <argument type="service" id="dbal_connection"/>
             <argument type="service" id="snippets"/>
             <argument type="service" id="paypal_unified.payment_method_provider"/>
             <tag name="shopware.event_subscriber"/>
@@ -169,7 +161,6 @@
                  class="SwagPaymentPayPalUnified\Subscriber\Order"
                  public="true">
             <argument type="service" id="front"/>
-            <argument type="service" id="dbal_connection"/>
             <argument type="service" id="paypal_unified.payment_method_provider"/>
             <tag name="shopware.event_subscriber"/>
         </service>
@@ -180,7 +171,6 @@
             <argument type="service" id="paypal_unified.risk_management_helper"/>
             <argument type="service" id="template"/>
             <argument type="service" id="paypal_unified.dependency_provider"/>
-            <argument type="service" id="dbal_connection"/>
             <argument type="service" id="paypal_unified.payment_method_provider"/>
             <tag name="shopware.event_subscriber"/>
         </service>
