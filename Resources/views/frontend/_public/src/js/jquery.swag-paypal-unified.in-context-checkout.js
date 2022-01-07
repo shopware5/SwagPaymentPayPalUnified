@@ -4,20 +4,6 @@
     $.plugin('swagPayPalUnifiedInContextCheckout', {
         defaults: {
             /**
-             * Depending on the mode, the library will load the PSP from different locations. live will
-             * load it from paypal.com whereas sandbox will load it from sandbox.paypal.com. The
-             * library will also emit warning to the console if the mode is sandbox (in live mode it will
-             * do so only for required parameters).
-             *
-             * Available modes:
-             *  - production
-             *  - sandbox
-             *
-             * @type string
-             */
-            paypalMode: 'production',
-
-            /**
              * label of the button
              * possible values:
              *  - buynow
@@ -28,13 +14,6 @@
              * @type string
              */
             label: 'buynow',
-
-            /**
-             * show PayPal branding
-             *
-             * @type boolean
-             */
-            branding: true,
 
             /**
              * show text under the button
@@ -78,11 +57,9 @@
             color: 'gold',
 
             /**
-             * The language ISO (ISO_639) for the payment wall.
-             *
-             * @type string
+             *  @type string
              */
-            paypalLanguage: 'en_US',
+            layout: 'horizontal',
 
             /**
              * selector for the checkout confirm form element
@@ -99,13 +76,6 @@
             confirmFormSubmitButtonSelector: ':submit[form="confirm--form"]',
 
             /**
-             * selector for the sAgb Checkbox
-             *
-             * @type string
-             */
-            agbSelector: '#sAGB',
-
-            /**
              * The selector for the indicator whether the PayPal javascript is already loaded or not
              *
              * @type string
@@ -120,15 +90,61 @@
             paypalErrorPage: '',
 
             /**
-             * The URL called, when the payment should be created
+             * This page will be opened when the payment creation fails.
              *
              * @type string
              */
-            checkoutPaymentUrl: ''
+            currency: 'EUR',
+
+            /**
+             * The PayPal clientId
+             *
+             * @type string|null
+             */
+            clientId: null,
+
+            /**
+             * @type string
+             */
+            sdkUrl: 'https://www.paypal.com/sdk/js',
+
+            /**
+             * @type string
+             */
+            createOrderUrl: '',
+
+            /**
+             * @type string
+             */
+            onApproveUrl: '',
+
+            /**
+             * @type string
+             */
+            finishUrl: '',
+
+            /**
+             * Use PayPal sandbox
+             *
+             * @type boolean
+             */
+            useSandbox: false,
+
+            /**
+             * Commit the ordernumber to PayPal
+             *
+             * @type boolean
+             */
+            commitOrdernumber: false,
+
+            /**
+             * @type string
+             */
+            paypalIntent: 'capture',
         },
 
         /**
-         * @type {Object}
+         * @type { Object }
          */
         inContextCheckoutButton: null,
 
@@ -169,7 +185,7 @@
         },
 
         /**
-         * @param {Event} event
+         * @param { Event } event
          */
         onConfirmCheckout: function(event) {
             event.preventDefault();
@@ -180,131 +196,181 @@
          */
         createButton: function() {
             var me = this,
-                paypalScriptUrl = 'https://www.paypalobjects.com/api/checkout.min.js',
                 $head = $('head');
 
-            if (me.opts.paypalMode === 'sandbox') {
-                paypalScriptUrl = 'https://www.paypalobjects.com/api/checkout.js';
-            }
-
-            if (!$head.data(me.opts.paypalScriptLoadedSelector)) {
+            if (!$head.hasClass(this.opts.paypalScriptLoadedSelector)) {
                 $.ajax({
-                    url: paypalScriptUrl,
+                    url: this.renderSdkUrl(),
                     dataType: 'script',
                     cache: true,
                     success: function() {
-                        $head.data(me.opts.paypalScriptLoadedSelector, true);
+                        $head.addClass(me.opts.paypalScriptLoadedSelector);
+                        me.paypal = window.paypal;
                         me.renderButton();
                     }
                 });
             } else {
-                me.renderButton();
+                this.paypal = window.paypal;
+                this.renderButton();
             }
+        },
+
+        renderSdkUrl: function() {
+            var params = {
+                'client-id': this.opts.clientId,
+                intent: this.opts.paypalIntent.toLowerCase()
+            };
+
+            if (this.opts.useSandbox) {
+                params.debug = true;
+            }
+
+            if (this.opts.currency) {
+                params.currency = this.opts.currency;
+            }
+
+            return [this.opts.sdkUrl, '?', $.param(params, true)].join('');
         },
 
         /**
          * Renders the ECS button
          */
         renderButton: function() {
-            var me = this;
+            var me = this,
+                buttonConfig = me.getButtonConfig(),
+                el = me.$el.get(0);
 
-            // wait for the PayPal javascript to be loaded
-            me.buffer(function() {
-                me.inContextCheckoutButton = paypal.Button.render(me.createPayPalButtonConfiguration(), me.$el.get(0));
-
-                $.publish('plugin/swagPayPalUnifiedInContextCheckout/createButton', [me, me.inContextCheckoutButton]);
-            });
+            me.paypal.Buttons(buttonConfig).render(el);
         },
 
         /**
          * Creates the configuration for the button
          *
-         * @return {Object}
+         * @return { Object }
          */
-        createPayPalButtonConfiguration: function() {
-            var me = this,
-                config;
-
-            config = {
-                /**
-                 * environment property of the button
-                 */
-                env: me.opts.paypalMode,
-
-                /**
-                 * styling of the button
-                 */
+        getButtonConfig: function() {
+            var buttonConfig = {
                 style: {
-                    label: me.opts.label,
-                    branding: me.opts.branding,
-                    tagline: me.opts.tagline,
-                    size: me.opts.size,
-                    shape: me.opts.shape,
-                    color: me.opts.color
+                    label: this.opts.label,
+                    color: this.opts.color,
+                    shape: this.opts.shape,
+                    size: this.opts.size,
+                    layout: this.opts.layout,
+                    tagline: this.opts.tagline,
                 },
 
-                locale: me.opts.paypalLanguage,
+                /**
+                 * Will be called after payment button is clicked
+                 */
+                createOrder: this.createOrder.bind(this),
 
                 /**
-                 * listener for custom validations
+                 * Will be called if the payment process is approved by paypal
                  */
-                validate: $.proxy(me.onValidate, me),
+                onApprove: this.onApprove.bind(this),
 
                 /**
-                 * on click listener for the button
+                 * Will be called if the payment process is cancelled by the customer
                  */
-                onClick: $.proxy(me.onButtonClick, me),
+                onCancel: this.onCancel.bind(this),
 
                 /**
-                 * listener for the button
+                 * Will be called if the payment button is clicked
                  */
-                payment: $.proxy(me.onPayPalPayment, me),
+                onClick: this.onButtonClick.bind(this),
 
                 /**
-                 * only needed for overlay solution
-                 * called if the customer accepts the payment
+                 * Will be called if any api error occurred
                  */
-                onAuthorize: $.proxy(me.onPayPalAuthorize, me)
+                onError: this.onPayPalAPIError.bind(this),
             };
 
-            $.publish('plugin/swagPayPalUnifiedInContextCheckout/createConfig', [me, config]);
+            $.publish('plugin/swagPayPalUnifiedInContextCheckout/createConfig', [this, buttonConfig]);
 
-            return config;
+            return buttonConfig;
         },
 
         /**
-         * adds a listener to the checkout confirm form to check its validity
-         * enables or disables the paypal checkout button
-         *
-         * @param {Object} actions
+         * @return { Promise }
          */
-        onValidate: function(actions) {
-            var me = this,
-                $tosCheckbox = $(me.opts.agbSelector);
+        createOrder: function() {
+            var me = this;
 
-            me.$form.on('change', function() {
-                if (me.checkFormValidity()) {
-                    $.publish('plugin/swagPayPalUnifiedInContextCheckout/formValid', [me, actions]);
-
-                    return actions.enable();
+            return $.ajax({
+                method: 'get',
+                url: me.opts.createOrderUrl
+            }).then(function(response) {
+                if (response.errorUrl) {
+                    me.onPayPalAPIError();
+                    return;
                 }
+                me.opts.basketId = response.basketId;
 
-                $.publish('plugin/swagPayPalUnifiedInContextCheckout/formInValid', [me, actions]);
+                return response.token;
+            }).promise();
+        },
 
-                return actions.disable();
+        /**
+         * @return { Promise }
+         */
+        onApprove: function(data, actions) {
+            var me = this;
+
+            $.loadingIndicator.open({
+                openOverlay: true,
+                closeOnClick: false,
+                theme: 'light'
             });
 
-            if ($tosCheckbox.length > 0 && !$tosCheckbox.get(0).validity.valid) {
-                $.publish('plugin/swagPayPalUnifiedInContextCheckout/formInValid', [me, actions]);
+            return $.ajax({
+                method: 'get',
+                url: this.renderApproveUrl(data),
+            }).then(function(response) {
+                if (response.errorUrl) {
+                    me.onPayPalAPIError();
+                    return;
+                }
 
-                return actions.disable();
-            }
+                actions.redirect(me.renderFinishUrl(response));
+            }).promise();
+        },
+
+        /**
+         * @param data { Object }
+         *
+         * @return { string }
+         */
+        renderApproveUrl: function(data) {
+            var params = $.param({
+                token: data.orderID,
+                payerId: data.payerID,
+                basketId: this.opts.basketId,
+            }, true);
+
+            return [this.opts.onApproveUrl, '?', params].join('');
+        },
+
+        /**
+         * @param response { Object }
+         *
+         * @return { string }
+         */
+        renderFinishUrl: function(response) {
+            var finishParams = $.param({
+                sUniqueID: response.paypalOrderId
+            }, true);
+
+            return [this.opts.finishUrl, '?', finishParams].join('');
+        },
+
+        onCancel: function() {
+            $.loadingIndicator.close();
         },
 
         /**
          * validates the checkout confirm form
          *
-         * @return {boolean}
+         * @return { boolean }
          */
         checkFormValidity: function() {
             var me = this,
@@ -325,100 +391,13 @@
 
             if (!me.checkFormValidity()) {
                 me.$confirmButton.trigger('click');
+                return false;
             }
         },
 
-        /**
-         * Callback method for the "payment" function of the button.
-         * Calls an action which creates the payment and redirects to the paypal page.
-         *
-         * @return {string}
-         */
-        onPayPalPayment: function() {
-            var me = this,
-                redirectUrl = me.opts.paypalErrorPage;
-
-            $('<input>', {
-                type: 'hidden',
-                name: 'useInContext',
-                value: true
-            }).appendTo(me.$form);
-
-            $.publish('plugin/swagPayPalUnifiedInContextCheckout/beforeCreatePayment', [me, me.$form]);
-
-            return me.processPayment().then(function(response) {
-                if (response.errorCode) {
-                    redirectUrl = me.stripErrorCodeFromUrl(redirectUrl) + response.errorCode;
-                    $(location).attr('href', redirectUrl);
-                }
-                $.publish('plugin/swagPayPalUnifiedInContextCheckout/paymentCreated', [me, response]);
-                return response.paymentId;
-            });
+        onPayPalAPIError: function() {
+            window.location.replace(this.opts.paypalErrorPage);
         },
-
-        /**
-         * calls the checkout confirm form URL with ajax and returns it as promise
-         * With this solution the Shopware logic is not avoided
-         *
-         * @return {Object}
-         */
-        processPayment: function() {
-            var me = this,
-                url = me.opts.checkoutPaymentUrl,
-                method = me.$form.attr('method'),
-                data = me.$form.serialize();
-
-            $.publish('plugin/swagPayPalUnifiedInContextCheckout/beforeAjax', [me, url, method, data]);
-
-            return $.ajax({
-                url: url,
-                method: method,
-                data: data,
-                error: $.proxy(me.onProcessPaymentError, me)
-            }).promise();
-        },
-
-        /**
-         * Redirects the user to the standard error page.
-         */
-        onProcessPaymentError: function() {
-            var me = this;
-
-            $(location).attr('href', me.opts.paypalErrorPage);
-        },
-
-        /**
-         * Callback method for the "authorize" function of the button.
-         * Directly redirects to the given return URL
-         *
-         * @param {Object} data
-         * @param {Object} actions
-         * @return {Object}
-         */
-        onPayPalAuthorize: function(data, actions) {
-            return actions.redirect();
-        },
-
-        /**
-         * Buffer helper function to set a timeout for a function
-         *
-         * @param {function} fn
-         * @param {number} timeout
-         * @return {number}
-         */
-        buffer: function(fn, timeout) {
-            var me = this;
-
-            timeout = timeout || 100;
-
-            return window.setTimeout(fn.bind(me), timeout);
-        },
-
-        stripErrorCodeFromUrl: function (url) {
-            var index = url.lastIndexOf('/');
-
-            return url.slice(0, index + 1);
-        }
     });
 
     window.StateManager.addPlugin('*[data-paypalUnifiedNormalCheckoutButtonInContext="true"]', 'swagPayPalUnifiedInContextCheckout');

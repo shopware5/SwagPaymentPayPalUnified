@@ -207,7 +207,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
                     fieldLabel: '{s name="intent/behaviour/label"}Payment acquisition{/s}',
                     valueField: 'id',
                     value: 'CAPTURE',
-                    helpText: '{s name="fieldset/behaviour/merchantLocation/help"}Choose your merchant location. Depending on this, different features are available to you.{/s}',
+                    helpText: '{s name="fieldset/behaviour/intent/help"}(CAPTURE) Complete payment immediately: Payment is automatically collected immediately. (AUTHORIZE) Delayed payment collection: Payment is only authorised.The collection must be made separately.{/s}',
                     store: Ext.create('Ext.data.Store', {
                         fields: ['id', 'text'],
                         data: [

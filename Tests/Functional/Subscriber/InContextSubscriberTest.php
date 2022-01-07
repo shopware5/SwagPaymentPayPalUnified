@@ -269,7 +269,8 @@ class InContextSubscriberTest extends TestCase
             Shopware()->Container()->get('dbal_connection'),
             Shopware()->Container()->get('paypal_unified.settings_service'),
             Shopware()->Container()->get('paypal_unified.dependency_provider'),
-            Shopware()->Container()->get('paypal_unified.payment_method_provider')
+            Shopware()->Container()->get('paypal_unified.payment_method_provider'),
+            Shopware()->Container()->get('shopware_storefront.context_service')
         );
     }
 }
