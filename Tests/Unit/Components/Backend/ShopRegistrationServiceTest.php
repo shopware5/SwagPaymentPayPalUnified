@@ -20,6 +20,8 @@ class ShopRegistrationServiceTest extends TestCase
 {
     /**
      * @beforeClass
+     *
+     * @return void
      */
     public function skipTestIfShopRegistrationServiceInterfaceDoesNotExist()
     {
@@ -28,6 +30,9 @@ class ShopRegistrationServiceTest extends TestCase
         }
     }
 
+    /**
+     * @return void
+     */
     public function testInstantiate()
     {
         $registrationService = $this->getShopRegistrationService();
@@ -35,10 +40,14 @@ class ShopRegistrationServiceTest extends TestCase
         static::assertInstanceOf(ShopRegistrationService::class, $registrationService);
     }
 
+    /**
+     * @return void
+     */
     public function testThrowsInvalidArgumentException()
     {
         static::expectException(\InvalidArgumentException::class);
 
+        /* @phpstan-ignore-next-line */
         $this->getShopRegistrationService()->registerShopById('9d253e94-457c-4943-aa3c-03304d1a8347');
     }
 
@@ -46,6 +55,8 @@ class ShopRegistrationServiceTest extends TestCase
      * @dataProvider defaultIsUsedWhenNoShopIsFoundDataProvider
      *
      * @param bool $shopExists
+     *
+     * @return void
      */
     public function testDefaultIsUsedWhenNoShopIsFound($shopExists)
     {
@@ -71,6 +82,10 @@ class ShopRegistrationServiceTest extends TestCase
 
     /**
      * @dataProvider registerResourcesIsCalledDataProvider
+     *
+     * @param bool $registrationServiceProvided
+     *
+     * @return void
      */
     public function testRegisterResourcesIsCalled($registrationServiceProvided)
     {
@@ -99,30 +114,43 @@ class ShopRegistrationServiceTest extends TestCase
         $registrationService->registerShopById(0);
     }
 
+    /**
+     * @return array<string, array<bool>>
+     */
     public function defaultIsUsedWhenNoShopIsFoundDataProvider()
     {
         return [
-            [
-                'Shop exists' => true,
+            'Shop exists' => [
+                true,
             ],
-            [
-                'Shop does not exist' => false,
+            'Shop does not exist' => [
+                false,
             ],
         ];
     }
 
+    /**
+     * @return array<string, array<bool>>
+     */
     public function registerResourcesIsCalledDataProvider()
     {
         return [
-            [
-                'Registration service is provided' => true,
+            'Registration service is provided' => [
+                true,
             ],
-            [
-                'Registration service is not provided' => false,
+            'Registration service is not provided' => [
+                false,
             ],
         ];
     }
 
+    /**
+     * @param ModelManager|null                     $modelManager
+     * @param SettingsServiceInterface|null         $settingsService
+     * @param ShopRegistrationServiceInterface|null $registrationService
+     *
+     * @return ShopRegistrationService
+     */
     private function getShopRegistrationService(
         $modelManager = null,
         $settingsService = null,
