@@ -49,6 +49,13 @@
             confirmUrl: '',
 
             /**
+             * URL used to create a error log message
+             *
+             * @type string
+             */
+            logUrl: '',
+
+            /**
              * size of the button
              * possible values:
              *  - small
@@ -104,11 +111,13 @@
             layout: 'horizontal',
 
             /**
-             * The language ISO (ISO_639) for the payment wall.
+             * The language ISO (ISO_639) locale of the button.
+             *
+             * for possible values see: https://developer.paypal.com/api/rest/reference/locale-codes/
              *
              * @type string
              */
-            paypalLanguage: 'en_US',
+            locale: '',
 
             /**
              * A boolean indicating if the current page is an product detail page.
@@ -146,11 +155,82 @@
             riskManagementMatchedProducts: null,
 
             /**
+             * @type string
+             */
+            paypalIntent: 'capture',
+
+            /**
              * Excluded esd products.
              *
              * @type array|null
              */
             esdProducts: null,
+
+            /**
+             * @type string
+             */
+            communicationErrorMessage: '',
+
+            /**
+             * @type string
+             */
+            communicationErrorTitle: '',
+
+            /**
+             * PayPal button height small
+             *
+             * @type number
+             */
+            smallHeight: 25,
+
+            /**
+             * PayPal button width small
+             *
+             * @type string
+             */
+            smallWidth: '150px',
+
+            /**
+             * PayPal button height medium
+             *
+             * @type number
+             */
+            mediumHeight: 35,
+
+            /**
+             * PayPal button width medium
+             *
+             * @type string
+             */
+            mediumWidth: '250px',
+
+            /**
+             * PayPal button height large
+             *
+             * @type number
+             */
+            largeHeight: 45,
+
+            /**
+             * PayPal button width large
+             *
+             * @type string
+             */
+            largeWidth: '350px',
+
+            /**
+             * PayPal button height responsive
+             *
+             * @type number
+             */
+            responsiveHeight: 55,
+
+            /**
+             * PayPal button width responsive
+             *
+             * @type string
+             */
+            responsiveWidth: '100%',
         },
 
         /**
@@ -167,6 +247,9 @@
                 return;
             }
 
+            this.createButtonSizeObject();
+            this.$el.width(this.buttonSize[this.opts.size].width);
+
             me.createButton();
 
             $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonCart/init', me);
@@ -174,6 +257,27 @@
             if (me.opts.detailPage) {
                 $.subscribe(me.getEventName('plugin/swAjaxVariant/onRequestData'), $.proxy(me.onChangeVariant, me));
             }
+        },
+
+        createButtonSizeObject: function () {
+            this.buttonSize = {
+                small: {
+                    height: this.opts.smallHeight,
+                    width: this.opts.smallWidth,
+                },
+                medium: {
+                    height: this.opts.mediumHeight,
+                    width: this.opts.mediumWidth,
+                },
+                large: {
+                    height: this.opts.largeHeight,
+                    width: this.opts.largeWidth,
+                },
+                responsive: {
+                    height: this.opts.responsiveHeight,
+                    width: this.opts.responsiveWidth,
+                }
+            };
         },
 
         /**
@@ -226,28 +330,24 @@
         },
 
         renderSdkUrl: function(clientId, currency) {
-            var me = this,
-                params = {};
+            var params = {
+                'client-id': clientId,
+                intent: this.opts.paypalIntent.toLowerCase()
+            };
 
-            if (clientId) {
-                params['client-id'] = clientId;
-            } else {
-                params['client-id'] = 'sb';
+            if (this.opts.locale.length > 0) {
+                params.locale = this.opts.locale;
+            }
+
+            if (this.opts.paypalMode === 'sandbox') {
+                params.debug = true;
             }
 
             if (currency) {
                 params.currency = currency;
             }
 
-            if (me.opts.paypalMode === 'sandbox') {
-                params.debug = true;
-            }
-
-            if (params.length < 1) {
-                return me.opts.sdkUrl;
-            }
-
-            return me.opts.sdkUrl + '?' + $.param(params, true);
+            return [this.opts.sdkUrl, '?', $.param(params, true)].join('');
         },
 
         /**
@@ -280,12 +380,12 @@
                  * styling of the button
                  */
                 style: {
-                    size: me.opts.size,
                     shape: me.opts.shape,
                     color: me.opts.color,
                     layout: me.opts.layout,
                     label: me.opts.label,
                     tagline: me.opts.tagline,
+                    height: this.buttonSize[this.opts.size].height,
                 },
 
                 /**
@@ -293,7 +393,20 @@
                  */
                 createOrder: $.proxy(me.createOrder, me),
 
+                /**
+                 * Will be called if the payment process is approved by PayPal
+                 */
                 onApprove: $.proxy(me.onApprove, me),
+
+                /**
+                 * Will be called if the payment process is cancelled by the customer
+                 */
+                onCancel: this.onCancel.bind(this),
+
+                /**
+                 * Will be called if any api error occurred
+                 */
+                onError: this.onPayPalAPIError.bind(this),
             };
 
             $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonCart/createConfig', [me, config]);
@@ -343,6 +456,33 @@
 
                 actions.redirect(url);
             }).promise();
+        },
+
+        onCancel: function() {
+            $.loadingIndicator.close();
+        },
+
+        onPayPalAPIError: function(response) {
+            $.loadingIndicator.close();
+
+            var content = $('<div>').html(this.opts.communicationErrorMessage),
+                config = {
+                    title: this.opts.communicationErrorTitle,
+                    width: 320,
+                    height: 200
+                };
+
+            content.css('padding', '10px');
+
+            $.modal.open(content, config);
+
+            $.ajax({
+                url: this.opts.logUrl,
+                data: {
+                    code:response.code,
+                    message: response.message,
+                },
+            });
         },
 
         /**

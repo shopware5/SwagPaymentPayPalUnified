@@ -57,6 +57,15 @@
             color: 'gold',
 
             /**
+             * The language ISO (ISO_639) locale of the button.
+             *
+             * for possible values see: https://developer.paypal.com/api/rest/reference/locale-codes/
+             *
+             * @type string
+             */
+            locale: '',
+
+            /**
              *  @type string
              */
             layout: 'horizontal',
@@ -141,6 +150,62 @@
              * @type string
              */
             paypalIntent: 'capture',
+
+            /**
+             * PayPal button height small
+             *
+             * @type number
+             */
+            smallHeight: 25,
+
+            /**
+             * PayPal button width small
+             *
+             * @type string
+             */
+            smallWidth: '150px',
+
+            /**
+             * PayPal button height medium
+             *
+             * @type number
+             */
+            mediumHeight: 35,
+
+            /**
+             * PayPal button width medium
+             *
+             * @type string
+             */
+            mediumWidth: '250px',
+
+            /**
+             * PayPal button height large
+             *
+             * @type number
+             */
+            largeHeight: 45,
+
+            /**
+             * PayPal button width large
+             *
+             * @type string
+             */
+            largeWidth: '350px',
+
+            /**
+             * PayPal button height responsive
+             *
+             * @type number
+             */
+            responsiveHeight: 55,
+
+            /**
+             * PayPal button width responsive
+             *
+             * @type string
+             */
+            responsiveWidth: '100%',
         },
 
         /**
@@ -149,16 +214,39 @@
         inContextCheckoutButton: null,
 
         init: function() {
-            var me = this;
+            this.applyDataAttributes();
 
-            me.applyDataAttributes();
+            this.$form = $(this.opts.confirmFormSelector);
+            this.hideConfirmButton();
+            this.disableConfirmButton();
 
-            me.$form = $(me.opts.confirmFormSelector);
-            me.hideConfirmButton();
-            me.disableConfirmButton();
-            me.createButton();
+            this.createButtonSizeObject();
+            this.$el.width(this.buttonSize[this.opts.size].width);
 
-            $.publish('plugin/swagPayPalUnifiedInContextCheckout/init', me);
+            this.createButton();
+
+            $.publish('plugin/swagPayPalUnifiedInContextCheckout/init', this);
+        },
+
+        createButtonSizeObject: function () {
+            this.buttonSize = {
+                small: {
+                    height: this.opts.smallHeight,
+                    width: this.opts.smallWidth,
+                },
+                medium: {
+                    height: this.opts.mediumHeight,
+                    width: this.opts.mediumWidth,
+                },
+                large: {
+                    height: this.opts.largeHeight,
+                    width: this.opts.largeWidth,
+                },
+                responsive: {
+                    height: this.opts.responsiveHeight,
+                    width: this.opts.responsiveWidth,
+                }
+            };
         },
 
         /**
@@ -221,6 +309,10 @@
                 intent: this.opts.paypalIntent.toLowerCase()
             };
 
+            if (this.opts.locale.length > 0) {
+                params.locale = this.opts.locale;
+            }
+
             if (this.opts.useSandbox) {
                 params.debug = true;
             }
@@ -254,9 +346,9 @@
                     label: this.opts.label,
                     color: this.opts.color,
                     shape: this.opts.shape,
-                    size: this.opts.size,
                     layout: this.opts.layout,
                     tagline: this.opts.tagline,
+                    height: this.buttonSize[this.opts.size].height,
                 },
 
                 /**
@@ -265,7 +357,7 @@
                 createOrder: this.createOrder.bind(this),
 
                 /**
-                 * Will be called if the payment process is approved by paypal
+                 * Will be called if the payment process is approved by PayPal
                  */
                 onApprove: this.onApprove.bind(this),
 

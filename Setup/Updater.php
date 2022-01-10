@@ -16,6 +16,7 @@ use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\Services\Plus\PaymentInstructionService;
 use SwagPaymentPayPalUnified\Models\Settings\General as GeneralSettingsModel;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
+use SwagPaymentPayPalUnified\Setup\Versions\UpdateTo400;
 
 class Updater
 {
@@ -44,6 +45,11 @@ class Updater
      */
     private $paymentModelCreator;
 
+    /**
+     * @var ColumnService
+     */
+    private $columnService;
+
     public function __construct(
         CrudService $attributeCrudService,
         ModelManager $modelManager,
@@ -56,6 +62,8 @@ class Updater
         $this->connection = $connection;
         $this->paymentMethodProvider = $paymentMethodProvider;
         $this->paymentModelCreator = $paymentModelCreator;
+
+        $this->columnService = new ColumnService($this->connection);
     }
 
     /**
@@ -116,7 +124,13 @@ class Updater
         }
 
         if (\version_compare($oldVersion, '4.0.0', '<=')) {
-            $this->updateTo400();
+            (new UpdateTo400(
+                $this->modelManager,
+                $this->connection,
+                $this->paymentMethodProvider,
+                $this->paymentModelCreator,
+                $this->columnService
+            ))->update();
         }
     }
 
@@ -139,7 +153,7 @@ class Updater
 
     private function updateTo110()
     {
-        if (!$this->checkIfColumnExist('swag_payment_paypal_unified_settings_general', 'landing_page_type')) {
+        if (!$this->columnService->checkIfColumnExist('swag_payment_paypal_unified_settings_general', 'landing_page_type')) {
             $sql = 'ALTER TABLE `swag_payment_paypal_unified_settings_general`
                     ADD COLUMN `landing_page_type` VARCHAR(255);
                     UPDATE `swag_payment_paypal_unified_settings_general`
@@ -151,7 +165,7 @@ class Updater
 
     private function updateTo111()
     {
-        if ($this->checkIfColumnExist('swag_payment_paypal_unified_settings_general', 'logo_image')) {
+        if ($this->columnService->checkIfColumnExist('swag_payment_paypal_unified_settings_general', 'logo_image')) {
             $sql = 'ALTER TABLE `swag_payment_paypal_unified_settings_general`
                     DROP COLUMN `logo_image`;';
 
@@ -161,7 +175,7 @@ class Updater
 
     private function updateTo112()
     {
-        if (!$this->checkIfColumnExist('swag_payment_paypal_unified_settings_express', 'off_canvas_active')) {
+        if (!$this->columnService->checkIfColumnExist('swag_payment_paypal_unified_settings_express', 'off_canvas_active')) {
             $sql = 'ALTER TABLE `swag_payment_paypal_unified_settings_express`
                 ADD `off_canvas_active` TINYINT(1) NOT NULL;
                 UPDATE `swag_payment_paypal_unified_settings_express`
@@ -173,7 +187,7 @@ class Updater
 
     private function updateTo210()
     {
-        if (!$this->checkIfColumnExist('swag_payment_paypal_unified_settings_express', 'listing_active')) {
+        if (!$this->columnService->checkIfColumnExist('swag_payment_paypal_unified_settings_express', 'listing_active')) {
             $sql = 'ALTER TABLE `swag_payment_paypal_unified_settings_express`
                 ADD `listing_active` TINYINT(1) NOT NULL;
                 UPDATE `swag_payment_paypal_unified_settings_express`
@@ -185,7 +199,7 @@ class Updater
 
     private function updateTo220()
     {
-        if (!$this->checkIfColumnExist('swag_payment_paypal_unified_settings_express', 'button_locale')) {
+        if (!$this->columnService->checkIfColumnExist('swag_payment_paypal_unified_settings_express', 'button_locale')) {
             $sql = "ALTER TABLE `swag_payment_paypal_unified_settings_express`
                 ADD `button_locale` VARCHAR(5) NOT NULL;
                 UPDATE `swag_payment_paypal_unified_settings_express`
@@ -197,7 +211,7 @@ class Updater
 
     private function updateTo240()
     {
-        if (!$this->checkIfColumnExist('swag_payment_paypal_unified_settings_general', 'use_smart_payment_buttons')) {
+        if (!$this->columnService->checkIfColumnExist('swag_payment_paypal_unified_settings_general', 'use_smart_payment_buttons')) {
             $query = <<<SQL
 ALTER TABLE `swag_payment_paypal_unified_settings_general`
 ADD `use_smart_payment_buttons` TINYINT(1) NOT NULL,
@@ -212,7 +226,7 @@ SQL;
 
     private function updateTo250()
     {
-        if (!$this->checkIfColumnExist('swag_payment_paypal_unified_settings_general', 'submit_cart')) {
+        if (!$this->columnService->checkIfColumnExist('swag_payment_paypal_unified_settings_general', 'submit_cart')) {
             $query = <<<SQL
 ALTER TABLE `swag_payment_paypal_unified_settings_general`
 ADD `submit_cart` TINYINT(1) NOT NULL;
@@ -226,7 +240,7 @@ SQL;
 
     private function updateTo261()
     {
-        if (!$this->checkIfColumnExist('swag_payment_paypal_unified_settings_general', 'advertise_installments')) {
+        if (!$this->columnService->checkIfColumnExist('swag_payment_paypal_unified_settings_general', 'advertise_installments')) {
             $query = <<<SQL
 ALTER TABLE `swag_payment_paypal_unified_settings_general`
 ADD `advertise_installments` TINYINT(1) NOT NULL;
@@ -240,7 +254,7 @@ SQL;
 
     private function updateTo270()
     {
-        if ($this->checkIfColumnExist('swag_payment_paypal_unified_settings_general', 'advertise_returns')) {
+        if ($this->columnService->checkIfColumnExist('swag_payment_paypal_unified_settings_general', 'advertise_returns')) {
             $sql = 'ALTER TABLE `swag_payment_paypal_unified_settings_general`
                     DROP COLUMN `advertise_returns`;';
 
@@ -257,7 +271,7 @@ WHERE `s_core_paymentmeans`.`name` = 'SwagPaymentPayPalUnifiedInstallments';
 SQL;
         $this->connection->executeQuery($sql);
 
-        if (!$this->checkIfColumnExist('swag_payment_paypal_unified_settings_installments', 'advertise_installments')) {
+        if (!$this->columnService->checkIfColumnExist('swag_payment_paypal_unified_settings_installments', 'advertise_installments')) {
             $sql = <<<SQL
 ALTER TABLE `swag_payment_paypal_unified_settings_installments`
 ADD `advertise_installments` TINYINT(1) NOT NULL;
@@ -265,7 +279,7 @@ SQL;
             $this->connection->executeQuery($sql);
         }
 
-        if ($this->checkIfColumnExist('swag_payment_paypal_unified_settings_general', 'advertise_installments')) {
+        if ($this->columnService->checkIfColumnExist('swag_payment_paypal_unified_settings_general', 'advertise_installments')) {
             $sql = <<<SQL
 UPDATE `swag_payment_paypal_unified_settings_installments` AS `installments`, `swag_payment_paypal_unified_settings_general` AS `general`
 SET `installments`.`advertise_installments` = `general`.`advertise_installments`
@@ -280,7 +294,7 @@ SQL;
             $this->connection->executeQuery($sql);
         }
 
-        if ($this->checkIfColumnExist('swag_payment_paypal_unified_settings_installments', 'active')) {
+        if ($this->columnService->checkIfColumnExist('swag_payment_paypal_unified_settings_installments', 'active')) {
             $sql = <<<SQL
 ALTER TABLE `swag_payment_paypal_unified_settings_installments`
 DROP COLUMN `active`;
@@ -288,7 +302,7 @@ SQL;
             $this->connection->executeQuery($sql);
         }
 
-        if ($this->checkIfColumnExist('swag_payment_paypal_unified_settings_installments', 'presentment_detail')) {
+        if ($this->columnService->checkIfColumnExist('swag_payment_paypal_unified_settings_installments', 'presentment_detail')) {
             $sql = <<<SQL
 ALTER TABLE `swag_payment_paypal_unified_settings_installments`
 DROP COLUMN `presentment_detail`;
@@ -296,7 +310,7 @@ SQL;
             $this->connection->executeQuery($sql);
         }
 
-        if ($this->checkIfColumnExist('swag_payment_paypal_unified_settings_installments', 'presentment_cart')) {
+        if ($this->columnService->checkIfColumnExist('swag_payment_paypal_unified_settings_installments', 'presentment_cart')) {
             $sql = <<<SQL
 ALTER TABLE `swag_payment_paypal_unified_settings_installments`
 DROP COLUMN `presentment_cart`;
@@ -304,7 +318,7 @@ SQL;
             $this->connection->executeQuery($sql);
         }
 
-        if ($this->checkIfColumnExist('swag_payment_paypal_unified_settings_installments', 'show_logo')) {
+        if ($this->columnService->checkIfColumnExist('swag_payment_paypal_unified_settings_installments', 'show_logo')) {
             $sql = <<<SQL
 ALTER TABLE `swag_payment_paypal_unified_settings_installments`
 DROP COLUMN `show_logo`;
@@ -312,7 +326,7 @@ SQL;
             $this->connection->executeQuery($sql);
         }
 
-        if ($this->checkIfColumnExist('swag_payment_paypal_unified_settings_installments', 'intent')) {
+        if ($this->columnService->checkIfColumnExist('swag_payment_paypal_unified_settings_installments', 'intent')) {
             $sql = <<<SQL
 ALTER TABLE `swag_payment_paypal_unified_settings_installments`
 DROP COLUMN `intent`;
@@ -367,59 +381,5 @@ SQL;
             ->where('sOrderAttributes.id IN (:attributeIds)')
             ->setParameter('attributeIds', $orderAttributeIds, Connection::PARAM_INT_ARRAY)
             ->execute();
-    }
-
-    private function updateTo400()
-    {
-        $payment = $this->paymentMethodProvider->getPaymentMethodModel(PaymentMethodProvider::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME);
-        if ($payment instanceof Payment) {
-            //If the payment does already exist, we don't need to add it again.
-            return;
-        }
-
-        $payment = $this->paymentModelCreator->createModel(PaymentMethodProvider::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME);
-
-        $this->modelManager->persist($payment);
-        $this->modelManager->flush($payment);
-
-        if (!$this->checkIfColumnExist('swag_payment_paypal_unified_settings_general', 'intent')) {
-            $this->connection->executeQuery(
-                'ALTER TABLE `swag_payment_paypal_unified_settings_general`
-                ADD `intent` varchar(255);'
-            );
-        }
-
-        if ($this->checkIfColumnExist('swag_payment_paypal_unified_settings_express', 'intent')) {
-            $this->connection->executeQuery(
-                'ALTER TABLE `swag_payment_paypal_unified_settings_express`
-                DROP COLUMN `intent`;'
-            );
-        }
-    }
-
-    /**
-     * Helper function to check if a column exists which is needed during update
-     *
-     * @param string $tableName
-     * @param string $columnName
-     *
-     * @return bool
-     */
-    private function checkIfColumnExist($tableName, $columnName)
-    {
-        $sql = <<<SQL
-SELECT column_name
-FROM information_schema.columns
-WHERE table_name = :tableName
-    AND column_name = :columnName
-    AND table_schema = DATABASE();
-SQL;
-
-        $columnNameInDb = $this->connection->executeQuery(
-            $sql,
-            ['tableName' => $tableName, 'columnName' => $columnName]
-        )->fetchColumn();
-
-        return $columnNameInDb === $columnName;
     }
 }

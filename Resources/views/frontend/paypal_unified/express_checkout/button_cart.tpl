@@ -5,12 +5,16 @@
                  data-paypalUnifiedEcButton="true"
                  data-paypalMode="{if $paypalUnifiedModeSandbox}sandbox{else}production{/if}"
                  data-createPaymentUrl="{url module=widgets controller=PaypalUnifiedV2ExpressCheckout action=createOrder forceSecure}"
+                 data-logUrl="{url module=widgets controller=PaypalUnifiedV2ExpressCheckout action=logErrorMessage forceSecure}"
+                 data-paypalIntent="{$paypalUnifiedIntent}"
                  data-color="{$paypalUnifiedEcButtonStyleColor}"
                  data-shape="{$paypalUnifiedEcButtonStyleShape}"
                  data-size="{$paypalUnifiedEcButtonStyleSize}"
-                 data-paypalLanguage="{$paypalUnifiedLanguageIso}"
+                 data-locale="{$paypalUnifiedLanguageIso}"
                  data-cart="true"
                  data-riskManagementMatchedProducts='{$riskManagementMatchedProducts}'
+                 data-communicationErrorMessage="{s name='error/communication' namespace='frontend/paypal_unified/checkout/messages'}{/s}"
+                 data-communicationErrorTitle="{s name='error/communication/title' namespace='frontend/paypal_unified/checkout/messages'}{/s}"
                  data-esdProducts='{$paypalUnifiedEsdProducts}'
                     {block name='paypal_unified_ec_button_container_cart_data'}{/block}>
             </div>

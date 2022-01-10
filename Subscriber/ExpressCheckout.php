@@ -179,7 +179,7 @@ class ExpressCheckout implements SubscriberInterface
 
         if ((isset($cart['content']) || $product) && !$this->isUserLoggedIn()) {
             $view->assign('paypalUnifiedUseInContext', $generalSettings->getUseInContext());
-            $this->addEcButtonStyleInfo($view, $expressSettings);
+            $this->addEcButtonStyleInfo($view, $expressSettings, $generalSettings);
         }
     }
 
@@ -241,7 +241,7 @@ class ExpressCheckout implements SubscriberInterface
         if (!$this->isUserLoggedIn()) {
             $view->assign('paypalUnifiedEcDetailActive', true);
             $this->addEcButtonBehaviour($view, $generalSettings);
-            $this->addEcButtonStyleInfo($view, $expressSettings);
+            $this->addEcButtonStyleInfo($view, $expressSettings, $generalSettings);
         }
     }
 
@@ -277,7 +277,7 @@ class ExpressCheckout implements SubscriberInterface
         $view->assign('paypalUnifiedEsdProducts', \json_encode($esdProductNumbers));
         $view->assign('paypalUnifiedEcListingActive', true);
         $this->addEcButtonBehaviour($view, $generalSettings);
-        $this->addEcButtonStyleInfo($view, $expressSettings);
+        $this->addEcButtonStyleInfo($view, $expressSettings, $generalSettings);
         $view->assign('paypalUnifiedEcButtonStyleSize', 'small');
     }
 
@@ -313,7 +313,7 @@ class ExpressCheckout implements SubscriberInterface
         if ($requestParams['sTarget'] === 'checkout' && ($targetAction === 'confirm' || $targetAction === 'shippingPayment')) {
             $view->assign('paypalUnifiedEcLoginActive', true);
             $this->addEcButtonBehaviour($view, $generalSettings);
-            $this->addEcButtonStyleInfo($view, $expressSettings);
+            $this->addEcButtonStyleInfo($view, $expressSettings, $generalSettings);
         }
     }
 
@@ -388,12 +388,13 @@ class ExpressCheckout implements SubscriberInterface
         $view->assign('paypalUnifiedCurrency', $shop->getCurrency()->getCurrency());
     }
 
-    private function addEcButtonStyleInfo(ViewEngine $view, ExpressSettingsModel $expressSettings)
+    private function addEcButtonStyleInfo(ViewEngine $view, ExpressSettingsModel $expressSettings, GeneralSettingsModel $generalSettings)
     {
         $view->assign('paypalUnifiedEcButtonStyleColor', $expressSettings->getButtonStyleColor());
         $view->assign('paypalUnifiedEcButtonStyleShape', $expressSettings->getButtonStyleShape());
         $view->assign('paypalUnifiedEcButtonStyleSize', $expressSettings->getButtonStyleSize());
         $view->assign('paypalUnifiedLanguageIso', $this->getExpressCheckoutButtonLanguage($expressSettings));
+        $view->assign('paypalUnifiedIntent', $generalSettings->getIntent());
     }
 
     /**
