@@ -8,7 +8,6 @@
 
 namespace SwagPaymentPayPalUnified\Subscriber;
 
-use Doctrine\DBAL\Connection;
 use Enlight\Event\SubscriberInterface;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
@@ -25,26 +24,12 @@ class PaymentMeans implements SubscriberInterface
      */
     private $settingsService;
 
-    /**
-     * @var \Enlight_Components_Session_Namespace
-     */
-    private $session;
-
-    /**
-     * @var Connection
-     */
-    private $connection;
-
     public function __construct(
-        Connection $connection,
         SettingsServiceInterface $settingsService,
-        \Enlight_Components_Session_Namespace $session,
         PaymentMethodProvider $paymentMethodProvider
     ) {
-        $this->connection = $connection;
         $this->unifiedPaymentId = $paymentMethodProvider->getPaymentId(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
         $this->settingsService = $settingsService;
-        $this->session = $session;
     }
 
     /**
@@ -72,30 +57,5 @@ class PaymentMeans implements SubscriberInterface
         }
 
         $args->setReturn($availableMethods);
-    }
-
-    /**
-     * @return array
-     */
-    private function getCustomerData()
-    {
-        $customerData = [];
-        $registerData = $this->session->get('sRegister');
-        $customerData['billingaddress']['company'] = null;
-        if (isset($registerData['billing']['company'])) {
-            $customerData['billingaddress']['company'] = $registerData['billing']['company'];
-        }
-
-        $countryIso = $this->connection->createQueryBuilder()
-            ->select('countryiso')
-            ->from('s_core_countries')
-            ->where('id = :countryId')
-            ->setParameter('countryId', $registerData['billing']['country'])
-            ->execute()
-            ->fetchColumn();
-
-        $customerData['additional']['country']['countryiso'] = $countryIso;
-
-        return $customerData;
     }
 }

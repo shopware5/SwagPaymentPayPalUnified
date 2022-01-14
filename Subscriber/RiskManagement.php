@@ -8,7 +8,6 @@
 
 namespace SwagPaymentPayPalUnified\Subscriber;
 
-use Doctrine\DBAL\Connection;
 use Enlight\Event\SubscriberInterface;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
@@ -32,11 +31,6 @@ class RiskManagement implements SubscriberInterface
     private $dependencyProvider;
 
     /**
-     * @var Connection
-     */
-    private $connection;
-
-    /**
      * @var PaymentMethodProvider
      */
     private $paymentMethodProvider;
@@ -45,13 +39,11 @@ class RiskManagement implements SubscriberInterface
         RiskManagementHelperInterface $riskManagementHelper,
         \Enlight_Template_Manager $template,
         DependencyProvider $dependencyProvider,
-        Connection $connection,
         PaymentMethodProvider $paymentMethodProvider
     ) {
         $this->riskManagementHelper = $riskManagementHelper;
         $this->template = $template;
         $this->dependencyProvider = $dependencyProvider;
-        $this->connection = $connection;
         $this->paymentMethodProvider = $paymentMethodProvider;
     }
 

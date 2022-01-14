@@ -8,7 +8,6 @@
 
 namespace SwagPaymentPayPalUnified\Subscriber;
 
-use Doctrine\DBAL\Connection;
 use Enlight\Event\SubscriberInterface;
 use Enlight_Controller_ActionEventArgs as ActionEventArgs;
 use Shopware\Models\Shop\Shop;
@@ -20,11 +19,6 @@ use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 
 class Account implements SubscriberInterface
 {
-    /**
-     * @var Connection
-     */
-    private $connection;
-
     /**
      * @var SettingsServiceInterface
      */
@@ -41,12 +35,10 @@ class Account implements SubscriberInterface
     private $paymentMethodProvider;
 
     public function __construct(
-        Connection $connection,
         SettingsServiceInterface $settingsService,
         DependencyProvider $dependencyProvider,
         PaymentMethodProvider $paymentMethodProvider
     ) {
-        $this->connection = $connection;
         $this->settingsService = $settingsService;
         $this->dependencyProvider = $dependencyProvider;
         $this->paymentMethodProvider = $paymentMethodProvider;

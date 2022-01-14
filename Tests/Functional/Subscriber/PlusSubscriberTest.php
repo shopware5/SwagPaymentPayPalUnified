@@ -54,7 +54,7 @@ class PlusSubscriberTest extends TestCase
         $request->setActionName('finish');
 
         $enlightEventArgs = new Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
         ]);
 
         $this->getSubscriber()->onPostDispatchCheckout($enlightEventArgs);
@@ -71,7 +71,7 @@ class PlusSubscriberTest extends TestCase
         $request->setActionName('finish');
 
         $enlightEventArgs = new Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
         ]);
 
         $this->getSubscriber()->onPostDispatchCheckout($enlightEventArgs);
@@ -89,7 +89,7 @@ class PlusSubscriberTest extends TestCase
         $this->createTestSettings();
 
         $enlightEventArgs = new Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
         ]);
 
         $this->getSubscriber()->onPostDispatchCheckout($enlightEventArgs);

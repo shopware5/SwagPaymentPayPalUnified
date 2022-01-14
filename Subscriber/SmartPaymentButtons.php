@@ -8,7 +8,6 @@
 
 namespace SwagPaymentPayPalUnified\Subscriber;
 
-use Doctrine\DBAL\Connection;
 use Enlight\Event\SubscriberInterface;
 use Enlight_Controller_ActionEventArgs as ActionEventArgs;
 use Enlight_View_Default as View;
@@ -25,11 +24,6 @@ class SmartPaymentButtons implements SubscriberInterface
     private $settingsService;
 
     /**
-     * @var Connection
-     */
-    private $connection;
-
-    /**
      * @var SnippetManager
      */
     private $snippetManager;
@@ -41,12 +35,10 @@ class SmartPaymentButtons implements SubscriberInterface
 
     public function __construct(
         SettingsServiceInterface $settingsService,
-        Connection $connection,
         SnippetManager $snippetManager,
         PaymentMethodProvider $paymentMethodProvider
     ) {
         $this->settingsService = $settingsService;
-        $this->connection = $connection;
         $this->snippetManager = $snippetManager;
         $this->paymentMethodProvider = $paymentMethodProvider;
     }

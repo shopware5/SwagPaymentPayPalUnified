@@ -18,7 +18,6 @@ use SwagPaymentPayPalUnified\Components\Services\PaymentAddressService;
 use SwagPaymentPayPalUnified\Components\Services\Plus\PaymentInstructionService;
 use SwagPaymentPayPalUnified\Components\Services\Validation\BasketIdWhitelist;
 use SwagPaymentPayPalUnified\Components\Services\Validation\BasketValidatorInterface;
-use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PayerInfoPatch;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PaymentAddressPatch;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PaymentAmountPatch;
@@ -55,11 +54,6 @@ class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_F
     private $client;
 
     /**
-     * @var LoggerServiceInterface
-     */
-    private $logger;
-
-    /**
      * @var SettingsServiceInterface
      */
     private $settingsService;
@@ -74,7 +68,6 @@ class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_F
         $this->dependencyProvider = $this->get('paypal_unified.dependency_provider');
         $this->paymentResource = $this->get('paypal_unified.payment_resource');
         $this->client = $this->get('paypal_unified.client_service');
-        $this->logger = $this->get('paypal_unified.logger_service');
         $this->settingsService = $this->get('paypal_unified.settings_service');
         $this->shopwareConfig = $this->get('config');
     }

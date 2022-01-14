@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Subscriber;
 
+use Enlight_Controller_Response_ResponseTestCase;
 use Enlight_Template_Manager;
 use PHPUnit\Framework\TestCase;
 use Shopware\Bundle\StoreFrontBundle\Service\Core\ContextService;
@@ -46,7 +47,7 @@ class InstallmentsBannerSubscriberTest extends TestCase
         $view = new ViewMock(new Enlight_Template_Manager());
         $request = new \Enlight_Controller_Request_RequestTestCase();
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
         ]);
 
         $result = $subscriber->onPostDispatchSecure($enlightEventArgs);
@@ -63,7 +64,7 @@ class InstallmentsBannerSubscriberTest extends TestCase
         $view = new ViewMock(new Enlight_Template_Manager());
         $request = new \Enlight_Controller_Request_RequestTestCase();
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
         ]);
 
         $subscriber->onPostDispatchSecure($enlightEventArgs);
@@ -81,7 +82,7 @@ class InstallmentsBannerSubscriberTest extends TestCase
         $view = new ViewMock(new Enlight_Template_Manager());
         $request = new \Enlight_Controller_Request_RequestTestCase();
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
         ]);
 
         $subscriber->onPostDispatchSecure($enlightEventArgs);
@@ -99,7 +100,7 @@ class InstallmentsBannerSubscriberTest extends TestCase
         $view = new ViewMock(new Enlight_Template_Manager());
         $request = new \Enlight_Controller_Request_RequestTestCase();
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
         ]);
 
         $subscriber->onPostDispatchSecure($enlightEventArgs);
@@ -117,7 +118,7 @@ class InstallmentsBannerSubscriberTest extends TestCase
         $request->setControllerName('foo');
         $request->setActionName('bar');
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
             'request' => $request,
         ]);
 
@@ -141,7 +142,7 @@ class InstallmentsBannerSubscriberTest extends TestCase
         $request->setControllerName('detail');
         $request->setActionName('index');
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
             'request' => $request,
         ]);
 
@@ -165,7 +166,7 @@ class InstallmentsBannerSubscriberTest extends TestCase
         $request->setControllerName('checkout');
         $request->setActionName('cart');
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
             'request' => $request,
         ]);
 
@@ -187,7 +188,7 @@ class InstallmentsBannerSubscriberTest extends TestCase
         $request->setControllerName('detail');
         $request->setActionName('index');
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
             'request' => $request,
         ]);
 
@@ -218,7 +219,7 @@ class InstallmentsBannerSubscriberTest extends TestCase
         $request->setControllerName('detail');
         $request->setActionName('index');
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
             'request' => $request,
         ]);
 
@@ -236,7 +237,6 @@ class InstallmentsBannerSubscriberTest extends TestCase
     {
         return new InstallmentsBanner(
             Shopware()->Container()->get('paypal_unified.settings_service'),
-            Shopware()->Container()->get('dbal_connection'),
             Shopware()->Container()->get('shopware_storefront.context_service'),
             Shopware()->Container()->get('paypal_unified.payment_method_provider')
         );

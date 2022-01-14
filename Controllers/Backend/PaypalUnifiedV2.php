@@ -6,7 +6,6 @@
  * file that was distributed with this source code.
  */
 
-use SwagPaymentPayPalUnified\Components\Backend\ShopRegistrationService;
 use SwagPaymentPayPalUnified\Components\Services\ExceptionHandlerService;
 use SwagPaymentPayPalUnified\PayPalBundle\PartnerAttributionId;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Payments\Capture;
@@ -34,11 +33,6 @@ class Shopware_Controllers_Backend_PaypalUnifiedV2 extends Shopware_Controllers_
     private $exceptionHandler;
 
     /**
-     * @var ShopRegistrationService
-     */
-    private $shopRegistrationService;
-
-    /**
      * @var AuthorizationResource
      */
     private $authorizationResource;
@@ -51,7 +45,6 @@ class Shopware_Controllers_Backend_PaypalUnifiedV2 extends Shopware_Controllers_
         $this->authorizationResource = $this->container->get('paypal_unified.v2.authorization_resource');
         $this->captureResource = $this->container->get('paypal_unified.v2.capture_resource');
         $this->exceptionHandler = $this->container->get('paypal_unified.exception_handler_service');
-        $this->shopRegistrationService = $this->container->get('paypal_unified.backend.shop_registration_service');
 
         $this->container->get('paypal_unified.backend.shop_registration_service')->registerShopById((int) $this->request->getParam('shopId'));
     }

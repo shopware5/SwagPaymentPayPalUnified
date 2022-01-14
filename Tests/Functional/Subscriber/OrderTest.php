@@ -117,7 +117,6 @@ class OrderTest extends TestCase
     {
         return new Order(
             Shopware()->Container()->get('front'),
-            Shopware()->Container()->get('dbal_connection'),
             Shopware()->Container()->get('paypal_unified.payment_method_provider')
         );
     }

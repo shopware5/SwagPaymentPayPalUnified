@@ -76,7 +76,7 @@ default:
         - *entrypoint_script
         - cd custom/plugins/${PLUGIN_NAME}
     script:
-        - ../../../vendor/bin/phpunit --verbose --config="phpunit.xml.dist" --colors="never" --log-junit="${ARTIFACTS_ROOT}/test-log.junit.xml"
+        - ../../../vendor/bin/phpunit -v --config="phpunit.xml.dist" --colors="never" --log-junit="${ARTIFACTS_ROOT}/test-log.junit.xml"
     artifacts:
         paths:
             - ${ARTIFACTS_ROOT}

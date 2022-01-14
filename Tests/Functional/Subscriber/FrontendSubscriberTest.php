@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Subscriber;
 
+use Enlight_Controller_Response_ResponseTestCase;
 use Enlight_Template_Manager;
 use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
@@ -54,7 +55,7 @@ class FrontendSubscriberTest extends TestCase
         $view = new ViewMock(new Enlight_Template_Manager());
         $request = new \Enlight_Controller_Request_RequestTestCase();
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
         ]);
 
         $result = $subscriber->onPostDispatchSecure($enlightEventArgs);
@@ -70,7 +71,7 @@ class FrontendSubscriberTest extends TestCase
         $view = new ViewMock(new Enlight_Template_Manager());
         $request = new \Enlight_Controller_Request_RequestTestCase();
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
         ]);
 
         $subscriber->onPostDispatchSecure($enlightEventArgs);
@@ -92,7 +93,7 @@ class FrontendSubscriberTest extends TestCase
         $view = new ViewMock(new Enlight_Template_Manager());
         $request = new \Enlight_Controller_Request_RequestTestCase();
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
         ]);
 
         $subscriber->onPostDispatchSecure($enlightEventArgs);
@@ -110,7 +111,7 @@ class FrontendSubscriberTest extends TestCase
         $view = new ViewMock(new Enlight_Template_Manager());
         $request = new \Enlight_Controller_Request_RequestTestCase();
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
         ]);
 
         $subscriber->onPostDispatchSecure($enlightEventArgs);
@@ -337,7 +338,6 @@ class FrontendSubscriberTest extends TestCase
         return new Frontend(
             Shopware()->Container()->getParameter('paypal_unified.plugin_dir'),
             Shopware()->Container()->get('paypal_unified.settings_service'),
-            Shopware()->Container()->get('dbal_connection'),
             Shopware()->Container()->get('paypal_unified.risk_management'),
             Shopware()->Container()->get('paypal_unified.payment_method_provider')
         );

@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Subscriber;
 
+use Enlight_Controller_Response_ResponseTestCase;
 use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Subscriber\Account;
@@ -47,7 +48,7 @@ class AccountTest extends TestCase
         $request->setActionName('fooBar');
 
         $eventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
         ]);
 
         $subscriber->onPostDispatchAccount($eventArgs);
@@ -73,7 +74,7 @@ class AccountTest extends TestCase
         $request->setActionName('index');
 
         $eventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
         ]);
 
         $subscriber->onPostDispatchAccount($eventArgs);
@@ -96,7 +97,7 @@ class AccountTest extends TestCase
         $request->setActionName('index');
 
         $eventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
         ]);
 
         $subscriber->onPostDispatchAccount($eventArgs);
@@ -119,7 +120,7 @@ class AccountTest extends TestCase
         $request->setActionName('index');
 
         $eventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
         ]);
 
         $subscriber->onPostDispatchAccount($eventArgs);
@@ -142,7 +143,7 @@ class AccountTest extends TestCase
         $request->setActionName('index');
 
         $eventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
         ]);
 
         $subscriber->onPostDispatchAccount($eventArgs);
@@ -165,7 +166,7 @@ class AccountTest extends TestCase
         $request->setActionName('index');
 
         $eventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
         ]);
 
         $subscriber->onPostDispatchAccount($eventArgs);
@@ -201,7 +202,7 @@ class AccountTest extends TestCase
         $request->setActionName('index');
 
         $eventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
         ]);
 
         $subscriber->onPostDispatchAccount($eventArgs);
@@ -237,7 +238,6 @@ class AccountTest extends TestCase
     private function getSubscriber()
     {
         return new Account(
-            Shopware()->Container()->get('dbal_connection'),
             Shopware()->Container()->get('paypal_unified.settings_service'),
             Shopware()->Container()->get('paypal_unified.dependency_provider'),
             Shopware()->Container()->get('paypal_unified.payment_method_provider')

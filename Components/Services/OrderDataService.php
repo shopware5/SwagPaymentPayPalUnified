@@ -9,7 +9,6 @@
 namespace SwagPaymentPayPalUnified\Components\Services;
 
 use Doctrine\DBAL\Connection;
-use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 
 class OrderDataService
@@ -19,17 +18,10 @@ class OrderDataService
      */
     private $dbalConnection;
 
-    /**
-     * @var SettingsServiceInterface
-     */
-    private $settingsService;
-
     public function __construct(
-        Connection $dbalConnection,
-        SettingsServiceInterface $settingsService
+        Connection $dbalConnection
     ) {
         $this->dbalConnection = $dbalConnection;
-        $this->settingsService = $settingsService;
     }
 
     /**

@@ -1096,11 +1096,6 @@ parameters:
 			path: Subscriber/Less.php
 
 		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Subscriber\\\\PaymentMeans\\:\\:getCustomerData\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: Subscriber/PaymentMeans.php
-
-		-
 			message: "#^PHPDoc tag @var for variable \\$availableMethods has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: Subscriber/PaymentMeans.php
@@ -1117,11 +1112,6 @@ parameters:
 
 		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Subscriber\\\\Plus\\:\\:createPayment\\(\\) has parameter \\$userData with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: Subscriber/Plus.php
-
-		-
-			message: "#^Property SwagPaymentPayPalUnified\\\\Subscriber\\\\Plus\\:\\:\\$allowedActions type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: Subscriber/Plus.php
 

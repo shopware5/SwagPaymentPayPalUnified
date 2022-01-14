@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Subscriber;
 
+use Enlight_Controller_Response_ResponseTestCase;
 use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\Services\ExceptionHandlerService;
@@ -67,7 +68,7 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $request = new \Enlight_Controller_Request_RequestTestCase();
 
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view, null),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
         ]);
 
         $this->importSettings();
@@ -85,7 +86,7 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $request = new \Enlight_Controller_Request_RequestTestCase();
 
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view, null),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
         ]);
 
         $this->importSettings(false, true, true);
@@ -102,7 +103,7 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $request = new \Enlight_Controller_Request_RequestTestCase();
 
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view, null),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
             'request' => $request,
         ]);
 
@@ -121,7 +122,7 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $request->setControllerName('detail');
 
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
             'request' => $request,
         ]);
 
@@ -141,7 +142,7 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $request->setActionName('fake');
 
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
             'request' => $request,
         ]);
 
@@ -162,7 +163,7 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $view->assign('sBasket', ['content' => [[]]]);
 
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
             'request' => $request,
         ]);
 
@@ -183,7 +184,7 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $view->assign('sBasket', ['content' => [[]]]);
 
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
             'request' => $request,
         ]);
 
@@ -201,7 +202,7 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $request = new \Enlight_Controller_Request_RequestTestCase();
 
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
             'request' => $request,
         ]);
 
@@ -228,7 +229,7 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $request->setActionName('fake');
 
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
             'request' => $request,
         ]);
 
@@ -245,7 +246,7 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $request->setActionName('confirm');
 
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
             'request' => $request,
         ]);
 
@@ -267,7 +268,7 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $view->assign('sBasket', ['content' => [['articleID' => 2]]]);
 
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
             'request' => $request,
         ]);
 
@@ -293,7 +294,7 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $request->setParam('expressCheckout', true);
         Shopware()->Container()->get('front')->setRequest($request);
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
             'request' => $request,
         ]);
 
@@ -324,7 +325,7 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $request->setActionName('fake');
 
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
             'request' => $request,
         ]);
 
@@ -343,7 +344,7 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $request->setActionName('payment');
 
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
             'request' => $request,
         ]);
 
@@ -365,7 +366,7 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $response = new \Enlight_Controller_Response_ResponseTestCase();
 
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
             'request' => $request,
             'response' => $response,
         ]);
@@ -610,7 +611,7 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $request->setParam('sTargetAction', 'confirm');
 
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
         ]);
         $enlightEventArgs->set('request', $request);
 
@@ -716,7 +717,6 @@ class ExpressCheckoutSubscriberTest extends TestCase
             Shopware()->Container()->get('paypal_unified.payment_address_service'),
             Shopware()->Container()->get('paypal_unified.payment_builder_service'),
             new ExceptionHandlerService($this->loggerMock),
-            Shopware()->Container()->get('dbal_connection'),
             Shopware()->Container()->get('paypal_unified.client_service'),
             Shopware()->Container()->get('paypal_unified.dependency_provider'),
             $esdProductChecker,
@@ -730,7 +730,7 @@ class ExpressCheckoutSubscriberTest extends TestCase
     private function createEventArgs(ViewMock $view)
     {
         return new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController(new \Enlight_Controller_Request_RequestTestCase(), $view),
+            'subject' => new DummyController(new \Enlight_Controller_Request_RequestTestCase(), $view, new Enlight_Controller_Response_ResponseTestCase()),
         ]);
     }
 
