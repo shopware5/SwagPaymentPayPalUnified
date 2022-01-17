@@ -3,7 +3,6 @@
         {block name='frontend_checkout_confirm_paypal_unified_in_context_button_inner'}
             <div class="paypal-unified-in-context--button-container right"
                  data-paypalUnifiedNormalCheckoutButtonInContext="true"
-                 data-label="buynow"
                  data-color="{$paypalUnifiedButtonStyleColor}"
                  data-shape="{$paypalUnifiedButtonStyleShape}"
                  data-size="{$paypalUnifiedButtonStyleSize}"

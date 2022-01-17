@@ -68,7 +68,7 @@
             /**
              *  @type string
              */
-            layout: 'horizontal',
+            layout: 'vertical',
 
             /**
              * selector for the checkout confirm form element
@@ -206,6 +206,20 @@
              * @type string
              */
             responsiveWidth: '100%',
+
+            /**
+             * For possible values see: https://developer.paypal.com/sdk/js/configuration/#disable-funding
+             *
+             * @type string
+             */
+            disabledFundings: 'card,bancontact,blik,eps,giropay,ideal,mercadopago,mybank,p24,sepa,sofort,venmo',
+
+            /**
+             * For possible values see: https://developer.paypal.com/sdk/js/configuration/#enable-funding
+             *
+             * @type string
+             */
+            enabledFundings: 'paylater',
         },
 
         /**
@@ -306,7 +320,9 @@
         renderSdkUrl: function() {
             var params = {
                 'client-id': this.opts.clientId,
-                intent: this.opts.paypalIntent.toLowerCase()
+                'disable-funding': this.opts.disabledFundings,
+                'enable-funding': this.opts.enabledFundings,
+                intent: this.opts.paypalIntent.toLowerCase(),
             };
 
             if (this.opts.locale.length > 0) {
