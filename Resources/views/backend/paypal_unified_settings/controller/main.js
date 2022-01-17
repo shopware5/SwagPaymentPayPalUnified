@@ -77,7 +77,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
         { ref: 'generalTab', selector: 'paypal-unified-settings-tabs-general' },
         { ref: 'plusTab', selector: 'paypal-unified-settings-tabs-paypal-plus' },
         { ref: 'installmentsTab', selector: 'paypal-unified-settings-tabs-installments' },
-        { ref: 'ecTab', selector: 'paypal-unified-settings-tabs-express-checkout' }
+        { ref: 'ecTab', selector: 'paypal-unified-settings-tabs-express-checkout' },
     ],
 
     init: function() {
@@ -103,7 +103,8 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
                 registerWebhook: me.onRegisterWebhook,
                 validateAPI: me.onValidateAPISettings,
                 onChangeShopActivation: me.applyActivationState,
-                onChangeMerchantLocation: me.applyMerchantLocationState
+                onChangeMerchantLocation: me.applyMerchantLocationState,
+                onInContextChange: me.onInContextChange
             }
         });
     },
@@ -390,6 +391,10 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
             installmentsTab.setDisabled(false);
             generalTab.smartPaymentButtonsCheckbox.setVisible(false);
         }
-    }
+    },
+
+    onInContextChange: function(checkbox, styleFieldSet) {
+        styleFieldSet.setDisabled(!checkbox.getValue());
+    },
 });
 // {/block}

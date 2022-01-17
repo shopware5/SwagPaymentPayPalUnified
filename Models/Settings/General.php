@@ -132,6 +132,30 @@ class General extends ModelEntity
     private $intent;
 
     /**
+     * @var string
+     * @ORM\Column(name="button_style_color", type="string")
+     */
+    private $buttonStyleColor;
+
+    /**
+     * @var string
+     * @ORM\Column(name="button_style_shape", type="string")
+     */
+    private $buttonStyleShape;
+
+    /**
+     * @var string
+     * @ORM\Column(name="button_style_size", type="string")
+     */
+    private $buttonStyleSize;
+
+    /**
+     * @var string
+     * @ORM\Column(name="button_locale", type="string", length=5)
+     */
+    private $buttonLocale = '';
+
+    /**
      * @return int
      */
     public function getId()
@@ -419,6 +443,70 @@ class General extends ModelEntity
     public function setIntent($intent)
     {
         $this->intent = $intent;
+    }
+
+    /**
+     * @return string
+     */
+    public function getButtonStyleColor()
+    {
+        return $this->buttonStyleColor;
+    }
+
+    /**
+     * @param string $buttonStyleColor
+     */
+    public function setButtonStyleColor($buttonStyleColor)
+    {
+        $this->buttonStyleColor = $buttonStyleColor;
+    }
+
+    /**
+     * @return string
+     */
+    public function getButtonStyleShape()
+    {
+        return $this->buttonStyleShape;
+    }
+
+    /**
+     * @param string $buttonStyleShape
+     */
+    public function setButtonStyleShape($buttonStyleShape)
+    {
+        $this->buttonStyleShape = $buttonStyleShape;
+    }
+
+    /**
+     * @return string
+     */
+    public function getButtonStyleSize()
+    {
+        return $this->buttonStyleSize;
+    }
+
+    /**
+     * @param string $buttonStyleSize
+     */
+    public function setButtonStyleSize($buttonStyleSize)
+    {
+        $this->buttonStyleSize = $buttonStyleSize;
+    }
+
+    /**
+     * @return string
+     */
+    public function getButtonLocale()
+    {
+        return $this->buttonLocale;
+    }
+
+    /**
+     * @param string $buttonLocale
+     */
+    public function setButtonLocale($buttonLocale)
+    {
+        $this->buttonLocale = $buttonLocale;
     }
 
     /**

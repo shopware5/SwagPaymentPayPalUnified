@@ -90,6 +90,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
             me.createActivationContainer(),
             me.createRestContainer(),
             me.createBehaviourContainer(),
+            me.createStyleContainer(),
             me.createErrorHandlingContainer()
         ];
     },
@@ -243,7 +244,12 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
                     inputValue: true,
                     uncheckedValue: false,
                     fieldLabel: '{s name="fieldset/behaviour/useInContext"}Use in-context mode{/s}',
-                    helpText: '{s name="fieldset/behaviour/useInContext/help"}Enable to use the PayPal in-context solution. Instead of redirecting to the PayPal login page, an overlay will be shown and the customer does not need to leave the shop. This option has no effect on the Smart Payment Buttons, as they always use the in-Context mode.{/s}'
+                    helpText: '{s name="fieldset/behaviour/useInContext/help"}Enable to use the PayPal in-context solution. Instead of redirecting to the PayPal login page, an overlay will be shown and the customer does not need to leave the shop. This option has no effect on the Smart Payment Buttons, as they always use the in-Context mode.{/s}',
+                    listeners: {
+                        'change': function(checkbox) {
+                            me.fireEvent('onInContextChange', checkbox, me.buttonStyleFieldset);
+                        }
+                    }
                 },
                 {
                     xtype: 'checkbox',
@@ -285,6 +291,21 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
         });
 
         return me.behaviourContainer;
+    },
+
+    createStyleContainer: function () {
+        this.buttonStyleFieldset = Ext.create('Ext.form.FieldSet', {
+            title: '{s name="fieldset/appearance/title"}Appearance{/s}',
+            disabled: true,
+            items: [
+                this.createButtonStyleColor(),
+                this.createButtonStyleShape(),
+                this.createButtonStyleSize(),
+                this.createButtonLocale(),
+            ]
+        });
+
+        return this.buttonStyleFieldset;
     },
 
     /**
@@ -347,6 +368,58 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
                 },
                 handler: Ext.bind(me.onRegisterWebhookButtonClick, me)
             }]
+        });
+    },
+
+    /**
+     * @returns { Ext.form.field.ComboBox }
+     */
+    createButtonStyleColor: function() {
+        return Ext.create('Ext.form.field.ComboBox', {
+            name: 'buttonStyleColor',
+            fieldLabel: '{s namespace="backend/paypal_unified_settings/tabs/express_checkout" name="field/ecButtonStyleColor"}Button color{/s}',
+            store: Ext.create('Shopware.apps.PaypalUnifiedSettings.store.EcButtonStyleColor'),
+            valueField: 'id'
+        });
+    },
+
+    /**
+     * @returns { Ext.form.field.ComboBox }
+     */
+    createButtonStyleShape: function() {
+        return Ext.create('Ext.form.field.ComboBox', {
+            name: 'buttonStyleShape',
+            fieldLabel: '{s namespace="backend/paypal_unified_settings/tabs/express_checkout" name="field/ecButtonStyleShape"}Button shape{/s}',
+            store: Ext.create('Shopware.apps.PaypalUnifiedSettings.store.EcButtonStyleShape'),
+            valueField: 'id'
+        });
+    },
+
+    /**
+     * @returns { Ext.form.field.ComboBox }
+     */
+    createButtonStyleSize: function() {
+        return Ext.create('Ext.form.field.ComboBox', {
+            name: 'buttonStyleSize',
+            fieldLabel: '{s namespace="backend/paypal_unified_settings/tabs/express_checkout" name="field/ecButtonStyleSize"}Button size{/s}',
+            store: Ext.create('Shopware.apps.PaypalUnifiedSettings.store.EcButtonStyleSize'),
+            valueField: 'id'
+        });
+    },
+
+    /**
+     * @returns { Ext.form.field.Text }
+     */
+    createButtonLocale: function() {
+        return Ext.create('Ext.form.field.Text', {
+            name: 'buttonLocale',
+            fieldLabel: '{s namespace="backend/paypal_unified_settings/tabs/express_checkout" name="field/ecButtonLocale"}Button locale{/s}',
+            supportText: '{s namespace="backend/paypal_unified_settings/tabs/express_checkout" name="field/ecButtonLocale/help"}If not set, the shop locale will be used. Valid values could be found <a href="https://developer.paypal.com/docs/api/reference/locale-codes/" target="_blank">here</a>.{/s}',
+            maxLength: 5,
+            // {literal}
+            regex: /[a-z]{2}_[A-Z]{2}/,
+            // {/literal}
+            invalidText: '{s namespace="backend/paypal_unified_settings/tabs/express_checkout" name="field/ecButtonLocale/invalid"}The locale code must be exact five chars long and must have a format like "en_US"{/s}'
         });
     },
 

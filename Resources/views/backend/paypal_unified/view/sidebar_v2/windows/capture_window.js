@@ -25,8 +25,8 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebarV2.windows.CaptureWindow', {
         return Ext.create('Ext.form.field.Checkbox', {
             name: 'finalize',
             fieldLabel: '{s name="captureWindow/field/finalize"}Finalize{/s}',
-            inputValue: true,
-            uncheckedValue: false,
+            inputValue: 1,
+            uncheckedValue: 0,
         });
     },
 

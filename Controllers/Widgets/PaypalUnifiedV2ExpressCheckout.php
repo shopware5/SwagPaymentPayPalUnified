@@ -11,6 +11,7 @@ use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\PayPalOrderParameterFacadeInterface;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\ShopwareOrderData;
+use SwagPaymentPayPalUnified\Components\Services\ExceptionHandlerService;
 use SwagPaymentPayPalUnified\Components\Services\ExpressCheckout\CustomerService;
 use SwagPaymentPayPalUnified\Components\Services\PaymentControllerHelper;
 use SwagPaymentPayPalUnified\Components\Services\PayPalOrderBuilderService;
@@ -54,6 +55,11 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout extends Shopwa
      */
     private $payPalOrderParameterFacade;
 
+    /**
+     * @var ExceptionHandlerService
+     */
+    private $exceptionHandler;
+
     public function preDispatch()
     {
         $this->Front()->Plugins()->ViewRenderer()->setNoRender();
@@ -66,6 +72,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout extends Shopwa
         $this->redirectDataBuilderFactory = $this->get('paypal_unified.redirect_data_builder_factory');
         $this->paymentControllerHelper = $this->get('paypal_unified.payment_controller_helper');
         $this->payPalOrderParameterFacade = $this->get('paypal_unified.paypal_order_parameter_facade');
+        $this->exceptionHandler = $this->get('paypal_unified.exception_handler_service');
     }
 
     public function createOrderAction()
@@ -131,6 +138,17 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout extends Shopwa
             'expressCheckout' => true,
             'orderId' => $payPalOrder->getId(),
         ]);
+    }
+
+    public function logErrorMessageAction()
+    {
+        $code = $this->request->getParam('code', ErrorCodes::UNKNOWN_EXPRESS_ERROR);
+        $message = $this->request->getParam('message');
+
+        $this->exceptionHandler->handle(
+            new \Exception(sprintf('code: %s%smessage: %s', $code, \PHP_EOL, $message)),
+            'API-ERROR'
+        );
     }
 
     private function addProductToCart()

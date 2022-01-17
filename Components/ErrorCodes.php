@@ -18,6 +18,7 @@ final class ErrorCodes
     const BASKET_VALIDATION_ERROR = 6;
     const ADDRESS_VALIDATION_ERROR = 7;
     const NO_DISPATCH_FOR_ORDER = 8;
+    const UNKNOWN_EXPRESS_ERROR = 9;
 
     private function __construct()
     {

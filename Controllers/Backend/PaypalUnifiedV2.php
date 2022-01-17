@@ -75,7 +75,7 @@ class Shopware_Controllers_Backend_PaypalUnifiedV2 extends Shopware_Controllers_
         $authorizationId = $this->Request()->getParam('authorizationId');
         $amountToCapture = $this->Request()->getParam('amount');
         $currency = $this->Request()->getParam('currency');
-        $finalize = (bool) $this->Request()->getParam('finalize');
+        $finalize = (bool) $this->Request()->getParam('finalize', false);
 
         $amount = new Amount();
         $amount->setCurrencyCode($currency);
@@ -83,7 +83,7 @@ class Shopware_Controllers_Backend_PaypalUnifiedV2 extends Shopware_Controllers_
 
         $capture = new Capture();
         $capture->setAmount($amount);
-        $capture->setFinalCapture($finalize === false ? null : true);
+        $capture->setFinalCapture($finalize);
 
         try {
             $this->authorizationResource->capture($authorizationId, $capture, PartnerAttributionId::PAYPAL_ALL_V2);

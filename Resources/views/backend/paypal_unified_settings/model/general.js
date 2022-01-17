@@ -27,7 +27,11 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.model.General', {
         { name: 'merchantLocation', type: 'string', defaultValue: 'germany' },
         { name: 'useSmartPaymentButtons', type: 'bool' },
         { name: 'submitCart', type: 'bool', defaultValue: true },
-        { name: 'intent', type: 'string', defaultValue: 'CAPTURE' }
+        { name: 'intent', type: 'string', defaultValue: 'CAPTURE' },
+        { name: 'buttonStyleColor', type: 'string', defaultValue: 'gold' },
+        { name: 'buttonStyleShape', type: 'string', defaultValue: 'rect' },
+        { name: 'buttonStyleSize', type: 'string', defaultValue: 'large' },
+        { name: 'buttonLocale', type: 'string', defaultValue: '' }
     ]
 });
 // {/block}
