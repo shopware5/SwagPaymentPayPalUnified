@@ -59,7 +59,7 @@ class Payer extends PayPalApiStruct
     }
 
     /**
-     * @return \SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\Payer\Address
+     * @return Address
      */
     public function getAddress()
     {
@@ -75,7 +75,7 @@ class Payer extends PayPalApiStruct
     }
 
     /**
-     * @return \SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\Payer\Name
+     * @return Name
      */
     public function getName()
     {
@@ -109,7 +109,7 @@ class Payer extends PayPalApiStruct
     }
 
     /**
-     * @return \SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\Payer\Phone|null
+     * @return Phone|null
      */
     public function getPhone()
     {
@@ -117,7 +117,7 @@ class Payer extends PayPalApiStruct
     }
 
     /**
-     * @param \SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\Payer\Phone|null $phone
+     * @param Phone|null $phone
      *
      * @return void
      */

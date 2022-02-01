@@ -12,6 +12,7 @@ use Enlight_Controller_Response_ResponseTestCase;
 use Enlight_Template_Manager;
 use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
+use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Subscriber\Frontend;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\ResetSessionTrait;
@@ -86,7 +87,7 @@ class FrontendSubscriberTest extends TestCase
             Shopware()->Container()->get('models')
         );
 
-        $paymentMethodProvider->setPaymentMethodActiveFlag(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME, false);
+        $paymentMethodProvider->setPaymentMethodActiveFlag(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME, false);
         $subscriber = $this->getSubscriber();
         $this->createTestSettings();
 
@@ -100,7 +101,7 @@ class FrontendSubscriberTest extends TestCase
 
         static::assertFalse($view->getAssign('paypalUnifiedShowLogo'));
 
-        $paymentMethodProvider->setPaymentMethodActiveFlag(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME, true);
+        $paymentMethodProvider->setPaymentMethodActiveFlag(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME, true);
     }
 
     public function testOnPostDispatchSecureAssignsVariablesToView()

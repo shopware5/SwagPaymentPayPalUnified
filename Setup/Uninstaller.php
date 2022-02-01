@@ -62,8 +62,9 @@ class Uninstaller
 
     private function deactivatePayments()
     {
-        $this->paymentMethodProvider->setPaymentMethodActiveFlag(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME, false);
-        $this->paymentMethodProvider->setPaymentMethodActiveFlag(PaymentMethodProvider::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME, false);
+        foreach ($this->paymentMethodProvider->getAllUnifiedNames() as $paymentMethodName) {
+            $this->paymentMethodProvider->setPaymentMethodActiveFlag($paymentMethodName, false);
+        }
     }
 
     private function removeAttributes()

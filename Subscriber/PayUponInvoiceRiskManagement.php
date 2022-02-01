@@ -12,6 +12,7 @@ use Enlight\Event\SubscriberInterface;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
+use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use Symfony\Component\Validator\Constraints\Collection;
 use Symfony\Component\Validator\Constraints\EqualTo;
 use Symfony\Component\Validator\Constraints\NotBlank;
@@ -71,7 +72,7 @@ class PayUponInvoiceRiskManagement implements SubscriberInterface
 
         $basket = $args->get('basket');
         $user = $args->get('user');
-        $paymentId = $this->paymentMethodProvider->getPaymentId(PaymentMethodProvider::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME);
+        $paymentId = $this->paymentMethodProvider->getPaymentId(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME);
 
         if ((int) $args->get('paymentID') !== $paymentId) {
             return false;
@@ -91,7 +92,7 @@ class PayUponInvoiceRiskManagement implements SubscriberInterface
     {
         $user = $args->get('user');
         $basket = $args->get('basket');
-        $paymentId = $this->paymentMethodProvider->getPaymentId(PaymentMethodProvider::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME);
+        $paymentId = $this->paymentMethodProvider->getPaymentId(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME);
 
         if ($args->get('paymentID') !== $paymentId) {
             return false;

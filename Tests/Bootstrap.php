@@ -8,9 +8,10 @@
 
 require __DIR__ . '/../../../../autoload.php';
 
+use Shopware\Kernel;
 use Shopware\Models\Shop\Shop;
 
-class PayPalUnifiedTestKernel extends \Shopware\Kernel
+class PayPalUnifiedTestKernel extends Kernel
 {
     /**
      * @var PayPalUnifiedTestKernel
@@ -29,7 +30,7 @@ class PayPalUnifiedTestKernel extends \Shopware\Kernel
 
         $repository = $container->get('models')->getRepository(Shop::class);
 
-        if ($container->has('shopware.components.shop_registration_service')) {
+        if ($container->initialized('shopware.components.shop_registration_service')) {
             $container->get('shopware.components.shop_registration_service')->registerResources(
                 $repository->getActiveDefault()
             );

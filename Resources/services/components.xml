@@ -11,6 +11,11 @@
         <import resource="components/paypal_order.xml"/>
         <import resource="components/plus.xml"/>
         <import resource="components/validation.xml"/>
+        <import resource="components/order_builder.xml" />
+        <import resource="components/payment_source.xml" />
+        <import resource="components/payment_source_value.xml" />
+        <import resource="components/apm_risk_management.xml" />
+        <import resource="components/order_array_factory.xml" />
     </imports>
 
     <services>
@@ -102,8 +107,8 @@
         </service>
 
         <service id="paypal_unified.payment_method_provider"
-                class="SwagPaymentPayPalUnified\Components\PaymentMethodProvider"
-                public="true">
+                 class="SwagPaymentPayPalUnified\Components\PaymentMethodProvider"
+                 public="true">
             <argument type="service" id="dbal_connection"/>
             <argument type="service" id="models"/>
         </service>
@@ -116,5 +121,17 @@
             <argument type="service" id="paypal_unified.common.cart_persister"/>
         </service>
 
+        <service id="paypal_unified.button_locale_service"
+                 class="SwagPaymentPayPalUnified\Components\ButtonLocaleService"
+                 public="true">
+            <argument type="service" id="paypal_unified.dependency_provider"/>
+        </service>
+
+        <service id="paypal_unified.dispatch_validation"
+                 class="SwagPaymentPayPalUnified\Components\Services\DispatchValidation"
+                 public="true">
+            <argument type="service" id="config"/>
+            <argument type="service" id="paypal_unified.dependency_provider"/>
+        </service>
     </services>
 </container>

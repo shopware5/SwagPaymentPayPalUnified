@@ -14,7 +14,7 @@ use SwagPaymentPayPalUnified\Components\Backend\CaptureService;
 use SwagPaymentPayPalUnified\Components\Backend\PaymentDetailsService;
 use SwagPaymentPayPalUnified\Components\Backend\VoidService;
 use SwagPaymentPayPalUnified\Components\ExceptionHandlerServiceInterface;
-use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
+use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Components\PaymentStatus;
 use SwagPaymentPayPalUnified\Components\Services\PaymentStatusService;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\AuthorizationResource;
@@ -417,8 +417,8 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
         // If there was PayPal classic installed earlier, those orders have to be queried.
         $legacyPaymentIds = $this->get('paypal_unified.legacy_service')->getClassicPaymentIds();
         $paymentIds = [
-            $paymentMethodProvider->getPaymentId(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME),
-            $paymentMethodProvider->getPaymentId(PaymentMethodProvider::PAYPAL_UNIFIED_INSTALLMENTS_METHOD_NAME),
+            $paymentMethodProvider->getPaymentId(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME),
+            $paymentMethodProvider->getPaymentId(PaymentMethodProviderInterface::PAYPAL_UNIFIED_INSTALLMENTS_METHOD_NAME),
         ];
 
         $paymentIds = array_merge($paymentIds, $legacyPaymentIds);

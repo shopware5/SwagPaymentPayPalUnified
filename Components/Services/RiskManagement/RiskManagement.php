@@ -10,6 +10,7 @@ namespace SwagPaymentPayPalUnified\Components\Services\RiskManagement;
 
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
+use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 
 class RiskManagement implements RiskManagementInterface
 {
@@ -47,7 +48,7 @@ class RiskManagement implements RiskManagementInterface
         /** @var \sBasket $sBasket */
         $sBasket = $this->dependencyProvider->getModule('Basket');
 
-        $paymentId = $this->paymentMethodProvider->getPaymentId(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
+        $paymentId = $this->paymentMethodProvider->getPaymentId(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
 
         return $sAdmin->sManageRisks($paymentId, $sBasket->sGetBasket(), $sAdmin->sGetUserData() ?: []);
     }

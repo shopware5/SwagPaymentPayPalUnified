@@ -9,7 +9,7 @@
 namespace SwagPaymentPayPalUnified\Tests\Functional\Subscriber;
 
 use PHPUnit\Framework\TestCase;
-use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
+use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Components\Services\RiskManagement\RiskManagementInterface;
 use SwagPaymentPayPalUnified\Subscriber\RiskManagement;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
@@ -264,7 +264,7 @@ class RiskManagementTest extends TestCase
     {
         $eventArgs = new \Enlight_Event_EventArgs();
         $paymentMethodProvider = Shopware()->Container()->get('paypal_unified.payment_method_provider');
-        $eventArgs->set('paymentID', $paymentMethodProvider->getPaymentId(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME));
+        $eventArgs->set('paymentID', $paymentMethodProvider->getPaymentId(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME));
 
         return $eventArgs;
     }

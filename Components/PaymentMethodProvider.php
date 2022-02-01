@@ -9,23 +9,14 @@
 namespace SwagPaymentPayPalUnified\Components;
 
 use Doctrine\DBAL\Connection;
+use PDO;
 use Shopware\Components\Model\ModelManager;
 use Shopware\Models\Payment\Payment;
+use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
+use UnexpectedValueException;
 
-class PaymentMethodProvider
+class PaymentMethodProvider implements PaymentMethodProviderInterface
 {
-    /**
-     * The technical names of the unified payment methods.
-     */
-    const PAYPAL_UNIFIED_PAYMENT_METHOD_NAME = 'SwagPaymentPayPalUnified';
-
-    const PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME = 'SwagPaymentPayPalUnifiedPayUponInvoice';
-
-    /**
-     * @deprecated
-     */
-    const PAYPAL_UNIFIED_INSTALLMENTS_METHOD_NAME = 'SwagPaymentPayPalUnifiedInstallments';
-
     const PAYMENT_ID_QUERY = 'SELECT `id` FROM s_core_paymentmeans WHERE `name`=:paymentName AND active = 1';
 
     /**
@@ -45,11 +36,7 @@ class PaymentMethodProvider
     }
 
     /**
-     * @param string $paymentMethodName
-     *
-     * @return Payment|null
-     *
-     * @see PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME or PaymentMethodProvider::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME
+     * {@inheritDoc}
      */
     public function getPaymentMethodModel($paymentMethodName)
     {
@@ -59,10 +46,7 @@ class PaymentMethodProvider
     }
 
     /**
-     * @param bool   $active
-     * @param string $paymentMethodName
-     *
-     * @see PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME or PaymentMethodProvider::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME
+     * {@inheritDoc}
      */
     public function setPaymentMethodActiveFlag($paymentMethodName, $active)
     {
@@ -77,11 +61,7 @@ class PaymentMethodProvider
     }
 
     /**
-     * @param string $paymentMethodName
-     *
-     * @return bool
-     *
-     * @see PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME or PaymentMethodProvider::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME
+     * {@inheritDoc}
      */
     public function getPaymentMethodActiveFlag($paymentMethodName)
     {
@@ -93,16 +73,108 @@ class PaymentMethodProvider
     }
 
     /**
-     * @param string $paymentMethodName
-     *
-     * @return int
-     *
-     * @see PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME or PaymentMethodProvider::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME
+     * {@inheritDoc}
      */
     public function getPaymentId($paymentMethodName)
     {
         return (int) $this->connection->fetchColumn(self::PAYMENT_ID_QUERY, [
             ':paymentName' => $paymentMethodName,
         ]);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getActivePayments(array $paymentMethodNames)
+    {
+        return $this->connection->createQueryBuilder()
+            ->select(['payment.name', 'payment.id'])
+            ->from('s_core_paymentmeans', 'payment')
+            ->where('payment.active = 1')
+            ->andWhere('payment.name IN (:paymentMethodNames)')
+            ->setParameter('paymentMethodNames', $paymentMethodNames, Connection::PARAM_STR_ARRAY)
+            ->execute()
+            ->fetchAll(PDO::FETCH_KEY_PAIR);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getPayPalMethodNames()
+    {
+        return [
+            self::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME,
+            self::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME,
+        ];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getAlternativePaymentMethodNames()
+    {
+        return [
+            self::BANCONTACT_METHOD_NAME,
+            self::BLIK_METHOD_NAME,
+            self::EPS_METHOD_NAME,
+            self::GIROPAY_METHOD_NAME,
+            self::IDEAL_METHOD_NAME,
+            self::MULTIBANCO_METHOD_NAME,
+            self::MY_BANK_METHOD_NAME,
+            self::OXXO_METHOD_NAME,
+            self::P24_METHOD_NAME,
+            self::SOFORT_METHOD_NAME,
+            self::TRUSTLY_METHOD_NAME,
+        ];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getAllUnifiedNames()
+    {
+        return array_merge(
+            $this->getPayPalMethodNames(),
+            $this->getAlternativePaymentMethodNames()
+        );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getPaymentTypeByName($paymentMethodName)
+    {
+        switch ($paymentMethodName) {
+            case self::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME:
+                return PaymentType::PAYPAL_CLASSIC_V2;
+            case self::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME:
+                return PaymentType::PAYPAL_PAY_UPON_INVOICE_V2;
+            case self::BANCONTACT_METHOD_NAME:
+                return PaymentType::APM_BANCONTACT;
+            case self::BLIK_METHOD_NAME:
+                return PaymentType::APM_BLIK;
+            case self::EPS_METHOD_NAME:
+                return PaymentType::APM_EPS;
+            case self::GIROPAY_METHOD_NAME:
+                return PaymentType::APM_GIROPAY;
+            case self::IDEAL_METHOD_NAME:
+                return PaymentType::APM_IDEAL;
+            case self::MULTIBANCO_METHOD_NAME:
+                return PaymentType::APM_MULTIBANCO;
+            case self::MY_BANK_METHOD_NAME:
+                return PaymentType::APM_MYBANK;
+            case self::OXXO_METHOD_NAME:
+                return PaymentType::APM_OXXO;
+            case self::P24_METHOD_NAME:
+                return PaymentType::APM_P24;
+            case self::SOFORT_METHOD_NAME:
+                return PaymentType::APM_SOFORT;
+            case self::TRUSTLY_METHOD_NAME:
+                return PaymentType::APM_TRUSTLY;
+        }
+
+        throw new UnexpectedValueException(
+            sprintf('Payment type for payment method "%s" not found', $paymentMethodName)
+        );
     }
 }

@@ -80,7 +80,7 @@ class Refund extends Payment
     }
 
     /**
-     * @return \SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Payments\Refund\SellerPayableBreakdown
+     * @return SellerPayableBreakdown
      */
     public function getSellerPayableBreakdown()
     {

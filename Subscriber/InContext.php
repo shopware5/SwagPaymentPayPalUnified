@@ -13,6 +13,7 @@ use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
 use Shopware\Models\Shop\Shop;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
+use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Models\Settings\ExpressCheckout as ExpressSettingsModel;
 use SwagPaymentPayPalUnified\Models\Settings\General as GeneralSettingsModel;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
@@ -75,7 +76,7 @@ class InContext implements SubscriberInterface
             return;
         }
 
-        $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
+        $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
         if (!$swUnifiedActive) {
             return;
         }
@@ -97,7 +98,7 @@ class InContext implements SubscriberInterface
         }
 
         $view = $controller->View();
-        $view->assign('paypalUnifiedPaymentId', $this->paymentMethodProvider->getPaymentId(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME));
+        $view->assign('paypalUnifiedPaymentId', $this->paymentMethodProvider->getPaymentId(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME));
         $view->assign('paypalUnifiedModeSandbox', $settings->getSandbox());
         $view->assign('paypalUnifiedUseInContext', $settings->getUseInContext());
         $view->assign('paypalUnifiedButtonStyleColor', $settings->getButtonStyleColor());

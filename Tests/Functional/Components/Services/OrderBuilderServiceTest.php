@@ -13,6 +13,7 @@ use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\ShopwareOrderData;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Amount;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Amount\Breakdown;
 use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
@@ -57,8 +58,8 @@ class OrderBuilderServiceTest extends TestCase
         }
 
         $payPalOrderData = $this->getContainer()
-            ->get('paypal_unified.paypal_order_builder_service')
-            ->getOrder($orderParams);
+            ->get('paypal_unified.order_factory')
+            ->createOrder($orderParams);
 
         // Check intent
         static::assertSame($intent, $payPalOrderData->getIntent());
@@ -92,20 +93,23 @@ class OrderBuilderServiceTest extends TestCase
         static::assertTrue(\is_array($payPalOrderData->getPurchaseUnits()));
         static::assertCount(1, $payPalOrderData->getPurchaseUnits());
 
-        static::assertSame('EUR', $payPalOrderData->getPurchaseUnits()[0]->getAmount()->getCurrencyCode());
-        static::assertSame('543.96', $payPalOrderData->getPurchaseUnits()[0]->getAmount()->getValue());
+        $amount = $payPalOrderData->getPurchaseUnits()[0]->getAmount();
+        static::assertInstanceOf(Amount::class, $amount);
+
+        static::assertSame('EUR', $amount->getCurrencyCode());
+        static::assertSame('543.96', $amount->getValue());
 
         // Check purchase units breakdown
-        static::assertInstanceOf(Breakdown::class, $payPalOrderData->getPurchaseUnits()[0]->getAmount()->getBreakdown());
+        static::assertInstanceOf(Breakdown::class, $amount->getBreakdown());
 
-        static::assertSame('EUR', $payPalOrderData->getPurchaseUnits()[0]->getAmount()->getBreakdown()->getItemTotal()->getCurrencyCode());
-        static::assertSame('468.96', $payPalOrderData->getPurchaseUnits()[0]->getAmount()->getBreakdown()->getItemTotal()->getValue());
+        static::assertSame('EUR', $amount->getBreakdown()->getItemTotal()->getCurrencyCode());
+        static::assertSame('468.96', $amount->getBreakdown()->getItemTotal()->getValue());
 
-        static::assertSame('EUR', $payPalOrderData->getPurchaseUnits()[0]->getAmount()->getBreakdown()->getShipping()->getCurrencyCode());
-        static::assertSame('75.00', $payPalOrderData->getPurchaseUnits()[0]->getAmount()->getBreakdown()->getShipping()->getValue());
+        static::assertSame('EUR', $amount->getBreakdown()->getShipping()->getCurrencyCode());
+        static::assertSame('75.00', $amount->getBreakdown()->getShipping()->getValue());
 
-        static::assertSame('EUR', $payPalOrderData->getPurchaseUnits()[0]->getAmount()->getBreakdown()->getDiscount()->getCurrencyCode());
-        static::assertSame('0.00', $payPalOrderData->getPurchaseUnits()[0]->getAmount()->getBreakdown()->getDiscount()->getValue());
+        static::assertSame('EUR', $amount->getBreakdown()->getDiscount()->getCurrencyCode());
+        static::assertSame('0.00', $amount->getBreakdown()->getDiscount()->getValue());
 
         // Check purchase units shipping
         static::assertSame('PhpUnit Tester', $payPalOrderData->getPurchaseUnits()[0]->getShipping()->getName()->getFullName());

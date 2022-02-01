@@ -8,7 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
 
-use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Amount;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\AbstractAmount;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Item;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Payee;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Payments;
@@ -23,7 +23,7 @@ class PurchaseUnit extends PayPalApiStruct
     protected $referenceId;
 
     /**
-     * @var Amount
+     * @var AbstractAmount
      */
     protected $amount;
 
@@ -48,7 +48,7 @@ class PurchaseUnit extends PayPalApiStruct
     protected $invoiceId;
 
     /**
-     * @var Item[]|null
+     * @var array<Item>|null
      */
     protected $items;
 
@@ -81,7 +81,7 @@ class PurchaseUnit extends PayPalApiStruct
     }
 
     /**
-     * @return Amount
+     * @return AbstractAmount
      */
     public function getAmount()
     {
@@ -89,9 +89,11 @@ class PurchaseUnit extends PayPalApiStruct
     }
 
     /**
+     * @param AbstractAmount $amount
+     *
      * @return void
      */
-    public function setAmount(Amount $amount)
+    public function setAmount($amount)
     {
         $this->amount = $amount;
     }
@@ -105,9 +107,11 @@ class PurchaseUnit extends PayPalApiStruct
     }
 
     /**
+     * @param Payee $payee
+     *
      * @return void
      */
-    public function setPayee(Payee $payee)
+    public function setPayee($payee)
     {
         $this->payee = $payee;
     }
@@ -167,7 +171,7 @@ class PurchaseUnit extends PayPalApiStruct
     }
 
     /**
-     * @return Item[]|null
+     * @return array<Item>|null
      */
     public function getItems()
     {
@@ -175,7 +179,7 @@ class PurchaseUnit extends PayPalApiStruct
     }
 
     /**
-     * @param Item[]|null $items
+     * @param array<Item>|null $items
      *
      * @return void
      */
@@ -193,9 +197,11 @@ class PurchaseUnit extends PayPalApiStruct
     }
 
     /**
+     * @param Shipping $shipping
+     *
      * @return void
      */
-    public function setShipping(Shipping $shipping)
+    public function setShipping($shipping)
     {
         $this->shipping = $shipping;
     }
@@ -209,9 +215,11 @@ class PurchaseUnit extends PayPalApiStruct
     }
 
     /**
+     * @param Payments $payments
+     *
      * @return void
      */
-    public function setPayments(Payments $payments)
+    public function setPayments($payments)
     {
         $this->payments = $payments;
     }

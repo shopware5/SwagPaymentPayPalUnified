@@ -9,6 +9,7 @@
 namespace SwagPaymentPayPalUnified\Tests\Functional;
 
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
+use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 
 trait PayPalUnifiedPaymentIdTrait
 {
@@ -20,6 +21,6 @@ trait PayPalUnifiedPaymentIdTrait
         $connection = Shopware()->Container()->get('dbal_connection');
         $modelManager = Shopware()->Container()->get('models');
 
-        return (new PaymentMethodProvider($connection, $modelManager))->getPaymentId(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
+        return (new PaymentMethodProvider($connection, $modelManager))->getPaymentId(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
     }
 }

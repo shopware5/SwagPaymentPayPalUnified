@@ -7,83 +7,22 @@
  */
 
 use Shopware\Components\HttpClient\RequestException;
-use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
-use SwagPaymentPayPalUnified\Components\PaymentStatus;
-use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\PayPalOrderParameterFacadeInterface;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\ShopwareOrderData;
-use SwagPaymentPayPalUnified\Components\Services\OrderDataService;
-use SwagPaymentPayPalUnified\Components\Services\PaymentControllerHelper;
-use SwagPaymentPayPalUnified\Components\Services\PayPalOrderBuilderService;
-use SwagPaymentPayPalUnified\Components\Services\Validation\RedirectDataBuilderFactory;
+use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentController;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\PartnerAttributionId;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Common\Link;
-use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Patch;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Patches\OrderAddInvoiceIdPatch;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\PaymentIntentV2;
-use SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\OrderResource;
 
-class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends Shopware_Controllers_Frontend_Payment
+class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymentController
 {
-    /**
-     * @var DependencyProvider
-     */
-    private $dependencyProvider;
-
-    /**
-     * @var PayPalOrderBuilderService
-     */
-    private $orderBuilderService;
-
-    /**
-     * @var OrderResource
-     */
-    private $orderResource;
-
-    /**
-     * @var RedirectDataBuilderFactory
-     */
-    private $redirectDataBuilderFactory;
-
-    /**
-     * @var Shopware_Components_Config
-     */
-    private $shopwareConfig;
-
-    /**
-     * @var SettingsServiceInterface
-     */
-    private $settingsService;
-
-    /**
-     * @var PaymentControllerHelper
-     */
-    private $paymentControllerHelper;
-
-    /**
-     * @var OrderDataService
-     */
-    private $orderDataService;
-
-    /**
-     * @var PayPalOrderParameterFacadeInterface
-     */
-    private $payPalOrderParameterFacade;
-
     public function preDispatch()
     {
-        $this->dependencyProvider = $this->get('paypal_unified.dependency_provider');
-        $this->orderBuilderService = $this->get('paypal_unified.paypal_order_builder_service');
-        $this->orderResource = $this->get('paypal_unified.v2.order_resource');
-        $this->redirectDataBuilderFactory = $this->get('paypal_unified.redirect_data_builder_factory');
-        $this->shopwareConfig = $this->get('config');
-        $this->settingsService = $this->get('paypal_unified.settings_service');
-        $this->paymentControllerHelper = $this->get('paypal_unified.payment_controller_helper');
-        $this->orderDataService = $this->get('paypal_unified.order_data_service');
-        $this->payPalOrderParameterFacade = $this->get('paypal_unified.paypal_order_parameter_facade');
+        parent::preDispatch();
 
         if ($this->Request()->isXmlHttpRequest()) {
             $this->Front()->Plugins()->ViewRenderer()->setNoRender();
@@ -107,7 +46,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends Shopware_Controllers
             return;
         }
 
-        if ($this->getDispatchNoOrder()) {
+        if (!$this->dispatchValidator->isValid()) {
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
                 ->setCode(ErrorCodes::NO_DISPATCH_FOR_ORDER);
 
@@ -120,8 +59,8 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends Shopware_Controllers
         $orderParams = $this->payPalOrderParameterFacade->createPayPalOrderParameter(PaymentType::PAYPAL_CLASSIC_V2, $shopwareOrderData);
 
         try {
-            $payPalOrderData = $this->orderBuilderService->getOrder($orderParams);
-            $payPalOrder = $this->orderResource->create($payPalOrderData, PartnerAttributionId::PAYPAL_ALL_V2, false);
+            $payPalOrderData = $this->orderFactory->createOrder($orderParams);
+            $payPalOrder = $this->orderResource->create($payPalOrderData, $orderParams->getPaymentType(), PartnerAttributionId::PAYPAL_ALL_V2, false);
         } catch (RequestException $exception) {
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
                 ->setCode(ErrorCodes::COMMUNICATION_FAILURE)
@@ -172,7 +111,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends Shopware_Controllers
             return;
         }
 
-        if (!$this->isCartValid($payPalOrder)) {
+        if (!$this->dispatchValidator->isValid()) {
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
                 ->setCode(ErrorCodes::BASKET_VALIDATION_ERROR);
 
@@ -186,8 +125,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends Shopware_Controllers
         $sendShopwareOrderNumber = $this->getSendOrdernumber();
 
         if ($sendShopwareOrderNumber) {
-            $shopwareOrderNumber = (string) $this->saveOrder($payPalOrderId, $payPalOrderId, PaymentStatus::PAYMENT_STATUS_OPEN);
-            $this->orderDataService->applyPaymentTypeAttribute($shopwareOrderNumber, $this->getPaymentType());
+            $shopwareOrderNumber = $this->createShopwareOrder($payPalOrderId, $this->getPaymentType($payPalOrder));
 
             $orderNumberPrefix = $this->settingsService->get(SettingsServiceInterface::SETTING_ORDER_NUMBER_PREFIX);
 
@@ -234,8 +172,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends Shopware_Controllers
         }
 
         if (!$sendShopwareOrderNumber) {
-            $shopwareOrderNumber = (string) $this->saveOrder($payPalOrderId, $payPalOrderId, PaymentStatus::PAYMENT_STATUS_OPEN);
-            $this->orderDataService->applyPaymentTypeAttribute($shopwareOrderNumber, $this->getPaymentType());
+            $this->createShopwareOrder($payPalOrderId, $this->getPaymentType($payPalOrder));
         }
 
         if ($this->Request()->isXmlHttpRequest()) {
@@ -250,116 +187,5 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends Shopware_Controllers
             'action' => 'finish',
             'sUniqueID' => $payPalOrderId,
         ]);
-    }
-
-    public function cancelAction()
-    {
-        $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
-            ->setCode(ErrorCodes::CANCELED_BY_USER);
-
-        $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
-    }
-
-    private function getPaymentType()
-    {
-        if ($this->request->getParam('spbCheckout', false)) {
-            return PaymentType::PAYPAL_SMART_PAYMENT_BUTTONS_V2;
-        }
-
-        return PaymentType::PAYPAL_CLASSIC_V2;
-    }
-
-    /**
-     * @return bool
-     */
-    private function getDispatchNoOrder()
-    {
-        $session = $this->dependencyProvider->getSession();
-
-        return !empty($this->shopwareConfig->get('premiumShippingNoOrder')) && (empty($session->get('sDispatch')) || empty($session->get('sCountry')));
-    }
-
-    /**
-     * @param string|null $cartId
-     *
-     * @return bool
-     */
-    private function shouldUseExtendedBasketValidator($cartId = null)
-    {
-        if (!$cartId || $cartId === 'null') {
-            return false;
-        }
-
-        if ($cartId === 'express') {
-            return false;
-        }
-
-        if ($this->container->has('basket_signature_generator')) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * @return bool
-     */
-    private function isCartValid(Order $payPalOrder)
-    {
-        $cartId = $this->Request()->getParam('basketId');
-
-        if ($this->shouldUseExtendedBasketValidator($cartId)) {
-            return $this->validateBasketExtended($cartId);
-        }
-
-        return $this->validateBasketSimple($payPalOrder);
-    }
-
-    /**
-     * @return bool
-     */
-    private function getSendOrdernumber()
-    {
-        return $this->settingsService->get(SettingsServiceInterface::SETTING_SEND_ORDER_NUMBER);
-    }
-
-    /**
-     * @param string $cartId
-     *
-     * @return bool
-     */
-    private function validateBasketExtended($cartId)
-    {
-        try {
-            $cart = $this->loadBasketFromSignature($cartId);
-            $this->verifyBasketSignature($cartId, $cart);
-
-            return true;
-        } catch (RuntimeException $ex) {
-            return false;
-        }
-    }
-
-    /**
-     * @return bool
-     */
-    private function validateBasketSimple(Order $payPalOrder)
-    {
-        $legacyValidator = $this->get('paypal_unified.simple_basket_validator');
-
-        $cart = $this->getBasket();
-        $customer = $this->getUser();
-
-        if ($cart === null || $customer === null) {
-            return false;
-        }
-
-        foreach ($payPalOrder->getPurchaseUnits() as $purchaseUnit) {
-            if (!$legacyValidator->validate($cart, $customer, (float) $purchaseUnit->getAmount()->getValue())) {
-                return false;
-            }
-        }
-
-        return true;
     }
 }

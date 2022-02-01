@@ -8,10 +8,9 @@
 
 namespace SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit;
 
-use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Common\Money;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Amount\Breakdown;
 
-class Amount extends Money
+class Amount extends AbstractAmount
 {
     /**
      * @var Breakdown|null
@@ -19,7 +18,7 @@ class Amount extends Money
     protected $breakdown;
 
     /**
-     * @return \SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Amount\Breakdown|null
+     * @return Breakdown|null
      */
     public function getBreakdown()
     {
@@ -27,7 +26,7 @@ class Amount extends Money
     }
 
     /**
-     * @param \SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Amount\Breakdown|null $breakdown
+     * @param Breakdown|null $breakdown
      *
      * @return void
      */

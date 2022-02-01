@@ -6,13 +6,15 @@
  * file that was distributed with this source code.
  */
 
-namespace SwagPaymentPayPalUnified\Components\Services;
+namespace SwagPaymentPayPalUnified\Components\Services\OrderBuilder\OrderHandler;
 
+use RuntimeException;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\PayPalOrderParameter;
 use SwagPaymentPayPalUnified\Components\Services\Common\ReturnUrlHelper;
 use SwagPaymentPayPalUnified\Components\Services\PayPalOrder\AmountProvider;
 use SwagPaymentPayPalUnified\Components\Services\PayPalOrder\ItemListProvider;
+use SwagPaymentPayPalUnified\Components\Services\PhoneNumberBuilder;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\ProcessingInstruction;
@@ -31,7 +33,7 @@ use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Shipping\Add
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Shipping\Name as ShippingName;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\PaymentIntentV2;
 
-class PayPalOrderBuilderService
+abstract class AbstractOrderHandler implements OrderBuilderHandlerInterface
 {
     /**
      * @var SettingsServiceInterface
@@ -80,34 +82,14 @@ class PayPalOrderBuilderService
     }
 
     /**
-     * @return Order
-     */
-    public function getOrder(PayPalOrderParameter $orderParameter)
-    {
-        $order = new Order();
-
-        $order->setIntent($this->getIntent());
-        $order->setPurchaseUnits($this->createPurchaseUnits($orderParameter));
-        $order->setPayer($this->createPayer($orderParameter));
-
-        if ($orderParameter->getPaymentType() === PaymentType::PAYPAL_PAY_UPON_INVOICE_V2) {
-            $order->setPaymentSource($this->createPaymentSource($orderParameter, $order));
-        } else {
-            $order->setApplicationContext($this->createApplicationContext($orderParameter));
-        }
-
-        return $order;
-    }
-
-    /**
      * @return string
      */
-    private function getIntent()
+    protected function getIntent()
     {
         $intent = $this->settings->get(SettingsServiceInterface::SETTING_INTENT);
 
         if (!\in_array($intent, [PaymentIntentV2::CAPTURE, PaymentIntentV2::AUTHORIZE], true)) {
-            throw new \RuntimeException(sprintf('The intent %s is not supported!', $intent));
+            throw new RuntimeException(sprintf('The intent %s is not supported!', $intent));
         }
 
         return $intent;
@@ -116,7 +98,7 @@ class PayPalOrderBuilderService
     /**
      * @return Payer
      */
-    private function createPayer(PayPalOrderParameter $orderParameter)
+    protected function createPayer(PayPalOrderParameter $orderParameter)
     {
         $customerData = $orderParameter->getCustomer()['additional']['user'];
 
@@ -142,7 +124,7 @@ class PayPalOrderBuilderService
      *
      * @return PayerAddress
      */
-    private function createBillingAddress(array $customer)
+    protected function createBillingAddress(array $customer)
     {
         $address = new PayerAddress();
 
@@ -169,7 +151,7 @@ class PayPalOrderBuilderService
     /**
      * @return array<PurchaseUnit>
      */
-    private function createPurchaseUnits(PayPalOrderParameter $orderParameter)
+    protected function createPurchaseUnits(PayPalOrderParameter $orderParameter)
     {
         $purchaseUnit = new PurchaseUnit();
         $submitCart = $this->settings->get(SettingsServiceInterface::SETTING_SUBMIT_CART) || $orderParameter->getPaymentType() === PaymentType::PAYPAL_PAY_UPON_INVOICE_V2;
@@ -200,12 +182,14 @@ class PayPalOrderBuilderService
     }
 
     /**
+     * @param array<string,mixed> $customer
+     *
      * @return Shipping
      */
-    private function createShipping(array $customer)
+    protected function createShipping(array $customer)
     {
         if (!\array_key_exists('shippingaddress', $customer)) {
-            throw new \RuntimeException(sprintf('Customer with ID "%s" has no shipping address', $customer['additional']['user']['id']));
+            throw new RuntimeException(sprintf('Customer with ID "%s" has no shipping address', $customer['additional']['user']['id']));
         }
 
         $shippingAddress = $customer['shippingaddress'];
@@ -223,7 +207,7 @@ class PayPalOrderBuilderService
      *
      * @return ShippingAddress
      */
-    private function createShippingAddress(array $customer)
+    protected function createShippingAddress(array $customer)
     {
         $address = new ShippingAddress();
         $shippingAddress = $customer['shippingaddress'];
@@ -247,20 +231,24 @@ class PayPalOrderBuilderService
     }
 
     /**
+     * @param array<string, mixed> $shippingAddress
+     *
      * @return ShippingName
      */
-    private function createShippingName(array $shippingAddress)
+    protected function createShippingName(array $shippingAddress)
     {
         $shippingName = new ShippingName();
-        $shippingName->setFullName(\sprintf('%s %s', $shippingAddress['firstname'], $shippingAddress['lastname']));
+        $shippingName->setFullName(sprintf('%s %s', $shippingAddress['firstname'], $shippingAddress['lastname']));
 
         return $shippingName;
     }
 
     /**
+     * @param array<string, mixed> $customer
+     *
      * @return PhoneNumber
      */
-    private function createPaymentSourcePhoneNumber(array $customer)
+    protected function createPaymentSourcePhoneNumber(array $customer)
     {
         if (!isset($customer['billingaddress']['phone'])) {
             return new PhoneNumber();
@@ -279,7 +267,7 @@ class PayPalOrderBuilderService
     /**
      * @return ApplicationContext
      */
-    private function createApplicationContext(PayPalOrderParameter $orderParameter)
+    protected function createApplicationContext(PayPalOrderParameter $orderParameter)
     {
         $applicationContext = new ApplicationContext();
         $applicationContext->setBrandName((string) $this->settings->get(SettingsServiceInterface::SETTING_BRAND_NAME));
@@ -300,13 +288,13 @@ class PayPalOrderBuilderService
      * All information for the experience context will likely be provided by the
      * merchant during onboarding (ISU).
      */
-    private function createExperienceContext()
+    protected function createExperienceContext()
     {
         $experienceContext = new ExperienceContext();
         $shop = $this->contextService->getShopContext()->getShop();
 
         $experienceContext->setLocale(
-            \str_replace('_', '-', $shop->getLocale()->getLocale())
+            str_replace('_', '-', $shop->getLocale()->getLocale())
         );
 
         if ($brandName = $this->settings->get(SettingsServiceInterface::SETTING_BRAND_NAME)) {
@@ -324,13 +312,13 @@ class PayPalOrderBuilderService
     /**
      * @return string
      */
-    private function getLandingPageType()
+    protected function getLandingPageType()
     {
         // TODO: (PT-12488) implement setting for this
         return ApplicationContext::LANDING_PAGE_TYPE_NO_PREFERENCE;
     }
 
-    private function createPaymentSource(PayPalOrderParameter $orderParameter, Order $order)
+    protected function createPaymentSource(PayPalOrderParameter $orderParameter, Order $order)
     {
         if ($orderParameter->getPaymentType() !== PaymentType::PAYPAL_PAY_UPON_INVOICE_V2) {
             return null;

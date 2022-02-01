@@ -11,11 +11,12 @@ namespace SwagPaymentPayPalUnified\Setup;
 use Doctrine\DBAL\Connection;
 use Shopware\Bundle\AttributeBundle\Service\CrudService;
 use Shopware\Components\Model\ModelManager;
-use Shopware\Models\Payment\Payment;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
+use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Components\Services\Plus\PaymentInstructionService;
 use SwagPaymentPayPalUnified\Models\Settings\General as GeneralSettingsModel;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
+use SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentModelFactory;
 use SwagPaymentPayPalUnified\Setup\Versions\UpdateTo400;
 
 class Updater
@@ -41,9 +42,9 @@ class Updater
     private $paymentMethodProvider;
 
     /**
-     * @var PaymentModelCreator
+     * @var PaymentModelFactory
      */
-    private $paymentModelCreator;
+    private $paymentModelFactory;
 
     /**
      * @var ColumnService
@@ -55,13 +56,13 @@ class Updater
         ModelManager $modelManager,
         Connection $connection,
         PaymentMethodProvider $paymentMethodProvider,
-        PaymentModelCreator $paymentModelCreator
+        PaymentModelFactory $paymentModelFactory
     ) {
         $this->attributeCrudService = $attributeCrudService;
         $this->modelManager = $modelManager;
         $this->connection = $connection;
         $this->paymentMethodProvider = $paymentMethodProvider;
-        $this->paymentModelCreator = $paymentModelCreator;
+        $this->paymentModelFactory = $paymentModelFactory;
 
         $this->columnService = new ColumnService($this->connection);
     }
@@ -128,7 +129,7 @@ class Updater
                 $this->modelManager,
                 $this->connection,
                 $this->paymentMethodProvider,
-                $this->paymentModelCreator,
+                $this->paymentModelFactory,
                 $this->columnService
             ))->update();
         }
@@ -344,7 +345,7 @@ SQL;
             ->where('sOrder.paymentID != :paymentId')
             ->andWhere('sOrderAttributes.swag_paypal_unified_payment_type LIKE :paymentType')
             ->andWhere('sOrder.ordertime > :orderTime')
-            ->setParameter('paymentId', $this->paymentMethodProvider->getPaymentId(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME))
+            ->setParameter('paymentId', $this->paymentMethodProvider->getPaymentId(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME))
             ->setParameter('paymentType', PaymentType::PAYPAL_CLASSIC)
             ->setParameter('orderTime', '2021-01-13 00:00:00') // Day of 3.0.2 release, which broke the applying of the payment type attribute
             ->execute()
@@ -368,7 +369,7 @@ SQL;
             ->andWhere('sOrderAttributes.swag_paypal_unified_payment_type LIKE :paymentType')
             ->andWhere('sOrder.internalcomment LIKE :description')
             ->andWhere('sOrder.ordertime > :orderTime')
-            ->setParameter('paymentId', $this->paymentMethodProvider->getPaymentId(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME))
+            ->setParameter('paymentId', $this->paymentMethodProvider->getPaymentId(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME))
             ->setParameter('paymentType', PaymentType::PAYPAL_PLUS)
             ->setParameter('description', \sprintf('%%%s%%', PaymentInstructionService::INVOICE_INSTRUCTION_DESCRIPTION))
             ->setParameter('orderTime', '2021-01-15 00:00:00') // Day of 3.0.3 release, which broke the applying of the payment type attribute for invoice

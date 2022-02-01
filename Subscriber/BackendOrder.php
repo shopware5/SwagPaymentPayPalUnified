@@ -10,6 +10,8 @@ namespace SwagPaymentPayPalUnified\Subscriber;
 
 use Doctrine\DBAL\Connection;
 use Enlight\Event\SubscriberInterface;
+use Enlight_Controller_ActionEventArgs;
+use PDO;
 
 class BackendOrder implements SubscriberInterface
 {
@@ -36,7 +38,7 @@ class BackendOrder implements SubscriberInterface
     /**
      * change the payment name to show which PayPal payment was selected by the customer
      */
-    public function onPostDispatchOrder(\Enlight_Controller_ActionEventArgs $args)
+    public function onPostDispatchOrder(Enlight_Controller_ActionEventArgs $args)
     {
         if ($args->getRequest()->getActionName() !== 'getList') {
             return;
@@ -44,7 +46,7 @@ class BackendOrder implements SubscriberInterface
 
         $view = $args->getSubject()->View();
         $orders = $view->getAssign('data');
-        $orderIds = \array_column($orders, 'id');
+        $orderIds = array_column($orders, 'id');
 
         $query = $this->connection->createQueryBuilder();
         $query->select(['orderID', 'swag_paypal_unified_payment_type'])
@@ -52,7 +54,7 @@ class BackendOrder implements SubscriberInterface
             ->where('orderID IN(:orderIds)')
             ->setParameter('orderIds', $orderIds, Connection::PARAM_INT_ARRAY);
 
-        $payPalPaymentTypes = $query->execute()->fetchAll(\PDO::FETCH_KEY_PAIR);
+        $payPalPaymentTypes = $query->execute()->fetchAll(PDO::FETCH_KEY_PAIR);
 
         foreach ($orders as &$order) {
             if (!isset($payPalPaymentTypes[$order['id']])) {

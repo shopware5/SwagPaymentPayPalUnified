@@ -13,6 +13,7 @@ use Enlight_Template_Manager;
 use PHPUnit\Framework\TestCase;
 use Shopware\Bundle\StoreFrontBundle\Service\Core\ContextService;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
+use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Subscriber\InstallmentsBanner;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\SettingsHelperTrait;
@@ -75,7 +76,7 @@ class InstallmentsBannerSubscriberTest extends TestCase
     public function testOnPostDispatchSecurePaymentMethodInactive()
     {
         $paymentMethodProvider = $this->getPaymentMethodProvider();
-        $paymentMethodProvider->setPaymentMethodActiveFlag(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME, false);
+        $paymentMethodProvider->setPaymentMethodActiveFlag(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME, false);
         $subscriber = $this->getSubscriber();
         $this->createTestSettings();
 
@@ -93,7 +94,7 @@ class InstallmentsBannerSubscriberTest extends TestCase
     public function testOnPostDispatchSecureInstallmentsBannerInactive()
     {
         $paymentMethodProvider = $this->getPaymentMethodProvider();
-        $paymentMethodProvider->setPaymentMethodActiveFlag(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME, false);
+        $paymentMethodProvider->setPaymentMethodActiveFlag(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME, false);
         $subscriber = $this->getSubscriber();
         $this->createTestSettings(true, false);
 

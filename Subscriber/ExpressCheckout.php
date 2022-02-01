@@ -12,14 +12,13 @@ use Enlight\Event\SubscriberInterface;
 use Enlight_Components_Session_Namespace as Session;
 use Enlight_Controller_ActionEventArgs as ActionEventArgs;
 use Enlight_View_Default as ViewEngine;
-use Exception;
 use Shopware\Models\Shop\Shop;
+use SwagPaymentPayPalUnified\Components\ButtonLocaleService;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
-use SwagPaymentPayPalUnified\Components\ErrorCodes;
-use SwagPaymentPayPalUnified\Components\ExceptionHandlerServiceInterface;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderInterface;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
+use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Components\Services\Common\CustomerHelper;
 use SwagPaymentPayPalUnified\Components\Services\PaymentAddressService;
 use SwagPaymentPayPalUnified\Components\Services\RiskManagement\EsdProductCheckerInterface;
@@ -63,11 +62,6 @@ class ExpressCheckout implements SubscriberInterface
     private $paymentBuilder;
 
     /**
-     * @var ExceptionHandlerServiceInterface
-     */
-    private $exceptionHandlerService;
-
-    /**
      * @var PaymentMethodProvider
      */
     private $paymentMethodProvider;
@@ -87,28 +81,33 @@ class ExpressCheckout implements SubscriberInterface
      */
     private $esdProductChecker;
 
+    /**
+     * @var ButtonLocaleService
+     */
+    private $buttonLocaleService;
+
     public function __construct(
         SettingsServiceInterface $settingsService,
         Session $session,
         PaymentResource $paymentResource,
         PaymentAddressService $addressRequestService,
         PaymentBuilderInterface $paymentBuilder,
-        ExceptionHandlerServiceInterface $exceptionHandlerService,
         ClientService $clientService,
         DependencyProvider $dependencyProvider,
         EsdProductCheckerInterface $esdProductChecker,
-        PaymentMethodProvider $paymentMethodProvider
+        PaymentMethodProvider $paymentMethodProvider,
+        ButtonLocaleService $buttonLocaleService
     ) {
         $this->settingsService = $settingsService;
         $this->session = $session;
         $this->paymentResource = $paymentResource;
         $this->paymentAddressService = $addressRequestService;
         $this->paymentBuilder = $paymentBuilder;
-        $this->exceptionHandlerService = $exceptionHandlerService;
         $this->clientService = $clientService;
         $this->dependencyProvider = $dependencyProvider;
         $this->esdProductChecker = $esdProductChecker;
         $this->paymentMethodProvider = $paymentMethodProvider;
+        $this->buttonLocaleService = $buttonLocaleService;
     }
 
     /**
@@ -130,7 +129,7 @@ class ExpressCheckout implements SubscriberInterface
 
     public function addExpressCheckoutButtonCart(ActionEventArgs $args)
     {
-        $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
+        $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
         if (!$swUnifiedActive) {
             return;
         }
@@ -148,6 +147,7 @@ class ExpressCheckout implements SubscriberInterface
         }
 
         $view = $args->getSubject()->View();
+
         $cart = $view->getAssign('sBasket');
 
         $cartProductIds = $this->getProductIdsFromBasket($cart['content']);
@@ -219,7 +219,7 @@ class ExpressCheckout implements SubscriberInterface
             return;
         }
 
-        $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
+        $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
         if (!$swUnifiedActive) {
             return;
         }
@@ -247,7 +247,7 @@ class ExpressCheckout implements SubscriberInterface
 
     public function addExpressCheckoutButtonListing(ActionEventArgs $args)
     {
-        $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
+        $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
         if (!$swUnifiedActive) {
             return;
         }
@@ -283,7 +283,7 @@ class ExpressCheckout implements SubscriberInterface
 
     public function addExpressCheckoutButtonLogin(ActionEventArgs $args)
     {
-        $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
+        $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
         if (!$swUnifiedActive) {
             return;
         }
@@ -353,27 +353,6 @@ class ExpressCheckout implements SubscriberInterface
         $this->paymentResource->patch($paymentId, $patches);
     }
 
-    /**
-     * @return string
-     */
-    private function getExpressCheckoutButtonLanguage(ExpressSettingsModel $expressSettings)
-    {
-        $shop = $this->dependencyProvider->getShop();
-
-        if (!$shop instanceof Shop) {
-            throw new \UnexpectedValueException(sprintf('Tried to access %s, but it\'s not set in the DIC.', Shop::class));
-        }
-
-        $locale = $shop->getLocale()->getLocale();
-        $buttonLocaleFromSetting = (string) $expressSettings->getButtonLocale();
-
-        if ($buttonLocaleFromSetting !== '') {
-            $locale = $buttonLocaleFromSetting;
-        }
-
-        return $locale;
-    }
-
     private function addEcButtonBehaviour(ViewEngine $view, GeneralSettingsModel $generalSettings)
     {
         $view->assign('paypalUnifiedModeSandbox', $generalSettings->getSandbox());
@@ -390,39 +369,13 @@ class ExpressCheckout implements SubscriberInterface
 
     private function addEcButtonStyleInfo(ViewEngine $view, ExpressSettingsModel $expressSettings, GeneralSettingsModel $generalSettings)
     {
-        $view->assign('paypalUnifiedEcButtonStyleColor', $expressSettings->getButtonStyleColor());
-        $view->assign('paypalUnifiedEcButtonStyleShape', $expressSettings->getButtonStyleShape());
-        $view->assign('paypalUnifiedEcButtonStyleSize', $expressSettings->getButtonStyleSize());
-        $view->assign('paypalUnifiedLanguageIso', $this->getExpressCheckoutButtonLanguage($expressSettings));
-        $view->assign('paypalUnifiedIntent', $generalSettings->getIntent());
-    }
-
-    /**
-     * @return array
-     */
-    private function handlePaymentPatchException(Exception $exception)
-    {
-        $message = null;
-        $name = null;
-        $error = $this->exceptionHandlerService->handle($exception, 'patch the payment for express checkout');
-
-        if ($this->settingsService->hasSettings() && $this->settingsService->get(SettingsServiceInterface::SETTING_DISPLAY_ERRORS)) {
-            $message = $error->getMessage();
-            $name = $error->getName();
-        }
-
-        $redirectData = [
-            'controller' => 'checkout',
-            'action' => 'shippingPayment',
-            'paypal_unified_error_code' => ErrorCodes::COMMUNICATION_FAILURE,
-        ];
-
-        if ($name !== null) {
-            $redirectData['paypal_unified_error_name'] = $name;
-            $redirectData['paypal_unified_error_message'] = $message;
-        }
-
-        return $redirectData;
+        $view->assign([
+            'paypalUnifiedEcButtonStyleColor' => $expressSettings->getButtonStyleColor(),
+            'paypalUnifiedEcButtonStyleShape' => $expressSettings->getButtonStyleShape(),
+            'paypalUnifiedEcButtonStyleSize' => $expressSettings->getButtonStyleSize(),
+            'paypalUnifiedLanguageIso' => $this->buttonLocaleService->getButtonLocale($expressSettings->getButtonLocale()),
+            'paypalUnifiedIntent' => $generalSettings->getIntent(),
+        ]);
     }
 
     private function isUserLoggedIn()

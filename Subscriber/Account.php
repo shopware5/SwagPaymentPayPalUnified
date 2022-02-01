@@ -13,6 +13,7 @@ use Enlight_Controller_ActionEventArgs as ActionEventArgs;
 use Shopware\Models\Shop\Shop;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
+use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Models\Settings\Plus;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
@@ -65,7 +66,7 @@ class Account implements SubscriberInterface
             return;
         }
 
-        $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
+        $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
         if (!$swUnifiedActive) {
             return;
         }
@@ -93,7 +94,7 @@ class Account implements SubscriberInterface
         }
 
         $view = $controller->View();
-        $unifiedPaymentId = $this->paymentMethodProvider->getPaymentId(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
+        $unifiedPaymentId = $this->paymentMethodProvider->getPaymentId(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
 
         $customerData = $view->getAssign('sUserData');
         $customerPayment = $customerData['additional']['payment'];

@@ -10,30 +10,39 @@ namespace SwagPaymentPayPalUnified\Tests\Functional\Controller\Frontend;
 
 require_once __DIR__ . '/../../../../Controllers/Frontend/PaypalUnifiedV2.php';
 
+use ArrayObject;
+use Enlight_Class;
 use Enlight_Components_Session_Namespace as ShopwareSession;
+use Enlight_Controller_Request_RequestTestCase;
+use Enlight_Controller_Response_ResponseTestCase;
+use Generator;
 use PHPUnit\Framework\TestCase;
 use Shopware\Components\BasketSignature\BasketPersister;
 use Shopware\Components\BasketSignature\BasketSignatureGenerator;
 use Shopware\Components\DependencyInjection\Container;
 use Shopware\Components\HttpClient\RequestException;
+use Shopware_Components_Config;
 use Shopware_Controllers_Frontend_PaypalUnifiedV2;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\PayPalOrderParameter;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\PayPalOrderParameterFacadeInterface;
 use SwagPaymentPayPalUnified\Components\Services\Common\CartPersister;
+use SwagPaymentPayPalUnified\Components\Services\DispatchValidation;
+use SwagPaymentPayPalUnified\Components\Services\OrderBuilder\OrderFactory;
 use SwagPaymentPayPalUnified\Components\Services\PaymentControllerHelper;
-use SwagPaymentPayPalUnified\Components\Services\PayPalOrderBuilderService;
 use SwagPaymentPayPalUnified\Components\Services\Validation\RedirectDataBuilder;
 use SwagPaymentPayPalUnified\Components\Services\Validation\RedirectDataBuilderFactory;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\OrderResource;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use UnexpectedValueException;
 
 class PaypalUnifiedV2Test extends TestCase
 {
     /**
      * @param array|null $orderData
+     * @param bool       $isValidDispatch
      * @param bool       $premiumShippingNoOrder
      * @param bool       $orderBuilderException
      * @param bool       $orderResourceCommunicationFailure
@@ -43,6 +52,7 @@ class PaypalUnifiedV2Test extends TestCase
      */
     public function testIndexErrorHandling(
         $orderData,
+        $isValidDispatch,
         $premiumShippingNoOrder,
         $orderBuilderException,
         $orderResourceCommunicationFailure,
@@ -50,16 +60,16 @@ class PaypalUnifiedV2Test extends TestCase
     ) {
         $session = static::createMock(ShopwareSession::class);
         $session->method('get')
-            ->will(static::returnValueMap([
+            ->willReturnMap([
                 ['expressData', null, null],
                 ['sOrderVariables', null, $orderData],
-            ]));
+            ]);
 
         $session->method('offsetGet')
-            ->will(static::returnValueMap([
-                ['sOrderVariables', \is_array($orderData) ? new \ArrayObject($orderData) : null],
+            ->willReturnMap([
+                ['sOrderVariables', \is_array($orderData) ? new ArrayObject($orderData) : null],
                 ['sUserId', 1],
-            ]));
+            ]);
 
         $dependencyProvider = static::createConfiguredMock(DependencyProvider::class, [
             'getSession' => $session,
@@ -77,19 +87,19 @@ class PaypalUnifiedV2Test extends TestCase
             'createRedirectDataBuilder' => $redirectDataBuilder,
         ]);
 
-        $configService = static::createMock(\Shopware_Components_Config::class);
+        $configService = static::createMock(Shopware_Components_Config::class);
         $configService->method('get')
-            ->will(static::returnValueMap([
+            ->willReturnMap([
                 ['premiumShippingNoOrder', null, $premiumShippingNoOrder],
-            ]));
+            ]);
 
-        $orderBuilderService = static::createMock(PayPalOrderBuilderService::class);
+        $orderFactory = static::createMock(OrderFactory::class);
 
         if ($orderBuilderException) {
-            $orderBuilderService->method('getOrder')
-                ->willThrowException(new \Exception());
+            $orderFactory->method('createOrder')
+                ->willThrowException(new UnexpectedValueException());
         } else {
-            $orderBuilderService->method('getOrder')
+            $orderFactory->method('createOrder')
                 ->willReturn(static::createMock(Order::class));
         }
 
@@ -106,7 +116,7 @@ class PaypalUnifiedV2Test extends TestCase
 
         $signatureGenerator = null;
 
-        if (\class_exists('Shopware\Components\BasketSignature\BasketSignatureGenerator')) {
+        if (class_exists('Shopware\Components\BasketSignature\BasketSignatureGenerator')) {
             $signatureGenerator = static::createMock(BasketSignatureGenerator::class);
             $signatureGenerator->method('generateSignature')
                 ->willReturn([]);
@@ -114,7 +124,7 @@ class PaypalUnifiedV2Test extends TestCase
 
         $basketPersister = null;
 
-        if (\class_exists('Shopware\Components\BasketSignature\BasketPersister')) {
+        if (class_exists('Shopware\Components\BasketSignature\BasketPersister')) {
             $basketPersister = static::createMock(BasketPersister::class);
         }
 
@@ -123,13 +133,16 @@ class PaypalUnifiedV2Test extends TestCase
             'createPayPalOrderParameter' => static::createMock(PayPalOrderParameter::class),
         ]);
 
+        $dispatchValidation = static::createMock(DispatchValidation::class);
+        $dispatchValidation->method('isValid')
+            ->willReturn($isValidDispatch);
+
         $container = static::createMock(Container::class);
         $container->method('get')
-            ->will(static::returnValueMap([
+            ->willReturnMap([
                 ['paypal_unified.dependency_provider', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $dependencyProvider],
                 ['paypal_unified.redirect_data_builder_factory', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $redirectDataBuilderFactory],
                 ['config', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $configService],
-                ['paypal_unified.paypal_order_builder_service', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $orderBuilderService],
                 ['paypal_unified.v2.order_resource', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $orderResource],
                 ['paypal_unified.payment_controller_helper', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $paymentControllerHelper],
                 ['session', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $session],
@@ -137,7 +150,9 @@ class PaypalUnifiedV2Test extends TestCase
                 ['basket_persister', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $basketPersister],
                 ['paypal_unified.common.cart_persister', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $cartPersister],
                 ['paypal_unified.paypal_order_parameter_facade', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $orderParameterFacade],
-            ]));
+                ['paypal_unified.dispatch_validation', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $dispatchValidation],
+                ['paypal_unified.order_factory', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $orderFactory],
+            ]);
 
         $controller = $this->getController($container);
 
@@ -145,7 +160,7 @@ class PaypalUnifiedV2Test extends TestCase
     }
 
     /**
-     * @return \Generator
+     * @return Generator
      */
     public function orderDataProvider()
     {
@@ -154,12 +169,14 @@ class PaypalUnifiedV2Test extends TestCase
             false,
             false,
             false,
+            false,
             ErrorCodes::NO_ORDER_TO_PROCESS,
         ];
 
         yield 'Order data without dispatch should lead to ErrorCodes::NO_DISPATCH_FOR_ORDER' => [
             [],
-            true,
+            false,
+            false,
             false,
             false,
             ErrorCodes::NO_DISPATCH_FOR_ORDER,
@@ -170,6 +187,7 @@ class PaypalUnifiedV2Test extends TestCase
                 'sUserData' => [],
                 'sBasket' => [],
             ],
+            true,
             false,
             true,
             false,
@@ -181,6 +199,7 @@ class PaypalUnifiedV2Test extends TestCase
                 'sUserData' => [],
                 'sBasket' => [],
             ],
+            true,
             false,
             false,
             true,
@@ -193,11 +212,11 @@ class PaypalUnifiedV2Test extends TestCase
      */
     private function getController(Container $container = null)
     {
-        $request = new \Enlight_Controller_Request_RequestTestCase();
-        $response = new \Enlight_Controller_Response_ResponseTestCase();
+        $request = new Enlight_Controller_Request_RequestTestCase();
+        $response = new Enlight_Controller_Response_ResponseTestCase();
 
         /** @var Shopware_Controllers_Frontend_PaypalUnifiedV2 $controller */
-        $controller = \Enlight_Class::Instance(
+        $controller = Enlight_Class::Instance(
             Shopware_Controllers_Frontend_PaypalUnifiedV2::class,
             [$request, $response]
         );

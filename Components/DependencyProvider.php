@@ -30,7 +30,7 @@ class DependencyProvider
      */
     public function getShop()
     {
-        if (!$this->container->has('shop')) {
+        if (!$this->container->initialized('shop')) {
             return null;
         }
 
@@ -48,7 +48,7 @@ class DependencyProvider
      */
     public function getFront()
     {
-        if ($this->container->has('front')) {
+        if ($this->container->initialized('front')) {
             return $this->container->get('front');
         }
 
@@ -81,7 +81,7 @@ class DependencyProvider
      */
     public function createPaymentToken()
     {
-        if ($this->container->has(PaymentTokenService::class)) {
+        if ($this->container->initialized(PaymentTokenService::class)) {
             if ($this->isBlacklistedShopwareVersionsForPaymentToken()) {
                 return null;
             }

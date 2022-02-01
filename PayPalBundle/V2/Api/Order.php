@@ -20,6 +20,31 @@ class Order extends PayPalApiStruct
     /**
      * @var string
      */
+    protected $intent;
+
+    /**
+     * @var array<PurchaseUnit>
+     */
+    protected $purchaseUnits;
+
+    /**
+     * @var ApplicationContext
+     */
+    protected $applicationContext;
+
+    /**
+     * @var PaymentSource
+     */
+    protected $paymentSource;
+
+    /**
+     * @var string
+     */
+    protected $processingInstruction;
+
+    /**
+     * @var string
+     */
     protected $createTime;
 
     /**
@@ -33,24 +58,9 @@ class Order extends PayPalApiStruct
     protected $id;
 
     /**
-     * @var string
-     */
-    protected $intent;
-
-    /**
      * @var Payer
      */
     protected $payer;
-
-    /**
-     * @var PurchaseUnit[]
-     */
-    protected $purchaseUnits;
-
-    /**
-     * @var ApplicationContext
-     */
-    protected $applicationContext;
 
     /**
      * @var string
@@ -58,19 +68,95 @@ class Order extends PayPalApiStruct
     protected $status;
 
     /**
-     * @var Link[]
+     * @var array<Link>
      */
     protected $links;
 
     /**
-     * @var PaymentSource|null
+     * @return string
      */
-    protected $paymentSource;
+    public function getIntent()
+    {
+        return $this->intent;
+    }
 
     /**
-     * @var string
+     * @param string $intent
+     *
+     * @return void
      */
-    protected $processingInstruction;
+    public function setIntent($intent)
+    {
+        $this->intent = $intent;
+    }
+
+    /**
+     * @return PurchaseUnit[]
+     */
+    public function getPurchaseUnits()
+    {
+        return $this->purchaseUnits;
+    }
+
+    /**
+     * @param PurchaseUnit[] $purchaseUnits
+     *
+     * @return void
+     */
+    public function setPurchaseUnits(array $purchaseUnits)
+    {
+        $this->purchaseUnits = $purchaseUnits;
+    }
+
+    /**
+     * @return ApplicationContext
+     */
+    public function getApplicationContext()
+    {
+        return $this->applicationContext;
+    }
+
+    /**
+     * @return void
+     */
+    public function setApplicationContext(ApplicationContext $applicationContext)
+    {
+        $this->applicationContext = $applicationContext;
+    }
+
+    /**
+     * @return PaymentSource
+     */
+    public function getPaymentSource()
+    {
+        return $this->paymentSource;
+    }
+
+    /**
+     * @return void
+     */
+    public function setPaymentSource(PaymentSource $paymentSource)
+    {
+        $this->paymentSource = $paymentSource;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getProcessingInstruction()
+    {
+        return $this->processingInstruction;
+    }
+
+    /**
+     * @param string $processingInstruction
+     *
+     * @return void
+     */
+    public function setProcessingInstruction($processingInstruction)
+    {
+        $this->processingInstruction = $processingInstruction;
+    }
 
     /**
      * @return string
@@ -127,25 +213,7 @@ class Order extends PayPalApiStruct
     }
 
     /**
-     * @return string
-     */
-    public function getIntent()
-    {
-        return $this->intent;
-    }
-
-    /**
-     * @param string $intent
-     *
-     * @return void
-     */
-    public function setIntent($intent)
-    {
-        $this->intent = $intent;
-    }
-
-    /**
-     * @return \SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\Payer
+     * @return Payer
      */
     public function getPayer()
     {
@@ -158,40 +226,6 @@ class Order extends PayPalApiStruct
     public function setPayer(Payer $payer)
     {
         $this->payer = $payer;
-    }
-
-    /**
-     * @return PurchaseUnit[]
-     */
-    public function getPurchaseUnits()
-    {
-        return $this->purchaseUnits;
-    }
-
-    /**
-     * @param PurchaseUnit[] $purchaseUnits
-     *
-     * @return void
-     */
-    public function setPurchaseUnits(array $purchaseUnits)
-    {
-        $this->purchaseUnits = $purchaseUnits;
-    }
-
-    /**
-     * @return \SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\ApplicationContext
-     */
-    public function getApplicationContext()
-    {
-        return $this->applicationContext;
-    }
-
-    /**
-     * @return void
-     */
-    public function setApplicationContext(ApplicationContext $applicationContext)
-    {
-        $this->applicationContext = $applicationContext;
     }
 
     /**
@@ -228,37 +262,5 @@ class Order extends PayPalApiStruct
     public function setLinks(array $links)
     {
         $this->links = $links;
-    }
-
-    /**
-     * @return PaymentSource|null
-     */
-    public function getPaymentSource()
-    {
-        return $this->paymentSource;
-    }
-
-    /**
-     * @param PaymentSource|null $paymentSource
-     */
-    public function setPaymentSource($paymentSource)
-    {
-        $this->paymentSource = $paymentSource;
-    }
-
-    /**
-     * @return string
-     */
-    public function getProcessingInstruction()
-    {
-        return $this->processingInstruction;
-    }
-
-    /**
-     * @param string $processingInstruction
-     */
-    public function setProcessingInstruction($processingInstruction)
-    {
-        $this->processingInstruction = $processingInstruction;
     }
 }

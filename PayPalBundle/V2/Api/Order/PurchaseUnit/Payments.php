@@ -16,22 +16,22 @@ use SwagPaymentPayPalUnified\PayPalBundle\V2\PayPalApiStruct;
 class Payments extends PayPalApiStruct
 {
     /**
-     * @var Authorization[]|null
+     * @var array<Authorization>|null
      */
     protected $authorizations;
 
     /**
-     * @var Capture[]|null
+     * @var array<Capture>|null
      */
     protected $captures;
 
     /**
-     * @var Refund[]|null
+     * @var array<Refund>|null
      */
     protected $refunds;
 
     /**
-     * @return Authorization[]|null
+     * @return array<Authorization>|null
      */
     public function getAuthorizations()
     {
@@ -39,7 +39,7 @@ class Payments extends PayPalApiStruct
     }
 
     /**
-     * @param Authorization[]|null $authorizations
+     * @param array<Authorization>|null $authorizations
      *
      * @return void
      */
@@ -49,7 +49,7 @@ class Payments extends PayPalApiStruct
     }
 
     /**
-     * @return Capture[]|null
+     * @return array<Capture>|null
      */
     public function getCaptures()
     {
@@ -57,7 +57,7 @@ class Payments extends PayPalApiStruct
     }
 
     /**
-     * @param Capture[]|null $captures
+     * @param array<Capture>|null $captures
      *
      * @return void
      */
@@ -67,7 +67,7 @@ class Payments extends PayPalApiStruct
     }
 
     /**
-     * @return Refund[]|null
+     * @return array<Refund>|null
      */
     public function getRefunds()
     {
@@ -75,7 +75,7 @@ class Payments extends PayPalApiStruct
     }
 
     /**
-     * @param Refund[]|null $refunds
+     * @param array<Refund>|null $refunds
      *
      * @return void
      */

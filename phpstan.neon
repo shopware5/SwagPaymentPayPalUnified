@@ -23,11 +23,11 @@ parameters:
             '#Access to an undefined property Shopware_Models_Document_Order::#'
         - # Since we have to support Shopware 5.2 we can not use return types
             '#Method .* has no return type specified#'
-        # Needs some improvements in the doctrine PHPStan extensions: see https://github.com/phpstan/phpstan-doctrine/pull/167
-        - '#Cannot call method fetch.*\(\) on Doctrine\\DBAL\\.*Statement\|int#'
         - # Has different type in older PHPUnit versions needs for older Shopware versions
             message: '#Parameter \#2 \$haystack of static method PHPUnit\\Framework\\Assert::assertContains\(\) expects iterable, string given#'
             path: Tests
         - # Compatibititly trait for different Shopware versions
             message: '#Call to an undefined method Enlight_Components_Session_Namespace::reset\(\)#'
             path: Tests/Functional/ResetSessionTrait.php
+        # Needs some improvements in the doctrine PHPStan extensions: see https://github.com/phpstan/phpstan-doctrine/pull/167
+        - '#Cannot call method fetch.*\(\) on Doctrine\\DBAL\\.*\|int#'
