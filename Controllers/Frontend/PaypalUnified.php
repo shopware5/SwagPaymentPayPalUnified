@@ -113,7 +113,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_F
             $requestParams->setPaymentToken($this->dependencyProvider->createPaymentToken());
 
             // If supported, add the basket signature feature
-            if ($this->container->has('basket_signature_generator')) {
+            if ($this->container->initialized('basket_signature_generator')) {
                 $basketUniqueId = $this->persistBasket();
                 $requestParams->setBasketUniqueId($basketUniqueId);
             }
@@ -184,7 +184,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_F
 
         //Basket validation with shopware 5.2 support
         if (\in_array($basketId, BasketIdWhitelist::WHITELIST_IDS, true)
-            || !$this->container->has('basket_signature_generator')
+            || !$this->container->initialized('basket_signature_generator')
         ) {
             //For shopware < 5.3 and for whitelisted basket ids
             try {

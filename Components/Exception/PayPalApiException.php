@@ -8,16 +8,18 @@
 
 namespace SwagPaymentPayPalUnified\Components\Exception;
 
-class PayPalApiException extends \Exception
+use Exception;
+
+class PayPalApiException extends Exception
 {
     /**
-     * @var string
+     * @var string|int
      */
     private $name;
 
     /**
-     * @param string $name
-     * @param string $message
+     * @param string|int $name
+     * @param string     $message
      */
     public function __construct($name, $message)
     {

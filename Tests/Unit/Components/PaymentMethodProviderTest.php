@@ -11,6 +11,7 @@ namespace SwagPaymentPayPalUnified\Tests\Unit\Components;
 use PHPUnit\Framework\TestCase;
 use Shopware\Models\Payment\Payment;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
+use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 
 class PaymentMethodProviderTest extends TestCase
 {
@@ -18,15 +19,15 @@ class PaymentMethodProviderTest extends TestCase
     {
         $provider = $this->getPaymentMethodProvider();
 
-        static::assertNotNull($provider->getPaymentMethodModel(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME), 'The payment method should not be null');
+        static::assertNotNull($provider->getPaymentMethodModel(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME), 'The payment method should not be null');
     }
 
     public function testSetPaymentInactive()
     {
         $provider = $this->getPaymentMethodProvider();
-        $provider->setPaymentMethodActiveFlag(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME, false);
+        $provider->setPaymentMethodActiveFlag(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME, false);
 
-        $payment = $provider->getPaymentMethodModel(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
+        $payment = $provider->getPaymentMethodModel(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
         static::assertInstanceOf(Payment::class, $payment);
         static::assertFalse($payment->getActive());
     }
@@ -34,9 +35,9 @@ class PaymentMethodProviderTest extends TestCase
     public function testSetPaymentActive()
     {
         $provider = $this->getPaymentMethodProvider();
-        $provider->setPaymentMethodActiveFlag(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME, true);
+        $provider->setPaymentMethodActiveFlag(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME, true);
 
-        $payment = $provider->getPaymentMethodModel(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
+        $payment = $provider->getPaymentMethodModel(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
         static::assertInstanceOf(Payment::class, $payment);
         static::assertTrue($payment->getActive());
     }
@@ -50,15 +51,15 @@ class PaymentMethodProviderTest extends TestCase
 
         $paymentId = (int) $connection->executeQuery(
             $paymentIdQuery,
-            [':name' => PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME]
+            [':name' => PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME]
         )->fetchColumn();
 
-        static::assertSame($paymentId, $provider->getPaymentId(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME));
+        static::assertSame($paymentId, $provider->getPaymentId(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME));
     }
 
     public function testGetPaymentActive()
     {
-        $activeFlag = $this->getPaymentMethodProvider()->getPaymentMethodActiveFlag(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
+        $activeFlag = $this->getPaymentMethodProvider()->getPaymentMethodActiveFlag(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
 
         static::assertTrue($activeFlag);
     }

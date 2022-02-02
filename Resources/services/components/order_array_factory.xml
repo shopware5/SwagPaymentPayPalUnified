@@ -1,0 +1,33 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+
+        <service id="paypal_unified.order_array_factory"
+                 class="SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\OrderArrayFactory\OrderArrayFactory"
+                 public="true">
+        </service>
+
+        <service id="paypal_unified.order_array_factory_handler_apm_default"
+                 class="SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\OrderArrayFactory\Handler\ApmDefaultHandler"
+                 public="true">
+            <tag name="paypal_unified.order_array_factory_handler"/>
+        </service>
+
+        <service id="paypal_unified.order_array_factory_handler_apm_extended"
+                 class="SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\OrderArrayFactory\Handler\ApmExtendedHandler"
+                 public="true">
+            <tag name="paypal_unified.order_array_factory_handler"/>
+        </service>
+
+        <service id="paypal_unified.order_array_factory_handler_default"
+                 class="SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\OrderArrayFactory\Handler\DefaultHandler"
+                 public="true">
+            <tag name="paypal_unified.order_array_factory_handler"/>
+        </service>
+
+    </services>
+</container>

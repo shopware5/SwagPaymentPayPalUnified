@@ -9,9 +9,11 @@
 namespace SwagPaymentPayPalUnified\Tests\Functional\Setup;
 
 use Doctrine\DBAL\Connection;
+use PDO;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
-use SwagPaymentPayPalUnified\Setup\PaymentModelCreator;
+use SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentModelFactory;
 use SwagPaymentPayPalUnified\Setup\Updater;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 
@@ -21,7 +23,7 @@ class UpdaterTest extends TestCase
 
     public function testUpdateTo303()
     {
-        $sql = \file_get_contents(__DIR__ . '/_fixtures/orders.sql');
+        $sql = file_get_contents(__DIR__ . '/_fixtures/orders.sql');
         static::assertTrue(\is_string($sql));
         Shopware()->Container()->get('dbal_connection')->exec($sql);
 
@@ -30,10 +32,10 @@ class UpdaterTest extends TestCase
             Shopware()->Container()->get('models'),
             Shopware()->Container()->get('dbal_connection'),
             Shopware()->Container()->get('paypal_unified.payment_method_provider'),
-            new PaymentModelCreator()
+            new PaymentModelFactory()
         );
 
-        $reflectionMethod = (new \ReflectionClass(Updater::class))->getMethod('updateTo303');
+        $reflectionMethod = (new ReflectionClass(Updater::class))->getMethod('updateTo303');
         $reflectionMethod->setAccessible(true);
 
         $reflectionMethod->invoke($updater);
@@ -46,7 +48,7 @@ class UpdaterTest extends TestCase
             ->orderBy('orderId')
             ->setParameter('orderIds', $orderIds, Connection::PARAM_INT_ARRAY)
             ->execute()
-            ->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_COLUMN);
+            ->fetchAll(PDO::FETCH_GROUP | PDO::FETCH_COLUMN);
 
         static::assertNull($result[100080][0]); // should be updated from "PayPalClassic" to NULL
         static::assertNull($result[100081][0]); // should be updated from "PayPalClassic" to NULL
@@ -57,7 +59,7 @@ class UpdaterTest extends TestCase
 
     public function testUpdateTo304()
     {
-        $sql = \file_get_contents(__DIR__ . '/_fixtures/orders_invoice.sql');
+        $sql = file_get_contents(__DIR__ . '/_fixtures/orders_invoice.sql');
         static::assertTrue(\is_string($sql));
         Shopware()->Container()->get('dbal_connection')->exec($sql);
 
@@ -66,10 +68,10 @@ class UpdaterTest extends TestCase
             Shopware()->Container()->get('models'),
             Shopware()->Container()->get('dbal_connection'),
             Shopware()->Container()->get('paypal_unified.payment_method_provider'),
-            new PaymentModelCreator()
+            new PaymentModelFactory()
         );
 
-        $reflectionMethod = (new \ReflectionClass(Updater::class))->getMethod('updateTo304');
+        $reflectionMethod = (new ReflectionClass(Updater::class))->getMethod('updateTo304');
         $reflectionMethod->setAccessible(true);
 
         $reflectionMethod->invoke($updater);
@@ -82,7 +84,7 @@ class UpdaterTest extends TestCase
             ->orderBy('orderId')
             ->setParameter('orderIds', $orderIds, Connection::PARAM_INT_ARRAY)
             ->execute()
-            ->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_COLUMN);
+            ->fetchAll(PDO::FETCH_GROUP | PDO::FETCH_COLUMN);
 
         static::assertNull($result[100080][0]); // should remain NULL as this is not PayPal
         static::assertSame(PaymentType::PAYPAL_CLASSIC, $result[100081][0]); // should remain classic

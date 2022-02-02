@@ -21,6 +21,7 @@
                  class="SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\OrderResource"
                  public="true">
             <argument type="service" id="paypal_unified.client_service"/>
+            <argument type="service" id="paypal_unified.order_array_factory"/>
         </service>
 
         <service id="paypal_unified.v2.refund_resource"
@@ -32,8 +33,9 @@
         <service id="paypal_unified.redirect_data_builder_factory"
                  class="SwagPaymentPayPalUnified\Components\Services\Validation\RedirectDataBuilderFactory"
                  public="true">
-            <argument type="service" id="paypal_unified.exception_handler_service"></argument>
-            <argument type="service" id="paypal_unified.settings_service"></argument>
+            <argument type="service" id="paypal_unified.exception_handler_service"/>
+            <argument type="service" id="paypal_unified.settings_service"/>
         </service>
+
     </services>
 </container>

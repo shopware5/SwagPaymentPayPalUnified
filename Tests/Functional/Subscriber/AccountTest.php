@@ -11,6 +11,7 @@ namespace SwagPaymentPayPalUnified\Tests\Functional\Subscriber;
 use Enlight_Controller_Response_ResponseTestCase;
 use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
+use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Subscriber\Account;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\SettingsHelperTrait;
@@ -62,7 +63,7 @@ class AccountTest extends TestCase
             Shopware()->Container()->get('dbal_connection'),
             Shopware()->Container()->get('models')
         );
-        $paymentMethodProvider->setPaymentMethodActiveFlag(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME, false);
+        $paymentMethodProvider->setPaymentMethodActiveFlag(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME, false);
         $subscriber = $this->getSubscriber();
 
         $view = new ViewMock(
@@ -81,7 +82,7 @@ class AccountTest extends TestCase
         $customerData = $view->getAssign('sUserData');
         static::assertSame('PayPal', $customerData['additional']['payment']['description']);
 
-        $paymentMethodProvider->setPaymentMethodActiveFlag(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME, true);
+        $paymentMethodProvider->setPaymentMethodActiveFlag(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME, true);
     }
 
     public function testOnPostDispatchAccountNoSettings()

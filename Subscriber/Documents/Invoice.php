@@ -15,6 +15,7 @@ use Shopware_Components_Snippet_Manager as SnippetManager;
 use Shopware_Components_Translation;
 use SwagPaymentPayPalUnified\Components\Document\InvoiceDocumentHandler;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
+use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Components\Services\Plus\PaymentInstructionService;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 
@@ -90,7 +91,7 @@ class Invoice implements SubscriberInterface
             return;
         }
 
-        $unifiedPaymentId = $this->paymentMethodProvider->getPaymentId(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
+        $unifiedPaymentId = $this->paymentMethodProvider->getPaymentId(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
 
         $orderPaymentMethodId = (int) $document->_order->payment['id'];
 
@@ -120,7 +121,7 @@ class Invoice implements SubscriberInterface
     {
         $vars = $eventArgs->getReturn();
 
-        if ($vars['additional']['payment']['name'] !== PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME) {
+        if ($vars['additional']['payment']['name'] !== PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME) {
             return $vars;
         }
 

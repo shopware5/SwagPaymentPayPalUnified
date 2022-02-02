@@ -10,10 +10,10 @@ namespace SwagPaymentPayPalUnified\Setup\Versions;
 
 use Doctrine\DBAL\Connection;
 use Shopware\Components\Model\ModelManager;
-use Shopware\Models\Payment\Payment;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Setup\ColumnService;
-use SwagPaymentPayPalUnified\Setup\PaymentModelCreator;
+use SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentInstaller;
+use SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentModelFactory;
 
 class UpdateTo400
 {
@@ -33,9 +33,9 @@ class UpdateTo400
     private $paymentMethodProvider;
 
     /**
-     * @var PaymentModelCreator
+     * @var PaymentModelFactory
      */
-    private $paymentModelCreator;
+    private $paymentModelFactory;
 
     /**
      * @var ColumnService
@@ -46,13 +46,13 @@ class UpdateTo400
         ModelManager $modelManager,
         Connection $connection,
         PaymentMethodProvider $paymentMethodProvider,
-        PaymentModelCreator $paymentModelCreator,
+        PaymentModelFactory $paymentModelFactory,
         ColumnService $columnService
     ) {
         $this->modelManager = $modelManager;
         $this->connection = $connection;
         $this->paymentMethodProvider = $paymentMethodProvider;
-        $this->paymentModelCreator = $paymentModelCreator;
+        $this->paymentModelFactory = $paymentModelFactory;
         $this->columnService = $columnService;
     }
 
@@ -60,7 +60,7 @@ class UpdateTo400
     {
         $this->moveIntent();
         $this->addButtonStyleToGeneralSettings();
-        $this->addPayUponInvoicePaymentMethod();
+        $this->installNewPaymentMethods();
         $this->insertDefaultButtonStyle();
     }
 
@@ -112,18 +112,9 @@ class UpdateTo400
         }
     }
 
-    private function addPayUponInvoicePaymentMethod()
+    private function installNewPaymentMethods()
     {
-        $payment = $this->paymentMethodProvider->getPaymentMethodModel(PaymentMethodProvider::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME);
-        if ($payment instanceof Payment) {
-            //If the payment does already exist, we don't need to add it again.
-            return;
-        }
-
-        $payment = $this->paymentModelCreator->createModel(PaymentMethodProvider::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME);
-
-        $this->modelManager->persist($payment);
-        $this->modelManager->flush($payment);
+        (new PaymentInstaller($this->paymentMethodProvider, $this->paymentModelFactory, $this->modelManager))->installPayments();
     }
 
     private function insertDefaultButtonStyle()

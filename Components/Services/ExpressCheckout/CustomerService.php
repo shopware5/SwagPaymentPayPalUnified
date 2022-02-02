@@ -22,6 +22,7 @@ use Shopware\Models\Customer\Customer;
 use Shopware_Components_Config as ShopwareConfig;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
+use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
 use Symfony\Component\Form\FormFactoryInterface;
 
@@ -162,7 +163,7 @@ class CustomerService
         $form = $this->formFactory->create(PersonalFormType::class, $customer);
         $form->submit($customerData);
 
-        $customer->setPaymentId($this->paymentMethodProvider->getPaymentId(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME));
+        $customer->setPaymentId($this->paymentMethodProvider->getPaymentId(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME));
 
         $address = new Address();
         $form = $this->formFactory->create(AddressFormType::class, $address);

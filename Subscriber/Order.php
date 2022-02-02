@@ -11,6 +11,7 @@ namespace SwagPaymentPayPalUnified\Subscriber;
 use Enlight\Event\SubscriberInterface;
 use Enlight_Controller_Front;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
+use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 
 class Order implements SubscriberInterface
@@ -46,7 +47,7 @@ class Order implements SubscriberInterface
     public function onFilterOrderAttributes(\Enlight_Event_EventArgs $args)
     {
         $orderParams = $args->get('orderParams');
-        $payPalPaymentId = $this->paymentMethodProvider->getPaymentId(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
+        $payPalPaymentId = $this->paymentMethodProvider->getPaymentId(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
         if ((int) $orderParams['paymentID'] !== $payPalPaymentId) {
             return;
         }

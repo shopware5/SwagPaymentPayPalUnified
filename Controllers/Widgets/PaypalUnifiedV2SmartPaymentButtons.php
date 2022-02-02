@@ -7,67 +7,21 @@
  */
 
 use Shopware\Components\HttpClient\RequestException;
-use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
-use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\PayPalOrderParameterFacade;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\ShopwareOrderData;
-use SwagPaymentPayPalUnified\Components\Services\PaymentControllerHelper;
-use SwagPaymentPayPalUnified\Components\Services\PayPalOrderBuilderService;
-use SwagPaymentPayPalUnified\Components\Services\Validation\RedirectDataBuilderFactory;
+use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentController;
 use SwagPaymentPayPalUnified\PayPalBundle\PartnerAttributionId;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
-use SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\OrderResource;
 
-class Shopware_Controllers_Widgets_PaypalUnifiedV2SmartPaymentButtons extends Shopware_Controllers_Frontend_Payment
+class Shopware_Controllers_Widgets_PaypalUnifiedV2SmartPaymentButtons extends AbstractPaypalPaymentController
 {
-    /**
-     * @var DependencyProvider
-     */
-    private $dependencyProvider;
-
-    /**
-     * @var \Shopware_Components_Config
-     */
-    private $shopwareConfig;
-
-    /**
-     * @var OrderResource
-     */
-    private $orderResource;
-
-    /**
-     * @var PayPalOrderBuilderService
-     */
-    private $orderBuilderService;
-
-    /**
-     * @var RedirectDataBuilderFactory
-     */
-    private $redirectDataBuilderFactory;
-
-    /**
-     * @var PaymentControllerHelper
-     */
-    private $paymentControllerHelper;
-
-    /**
-     * @var PayPalOrderParameterFacade
-     */
-    private $payPalOrderParameterFacade;
-
     public function preDispatch()
     {
+        parent::preDispatch();
+
         $this->Front()->Plugins()->ViewRenderer()->setNoRender();
         $this->Front()->Plugins()->Json()->setRenderer();
         $this->view->setTemplate();
-
-        $this->orderBuilderService = $this->get('paypal_unified.paypal_order_builder_service');
-        $this->orderResource = $this->get('paypal_unified.v2.order_resource');
-        $this->redirectDataBuilderFactory = $this->get('paypal_unified.redirect_data_builder_factory');
-        $this->paymentControllerHelper = $this->get('paypal_unified.payment_controller_helper');
-        $this->dependencyProvider = $this->get('paypal_unified.dependency_provider');
-        $this->shopwareConfig = $this->get('config');
-        $this->payPalOrderParameterFacade = $this->get('paypal_unified.paypal_order_parameter_facade');
     }
 
     public function createOrderAction()
@@ -84,7 +38,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2SmartPaymentButtons extends Sh
             return;
         }
 
-        if ($this->noDispatchForOrder()) {
+        if ($this->dispatchValidator->isValid()) {
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
                 ->setCode(ErrorCodes::NO_DISPATCH_FOR_ORDER);
 
@@ -95,10 +49,10 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2SmartPaymentButtons extends Sh
 
         $shopwareOrderData = new ShopwareOrderData($shopwareSessionOrderData['sUserData'], $shopwareSessionOrderData['sBasket']);
         $orderParams = $this->payPalOrderParameterFacade->createPayPalOrderParameter(PaymentType::PAYPAL_SMART_PAYMENT_BUTTONS_V2, $shopwareOrderData);
-        $payPalOrderData = $this->orderBuilderService->getOrder($orderParams);
+        $payPalOrderData = $this->orderFactory->createOrder($orderParams);
 
         try {
-            $payPalOrder = $this->orderResource->create($payPalOrderData, PartnerAttributionId::PAYPAL_ALL_V2, false);
+            $payPalOrder = $this->orderResource->create($payPalOrderData, $orderParams->getPaymentType(), PartnerAttributionId::PAYPAL_ALL_V2, false);
         } catch (RequestException $exception) {
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
                 ->setCode(ErrorCodes::COMMUNICATION_FAILURE)
@@ -119,15 +73,5 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2SmartPaymentButtons extends Sh
 
         $this->view->assign('token', $payPalOrder->getId());
         $this->view->assign('basketId', $orderParams->getBasketUniqueId());
-    }
-
-    /**
-     * @return bool
-     */
-    private function noDispatchForOrder()
-    {
-        $session = $this->dependencyProvider->getSession();
-
-        return !empty($this->shopwareConfig->get('premiumShippingNoOrder')) && (empty($session->get('sDispatch')) || empty($session->get('sCountry')));
     }
 }

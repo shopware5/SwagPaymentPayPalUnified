@@ -96,7 +96,7 @@ class Capture extends Payment
     }
 
     /**
-     * @return \SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Payments\Capture\SellerProtection
+     * @return SellerProtection
      */
     public function getSellerProtection()
     {

@@ -11,10 +11,12 @@ namespace SwagPaymentPayPalUnified\Setup;
 use Doctrine\DBAL\Connection;
 use Shopware\Bundle\AttributeBundle\Service\CrudService;
 use Shopware\Components\Model\ModelManager;
-use Shopware\Models\Payment\Payment;
 use Shopware\Models\Plugin\Plugin;
 use Shopware_Components_Translation;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
+use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
+use SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentInstaller;
+use SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentModelFactory;
 
 class Installer
 {
@@ -49,9 +51,9 @@ class Installer
     private $paymentMethodProvider;
 
     /**
-     * @var PaymentModelCreator
+     * @var PaymentModelFactory
      */
-    private $paymentModelCreator;
+    private $paymentModelFactory;
 
     /**
      * @param string $bootstrapPath
@@ -62,7 +64,7 @@ class Installer
         CrudService $attributeCrudService,
         Shopware_Components_Translation $translation,
         PaymentMethodProvider $paymentMethodProvider,
-        PaymentModelCreator $paymentModelCreator,
+        PaymentModelFactory $paymentModelCreator,
         $bootstrapPath
     ) {
         $this->modelManager = $modelManager;
@@ -70,7 +72,7 @@ class Installer
         $this->attributeCrudService = $attributeCrudService;
         $this->translation = $translation;
         $this->paymentMethodProvider = $paymentMethodProvider;
-        $this->paymentModelCreator = $paymentModelCreator;
+        $this->paymentModelFactory = $paymentModelCreator;
         $this->bootstrapPath = $bootstrapPath;
     }
 
@@ -86,7 +88,7 @@ class Installer
         }
 
         $this->createDatabaseTables();
-        $this->createUnifiedPaymentMethods();
+        $this->createPaymentMethods();
         $this->createAttributes();
         $this->createDocumentTemplates();
         $this->migrate();
@@ -195,7 +197,7 @@ class Installer
         $this->translation->write(
             2,
             'config_payment',
-            $translationKeys[PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME],
+            $translationKeys[PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME],
             [
                 'description' => 'PayPal',
                 'additionalDescription' => '<!-- PayPal Logo --><a href="https://www.paypal.com/de/cgi-bin/webscr?cmd=xpt/cps/popup/OLCWhatIsPayPal-outside" target="_blank" rel="noopener">'
@@ -215,30 +217,13 @@ class Installer
             ->select('name, id')
             ->from('s_core_paymentmeans', 'pm')
             ->where('pm.name = :name')
-            ->setParameter(':name', PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME)
+            ->setParameter(':name', PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME)
             ->execute()
             ->fetchAll(\PDO::FETCH_KEY_PAIR);
     }
 
-    private function createUnifiedPaymentMethods()
+    private function createPaymentMethods()
     {
-        $paymentMethodsNameArray = [
-            PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME,
-            PaymentMethodProvider::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME,
-        ];
-
-        foreach ($paymentMethodsNameArray as $paymentMethodName) {
-            $payment = $this->paymentMethodProvider->getPaymentMethodModel($paymentMethodName);
-
-            if ($payment instanceof Payment) {
-                // If the payment does already exist, we don't need to add it again.
-                continue;
-            }
-
-            $payment = $this->paymentModelCreator->createModel($paymentMethodName);
-
-            $this->modelManager->persist($payment);
-            $this->modelManager->flush($payment);
-        }
+        (new PaymentInstaller($this->paymentMethodProvider, $this->paymentModelFactory, $this->modelManager))->installPayments();
     }
 }

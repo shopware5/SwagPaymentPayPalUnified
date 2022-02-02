@@ -10,6 +10,7 @@ namespace SwagPaymentPayPalUnified\Tests\Functional\Subscriber;
 
 use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
+use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\Subscriber\Order;
 
@@ -129,7 +130,7 @@ class OrderTest extends TestCase
         $connection = Shopware()->Container()->get('dbal_connection');
         $modelManager = Shopware()->Container()->get('models');
 
-        return (new PaymentMethodProvider($connection, $modelManager))->getPaymentId(PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
+        return (new PaymentMethodProvider($connection, $modelManager))->getPaymentId(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
     }
 
     /**

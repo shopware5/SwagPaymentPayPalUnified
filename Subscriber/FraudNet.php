@@ -12,7 +12,7 @@ use Enlight\Event\SubscriberInterface;
 use Enlight_Event_EventArgs;
 use Shopware_Controllers_Frontend_Checkout;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
-use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
+use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 
 class FraudNet implements SubscriberInterface
 {
@@ -43,7 +43,7 @@ class FraudNet implements SubscriberInterface
         }
 
         $selectedPayment = $subject->View()->getAssign('sPayment');
-        if ($selectedPayment['name'] !== PaymentMethodProvider::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME) {
+        if ($selectedPayment['name'] !== PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME) {
             return;
         }
 

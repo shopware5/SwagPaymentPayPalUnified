@@ -13,8 +13,8 @@ use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\PayPalOrderParamete
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\ShopwareOrderData;
 use SwagPaymentPayPalUnified\Components\Services\ExceptionHandlerService;
 use SwagPaymentPayPalUnified\Components\Services\ExpressCheckout\CustomerService;
+use SwagPaymentPayPalUnified\Components\Services\OrderBuilder\OrderFactory;
 use SwagPaymentPayPalUnified\Components\Services\PaymentControllerHelper;
-use SwagPaymentPayPalUnified\Components\Services\PayPalOrderBuilderService;
 use SwagPaymentPayPalUnified\Components\Services\Validation\RedirectDataBuilderFactory;
 use SwagPaymentPayPalUnified\PayPalBundle\PartnerAttributionId;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
@@ -29,11 +29,6 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout extends Shopwa
      * @var DependencyProvider
      */
     private $dependencyProvider;
-
-    /**
-     * @var PayPalOrderBuilderService
-     */
-    private $orderBuilderService;
 
     /**
      * @var OrderResource
@@ -60,6 +55,11 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout extends Shopwa
      */
     private $exceptionHandler;
 
+    /**
+     * @var OrderFactory
+     */
+    private $orderFactory;
+
     public function preDispatch()
     {
         $this->Front()->Plugins()->ViewRenderer()->setNoRender();
@@ -67,12 +67,12 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout extends Shopwa
         $this->View()->setTemplate();
 
         $this->dependencyProvider = $this->get('paypal_unified.dependency_provider');
-        $this->orderBuilderService = $this->get('paypal_unified.paypal_order_builder_service');
         $this->orderResource = $this->get('paypal_unified.v2.order_resource');
         $this->redirectDataBuilderFactory = $this->get('paypal_unified.redirect_data_builder_factory');
         $this->paymentControllerHelper = $this->get('paypal_unified.payment_controller_helper');
         $this->payPalOrderParameterFacade = $this->get('paypal_unified.paypal_order_parameter_facade');
         $this->exceptionHandler = $this->get('paypal_unified.exception_handler_service');
+        $this->orderFactory = $this->get('paypal_unified.order_factory');
     }
 
     public function createOrderAction()
@@ -91,9 +91,9 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout extends Shopwa
         $orderParams = $this->payPalOrderParameterFacade->createPayPalOrderParameter(PaymentType::PAYPAL_EXPRESS_V2, $shopwareOrderData);
 
         try {
-            $payPalOrderData = $this->orderBuilderService->getOrder($orderParams);
+            $payPalOrderData = $this->orderFactory->createOrder($orderParams);
 
-            $payPalOrder = $this->orderResource->create($payPalOrderData, PartnerAttributionId::PAYPAL_ALL_V2, false);
+            $payPalOrder = $this->orderResource->create($payPalOrderData, $orderParams->getPaymentType(), PartnerAttributionId::PAYPAL_ALL_V2, false);
         } catch (RequestException $exception) {
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
                 ->setCode(ErrorCodes::COMMUNICATION_FAILURE)

@@ -91,12 +91,12 @@ class OrderDataServiceTest extends TestCase
         $orderDataService = $this->getOrderDataService();
         $this->createTestSettings();
 
-        $orderDataService->applyPaymentTypeAttribute(self::ORDER_NUMBER, PaymentType::PAYPAL_PLUS_V2);
+        $orderDataService->applyPaymentTypeAttribute(self::ORDER_NUMBER, PaymentType::PAYPAL_PLUS);
 
         $dbalConnection = Shopware()->Container()->get('dbal_connection');
         $updatedAttribute = $dbalConnection->executeQuery('SELECT swag_paypal_unified_payment_type FROM s_order_attributes WHERE orderID=9999')->fetchColumn();
 
-        static::assertSame(PaymentType::PAYPAL_PLUS_V2, $updatedAttribute);
+        static::assertSame(PaymentType::PAYPAL_PLUS, $updatedAttribute);
     }
 
     public function testApplyPaymentAttributeClassic()

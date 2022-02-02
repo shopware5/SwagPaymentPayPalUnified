@@ -1,0 +1,94 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <!-- Factory tag: paypal_unified.risk_management.value_handler -->
+        <service id="paypal_unified.risk_management.value_factory"
+                 class="SwagPaymentPayPalUnified\Components\Services\RiskManagement\Apm\ValueFactory"
+                 public="true">
+        </service>
+
+        <service id="paypal_unified.risk_management.default_value_handler"
+                 class="SwagPaymentPayPalUnified\Components\Services\RiskManagement\Apm\Value\DefaultValueHandler"
+                 public="true">
+            <argument type="service" id="shopware_storefront.context_service"/>
+            <tag name="paypal_unified.risk_management.value_handler"/>
+        </service>
+
+        <!-- Factory tag: paypal_unified.risk_management.validator_handler -->
+        <service id="paypal_unified.risk_management.validator_factory"
+                 class="SwagPaymentPayPalUnified\Components\Services\RiskManagement\Apm\ValidatorFactory"
+                 public="true">
+        </service>
+
+        <service id="paypal_unified.risk_management.bancontact_validator"
+                 class="SwagPaymentPayPalUnified\Components\Services\RiskManagement\Apm\Validator\BancontactValidatorHandler"
+                 public="true">
+            <tag name="paypal_unified.risk_management.validator_handler"/>
+        </service>
+
+        <service id="paypal_unified.risk_management.blik_validator"
+                 class="SwagPaymentPayPalUnified\Components\Services\RiskManagement\Apm\Validator\BlikValidatorHandler"
+                 public="true">
+            <tag name="paypal_unified.risk_management.validator_handler"/>
+        </service>
+
+        <service id="paypal_unified.risk_management.eps_validator"
+                 class="SwagPaymentPayPalUnified\Components\Services\RiskManagement\Apm\Validator\EpsValidatorHandler"
+                 public="true">
+            <tag name="paypal_unified.risk_management.validator_handler"/>
+        </service>
+
+        <service id="paypal_unified.risk_management.giropay_validator"
+                 class="SwagPaymentPayPalUnified\Components\Services\RiskManagement\Apm\Validator\GiropayValidatorHandler"
+                 public="true">
+            <tag name="paypal_unified.risk_management.validator_handler"/>
+        </service>
+
+        <service id="paypal_unified.risk_management.ideal_validator"
+                 class="SwagPaymentPayPalUnified\Components\Services\RiskManagement\Apm\Validator\IdealValidatorHandler"
+                 public="true">
+            <tag name="paypal_unified.risk_management.validator_handler"/>
+        </service>
+
+        <service id="paypal_unified.risk_management.multibanco_validator"
+                 class="SwagPaymentPayPalUnified\Components\Services\RiskManagement\Apm\Validator\MultibancoValidatorHandler"
+                 public="true">
+            <tag name="paypal_unified.risk_management.validator_handler"/>
+        </service>
+
+        <service id="paypal_unified.risk_management.mybank_validator"
+                 class="SwagPaymentPayPalUnified\Components\Services\RiskManagement\Apm\Validator\MyBankValidatorHandler"
+                 public="true">
+            <tag name="paypal_unified.risk_management.validator_handler"/>
+        </service>
+
+        <service id="paypal_unified.risk_management.oxxo_validator"
+                 class="SwagPaymentPayPalUnified\Components\Services\RiskManagement\Apm\Validator\OxxoValidatorHandler"
+                 public="true">
+            <tag name="paypal_unified.risk_management.validator_handler"/>
+        </service>
+
+        <service id="paypal_unified.risk_management.p24_validator"
+                 class="SwagPaymentPayPalUnified\Components\Services\RiskManagement\Apm\Validator\P24ValidatorHandler"
+                 public="true">
+            <tag name="paypal_unified.risk_management.validator_handler"/>
+        </service>
+
+        <service id="paypal_unified.risk_management.sofort_validator"
+                 class="SwagPaymentPayPalUnified\Components\Services\RiskManagement\Apm\Validator\SofortValidatorHandler"
+                 public="true">
+            <tag name="paypal_unified.risk_management.validator_handler"/>
+        </service>
+
+        <service id="paypal_unified.risk_management.trustly_validator"
+                 class="SwagPaymentPayPalUnified\Components\Services\RiskManagement\Apm\Validator\TrustlyValidatorHandler"
+                 public="true">
+            <tag name="paypal_unified.risk_management.validator_handler"/>
+        </service>
+
+    </services>
+</container>

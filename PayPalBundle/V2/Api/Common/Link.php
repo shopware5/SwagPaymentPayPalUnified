@@ -14,6 +14,7 @@ abstract class Link extends PayPalApiStruct
 {
     const RELATION_APPROVE = 'approve';
     const RELATION_UP = 'up';
+    const RELATION_PAYER_ACTION_REQUIRED = 'payer-action';
 
     /**
      * @var string

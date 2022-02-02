@@ -11,9 +11,8 @@ namespace SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\Payer\Address;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\Payer\Name;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\Payer\Phone\PhoneNumber;
-use SwagPaymentPayPalUnified\PayPalBundle\V2\PayPalApiStruct;
 
-class PayUponInvoice extends PayPalApiStruct
+class PayUponInvoice extends AbstractPaymentSource
 {
     /**
      * @var Name

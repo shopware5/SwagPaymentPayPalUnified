@@ -23,7 +23,7 @@ class Authorization extends Payment
     protected $expirationTime;
 
     /**
-     * @return \SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Payments\Authorization\SellerProtection
+     * @return SellerProtection
      */
     public function getSellerProtection()
     {

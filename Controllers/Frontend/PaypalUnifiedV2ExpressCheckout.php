@@ -8,14 +8,8 @@
 
 use Shopware\Components\HttpClient\RequestException;
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
-use SwagPaymentPayPalUnified\Components\PaymentStatus;
-use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\PayPalOrderParameterFacadeInterface;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\ShopwareOrderData;
-use SwagPaymentPayPalUnified\Components\Services\OrderDataService;
-use SwagPaymentPayPalUnified\Components\Services\PaymentControllerHelper;
-use SwagPaymentPayPalUnified\Components\Services\PayPalOrderBuilderService;
-use SwagPaymentPayPalUnified\Components\Services\SettingsService;
-use SwagPaymentPayPalUnified\Components\Services\Validation\RedirectDataBuilderFactory;
+use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentController;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\PartnerAttributionId;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
@@ -23,59 +17,12 @@ use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Patch;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Patches\OrderAddInvoiceIdPatch;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Patches\OrderPurchaseUnitPatch;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\PaymentIntentV2;
-use SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\OrderResource;
 
 /**
  * @phpstan-import-type CheckoutBasketArray from \Shopware_Controllers_Frontend_Checkout
  */
-class Shopware_Controllers_Frontend_PaypalUnifiedV2ExpressCheckout extends Shopware_Controllers_Frontend_Payment
+class Shopware_Controllers_Frontend_PaypalUnifiedV2ExpressCheckout extends AbstractPaypalPaymentController
 {
-    /**
-     * @var OrderResource
-     */
-    private $orderResource;
-
-    /**
-     * @var PaymentControllerHelper
-     */
-    private $paymentControllerHelper;
-
-    /**
-     * @var RedirectDataBuilderFactory
-     */
-    private $redirectDataBuilderFactory;
-
-    /**
-     * @var PayPalOrderBuilderService
-     */
-    private $payPalOrderBuilderService;
-
-    /**
-     * @var OrderDataService
-     */
-    private $orderDataService;
-
-    /**
-     * @var SettingsService
-     */
-    private $settingsService;
-
-    /**
-     * @var PayPalOrderParameterFacadeInterface
-     */
-    private $payPalOrderParameterFacade;
-
-    public function preDispatch()
-    {
-        $this->orderResource = $this->get('paypal_unified.v2.order_resource');
-        $this->paymentControllerHelper = $this->get('paypal_unified.payment_controller_helper');
-        $this->redirectDataBuilderFactory = $this->get('paypal_unified.redirect_data_builder_factory');
-        $this->payPalOrderBuilderService = $this->get('paypal_unified.paypal_order_builder_service');
-        $this->orderDataService = $this->get('paypal_unified.order_data_service');
-        $this->settingsService = $this->get('paypal_unified.settings_service');
-        $this->payPalOrderParameterFacade = $this->get('paypal_unified.paypal_order_parameter_facade');
-    }
-
     public function expressCheckoutFinishAction()
     {
         $payPalOrderId = $this->request->getParam('orderId');
@@ -92,17 +39,17 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2ExpressCheckout extends Shopw
         $shopwareOrderData = new ShopwareOrderData($userData, $basketData);
         $payPalOrderParameter = $this->payPalOrderParameterFacade->createPayPalOrderParameter(PaymentType::PAYPAL_EXPRESS_V2, $shopwareOrderData);
 
-        $payPalOrderData = $this->payPalOrderBuilderService->getOrder($payPalOrderParameter);
+        $payPalOrderData = $this->orderFactory->createOrder($payPalOrderParameter);
 
         $purchaseUnitPatch = new OrderPurchaseUnitPatch();
         $purchaseUnitPatch->setPath(OrderPurchaseUnitPatch::PATH);
         $purchaseUnitPatch->setOp(Patch::OPERATION_REPLACE);
-        $purchaseUnitPatch->setValue(\json_decode((string) \json_encode($payPalOrderData->getPurchaseUnits()[0]), true));
+        $purchaseUnitPatch->setValue(json_decode((string) json_encode($payPalOrderData->getPurchaseUnits()[0]), true));
 
         $patchSet = [$purchaseUnitPatch];
 
         if ($sendShopwareOrderNumber) {
-            $shopwareOrderNumber = $this->createShopwareOrder($payPalOrderId);
+            $shopwareOrderNumber = $this->createShopwareOrder($payPalOrderId, $payPalOrderParameter->getPaymentType());
 
             $orderNumberPrefix = $this->settingsService->get(SettingsServiceInterface::SETTING_SEND_ORDER_NUMBER);
 
@@ -151,7 +98,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2ExpressCheckout extends Shopw
         }
 
         if (!$sendShopwareOrderNumber) {
-            $this->createShopwareOrder($payPalOrderId);
+            $this->createShopwareOrder($payPalOrderId, $payPalOrderParameter->getPaymentType());
         }
 
         $this->redirect([
@@ -160,19 +107,5 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2ExpressCheckout extends Shopw
             'action' => 'finish',
             'sUniqueID' => $payPalOrderId,
         ]);
-    }
-
-    /**
-     * @param string $payPalOrderId
-     *
-     * @return string
-     */
-    private function createShopwareOrder($payPalOrderId)
-    {
-        $orderNumber = (string) $this->saveOrder($payPalOrderId, $payPalOrderId, PaymentStatus::PAYMENT_STATUS_OPEN);
-
-        $this->orderDataService->applyPaymentTypeAttribute($orderNumber, PaymentType::PAYPAL_EXPRESS_V2);
-
-        return $orderNumber;
     }
 }

@@ -37,7 +37,7 @@ class SellerPayableBreakdown extends PayPalApiStruct
     protected $totalRefundedAmount;
 
     /**
-     * @return \SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Payments\Refund\SellerPayableBreakdown\GrossAmount
+     * @return GrossAmount
      */
     public function getGrossAmount()
     {
@@ -53,7 +53,7 @@ class SellerPayableBreakdown extends PayPalApiStruct
     }
 
     /**
-     * @return \SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Payments\Refund\SellerPayableBreakdown\PaypalFee
+     * @return PaypalFee
      */
     public function getPaypalFee()
     {
@@ -69,7 +69,7 @@ class SellerPayableBreakdown extends PayPalApiStruct
     }
 
     /**
-     * @return \SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Payments\Refund\SellerPayableBreakdown\NetAmount
+     * @return NetAmount
      */
     public function getNetAmount()
     {
@@ -85,7 +85,7 @@ class SellerPayableBreakdown extends PayPalApiStruct
     }
 
     /**
-     * @return \SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Payments\Refund\SellerPayableBreakdown\TotalRefundedAmount
+     * @return TotalRefundedAmount
      */
     public function getTotalRefundedAmount()
     {

@@ -61,7 +61,7 @@ class ViewMock extends Enlight_View_Default
     public function assign($spec, $value = null, $nocache = null, $scope = null)
     {
         if (\is_array($spec)) {
-            $this->assigns = $spec;
+            $this->assigns = array_merge_recursive($this->assigns, $spec);
 
             return $this;
         }
@@ -80,5 +80,13 @@ class ViewMock extends Enlight_View_Default
         }
 
         return $this->assigns[$spec];
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    public function getLoadedTemplates()
+    {
+        return $this->loadedTemplates;
     }
 }

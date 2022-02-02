@@ -13,6 +13,7 @@ use Shopware\Bundle\StoreFrontBundle\Struct\Currency;
 use Shopware\Bundle\StoreFrontBundle\Struct\ShopContextInterface;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
+use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Subscriber\PayUponInvoiceRiskManagement;
 use Symfony\Component\Validator\Constraints\Collection;
 use Symfony\Component\Validator\Constraints\EqualTo;
@@ -31,7 +32,7 @@ class PayUponInvoiceRiskManagementTest extends TestCase
      *
      * The paymentMethodProvider provides testcases to assert the check
      * succeeds for all payment methods besides
-     * PaymentMethodProvider::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME.
+     * PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME.
      * @dataProvider paymentMethodProvider
      *
      * @param bool $expectedReturnValue
@@ -152,7 +153,7 @@ class PayUponInvoiceRiskManagementTest extends TestCase
 
         foreach (self::getPaymentMethodMap() as list($paymentMethod, $paymentMethodId)) {
             $paymentMethodDescription = $paymentMethod instanceof Constraint ? \get_class($paymentMethod) : $paymentMethod;
-            $isPayUponInvoice = $paymentMethod === PaymentMethodProvider::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME;
+            $isPayUponInvoice = $paymentMethod === PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME;
 
             $argsMock = static::createMock(Enlight_Hook_HookArgs::class);
 
@@ -239,9 +240,9 @@ class PayUponInvoiceRiskManagementTest extends TestCase
     protected static function getPaymentMethodMap()
     {
         return [
-            [PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME, 100],
-            [PaymentMethodProvider::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME, 101],
-            [PaymentMethodProvider::PAYPAL_UNIFIED_INSTALLMENTS_METHOD_NAME, 102],
+            [PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME, 100],
+            [PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME, 101],
+            [PaymentMethodProviderInterface::PAYPAL_UNIFIED_INSTALLMENTS_METHOD_NAME, 102],
             [static::anything(), 0],
         ];
     }

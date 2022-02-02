@@ -25,7 +25,7 @@ class Shipping extends PayPalApiStruct
     protected $address;
 
     /**
-     * @return \SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Shipping\Name
+     * @return Name
      */
     public function getName()
     {
@@ -41,7 +41,7 @@ class Shipping extends PayPalApiStruct
     }
 
     /**
-     * @return \SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Shipping\Address
+     * @return Address
      */
     public function getAddress()
     {

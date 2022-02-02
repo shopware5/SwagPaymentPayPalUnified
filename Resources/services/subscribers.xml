@@ -78,12 +78,11 @@
             <argument type="service" id="paypal_unified.payment_resource"/>
             <argument type="service" id="paypal_unified.payment_address_service"/>
             <argument type="service" id="paypal_unified.express_checkout.payment_builder_service"/>
-            <argument type="service" id="paypal_unified.exception_handler_service"/>
             <argument type="service" id="paypal_unified.client_service"/>
             <argument type="service" id="paypal_unified.dependency_provider"/>
-            <argument type="service"
-                      id="SwagPaymentPayPalUnified\Components\Services\RiskManagement\EsdProductChecker"/>
+            <argument type="service" id="SwagPaymentPayPalUnified\Components\Services\RiskManagement\EsdProductChecker"/>
             <argument type="service" id="paypal_unified.payment_method_provider"/>
+            <argument type="service" id="paypal_unified.button_locale_service"/>
             <tag name="shopware.event_subscriber"/>
         </service>
 
@@ -182,6 +181,17 @@
             <argument type="service" id="paypal_unified.dependency_provider"/>
             <argument type="service" id="validator"/>
             <argument type="service" id="shopware_storefront.context_service"/>
+            <tag name="shopware.event_subscriber"/>
+        </service>
+
+        <service id="paypal_unified.subscriber.apm_risk_management"
+                 class="SwagPaymentPayPalUnified\Subscriber\ApmRiskManagement"
+                 public="true">
+            <argument type="service" id="paypal_unified.payment_method_provider"/>
+            <argument type="service" id="paypal_unified.dependency_provider"/>
+            <argument type="service" id="validator"/>
+            <argument type="service" id="paypal_unified.risk_management.value_factory"/>
+            <argument type="service" id="paypal_unified.risk_management.validator_factory"/>
             <tag name="shopware.event_subscriber"/>
         </service>
 

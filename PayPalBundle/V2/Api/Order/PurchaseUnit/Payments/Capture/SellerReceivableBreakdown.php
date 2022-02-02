@@ -31,7 +31,7 @@ class SellerReceivableBreakdown extends PayPalApiStruct
     protected $netAmount;
 
     /**
-     * @return \SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Payments\Capture\SellerReceivableBreakdown\GrossAmount
+     * @return GrossAmount
      */
     public function getGrossAmount()
     {
@@ -47,7 +47,7 @@ class SellerReceivableBreakdown extends PayPalApiStruct
     }
 
     /**
-     * @return \SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Payments\Capture\SellerReceivableBreakdown\PaypalFee
+     * @return PaypalFee
      */
     public function getPaypalFee()
     {
@@ -63,7 +63,7 @@ class SellerReceivableBreakdown extends PayPalApiStruct
     }
 
     /**
-     * @return \SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Payments\Capture\SellerReceivableBreakdown\NetAmount
+     * @return NetAmount
      */
     public function getNetAmount()
     {

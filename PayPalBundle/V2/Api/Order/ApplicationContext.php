@@ -26,6 +26,21 @@ class ApplicationContext extends PayPalApiStruct
     /**
      * @var string
      */
+    protected $locale;
+
+    /**
+     * @var string
+     */
+    protected $returnUrl;
+
+    /**
+     * @var string
+     */
+    protected $cancelUrl;
+
+    /**
+     * @var string
+     */
     protected $brandName;
 
     /**
@@ -44,14 +59,58 @@ class ApplicationContext extends PayPalApiStruct
     protected $userAction = self::USER_ACTION_PAY_NOW;
 
     /**
-     * @var string
+     * @return string
      */
-    protected $returnUrl;
+    public function getLocale()
+    {
+        return $this->locale;
+    }
 
     /**
-     * @var string
+     * @param string $locale
+     *
+     * @return void
      */
-    protected $cancelUrl;
+    public function setLocale($locale)
+    {
+        $this->locale = $locale;
+    }
+
+    /**
+     * @return string
+     */
+    public function getReturnUrl()
+    {
+        return $this->returnUrl;
+    }
+
+    /**
+     * @param string $returnUrl
+     *
+     * @return void
+     */
+    public function setReturnUrl($returnUrl)
+    {
+        $this->returnUrl = $returnUrl;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCancelUrl()
+    {
+        return $this->cancelUrl;
+    }
+
+    /**
+     * @param string $cancelUrl
+     *
+     * @return void
+     */
+    public function setCancelUrl($cancelUrl)
+    {
+        $this->cancelUrl = $cancelUrl;
+    }
 
     /**
      * @return string
@@ -123,41 +182,5 @@ class ApplicationContext extends PayPalApiStruct
     public function setUserAction($userAction)
     {
         $this->userAction = $userAction;
-    }
-
-    /**
-     * @return string
-     */
-    public function getReturnUrl()
-    {
-        return $this->returnUrl;
-    }
-
-    /**
-     * @param string $returnUrl
-     *
-     * @return void
-     */
-    public function setReturnUrl($returnUrl)
-    {
-        $this->returnUrl = $returnUrl;
-    }
-
-    /**
-     * @return string
-     */
-    public function getCancelUrl()
-    {
-        return $this->cancelUrl;
-    }
-
-    /**
-     * @param string $cancelUrl
-     *
-     * @return void
-     */
-    public function setCancelUrl($cancelUrl)
-    {
-        $this->cancelUrl = $cancelUrl;
     }
 }

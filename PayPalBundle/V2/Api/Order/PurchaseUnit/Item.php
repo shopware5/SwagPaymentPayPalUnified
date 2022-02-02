@@ -81,7 +81,7 @@ class Item extends PayPalApiStruct
     }
 
     /**
-     * @return \SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Item\UnitAmount
+     * @return UnitAmount
      */
     public function getUnitAmount()
     {
@@ -97,7 +97,7 @@ class Item extends PayPalApiStruct
     }
 
     /**
-     * @return \SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Item\Tax
+     * @return Tax
      */
     public function getTax()
     {

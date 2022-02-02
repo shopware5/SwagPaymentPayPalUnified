@@ -65,7 +65,7 @@ class Payee extends PayPalApiStruct
     }
 
     /**
-     * @return \SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Payee\DisplayData
+     * @return DisplayData
      */
     public function getDisplayData()
     {

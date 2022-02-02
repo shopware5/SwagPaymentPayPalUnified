@@ -13,6 +13,7 @@ use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Patch;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\RequestUriV2;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\OrderArrayFactory\OrderArrayFactory;
 
 class OrderResource
 {
@@ -21,9 +22,15 @@ class OrderResource
      */
     private $clientService;
 
-    public function __construct(ClientService $clientService)
+    /**
+     * @var OrderArrayFactory
+     */
+    private $arrayFactory;
+
+    public function __construct(ClientService $clientService, OrderArrayFactory $arrayFactory)
     {
         $this->clientService = $clientService;
+        $this->arrayFactory = $arrayFactory;
     }
 
     /**
@@ -43,15 +50,13 @@ class OrderResource
 
     /**
      * @param string $partnerAttributionId
+     * @param string $paymentType
      * @param bool   $minimalResponse
      *
      * @return Order
      */
-    public function create(
-        Order $order,
-        $partnerAttributionId,
-        $minimalResponse = true
-    ) {
+    public function create(Order $order, $paymentType, $partnerAttributionId, $minimalResponse = true)
+    {
         $this->clientService->setPartnerAttributionId($partnerAttributionId);
         if ($minimalResponse === false) {
             $this->clientService->setHeader('Prefer', 'return=representation');
@@ -77,7 +82,7 @@ class OrderResource
         $response = $this->clientService->sendRequest(
             RequestType::POST,
             RequestUriV2::ORDERS_RESOURCE,
-            $order->toArray()
+            $this->arrayFactory->toArray($order, $paymentType)
         );
 
         return (new Order())->assign($response);
