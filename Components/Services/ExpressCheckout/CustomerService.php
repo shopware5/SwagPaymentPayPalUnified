@@ -23,6 +23,7 @@ use Shopware_Components_Config as ShopwareConfig;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
 use Symfony\Component\Form\FormFactoryInterface;
 
@@ -73,6 +74,11 @@ class CustomerService
      */
     private $adminModule;
 
+    /**
+     * @var LoggerServiceInterface
+     */
+    private $logger;
+
     public function __construct(
         ShopwareConfig $shopwareConfig,
         Connection $connection,
@@ -81,7 +87,8 @@ class CustomerService
         RegisterServiceInterface $registerService,
         Enlight_Controller_Front $front,
         DependencyProvider $dependencyProvider,
-        PaymentMethodProvider $paymentMethodProvider
+        PaymentMethodProvider $paymentMethodProvider,
+        LoggerServiceInterface $logger
     ) {
         $this->shopwareConfig = $shopwareConfig;
         $this->connection = $connection;
@@ -91,6 +98,7 @@ class CustomerService
         $this->front = $front;
         $this->dependencyProvider = $dependencyProvider;
         $this->paymentMethodProvider = $paymentMethodProvider;
+        $this->logger = $logger;
     }
 
     public function createNewCustomer(Order $orderStruct)
@@ -125,6 +133,8 @@ class CustomerService
         ];
 
         $customerModel = $this->registerCustomer($customerData);
+
+        $this->logger->debug(sprintf('%s NEW CUSTOMER CREATED WITH ID: %s', __METHOD__, $customerModel->getId()));
 
         $this->loginCustomer($customerModel);
     }
@@ -194,9 +204,12 @@ class CustomerService
 
     private function loginCustomer(Customer $customerModel)
     {
+        $this->logger->debug(sprintf('%s LOGIN NEW CUSTOMER WITH ID: %s', __METHOD__, $customerModel->getId()));
+
         $request = $this->front->Request();
 
         if (!$request instanceof \Enlight_Controller_Request_Request) {
+            $this->logger->debug(sprintf('%s NO REQUEST GIVEN', __METHOD__));
             throw new \UnexpectedValueException(sprintf('Expected instance of %s, got null', \Enlight_Controller_Request_Request::class));
         }
 
@@ -210,5 +223,7 @@ class CustomerService
         $customerShippingCountry = $customerModel->getDefaultShippingAddress()->getCountry();
         $session->offsetSet('sCountry', $customerShippingCountry->getId());
         $session->offsetSet('sArea', $customerShippingCountry->getArea()->getId());
+
+        $this->logger->debug(sprintf('%s NEW CUSTOMER WITH ID: %s SUCCESSFUL LOGGED IN', __METHOD__, $customerModel->getId()));
     }
 }

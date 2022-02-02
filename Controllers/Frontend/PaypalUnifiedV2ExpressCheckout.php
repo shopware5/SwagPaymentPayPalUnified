@@ -25,9 +25,13 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2ExpressCheckout extends Abstr
 {
     public function expressCheckoutFinishAction()
     {
+        $this->logger->debug(sprintf('%s START', __METHOD__));
+
         $payPalOrderId = $this->request->getParam('orderId');
 
         if (!$payPalOrderId) {
+            $this->logger->debug(sprintf('%s NO ORDER ID GIVEN', __METHOD__));
+
             throw new \RuntimeException('No order ID given.');
         }
 
@@ -48,6 +52,8 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2ExpressCheckout extends Abstr
 
         $patchSet = [$purchaseUnitPatch];
 
+        $this->logger->debug(sprintf('%s SEND SHOPWARE ORDERNUMBER: %s', __METHOD__, $sendShopwareOrderNumber ? 'TRUE' : 'FALSE'));
+
         if ($sendShopwareOrderNumber) {
             $shopwareOrderNumber = $this->createShopwareOrder($payPalOrderId, $payPalOrderParameter->getPaymentType());
 
@@ -62,7 +68,11 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2ExpressCheckout extends Abstr
         }
 
         try {
+            $this->logger->debug(sprintf('%s UPDATE PAYPAL ORDER WITH ID: %s', __METHOD__, $payPalOrderId));
+
             $this->orderResource->update($patchSet, $payPalOrderId, PartnerAttributionId::PAYPAL_ALL_V2);
+
+            $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFULLY UPDATED', __METHOD__));
         } catch (RequestException $exception) {
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
                 ->setCode(ErrorCodes::COMMUNICATION_FAILURE)
@@ -75,9 +85,17 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2ExpressCheckout extends Abstr
 
         try {
             if ($this->settingsService->get(SettingsServiceInterface::SETTING_INTENT) === PaymentIntentV2::CAPTURE) {
+                $this->logger->debug(sprintf('%s CAPTURE PAYPAL ORDER WITH ID: %s', __METHOD__, $payPalOrderId));
+
                 $this->orderResource->capture($payPalOrderId, PartnerAttributionId::PAYPAL_ALL_V2, false);
+
+                $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFULLY CAPTURED', __METHOD__));
             } elseif ($this->settingsService->get(SettingsServiceInterface::SETTING_INTENT) === PaymentIntentV2::AUTHORIZE) {
+                $this->logger->debug(sprintf('%s AUTHORIZE PAYPAL ORDER WITH ID: %s', __METHOD__, $payPalOrderId));
+
                 $this->orderResource->authorize($payPalOrderId, PartnerAttributionId::PAYPAL_ALL_V2, false);
+
+                $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFULLY AUTHORIZED', __METHOD__));
             }
         } catch (RequestException $exception) {
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
@@ -97,9 +115,13 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2ExpressCheckout extends Abstr
             return;
         }
 
+        $this->logger->debug(sprintf('%s SEND SHOPWARE ORDERNUMBER: %s', __METHOD__, $sendShopwareOrderNumber ? 'TRUE' : 'FALSE'));
+
         if (!$sendShopwareOrderNumber) {
             $this->createShopwareOrder($payPalOrderId, $payPalOrderParameter->getPaymentType());
         }
+
+        $this->logger->debug(sprintf('%s REDIRECT TO checkout/finish', __METHOD__));
 
         $this->redirect([
             'module' => 'frontend',

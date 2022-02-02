@@ -13,12 +13,14 @@ use SwagPaymentPayPalUnified\Components\PaymentStatus;
 use SwagPaymentPayPalUnified\Components\Services\PaymentStatusService;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\Webhook\WebhookEventTypes;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Webhook;
+use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\WebhookHandlers\AuthorizationVoided;
 
 class AuthorizationVoidedTest extends TestCase
 {
     use DatabaseTestCaseTrait;
+    use ContainerTrait;
 
     const TEST_ORDER_ID = '15';
 
@@ -35,8 +37,8 @@ class AuthorizationVoidedTest extends TestCase
     public function testCanConstruct()
     {
         $instance = new AuthorizationVoided(
-            Shopware()->Container()->get('paypal_unified.logger_service'),
-            Shopware()->Container()->get('paypal_unified.payment_status_service')
+            $this->getContainer()->get('paypal_unified.logger_service'),
+            $this->getContainer()->get('paypal_unified.payment_status_service')
         );
 
         static::assertInstanceOf(AuthorizationVoided::class, $instance);
@@ -45,8 +47,8 @@ class AuthorizationVoidedTest extends TestCase
     public function testInvokeReturnsTrueBecauseTheOrderStatusHasBeenUpdated()
     {
         $instance = new AuthorizationVoided(
-            Shopware()->Container()->get('paypal_unified.logger_service'),
-            Shopware()->Container()->get('paypal_unified.payment_status_service')
+            $this->getContainer()->get('paypal_unified.logger_service'),
+            $this->getContainer()->get('paypal_unified.payment_status_service')
         );
 
         static::assertTrue($instance->invoke($this->getWebhookStruct()));
@@ -60,8 +62,8 @@ class AuthorizationVoidedTest extends TestCase
     public function testInvokeReturnsFalseBecauseTheOrderDoesNotExist()
     {
         $instance = new AuthorizationVoided(
-            Shopware()->Container()->get('paypal_unified.logger_service'),
-            Shopware()->Container()->get('paypal_unified.payment_status_service')
+            $this->getContainer()->get('paypal_unified.logger_service'),
+            $this->getContainer()->get('paypal_unified.payment_status_service')
         );
 
         static::assertFalse($instance->invoke($this->getWebhookStruct('ORDER_NOT_AVAILABLE')));
@@ -70,8 +72,8 @@ class AuthorizationVoidedTest extends TestCase
     public function testGetEventTypeIsCorrect()
     {
         $instance = new AuthorizationVoided(
-            Shopware()->Container()->get('paypal_unified.logger_service'),
-            Shopware()->Container()->get('paypal_unified.payment_status_service')
+            $this->getContainer()->get('paypal_unified.logger_service'),
+            $this->getContainer()->get('paypal_unified.payment_status_service')
         );
         static::assertSame(WebhookEventTypes::PAYMENT_AUTHORIZATION_VOIDED, $instance->getEventType());
     }
@@ -79,8 +81,8 @@ class AuthorizationVoidedTest extends TestCase
     public function testInvokeWillReturnFalseWithoutActiveEntityManager()
     {
         $instance = new AuthorizationVoided(
-            Shopware()->Container()->get('paypal_unified.logger_service'),
-            new PaymentStatusService(new EntityManagerMock())
+            $this->getContainer()->get('paypal_unified.logger_service'),
+            new PaymentStatusService(new EntityManagerMock(), $this->getContainer()->get('paypal_unified.logger_service'))
         );
 
         static::assertFalse($instance->invoke($this->getWebhookStruct(self::TEST_ORDER_ID)));

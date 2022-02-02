@@ -29,6 +29,7 @@ use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\PayPalOrderParamete
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\PayPalOrderParameterFacadeInterface;
 use SwagPaymentPayPalUnified\Components\Services\Common\CartPersister;
 use SwagPaymentPayPalUnified\Components\Services\DispatchValidation;
+use SwagPaymentPayPalUnified\Components\Services\LoggerService;
 use SwagPaymentPayPalUnified\Components\Services\OrderBuilder\OrderFactory;
 use SwagPaymentPayPalUnified\Components\Services\PaymentControllerHelper;
 use SwagPaymentPayPalUnified\Components\Services\Validation\RedirectDataBuilder;
@@ -137,6 +138,8 @@ class PaypalUnifiedV2Test extends TestCase
         $dispatchValidation->method('isInvalid')
             ->willReturn($isValidDispatch);
 
+        $logger = $this->createMock(LoggerService::class);
+
         $container = $this->createMock(Container::class);
         $container->method('get')
             ->willReturnMap([
@@ -152,6 +155,7 @@ class PaypalUnifiedV2Test extends TestCase
                 ['paypal_unified.paypal_order_parameter_facade', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $orderParameterFacade],
                 ['paypal_unified.dispatch_validation', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $dispatchValidation],
                 ['paypal_unified.order_factory', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $orderFactory],
+                ['swag_payment_pay_pal_unified.logger', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $logger],
             ]);
 
         $controller = $this->getController($container);

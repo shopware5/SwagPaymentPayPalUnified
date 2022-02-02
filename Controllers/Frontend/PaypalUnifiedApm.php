@@ -23,6 +23,8 @@ class Shopware_Controllers_Frontend_PaypalUnifiedApm extends AbstractPaypalPayme
 {
     public function indexAction()
     {
+        $this->logger->debug(sprintf('%s START', __METHOD__));
+
         $session = $this->dependencyProvider->getSession();
 
         $shopwareSessionOrderData = $session->get('sOrderVariables');
@@ -55,7 +57,11 @@ class Shopware_Controllers_Frontend_PaypalUnifiedApm extends AbstractPaypalPayme
         $payPalOrderData = $this->orderFactory->createOrder($orderParams);
 
         try {
+            $this->logger->debug(sprintf('%s BEFORE CREATE PAYPAL ORDER', __METHOD__));
+
             $payPalOrder = $this->orderResource->create($payPalOrderData, $orderParams->getPaymentType(), PartnerAttributionId::PAYPAL_ALL_V2, false);
+
+            $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFUL CREATED - ID: %d', __METHOD__, $payPalOrder->getId()));
         } catch (RequestException $exception) {
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
                 ->setCode(ErrorCodes::COMMUNICATION_FAILURE)
@@ -74,7 +80,11 @@ class Shopware_Controllers_Frontend_PaypalUnifiedApm extends AbstractPaypalPayme
             return;
         }
 
-        $this->redirect($this->getUrl($payPalOrder, Link::RELATION_PAYER_ACTION_REQUIRED));
+        $url = $this->getUrl($payPalOrder, Link::RELATION_PAYER_ACTION_REQUIRED);
+
+        $this->logger->debug(sprintf('%s REDIRECT TO: %s', __METHOD__, $url));
+
+        $this->redirect($url);
     }
 
     /**
@@ -86,11 +96,17 @@ class Shopware_Controllers_Frontend_PaypalUnifiedApm extends AbstractPaypalPayme
      */
     public function returnAction()
     {
+        $this->logger->debug(sprintf('%s START', __METHOD__));
+
         $request = $this->Request();
         $payPalOrderId = $request->getParam('token');
 
         try {
+            $this->logger->debug(sprintf('%s GET PAYPAL ORDER WITH ID: %s', __METHOD__, $payPalOrderId));
+
             $payPalOrder = $this->orderResource->get($payPalOrderId);
+
+            $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFULLY LOADED', __METHOD__));
         } catch (RequestException $exception) {
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
                 ->setCode(ErrorCodes::COMMUNICATION_FAILURE)
@@ -120,6 +136,8 @@ class Shopware_Controllers_Frontend_PaypalUnifiedApm extends AbstractPaypalPayme
 
         $sendShopwareOrderNumber = $this->getSendOrdernumber();
 
+        $this->logger->debug(sprintf('%s SEND SHOPWARE ORDERNUMBER: %s', __METHOD__, $sendShopwareOrderNumber ? 'TRUE' : 'FALSE'));
+
         if ($sendShopwareOrderNumber) {
             $shopwareOrderNumber = (string) $this->saveOrder($payPalOrderId, $payPalOrderId, PaymentStatus::PAYMENT_STATUS_OPEN);
             $this->orderDataService->applyPaymentTypeAttribute($shopwareOrderNumber, $this->getPaymentType($payPalOrder));
@@ -132,7 +150,11 @@ class Shopware_Controllers_Frontend_PaypalUnifiedApm extends AbstractPaypalPayme
             $invoiceIdPatch->setPath(OrderAddInvoiceIdPatch::PATH);
 
             try {
+                $this->logger->debug(sprintf('%s UPDATE PAYPAL ORDER WITH ID: %s', __METHOD__, $payPalOrderId));
+
                 $this->orderResource->update([$invoiceIdPatch], $payPalOrder->getId(), PaymentType::PAYPAL_CLASSIC_V2);
+
+                $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFULLY UPDATED', __METHOD__));
             } catch (RequestException $exception) {
                 $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
                     ->setCode(ErrorCodes::COMMUNICATION_FAILURE)
@@ -147,10 +169,18 @@ class Shopware_Controllers_Frontend_PaypalUnifiedApm extends AbstractPaypalPayme
         try {
             if ($this->settingsService->get(SettingsServiceInterface::SETTING_INTENT) === PaymentIntentV2::CAPTURE
                 && strtolower($payPalOrder->getStatus()) !== PaymentStatus::PAYMENT_COMPLETED) {
+                $this->logger->debug(sprintf('%s CAPTURE PAYPAL ORDER WITH ID: %s', __METHOD__, $payPalOrderId));
+
                 $this->orderResource->capture($payPalOrder->getId(), PartnerAttributionId::PAYPAL_ALL_V2, false);
+
+                $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFULLY CAPTURED', __METHOD__));
             } elseif ($this->settingsService->get(SettingsServiceInterface::SETTING_INTENT) === PaymentIntentV2::AUTHORIZE
                 && strtolower($payPalOrder->getStatus()) !== PaymentStatus::PAYMENT_COMPLETED) {
+                $this->logger->debug(sprintf('%s AUTHORIZE PAYPAL ORDER WITH ID: %s', __METHOD__, $payPalOrderId));
+
                 $this->orderResource->authorize($payPalOrder->getId(), PartnerAttributionId::PAYPAL_ALL_V2, false);
+
+                $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFULLY AUTHORIZED', __METHOD__));
             }
         } catch (RequestException $exception) {
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
@@ -170,6 +200,8 @@ class Shopware_Controllers_Frontend_PaypalUnifiedApm extends AbstractPaypalPayme
             return;
         }
 
+        $this->logger->debug(sprintf('%s SEND SHOPWARE ORDERNUMBER: %s', __METHOD__, $sendShopwareOrderNumber ? 'TRUE' : 'FALSE'));
+
         if (!$sendShopwareOrderNumber) {
             $shopwareOrderNumber = (string) $this->createShopwareOrder($payPalOrderId, $this->getPaymentType($payPalOrder));
         }
@@ -177,10 +209,14 @@ class Shopware_Controllers_Frontend_PaypalUnifiedApm extends AbstractPaypalPayme
         if ($this->Request()->isXmlHttpRequest()) {
             $this->view->assign('paypalOrderId', $payPalOrderId);
 
+            $this->logger->debug(sprintf('%s IS XHR REQUEST', __METHOD__));
+
             return;
         }
 
         if ($this->isPaymentCompleted($payPalOrderId)) {
+            $this->logger->debug(sprintf('%s REDIRECT TO checkout/finish', __METHOD__));
+
             $this->redirect([
                 'module' => 'frontend',
                 'controller' => 'checkout',

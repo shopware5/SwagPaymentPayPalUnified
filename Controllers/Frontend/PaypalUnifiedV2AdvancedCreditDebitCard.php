@@ -15,12 +15,16 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2AdvancedCreditDebitCard exten
      */
     public function indexAction()
     {
+        $this->logger->debug(sprintf('%s START', __METHOD__));
+
         $session = $this->container->get('session');
 
         $paypalOrderId = $session->offsetGet('paypalOrderId');
 
         if ($this->isPaymentCompleted($paypalOrderId)) {
             $session->offsetUnset('paypalOrderId');
+
+            $this->logger->debug(sprintf('%s REDIRECT TO checkout/finish', __METHOD__));
 
             $this->redirect([
                 'module' => 'frontend',

@@ -65,6 +65,7 @@
                  class="SwagPaymentPayPalUnified\Components\Services\PaymentStatusService"
                  public="true">
             <argument type="service" id="models"/>
+            <argument type="service" id="paypal_unified.logger_service"/>
         </service>
 
         <service id="paypal_unified.settings_service"

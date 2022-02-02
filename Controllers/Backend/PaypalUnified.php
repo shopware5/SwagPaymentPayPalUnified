@@ -20,6 +20,7 @@ use SwagPaymentPayPalUnified\Components\PaymentStatus;
 use SwagPaymentPayPalUnified\Components\Services\PaymentStatusService;
 use SwagPaymentPayPalUnified\Models\Settings\AdvancedCreditDebitCard;
 use SwagPaymentPayPalUnified\Models\Settings\PayUponInvoice;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\AuthorizationResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\CaptureResource;
@@ -48,7 +49,7 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
     protected $exceptionHandler;
 
     /**
-     * @var array
+     * @var array<int, string>
      */
     protected $filterFields = [
         'number',
@@ -58,12 +59,18 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
     ];
 
     /**
+     * @var LoggerServiceInterface
+     */
+    private $logger;
+
+    /**
      * {@inheritdoc}
      */
     public function preDispatch()
     {
         $this->exceptionHandler = $this->container->get('paypal_unified.exception_handler_service');
         $this->container->get('paypal_unified.backend.shop_registration_service')->registerShopById((int) $this->request->getParam('shopId'));
+        $this->logger = $this->container->get('paypal_unified.logger_service');
 
         parent::preDispatch();
     }
@@ -313,6 +320,8 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
         $nonce = (string) $this->request->getParam('nonce');
         $sandbox = (bool) $this->request->getParam('sandbox');
 
+        $this->logger->debug(sprintf('%s START', __METHOD__));
+
         /** @var CredentialsService $credentialsService */
         $credentialsService = $this->get('paypal_unified.backend.credentials_service');
 
@@ -450,6 +459,8 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
      */
     private function updateOnboardingStatus($shopId, $sandbox, $onboardingCompleted)
     {
+        $this->logger->debug(sprintf('%s START', __METHOD__));
+
         $entityManager = $this->container->get('models');
         $settingsService = $this->container->get('paypal_unified.settings_service');
 
@@ -464,12 +475,18 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
         ];
 
         if (!$puiSettings instanceof PayUponInvoice) {
+            $this->logger->debug(sprintf('%s CREATE NEW %s SETTINGS OBJECT', __METHOD__, PayUponInvoice::class));
+
             $puiSettings = (new PayUponInvoice())->fromArray($defaultSettings);
         }
 
         if (!$acdcSettings instanceof AdvancedCreditDebitCard) {
+            $this->logger->debug(sprintf('%s CREATE NEW %s SETTINGS OBJECT', __METHOD__, AdvancedCreditDebitCard::class));
+
             $acdcSettings = (new AdvancedCreditDebitCard())->fromArray($defaultSettings);
         }
+
+        $this->logger->debug(sprintf('%s IS SANDBOX: %s', __METHOD__, $sandbox ? 'TRUE' : 'FALSE'));
 
         if ($sandbox) {
             $puiSettings->setSandboxOnboardingCompleted($onboardingCompleted);
@@ -483,6 +500,8 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
         $entityManager->persist($acdcSettings);
 
         $entityManager->flush();
+
+        $this->logger->debug(sprintf('%s ONBOARDING STATUS SUCCESSFUL UPDATED', __METHOD__));
     }
 
     /**

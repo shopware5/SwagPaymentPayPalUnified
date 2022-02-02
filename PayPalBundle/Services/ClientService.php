@@ -98,6 +98,8 @@ class ClientService
      */
     public function configure(array $settings)
     {
+        $this->logger->debug(sprintf('%s CONFIGURE', __METHOD__), $settings);
+
         $this->shopId = (int) $settings['shopId'];
         $sandbox = $settings['sandbox'];
 
@@ -263,8 +265,12 @@ class ClientService
         }
 
         try {
+            $this->logger->debug(sprintf('%s CREATE AUTHENTICATION, WITH CREDENTIALS: %s', __METHOD__, $credentials->toString()));
+
             $token = $this->tokenService->getToken($this, $credentials, $shopId);
             $this->setHeader('Authorization', $token->getTokenType() . ' ' . $token->getAccessToken());
+
+            $this->logger->debug(sprintf('%s %s', __METHOD__, 'AUTHENTICATION SUCCESSFUL CREATED'));
         } catch (RequestException $requestException) {
             $this->logger->error('Could not create authentication - request exception', [
                 'payload' => $requestException->getBody(),

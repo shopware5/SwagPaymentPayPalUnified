@@ -51,4 +51,8 @@ class LoggerMock implements LoggerServiceInterface
     {
         return $this->errors;
     }
+
+    public function debug($message, array $context = [])
+    {
+    }
 }

@@ -16,6 +16,7 @@ use SwagPaymentPayPalUnified\Components\Services\ExpressCheckout\CustomerService
 use SwagPaymentPayPalUnified\Components\Services\OrderBuilder\OrderFactory;
 use SwagPaymentPayPalUnified\Components\Services\PaymentControllerHelper;
 use SwagPaymentPayPalUnified\Components\Services\Validation\RedirectDataBuilderFactory;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\PartnerAttributionId;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\OrderResource;
@@ -60,6 +61,11 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout extends Shopwa
      */
     private $orderFactory;
 
+    /**
+     * @var LoggerServiceInterface
+     */
+    private $logger;
+
     public function preDispatch()
     {
         $this->Front()->Plugins()->ViewRenderer()->setNoRender();
@@ -73,10 +79,13 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout extends Shopwa
         $this->payPalOrderParameterFacade = $this->get('paypal_unified.paypal_order_parameter_facade');
         $this->exceptionHandler = $this->get('paypal_unified.exception_handler_service');
         $this->orderFactory = $this->get('paypal_unified.order_factory');
+        $this->logger = $this->get('swag_payment_pay_pal_unified.logger');
     }
 
     public function createOrderAction()
     {
+        $this->logger->debug(sprintf('%s START', __METHOD__));
+
         //If the PayPal express button on the detail page was clicked, the addProduct equals true.
         //That means, that it has to be added manually to the basket.
         if ($this->Request()->getParam('addProduct') !== null) {
@@ -91,9 +100,13 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout extends Shopwa
         $orderParams = $this->payPalOrderParameterFacade->createPayPalOrderParameter(PaymentType::PAYPAL_EXPRESS_V2, $shopwareOrderData);
 
         try {
+            $this->logger->debug(sprintf('%s BEFORE CREATE PAYPAL ORDER', __METHOD__));
+
             $payPalOrderData = $this->orderFactory->createOrder($orderParams);
 
             $payPalOrder = $this->orderResource->create($payPalOrderData, $orderParams->getPaymentType(), PartnerAttributionId::PAYPAL_ALL_V2, false);
+
+            $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFUL CREATED: ID: %d', __METHOD__, $payPalOrder->getId()));
         } catch (RequestException $exception) {
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
                 ->setCode(ErrorCodes::COMMUNICATION_FAILURE)
@@ -116,10 +129,16 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout extends Shopwa
 
     public function onApproveAction()
     {
+        $this->logger->debug(sprintf('%s START', __METHOD__));
+
         $payPalOrderId = $this->Request()->get('orderID');
 
         try {
+            $this->logger->debug(sprintf('%s GET PAYPAL ORDER WITH ID: %s', __METHOD__, $payPalOrderId));
+
             $payPalOrder = $this->orderResource->get($payPalOrderId);
+
+            $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFULLY LOADED', __METHOD__));
         } catch (\Exception $exception) {
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
                 ->setCode(ErrorCodes::UNKNOWN)
@@ -132,6 +151,8 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout extends Shopwa
 
         /** @var CustomerService $customerService */
         $customerService = $this->get('paypal_unified.express_checkout.customer_service');
+
+        $this->logger->debug(sprintf('%s CREATE NEW CUSTOMER FOR PAYPAL ORDER WITH ID: %s', __METHOD__, $payPalOrderId));
         $customerService->createNewCustomer($payPalOrder);
 
         $this->view->assign([
@@ -153,12 +174,21 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout extends Shopwa
 
     private function addProductToCart()
     {
+        $this->logger->debug(sprintf('%s START', __METHOD__));
+
         /** @var sBasket $basketModule */
         $basketModule = $this->dependencyProvider->getModule('basket');
         $request = $this->Request();
+        $productNumber = $request->getParam('productNumber');
+        $qantity = (int) $request->getParam('productQuantity');
+
+        $this->logger->debug(sprintf('%s DELETE BASKET', __METHOD__));
 
         $basketModule->sDeleteBasket();
-        $basketModule->sAddArticle($request->getParam('productNumber'), $request->getParam('productQuantity'));
+
+        $this->logger->debug(sprintf('%s ADD PRODUCT WITH NUMBER: %s AND QUANTITY: %d', __METHOD__, $productNumber, $qantity));
+
+        $basketModule->sAddArticle($request->getParam('productNumber'), $qantity);
 
         // add potential discounts or surcharges to prevent an amount mismatch
         // on patching the new amount after the confirmation.
@@ -168,6 +198,10 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout extends Shopwa
         $countries = $admin->sGetCountryList();
         $admin->sGetPremiumShippingcosts(\reset($countries));
 
+        $this->logger->debug(sprintf('%s REFRESH BASKET', __METHOD__));
+
         $basketModule->sRefreshBasket();
+
+        $this->logger->debug(sprintf('%s PRODUCT SUCCESSFUL ADDED', __METHOD__));
     }
 }

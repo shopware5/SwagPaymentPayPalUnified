@@ -29,6 +29,7 @@
             <argument type="service" id="front"/>
             <argument type="service" id="paypal_unified.dependency_provider"/>
             <argument type="service" id="paypal_unified.payment_method_provider"/>
+            <argument type="service" id="paypal_unified.logger_service"/>
         </service>
     </services>
 </container>

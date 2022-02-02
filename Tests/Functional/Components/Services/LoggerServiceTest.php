@@ -9,6 +9,7 @@
 namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services;
 
 use PHPUnit\Framework\TestCase;
+use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\SettingsHelperTrait;
 
@@ -16,6 +17,7 @@ class LoggerServiceTest extends TestCase
 {
     use DatabaseTestCaseTrait;
     use SettingsHelperTrait;
+    use ContainerTrait;
 
     public function testWarningReturnsWithoutSettings()
     {
@@ -24,7 +26,7 @@ class LoggerServiceTest extends TestCase
         //Reset the logfile
         \file_put_contents($fileName, '');
 
-        $loggerService = Shopware()->Container()->get('paypal_unified.logger_service');
+        $loggerService = $this->getContainer()->get('paypal_unified.logger_service');
 
         $loggerService->warning('Test message');
 
@@ -39,7 +41,7 @@ class LoggerServiceTest extends TestCase
         //Reset the logfile
         \file_put_contents($fileName, '');
 
-        $loggerService = Shopware()->Container()->get('paypal_unified.logger_service');
+        $loggerService = $this->getContainer()->get('paypal_unified.logger_service');
 
         $this->insertTestSettings(2);
 
@@ -56,9 +58,10 @@ class LoggerServiceTest extends TestCase
         //Reset the logfile
         \file_put_contents($fileName, '');
 
-        $loggerService = Shopware()->Container()->get('paypal_unified.logger_service');
-
         $this->insertTestSettings();
+
+        $this->getContainer()->reset('paypal_unified.logger_service');
+        $loggerService = $this->getContainer()->get('paypal_unified.logger_service');
 
         $loggerService->warning('Test message');
 
@@ -81,7 +84,8 @@ class LoggerServiceTest extends TestCase
         //Reset the logfile
         \file_put_contents($fileName, '');
 
-        $loggerService = Shopware()->Container()->get('paypal_unified.logger_service');
+        $this->getContainer()->reset('paypal_unified.logger_service');
+        $loggerService = $this->getContainer()->get('paypal_unified.logger_service');
 
         $loggerService->notify('Test message');
 
@@ -96,7 +100,7 @@ class LoggerServiceTest extends TestCase
         //Reset the logfile
         \file_put_contents($fileName, '');
 
-        $loggerService = Shopware()->Container()->get('paypal_unified.logger_service');
+        $loggerService = $this->getContainer()->get('paypal_unified.logger_service');
 
         $this->insertTestSettings(2);
 
@@ -113,9 +117,10 @@ class LoggerServiceTest extends TestCase
         //Reset the logfile
         \file_put_contents($fileName, '');
 
-        $loggerService = Shopware()->Container()->get('paypal_unified.logger_service');
-
         $this->insertTestSettings();
+
+        $this->getContainer()->reset('paypal_unified.logger_service');
+        $loggerService = $this->getContainer()->get('paypal_unified.logger_service');
 
         $loggerService->notify('Test message');
 
@@ -138,7 +143,7 @@ class LoggerServiceTest extends TestCase
         //Reset the logfile
         \file_put_contents($fileName, '');
 
-        $loggerService = Shopware()->Container()->get('paypal_unified.logger_service');
+        $loggerService = $this->getContainer()->get('paypal_unified.logger_service');
 
         $loggerService->error('A very fatal error');
 
@@ -168,7 +173,7 @@ class LoggerServiceTest extends TestCase
      */
     private function getLogfile()
     {
-        $env = Shopware()->Container()->getParameter('kernel.environment');
+        $env = $this->getContainer()->getParameter('kernel.environment');
 
         $fileName = __DIR__ . '/../../../../../../../var/log/plugin_' . $env . '-' . \date('Y-m-d') . '.log';
 

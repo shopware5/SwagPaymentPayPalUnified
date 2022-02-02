@@ -21,29 +21,32 @@ use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Payee;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Shipping;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Shipping\Address as ShippingAddress;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Shipping\Name as ShippingName;
+use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 
 class CustomerServiceTest extends TestCase
 {
     use DatabaseTestCaseTrait;
+    use ContainerTrait;
 
     public function testServiceIsAvailable()
     {
-        $service = Shopware()->Container()->get('paypal_unified.express_checkout.customer_service');
+        $service = $this->getContainer()->get('paypal_unified.express_checkout.customer_service');
         static::assertSame(CustomerService::class, \get_class($service));
     }
 
     public function testConstruct()
     {
         $service = new CustomerService(
-            Shopware()->Container()->get('config'),
-            Shopware()->Container()->get('dbal_connection'),
-            Shopware()->Container()->get('shopware.form.factory'),
-            Shopware()->Container()->get('shopware_storefront.context_service'),
-            Shopware()->Container()->get('shopware_account.register_service'),
-            Shopware()->Container()->get('front'),
-            Shopware()->Container()->get('paypal_unified.dependency_provider'),
-            Shopware()->Container()->get('paypal_unified.payment_method_provider')
+            $this->getContainer()->get('config'),
+            $this->getContainer()->get('dbal_connection'),
+            $this->getContainer()->get('shopware.form.factory'),
+            $this->getContainer()->get('shopware_storefront.context_service'),
+            $this->getContainer()->get('shopware_account.register_service'),
+            $this->getContainer()->get('front'),
+            $this->getContainer()->get('paypal_unified.dependency_provider'),
+            $this->getContainer()->get('paypal_unified.payment_method_provider'),
+            $this->getContainer()->get('paypal_unified.logger_service')
         );
 
         static::assertNotNull($service);
@@ -120,7 +123,7 @@ class CustomerServiceTest extends TestCase
         static::assertSame('Shopware', $user['firstname']);
         static::assertSame('PHPUnit', $user['lastname']);
 
-        static::assertNotNull(Shopware()->Container()->get('session')->get('sUserId'));
+        static::assertNotNull($this->getContainer()->get('session')->get('sUserId'));
     }
 
     /**
@@ -130,7 +133,7 @@ class CustomerServiceTest extends TestCase
      */
     private function getUserByMail($mail = 'phpunit@test.com')
     {
-        $db = Shopware()->Container()->get('dbal_connection');
+        $db = $this->getContainer()->get('dbal_connection');
 
         $sql = 'SELECT * FROM s_user WHERE email=:emailAddress';
 
@@ -147,6 +150,6 @@ class CustomerServiceTest extends TestCase
      */
     private function getCustomerService()
     {
-        return Shopware()->Container()->get('paypal_unified.express_checkout.customer_service');
+        return $this->getContainer()->get('paypal_unified.express_checkout.customer_service');
     }
 }

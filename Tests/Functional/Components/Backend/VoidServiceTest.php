@@ -14,6 +14,7 @@ use SwagPaymentPayPalUnified\Components\Backend\VoidService;
 use SwagPaymentPayPalUnified\Components\PaymentStatus;
 use SwagPaymentPayPalUnified\Components\Services\ExceptionHandlerService;
 use SwagPaymentPayPalUnified\Components\Services\PaymentStatusService;
+use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Mocks\AuthorizationResourceMock;
 use SwagPaymentPayPalUnified\Tests\Mocks\LoggerMock;
@@ -23,6 +24,7 @@ class VoidServiceTest extends TestCase
 {
     use DatabaseTestCaseTrait;
     use OrderTrait;
+    use ContainerTrait;
 
     const CURRENCY = CaptureServiceTest::CURRENCY;
 
@@ -31,8 +33,8 @@ class VoidServiceTest extends TestCase
      */
     public function before()
     {
-        $this->modelManager = Shopware()->Container()->get('models');
-        $this->connection = Shopware()->Container()->get('dbal_connection');
+        $this->modelManager = $this->getContainer()->get('models');
+        $this->connection = $this->getContainer()->get('dbal_connection');
     }
 
     public function testVoidOrder()
@@ -91,7 +93,7 @@ class VoidServiceTest extends TestCase
             ),
             new AuthorizationResourceMock(),
             new OrderResourceMock(),
-            new PaymentStatusService($this->modelManager)
+            new PaymentStatusService($this->modelManager, $this->getContainer()->get('paypal_unified.logger_service'))
         );
     }
 }

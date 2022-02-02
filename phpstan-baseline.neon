@@ -261,36 +261,6 @@ parameters:
 			path: Components/Services/Legacy/LegacyService.php
 
 		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\LoggerService\\:\\:error\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Components/Services/LoggerService.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\LoggerService\\:\\:error\\(\\) has parameter \\$context with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: Components/Services/LoggerService.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\LoggerService\\:\\:notify\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Components/Services/LoggerService.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\LoggerService\\:\\:notify\\(\\) has parameter \\$context with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: Components/Services/LoggerService.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\LoggerService\\:\\:warning\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Components/Services/LoggerService.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\LoggerService\\:\\:warning\\(\\) has parameter \\$context with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: Components/Services/LoggerService.php
-
-		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\OrderBuilder\\\\OrderFactory\\:\\:addHandler\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: Components/Services/OrderBuilder/OrderFactory.php
@@ -621,6 +591,16 @@ parameters:
 			path: Components/Services/Validation/SimpleBasketValidator.php
 
 		-
+			message: "#^Cannot access offset 'orderStatus' on array\\<string, mixed\\>\\|Shopware\\\\Components\\\\Model\\\\ModelEntity\\.$#"
+			count: 2
+			path: Controllers/Backend/PaypalUnified.php
+
+		-
+			message: "#^Cannot access offset 'paymentStatus' on array\\<string, mixed\\>\\|Shopware\\\\Components\\\\Model\\\\ModelEntity\\.$#"
+			count: 2
+			path: Controllers/Backend/PaypalUnified.php
+
+		-
 			message: "#^Class Shopware_Controllers_Backend_PaypalUnified extends generic class Shopware_Controllers_Backend_Application but does not specify its types\\: TEntityClass$#"
 			count: 1
 			path: Controllers/Backend/PaypalUnified.php
@@ -646,42 +626,7 @@ parameters:
 			path: Controllers/Backend/PaypalUnified.php
 
 		-
-			message: "#^Method Shopware_Controllers_Backend_PaypalUnified\\:\\:getFilterConditions\\(\\) has parameter \\$filters with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: Controllers/Backend/PaypalUnified.php
-
-		-
-			message: "#^Method Shopware_Controllers_Backend_PaypalUnified\\:\\:getFilterConditions\\(\\) has parameter \\$whiteList with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: Controllers/Backend/PaypalUnified.php
-
-		-
-			message: "#^Method Shopware_Controllers_Backend_PaypalUnified\\:\\:getFilterConditions\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: Controllers/Backend/PaypalUnified.php
-
-		-
-			message: "#^Method Shopware_Controllers_Backend_PaypalUnified\\:\\:getList\\(\\) has parameter \\$filter with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: Controllers/Backend/PaypalUnified.php
-
-		-
-			message: "#^Method Shopware_Controllers_Backend_PaypalUnified\\:\\:getList\\(\\) has parameter \\$sort with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: Controllers/Backend/PaypalUnified.php
-
-		-
-			message: "#^Method Shopware_Controllers_Backend_PaypalUnified\\:\\:getList\\(\\) has parameter \\$wholeParams with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: Controllers/Backend/PaypalUnified.php
-
-		-
-			message: "#^Method Shopware_Controllers_Backend_PaypalUnified\\:\\:getList\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: Controllers/Backend/PaypalUnified.php
-
-		-
-			message: "#^Method Shopware_Controllers_Backend_PaypalUnified\\:\\:getModelFields\\(\\) return type has no value type specified in iterable type array\\.$#"
+			message: "#^Method Shopware_Controllers_Backend_PaypalUnified\\:\\:getFilterConditions\\(\\) should return array\\<array\\{property\\: string, operator\\: string\\|null, value\\: mixed, expression\\?\\: string\\}\\> but returns non\\-empty\\-array\\<array\\{property\\: string, operator\\?\\: string\\|null, value\\: mixed, expression\\?\\: string\\}\\>\\.$#"
 			count: 1
 			path: Controllers/Backend/PaypalUnified.php
 
@@ -736,17 +681,7 @@ parameters:
 			path: Controllers/Backend/PaypalUnified.php
 
 		-
-			message: "#^Property Shopware_Controllers_Backend_PaypalUnified\\:\\:\\$filterFields type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: Controllers/Backend/PaypalUnified.php
-
-		-
 			message: "#^Class Shopware_Controllers_Backend_PaypalUnifiedExpressSettings extends generic class Shopware_Controllers_Backend_Application but does not specify its types\\: TEntityClass$#"
-			count: 1
-			path: Controllers/Backend/PaypalUnifiedExpressSettings.php
-
-		-
-			message: "#^Method Shopware_Controllers_Backend_PaypalUnifiedExpressSettings\\:\\:detailAction\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: Controllers/Backend/PaypalUnifiedExpressSettings.php
 
@@ -756,32 +691,12 @@ parameters:
 			path: Controllers/Backend/PaypalUnifiedGeneralSettings.php
 
 		-
-			message: "#^Method Shopware_Controllers_Backend_PaypalUnifiedGeneralSettings\\:\\:detailAction\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Controllers/Backend/PaypalUnifiedGeneralSettings.php
-
-		-
 			message: "#^Class Shopware_Controllers_Backend_PaypalUnifiedInstallmentsSettings extends generic class Shopware_Controllers_Backend_Application but does not specify its types\\: TEntityClass$#"
 			count: 1
 			path: Controllers/Backend/PaypalUnifiedInstallmentsSettings.php
 
 		-
-			message: "#^Method Shopware_Controllers_Backend_PaypalUnifiedInstallmentsSettings\\:\\:detailAction\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Controllers/Backend/PaypalUnifiedInstallmentsSettings.php
-
-		-
-			message: "#^Method Shopware_Controllers_Backend_PaypalUnifiedPayUponInvoiceSettings\\:\\:detailAction\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Controllers/Backend/PaypalUnifiedPayUponInvoiceSettings.php
-
-		-
 			message: "#^Class Shopware_Controllers_Backend_PaypalUnifiedPlusSettings extends generic class Shopware_Controllers_Backend_Application but does not specify its types\\: TEntityClass$#"
-			count: 1
-			path: Controllers/Backend/PaypalUnifiedPlusSettings.php
-
-		-
-			message: "#^Method Shopware_Controllers_Backend_PaypalUnifiedPlusSettings\\:\\:detailAction\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: Controllers/Backend/PaypalUnifiedPlusSettings.php
 
@@ -1259,36 +1174,6 @@ parameters:
 			message: "#^Method SwagPaymentPayPalUnified\\\\Models\\\\Settings\\\\Plus\\:\\:toArray\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: Models/Settings/Plus.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Components\\\\LoggerServiceInterface\\:\\:error\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: PayPalBundle/Components/LoggerServiceInterface.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Components\\\\LoggerServiceInterface\\:\\:error\\(\\) has parameter \\$context with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: PayPalBundle/Components/LoggerServiceInterface.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Components\\\\LoggerServiceInterface\\:\\:notify\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: PayPalBundle/Components/LoggerServiceInterface.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Components\\\\LoggerServiceInterface\\:\\:notify\\(\\) has parameter \\$context with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: PayPalBundle/Components/LoggerServiceInterface.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Components\\\\LoggerServiceInterface\\:\\:warning\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: PayPalBundle/Components/LoggerServiceInterface.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Components\\\\LoggerServiceInterface\\:\\:warning\\(\\) has parameter \\$context with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: PayPalBundle/Components/LoggerServiceInterface.php
 
 		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Components\\\\Patches\\\\PatchInterface\\:\\:getValue\\(\\) has no return type specified\\.$#"
@@ -6216,37 +6101,7 @@ parameters:
 			path: Tests/Mocks/DummyController.php
 
 		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Mocks\\\\LoggerMock\\:\\:error\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Mocks/LoggerMock.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Mocks\\\\LoggerMock\\:\\:error\\(\\) has parameter \\$context with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: Tests/Mocks/LoggerMock.php
-
-		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Mocks\\\\LoggerMock\\:\\:getErrors\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: Tests/Mocks/LoggerMock.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Mocks\\\\LoggerMock\\:\\:notify\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Mocks/LoggerMock.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Mocks\\\\LoggerMock\\:\\:notify\\(\\) has parameter \\$context with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: Tests/Mocks/LoggerMock.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Mocks\\\\LoggerMock\\:\\:warning\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Mocks/LoggerMock.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Mocks\\\\LoggerMock\\:\\:warning\\(\\) has parameter \\$context with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: Tests/Mocks/LoggerMock.php
 
@@ -6634,3 +6489,4 @@ parameters:
 			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Unit\\\\PayPalBundle\\\\Structs\\\\WebhookStructTest\\:\\:testToArray\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: Tests/Unit/PayPalBundle/Structs/WebhookStructTest.php
+

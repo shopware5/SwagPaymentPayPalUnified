@@ -22,6 +22,7 @@ use SwagPaymentPayPalUnified\Components\Services\OrderBuilder\OrderFactory;
 use SwagPaymentPayPalUnified\Components\Services\OrderDataService;
 use SwagPaymentPayPalUnified\Components\Services\PaymentControllerHelper;
 use SwagPaymentPayPalUnified\Components\Services\Validation\RedirectDataBuilderFactory;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
@@ -109,6 +110,11 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
      */
     protected $shopwareConfig;
 
+    /**
+     * @var LoggerServiceInterface
+     */
+    protected $logger;
+
     public function preDispatch()
     {
         $this->dependencyProvider = $this->get('paypal_unified.dependency_provider');
@@ -123,10 +129,13 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
         $this->paymentMethodProvider = $this->get('paypal_unified.payment_method_provider');
         $this->exceptionHandler = $this->get('paypal_unified.exception_handler_service');
         $this->shopwareConfig = $this->get('config');
+        $this->logger = $this->get('swag_payment_pay_pal_unified.logger');
     }
 
     public function cancelAction()
     {
+        $this->logger->debug(sprintf('%s CANCELED_BY_USER', __METHOD__));
+
         $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
             ->setCode(ErrorCodes::CANCELED_BY_USER);
 
@@ -279,12 +288,20 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
      */
     protected function isPaymentCompleted($payPalOrderId)
     {
-        $start = time();
+        $start = microtime(true);
+
+        $this->logger->debug(sprintf('%s START POLLING AT: %f', __METHOD__, $start));
 
         for ($i = 0; $i <= self::MAXIMUM_RETRIES; ++$i) {
+            $this->logger->debug(sprintf('%s POLLING TRY NR: %d AT: %f', __METHOD__, $i, microtime(true)));
+
             $paypalOrder = $this->orderResource->get($payPalOrderId);
 
             if ($paypalOrder->getStatus() === PaymentStatusV2::ORDER_COMPLETED) {
+                $currentTime = microtime(true);
+                $elapsedTime = $currentTime - $start;
+                $this->logger->debug(sprintf('%s POLLING SUCCESSFUL AFTER TRY NR: %d AT: %f AFTER: %f SECONDS', __METHOD__, $i, $currentTime, $elapsedTime));
+
                 return true;
             }
 
@@ -309,6 +326,10 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
             sleep(self::SLEEP);
         }
 
+        $currentTime = microtime(true);
+        $elapsedTime = $currentTime - $start;
+        $this->logger->debug(sprintf('%s POLLING FAILED AT: %f AFTER: %f SECONDS AND TRY NR: %d', __METHOD__, $currentTime, $elapsedTime, $i));
+
         return false;
     }
 
@@ -320,9 +341,13 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
      */
     protected function createShopwareOrder($payPalOrderId, $paymentType)
     {
+        $this->logger->debug(sprintf('%s CREATE SHOPWARE ORDER', __METHOD__));
+
         $orderNumber = (string) $this->saveOrder($payPalOrderId, $payPalOrderId, PaymentStatus::PAYMENT_STATUS_OPEN);
 
         $this->orderDataService->applyPaymentTypeAttribute($orderNumber, $paymentType);
+
+        $this->logger->debug(sprintf('%s ORDER SUCCESSFUL CREATED WITH NUMBER: %s', __METHOD__, $orderNumber));
 
         return $orderNumber;
     }

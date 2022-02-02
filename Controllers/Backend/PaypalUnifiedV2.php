@@ -7,6 +7,7 @@
  */
 
 use SwagPaymentPayPalUnified\Components\Services\ExceptionHandlerService;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\PartnerAttributionId;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Payments\Capture;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Payments\Capture\Amount;
@@ -37,6 +38,11 @@ class Shopware_Controllers_Backend_PaypalUnifiedV2 extends Shopware_Controllers_
      */
     private $authorizationResource;
 
+    /**
+     * @var LoggerServiceInterface
+     */
+    private $logger;
+
     public function preDispatch()
     {
         parent::preDispatch();
@@ -45,12 +51,15 @@ class Shopware_Controllers_Backend_PaypalUnifiedV2 extends Shopware_Controllers_
         $this->authorizationResource = $this->container->get('paypal_unified.v2.authorization_resource');
         $this->captureResource = $this->container->get('paypal_unified.v2.capture_resource');
         $this->exceptionHandler = $this->container->get('paypal_unified.exception_handler_service');
+        $this->logger = $this->container->get('paypal_unified.logger_service');
 
         $this->container->get('paypal_unified.backend.shop_registration_service')->registerShopById((int) $this->request->getParam('shopId'));
     }
 
     public function orderDetailsAction()
     {
+        $this->logger->debug(sprintf('%s START', __METHOD__));
+
         $orderId = $this->request->getParam('id');
         if ($orderId === null) {
             $this->view->assign(['success' => false, 'message' => 'There was no orderId provided']);
@@ -59,7 +68,11 @@ class Shopware_Controllers_Backend_PaypalUnifiedV2 extends Shopware_Controllers_
         }
 
         try {
+            $this->logger->debug(sprintf('%s GET PAYPAL ORDER WITH ID : %s', __METHOD__, $orderId));
+
             $paypalOrder = $this->orderResource->get($orderId);
+
+            $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFULLY LOADED', __METHOD__));
         } catch (Exception $exception) {
             $error = $this->exceptionHandler->handle($exception, 'backend/PaypalUnifiedV2/orderDetails');
             $this->view->assign(['success' => false, 'message' => $error->getCompleteMessage()]);
@@ -72,6 +85,8 @@ class Shopware_Controllers_Backend_PaypalUnifiedV2 extends Shopware_Controllers_
 
     public function captureOrderAction()
     {
+        $this->logger->debug(sprintf('%s START', __METHOD__));
+
         $authorizationId = $this->Request()->getParam('authorizationId');
         $amountToCapture = $this->Request()->getParam('amount');
         $currency = $this->Request()->getParam('currency');
@@ -86,7 +101,11 @@ class Shopware_Controllers_Backend_PaypalUnifiedV2 extends Shopware_Controllers_
         $capture->setFinalCapture($finalize);
 
         try {
+            $this->logger->debug(sprintf('%s CAPTURE PAYPAL ORDER WITH ID: %s', __METHOD__, $authorizationId));
+
             $this->authorizationResource->capture($authorizationId, $capture, PartnerAttributionId::PAYPAL_ALL_V2);
+
+            $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFULLY AUTHORIZED', __METHOD__));
         } catch (Exception $exception) {
             $payPalException = $this->exceptionHandler->handle($exception, 'backend/PaypalUnifiedV2/captureOrder');
             $this->view->assign([
@@ -103,6 +122,8 @@ class Shopware_Controllers_Backend_PaypalUnifiedV2 extends Shopware_Controllers_
 
     public function refundOrderAction()
     {
+        $this->logger->debug(sprintf('%s START', __METHOD__));
+
         $captureId = $this->request->getParam('captureId');
         $amountToRefund = $this->request->getParam('amount');
         $currency = $this->Request()->getParam('currency');
@@ -117,7 +138,11 @@ class Shopware_Controllers_Backend_PaypalUnifiedV2 extends Shopware_Controllers_
         $refund->setNoteToPayer($note);
 
         try {
+            $this->logger->debug(sprintf('%s CAPTURE PAYPAL ORDER WITH ID: %s', __METHOD__, $captureId));
+
             $this->captureResource->refund($captureId, $refund, PartnerAttributionId::PAYPAL_ALL_V2);
+
+            $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFULLY CAPTURED', __METHOD__));
         } catch (Exception $exception) {
             $payPalException = $this->exceptionHandler->handle($exception, 'backend/PaypalUnifiedV2/captureOrder');
             $this->view->assign([
@@ -134,10 +159,16 @@ class Shopware_Controllers_Backend_PaypalUnifiedV2 extends Shopware_Controllers_
 
     public function cancelAuthorizationAction()
     {
+        $this->logger->debug(sprintf('%s START', __METHOD__));
+
         $authorizationId = $this->Request()->getParam('authorizationId');
 
         try {
+            $this->logger->debug(sprintf('%s CANCEL AUTHORIZATION OF PAYPAL ORDER WITH ID: %s', __METHOD__, $authorizationId));
+
             $this->authorizationResource->void($authorizationId, PartnerAttributionId::PAYPAL_ALL_V2);
+
+            $this->logger->debug(sprintf('%s CANCEL AUTHORIZATION SUCCESSFUL', __METHOD__));
         } catch (Exception $exception) {
             $payPalException = $this->exceptionHandler->handle($exception, 'backend/PaypalUnifiedV2/captureOrder');
             $this->view->assign([

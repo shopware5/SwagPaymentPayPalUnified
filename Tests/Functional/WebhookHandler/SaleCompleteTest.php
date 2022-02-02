@@ -13,12 +13,14 @@ use SwagPaymentPayPalUnified\Components\PaymentStatus;
 use SwagPaymentPayPalUnified\Components\Services\PaymentStatusService;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\Webhook\WebhookEventTypes;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Webhook;
+use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\WebhookHandlers\SaleComplete;
 
 class SaleCompleteTest extends TestCase
 {
     use DatabaseTestCaseTrait;
+    use ContainerTrait;
 
     const TEST_ORDER_ID = '15';
 
@@ -35,8 +37,8 @@ class SaleCompleteTest extends TestCase
     public function testCanConstruct()
     {
         $instance = new SaleComplete(
-            Shopware()->Container()->get('paypal_unified.logger_service'),
-            Shopware()->Container()->get('paypal_unified.payment_status_service')
+            $this->getContainer()->get('paypal_unified.logger_service'),
+            $this->getContainer()->get('paypal_unified.payment_status_service')
         );
 
         static::assertInstanceOf(SaleComplete::class, $instance);
@@ -45,8 +47,8 @@ class SaleCompleteTest extends TestCase
     public function testInvokeReturnsTrueBecauseTheOrderStatusHasBeenUpdated()
     {
         $instance = new SaleComplete(
-            Shopware()->Container()->get('paypal_unified.logger_service'),
-            Shopware()->Container()->get('paypal_unified.payment_status_service')
+            $this->getContainer()->get('paypal_unified.logger_service'),
+            $this->getContainer()->get('paypal_unified.payment_status_service')
         );
 
         static::assertTrue($instance->invoke($this->getWebhookStruct()));
@@ -60,8 +62,8 @@ class SaleCompleteTest extends TestCase
     public function testInvokeReturnsFalseBecauseTheOrderDoesNotExist()
     {
         $instance = new SaleComplete(
-            Shopware()->Container()->get('paypal_unified.logger_service'),
-            Shopware()->Container()->get('paypal_unified.payment_status_service')
+            $this->getContainer()->get('paypal_unified.logger_service'),
+            $this->getContainer()->get('paypal_unified.payment_status_service')
         );
 
         static::assertFalse($instance->invoke($this->getWebhookStruct('ORDER_NOT_AVAILABLE')));
@@ -70,8 +72,8 @@ class SaleCompleteTest extends TestCase
     public function testGetEventTypeIsCorrect()
     {
         $instance = new SaleComplete(
-            Shopware()->Container()->get('paypal_unified.logger_service'),
-            Shopware()->Container()->get('paypal_unified.payment_status_service')
+            $this->getContainer()->get('paypal_unified.logger_service'),
+            $this->getContainer()->get('paypal_unified.payment_status_service')
         );
         static::assertSame(WebhookEventTypes::PAYMENT_SALE_COMPLETED, $instance->getEventType());
     }
@@ -79,8 +81,8 @@ class SaleCompleteTest extends TestCase
     public function testInvokeWillReturnFalseWithoutActiveEntityManager()
     {
         $instance = new SaleComplete(
-            Shopware()->Container()->get('paypal_unified.logger_service'),
-            new PaymentStatusService(new EntityManagerMock())
+            $this->getContainer()->get('paypal_unified.logger_service'),
+            new PaymentStatusService(new EntityManagerMock(), $this->getContainer()->get('paypal_unified.logger_service'))
         );
 
         static::assertFalse($instance->invoke($this->getWebhookStruct(self::TEST_ORDER_ID)));

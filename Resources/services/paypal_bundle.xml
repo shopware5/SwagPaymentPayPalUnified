@@ -21,6 +21,7 @@
                  class="SwagPaymentPayPalUnified\PayPalBundle\Services\TokenService"
                  public="true">
             <argument type="service" id="shopware.cache_manager"/>
+            <argument type="service" id="paypal_unified.logger_service"/>
         </service>
 
         <service id="paypal_unified.webhook_service"

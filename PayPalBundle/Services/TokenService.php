@@ -9,6 +9,7 @@
 namespace SwagPaymentPayPalUnified\PayPalBundle\Services;
 
 use Shopware\Components\CacheManager;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\TokenResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\OAuthCredentials;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Token;
@@ -22,9 +23,15 @@ class TokenService
      */
     private $cacheManager;
 
-    public function __construct(CacheManager $cacheManager)
+    /**
+     * @var LoggerServiceInterface
+     */
+    private $logger;
+
+    public function __construct(CacheManager $cacheManager, LoggerServiceInterface $logger)
     {
         $this->cacheManager = $cacheManager;
+        $this->logger = $logger;
     }
 
     /**
@@ -34,9 +41,11 @@ class TokenService
      */
     public function getToken(ClientService $client, OAuthCredentials $credentials, $shopId)
     {
+        $this->logger->debug(sprintf('%s GET TOKEN WITH CREDENTIALS: %s AND SHOP ID: %s', __METHOD__, $credentials->toString(), $shopId));
+
         $token = $this->getTokenFromCache($shopId);
         if ($token === false || !$this->isTokenValid($token)) {
-            $tokenResource = new TokenResource($client);
+            $tokenResource = new TokenResource($client, $this->logger);
 
             $token = Token::fromArray($tokenResource->get($credentials));
             $this->setToken($token, $shopId);
@@ -52,6 +61,8 @@ class TokenService
      */
     private function getTokenFromCache($shopId)
     {
+        $this->logger->debug(sprintf('%s GET TOKEN FROM CACHE WITH SHOP ID: %s', __METHOD__, $shopId));
+
         return \unserialize($this->cacheManager->getCoreCache()->load(self::CACHE_ID . $shopId));
     }
 
@@ -60,6 +71,8 @@ class TokenService
      */
     private function setToken(Token $token, $shopId)
     {
+        $this->logger->debug(sprintf('%s SET TOKEN WITH SHOP ID: %s', __METHOD__, $shopId));
+
         $this->cacheManager->getCoreCache()->save(\serialize($token), self::CACHE_ID . $shopId);
     }
 

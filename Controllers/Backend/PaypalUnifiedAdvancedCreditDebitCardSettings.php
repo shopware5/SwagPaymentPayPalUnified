@@ -23,7 +23,7 @@ class Shopware_Controllers_Backend_PaypalUnifiedAdvancedCreditDebitCardSettings 
     /**
      * {@inheritdoc}
      */
-    protected $alias = 'advanced-credit-debit-card';
+    protected $alias = 'advancedCreditDebitCard';
 
     /**
      * @return void
