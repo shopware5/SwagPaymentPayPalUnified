@@ -11,7 +11,7 @@ namespace SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentModels;
 use Shopware\Models\Payment\Payment;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 
-class MultiBanco implements PaymentModelInterface
+class MultiBanco extends AbstractPaymentModel
 {
     /**
      * {@inheritDoc}
@@ -19,12 +19,13 @@ class MultiBanco implements PaymentModelInterface
     public function create()
     {
         $payment = new Payment();
-        $payment->setActive(true);
+        $payment->setActive(false);
         $payment->setPosition(self::POSITION_MULTIBANCO);
         $payment->setName(PaymentMethodProviderInterface::MULTIBANCO_METHOD_NAME);
         $payment->setDescription('Multibanco');
         $payment->setAdditionalDescription($this->getDescription());
         $payment->setAction(self::ACTION_PAYPAL_APM);
+        $payment->setPlugin($this->plugin);
 
         return $payment;
     }

@@ -3,7 +3,7 @@
 Ext.define('Shopware.apps.PaypalUnified.view.sidebarV2.fields.DateTimeFieldFormatter', {
 
     /**
-     * @param value { String }
+     * @param { String } value
      *
      * @return { String }
      */

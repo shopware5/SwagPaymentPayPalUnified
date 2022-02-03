@@ -68,7 +68,7 @@ class ExceptionHandlerService implements ExceptionHandlerServiceInterface
 
         if (!$requestBody) {
             return new PayPalApiException(
-                $e->getCode(),
+                (string) $e->getCode(),
                 self::DEFAULT_MESSAGE . $exceptionMessage
             );
         }
@@ -77,7 +77,7 @@ class ExceptionHandlerService implements ExceptionHandlerServiceInterface
 
         if (!\is_array($requestBody)) {
             return new PayPalApiException(
-                $e->getCode(),
+                (string) $e->getCode(),
                 self::DEFAULT_MESSAGE . $exceptionMessage
             );
         }
@@ -95,7 +95,7 @@ class ExceptionHandlerService implements ExceptionHandlerServiceInterface
 
         if (!$errorStruct) {
             return new PayPalApiException(
-                $e->getCode(),
+                (string) $e->getCode(),
                 self::DEFAULT_MESSAGE . $exceptionMessage
             );
         }

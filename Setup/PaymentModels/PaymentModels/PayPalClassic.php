@@ -11,7 +11,7 @@ namespace SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentModels;
 use Shopware\Models\Payment\Payment;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 
-class PayPalClassic implements PaymentModelInterface
+class PayPalClassic extends AbstractPaymentModel
 {
     /**
      * {@inheritDoc}
@@ -19,12 +19,13 @@ class PayPalClassic implements PaymentModelInterface
     public function create()
     {
         $payment = new Payment();
-        $payment->setActive(true);
+        $payment->setActive(false);
         $payment->setPosition(self::POSITION_PAYPAL_CLASSIC);
         $payment->setName(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
         $payment->setDescription('PayPal');
         $payment->setAdditionalDescription($this->getUnifiedPaymentLogo() . 'Bezahlung per PayPal - einfach, schnell und sicher.');
         $payment->setAction(self::ACTION_PAYPAL_CLASSIC);
+        $payment->setPlugin($this->plugin);
 
         return $payment;
     }

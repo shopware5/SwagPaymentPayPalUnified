@@ -41,6 +41,11 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
     /**
      * @type { String }
      */
+    payUponInvoiceDetailUrl: '{url controller=PaypalUnifiedPayUponInvoiceSettings action=detail}',
+
+    /**
+     * @type { String }
+     */
     registerWebhookUrl: '{url controller=PaypalUnifiedSettings action=registerWebhook}',
 
     /**
@@ -69,6 +74,16 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
     plusRecord: null,
 
     /**
+     * @type { Shopware.apps.PaypalUnifiedSettings.model.PayUponInvoice }
+     */
+    payUponInvoiceRecord: null,
+
+    /**
+     * @type { XMLHttpRequest }
+     */
+    updateCredentialsRequest: null,
+
+    /**
      * @type { Number }
      */
     shopId: null,
@@ -78,6 +93,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
         { ref: 'plusTab', selector: 'paypal-unified-settings-tabs-paypal-plus' },
         { ref: 'installmentsTab', selector: 'paypal-unified-settings-tabs-installments' },
         { ref: 'ecTab', selector: 'paypal-unified-settings-tabs-express-checkout' },
+        { ref: 'payUponInvoiceTab', selector: 'paypal-unified-settings-tabs-pay-upon-invoice' },
     ],
 
     init: function() {
@@ -104,7 +120,12 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
                 validateAPI: me.onValidateAPISettings,
                 onChangeShopActivation: me.applyActivationState,
                 onChangeMerchantLocation: me.applyMerchantLocationState,
-                onInContextChange: me.onInContextChange
+                onInContextChange: me.onInContextChange,
+                onChangeSandboxActivation: me.applySandboxActivationState,
+                authCodeReceived: me.onAuthCodeReceivedGeneral
+            },
+            'paypal-unified-settings-tabs-pay-upon-invoice': {
+                authCodeReceived: me.onAuthCodeReceivedPayUponInvoice
             }
         });
     },
@@ -128,6 +149,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
         me.loadSetting(me.expressDetailUrl);
         me.loadSetting(me.installmentsDetailUrl);
         me.loadSetting(me.plusDetailUrl);
+        me.loadSetting(me.payUponInvoiceDetailUrl);
     },
 
     loadSetting: function(detailUrl) {
@@ -151,6 +173,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
         me.expressCheckoutRecord.save();
         me.installmentsRecord.save();
         me.plusRecord.save();
+        me.payUponInvoiceRecord.save();
     },
 
     prepareRecords: function() {
@@ -158,22 +181,26 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
             generalTab = me.getGeneralTab(),
             plusTab = me.getPlusTab(),
             installmentsTab = me.getInstallmentsTab(),
-            ecTab = me.getEcTab();
+            ecTab = me.getEcTab(),
+            payUponInvoiceTab = me.getPayUponInvoiceTab();
 
         me.generalRecord = Ext.create('Shopware.apps.PaypalUnifiedSettings.model.General');
         me.expressCheckoutRecord = Ext.create('Shopware.apps.PaypalUnifiedSettings.model.ExpressCheckout');
         me.installmentsRecord = Ext.create('Shopware.apps.PaypalUnifiedSettings.model.Installments');
         me.plusRecord = Ext.create('Shopware.apps.PaypalUnifiedSettings.model.Plus');
+        me.payUponInvoiceRecord = Ext.create('Shopware.apps.PaypalUnifiedSettings.model.PayUponInvoice');
 
         me.generalRecord.set('shopId', me.shopId);
         me.expressCheckoutRecord.set('shopId', me.shopId);
         me.installmentsRecord.set('shopId', me.shopId);
         me.plusRecord.set('shopId', me.shopId);
+        me.payUponInvoiceRecord.set('shopId', me.shopId);
 
         installmentsTab.loadRecord(me.installmentsRecord);
         generalTab.loadRecord(me.generalRecord);
         plusTab.loadRecord(me.plusRecord);
         ecTab.loadRecord(me.expressCheckoutRecord);
+        payUponInvoiceTab.loadRecord(me.payUponInvoiceRecord);
     },
 
     /**
@@ -193,7 +220,8 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
             plusSettings = me.getPlusTab().getForm().getValues(),
             installmentsSettings = me.getInstallmentsTab().getForm().getValues(),
             ecTabForm = me.getEcTab().getForm(),
-            ecSettings = ecTabForm.getValues();
+            ecSettings = ecTabForm.getValues(),
+            payUponInvoiceSettings = me.getPayUponInvoiceTab().getForm().getValues();
 
         if (!generalTabForm.isValid() || !ecTabForm.isValid()) {
             Shopware.Notification.createGrowlMessage('{s name="growl/title"}PayPal{/s}', '{s name="growl/formValidationError"}Please fill out all fields marked in red.{/s}', me.window.title);
@@ -206,6 +234,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
         me.expressCheckoutRecord.set(ecSettings);
         me.installmentsRecord.set(installmentsSettings);
         me.plusRecord.set(plusSettings);
+        me.payUponInvoiceRecord.set(payUponInvoiceSettings);
 
         me.saveRecords();
 
@@ -328,12 +357,15 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
             plusTab = me.getPlusTab(),
             installmentsTab = me.getInstallmentsTab(),
             ecTab = me.getEcTab(),
+            payUponInvoiceTab = me.getPayUponInvoiceTab(),
             settings = Ext.JSON.decode(response.responseText);
 
         if (settings.general) {
             me.generalRecord = Ext.create('Shopware.apps.PaypalUnifiedSettings.model.General', settings.general);
             generalTab.loadRecord(me.generalRecord);
             me.applyActivationState(me.generalRecord.get('active'));
+            me.applySandboxActivationState(me.generalRecord.get('sandbox'));
+
             if (me.generalRecord.get('merchantLocation') === 'other') {
                 plusTab.setDisabled(true);
                 installmentsTab.setDisabled(true);
@@ -349,6 +381,11 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
         } else if (settings.plus) {
             me.plusRecord = Ext.create('Shopware.apps.PaypalUnifiedSettings.model.Plus', settings.plus);
             plusTab.loadRecord(me.plusRecord);
+        } else if (settings['pay-upon-invoice']) {
+            me.payUponInvoiceRecord = Ext.create('Shopware.apps.PaypalUnifiedSettings.model.PayUponInvoice', settings['pay-upon-invoice']);
+            payUponInvoiceTab.loadRecord(me.payUponInvoiceRecord);
+
+            payUponInvoiceTab.refreshTabItems();
         }
 
         me.settingsSaved = false;
@@ -372,23 +409,50 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
         me.getPlusTab().setDisabled(!active);
         me.getInstallmentsTab().setDisabled(!active);
         me.getEcTab().setDisabled(!active);
+        me.getPayUponInvoiceTab().setDisabled(!active);
+
+        me.generalRecord.set('active', active);
+    },
+
+    /**
+     * A helper function that updates the UI depending on the sandbox activation state.
+     *
+     * @param { Boolean } active
+     */
+    applySandboxActivationState: function(active) {
+        var me = this,
+            generalTab = me.getGeneralTab(),
+            payUponInvoiceTab = me.getPayUponInvoiceTab();
+
+        generalTab.restLiveCredentialsContainer.setDisabled(active);
+        generalTab.restSandboxCredentialsContainer.setDisabled(!active);
+
+        generalTab.setSandbox(active);
+        payUponInvoiceTab.setSandbox(active);
+
+        generalTab.refreshOnboardingButton();
+        payUponInvoiceTab.refreshTabItems();
     },
 
     applyMerchantLocationState: function(combobox) {
         var me = this,
             generalTab = me.getGeneralTab(),
             plusTab = me.getPlusTab(),
-            installmentsTab = me.getInstallmentsTab();
+            installmentsTab = me.getInstallmentsTab(),
+            payUponInvoiceTab = me.getPayUponInvoiceTab();
 
         if (combobox.value === 'other') {
             plusTab.setDisabled(true);
             installmentsTab.setDisabled(true);
+            payUponInvoiceTab.setDisabled(true);
             me.plusRecord.set('active', false);
             me.installmentsRecord.set('active', false);
+            me.payUponInvoiceRecord.set('active', false);
             generalTab.smartPaymentButtonsCheckbox.setVisible(true);
         } else {
             plusTab.setDisabled(false);
             installmentsTab.setDisabled(false);
+            payUponInvoiceTab.setDisabled(false);
             generalTab.smartPaymentButtonsCheckbox.setVisible(false);
         }
     },
@@ -396,5 +460,120 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
     onInContextChange: function(checkbox, styleFieldSet) {
         styleFieldSet.setDisabled(!checkbox.getValue());
     },
+
+    /**
+     * @param { String } authCode
+     * @param { String } sharedId
+     * @param { String } nonce
+     * @param { String } partnerId
+     */
+    onAuthCodeReceivedGeneral: function (authCode, sharedId, nonce, partnerId) {
+        var generalTab = this.getGeneralTab();
+
+        this._onAuthCodeReceived({
+            url: generalTab.getUpdateCredentialsUrl(),
+            jsonData: {
+                shopId: this.generalRecord.get('shopId'),
+                authCode: authCode,
+                sharedId: sharedId,
+                nonce: nonce,
+                sandbox: generalTab.getSandbox(),
+                partnerId: partnerId
+            }
+        });
+    },
+
+    /**
+     * @param { String } authCode
+     * @param { String } sharedId
+     * @param { String } nonce
+     * @param { String } partnerId
+     */
+    onAuthCodeReceivedPayUponInvoice: function (authCode, sharedId, nonce, partnerId) {
+        var payUponInvoiceTab = this.getPayUponInvoiceTab();
+
+        this._onAuthCodeReceived({
+            url: payUponInvoiceTab.getUpdateCredentialsUrl(),
+            jsonData: {
+                shopId: this.payUponInvoiceRecord.get('shopId'),
+                authCode: authCode,
+                sharedId: sharedId,
+                nonce: nonce,
+                sandbox: payUponInvoiceTab.getSandbox(),
+                partnerId: partnerId
+            }
+        });
+    },
+
+    /**
+     * @param { Object } config
+     * @param { string } config.url
+     * @param { Object } config.jsonData
+     */
+    _onAuthCodeReceived: function (config) {
+        if (this.updateCredentialsRequest !== null) {
+            return;
+        }
+
+        config.success = this._onUpdateCredentialsSuccess.bind(this);
+        config.failure = this._onUpdateCredentialsFailure.bind(this);
+        config.callback = this._onUpdateCredentialsResponse.bind(this);
+
+        if (!this.generalRecord.get('clientId') && !this.generalRecord.get('sandboxClientId')) {
+            /**
+             * Save the general record, just in case the server does not already
+             * have a General-Settings-Entity where credentials have been
+             * stored.
+             */
+            this.generalRecord.save();
+        }
+
+        this.updateCredentialsRequest = Ext.Ajax.request(config);
+    },
+
+    /**
+     * @param { XMLHttpRequest } response
+     * @param { Object } options
+     *
+     * @private
+     */
+    _onUpdateCredentialsSuccess: function (response, options) {
+        this.loadSetting(this.generalDetailUrl);
+        this.loadSetting(this.payUponInvoiceDetailUrl);
+
+        this.getPayUponInvoiceTab().refreshTabItems();
+
+        PAYPAL.apps.Signup.MiniBrowser.win.close();
+    },
+
+    /**
+     * @param { XMLHttpRequest } response
+     * @param { Object } options
+     *
+     * @private
+     */
+    _onUpdateCredentialsFailure: function (response, options) {
+        Shopware.Notification.createStickyGrowlMessage(
+            {
+                title: '{s name="growl/title"}PayPal{/s}',
+                text: '{s name="growl/updateCredentialsFailure"}Your account information could not be updated automatically. Please repeat the authorisation process.{/s}'
+            },
+            me.window.title
+        );
+    },
+
+    /**
+     * Resets the updateCredentialsRequest reference after the corresponding
+     * response has been received.
+     *
+     * @param { Object } options
+     * @param { Boolean } success
+     * @param { XMLHttpRequest } response
+     *
+     * @private
+     */
+    _onUpdateCredentialsResponse: function (options, success, response) {
+        this.updateCredentialsRequest = null;
+    }
 });
 // {/block}

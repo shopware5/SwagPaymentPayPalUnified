@@ -47,7 +47,7 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebarV2.tabs.PaymentHistory', {
     },
 
     /**
-     * @param paypalOrderData { Object }
+     * @param { Object } paypalOrderData
      */
     setOrderData: function(paypalOrderData) {
         this.histroyGrid.setOrderData(paypalOrderData);
@@ -112,7 +112,7 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebarV2.tabs.PaymentHistory', {
     },
 
     /**
-     * @param paypalOrderData { Object }
+     * @param { Object } paypalOrderData
      */
     handleToolbarAndButtonVisibility: function(paypalOrderData) {
         var authorizations;
@@ -142,7 +142,7 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebarV2.tabs.PaymentHistory', {
     },
 
     /**
-     * @param paypalOrderData { Object }
+     * @param { Object } paypalOrderData
      */
     isShowCancelAuthorizationButton: function(paypalOrderData) {
         var payments = paypalOrderData.purchase_units[0].payments

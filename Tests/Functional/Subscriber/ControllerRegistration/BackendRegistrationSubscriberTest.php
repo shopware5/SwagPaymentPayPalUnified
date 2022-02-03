@@ -22,13 +22,14 @@ class BackendRegistrationSubscriberTest extends TestCase
     public function testGetSubscribedEvents()
     {
         $events = Backend::getSubscribedEvents();
-        static::assertCount(6, $events);
+        static::assertCount(7, $events);
         static::assertSame('onGetBackendControllerPath', $events['Enlight_Controller_Dispatcher_ControllerPath_Backend_PaypalUnified']);
         static::assertSame('onGetBackendSettingsControllerPath', $events['Enlight_Controller_Dispatcher_ControllerPath_Backend_PaypalUnifiedSettings']);
         static::assertSame('onGetBackendGeneralSettingsControllerPath', $events['Enlight_Controller_Dispatcher_ControllerPath_Backend_PaypalUnifiedGeneralSettings']);
         static::assertSame('onGetBackendExpressSettingsControllerPath', $events['Enlight_Controller_Dispatcher_ControllerPath_Backend_PaypalUnifiedExpressSettings']);
         static::assertSame('onGetBackendInstallmentsSettingsControllerPath', $events['Enlight_Controller_Dispatcher_ControllerPath_Backend_PaypalUnifiedInstallmentsSettings']);
         static::assertSame('onGetBackendPlusSettingsControllerPath', $events['Enlight_Controller_Dispatcher_ControllerPath_Backend_PaypalUnifiedPlusSettings']);
+        static::assertSame('onGetBackendPayUponInvoiceControllerPath', $events['Enlight_Controller_Dispatcher_ControllerPath_Backend_PaypalUnifiedPayUponInvoiceSettings']);
     }
 
     public function testOnGetBackendControllerPath()

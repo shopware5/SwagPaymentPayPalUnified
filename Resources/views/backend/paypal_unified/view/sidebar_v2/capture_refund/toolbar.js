@@ -50,7 +50,7 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebarV2.captureRefund.Toolbar', {
     },
 
     /**
-     * @param window { Ext.window.Window }
+     * @param { Ext.window.Window } window
      */
     setWindow: function(window) {
         this.window = window;

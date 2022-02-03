@@ -49,13 +49,13 @@ class PaymentInstructionServiceTest extends TestCase
         static::assertSame((string) self::TEST_AMOUNT_VALUE, $testInstructions->getAmount());
 
         $query = Shopware()->Container()->get('dbal_connection')->createQueryBuilder();
-
-        $query->select('internalcomment')
+        $statement = $query->select('internalcomment')
             ->from('s_order')
             ->where('ordernumber = :orderNumber')
-            ->setParameter('orderNumber', self::TEST_ORDER_NUMBER);
+            ->setParameter('orderNumber', self::TEST_ORDER_NUMBER)
+            ->execute();
 
-        $internalComment = $query->execute()->fetchColumn();
+        $internalComment = $statement->fetchColumn();
 
         $expected = '
 {"jsonDescription":"Pay Upon Invoice Payment Instructions","orderNumber":"20001","bankName":"TEST_BANK","accountHolder":"TEST_ACCOUNT_HOLDER","iban":"TEST_IBAN","bic":"TEST_BIC","amount":"50.5","dueDate":"01-01-2000","reference":"TEST_REFERENCE_NUMBER"}

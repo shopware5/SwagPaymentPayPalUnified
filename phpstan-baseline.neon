@@ -686,11 +686,6 @@ parameters:
 			path: PayPalBundle/Resources/WebhookResource.php
 
 		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Services\\\\ClientService\\:\\:configure\\(\\) has parameter \\$settings with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: PayPalBundle/Services/ClientService.php
-
-		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Services\\\\ClientService\\:\\:sendRequest\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: PayPalBundle/Services/ClientService.php
@@ -1572,11 +1567,6 @@ parameters:
 
 		-
 			message: "#^Property SwagPaymentPayPalUnified\\\\Tests\\\\Mocks\\\\ViewMock\\:\\:\\$assigns type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: Tests/Mocks/ViewMock.php
-
-		-
-			message: "#^Property SwagPaymentPayPalUnified\\\\Tests\\\\Mocks\\\\ViewMock\\:\\:\\$loadedTemplates type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: Tests/Mocks/ViewMock.php
 

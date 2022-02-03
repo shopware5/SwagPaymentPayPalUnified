@@ -26,5 +26,9 @@
         <service id="paypal_unified.webhook_service"
                  class="SwagPaymentPayPalUnified\PayPalBundle\Services\WebhookService"
                  public="true"/>
+
+        <service id="paypal_unified.nonce_service"
+                 class="SwagPaymentPayPalUnified\PayPalBundle\Services\NonceService"
+                 public="true"/>
     </services>
 </container>

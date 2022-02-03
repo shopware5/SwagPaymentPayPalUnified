@@ -28,7 +28,7 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebarV2.tabs.PaypalTransactions',
     },
 
     /**
-     * @param paypalOrderData { Object }
+     * @param { Object } paypalOrderData
      */
     setOrderData: function(paypalOrderData) {
         this.productItemGrid.setStore(paypalOrderData.purchase_units[0].items);

@@ -3,6 +3,9 @@
 Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
     extend: 'Ext.form.Panel',
     alias: 'widget.paypal-unified-settings-tabs-general',
+    mixins: [
+        'Shopware.apps.PaypalUnified.mixin.OnboardingHelper'
+    ],
     title: '{s name="title"}General settings{/s}',
 
     anchor: '100%',
@@ -26,6 +29,16 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
     /**
      * @type { Ext.form.FieldSet }
      */
+    restLiveCredentialsContainer: null,
+
+    /**
+     * @type { Ext.form.FieldSet }
+     */
+    restSandboxCredentialsContainer: null,
+
+    /**
+     * @type { Ext.form.FieldSet }
+     */
     behaviourContainer: null,
 
     /**
@@ -37,6 +50,15 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
      * @type { Ext.form.FieldSet }
      */
     errorHandlingContainer: null,
+
+    /**
+     * @type { Ext.button.Button }
+     */
+    onboardingButton: null,
+
+    config: {
+        authCodeReceivedEventName: 'authCodeReceived'
+    },
 
     initComponent: function () {
         var me = this;
@@ -75,7 +97,24 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
              *
              * @param { String }
              */
-            'onChangeMerchantLocation'
+            'onChangeMerchantLocation',
+
+            /**
+             * Will be fired when the user enables/disables the sandbox setting
+             *
+             * @param { Boolean }
+             */
+            'onChangeSandboxActivation',
+
+            /**
+             * Will be fired when a paypal onboarding has been completed and the popup window sends over the authCode/sharedId which we use to fetch new credentials.
+             *
+             * @param { String } authCode
+             * @param { String } sharedId
+             * @param { String } nonce
+             * @param { String } partnerId
+             */
+            this.getAuthCodeReceivedEventName()
         );
     },
 
@@ -145,9 +184,8 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
 
         me.toolbarContainer = me.createToolbar();
 
-        me.restContainer = Ext.create('Ext.form.FieldSet', {
-            title: '{s name="fieldset/rest/title"}API Settings{/s}',
-
+        me.restLiveCredentialsContainer = Ext.create('Ext.form.FieldSet', {
+            title: '{s name="fieldset/rest/title/credentials/live"}Live{/s}',
             items: [
                 {
                     xtype: 'textfield',
@@ -162,14 +200,47 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
                     fieldLabel: '{s name="fieldset/rest/clientSecret"}Client-Secret{/s}',
                     helpText: '{s name="fieldset/rest/clientSecret/help"}The REST-API Client-Secret that is being used to authenticate this plugin to the PayPal API.{/s}',
                     allowBlank: false
+                }
+            ]
+        });
+
+        me.restSandboxCredentialsContainer = Ext.create('Ext.form.FieldSet', {
+            title: '{s name="fieldset/rest/title/credentials/sandbox"}Sandbox{/s}',
+            items: [
+                {
+                    xtype: 'textfield',
+                    name: 'sandboxClientId',
+                    fieldLabel: '{s name="fieldset/rest/sandboxClientId"}Client-ID{/s}',
+                    helpText: '{s name="fieldset/rest/sandboxClientId/help"}The REST-API Client-ID that is being used to authenticate this plugin to the PayPal API.{/s}',
+                    allowBlank: false
                 },
+                {
+                    xtype: 'textfield',
+                    name: 'sandboxClientSecret',
+                    fieldLabel: '{s name="fieldset/rest/sandboxClientSecret"}Client-Secret{/s}',
+                    helpText: '{s name="fieldset/rest/sandboxClientSecret/help"}The REST-API Client-Secret that is being used to authenticate this plugin to the PayPal API.{/s}',
+                    allowBlank: false
+                }
+            ],
+            disabled: true
+        });
+
+        me.restContainer = Ext.create('Ext.form.FieldSet', {
+            title: '{s name="fieldset/rest/title"}API Settings{/s}',
+
+            items: [
+                me.restLiveCredentialsContainer,
+                me.restSandboxCredentialsContainer,
                 {
                     xtype: 'checkbox',
                     name: 'sandbox',
                     inputValue: true,
                     uncheckedValue: false,
                     fieldLabel: '{s name="fieldset/rest/enableSandbox"}Enable sandbox{/s}',
-                    boxLabel: '{s name="fieldset/rest/enableSandbox/help"}Enable this option to test the integration.{/s}'
+                    boxLabel: '{s name="fieldset/rest/enableSandbox/help"}Enable this option to test the integration.{/s}',
+                    handler: function(element, checked) {
+                        me.fireEvent('onChangeSandboxActivation', checked);
+                    }
                 },
                 me.toolbarContainer
             ]
@@ -345,29 +416,35 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
     createToolbar: function () {
         var me = this;
 
+        me.onboardingButton = me.createOnboardingButtonStandalone();
+
         return Ext.create('Ext.form.Panel', {
             dock: 'bottom',
             border: false,
             bodyPadding: 5,
             name: 'toolbarContainer',
 
-            items: [{
-                xtype: 'button',
-                cls: 'primary',
-                text: '{s name="fieldset/rest/testButton"}Test API settings{/s}',
-                style: {
-                    float: 'right'
+            items: [
+                {
+                    xtype: 'button',
+                    cls: 'primary',
+                    text: '{s name="fieldset/rest/testButton"}Test API settings{/s}',
+                    style: {
+                        float: 'right'
+                    },
+                    handler: Ext.bind(me.onValidateAPIButtonClick, me)
                 },
-                handler: Ext.bind(me.onValidateAPIButtonClick, me)
-            }, {
-                xtype: 'button',
-                cls: 'secondary',
-                text: '{s name="fieldset/rest/webhookButton"}Register Webhook{/s}',
-                style: {
-                    float: 'right'
+                {
+                    xtype: 'button',
+                    cls: 'secondary',
+                    text: '{s name="fieldset/rest/webhookButton"}Register Webhook{/s}',
+                    style: {
+                        float: 'right'
+                    },
+                    handler: Ext.bind(me.onRegisterWebhookButtonClick, me)
                 },
-                handler: Ext.bind(me.onRegisterWebhookButtonClick, me)
-            }]
+                me.onboardingButton
+            ]
         });
     },
 
@@ -421,6 +498,16 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
             // {/literal}
             invalidText: '{s namespace="backend/paypal_unified_settings/tabs/express_checkout" name="field/ecButtonLocale/invalid"}The locale code must be exact five chars long and must have a format like "en_US"{/s}'
         });
+    },
+
+    refreshOnboardingButton: function ()
+    {
+        this.toolbarContainer.remove(this.onboardingButton);
+        this.onboardingButton.destroy();
+
+        this.onboardingButton = this.createOnboardingButtonStandalone();
+
+        this.toolbarContainer.add(this.onboardingButton);
     },
 
     /**

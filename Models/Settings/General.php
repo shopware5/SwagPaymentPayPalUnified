@@ -54,6 +54,18 @@ class General extends ModelEntity
     private $clientSecret;
 
     /**
+     * @var string
+     * @ORM\Column(name="sandbox_client_id", type="string")
+     */
+    private $sandboxClientId;
+
+    /**
+     * @var string
+     * @ORM\Column(name="sandbox_client_secret", type="string")
+     */
+    private $sandboxClientSecret;
+
+    /**
      * @var bool
      * @ORM\Column(name="sandbox", type="boolean")
      */
@@ -233,6 +245,38 @@ class General extends ModelEntity
     public function setClientSecret($clientSecret)
     {
         $this->clientSecret = $clientSecret;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSandboxClientId()
+    {
+        return $this->sandboxClientId;
+    }
+
+    /**
+     * @param string $sandboxClientId
+     */
+    public function setSandboxClientId($sandboxClientId)
+    {
+        $this->sandboxClientId = $sandboxClientId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSandboxClientSecret()
+    {
+        return $this->sandboxClientSecret;
+    }
+
+    /**
+     * @param string $sandboxClientSecret
+     */
+    public function setSandboxClientSecret($sandboxClientSecret)
+    {
+        $this->sandboxClientSecret = $sandboxClientSecret;
     }
 
     /**

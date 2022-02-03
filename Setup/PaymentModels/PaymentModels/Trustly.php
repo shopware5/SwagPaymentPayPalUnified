@@ -11,7 +11,7 @@ namespace SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentModels;
 use Shopware\Models\Payment\Payment;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 
-class Trustly implements PaymentModelInterface
+class Trustly extends AbstractPaymentModel
 {
     /**
      * {@inheritDoc}
@@ -19,12 +19,13 @@ class Trustly implements PaymentModelInterface
     public function create()
     {
         $payment = new Payment();
-        $payment->setActive(true);
+        $payment->setActive(false);
         $payment->setPosition(self::POSITION_TRUSTLY);
         $payment->setName(PaymentMethodProviderInterface::TRUSTLY_METHOD_NAME);
         $payment->setDescription('Trustly');
         $payment->setAdditionalDescription($this->getDescription());
         $payment->setAction(self::ACTION_PAYPAL_APM);
+        $payment->setPlugin($this->plugin);
 
         return $payment;
     }

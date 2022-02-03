@@ -48,7 +48,7 @@ class ExceptionHandlerServiceTest extends TestCase
 
         $error = $handler->handle($e, 'testing');
 
-        static::assertSame(123, $error->getName());
+        static::assertSame('123', $error->getName());
         static::assertSame('An error occurred: test message', $error->getMessage());
 
         $logErrors = $loggerMock->getErrors();
@@ -65,7 +65,7 @@ class ExceptionHandlerServiceTest extends TestCase
 
         $error = $handler->handle($e, 'testing');
 
-        static::assertSame(123, $error->getName());
+        static::assertSame('123', $error->getName());
         static::assertSame('An error occurred: test message', $error->getMessage());
 
         $logErrors = $loggerMock->getErrors();
@@ -111,7 +111,7 @@ class ExceptionHandlerServiceTest extends TestCase
 
         $error = $handler->handle($e, 'testing');
 
-        static::assertSame(123, $error->getName());
+        static::assertSame('123', $error->getName());
         static::assertSame('An error occurred: test message', $error->getMessage());
 
         $logErrors = $loggerMock->getErrors();

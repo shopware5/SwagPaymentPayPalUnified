@@ -11,9 +11,14 @@ use PHPUnit\Framework\TestCase;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
 use Shopware\Bundle\StoreFrontBundle\Struct\Currency;
 use Shopware\Bundle\StoreFrontBundle\Struct\ShopContextInterface;
+use Shopware\Models\Shop\Shop;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
+use SwagPaymentPayPalUnified\Models\Settings\General;
+use SwagPaymentPayPalUnified\Models\Settings\PayUponInvoice;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use SwagPaymentPayPalUnified\Subscriber\PayUponInvoiceRiskManagement;
 use Symfony\Component\Validator\Constraints\Collection;
 use Symfony\Component\Validator\Constraints\EqualTo;
@@ -24,6 +29,8 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class PayUponInvoiceRiskManagementTest extends TestCase
 {
+    const SHOP_ID = 591790496;
+
     /**
      * The returnValueProvider provides a testcase to assert the check fails in
      * case earlier risk management checks failed already.
@@ -179,10 +186,11 @@ class PayUponInvoiceRiskManagementTest extends TestCase
     }
 
     /**
-     * @param PaymentMethodProvider|null   $paymentMethodProvider
-     * @param DependencyProvider|null      $dependencyProvider
-     * @param ValidatorInterface|null      $validator
-     * @param ContextServiceInterface|null $contextService
+     * @param PaymentMethodProvider|null    $paymentMethodProvider
+     * @param DependencyProvider|null       $dependencyProvider
+     * @param ValidatorInterface|null       $validator
+     * @param ContextServiceInterface|null  $contextService
+     * @param SettingsServiceInterface|null $settingsService
      *
      * @return PayUponInvoiceRiskManagement
      */
@@ -190,13 +198,15 @@ class PayUponInvoiceRiskManagementTest extends TestCase
         $paymentMethodProvider = null,
         $dependencyProvider = null,
         $validator = null,
-        $contextService = null
+        $contextService = null,
+        $settingsService = null
     ) {
         return new PayUponInvoiceRiskManagement(
             $paymentMethodProvider ?: $this->getPaymentMethodProvider(),
             $dependencyProvider ?: $this->getDependencyProvider(),
             $validator ?: $this->getValidator(),
-            $contextService ?: $this->getContextService()
+            $contextService ?: $this->getContextService(),
+            $settingsService ?: $this->getSettingsService()
         );
     }
 
@@ -229,9 +239,25 @@ class PayUponInvoiceRiskManagementTest extends TestCase
                 'getCurrency' => static::createConfiguredMock(Currency::class, [
                     'getCurrency' => 'c63432e0-e10c-4ca0-aae9-e622b43d0285',
                 ]),
+                'getShop' => static::createConfiguredMock(Shop::class, [
+                    'getId' => self::SHOP_ID,
+                ]),
             ]));
 
         return $contextServiceMock;
+    }
+
+    protected function getSettingsService()
+    {
+        $settingsServiceMock = static::createMock(SettingsServiceInterface::class);
+
+        $settingsServiceMock->method('getSettings')
+            ->willReturnMap([
+                [self::SHOP_ID, SettingsTable::GENERAL, (new General())->fromArray(['shopId' => self::SHOP_ID])],
+                [self::SHOP_ID, SettingsTable::PAY_UPON_INVOICE, (new PayUponInvoice())->fromArray(['shopId' => self::SHOP_ID, 'active' => true, 'onboardingCompleted' => true])],
+            ]);
+
+        return $settingsServiceMock;
     }
 
     /**

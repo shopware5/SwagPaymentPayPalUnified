@@ -9,7 +9,9 @@
 namespace SwagPaymentPayPalUnified\Setup\PaymentModels;
 
 use InvalidArgumentException;
+use Shopware\Models\Plugin\Plugin;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
+use SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentModels\AbstractPaymentModel;
 use SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentModels\Bancontact;
 use SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentModels\Blik;
 use SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentModels\Eps;
@@ -18,7 +20,6 @@ use SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentModels\Ideal;
 use SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentModels\MultiBanco;
 use SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentModels\MyBank;
 use SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentModels\Oxxo;
-use SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentModels\PaymentModelInterface;
 use SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentModels\PayPalClassic;
 use SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentModels\PayPalPayUponInvoice;
 use SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentModels\Przelewy24;
@@ -28,33 +29,33 @@ use SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentModels\Trustly;
 class PaymentModelFactory
 {
     /**
-     * @var array<PaymentModelInterface>
+     * @var array<AbstractPaymentModel>
      */
     private $paymentModels;
 
-    public function __construct()
+    public function __construct(Plugin $plugin)
     {
         $this->paymentModels = [
-            PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME => new PayPalClassic(),
-            PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME => new PayPalPayUponInvoice(),
-            PaymentMethodProviderInterface::BANCONTACT_METHOD_NAME => new Bancontact(),
-            PaymentMethodProviderInterface::BLIK_METHOD_NAME => new Blik(),
-            PaymentMethodProviderInterface::EPS_METHOD_NAME => new Eps(),
-            PaymentMethodProviderInterface::GIROPAY_METHOD_NAME => new Giropay(),
-            PaymentMethodProviderInterface::IDEAL_METHOD_NAME => new Ideal(),
-            PaymentMethodProviderInterface::MY_BANK_METHOD_NAME => new MyBank(),
-            PaymentMethodProviderInterface::P24_METHOD_NAME => new Przelewy24(),
-            PaymentMethodProviderInterface::SOFORT_METHOD_NAME => new Sofort(),
-            PaymentMethodProviderInterface::MULTIBANCO_METHOD_NAME => new MultiBanco(),
-            PaymentMethodProviderInterface::OXXO_METHOD_NAME => new Oxxo(),
-            PaymentMethodProviderInterface::TRUSTLY_METHOD_NAME => new Trustly(),
+            PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME => new PayPalClassic($plugin),
+            PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME => new PayPalPayUponInvoice($plugin),
+            PaymentMethodProviderInterface::BANCONTACT_METHOD_NAME => new Bancontact($plugin),
+            PaymentMethodProviderInterface::BLIK_METHOD_NAME => new Blik($plugin),
+            PaymentMethodProviderInterface::EPS_METHOD_NAME => new Eps($plugin),
+            PaymentMethodProviderInterface::GIROPAY_METHOD_NAME => new Giropay($plugin),
+            PaymentMethodProviderInterface::IDEAL_METHOD_NAME => new Ideal($plugin),
+            PaymentMethodProviderInterface::MY_BANK_METHOD_NAME => new MyBank($plugin),
+            PaymentMethodProviderInterface::P24_METHOD_NAME => new Przelewy24($plugin),
+            PaymentMethodProviderInterface::SOFORT_METHOD_NAME => new Sofort($plugin),
+            PaymentMethodProviderInterface::MULTIBANCO_METHOD_NAME => new MultiBanco($plugin),
+            PaymentMethodProviderInterface::OXXO_METHOD_NAME => new Oxxo($plugin),
+            PaymentMethodProviderInterface::TRUSTLY_METHOD_NAME => new Trustly($plugin),
         ];
     }
 
     /**
      * @param string $name
      *
-     * @return PaymentModelInterface
+     * @return AbstractPaymentModel
      */
     public function getPaymentModel($name)
     {

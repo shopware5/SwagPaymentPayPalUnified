@@ -12,6 +12,7 @@ use Doctrine\DBAL\Connection;
 use PDO;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
+use Shopware\Models\Plugin\Plugin;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentModelFactory;
 use SwagPaymentPayPalUnified\Setup\Updater;
@@ -32,7 +33,7 @@ class UpdaterTest extends TestCase
             Shopware()->Container()->get('models'),
             Shopware()->Container()->get('dbal_connection'),
             Shopware()->Container()->get('paypal_unified.payment_method_provider'),
-            new PaymentModelFactory()
+            new PaymentModelFactory(static::createMock(Plugin::class))
         );
 
         $reflectionMethod = (new ReflectionClass(Updater::class))->getMethod('updateTo303');
@@ -68,7 +69,7 @@ class UpdaterTest extends TestCase
             Shopware()->Container()->get('models'),
             Shopware()->Container()->get('dbal_connection'),
             Shopware()->Container()->get('paypal_unified.payment_method_provider'),
-            new PaymentModelFactory()
+            new PaymentModelFactory(static::createMock(Plugin::class))
         );
 
         $reflectionMethod = (new ReflectionClass(Updater::class))->getMethod('updateTo304');

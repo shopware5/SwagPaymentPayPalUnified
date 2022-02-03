@@ -11,11 +11,13 @@ use Doctrine\ORM\Query\Expr\Join;
 use Shopware\Components\Model\QueryBuilder;
 use Shopware\Models\Order\Order;
 use SwagPaymentPayPalUnified\Components\Backend\CaptureService;
+use SwagPaymentPayPalUnified\Components\Backend\CredentialsService;
 use SwagPaymentPayPalUnified\Components\Backend\PaymentDetailsService;
 use SwagPaymentPayPalUnified\Components\Backend\VoidService;
 use SwagPaymentPayPalUnified\Components\ExceptionHandlerServiceInterface;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Components\PaymentStatus;
+use SwagPaymentPayPalUnified\Components\Services\OnboardingStatusService;
 use SwagPaymentPayPalUnified\Components\Services\PaymentStatusService;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\AuthorizationResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\CaptureResource;
@@ -24,6 +26,7 @@ use SwagPaymentPayPalUnified\PayPalBundle\Resources\RefundResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\SaleResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\SaleRefund;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Transactions\Amount;
+use Symfony\Component\HttpFoundation\Response;
 
 class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Backend_Application
 {
@@ -297,6 +300,43 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
         $viewParameter = $voidService->voidOrder($orderId);
 
         $this->View()->assign($viewParameter);
+    }
+
+    public function updateCredentialsAction()
+    {
+        $shopId = (int) $this->Request()->getParam('shopId');
+        $partnerId = (string) $this->request->getParam('partnerId');
+        $authCode = (string) $this->request->getParam('authCode');
+        $sharedId = (string) $this->request->getParam('sharedId');
+        $nonce = (string) $this->request->getParam('nonce');
+        $sandbox = (bool) $this->request->getParam('sandbox');
+
+        /** @var CredentialsService $credentialsService */
+        $credentialsService = $this->get('paypal_unified.backend.credentials_service');
+
+        /** @var OnboardingStatusService $onboardingStatusService */
+        $onboardingStatusService = $this->get('paypal_unified.onboarding_status_service');
+
+        try {
+            $accessToken = $credentialsService->getAccessToken($authCode, $sharedId, $nonce, $sandbox);
+            $credentials = $credentialsService->getCredentials($accessToken, $partnerId, $sandbox);
+
+            $credentialsService->updateCredentials($credentials, $shopId, $sandbox);
+        } catch (\Exception $e) {
+            $this->response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
+            $this->view->assign([
+                'exception' => $e->getMessage(),
+                'trace' => $e->getTrace(),
+            ]);
+
+            return;
+        }
+
+        $onboardingStatusService->updatePayUponInvoiceOnboardingStatus(
+            $shopId,
+            $sandbox,
+            $onboardingStatusService->isCapable($partnerId, $shopId, OnboardingStatusService::CAPABILITY_PAY_UPON_INVOICE)
+        );
     }
 
     /**

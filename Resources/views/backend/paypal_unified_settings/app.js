@@ -54,7 +54,8 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings', {
         'tabs.General',
         'tabs.Plus',
         'tabs.Installments',
-        'tabs.ExpressCheckout'
+        'tabs.ExpressCheckout',
+        'tabs.PayUponInvoice'
     ],
 
     /**

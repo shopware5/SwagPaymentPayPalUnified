@@ -42,5 +42,13 @@
             <argument type="service" id="paypal_unified.settings_service"/>
             <argument type="service" id="shopware.components.shop_registration_service" on-invalid="null"/>
         </service>
+
+        <service id="paypal_unified.backend.credentials_service"
+                 class="SwagPaymentPayPalUnified\Components\Backend\CredentialsService"
+                 public="true">
+            <argument type="service" id="paypal_unified.credentials_resource" />
+            <argument type="service" id="paypal_unified.settings_service"/>
+            <argument type="service" id="models"/>
+        </service>
     </services>
 </container>

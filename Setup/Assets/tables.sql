@@ -5,6 +5,8 @@ CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_settings_general
     `active`                    TINYINT(1),
     `client_id`                 VARCHAR(255),
     `client_secret`             VARCHAR(255),
+    `sandbox_client_id`         VARCHAR(255),
+    `sandbox_client_secret`     VARCHAR(255),
     `sandbox`                   TINYINT(1),
     `show_sidebar_logo`         TINYINT(1)   NOT NULL,
     `brand_name`                VARCHAR(255),
@@ -82,6 +84,17 @@ CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_payment_instruction
     `amount`         VARCHAR(255) NOT NULL,
     `reference`      VARCHAR(255) NOT NULL,
     `due_date`       DATETIME
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COLLATE = utf8_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_settings_pay_upon_invoice (
+    `id`                           INT(11)    UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `shop_id`                      INT(11)    NOT NULL,
+    `onboarding_completed`         TINYINT(1) NOT NULL,
+    `sandbox_onboarding_completed` TINYINT(1) NOT NULL,
+    `active`                       TINYINT(1) NOT NULL
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
