@@ -14,6 +14,7 @@ final class RequestUriV2
     const CAPTURES_RESOURCE = 'v2/payments/captures';
     const ORDERS_RESOURCE = 'v2/checkout/orders';
     const REFUNDS_RESOURCE = 'v2/payments/refunds';
+    const CLIENT_TOKEN_RESOURCE = 'v1/identity/generate-token';
 
     private function __construct()
     {

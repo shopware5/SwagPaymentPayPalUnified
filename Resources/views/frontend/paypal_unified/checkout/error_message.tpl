@@ -22,6 +22,12 @@
         {elseif $paypalUnifiedErrorCode == 8}
             {* No dispatch for order error *}
             {include file='frontend/_includes/messages.tpl' type='error' content="{s name="error/dispatch"}The payment could not be processed because there was no shipping method for your order.{/s}"}
+        {elseif $paypalUnifiedErrorCode == 10}
+            {* Instrument declined *}
+            {* @see https://developer.paypal.com/docs/checkout/standard/customize/handle-funding-failures/#link-handlefundingfailures *}
+            {include file='frontend/_includes/messages.tpl' type='error' content="{s name="error/instrumentDeclined"}The payment could not be processed, because either the billing address associated with the financial instrument could not be confirmed, the transaction exceeds the card limit, or the card issuer denied the transaction.{/s}"}
+        {elseif $paypalUnifiedErrorCode == 11}
+            {include file='frontend/_includes/messages.tpl' type='error' content="{s name="error/transaction_refused"}The payment provider has rejected the payment. Please check your entries.{/s}"}
         {else}
             {* Unknown error *}
             {include file='frontend/_includes/messages.tpl' type='error' content="{s name="error/unkown"}An unknown error occurred while processing the payment.{/s}"}

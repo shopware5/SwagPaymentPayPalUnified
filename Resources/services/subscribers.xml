@@ -81,7 +81,8 @@
             <argument type="service" id="paypal_unified.express_checkout.payment_builder_service"/>
             <argument type="service" id="paypal_unified.client_service"/>
             <argument type="service" id="paypal_unified.dependency_provider"/>
-            <argument type="service" id="SwagPaymentPayPalUnified\Components\Services\RiskManagement\EsdProductChecker"/>
+            <argument type="service"
+                      id="SwagPaymentPayPalUnified\Components\Services\RiskManagement\EsdProductChecker"/>
             <argument type="service" id="paypal_unified.payment_method_provider"/>
             <argument type="service" id="paypal_unified.button_locale_service"/>
             <tag name="shopware.event_subscriber"/>
@@ -201,6 +202,18 @@
                  class="SwagPaymentPayPalUnified\Subscriber\FraudNet"
                  public="true">
             <argument type="service" id="paypal_unified.dependency_provider"/>
+            <tag name="shopware.event_subscriber"/>
+        </service>
+
+        <service id="paypal_unified.advanced_credit_debit_card_subscriber"
+                 class="SwagPaymentPayPalUnified\Subscriber\AdvancedCreditDebitCard"
+                 public="true">
+            <argument type="service" id="paypal_unified.payment_method_provider"/>
+            <argument type="service" id="paypal_unified.settings_service"/>
+            <argument type="service" id="paypal_unified.v2.client_toke_resource"/>
+            <argument type="service" id="shopware_storefront.context_service"/>
+            <argument type="service" id="paypal_unified.dependency_provider"/>
+            <argument type="service" id="paypal_unified.europe_service"/>
             <tag name="shopware.event_subscriber"/>
         </service>
     </services>

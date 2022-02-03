@@ -30,6 +30,13 @@
             <argument type="service" id="paypal_unified.client_service"/>
         </service>
 
+        <service id="paypal_unified.v2.client_toke_resource"
+                 class="SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\ClientTokenResource"
+                 public="true">
+            <argument type="service" id="paypal_unified.client_service"/>
+            <argument type="service" id="shopware.cache_manager"/>
+        </service>
+
         <service id="paypal_unified.redirect_data_builder_factory"
                  class="SwagPaymentPayPalUnified\Components\Services\Validation\RedirectDataBuilderFactory"
                  public="true">

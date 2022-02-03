@@ -16,6 +16,11 @@ use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 
 class FraudNet implements SubscriberInterface
 {
+    const PAYMENT_METHODS_REQUIRED_FRAUD_NET = [
+        PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME,
+        PaymentMethodProviderInterface::PAYPAL_UNIFIED_ADVANCED_CREDIT_DEBIT_CARD_METHOD_NAME,
+    ];
+
     /**
      * @var DependencyProvider
      */
@@ -43,7 +48,7 @@ class FraudNet implements SubscriberInterface
         }
 
         $selectedPayment = $subject->View()->getAssign('sPayment');
-        if ($selectedPayment['name'] !== PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME) {
+        if (!\in_array($selectedPayment['name'], self::PAYMENT_METHODS_REQUIRED_FRAUD_NET)) {
             return;
         }
 
@@ -61,7 +66,7 @@ class FraudNet implements SubscriberInterface
          */
         $subject->View()->assign('fraudNetFlowId', 'b9abd91c51ba11ecbf630242ac130002');
 
-        $subject->View()->assign('usePayPalInvoiceFraudNet', true);
+        $subject->View()->assign('usePayPalFraudNet', true);
     }
 
     /**

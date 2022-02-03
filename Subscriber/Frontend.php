@@ -81,6 +81,8 @@ class Frontend implements SubscriberInterface
             $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.smart-payment-buttons.js',
             $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.installments-banner.js',
             $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified-fraudnet.js',
+            $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.advanced-credit-debit-card.js',
+            $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.advanced-credit-debit-card-fallback.js',
         ];
 
         return new ArrayCollection($jsPath);

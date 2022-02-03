@@ -12,7 +12,7 @@ use Doctrine\DBAL\Connection;
 use Shopware\Components\Model\ModelManager;
 use Shopware\Models\Shop\Shop;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
-use SwagPaymentPayPalUnified\Models\Settings;
+use SwagPaymentPayPalUnified\Models\Settings\AdvancedCreditDebitCard;
 use SwagPaymentPayPalUnified\Models\Settings\ExpressCheckout;
 use SwagPaymentPayPalUnified\Models\Settings\General;
 use SwagPaymentPayPalUnified\Models\Settings\Installments;
@@ -90,6 +90,9 @@ class SettingsService implements SettingsServiceInterface
                 break;
             case SettingsTable::PAY_UPON_INVOICE:
                 $entity = PayUponInvoice::class;
+                break;
+            case SettingsTable::ADVANCED_CREDIT_DEBIT_CARD:
+                $entity = AdvancedCreditDebitCard::class;
                 break;
             default:
                 $entity = General::class;

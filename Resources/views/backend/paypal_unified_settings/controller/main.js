@@ -46,6 +46,11 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
     /**
      * @type { String }
      */
+    advancedCreditDebitCardDetailUrl: '{url controller=PaypalUnifiedAdvancedCreditDebitCardSettings action=detail}',
+
+    /**
+     * @type { String }
+     */
     registerWebhookUrl: '{url controller=PaypalUnifiedSettings action=registerWebhook}',
 
     /**
@@ -79,6 +84,11 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
     payUponInvoiceRecord: null,
 
     /**
+     * @type { Shopware.apps.PaypalUnifiedSettings.model.AdvancedCreditDebitCard }
+     */
+    advancedCreditDebitCardRecord: null,
+
+    /**
      * @type { XMLHttpRequest }
      */
     updateCredentialsRequest: null,
@@ -94,6 +104,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
         { ref: 'installmentsTab', selector: 'paypal-unified-settings-tabs-installments' },
         { ref: 'ecTab', selector: 'paypal-unified-settings-tabs-express-checkout' },
         { ref: 'payUponInvoiceTab', selector: 'paypal-unified-settings-tabs-pay-upon-invoice' },
+        { ref: 'advancedCreditDebitCardTab', selector: 'paypal-unified-settings-tabs-advanced-credit-debit-card' },
     ],
 
     init: function() {
@@ -150,6 +161,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
         me.loadSetting(me.installmentsDetailUrl);
         me.loadSetting(me.plusDetailUrl);
         me.loadSetting(me.payUponInvoiceDetailUrl);
+        me.loadSetting(me.advancedCreditDebitCardDetailUrl);
     },
 
     loadSetting: function(detailUrl) {
@@ -174,6 +186,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
         me.installmentsRecord.save();
         me.plusRecord.save();
         me.payUponInvoiceRecord.save();
+        me.advancedCreditDebitCardRecord.save();
     },
 
     prepareRecords: function() {
@@ -182,25 +195,29 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
             plusTab = me.getPlusTab(),
             installmentsTab = me.getInstallmentsTab(),
             ecTab = me.getEcTab(),
-            payUponInvoiceTab = me.getPayUponInvoiceTab();
+            payUponInvoiceTab = me.getPayUponInvoiceTab(),
+            advancedCreditDebitCardTab = me.getAdvancedCreditDebitCardTab();
 
         me.generalRecord = Ext.create('Shopware.apps.PaypalUnifiedSettings.model.General');
         me.expressCheckoutRecord = Ext.create('Shopware.apps.PaypalUnifiedSettings.model.ExpressCheckout');
         me.installmentsRecord = Ext.create('Shopware.apps.PaypalUnifiedSettings.model.Installments');
         me.plusRecord = Ext.create('Shopware.apps.PaypalUnifiedSettings.model.Plus');
         me.payUponInvoiceRecord = Ext.create('Shopware.apps.PaypalUnifiedSettings.model.PayUponInvoice');
+        me.advancedCreditDebitCardRecord = Ext.create('Shopware.apps.PaypalUnifiedSettings.model.AdvancedCreditDebitCard');
 
         me.generalRecord.set('shopId', me.shopId);
         me.expressCheckoutRecord.set('shopId', me.shopId);
         me.installmentsRecord.set('shopId', me.shopId);
         me.plusRecord.set('shopId', me.shopId);
         me.payUponInvoiceRecord.set('shopId', me.shopId);
+        me.advancedCreditDebitCardRecord.set('shopId', me.shopId);
 
         installmentsTab.loadRecord(me.installmentsRecord);
         generalTab.loadRecord(me.generalRecord);
         plusTab.loadRecord(me.plusRecord);
         ecTab.loadRecord(me.expressCheckoutRecord);
         payUponInvoiceTab.loadRecord(me.payUponInvoiceRecord);
+        advancedCreditDebitCardTab.loadRecord(me.advancedCreditDebitCardRecord);
     },
 
     /**
@@ -221,7 +238,8 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
             installmentsSettings = me.getInstallmentsTab().getForm().getValues(),
             ecTabForm = me.getEcTab().getForm(),
             ecSettings = ecTabForm.getValues(),
-            payUponInvoiceSettings = me.getPayUponInvoiceTab().getForm().getValues();
+            payUponInvoiceSettings = me.getPayUponInvoiceTab().getForm().getValues(),
+            advancedCreditDebitCardSettings = me.getAdvancedCreditDebitCardTab().getForm().getValues();
 
         if (!generalTabForm.isValid() || !ecTabForm.isValid()) {
             Shopware.Notification.createGrowlMessage('{s name="growl/title"}PayPal{/s}', '{s name="growl/formValidationError"}Please fill out all fields marked in red.{/s}', me.window.title);
@@ -235,6 +253,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
         me.installmentsRecord.set(installmentsSettings);
         me.plusRecord.set(plusSettings);
         me.payUponInvoiceRecord.set(payUponInvoiceSettings);
+        me.advancedCreditDebitCardRecord.set(advancedCreditDebitCardSettings);
 
         me.saveRecords();
 
@@ -362,6 +381,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
             installmentsTab = me.getInstallmentsTab(),
             ecTab = me.getEcTab(),
             payUponInvoiceTab = me.getPayUponInvoiceTab(),
+            advancedCreditDebitCardTab = me.getAdvancedCreditDebitCardTab(),
             settings = Ext.JSON.decode(response.responseText);
 
         if (settings.general) {
@@ -390,6 +410,11 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
             payUponInvoiceTab.loadRecord(me.payUponInvoiceRecord);
 
             payUponInvoiceTab.refreshTabItems();
+        } else if (settings['advanced-credit-debit-card']) {
+            me.advancedCreditDebitCardRecord = Ext.create('Shopware.apps.PaypalUnifiedSettings.model.AdvancedCreditDebitCard', settings['advanced-credit-debit-card']);
+            advancedCreditDebitCardTab.loadRecord(me.advancedCreditDebitCardRecord);
+
+            advancedCreditDebitCardTab.refreshTabItems();
         }
 
         me.settingsSaved = false;
@@ -414,6 +439,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
         me.getInstallmentsTab().setDisabled(!active);
         me.getEcTab().setDisabled(!active);
         me.getPayUponInvoiceTab().setDisabled(!active);
+        me.getAdvancedCreditDebitCardTab().setDisabled(!active);
 
         me.generalRecord.set('active', active);
     },
@@ -426,16 +452,19 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
     applySandboxActivationState: function(active) {
         var me = this,
             generalTab = me.getGeneralTab(),
-            payUponInvoiceTab = me.getPayUponInvoiceTab();
+            payUponInvoiceTab = me.getPayUponInvoiceTab(),
+            advancedCreditDebitCardTab = me.getAdvancedCreditDebitCardTab();
 
         generalTab.restLiveCredentialsContainer.setDisabled(active);
         generalTab.restSandboxCredentialsContainer.setDisabled(!active);
 
         generalTab.setSandbox(active);
         payUponInvoiceTab.setSandbox(active);
+        advancedCreditDebitCardTab.setSandbox(active);
 
         generalTab.refreshOnboardingButton();
         payUponInvoiceTab.refreshTabItems();
+        advancedCreditDebitCardTab.refreshTabItems();
     },
 
     applyMerchantLocationState: function(combobox) {
@@ -510,6 +539,28 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
     },
 
     /**
+     * @param { String } authCode
+     * @param { String } sharedId
+     * @param { String } nonce
+     * @param { String } partnerId
+     */
+    onAuthCodeReceivedAdvancedCreditDebitCard: function (authCode, sharedId, nonce, partnerId) {
+        var advancedCreditDebitCardTab = this.getAdvancedCreditDebitCardTab();
+
+        this._onAuthCodeReceived({
+            url: advancedCreditDebitCardTab.getUpdateCredentialsUrl(),
+            jsonData: {
+                shopId: this.advancedCreditDebitCardRecord.get('shopId'),
+                authCode: authCode,
+                sharedId: sharedId,
+                nonce: nonce,
+                sandbox: advancedCreditDebitCardTab.getSandbox(),
+                partnerId: partnerId
+            }
+        });
+    },
+
+    /**
      * @param { Object } config
      * @param { string } config.url
      * @param { Object } config.jsonData
@@ -544,8 +595,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
     _onUpdateCredentialsSuccess: function (response, options) {
         this.loadSetting(this.generalDetailUrl);
         this.loadSetting(this.payUponInvoiceDetailUrl);
-
-        this.getPayUponInvoiceTab().refreshTabItems();
+        this.loadSetting(this.advancedCreditDebitCardDetailUrl);
 
         PAYPAL.apps.Signup.MiniBrowser.win.close();
     },

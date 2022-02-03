@@ -122,6 +122,7 @@ class SmartPaymentButtons implements SubscriberInterface
         }
 
         $view->assign('paypalUnifiedSpbCheckout', true);
+        $view->assign('paypalUnifiedAdvancedCreditDebitCardCheckout', (bool) $request->getParam('acdcCheckout', false));
         $view->assign('paypalUnifiedSpbOrderId', $request->getParam('orderId'));
         $view->assign('paypalUnifiedSpbPayerId', $request->getParam('payerId'));
         $view->assign('paypalUnifiedSpbBasketId', $request->getParam('basketId'));
@@ -142,6 +143,7 @@ class SmartPaymentButtons implements SubscriberInterface
             'controller' => 'PaypalUnifiedV2',
             'action' => 'return',
             'spbCheckout' => true,
+            'acdcCheckout' => (bool) $request->getParam('acdcCheckout', false),
             'token' => $request->getParam('orderId'),
             'PayerID' => $request->getParam('payerId'),
             'basketId' => $request->getParam('basketId'),

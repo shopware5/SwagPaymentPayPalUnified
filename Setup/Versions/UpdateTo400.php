@@ -56,16 +56,23 @@ class UpdateTo400
         $this->columnService = $columnService;
     }
 
+    /**
+     * @return void
+     */
     public function update()
     {
         $this->moveIntent();
         $this->addButtonStyleToGeneralSettings();
         $this->installNewPaymentMethods();
         $this->addPayUponInvoiceSettingsTable();
+        $this->addAdvancedCreditDebitCardSettingsTable();
         $this->insertDefaultButtonStyle();
         $this->addSandboxCredentialsToGeneralSettings();
     }
 
+    /**
+     * @return void
+     */
     private function moveIntent()
     {
         if (!$this->columnService->checkIfColumnExist('swag_payment_paypal_unified_settings_general', 'intent')) {
@@ -83,6 +90,9 @@ class UpdateTo400
         }
     }
 
+    /**
+     * @return void
+     */
     private function addButtonStyleToGeneralSettings()
     {
         if (!$this->columnService->checkIfColumnExist('swag_payment_paypal_unified_settings_general', 'button_style_color')) {
@@ -114,11 +124,17 @@ class UpdateTo400
         }
     }
 
+    /**
+     * @return void
+     */
     private function installNewPaymentMethods()
     {
         (new PaymentInstaller($this->paymentMethodProvider, $this->paymentModelFactory, $this->modelManager))->installPayments();
     }
 
+    /**
+     * @return void
+     */
     private function addPayUponInvoiceSettingsTable()
     {
         if (!$this->connection->getSchemaManager()->tablesExist(['swag_payment_paypal_unified_settings_pay_upon_invoice'])) {
@@ -139,6 +155,32 @@ SQL
         }
     }
 
+    /**
+     * @return void
+     */
+    private function addAdvancedCreditDebitCardSettingsTable()
+    {
+        if (!$this->connection->getSchemaManager()->tablesExist(['swag_payment_paypal_unified_settings_pay_upon_invoice'])) {
+            $this->connection->executeQuery(
+                <<<'SQL'
+CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_settings_advanced_credit_debit_card (
+    `id`                           INT(11)    UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `shop_id`                      INT(11)    NOT NULL,
+    `onboarding_completed`         TINYINT(1) NOT NULL,
+    `sandbox_onboarding_completed` TINYINT(1) NOT NULL,
+    `active`                       TINYINT(1) NOT NULL
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COLLATE = utf8_unicode_ci;
+SQL
+            );
+        }
+    }
+
+    /**
+     * @return void
+     */
     private function insertDefaultButtonStyle()
     {
         $this->connection->executeQuery(
@@ -151,6 +193,9 @@ SQL
         );
     }
 
+    /**
+     * @return void
+     */
     private function addSandboxCredentialsToGeneralSettings()
     {
         if (!$this->columnService->checkIfColumnExist('swag_payment_paypal_unified_settings_general', 'sandbox_client_id')) {
