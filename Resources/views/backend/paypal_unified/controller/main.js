@@ -46,7 +46,18 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
         'PayPalClassicV2',
         'PayPalPlusInvoiceV2',
         'PayPalExpressV2',
-        'PayPalSmartPaymentButtonsV2'
+        'PayPalSmartPaymentButtonsV2',
+        'bancontact',
+        'blik',
+        'eps',
+        'giropay',
+        'ideal',
+        'multibanco',
+        'mybank',
+        'oxxo',
+        'p24',
+        'sofort',
+        'trustly'
     ],
 
     init: function() {

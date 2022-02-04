@@ -27,8 +27,10 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebarV2.order.fieldset.paypalTran
         var purchaseUnit = paypalOrderData.purchase_units[0];
 
         this.totalAmount.setValue([purchaseUnit.amount.value, purchaseUnit.amount.currency_code].join(' '));
-        this.subtotal.setValue([purchaseUnit.amount.breakdown.item_total.value, purchaseUnit.amount.breakdown.item_total.currency_code].join(' '));
-        this.shippingCoasts.setValue([purchaseUnit.amount.breakdown.shipping.value, purchaseUnit.amount.breakdown.shipping.currency_code].join(' '));
+        if (purchaseUnit.amount.breakdown) {
+            this.subtotal.setValue([purchaseUnit.amount.breakdown.item_total.value, purchaseUnit.amount.breakdown.item_total.currency_code].join(' '));
+            this.shippingCoasts.setValue([purchaseUnit.amount.breakdown.shipping.value, purchaseUnit.amount.breakdown.shipping.currency_code].join(' '));
+        }
     },
 });
 // {/block}

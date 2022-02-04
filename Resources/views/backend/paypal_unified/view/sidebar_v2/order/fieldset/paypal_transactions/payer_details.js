@@ -30,6 +30,10 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebarV2.order.fieldset.paypalTran
      * @param { Object } paypalOrderData
      */
     setOrderData: function (paypalOrderData) {
+        if (paypalOrderData.payer === null) {
+            return;
+        }
+
         this.customerId.setValue(paypalOrderData.payer.payer_id);
         this.customerEmail.setValue(paypalOrderData.payer.email_address);
         this.givenName.setValue(paypalOrderData.payer.name.given_name);
