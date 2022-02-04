@@ -183,6 +183,8 @@ class CaptureService
 
     /**
      * @param bool $isFinal
+     *
+     * @return void
      */
     private function updateCapturePaymentStatus(array $captureData, $isFinal)
     {

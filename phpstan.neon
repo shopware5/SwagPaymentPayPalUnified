@@ -21,8 +21,6 @@ parameters:
             '#Class Shopware_Components_Translation constructor invoked with 0 parameters, 2 required#'
         - # Properties are called with magic __get
             '#Access to an undefined property Shopware_Models_Document_Order::#'
-        - # Since we have to support Shopware 5.2 we can not use return types
-            '#Method .* has no return type specified#'
         - # Has different type in older PHPUnit versions needs for older Shopware versions
             message: '#Parameter \#2 \$haystack of static method PHPUnit\\Framework\\Assert::assertContains\(\) expects iterable, string given#'
             path: Tests
