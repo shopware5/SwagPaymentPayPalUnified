@@ -32,7 +32,7 @@ class DispatchValidation
     /**
      * @return bool
      */
-    public function isValid()
+    public function isInvalid()
     {
         $session = $this->dependencyProvider->getSession();
 
