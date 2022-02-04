@@ -114,9 +114,9 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.PayUponInvoice', {
     },
 
     isOnboardingCompleted: function () {
-        return this.getForm()
-            && this.getForm().getRecord()
-            && this.getForm().getRecord().get(this.getSandbox() ? 'sandboxOnboardingCompleted' : 'onboardingCompleted');
+        return this.getForm() &&
+            this.getForm().getRecord() &&
+            this.getForm().getRecord().get(this.getSandbox() ? 'sandboxOnboardingCompleted' : 'onboardingCompleted');
     },
 
     refreshTabItems: function () {

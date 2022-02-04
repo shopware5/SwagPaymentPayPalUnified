@@ -189,7 +189,7 @@
             var confirmUrl = this.opts.checkoutConfirmUrl + '?' + $.param({
                 orderId: data.orderID,
                 payerId: data.payerID,
-                basketId: this.opts.basketId,
+                basketId: this.opts.basketId
             }, true);
 
             $.loadingIndicator.open({
