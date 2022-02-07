@@ -97,16 +97,17 @@ class InContext implements SubscriberInterface
             return;
         }
 
+        $sandbox = $settings->getSandbox();
         $view = $controller->View();
         $view->assign('paypalUnifiedPaymentId', $this->paymentMethodProvider->getPaymentId(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME));
-        $view->assign('paypalUnifiedModeSandbox', $settings->getSandbox());
+        $view->assign('paypalUnifiedModeSandbox', $sandbox);
         $view->assign('paypalUnifiedUseInContext', $settings->getUseInContext());
         $view->assign('paypalUnifiedButtonStyleColor', $settings->getButtonStyleColor());
         $view->assign('paypalUnifiedButtonStyleShape', $settings->getButtonStyleShape());
         $view->assign('paypalUnifiedButtonStyleSize', $settings->getButtonStyleSize());
         $view->assign('paypalUnifiedButtonLocale', (string) $settings->getButtonLocale());
         $view->assign('paypalUnifiedLanguageIso', $this->getInContextButtonLanguage($expressSettings));
-        $view->assign('paypalUnifiedClientId', $settings->getClientId());
+        $view->assign('paypalUnifiedClientId', $sandbox ? $settings->getSandboxClientId() : $settings->getClientId());
         $view->assign('paypalUnifiedCurrency', $this->contextService->getContext()->getCurrency()->getCurrency());
         $view->assign('paypalUnifiedIntent', $this->settingsService->get(SettingsServiceInterface::SETTING_INTENT));
     }

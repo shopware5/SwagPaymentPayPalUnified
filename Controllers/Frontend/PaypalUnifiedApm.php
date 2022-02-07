@@ -36,7 +36,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedApm extends AbstractPaypalPayme
             return;
         }
 
-        if ($this->dispatchValidator->isValid()) {
+        if ($this->dispatchValidator->isInvalid()) {
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
                 ->setCode(ErrorCodes::NO_DISPATCH_FOR_ORDER);
 

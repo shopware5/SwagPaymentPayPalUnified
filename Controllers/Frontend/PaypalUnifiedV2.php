@@ -46,7 +46,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
             return;
         }
 
-        if (!$this->dispatchValidator->isValid()) {
+        if ($this->dispatchValidator->isInvalid()) {
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
                 ->setCode(ErrorCodes::NO_DISPATCH_FOR_ORDER);
 
@@ -111,7 +111,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
             return;
         }
 
-        if (!$this->dispatchValidator->isValid()) {
+        if ($this->dispatchValidator->isInvalid()) {
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
                 ->setCode(ErrorCodes::BASKET_VALIDATION_ERROR);
 

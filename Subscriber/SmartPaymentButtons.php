@@ -80,7 +80,7 @@ class SmartPaymentButtons implements SubscriberInterface
         $this->changePaymentDescription($view, 'sPayments');
 
         $view->assign('paypalUnifiedUseSmartPaymentButtons', true);
-        $view->assign('paypalUnifiedSpbClientId', $generalSettings->getClientId());
+        $view->assign('paypalUnifiedSpbClientId', $generalSettings->getSandbox() ? $generalSettings->getSandboxClientId() : $generalSettings->getClientId());
         $view->assign('paypalUnifiedSpbCurrency', $view->getAssign('sBasket')['sCurrencyName']);
         $view->assign('paypalUnifiedPaymentId', $this->paymentMethodProvider->getPaymentId(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME));
     }
@@ -108,7 +108,7 @@ class SmartPaymentButtons implements SubscriberInterface
         $this->changePaymentDescription($view, 'sPaymentMeans');
 
         $view->assign('paypalUnifiedUseSmartPaymentButtonMarks', true);
-        $view->assign('paypalUnifiedSpbClientId', $generalSettings->getClientId());
+        $view->assign('paypalUnifiedSpbClientId', $generalSettings->getSandbox() ? $generalSettings->getSandboxClientId() : $generalSettings->getClientId());
         $view->assign('paypalUnifiedPaymentId', $this->paymentMethodProvider->getPaymentId(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME));
     }
 

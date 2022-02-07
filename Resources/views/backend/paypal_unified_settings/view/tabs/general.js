@@ -425,15 +425,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
             name: 'toolbarContainer',
 
             items: [
-                {
-                    xtype: 'button',
-                    cls: 'primary',
-                    text: '{s name="fieldset/rest/testButton"}Test API settings{/s}',
-                    style: {
-                        float: 'right'
-                    },
-                    handler: Ext.bind(me.onValidateAPIButtonClick, me)
-                },
+                me.onboardingButton,
                 {
                     xtype: 'button',
                     cls: 'secondary',
@@ -443,7 +435,15 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
                     },
                     handler: Ext.bind(me.onRegisterWebhookButtonClick, me)
                 },
-                me.onboardingButton
+                {
+                    xtype: 'button',
+                    cls: 'secondary',
+                    text: '{s name="fieldset/rest/testButton"}Test API settings{/s}',
+                    style: {
+                        float: 'right'
+                    },
+                    handler: Ext.bind(me.onValidateAPIButtonClick, me)
+                }
             ]
         });
     },

@@ -15,7 +15,7 @@
             /**
              * The flow id provided to you. Unique for each web page
              */
-            fraudNetFlowId: null,
+            fraudNetFlowId: null
         },
 
         body: null,
@@ -46,7 +46,7 @@
                 .attr('src', this.opts.fraudNetUrl);
 
             this.body.append(scriptTag);
-        },
+        }
     });
 
     window.StateManager.addPlugin('*[data-paypalUnifiedFraudNet="true"]', 'swagPayPalUnifiedFraudNet');

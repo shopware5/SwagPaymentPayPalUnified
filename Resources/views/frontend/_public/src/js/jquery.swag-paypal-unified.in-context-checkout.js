@@ -219,7 +219,7 @@
              *
              * @type string
              */
-            enabledFundings: 'paylater',
+            enabledFundings: 'paylater'
         },
 
         /**
@@ -246,19 +246,19 @@
             this.buttonSize = {
                 small: {
                     height: this.opts.smallHeight,
-                    width: this.opts.smallWidth,
+                    width: this.opts.smallWidth
                 },
                 medium: {
                     height: this.opts.mediumHeight,
-                    width: this.opts.mediumWidth,
+                    width: this.opts.mediumWidth
                 },
                 large: {
                     height: this.opts.largeHeight,
-                    width: this.opts.largeWidth,
+                    width: this.opts.largeWidth
                 },
                 responsive: {
                     height: this.opts.responsiveHeight,
-                    width: this.opts.responsiveWidth,
+                    width: this.opts.responsiveWidth
                 }
             };
         },
@@ -322,7 +322,7 @@
                 'client-id': this.opts.clientId,
                 'disable-funding': this.opts.disabledFundings,
                 'enable-funding': this.opts.enabledFundings,
-                intent: this.opts.paypalIntent.toLowerCase(),
+                intent: this.opts.paypalIntent.toLowerCase()
             };
 
             if (this.opts.locale.length > 0) {
@@ -364,7 +364,7 @@
                     shape: this.opts.shape,
                     layout: this.opts.layout,
                     tagline: this.opts.tagline,
-                    height: this.buttonSize[this.opts.size].height,
+                    height: this.buttonSize[this.opts.size].height
                 },
 
                 /**
@@ -390,7 +390,7 @@
                 /**
                  * Will be called if any api error occurred
                  */
-                onError: this.onPayPalAPIError.bind(this),
+                onError: this.onPayPalAPIError.bind(this)
             };
 
             $.publish('plugin/swagPayPalUnifiedInContextCheckout/createConfig', [this, buttonConfig]);
@@ -432,7 +432,7 @@
 
             return $.ajax({
                 method: 'get',
-                url: this.renderApproveUrl(data),
+                url: this.renderApproveUrl(data)
             }).then(function(response) {
                 if (response.errorUrl) {
                     me.onPayPalAPIError();
@@ -452,7 +452,7 @@
             var params = $.param({
                 token: data.orderID,
                 payerId: data.payerID,
-                basketId: this.opts.basketId,
+                basketId: this.opts.basketId
             }, true);
 
             return [this.opts.onApproveUrl, '?', params].join('');
@@ -505,7 +505,7 @@
 
         onPayPalAPIError: function() {
             window.location.replace(this.opts.paypalErrorPage);
-        },
+        }
     });
 
     window.StateManager.addPlugin('*[data-paypalUnifiedNormalCheckoutButtonInContext="true"]', 'swagPayPalUnifiedInContextCheckout');

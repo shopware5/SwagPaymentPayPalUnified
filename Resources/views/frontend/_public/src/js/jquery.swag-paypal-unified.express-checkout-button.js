@@ -230,7 +230,7 @@
              *
              * @type string
              */
-            responsiveWidth: '100%',
+            responsiveWidth: '100%'
         },
 
         /**
@@ -263,19 +263,19 @@
             this.buttonSize = {
                 small: {
                     height: this.opts.smallHeight,
-                    width: this.opts.smallWidth,
+                    width: this.opts.smallWidth
                 },
                 medium: {
                     height: this.opts.mediumHeight,
-                    width: this.opts.mediumWidth,
+                    width: this.opts.mediumWidth
                 },
                 large: {
                     height: this.opts.largeHeight,
-                    width: this.opts.largeWidth,
+                    width: this.opts.largeWidth
                 },
                 responsive: {
                     height: this.opts.responsiveHeight,
-                    width: this.opts.responsiveWidth,
+                    width: this.opts.responsiveWidth
                 }
             };
         },
@@ -385,7 +385,7 @@
                     layout: me.opts.layout,
                     label: me.opts.label,
                     tagline: me.opts.tagline,
-                    height: this.buttonSize[this.opts.size].height,
+                    height: this.buttonSize[this.opts.size].height
                 },
 
                 /**
@@ -406,7 +406,7 @@
                 /**
                  * Will be called if any api error occurred
                  */
-                onError: this.onPayPalAPIError.bind(this),
+                onError: this.onPayPalAPIError.bind(this)
             };
 
             $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonCart/createConfig', [me, config]);
@@ -431,8 +431,8 @@
                 data: {
                     addProduct: true,
                     productNumber: me.opts.productNumber,
-                    productQuantity: $(me.opts.productQuantitySelector).val(),
-                },
+                    productQuantity: $(me.opts.productQuantitySelector).val()
+                }
             }).then(function(response) {
                 return response.orderId;
             }).promise();
@@ -447,11 +447,11 @@
 
             return $.ajax({
                 url: me.opts.onApproveUrl,
-                data: data,
+                data: data
             }).then(function(response) {
                 var url = me.opts.confirmUrl + '?' + $.param({
                     expressCheckout: response.expressCheckout,
-                    orderId: response.orderId,
+                    orderId: response.orderId
                 });
 
                 actions.redirect(url);
@@ -479,9 +479,9 @@
             $.ajax({
                 url: this.opts.logUrl,
                 data: {
-                    code:response.code,
-                    message: response.message,
-                },
+                    code: response.code,
+                    message: response.message
+                }
             });
         },
 
@@ -493,7 +493,7 @@
          */
         getProductQuantity: function() {
             var me = this,
-                quantity = $(me.opts.productQuantitySelector).val()
+                quantity = $(me.opts.productQuantitySelector).val();
 
             if (quantity === undefined) {
                 return 1;

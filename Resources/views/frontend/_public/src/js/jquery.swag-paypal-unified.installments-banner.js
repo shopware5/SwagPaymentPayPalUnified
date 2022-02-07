@@ -76,7 +76,7 @@
              *
              * @type string|null
              */
-            buyerCountry: null,
+            buyerCountry: null
         },
 
         init: function() {

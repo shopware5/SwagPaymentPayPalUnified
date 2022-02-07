@@ -253,9 +253,11 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
             url: me.registerWebhookUrl,
             params: {
                 shopId: me.shopId,
-                clientId: generalSettings['clientId'],
-                clientSecret: generalSettings['clientSecret'],
-                sandbox: generalSettings['sandbox']
+                clientId: generalSettings.clientId,
+                clientSecret: generalSettings.clientSecret,
+                sandboxClientId: generalSettings.sandboxClientId,
+                sandboxClientSecret: generalSettings.sandboxClientSecret,
+                sandbox: generalSettings.sandbox
             },
             callback: Ext.bind(me.onRegisterWebhookAjaxCallback, me)
         });
@@ -271,9 +273,11 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
             url: me.validateAPIUrl,
             params: {
                 shopId: me.shopId,
-                clientId: generalSettings['clientId'],
-                clientSecret: generalSettings['clientSecret'],
-                sandbox: generalSettings['sandbox']
+                clientId: generalSettings.clientId,
+                clientSecret: generalSettings.clientSecret,
+                sandboxClientId: generalSettings.sandboxClientId,
+                sandboxClientSecret: generalSettings.sandboxClientSecret,
+                sandbox: generalSettings.sandbox
             },
             callback: Ext.bind(me.onValidateAPIAjaxCallback, me)
         });

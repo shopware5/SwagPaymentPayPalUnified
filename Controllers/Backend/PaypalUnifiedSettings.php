@@ -115,13 +115,17 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
     {
         $request = $this->Request();
         $shopId = (int) $request->getParam('shopId');
-        $restId = $request->getParam('clientId');
         $sandbox = $request->getParam('sandbox', 'false') !== 'false';
+        $restId = $request->getParam('clientId');
         $restSecret = $request->getParam('clientSecret');
+        $restIdSandbox = $request->getParam('sandboxClientId');
+        $restSecretSandbox = $request->getParam('sandboxClientSecret');
 
         $this->clientService->configure([
             'clientId' => $restId,
             'clientSecret' => $restSecret,
+            'sandboxClientId' => $restIdSandbox,
+            'sandboxClientSecret' => $restSecretSandbox,
             'sandbox' => $sandbox,
             'shopId' => $shopId,
         ]);

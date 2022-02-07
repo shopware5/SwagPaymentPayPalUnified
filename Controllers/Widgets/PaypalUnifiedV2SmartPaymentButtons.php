@@ -38,7 +38,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2SmartPaymentButtons extends Ab
             return;
         }
 
-        if ($this->dispatchValidator->isValid()) {
+        if ($this->dispatchValidator->isInvalid()) {
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
                 ->setCode(ErrorCodes::NO_DISPATCH_FOR_ORDER);
 

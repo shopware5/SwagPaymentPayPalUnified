@@ -58,7 +58,7 @@ class PaypalUnifiedV2Test extends TestCase
         $orderResourceCommunicationFailure,
         $expectedErrorCode
     ) {
-        $session = static::createMock(ShopwareSession::class);
+        $session = $this->createMock(ShopwareSession::class);
         $session->method('get')
             ->willReturnMap([
                 ['expressData', null, null],
@@ -71,11 +71,11 @@ class PaypalUnifiedV2Test extends TestCase
                 ['sUserId', 1],
             ]);
 
-        $dependencyProvider = static::createConfiguredMock(DependencyProvider::class, [
+        $dependencyProvider = $this->createConfiguredMock(DependencyProvider::class, [
             'getSession' => $session,
         ]);
 
-        $redirectDataBuilder = static::createMock(RedirectDataBuilder::class);
+        $redirectDataBuilder = $this->createMock(RedirectDataBuilder::class);
         $redirectDataBuilder->expects(static::atLeastOnce())
             ->method('setCode')
             ->with($expectedErrorCode)
@@ -83,61 +83,61 @@ class PaypalUnifiedV2Test extends TestCase
         $redirectDataBuilder->method('setException')
             ->willReturn($redirectDataBuilder);
 
-        $redirectDataBuilderFactory = static::createConfiguredMock(RedirectDataBuilderFactory::class, [
+        $redirectDataBuilderFactory = $this->createConfiguredMock(RedirectDataBuilderFactory::class, [
             'createRedirectDataBuilder' => $redirectDataBuilder,
         ]);
 
-        $configService = static::createMock(Shopware_Components_Config::class);
+        $configService = $this->createMock(Shopware_Components_Config::class);
         $configService->method('get')
             ->willReturnMap([
                 ['premiumShippingNoOrder', null, $premiumShippingNoOrder],
             ]);
 
-        $orderFactory = static::createMock(OrderFactory::class);
+        $orderFactory = $this->createMock(OrderFactory::class);
 
         if ($orderBuilderException) {
             $orderFactory->method('createOrder')
                 ->willThrowException(new UnexpectedValueException());
         } else {
             $orderFactory->method('createOrder')
-                ->willReturn(static::createMock(Order::class));
+                ->willReturn($this->createMock(Order::class));
         }
 
-        $orderResource = static::createMock(OrderResource::class);
+        $orderResource = $this->createMock(OrderResource::class);
 
         if ($orderResourceCommunicationFailure) {
             $orderResource->method('create')
                 ->willThrowException(new RequestException());
         }
 
-        $paymentControllerHelper = static::createConfiguredMock(PaymentControllerHelper::class, [
+        $paymentControllerHelper = $this->createConfiguredMock(PaymentControllerHelper::class, [
             'setGrossPriceFallback' => [],
         ]);
 
         $signatureGenerator = null;
 
-        if (class_exists('Shopware\Components\BasketSignature\BasketSignatureGenerator')) {
-            $signatureGenerator = static::createMock(BasketSignatureGenerator::class);
+        if (class_exists(BasketSignatureGenerator::class)) {
+            $signatureGenerator = $this->createMock(BasketSignatureGenerator::class);
             $signatureGenerator->method('generateSignature')
                 ->willReturn([]);
         }
 
         $basketPersister = null;
 
-        if (class_exists('Shopware\Components\BasketSignature\BasketPersister')) {
-            $basketPersister = static::createMock(BasketPersister::class);
+        if (class_exists(BasketPersister::class)) {
+            $basketPersister = $this->createMock(BasketPersister::class);
         }
 
-        $cartPersister = static::createMock(CartPersister::class);
-        $orderParameterFacade = static::createConfiguredMock(PayPalOrderParameterFacadeInterface::class, [
-            'createPayPalOrderParameter' => static::createMock(PayPalOrderParameter::class),
+        $cartPersister = $this->createMock(CartPersister::class);
+        $orderParameterFacade = $this->createConfiguredMock(PayPalOrderParameterFacadeInterface::class, [
+            'createPayPalOrderParameter' => $this->createMock(PayPalOrderParameter::class),
         ]);
 
-        $dispatchValidation = static::createMock(DispatchValidation::class);
-        $dispatchValidation->method('isValid')
+        $dispatchValidation = $this->createMock(DispatchValidation::class);
+        $dispatchValidation->method('isInvalid')
             ->willReturn($isValidDispatch);
 
-        $container = static::createMock(Container::class);
+        $container = $this->createMock(Container::class);
         $container->method('get')
             ->willReturnMap([
                 ['paypal_unified.dependency_provider', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $dependencyProvider],
@@ -175,7 +175,7 @@ class PaypalUnifiedV2Test extends TestCase
 
         yield 'Order data without dispatch should lead to ErrorCodes::NO_DISPATCH_FOR_ORDER' => [
             [],
-            false,
+            true,
             false,
             false,
             false,
@@ -187,7 +187,7 @@ class PaypalUnifiedV2Test extends TestCase
                 'sUserData' => [],
                 'sBasket' => [],
             ],
-            true,
+            false,
             false,
             true,
             false,
@@ -199,7 +199,7 @@ class PaypalUnifiedV2Test extends TestCase
                 'sUserData' => [],
                 'sBasket' => [],
             ],
-            true,
+            false,
             false,
             false,
             true,
