@@ -31,7 +31,10 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebarV2.tabs.PaypalTransactions',
      * @param { Object } paypalOrderData
      */
     setOrderData: function(paypalOrderData) {
-        this.productItemGrid.setStore(paypalOrderData.purchase_units[0].items);
+        var items  = paypalOrderData.purchase_units[0].items;
+        if (items !== null) {
+            this.productItemGrid.setStore(items);
+        }
         this.invoiceAmountFieldset.setOrderData(paypalOrderData);
         this.paymentDetailsFieldset.setOrderData(paypalOrderData);
         this.payerDetailsFieldset.setOrderData(paypalOrderData);

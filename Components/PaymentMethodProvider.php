@@ -9,6 +9,7 @@
 namespace SwagPaymentPayPalUnified\Components;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Query\QueryBuilder;
 use PDO;
 use Shopware\Components\Model\ModelManager;
 use Shopware\Models\Payment\Payment;
@@ -87,12 +88,18 @@ class PaymentMethodProvider implements PaymentMethodProviderInterface
      */
     public function getActivePayments(array $paymentMethodNames)
     {
-        return $this->connection->createQueryBuilder()
-            ->select(['payment.name', 'payment.id'])
-            ->from('s_core_paymentmeans', 'payment')
-            ->where('payment.active = 1')
-            ->andWhere('payment.name IN (:paymentMethodNames)')
-            ->setParameter('paymentMethodNames', $paymentMethodNames, Connection::PARAM_STR_ARRAY)
+        return $this->createPaymentQueryBuilder($paymentMethodNames)
+            ->andWhere('payment.active = 1')
+            ->execute()
+            ->fetchAll(PDO::FETCH_KEY_PAIR);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getPayments(array $paymentMethodNames)
+    {
+        return $this->createPaymentQueryBuilder($paymentMethodNames)
             ->execute()
             ->fetchAll(PDO::FETCH_KEY_PAIR);
     }
@@ -176,5 +183,19 @@ class PaymentMethodProvider implements PaymentMethodProviderInterface
         throw new UnexpectedValueException(
             sprintf('Payment type for payment method "%s" not found', $paymentMethodName)
         );
+    }
+
+    /**
+     * @param array<string> $paymentMethodNames
+     *
+     * @return QueryBuilder
+     */
+    private function createPaymentQueryBuilder(array $paymentMethodNames)
+    {
+        return $this->connection->createQueryBuilder()
+            ->select(['payment.name', 'payment.id'])
+            ->from('s_core_paymentmeans', 'payment')
+            ->andWhere('payment.name IN (:paymentMethodNames)')
+            ->setParameter('paymentMethodNames', $paymentMethodNames, Connection::PARAM_STR_ARRAY);
     }
 }

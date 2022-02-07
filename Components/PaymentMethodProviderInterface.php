@@ -86,6 +86,13 @@ interface PaymentMethodProviderInterface
     public function getActivePayments(array $paymentMethodNames);
 
     /**
+     * @param array<string> $paymentMethodNames
+     *
+     * @return array<string, int>
+     */
+    public function getPayments(array $paymentMethodNames);
+
+    /**
      * @return array<string>
      */
     public function getPayPalMethodNames();

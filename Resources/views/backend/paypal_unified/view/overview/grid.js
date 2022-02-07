@@ -243,6 +243,8 @@ Ext.define('Shopware.apps.PaypalUnified.view.overview.Grid', {
             case 'PayPalSmartPaymentButtonsV2':
                 return '{s name="type/smart_payment_buttons_v2"}PayPalSmartPaymentButtonsV2{/s}'
         }
+
+        return record.get('paymentType')
     }
 });
 // {/block}

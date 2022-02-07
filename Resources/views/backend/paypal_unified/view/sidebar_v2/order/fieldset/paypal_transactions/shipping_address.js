@@ -30,6 +30,10 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebarV2.order.fieldset.paypalTran
      * @param { Object } paypalOrderData
      */
     setOrderData: function(paypalOrderData) {
+        if (paypalOrderData.purchase_units[0].shipping === null) {
+            return;
+        }
+
         var shipping = paypalOrderData.purchase_units[0].shipping,
             address = shipping.address;
 
