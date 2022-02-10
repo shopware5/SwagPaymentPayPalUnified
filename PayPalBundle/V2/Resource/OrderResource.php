@@ -58,21 +58,11 @@ class OrderResource
     public function create(Order $order, $paymentType, $partnerAttributionId, $minimalResponse = true)
     {
         $this->clientService->setPartnerAttributionId($partnerAttributionId);
+
         if ($minimalResponse === false) {
             $this->clientService->setHeader('Prefer', 'return=representation');
         }
 
-        /*
-         * This is only necessary, because the Request-Id-Header should be
-         * optional, but isn't. This is a quirk of PayPals staging system again,
-         * so may be removed later on if possible. Otherwise we'll need to
-         * implement some way of storing this alongside the order, as outlined
-         * below.
-         *
-         * TODO: (PT-12531) check back later (after testing against the public sandbox) to either remove or store this value
-         *
-         * @see https://developer.paypal.com/docs/api/reference/api-requests/#paypal-request-id
-         */
         if ($order->getPaymentSource() !== null) {
             $id = bin2hex((string) openssl_random_pseudo_bytes(16));
 

@@ -7,11 +7,16 @@
  */
 
 use Shopware\Components\HttpClient\RequestException;
+use Shopware\Models\Order\Status;
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\ShopwareOrderData;
+use SwagPaymentPayPalUnified\Components\Services\PaymentStatusService;
 use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentController;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\PartnerAttributionId;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Patch;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Patches\OrderAddInvoiceIdPatch;
 
 class Shopware_Controllers_Frontend_PaypalUnifiedV2PayUponInvoice extends AbstractPaypalPaymentController
 {
@@ -30,9 +35,6 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2PayUponInvoice extends Abstra
 
         try {
             $orderData = $this->orderFactory->createOrder($orderParams);
-
-            // We set a random invoice ID here, it will be updated later.
-            $orderData->getPurchaseUnits()[0]->setInvoiceId(bin2hex((string) \openssl_random_pseudo_bytes(8)));
 
             $paypalOrder = $this->orderResource->create($orderData, $orderParams->getPaymentType(), PartnerAttributionId::PAYPAL_ALL_V2, false);
         } catch (RequestException $exception) {
@@ -53,17 +55,52 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2PayUponInvoice extends Abstra
             return;
         }
 
-        $this->createShopwareOrder($paypalOrder->getId(), PaymentType::PAYPAL_PAY_UPON_INVOICE_V2);
+        $shopwareOrderNumber = $this->createShopwareOrder($paypalOrder->getId(), PaymentType::PAYPAL_PAY_UPON_INVOICE_V2);
+
+        if ($this->settingsService->get(SettingsServiceInterface::SETTING_SEND_ORDER_NUMBER)) {
+            $orderNumberPrefix = $this->settingsService->get(SettingsServiceInterface::SETTING_ORDER_NUMBER_PREFIX);
+
+            $invoiceIdPatch = new OrderAddInvoiceIdPatch();
+            $invoiceIdPatch->setOp(Patch::OPERATION_ADD);
+            $invoiceIdPatch->setValue(sprintf('%s%s', $orderNumberPrefix, $shopwareOrderNumber));
+            $invoiceIdPatch->setPath(OrderAddInvoiceIdPatch::PATH);
+
+            $patchSet[] = $invoiceIdPatch;
+
+            try {
+                $this->orderResource->update($patchSet, $paypalOrder->getId(), PartnerAttributionId::PAYPAL_ALL_V2);
+            } catch (RequestException $exception) {
+                $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
+                    ->setCode(ErrorCodes::COMMUNICATION_FAILURE)
+                    ->setException($exception);
+
+                $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
+
+                return;
+            }
+        }
+
+        /** @var PaymentStatusService $paymentStatusService */
+        $paymentStatusService = $this->get('paypal_unified.payment_status_service');
 
         // TODO: (PT-12529) Implement webhook solution
         // TODO: (PT-12529) Send response, implement a "waiting" template using a widget controller (which reacts to the webhook call OR does the polling) + AJAX for local polling
         if ($this->isPaymentCompleted($paypalOrder->getId())) {
+            $paymentStatusService->updatePaymentStatus($paypalOrder->getId(), Status::PAYMENT_STATE_COMPLETELY_INVOICED);
+
             $this->redirect([
                 'module' => 'frontend',
                 'controller' => 'checkout',
                 'action' => 'finish',
                 'sUniqueID' => $paypalOrder->getId(),
             ]);
+        } else {
+            $paymentStatusService->updatePaymentStatus($paypalOrder->getId(), Status::PAYMENT_STATE_REVIEW_NECESSARY);
+
+            $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
+                ->setCode(ErrorCodes::COMMUNICATION_FAILURE);
+
+            $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
         }
     }
 }
