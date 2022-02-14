@@ -2661,32 +2661,12 @@ parameters:
 			path: Setup/Installer.php
 
 		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Setup\\\\Installer\\:\\:createPaymentMethods\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Setup/Installer.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Setup\\\\Installer\\:\\:getTranslationKeys\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: Setup/Installer.php
-
-		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Setup\\\\Installer\\:\\:migrate\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: Setup/Installer.php
 
 		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Setup\\\\Installer\\:\\:removeDocumentTemplates\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Setup/Installer.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Setup\\\\Installer\\:\\:writeTranslation\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Setup/Installer.php
-
-		-
-			message: "#^PHPDoc tag @var for variable \\$translationKeys has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: Setup/Installer.php
 
@@ -6749,4 +6729,3 @@ parameters:
 			message: "#^Method PayUponInvoiceRiskManagementTest\\:\\:getValidator\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: Tests/Unit/Subscriber/PayUponInvoiceRiskManagementTest.php
-

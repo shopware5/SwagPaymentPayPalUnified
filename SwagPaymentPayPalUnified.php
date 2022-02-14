@@ -28,6 +28,7 @@ use SwagPaymentPayPalUnified\Components\DependencyInjection\RiskManagementValueC
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Setup\Installer;
 use SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentModelFactory;
+use SwagPaymentPayPalUnified\Setup\TranslationTransformer;
 use SwagPaymentPayPalUnified\Setup\Uninstaller;
 use SwagPaymentPayPalUnified\Setup\Updater;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -65,6 +66,7 @@ class SwagPaymentPayPalUnified extends Plugin
             $this->container->get('dbal_connection'),
             $this->container->get('shopware_attribute.crud_service'),
             $translation,
+            new TranslationTransformer($this->container->get('models')),
             $this->getPaymentMethodProvider(),
             new PaymentModelFactory($context->getPlugin()),
             $this->getPath()

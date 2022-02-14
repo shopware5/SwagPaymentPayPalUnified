@@ -14,7 +14,7 @@ use Shopware\Components\Model\ModelManager;
 use Shopware\Models\Plugin\Plugin;
 use Shopware_Components_Translation;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
-use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
+use SwagPaymentPayPalUnified\Setup\Assets\Translations;
 use SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentInstaller;
 use SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentModelFactory;
 
@@ -46,6 +46,11 @@ class Installer
     private $translation;
 
     /**
+     * @var TranslationTransformer
+     */
+    private $translationTransformer;
+
+    /**
      * @var PaymentMethodProvider
      */
     private $paymentMethodProvider;
@@ -63,6 +68,7 @@ class Installer
         Connection $connection,
         CrudService $attributeCrudService,
         Shopware_Components_Translation $translation,
+        TranslationTransformer $translationTransformer,
         PaymentMethodProvider $paymentMethodProvider,
         PaymentModelFactory $paymentModelCreator,
         $bootstrapPath
@@ -71,6 +77,7 @@ class Installer
         $this->connection = $connection;
         $this->attributeCrudService = $attributeCrudService;
         $this->translation = $translation;
+        $this->translationTransformer = $translationTransformer;
         $this->paymentMethodProvider = $paymentMethodProvider;
         $this->paymentModelFactory = $paymentModelCreator;
         $this->bootstrapPath = $bootstrapPath;
@@ -92,7 +99,11 @@ class Installer
         $this->createAttributes();
         $this->createDocumentTemplates();
         $this->migrate();
-        $this->writeTranslation();
+
+        $this->translation->writeBatch(
+            $this->translationTransformer->getTranslations('config_payment', Translations::CONFIG_PAYMENT_TRANSLATIONS),
+            true
+        );
 
         return true;
     }
@@ -159,10 +170,10 @@ class Installer
         $this->removeDocumentTemplates();
 
         $sql = "
-			INSERT INTO `s_core_documents_box` (`documentID`, `name`, `style`, `value`) VALUES
-			(1, 'PayPal_Unified_Instructions_Footer', 'width: 170mm;\r\nposition:fixed;\r\nbottom:-20mm;\r\nheight: 15mm;', :footerValue),
-			(1, 'PayPal_Unified_Instructions_Content', :contentStyle, :contentValue);
-		";
+            INSERT INTO `s_core_documents_box` (`documentID`, `name`, `style`, `value`) VALUES
+            (1, 'PayPal_Unified_Instructions_Footer', 'width: 170mm;\r\nposition:fixed;\r\nbottom:-20mm;\r\nheight: 15mm;', :footerValue),
+            (1, 'PayPal_Unified_Instructions_Content', :contentStyle, :contentValue);
+        ";
 
         //Load the assets
         $instructionsContent = \file_get_contents($this->bootstrapPath . '/Setup/Assets/Document/PayPal_Unified_Instructions_Content.html');
@@ -189,39 +200,9 @@ class Installer
         $this->connection->query($sql);
     }
 
-    private function writeTranslation()
-    {
-        /** @var array $translationKeys */
-        $translationKeys = $this->getTranslationKeys();
-
-        $this->translation->write(
-            2,
-            'config_payment',
-            $translationKeys[PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME],
-            [
-                'description' => 'PayPal',
-                'additionalDescription' => '<!-- PayPal Logo --><a href="https://www.paypal.com/de/cgi-bin/webscr?cmd=xpt/cps/popup/OLCWhatIsPayPal-outside" target="_blank" rel="noopener">'
-                    . '<img src="{link file=\'frontend/_public/src/img/sidebar-paypal-generic.png\' fullPath}" alt="Logo \'PayPal recommended\'">'
-                    . '</a><br><!-- PayPal Logo -->Paying with PayPal - easy, fast and secure.',
-            ],
-            true
-        );
-    }
-
     /**
-     * @return array
+     * @return void
      */
-    private function getTranslationKeys()
-    {
-        return $this->modelManager->getDBALQueryBuilder()
-            ->select('name, id')
-            ->from('s_core_paymentmeans', 'pm')
-            ->where('pm.name = :name')
-            ->setParameter(':name', PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME)
-            ->execute()
-            ->fetchAll(\PDO::FETCH_KEY_PAIR);
-    }
-
     private function createPaymentMethods()
     {
         (new PaymentInstaller($this->paymentMethodProvider, $this->paymentModelFactory, $this->modelManager))->installPayments();
