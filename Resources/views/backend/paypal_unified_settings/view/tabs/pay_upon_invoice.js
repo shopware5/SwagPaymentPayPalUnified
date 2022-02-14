@@ -15,6 +15,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.PayUponInvoice', {
             checkboxLabel: '{s name="fieldset/activation/activate/help"}Enable this option to activate PayPal Pay Upon Invoice for this shop.{/s}'
         },
         onboardingPendingMessage: '{s name="onboardingPendingMessage"}Your account is currenctly not eligible for accepting payments using Pay Upon Invoice.{/s}',
+        registrationSettingsMessage: '{s name="registrationSettingsMessage"}For your customers to be able to pay using this payment method, they\'ll need to provide a phone number as well as their date of birth. Please make sure to activate the corresponding input fields for the registration. (Basic settings - Storefront - Login / Registration){/s}'
     },
 
     anchor: '100%',
@@ -40,6 +41,11 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.PayUponInvoice', {
     onboardingMessage: null,
 
     /**
+     * @type { Ext.container.Container }
+     */
+    registrationSettingsMessage: null,
+
+    /**
      * @type { Ext.button.Button }
      */
     onboardingButton: null,
@@ -57,6 +63,8 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.PayUponInvoice', {
 
         if (!this.isOnboardingCompleted()) {
             items.push(this.createOnboardingMessage());
+        } else {
+            items.push(this.createRegistrationSettingsMessage());
         }
 
         items.push(this.createActivationFieldset());
@@ -72,6 +80,15 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.PayUponInvoice', {
         );
 
         return this.onboardingMessage;
+    },
+
+    createRegistrationSettingsMessage: function () {
+        this.registrationSettingsMessage = Shopware.Notification.createBlockMessage(
+            this.snippets.registrationSettingsMessage,
+            'alert'
+        );
+
+        return this.registrationSettingsMessage;
     },
 
     createActivationFieldset: function () {
