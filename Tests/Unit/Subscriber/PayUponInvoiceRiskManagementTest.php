@@ -7,6 +7,7 @@
  */
 
 use PHPUnit\Framework\Constraint\Constraint;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
 use Shopware\Bundle\StoreFrontBundle\Struct\Currency;
@@ -20,6 +21,7 @@ use SwagPaymentPayPalUnified\Models\Settings\PayUponInvoice;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use SwagPaymentPayPalUnified\Subscriber\PayUponInvoiceRiskManagement;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Validator\Constraints\Collection;
 use Symfony\Component\Validator\Constraints\EqualTo;
 use Symfony\Component\Validator\Constraints\NotBlank;
@@ -191,6 +193,7 @@ class PayUponInvoiceRiskManagementTest extends TestCase
      * @param ValidatorInterface|null       $validator
      * @param ContextServiceInterface|null  $contextService
      * @param SettingsServiceInterface|null $settingsService
+     * @param RequestStack|null             $requestStack
      *
      * @return PayUponInvoiceRiskManagement
      */
@@ -199,27 +202,38 @@ class PayUponInvoiceRiskManagementTest extends TestCase
         $dependencyProvider = null,
         $validator = null,
         $contextService = null,
-        $settingsService = null
+        $settingsService = null,
+        $requestStack = null
     ) {
         return new PayUponInvoiceRiskManagement(
             $paymentMethodProvider ?: $this->getPaymentMethodProvider(),
             $dependencyProvider ?: $this->getDependencyProvider(),
             $validator ?: $this->getValidator(),
             $contextService ?: $this->getContextService(),
-            $settingsService ?: $this->getSettingsService()
+            $settingsService ?: $this->getSettingsService(),
+            $requestStack ?: $this->getRequestStack()
         );
     }
 
+    /**
+     * @return MockObject|PaymentMethodProvider
+     */
     protected function getPaymentMethodProvider()
     {
         return static::createMock(PaymentMethodProvider::class);
     }
 
+    /**
+     * @return MockObject|DependencyProvider
+     */
     protected function getDependencyProvider()
     {
         return static::createMock(DependencyProvider::class);
     }
 
+    /**
+     * @return MockObject|ValidatorInterface
+     */
     protected function getValidator()
     {
         $validatorMock = static::createMock(ValidatorInterface::class);
@@ -230,6 +244,9 @@ class PayUponInvoiceRiskManagementTest extends TestCase
         return $validatorMock;
     }
 
+    /**
+     * @return MockObject|ContextServiceInterface
+     */
     protected function getContextService()
     {
         $contextServiceMock = static::createMock(ContextServiceInterface::class);
@@ -247,6 +264,9 @@ class PayUponInvoiceRiskManagementTest extends TestCase
         return $contextServiceMock;
     }
 
+    /**
+     * @return MockObject|SettingsServiceInterface
+     */
     protected function getSettingsService()
     {
         $settingsServiceMock = static::createMock(SettingsServiceInterface::class);
@@ -258,6 +278,14 @@ class PayUponInvoiceRiskManagementTest extends TestCase
             ]);
 
         return $settingsServiceMock;
+    }
+
+    /**
+     * @return MockObject|RequestStack
+     */
+    protected function getRequestStack()
+    {
+        return static::createMock(RequestStack::class);
     }
 
     /**

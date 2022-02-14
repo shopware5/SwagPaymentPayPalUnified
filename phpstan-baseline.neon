@@ -6704,28 +6704,3 @@ parameters:
 			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Unit\\\\PayPalBundle\\\\Structs\\\\WebhookStructTest\\:\\:testToArray\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: Tests/Unit/PayPalBundle/Structs/WebhookStructTest.php
-
-		-
-			message: "#^Method PayUponInvoiceRiskManagementTest\\:\\:getContextService\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Unit/Subscriber/PayUponInvoiceRiskManagementTest.php
-
-		-
-			message: "#^Method PayUponInvoiceRiskManagementTest\\:\\:getDependencyProvider\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Unit/Subscriber/PayUponInvoiceRiskManagementTest.php
-
-		-
-			message: "#^Method PayUponInvoiceRiskManagementTest\\:\\:getPaymentMethodProvider\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Unit/Subscriber/PayUponInvoiceRiskManagementTest.php
-
-		-
-			message: "#^Method PayUponInvoiceRiskManagementTest\\:\\:getSettingsService\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Unit/Subscriber/PayUponInvoiceRiskManagementTest.php
-
-		-
-			message: "#^Method PayUponInvoiceRiskManagementTest\\:\\:getValidator\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Unit/Subscriber/PayUponInvoiceRiskManagementTest.php
