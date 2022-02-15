@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\PayPalBundle\V2\Resource;
 
+use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\RequestType;
 use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
@@ -27,10 +28,19 @@ class OrderResource
      */
     private $arrayFactory;
 
-    public function __construct(ClientService $clientService, OrderArrayFactory $arrayFactory)
-    {
+    /**
+     * @var LoggerServiceInterface
+     */
+    private $loggerService;
+
+    public function __construct(
+        ClientService $clientService,
+        OrderArrayFactory $arrayFactory,
+        LoggerServiceInterface $loggerService
+    ) {
         $this->clientService = $clientService;
         $this->arrayFactory = $arrayFactory;
+        $this->loggerService = $loggerService;
     }
 
     /**
@@ -57,6 +67,8 @@ class OrderResource
      */
     public function create(Order $order, $paymentType, $partnerAttributionId, $minimalResponse = true)
     {
+        $paypalRequestId = null;
+
         $this->clientService->setPartnerAttributionId($partnerAttributionId);
 
         if ($minimalResponse === false) {
@@ -64,9 +76,9 @@ class OrderResource
         }
 
         if ($order->getPaymentSource() !== null) {
-            $id = bin2hex((string) openssl_random_pseudo_bytes(16));
+            $paypalRequestId = bin2hex((string) openssl_random_pseudo_bytes(16));
 
-            $this->clientService->setHeader('PayPal-Request-Id', $id);
+            $this->clientService->setHeader('PayPal-Request-Id', $paypalRequestId);
         }
 
         $response = $this->clientService->sendRequest(
@@ -75,7 +87,19 @@ class OrderResource
             $this->arrayFactory->toArray($order, $paymentType)
         );
 
-        return (new Order())->assign($response);
+        $paypalOrder = (new Order())->assign($response);
+
+        if ($paypalRequestId !== null) {
+            $this->loggerService->notify(
+                'PayPal order with payment source created',
+                [
+                    'orderId' => $paypalOrder->getId(),
+                    'requestId' => $paypalRequestId,
+                ]
+            );
+        }
+
+        return $paypalOrder;
     }
 
     /**

@@ -129,8 +129,8 @@ class AmountProvider
              *
              * @see https://developer.paypal.com/api/rest/reference/orders/v2/errors#unprocessable-entity (TAX_TOTAL_MISMATCH)
              */
-            $taxTotalValue = array_reduce($items, static function ($acc, Item $item) {
-                return $acc + (float) $item->getTax()->getValue() * $item->getQuantity();
+            $taxTotalValue = array_reduce($items, static function ($total, Item $item) {
+                return $total + (float) $item->getTax()->getValue() * $item->getQuantity();
             }, 0.0);
 
             $taxTotal = new TaxTotal();

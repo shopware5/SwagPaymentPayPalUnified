@@ -174,11 +174,10 @@ class ItemListProvider
     /**
      * @param string              $currency
      * @param array<string,mixed> $lineItem
-     * @param Item                $item
      *
      * @return void
      */
-    private function setTaxInformation($currency, $lineItem, $item)
+    private function setTaxInformation($currency, array $lineItem, Item $item)
     {
         $tax = new Tax();
 

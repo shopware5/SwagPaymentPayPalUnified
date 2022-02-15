@@ -55,7 +55,11 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2PayUponInvoice extends Abstra
             return;
         }
 
+        /** @var PaymentStatusService $paymentStatusService */
+        $paymentStatusService = $this->get('paypal_unified.payment_status_service');
+
         $shopwareOrderNumber = $this->createShopwareOrder($paypalOrder->getId(), PaymentType::PAYPAL_PAY_UPON_INVOICE_V2);
+        $paymentStatusService->updatePaymentStatus($paypalOrder->getId(), Status::PAYMENT_STATE_RESERVED);
 
         if ($this->settingsService->get(SettingsServiceInterface::SETTING_SEND_ORDER_NUMBER)) {
             $orderNumberPrefix = $this->settingsService->get(SettingsServiceInterface::SETTING_ORDER_NUMBER_PREFIX);
@@ -80,13 +84,10 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2PayUponInvoice extends Abstra
             }
         }
 
-        /** @var PaymentStatusService $paymentStatusService */
-        $paymentStatusService = $this->get('paypal_unified.payment_status_service');
-
         // TODO: (PT-12529) Implement webhook solution
         // TODO: (PT-12529) Send response, implement a "waiting" template using a widget controller (which reacts to the webhook call OR does the polling) + AJAX for local polling
         if ($this->isPaymentCompleted($paypalOrder->getId())) {
-            $paymentStatusService->updatePaymentStatus($paypalOrder->getId(), Status::PAYMENT_STATE_COMPLETELY_INVOICED);
+            $paymentStatusService->updatePaymentStatus($paypalOrder->getId(), Status::PAYMENT_STATE_COMPLETELY_PAID);
 
             $this->redirect([
                 'module' => 'frontend',

@@ -212,8 +212,20 @@ class PayUponInvoiceRiskManagement implements SubscriberInterface
         $controller = $request->getControllerName();
         $action = $request->getActionName();
 
-        if ($controller === 'checkout' && \in_array($action, ['shippingPayment', 'saveShippingPayment'])) {
-            return true;
+        $allowList = [
+            'checkout' => [
+                'shippingPayment',
+                'saveShippingPayment',
+            ],
+            'account' => [
+                'payment',
+            ],
+        ];
+
+        foreach ($allowList as $allowedController => $allowedActions) {
+            if ($controller === $allowedController) {
+                return \in_array($action, $allowedActions, true);
+            }
         }
 
         return false;
