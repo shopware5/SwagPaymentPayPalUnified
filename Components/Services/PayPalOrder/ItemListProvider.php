@@ -172,18 +172,20 @@ class ItemListProvider
     }
 
     /**
-     * @param string $currency
+     * @param string              $currency
+     * @param array<string,mixed> $lineItem
+     * @param Item                $item
      *
      * @return void
      */
-    private function setTaxInformation($currency, array $lineItem, Item $item)
+    private function setTaxInformation($currency, $lineItem, $item)
     {
         $tax = new Tax();
 
         $tax->setCurrencyCode($currency);
-        $tax->setValue(\str_replace(',', '.', $lineItem['tax']));
+        $tax->setValue(sprintf('%.2f', $lineItem['priceNumeric'] - $lineItem['netprice']));
 
-        $item->getUnitAmount()->setValue(\str_replace(',', '.', $lineItem['amountnet']));
+        $item->getUnitAmount()->setValue(sprintf('%.2f', $lineItem['netprice']));
 
         $item->setTax($tax);
         $item->setTaxRate($lineItem['tax_rate']);

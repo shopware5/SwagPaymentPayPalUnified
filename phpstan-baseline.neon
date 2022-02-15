@@ -426,11 +426,6 @@ parameters:
 			path: Components/Services/PayPalOrder/ItemListProvider.php
 
 		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\PayPalOrder\\\\ItemListProvider\\:\\:setTaxInformation\\(\\) has parameter \\$lineItem with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: Components/Services/PayPalOrder/ItemListProvider.php
-
-		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\PaymentAddressService\\:\\:getBillingAddress\\(\\) has parameter \\$userData with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: Components/Services/PaymentAddressService.php
