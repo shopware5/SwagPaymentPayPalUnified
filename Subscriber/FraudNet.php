@@ -16,6 +16,8 @@ use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 
 class FraudNet implements SubscriberInterface
 {
+    const FRAUD_NET_SOURCE_WEBSITE_IDENTIFIER = 'shopware-v5_checkout-page';
+
     const PAYMENT_METHODS_REQUIRED_FRAUD_NET = [
         PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME,
         PaymentMethodProviderInterface::PAYPAL_UNIFIED_ADVANCED_CREDIT_DEBIT_CARD_METHOD_NAME,
@@ -53,19 +55,7 @@ class FraudNet implements SubscriberInterface
         }
 
         $subject->View()->assign('fraudNetSessionId', $this->getFraudNetSessionId());
-
-        /*
-         * This is the `s`-parameter provided to the fraudnet script. Either we
-         * as a partner, or the merchants themselves need to get this from
-         * "our paypal representative": "The FraudNet team will provide the
-         * source website identifier to your team."
-         *
-         * TODO: (PT-12531) get the identifier and either read it from settingsService (merchant-specific) or hard-code it (partner-specific)
-         *
-         * @see https://developer.paypal.com/docs/limited-release/fraudnet/integrate/add-parameter-block/#configuration-parameters
-         */
-        $subject->View()->assign('fraudNetFlowId', 'b9abd91c51ba11ecbf630242ac130002');
-
+        $subject->View()->assign('fraudNetFlowId', self::FRAUD_NET_SOURCE_WEBSITE_IDENTIFIER);
         $subject->View()->assign('usePayPalFraudNet', true);
     }
 
