@@ -184,7 +184,6 @@
             <argument type="service" id="validator"/>
             <argument type="service" id="shopware_storefront.context_service"/>
             <argument type="service" id="paypal_unified.settings_service"/>
-            <argument type="service" id="request_stack"/>
             <tag name="shopware.event_subscriber"/>
         </service>
 

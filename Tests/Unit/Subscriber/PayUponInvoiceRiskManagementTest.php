@@ -21,7 +21,6 @@ use SwagPaymentPayPalUnified\Models\Settings\PayUponInvoice;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use SwagPaymentPayPalUnified\Subscriber\PayUponInvoiceRiskManagement;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Validator\Constraints\Collection;
 use Symfony\Component\Validator\Constraints\EqualTo;
 use Symfony\Component\Validator\Constraints\NotBlank;
@@ -42,6 +41,7 @@ class PayUponInvoiceRiskManagementTest extends TestCase
      * The paymentMethodProvider provides testcases to assert the check
      * succeeds for all payment methods besides
      * PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME.
+     *
      * @dataProvider paymentMethodProvider
      *
      * @param bool $expectedReturnValue
@@ -193,7 +193,6 @@ class PayUponInvoiceRiskManagementTest extends TestCase
      * @param ValidatorInterface|null       $validator
      * @param ContextServiceInterface|null  $contextService
      * @param SettingsServiceInterface|null $settingsService
-     * @param RequestStack|null             $requestStack
      *
      * @return PayUponInvoiceRiskManagement
      */
@@ -202,16 +201,14 @@ class PayUponInvoiceRiskManagementTest extends TestCase
         $dependencyProvider = null,
         $validator = null,
         $contextService = null,
-        $settingsService = null,
-        $requestStack = null
+        $settingsService = null
     ) {
         return new PayUponInvoiceRiskManagement(
             $paymentMethodProvider ?: $this->getPaymentMethodProvider(),
             $dependencyProvider ?: $this->getDependencyProvider(),
             $validator ?: $this->getValidator(),
             $contextService ?: $this->getContextService(),
-            $settingsService ?: $this->getSettingsService(),
-            $requestStack ?: $this->getRequestStack()
+            $settingsService ?: $this->getSettingsService()
         );
     }
 
@@ -228,7 +225,14 @@ class PayUponInvoiceRiskManagementTest extends TestCase
      */
     protected function getDependencyProvider()
     {
-        return static::createMock(DependencyProvider::class);
+        $dependencyProviderMock = static::createMock(DependencyProvider::class);
+
+        $dependencyProviderMock->method('getFront')
+            ->willReturn(static::createConfiguredMock(Enlight_Controller_Front::class, [
+                'Request' => static::createMock(Enlight_Controller_Request_Request::class),
+            ]));
+
+        return $dependencyProviderMock;
     }
 
     /**
@@ -278,14 +282,6 @@ class PayUponInvoiceRiskManagementTest extends TestCase
             ]);
 
         return $settingsServiceMock;
-    }
-
-    /**
-     * @return MockObject|RequestStack
-     */
-    protected function getRequestStack()
-    {
-        return static::createMock(RequestStack::class);
     }
 
     /**

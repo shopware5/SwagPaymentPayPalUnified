@@ -9,6 +9,8 @@
 namespace SwagPaymentPayPalUnified\Subscriber;
 
 use Enlight\Event\SubscriberInterface;
+use Enlight_Controller_Front;
+use Enlight_Controller_Request_Request;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
@@ -17,13 +19,12 @@ use SwagPaymentPayPalUnified\Models\Settings\General;
 use SwagPaymentPayPalUnified\Models\Settings\PayUponInvoice;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Validator\Constraints\Collection;
 use Symfony\Component\Validator\Constraints\EqualTo;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Range;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use UnexpectedValueException;
 
 class PayUponInvoiceRiskManagement implements SubscriberInterface
 {
@@ -52,25 +53,18 @@ class PayUponInvoiceRiskManagement implements SubscriberInterface
      */
     private $settingsService;
 
-    /**
-     * @var RequestStack
-     */
-    private $requestStack;
-
     public function __construct(
         PaymentMethodProvider $paymentMethodProvider,
         DependencyProvider $dependencyProvider,
         ValidatorInterface $validator,
         ContextServiceInterface $contextService,
-        SettingsServiceInterface $settingsService,
-        RequestStack $requestStack
+        SettingsServiceInterface $settingsService
     ) {
         $this->paymentMethodProvider = $paymentMethodProvider;
         $this->dependencyProvider = $dependencyProvider;
         $this->validator = $validator;
         $this->contextService = $contextService;
         $this->settingsService = $settingsService;
-        $this->requestStack = $requestStack;
     }
 
     /**
@@ -203,14 +197,20 @@ class PayUponInvoiceRiskManagement implements SubscriberInterface
      */
     private function shouldShowUnconditionally()
     {
-        $request = $this->requestStack->getCurrentRequest();
+        $front = $this->dependencyProvider->getFront();
 
-        if (!$request instanceof Request) {
-            return false;
+        if (!$front instanceof Enlight_Controller_Front) {
+            throw new UnexpectedValueException(sprintf('Expected instance of %s, got %s.', Enlight_Controller_Front::class, 'null'));
         }
 
-        $controller = $request->get('controller');
-        $action = $request->get('action');
+        $request = $front->Request();
+
+        if (!$request instanceof Enlight_Controller_Request_Request) {
+            throw new UnexpectedValueException(sprintf('Expected instance of %s, got %s.', Enlight_Controller_Request_Request::class, 'null'));
+        }
+
+        $controller = $request->getControllerName();
+        $action = $request->getActionName();
 
         if ($controller === 'checkout' && \in_array($action, ['shippingPayment', 'saveShippingPayment'])) {
             return true;
