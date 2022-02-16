@@ -55,6 +55,12 @@ class General extends ModelEntity
 
     /**
      * @var string
+     * @ORM\Column(name="paypal_payer_id", type="string")
+     */
+    private $paypalPayerId;
+
+    /**
+     * @var string
      * @ORM\Column(name="sandbox_client_id", type="string")
      */
     private $sandboxClientId;
@@ -64,6 +70,12 @@ class General extends ModelEntity
      * @ORM\Column(name="sandbox_client_secret", type="string")
      */
     private $sandboxClientSecret;
+
+    /**
+     * @var string
+     * @ORM\Column(name="sandbox_paypal_payer_id", type="string")
+     */
+    private $sandboxPaypalPayerId;
 
     /**
      * @var bool
@@ -250,6 +262,24 @@ class General extends ModelEntity
     /**
      * @return string
      */
+    public function getPaypalPayerId()
+    {
+        return $this->paypalPayerId;
+    }
+
+    /**
+     * @param string $paypalPayerId
+     *
+     * @return void
+     */
+    public function setPaypalPayerId($paypalPayerId)
+    {
+        $this->paypalPayerId = $paypalPayerId;
+    }
+
+    /**
+     * @return string
+     */
     public function getSandboxClientId()
     {
         return $this->sandboxClientId;
@@ -277,6 +307,24 @@ class General extends ModelEntity
     public function setSandboxClientSecret($sandboxClientSecret)
     {
         $this->sandboxClientSecret = $sandboxClientSecret;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSandboxPaypalPayerId()
+    {
+        return $this->sandboxPaypalPayerId;
+    }
+
+    /**
+     * @param string $sandboxPaypalPayerId
+     *
+     * @return void
+     */
+    public function setSandboxPaypalPayerId($sandboxPaypalPayerId)
+    {
+        $this->sandboxPaypalPayerId = $sandboxPaypalPayerId;
     }
 
     /**

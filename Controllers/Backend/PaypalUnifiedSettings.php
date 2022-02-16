@@ -60,7 +60,7 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
             'action' => 'execute',
             'forceSecure' => 1,
         ]);
-        $url = \str_replace('http://', 'https://', $url);
+        $url = str_replace('http://', 'https://', $url);
 
         try {
             $this->configureClient();
@@ -109,6 +109,75 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
                 'message' => $error->getCompleteMessage(),
             ]);
         }
+    }
+
+    /**
+     * @return void
+     */
+    public function isCapableAction()
+    {
+        $shopId = (int) $this->Request()->getParam('shopId', 0);
+        $sandbox = (bool) $this->Request()->getParam('sandbox', false);
+        $payerId = $this->Request()->getParam('payerId');
+        $paymentMethodCapabilityNames = $this->Request()->getParam('paymentMethodCapabilityNames');
+
+        if ($shopId === 0) {
+            $this->view->assign([
+                'success' => false,
+                'message' => 'The parameter "shopId" is required.',
+            ]);
+
+            return;
+        }
+
+        if ($payerId === null) {
+            $this->view->assign([
+                'success' => false,
+                'message' => 'The parameter "payerId" is required.',
+            ]);
+
+            return;
+        }
+
+        if ($paymentMethodCapabilityNames === null) {
+            $this->view->assign([
+                'success' => false,
+                'message' => 'The parameter "paymentMethodCapabilityNames" is required.',
+            ]);
+
+            return;
+        }
+
+        if (!\is_array($paymentMethodCapabilityNames)) {
+            $this->view->assign([
+                'success' => false,
+                'message' => 'The parameter "paymentMethodCapabilityNames" should be a array.',
+            ]);
+
+            return;
+        }
+
+        $onboardingStatusService = $this->container->get('paypal_unified.onboarding_status_service');
+
+        $viewAssign = [];
+        try {
+            foreach ($paymentMethodCapabilityNames as $paymentMethodCapabilityName) {
+                $viewAssign[$paymentMethodCapabilityName] = $onboardingStatusService->isCapable($payerId, $shopId, $sandbox, $paymentMethodCapabilityName);
+            }
+        } catch (\Exception $exception) {
+            $this->exceptionHandler->handle($exception, 'validate capability');
+
+            $this->View()->assign([
+                'success' => false,
+                'message' => $exception->getMessage(),
+            ]);
+
+            return;
+        }
+
+        $viewAssign['success'] = true;
+
+        $this->view->assign($viewAssign);
     }
 
     private function configureClient()

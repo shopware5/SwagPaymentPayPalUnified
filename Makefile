@@ -41,7 +41,7 @@ fix-cs: ## Run the code style fixer
 fix-cs-dry: CS_FIXER_RUN= --dry-run
 fix-cs-dry: fix-cs  ## Run the code style fixer in dry mode
 
-check-js-code: check-eslint-frontend check-eslint-backend
+check-js-code: check-eslint-frontend check-eslint-backend ## Run esLint
 
 ESLINT_FIX=
 check-eslint-frontend:

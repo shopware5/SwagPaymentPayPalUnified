@@ -1,30 +1,32 @@
 CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_settings_general
 (
-    `id`                        INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    `shop_id`                   INT(11)      NOT NULL,
-    `active`                    TINYINT(1),
-    `client_id`                 VARCHAR(255),
-    `client_secret`             VARCHAR(255),
-    `sandbox_client_id`         VARCHAR(255),
-    `sandbox_client_secret`     VARCHAR(255),
-    `sandbox`                   TINYINT(1),
-    `show_sidebar_logo`         TINYINT(1)   NOT NULL,
-    `brand_name`                VARCHAR(255),
-    `landing_page_type`         VARCHAR(255),
-    `send_order_number`         TINYINT(1)   NOT NULL,
-    `order_number_prefix`       VARCHAR(255),
-    `use_in_context`            TINYINT(1)   NOT NULL,
-    `log_level`                 INT(11)      NOT NULL,
-    `display_errors`            TINYINT(1)   NOT NULL,
-    `advertise_returns`         TINYINT(1)   NOT NULL,
-    `use_smart_payment_buttons` TINYINT(1)   NOT NULL,
-    `merchant_location`         VARCHAR(255) NOT NULL,
-    `submit_cart`               TINYINT(1)   NOT NULL,
-    `intent`                    VARCHAR(255) default 'CAPTURE',
-    `button_style_color`        VARCHAR(255) NULL,
-    `button_style_shape`        VARCHAR(255) NULL,
-    `button_style_size`         VARCHAR(255) NULL,
-    `button_locale`             VARCHAR(5)
+    `id`                         INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `shop_id`                    INT(11)      NOT NULL,
+    `active`                     TINYINT(1),
+    `client_id`                  VARCHAR(255),
+    `client_secret`              VARCHAR(255),
+    `sandbox_client_id`          VARCHAR(255),
+    `sandbox_client_secret`      VARCHAR(255),
+    `sandbox`                    TINYINT(1),
+    `show_sidebar_logo`          TINYINT(1)   NOT NULL,
+    `brand_name`                 VARCHAR(255),
+    `landing_page_type`          VARCHAR(255),
+    `send_order_number`          TINYINT(1)   NOT NULL,
+    `order_number_prefix`        VARCHAR(255),
+    `use_in_context`             TINYINT(1)   NOT NULL,
+    `log_level`                  INT(11)      NOT NULL,
+    `display_errors`             TINYINT(1)   NOT NULL,
+    `advertise_returns`          TINYINT(1)   NOT NULL,
+    `use_smart_payment_buttons`  TINYINT(1)   NOT NULL,
+    `merchant_location`          VARCHAR(255) NOT NULL,
+    `submit_cart`                TINYINT(1)   NOT NULL,
+    `intent`                     VARCHAR(255) default 'CAPTURE',
+    `button_style_color`         VARCHAR(255) NULL,
+    `button_style_shape`         VARCHAR(255) NULL,
+    `button_style_size`          VARCHAR(255) NULL,
+    `button_locale`              VARCHAR(5),
+    `paypal_payer_id`         VARCHAR(255) NULL,
+    `sandbox_paypal_payer_id` VARCHAR(255) NULL
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
@@ -89,8 +91,9 @@ CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_payment_instruction
     DEFAULT CHARSET = utf8
     COLLATE = utf8_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_settings_pay_upon_invoice (
-    `id`                           INT(11)    UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_settings_pay_upon_invoice
+(
+    `id`                           INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     `shop_id`                      INT(11)    NOT NULL,
     `onboarding_completed`         TINYINT(1) NOT NULL,
     `sandbox_onboarding_completed` TINYINT(1) NOT NULL,
@@ -100,8 +103,9 @@ CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_settings_pay_upon_invoice
     DEFAULT CHARSET = utf8
     COLLATE = utf8_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_settings_advanced_credit_debit_card (
-    `id`                           INT(11)    UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_settings_advanced_credit_debit_card
+(
+    `id`                           INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     `shop_id`                      INT(11)    NOT NULL,
     `onboarding_completed`         TINYINT(1) NOT NULL,
     `sandbox_onboarding_completed` TINYINT(1) NOT NULL,

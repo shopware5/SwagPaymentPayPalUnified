@@ -23,7 +23,7 @@ class Shopware_Controllers_Backend_PaypalUnifiedPayUponInvoiceSettings extends S
     /**
      * {@inheritdoc}
      */
-    protected $alias = 'pay-upon-invoice';
+    protected $alias = 'payUponInvoice';
 
     public function detailAction()
     {
