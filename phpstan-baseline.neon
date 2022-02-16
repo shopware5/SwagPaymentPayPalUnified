@@ -111,36 +111,6 @@ parameters:
 			path: Components/Document/InvoiceDocumentHandler.php
 
 		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\PayPalOrderParameter\\\\PayPalOrderParameter\\:\\:__construct\\(\\) has parameter \\$cart with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: Components/PayPalOrderParameter/PayPalOrderParameter.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\PayPalOrderParameter\\\\PayPalOrderParameter\\:\\:__construct\\(\\) has parameter \\$customer with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: Components/PayPalOrderParameter/PayPalOrderParameter.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\PayPalOrderParameter\\\\PayPalOrderParameter\\:\\:getCart\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: Components/PayPalOrderParameter/PayPalOrderParameter.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\PayPalOrderParameter\\\\PayPalOrderParameter\\:\\:getCustomer\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: Components/PayPalOrderParameter/PayPalOrderParameter.php
-
-		-
-			message: "#^Property SwagPaymentPayPalUnified\\\\Components\\\\PayPalOrderParameter\\\\PayPalOrderParameter\\:\\:\\$cart type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: Components/PayPalOrderParameter/PayPalOrderParameter.php
-
-		-
-			message: "#^Property SwagPaymentPayPalUnified\\\\Components\\\\PayPalOrderParameter\\\\PayPalOrderParameter\\:\\:\\$customer type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: Components/PayPalOrderParameter/PayPalOrderParameter.php
-
-		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\PayPalOrderParameter\\\\ShopwareOrderData\\:\\:__construct\\(\\) has parameter \\$shopwareUserData with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: Components/PayPalOrderParameter/ShopwareOrderData.php
@@ -232,11 +202,6 @@ parameters:
 
 		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\Common\\\\CustomerHelper\\:\\:hasNetPriceCaluclationIndicator\\(\\) has parameter \\$customer with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: Components/Services/Common/CustomerHelper.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\Common\\\\CustomerHelper\\:\\:shouldUseNetPrice\\(\\) has parameter \\$customer with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: Components/Services/Common/CustomerHelper.php
 
@@ -404,16 +369,6 @@ parameters:
 			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\PayPalOrder\\\\AmountProvider\\:\\:createBreakdown\\(\\) has parameter \\$customer with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: Components/Services/PayPalOrder/AmountProvider.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\PayPalOrder\\\\ItemListProvider\\:\\:getItemList\\(\\) has parameter \\$cart with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: Components/Services/PayPalOrder/ItemListProvider.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\PayPalOrder\\\\ItemListProvider\\:\\:getItemList\\(\\) has parameter \\$customer with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: Components/Services/PayPalOrder/ItemListProvider.php
 
 		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\PayPalOrder\\\\ItemListProvider\\:\\:setName\\(\\) has parameter \\$lineItem with no value type specified in iterable type array\\.$#"

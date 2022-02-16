@@ -9,6 +9,7 @@
 namespace SwagPaymentPayPalUnified\Components;
 
 use Shopware\Models\Payment\Payment;
+use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 
 interface PaymentMethodProviderInterface
 {
@@ -112,7 +113,7 @@ interface PaymentMethodProviderInterface
     /**
      * @param string $paymentMethodName
      *
-     * @return string
+     * @return PaymentType::*
      *
      * @see PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME or PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME
      */

@@ -185,7 +185,7 @@ class PayUponInvoiceRiskManagement implements SubscriberInterface
             return;
         }
 
-        $this->dependencyProvider->getSession()->set('PayPalUnifiedPayUponInvoiceBlocked', true);
+        $this->dependencyProvider->getSession()->offsetSet('PayPalUnifiedPayUponInvoiceBlocked', true);
     }
 
     /**

@@ -199,7 +199,7 @@ class PaymentBuilderService implements PaymentBuilderInterface
             $name = $basketItem['articlename'];
             $quantity = (int) $basketItem['quantity'];
 
-            $price = $this->customerHelper->shouldUseNetPrice($this->userData) === true
+            $price = $this->customerHelper->usesGrossPrice($this->userData) === true
                 ? $this->priceFormatter->roundPrice($basketItem['price'])
                 : $this->priceFormatter->roundPrice($basketItem['netprice']);
 
@@ -258,7 +258,7 @@ class PaymentBuilderService implements PaymentBuilderInterface
     {
         $amountDetails = new Details();
 
-        if ($this->customerHelper->shouldUseNetPrice($this->userData) && !$this->customerHelper->hasNetPriceCaluclationIndicator($this->userData)) {
+        if ($this->customerHelper->usesGrossPrice($this->userData) && !$this->customerHelper->hasNetPriceCaluclationIndicator($this->userData)) {
             $amountDetails->setShipping($this->priceFormatter->formatPrice($this->basketData['sShippingcostsWithTax']));
             $amountDetails->setSubTotal($this->priceFormatter->formatPrice($this->basketData['Amount']));
             $amountDetails->setTax(\number_format(0, 2));
@@ -267,7 +267,7 @@ class PaymentBuilderService implements PaymentBuilderInterface
         }
 
         //Case 2: Show net prices in shopware and don't exclude country tax
-        if (!$this->customerHelper->shouldUseNetPrice($this->userData) && !$this->customerHelper->hasNetPriceCaluclationIndicator($this->userData)) {
+        if (!$this->customerHelper->usesGrossPrice($this->userData) && !$this->customerHelper->hasNetPriceCaluclationIndicator($this->userData)) {
             $amountDetails->setShipping($this->priceFormatter->formatPrice($this->basketData['sShippingcostsNet']));
             $amountDetails->setSubTotal($this->priceFormatter->formatPrice($this->basketData['AmountNet']));
             $amountDetails->setTax($this->basketData['sAmountTax']);
