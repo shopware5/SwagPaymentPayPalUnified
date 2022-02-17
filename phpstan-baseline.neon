@@ -1446,16 +1446,6 @@ parameters:
 			path: PayPalBundle/Services/ClientService.php
 
 		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Services\\\\ClientService\\:\\:sendRequest\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: PayPalBundle/Services/ClientService.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Services\\\\ClientService\\:\\:sendRequest\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: PayPalBundle/Services/ClientService.php
-
-		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Services\\\\ClientService\\:\\:setHeader\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: PayPalBundle/Services/ClientService.php
@@ -6204,16 +6194,6 @@ parameters:
 			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Mocks\\\\CaptureResourceMock\\:\\:refund\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: Tests/Mocks/CaptureResourceMock.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Mocks\\\\ClientService\\:\\:sendRequest\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: Tests/Mocks/ClientService.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Mocks\\\\ClientService\\:\\:sendRequest\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: Tests/Mocks/ClientService.php
 
 		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Mocks\\\\ClientService\\:\\:setExpectedResult\\(\\) has no return type specified\\.$#"

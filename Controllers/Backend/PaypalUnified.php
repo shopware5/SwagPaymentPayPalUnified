@@ -17,8 +17,10 @@ use SwagPaymentPayPalUnified\Components\Backend\VoidService;
 use SwagPaymentPayPalUnified\Components\ExceptionHandlerServiceInterface;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Components\PaymentStatus;
-use SwagPaymentPayPalUnified\Components\Services\OnboardingStatusService;
 use SwagPaymentPayPalUnified\Components\Services\PaymentStatusService;
+use SwagPaymentPayPalUnified\Models\Settings\AdvancedCreditDebitCard;
+use SwagPaymentPayPalUnified\Models\Settings\PayUponInvoice;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\AuthorizationResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\CaptureResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\OrderResource;
@@ -314,14 +316,13 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
         /** @var CredentialsService $credentialsService */
         $credentialsService = $this->get('paypal_unified.backend.credentials_service');
 
-        /** @var OnboardingStatusService $onboardingStatusService */
-        $onboardingStatusService = $this->get('paypal_unified.onboarding_status_service');
-
         try {
             $accessToken = $credentialsService->getAccessToken($authCode, $sharedId, $nonce, $sandbox);
             $credentials = $credentialsService->getCredentials($accessToken, $partnerId, $sandbox);
 
             $credentialsService->updateCredentials($credentials, $shopId, $sandbox);
+
+            $this->updateOnboardingStatus($shopId, $sandbox, true);
         } catch (\Exception $e) {
             $this->response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
             $this->view->assign([
@@ -331,12 +332,6 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
 
             return;
         }
-
-        $onboardingStatusService->updatePayUponInvoiceOnboardingStatus(
-            $shopId,
-            $sandbox,
-            $onboardingStatusService->isCapable($partnerId, $shopId, OnboardingStatusService::CAPABILITY_PAY_UPON_INVOICE)
-        );
     }
 
     /**
@@ -444,6 +439,50 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
         }
 
         return $fields;
+    }
+
+    /**
+     * @param int  $shopId
+     * @param bool $sandbox
+     * @param bool $onboardingCompleted
+     *
+     * @return void
+     */
+    private function updateOnboardingStatus($shopId, $sandbox, $onboardingCompleted)
+    {
+        $entityManager = $this->container->get('models');
+        $settingsService = $this->container->get('paypal_unified.settings_service');
+
+        $puiSettings = $settingsService->getSettings($shopId, SettingsTable::PAY_UPON_INVOICE);
+        $acdcSettings = $settingsService->getSettings($shopId, SettingsTable::ADVANCED_CREDIT_DEBIT_CARD);
+
+        $defaultSettings = [
+            'shopId' => $shopId,
+            'onboardingCompleted' => false,
+            'sandboxOnboardingCompleted' => false,
+            'active' => false,
+        ];
+
+        if (!$puiSettings instanceof PayUponInvoice) {
+            $puiSettings = (new PayUponInvoice())->fromArray($defaultSettings);
+        }
+
+        if (!$acdcSettings instanceof AdvancedCreditDebitCard) {
+            $acdcSettings = (new AdvancedCreditDebitCard())->fromArray($defaultSettings);
+        }
+
+        if ($sandbox) {
+            $puiSettings->setSandboxOnboardingCompleted($onboardingCompleted);
+            $acdcSettings->setSandboxOnboardingCompleted($onboardingCompleted);
+        } else {
+            $puiSettings->setOnboardingCompleted($onboardingCompleted);
+            $acdcSettings->setOnboardingCompleted($onboardingCompleted);
+        }
+
+        $entityManager->persist($puiSettings);
+        $entityManager->persist($acdcSettings);
+
+        $entityManager->flush();
     }
 
     /**

@@ -60,7 +60,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
         authCodeReceivedEventName: 'authCodeReceived'
     },
 
-    initComponent: function () {
+    initComponent: function() {
         var me = this;
 
         me.items = me.createItems();
@@ -71,7 +71,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
         me.toolbarContainer.setBodyStyle(me.style);
     },
 
-    registerEvents: function () {
+    registerEvents: function() {
         var me = this;
 
         me.addEvents(
@@ -121,11 +121,11 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
     /**
      * @returns { Array }
      */
-    createItems: function () {
+    createItems: function() {
         var me = this;
 
         return [
-            me.createNotice(),
+            me.createAccountNotice(),
             me.createActivationContainer(),
             me.createRestContainer(),
             me.createBehaviourContainer(),
@@ -134,27 +134,23 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
         ];
     },
 
-    /**
-     * @returns { Ext.form.Container }
-     */
-    createNotice: function () {
-        var infoNotice = Shopware.Notification.createBlockMessage('{s name="description"}PayPal - the PayPal button in the checkout! Register for your PayPal business account here: <a href="https://www.paypal.com/de/webapps/mpp/express-checkout" title="https://www.paypal.com/de/webapps/mpp/express-checkout" target="_blank">https://www.paypal.com/de/webapps/mpp/express-checkout</a>{/s}', 'info');
+    createAccountNotice: function() {
+        var noticeText = '{s name="description"}PayPal - the PayPal button in the checkout! Register for your PayPal business account here: <a href="https://www.paypal.com/de/webapps/mpp/express-checkout" title="https://www.paypal.com/de/webapps/mpp/express-checkout" target="_blank">https://www.paypal.com/de/webapps/mpp/express-checkout</a>{/s}',
+            // There is no style defined for the type "info" in the shopware backend stylesheet, therefore we have to apply it manually
+            noticeStyle = {
+                'color': 'white',
+                'font-size': '14px',
+                'background-color': '#4AA3DF',
+                'text-shadow': '0 0 5px rgba(0, 0, 0, 0.3)'
+            };
 
-        // There is no style defined for the type "info" in the shopware backend stylesheet, therefore we have to apply it manually
-        infoNotice.style = {
-            'color': 'white',
-            'font-size': '14px',
-            'background-color': '#4AA3DF',
-            'text-shadow': '0 0 5px rgba(0, 0, 0, 0.3)'
-        };
-
-        return infoNotice;
+        return this.createNotice(noticeText, 'info', noticeStyle);
     },
 
     /**
      * @returns { Ext.form.FieldSet }
      */
-    createActivationContainer: function () {
+    createActivationContainer: function() {
         var me = this;
 
         me.activationContainer = Ext.create('Ext.form.FieldSet', {
@@ -184,6 +180,10 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
 
         me.toolbarContainer = me.createToolbar();
 
+        me.payerIdNotice = me.createPayerIdNotice(
+            '{s name="fieldset/rest/payerId/help"}The PayPal Pay upon invoice and PayPal Advanced Credit Debit Card requires the PayPal merchant ID to function correctly. You can find this in your account:{/s} {s name="fieldset/rest/payerId/help/link"}<a href="https://www.paypal.com/businessmanage/account/aboutBusiness"/>{/s}'
+        );
+
         me.restLiveCredentialsContainer = Ext.create('Ext.form.FieldSet', {
             title: '{s name="fieldset/rest/title/credentials/live"}Live{/s}',
             items: [
@@ -200,9 +200,20 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
                     fieldLabel: '{s name="fieldset/rest/clientSecret"}Client-Secret{/s}',
                     helpText: '{s name="fieldset/rest/clientSecret/help"}The REST-API Client-Secret that is being used to authenticate this plugin to the PayPal API.{/s}',
                     allowBlank: false
-                }
+                },
+                {
+                    xtype: 'textfield',
+                    name: 'paypalPayerId',
+                    fieldLabel: '{s name="fieldset/rest/payerId"}PayPal Merchant ID{/s}',
+                    helpText: '{s name="fieldset/rest/payerId/help"}The PayPal Pay upon invoice and PayPal Advanced Credit Debit Card requires the PayPal merchant ID to function correctly. You can find this in your account:{/s} {s name="fieldset/rest/payerId/help/link"}<a href="https://www.paypal.com/businessmanage/account/aboutBusiness"/>{/s}'
+                },
+                me.payerIdNotice
             ]
         });
+
+        me.sandboxPayerIdNotice = me.createPayerIdNotice(
+            '{s name="fieldset/rest/payerId/help"}The PayPal Pay upon invoice and PayPal Advanced Credit Debit Card requires the PayPal merchant ID to function correctly. You can find this in your account:{/s} {s name="fieldset/rest/payerId/help/link/sandbox"}<a href="https://www.sandbox.paypal.com/businessmanage/account/aboutBusiness">{/s}'
+        );
 
         me.restSandboxCredentialsContainer = Ext.create('Ext.form.FieldSet', {
             title: '{s name="fieldset/rest/title/credentials/sandbox"}Sandbox{/s}',
@@ -220,7 +231,14 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
                     fieldLabel: '{s name="fieldset/rest/sandboxClientSecret"}Client-Secret{/s}',
                     helpText: '{s name="fieldset/rest/sandboxClientSecret/help"}The REST-API Client-Secret that is being used to authenticate this plugin to the PayPal API.{/s}',
                     allowBlank: false
-                }
+                },
+                {
+                    xtype: 'textfield',
+                    name: 'sandboxPaypalPayerId',
+                    fieldLabel: '{s name="fieldset/rest/payerId"}PayPal Merchant ID{/s}',
+                    helpText: '{s name="fieldset/rest/payerId/help"}The PayPal Pay upon invoice and PayPal Advanced Credit Debit Card requires the PayPal merchant ID to function correctly. You can find this in your account:{/s} {s name="fieldset/rest/payerId/help/link/sandbox"}<a href="https://www.sandbox.paypal.com/businessmanage/account/aboutBusiness">{/s}'
+                },
+                me.sandboxPayerIdNotice
             ],
             disabled: true
         });
@@ -252,7 +270,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
     /**
      * @returns { Ext.form.FieldSet }
      */
-    createBehaviourContainer: function () {
+    createBehaviourContainer: function() {
         var me = this;
 
         me.orderNumberPrefix = Ext.create('Ext.form.field.Text', {
@@ -283,8 +301,14 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
                     store: Ext.create('Ext.data.Store', {
                         fields: ['id', 'text'],
                         data: [
-                            { id: 'CAPTURE', text: '{s name="intent/behaviour/immediately"}(CAPTURE) Complete payment immediately{/s}' },
-                            { id: 'AUTHORIZE', text: '{s name="intent/behaviour/later"}(AUTHORIZE) Delayed payment collection{/s}' },
+                            {
+                                id: 'CAPTURE',
+                                text: '{s name="intent/behaviour/immediately"}(CAPTURE) Complete payment immediately{/s}'
+                            },
+                            {
+                                id: 'AUTHORIZE',
+                                text: '{s name="intent/behaviour/later"}(AUTHORIZE) Delayed payment collection{/s}'
+                            },
                         ]
                     }),
                 },
@@ -364,7 +388,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
         return me.behaviourContainer;
     },
 
-    createStyleContainer: function () {
+    createStyleContainer: function() {
         this.buttonStyleFieldset = Ext.create('Ext.form.FieldSet', {
             title: '{s name="fieldset/appearance/title"}Appearance{/s}',
             disabled: true,
@@ -413,10 +437,10 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
     /**
      * @returns { Ext.form.Panel }
      */
-    createToolbar: function () {
+    createToolbar: function() {
         var me = this;
 
-        me.onboardingButton = me.createOnboardingButtonStandalone();
+        me.onboardingButton = me.createOnboardingButtonStandalone('GENERAL');
 
         return Ext.create('Ext.form.Panel', {
             dock: 'bottom',
@@ -500,8 +524,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
         });
     },
 
-    refreshOnboardingButton: function ()
-    {
+    refreshOnboardingButton: function() {
         this.toolbarContainer.remove(this.onboardingButton);
         this.onboardingButton.destroy();
 
@@ -514,22 +537,53 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
      * @param { Shopware.apps.Base.view.element.Boolean } element
      * @param { Boolean } checked
      */
-    onSendOrderNumberChecked: function (element, checked) {
+    onSendOrderNumberChecked: function(element, checked) {
         var me = this;
 
         me.orderNumberPrefix.setDisabled(!checked);
     },
 
-    onValidateAPIButtonClick: function () {
+    onValidateAPIButtonClick: function() {
         var me = this;
 
         me.fireEvent('validateAPI');
     },
 
-    onRegisterWebhookButtonClick: function () {
+    onRegisterWebhookButtonClick: function() {
         var me = this;
 
         me.fireEvent('registerWebhook');
-    }
+    },
+
+    /**
+     *
+     * @param { String } noticeText
+     *
+     * @return { Ext.form.Container }
+     */
+    createPayerIdNotice: function (noticeText) {
+        var notice = this.createNotice(noticeText, 'alert');
+
+        notice.hide();
+
+        return notice;
+    },
+
+    /**
+     *
+     * @param { String } noticeText
+     * @param { Object | null } style
+     *
+     * @return { Ext.form.Container }
+     */
+    createNotice: function(noticeText, type, style) {
+        var notice = Shopware.Notification.createBlockMessage(noticeText, type);
+
+        if (style) {
+            notice.style = style;
+        }
+
+        return notice;
+    },
 });
 // {/block}

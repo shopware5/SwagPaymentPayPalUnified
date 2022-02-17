@@ -74,8 +74,10 @@ Ext.define('Shopware.apps.PaypalUnified.mixin.OnboardingHelper', {
     /**
      * @returns { Ext.button.Button }
      */
-    createOnboardingButtonStandalone: function () {
+    createOnboardingButtonStandalone: function (value) {
         var me = this;
+
+        this.submitValue = value;
 
         return Ext.create('Ext.button.Button', {
             text: this.onboardingHelper.snippets.onboardingButton.text,
@@ -100,16 +102,15 @@ Ext.define('Shopware.apps.PaypalUnified.mixin.OnboardingHelper', {
         });
     },
 
-    createOnboardingButtonFormElement: function () {
-        var me = this,
-            button = me.createOnboardingButtonStandalone();
+    createOnboardingButtonFormElement: function (value) {
+        var me = this;
 
         return {
             xtype: 'fieldcontainer',
             fieldLabel: this.onboardingHelper.snippets.onboardingButton.label,
             labelWidth: 250,
             items: [
-                button
+                me.createOnboardingButtonStandalone(value)
             ]
         };
     },
@@ -219,7 +220,8 @@ Ext.define('Shopware.apps.PaypalUnified.mixin.OnboardingHelper', {
                 authCode,
                 sharedId,
                 this.getSandbox() ? this.onboardingHelper.params.sellerNonce.sandbox : this.onboardingHelper.params.sellerNonce.live,
-                this.getSandbox() ? this.onboardingHelper.partner.payerId.sandbox : this.onboardingHelper.partner.payerId.live
+                this.getSandbox() ? this.onboardingHelper.partner.payerId.sandbox : this.onboardingHelper.partner.payerId.live,
+                this.submitValue
             );
         } else {
             this.fireEvent(
@@ -227,7 +229,8 @@ Ext.define('Shopware.apps.PaypalUnified.mixin.OnboardingHelper', {
                 authCode,
                 sharedId,
                 this.getSandbox() ? this.onboardingHelper.params.sellerNonce.sandbox : this.onboardingHelper.params.sellerNonce.live,
-                this.getSandbox() ? this.onboardingHelper.partner.payerId.sandbox : this.onboardingHelper.partner.payerId.live
+                this.getSandbox() ? this.onboardingHelper.partner.payerId.sandbox : this.onboardingHelper.partner.payerId.live,
+                this.submitValue
             );
         }
     }

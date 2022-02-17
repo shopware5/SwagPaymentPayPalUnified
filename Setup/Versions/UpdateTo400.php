@@ -68,6 +68,7 @@ class UpdateTo400
         $this->addAdvancedCreditDebitCardSettingsTable();
         $this->insertDefaultButtonStyle();
         $this->addSandboxCredentialsToGeneralSettings();
+        $this->addPayerIdToGeneralSettings();
     }
 
     /**
@@ -160,7 +161,7 @@ SQL
      */
     private function addAdvancedCreditDebitCardSettingsTable()
     {
-        if (!$this->connection->getSchemaManager()->tablesExist(['swag_payment_paypal_unified_settings_pay_upon_invoice'])) {
+        if (!$this->connection->getSchemaManager()->tablesExist(['swag_payment_paypal_unified_settings_advanced_credit_debit_card'])) {
             $this->connection->executeQuery(
                 <<<'SQL'
 CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_settings_advanced_credit_debit_card (
@@ -209,6 +210,26 @@ SQL
             $this->connection->executeQuery(
                 'ALTER TABLE `swag_payment_paypal_unified_settings_general`
                 ADD `sandbox_client_secret` varchar(255) NULL;'
+            );
+        }
+    }
+
+    /**
+     * @return void
+     */
+    private function addPayerIdToGeneralSettings()
+    {
+        if (!$this->columnService->checkIfColumnExist('swag_payment_paypal_unified_settings_general', 'paypal_payer_id')) {
+            $this->connection->executeQuery(
+                'ALTER TABLE `swag_payment_paypal_unified_settings_general`
+                ADD `paypal_payer_id` varchar(255) NULL;'
+            );
+        }
+
+        if (!$this->columnService->checkIfColumnExist('swag_payment_paypal_unified_settings_general', 'sandbox_paypal_payer_id')) {
+            $this->connection->executeQuery(
+                'ALTER TABLE `swag_payment_paypal_unified_settings_general`
+                ADD `sandbox_paypal_payer_id` varchar(255) NULL;'
             );
         }
     }

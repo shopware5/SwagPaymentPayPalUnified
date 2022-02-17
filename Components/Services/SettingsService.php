@@ -9,6 +9,7 @@
 namespace SwagPaymentPayPalUnified\Components\Services;
 
 use Doctrine\DBAL\Connection;
+use RuntimeException;
 use Shopware\Components\Model\ModelManager;
 use Shopware\Models\Shop\Shop;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
@@ -106,7 +107,7 @@ class SettingsService implements SettingsServiceInterface
     /**
      * {@inheritdoc}
      *
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     public function get($column, $settingsTable = SettingsTable::GENERAL)
     {

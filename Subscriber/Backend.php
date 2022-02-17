@@ -10,6 +10,7 @@ namespace SwagPaymentPayPalUnified\Subscriber;
 
 use Enlight\Event\SubscriberInterface;
 use Enlight_Controller_ActionEventArgs as ActionEventArgs;
+use Enlight_View_Default;
 use SwagPaymentPayPalUnified\PayPalBundle\Services\NonceService;
 
 class Backend implements SubscriberInterface
@@ -78,7 +79,7 @@ class Backend implements SubscriberInterface
 
     public function onPostDispatchPayment(ActionEventArgs $args)
     {
-        /** @var \Enlight_View_Default $view */
+        /** @var Enlight_View_Default $view */
         $view = $args->get('subject')->View();
 
         $view->addTemplateDir($this->pluginDir . '/Resources/views/');

@@ -21,7 +21,7 @@ class Payee extends PayPalApiStruct
     /**
      * @var string
      */
-    protected $merchantId;
+    protected $payerId;
 
     /**
      * @var DisplayData
@@ -49,19 +49,19 @@ class Payee extends PayPalApiStruct
     /**
      * @return string
      */
-    public function getMerchantId()
+    public function getPayerId()
     {
-        return $this->merchantId;
+        return $this->payerId;
     }
 
     /**
-     * @param string $merchantId
+     * @param string $payerId
      *
      * @return void
      */
-    public function setMerchantId($merchantId)
+    public function setPayerId($payerId)
     {
-        $this->merchantId = $merchantId;
+        $this->payerId = $payerId;
     }
 
     /**

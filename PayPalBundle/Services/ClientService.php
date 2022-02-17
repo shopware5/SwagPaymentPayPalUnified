@@ -8,6 +8,8 @@
 
 namespace SwagPaymentPayPalUnified\PayPalBundle\Services;
 
+use Exception;
+use RuntimeException;
 use Shopware\Components\HttpClient\GuzzleFactory;
 use Shopware\Components\HttpClient\GuzzleHttpClient as GuzzleClient;
 use Shopware\Components\HttpClient\RequestException;
@@ -118,22 +120,22 @@ class ClientService
      * Sends a request and returns the full response.
      * The type can be obtained from RequestType.php
      *
-     * @param string                    $type
-     * @param string                    $resourceUri
-     * @param array<string, mixed>|null $data
-     * @param bool                      $jsonPayload true if the given data should be JSON-encoded
+     * @param string            $type
+     * @param string            $resourceUri
+     * @param array<mixed>|null $data
+     * @param bool              $jsonPayload true if the given data should be JSON-encoded
      *
      * @throws RequestException
      *
-     * @return Response
+     * @return array<mixed>
      */
-    public function sendRequestFull($type, $resourceUri, $data = [], $jsonPayload = true)
+    public function sendRequest($type, $resourceUri, $data = [], $jsonPayload = true)
     {
         $httpClient = $this->getClient();
         $resourceUri = $this->baseUrl . $resourceUri;
 
         if ($jsonPayload) {
-            $data = \json_encode($data);
+            $data = json_encode($data);
             if (!\is_string($data)) {
                 $data = null;
             }
@@ -170,7 +172,7 @@ class ClientService
                 break;
 
             default:
-                throw new \RuntimeException('An unsupported request type was provided. The type was: ' . $type);
+                throw new RuntimeException('An unsupported request type was provided. The type was: ' . $type);
         }
 
         $this->logger->notify(
@@ -181,24 +183,7 @@ class ClientService
             ]
         );
 
-        return $response;
-    }
-
-    /**
-     * Sends a request and returns the parsed response body.
-     *
-     * @param string     $type
-     * @param string     $resourceUri
-     * @param array|null $data
-     * @param bool       $jsonPayload true if the given data should be JSON-encoded
-     *
-     * @throws RequestException
-     *
-     * @return array
-     */
-    public function sendRequest($type, $resourceUri, $data = [], $jsonPayload = true)
-    {
-        return \json_decode($this->sendRequestFull($type, $resourceUri, $data, $jsonPayload)->getBody(), true);
+        return json_decode($response->getBody(), true);
     }
 
     /**
@@ -287,7 +272,7 @@ class ClientService
             ]);
 
             throw $requestException;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->logger->error('Could not create authentication - unknown exception', [
                 'message' => $e->getMessage(),
                 'stacktrace' => $e->getTraceAsString(),
