@@ -33,9 +33,13 @@ class Widgets implements SubscriberInterface
         return [
             'Enlight_Controller_Dispatcher_ControllerPath_Widgets_PaypalUnifiedV2ExpressCheckout' => 'onGetEcV2ControllerPath',
             'Enlight_Controller_Dispatcher_ControllerPath_Widgets_PaypalUnifiedV2SmartPaymentButtons' => 'onGetSpbV2ControllerPath',
+            'Enlight_Controller_Dispatcher_ControllerPath_Widgets_PaypalUnifiedV2AdvancedCreditDebitCard' => 'onGetAcdcV2ControllerPath',
         ];
     }
 
+    /**
+     * @return string
+     */
     public function onGetSpbV2ControllerPath()
     {
         return $this->pluginDirectory . '/Controllers/Widgets/PaypalUnifiedV2SmartPaymentButtons.php';
@@ -47,5 +51,13 @@ class Widgets implements SubscriberInterface
     public function onGetEcV2ControllerPath()
     {
         return $this->pluginDirectory . '/Controllers/Widgets/PaypalUnifiedV2ExpressCheckout.php';
+    }
+
+    /**
+     * @return string
+     */
+    public function onGetAcdcV2ControllerPath()
+    {
+        return $this->pluginDirectory . '/Controllers/Widgets/PaypalUnifiedV2AdvancedCreditDebitCard.php';
     }
 }

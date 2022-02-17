@@ -18,6 +18,7 @@ class ClassicOrderHandler extends AbstractOrderHandler
         PaymentType::PAYPAL_CLASSIC_V2,
         PaymentType::PAYPAL_EXPRESS_V2,
         PaymentType::PAYPAL_SMART_PAYMENT_BUTTONS_V2,
+        PaymentType::PAYPAL_ADVANCED_CREDIT_DEBIT_CARD,
     ];
 
     public function supports($paymentType)

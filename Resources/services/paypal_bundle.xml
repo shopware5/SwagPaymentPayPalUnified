@@ -30,5 +30,10 @@
         <service id="paypal_unified.nonce_service"
                  class="SwagPaymentPayPalUnified\PayPalBundle\Services\NonceService"
                  public="true"/>
+
+        <service id="paypal_unified.europe_service"
+                 class="SwagPaymentPayPalUnified\PayPalBundle\Services\EUStates"
+                 public="true"/>
+
     </services>
 </container>

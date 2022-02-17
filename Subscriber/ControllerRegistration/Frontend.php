@@ -36,6 +36,7 @@ class Frontend implements SubscriberInterface
             'Enlight_Controller_Dispatcher_ControllerPath_Frontend_PaypalUnifiedWebhook' => 'onGetWebhookControllerPath',
             'Enlight_Controller_Dispatcher_ControllerPath_Frontend_PaypalUnifiedV2PayUponInvoice' => 'onGetUnifiedV2PayUponInvoiceControllerPath',
             'Enlight_Controller_Dispatcher_ControllerPath_Frontend_PaypalUnifiedApm' => 'onGetPaypalUnifiedApmControllerPath',
+            'Enlight_Controller_Dispatcher_ControllerPath_Frontend_PaypalUnifiedAdvancedCreditDebitCard' => 'onGetPaypalUnifiedAdvancedCreditDebitCardControllerPath',
         ];
     }
 
@@ -50,6 +51,9 @@ class Frontend implements SubscriberInterface
         return $this->pluginDirectory . '/Controllers/Frontend/PaypalUnified.php';
     }
 
+    /**
+     * @return string
+     */
     public function onGetUnifiedControllerPathV2()
     {
         return $this->pluginDirectory . '/Controllers/Frontend/PaypalUnifiedV2.php';
@@ -66,13 +70,27 @@ class Frontend implements SubscriberInterface
         return $this->pluginDirectory . '/Controllers/Frontend/PaypalUnifiedWebhook.php';
     }
 
+    /**
+     * @return string
+     */
     public function onGetUnifiedV2PayUponInvoiceControllerPath()
     {
         return $this->pluginDirectory . '/Controllers/Frontend/PaypalUnifiedV2PayUponInvoice.php';
     }
 
+    /**
+     * @return string
+     */
     public function onGetPaypalUnifiedApmControllerPath()
     {
         return $this->pluginDirectory . '/Controllers/Frontend/PaypalUnifiedApm.php';
+    }
+
+    /**
+     * @return string
+     */
+    public function onGetPaypalUnifiedAdvancedCreditDebitCardControllerPath()
+    {
+        return $this->pluginDirectory . '/Controllers/Frontend/PaypalUnifiedV2AdvancedCreditDebitCard.php';
     }
 }

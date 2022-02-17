@@ -20,6 +20,7 @@ use SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentModels\Ideal;
 use SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentModels\MultiBanco;
 use SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentModels\MyBank;
 use SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentModels\Oxxo;
+use SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentModels\PayPalAdvancedCreditAndDebitCard;
 use SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentModels\PayPalClassic;
 use SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentModels\PayPalPayUponInvoice;
 use SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentModels\Przelewy24;
@@ -38,6 +39,7 @@ class PaymentModelFactory
         $this->paymentModels = [
             PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME => new PayPalClassic($plugin),
             PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME => new PayPalPayUponInvoice($plugin),
+            PaymentMethodProviderInterface::PAYPAL_UNIFIED_ADVANCED_CREDIT_DEBIT_CARD_METHOD_NAME => new PayPalAdvancedCreditAndDebitCard($plugin),
             PaymentMethodProviderInterface::BANCONTACT_METHOD_NAME => new Bancontact($plugin),
             PaymentMethodProviderInterface::BLIK_METHOD_NAME => new Blik($plugin),
             PaymentMethodProviderInterface::EPS_METHOD_NAME => new Eps($plugin),

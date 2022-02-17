@@ -135,6 +135,10 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
 
     protected function getPaymentType(Order $order)
     {
+        if ($this->request->getParam('acdcCheckout', false)) {
+            return PaymentType::PAYPAL_ADVANCED_CREDIT_DEBIT_CARD;
+        }
+
         if ($this->request->getParam('spbCheckout', false)) {
             return PaymentType::PAYPAL_SMART_PAYMENT_BUTTONS_V2;
         }

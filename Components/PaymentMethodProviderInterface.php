@@ -19,6 +19,8 @@ interface PaymentMethodProviderInterface
 
     const PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME = 'SwagPaymentPayPalUnifiedPayUponInvoice';
 
+    const PAYPAL_UNIFIED_ADVANCED_CREDIT_DEBIT_CARD_METHOD_NAME = 'SwagPaymentPayPalUnifiedAdvancedCreditDebitCard';
+
     const BANCONTACT_METHOD_NAME = 'SwagPaymentPayPalUnifiedBancontact';
 
     const BLIK_METHOD_NAME = 'SwagPaymentPayPalUnifiedBlik';

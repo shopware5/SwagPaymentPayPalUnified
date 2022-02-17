@@ -2786,41 +2786,6 @@ parameters:
 			path: Setup/Updater.php
 
 		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Setup\\\\Versions\\\\UpdateTo400\\:\\:addButtonStyleToGeneralSettings\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Setup/Versions/UpdateTo400.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Setup\\\\Versions\\\\UpdateTo400\\:\\:addPayUponInvoiceSettingsTable\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Setup/Versions/UpdateTo400.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Setup\\\\Versions\\\\UpdateTo400\\:\\:addSandboxCredentialsToGeneralSettings\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Setup/Versions/UpdateTo400.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Setup\\\\Versions\\\\UpdateTo400\\:\\:insertDefaultButtonStyle\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Setup/Versions/UpdateTo400.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Setup\\\\Versions\\\\UpdateTo400\\:\\:installNewPaymentMethods\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Setup/Versions/UpdateTo400.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Setup\\\\Versions\\\\UpdateTo400\\:\\:moveIntent\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Setup/Versions/UpdateTo400.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Setup\\\\Versions\\\\UpdateTo400\\:\\:update\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Setup/Versions/UpdateTo400.php
-
-		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Subscriber\\\\Account\\:\\:onPostDispatchAccount\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: Subscriber/Account.php
@@ -2854,26 +2819,6 @@ parameters:
 			message: "#^Method SwagPaymentPayPalUnified\\\\Subscriber\\\\BackendOrder\\:\\:onPostDispatchOrder\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: Subscriber/BackendOrder.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Subscriber\\\\ControllerRegistration\\\\Frontend\\:\\:onGetPaypalUnifiedApmControllerPath\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Subscriber/ControllerRegistration/Frontend.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Subscriber\\\\ControllerRegistration\\\\Frontend\\:\\:onGetUnifiedControllerPathV2\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Subscriber/ControllerRegistration/Frontend.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Subscriber\\\\ControllerRegistration\\\\Frontend\\:\\:onGetUnifiedV2PayUponInvoiceControllerPath\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Subscriber/ControllerRegistration/Frontend.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Subscriber\\\\ControllerRegistration\\\\Widgets\\:\\:onGetSpbV2ControllerPath\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Subscriber/ControllerRegistration/Widgets.php
 
 		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Subscriber\\\\CookieConsent\\:\\:addPayPalCookie\\(\\) return type has no value type specified in iterable type Shopware\\\\Bundle\\\\CookieBundle\\\\CookieCollection\\.$#"

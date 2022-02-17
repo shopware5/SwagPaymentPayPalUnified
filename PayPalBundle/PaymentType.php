@@ -18,6 +18,7 @@ final class PaymentType
 
     const PAYPAL_CLASSIC_V2 = 'PayPalClassicV2';
     const PAYPAL_PAY_UPON_INVOICE_V2 = 'PayPalPayUponInvoiceV2';
+    const PAYPAL_ADVANCED_CREDIT_DEBIT_CARD = 'PayPalAdvancedCreditDebitCardV2';
     const PAYPAL_EXPRESS_V2 = 'PayPalExpressV2';
     const PAYPAL_SMART_PAYMENT_BUTTONS_V2 = 'PayPalSmartPaymentButtonsV2';
 

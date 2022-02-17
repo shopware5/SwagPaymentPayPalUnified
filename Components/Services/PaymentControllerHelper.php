@@ -11,6 +11,7 @@ namespace SwagPaymentPayPalUnified\Components\Services;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\Services\Common\CustomerHelper;
 use SwagPaymentPayPalUnified\Components\Services\Validation\RedirectDataBuilder;
+use Symfony\Component\HttpFoundation\Response;
 
 class PaymentControllerHelper
 {
@@ -48,11 +49,14 @@ class PaymentControllerHelper
         $controller->Front()->Plugins()->Json()->setRenderer();
 
         $view = $controller->View();
-        $view->setTemplate();
 
+        $controller->Response()->setStatusCode(Response::HTTP_BAD_REQUEST);
         $view->assign('errorCode', $redirectDataBuilder->getCode());
         if ($redirectDataBuilder->hasException()) {
             $view->assign($redirectDataBuilder->getRedirectData());
         }
+
+        $view->assign('paypalUnifiedErrorCode', $redirectDataBuilder->getCode());
+        $view->assign('errorTemplate', $view->fetch('frontend/paypal_unified/checkout/error_message.tpl'));
     }
 }

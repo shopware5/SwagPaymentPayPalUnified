@@ -46,6 +46,16 @@
     {$smarty.block.parent}
 {/block}
 
+{* PayPal ACDC integration *}
+{block name='frontend_checkout_confirm_left_payment_method'}
+    {$smarty.block.parent}
+    {block name='frontend_checkout_confirm_premiums_paypal_unified_advanced_credit_debit_card'}
+        {if $paypalUnifiedAdvancedCreditDebitCardActive}
+            {include file='frontend/paypal_unified/acdc/payment_details.tpl'}
+        {/if}
+    {/block}
+{/block}
+
 {* PayPal In-Context and SPB integration *}
 {block name='frontend_checkout_confirm_submit'}
     {block name='frontend_checkout_confirm_submit_paypal_unified_in_context'}
@@ -72,6 +82,10 @@
             {include file='frontend/paypal_unified/express_checkout/confirm_inputs.tpl'}
         {elseif $paypalUnifiedSpbCheckout}
             {include file='frontend/paypal_unified/spb/confirm_inputs.tpl'}
+        {/if}
+
+        {if $paypalUnifiedAdvancedCreditDebitCardCheckout}
+            {include file='frontend/paypal_unified/acdc/confirm_inputs.tpl'}
         {/if}
     {/block}
 
@@ -112,7 +126,7 @@
 {block name="frontend_index_footer"}
     {$smarty.block.parent}
 
-    {if $usePayPalInvoiceFraudNet}
+    {if $usePayPalFraudNet}
         <div data-paypalUnifiedFraudNet="true"
              data-fraudNetSessionId="{$fraudNetSessionId}"
              data-fraudNetFlowId="{$fraudNetFlowId}"
