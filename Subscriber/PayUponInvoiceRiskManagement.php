@@ -9,6 +9,8 @@
 namespace SwagPaymentPayPalUnified\Subscriber;
 
 use Enlight\Event\SubscriberInterface;
+use Enlight_Controller_Front;
+use Enlight_Controller_Request_Request;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
@@ -22,6 +24,7 @@ use Symfony\Component\Validator\Constraints\EqualTo;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Range;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use UnexpectedValueException;
 
 class PayUponInvoiceRiskManagement implements SubscriberInterface
 {
@@ -72,6 +75,8 @@ class PayUponInvoiceRiskManagement implements SubscriberInterface
         return [
             'sAdmin::sManageRisks::after' => 'afterManageRisks',
             'Shopware_Modules_Admin_Execute_Risk_Rule_PayPalUnifiedInvoiceRiskManagementRule' => 'onExecuteRule',
+            'Shopware_Modules_Admin_Payment_Fallback' => 'setPaymentMethodBlockedFlag',
+            'Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout' => 'onPostDispatchCheckout',
         ];
     }
 
@@ -84,6 +89,10 @@ class PayUponInvoiceRiskManagement implements SubscriberInterface
         $paymentId = $this->paymentMethodProvider->getPaymentId(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME);
 
         if ((int) $args->get('paymentID') !== $paymentId) {
+            return false;
+        }
+
+        if ($this->shouldShowUnconditionally()) {
             return false;
         }
 
@@ -148,5 +157,77 @@ class PayUponInvoiceRiskManagement implements SubscriberInterface
         );
 
         return $violationList->count() > 0;
+    }
+
+    /**
+     * @return void
+     */
+    public function onPostDispatchCheckout(\Enlight_Controller_ActionEventArgs $args)
+    {
+        /** @var \Shopware_Controllers_Frontend_Checkout $controller */
+        $controller = $args->get('subject');
+        $view = $controller->View();
+
+        if ($view->getAssign('paymentBlocked') && $this->dependencyProvider->getSession()->offsetGet('PayPalUnifiedPayUponInvoiceBlocked')) {
+            $view->assign('PayPalUnifiedPayUponInvoiceBlocked', true);
+
+            $this->dependencyProvider->getSession()->offsetUnset('PayPalUnifiedPayUponInvoiceBlocked');
+        }
+    }
+
+    /**
+     * @return void
+     */
+    public function setPaymentMethodBlockedFlag(\Enlight_Event_EventArgs $args)
+    {
+        // Only show the message if the customer actually chose pay upon invoice
+        if ($args->get('name') !== PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME) {
+            return;
+        }
+
+        $this->dependencyProvider->getSession()->offsetSet('PayPalUnifiedPayUponInvoiceBlocked', true);
+    }
+
+    /**
+     * In some cases, like showing the list of all payment methods, the PUI
+     * payment method should be shown unconditionally, so customers at least get
+     * the opportunity to see it's available.
+     *
+     * @return bool
+     */
+    private function shouldShowUnconditionally()
+    {
+        $front = $this->dependencyProvider->getFront();
+
+        if (!$front instanceof Enlight_Controller_Front) {
+            throw new UnexpectedValueException(sprintf('Expected instance of %s, got %s.', Enlight_Controller_Front::class, 'null'));
+        }
+
+        $request = $front->Request();
+
+        if (!$request instanceof Enlight_Controller_Request_Request) {
+            throw new UnexpectedValueException(sprintf('Expected instance of %s, got %s.', Enlight_Controller_Request_Request::class, 'null'));
+        }
+
+        $controller = $request->getControllerName();
+        $action = $request->getActionName();
+
+        $allowList = [
+            'checkout' => [
+                'shippingPayment',
+                'saveShippingPayment',
+            ],
+            'account' => [
+                'payment',
+            ],
+        ];
+
+        foreach ($allowList as $allowedController => $allowedActions) {
+            if ($controller === $allowedController) {
+                return \in_array($action, $allowedActions, true);
+            }
+        }
+
+        return false;
     }
 }

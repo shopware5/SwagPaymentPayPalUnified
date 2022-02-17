@@ -8,10 +8,12 @@
 
 namespace SwagPaymentPayPalUnified\Components\PayPalOrderParameter;
 
+use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
+
 interface PayPalOrderParameterFacadeInterface
 {
     /**
-     * @param string $paymentType
+     * @param PaymentType::* $paymentType
      *
      * @return PayPalOrderParameter
      */

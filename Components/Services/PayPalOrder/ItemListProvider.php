@@ -12,6 +12,7 @@ use Shopware_Components_Snippet_Manager as SnippetManager;
 use SwagPaymentPayPalUnified\Components\Services\Common\CustomerHelper;
 use SwagPaymentPayPalUnified\Components\Services\Common\PriceFormatter;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
+use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Item;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Item\Tax;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Item\UnitAmount;
@@ -51,11 +52,13 @@ class ItemListProvider
     }
 
     /**
-     * @param bool $enforceNetPrice
+     * @param array <string,mixed> $cart
+     * @param array <string,mixed> $customer
+     * @param PaymentType::*       $paymentType
      *
      * @return Item[]|null
      */
-    public function getItemList(array $cart, array $customer, $enforceNetPrice)
+    public function getItemList(array $cart, array $customer, $paymentType)
     {
         $lineItems = $cart['content'];
         if ($lineItems === []) {
@@ -74,9 +77,11 @@ class ItemListProvider
             $label = $lineItem['articlename'];
             $number = (string) $lineItem['ordernumber'];
             $quantity = $lineItem['quantity'];
-            $value = $this->customerHelper->shouldUseNetPrice($customer) === true || $enforceNetPrice
-                ? $this->priceFormatter->roundPrice($lineItem['price'])
-                : $this->priceFormatter->roundPrice($lineItem['netprice']);
+            $value = $this->priceFormatter->roundPrice($lineItem['price']);
+
+            if (!$this->customerHelper->usesGrossPrice($customer) || $paymentType === PaymentType::PAYPAL_PAY_UPON_INVOICE_V2) {
+                $value = $this->priceFormatter->roundPrice($lineItem['netprice']);
+            }
 
             // In the following part, we modify the CustomProducts positions.
             // All position prices of the Custom Products configuration are added up, so that no items with 0€ are committed to PayPal
@@ -126,8 +131,8 @@ class ItemListProvider
                 $item->setCategory('PHYSICAL_GOODS');
             }
 
-            if ($enforceNetPrice) {
-                $this->setTaxInformation($currency, $lineItem, $item);
+            if ($paymentType === PaymentType::PAYPAL_PAY_UPON_INVOICE_V2) {
+                $this->setTaxInformation($currency, $lineItem, $customer, $item);
             }
 
             $items[] = $item;
@@ -172,20 +177,49 @@ class ItemListProvider
     }
 
     /**
-     * @param string $currency
+     * @param string              $currency
+     * @param array<string,mixed> $lineItem
+     * @param array<string,mixed> $customer
      *
      * @return void
      */
-    private function setTaxInformation($currency, array $lineItem, Item $item)
+    private function setTaxInformation($currency, array $lineItem, array $customer, Item $item)
     {
         $tax = new Tax();
 
         $tax->setCurrencyCode($currency);
-        $tax->setValue(\str_replace(',', '.', $lineItem['tax']));
-
-        $item->getUnitAmount()->setValue(\str_replace(',', '.', $lineItem['amountnet']));
+        $tax->setValue(sprintf('%.2f', $this->getSingleItemTaxAmount($lineItem, $customer)));
 
         $item->setTax($tax);
         $item->setTaxRate($lineItem['tax_rate']);
+    }
+
+    /**
+     * @param array<string,mixed> $lineItem
+     * @param array<string,mixed> $customer
+     *
+     * @return float
+     */
+    private function getSingleItemTaxAmount(array $lineItem, array $customer)
+    {
+        if (!$this->customerHelper->chargeVat($customer)) {
+            /*
+             * If we don't need to charge any VAT, the tax sum is 0 accordingly.
+             * This is the case, if the country of residence is excluded from
+             * tax calculation for example.
+             */
+            return 0.0;
+        }
+
+        $tax = (float) str_replace(',', '.', $lineItem['tax']);
+        $quantity = (int) $lineItem['quantity'];
+
+        /*
+         * Unfortunately, there's no indicator on the `lineItem` which would
+         * allow us to see the final tax sum of a **single product** of a line
+         * item, therefore the division by quantity is necessary, since we need
+         * to provide the prices & taxes for a single item to the PayPal-API.
+         */
+        return $quantity > 1 ? $tax / $quantity : $tax;
     }
 }

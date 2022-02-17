@@ -10,6 +10,7 @@ namespace SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentModels;
 
 use Shopware\Models\Payment\Payment;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
+use SwagPaymentPayPalUnified\Setup\Assets\Translations;
 
 class PayPalAdvancedCreditAndDebitCard extends AbstractPaymentModel
 {
@@ -22,8 +23,8 @@ class PayPalAdvancedCreditAndDebitCard extends AbstractPaymentModel
         $payment->setActive(false);
         $payment->setPosition(self::POSITION_ADVANCED_CEDIT_DEBIT_CARD);
         $payment->setName(PaymentMethodProviderInterface::PAYPAL_UNIFIED_ADVANCED_CREDIT_DEBIT_CARD_METHOD_NAME);
-        $payment->setDescription('Kreditkarte oder Debitkarten');
-        $payment->setAdditionalDescription('Bezahlen Sie einfach, schnell und bequem mit Ihrer Kredit- oder Debitkarte');
+        $payment->setDescription(Translations::CONFIG_PAYMENT_TRANSLATIONS['de_DE'][PaymentMethodProviderInterface::PAYPAL_UNIFIED_ADVANCED_CREDIT_DEBIT_CARD_METHOD_NAME]['description']);
+        $payment->setAdditionalDescription(Translations::CONFIG_PAYMENT_TRANSLATIONS['de_DE'][PaymentMethodProviderInterface::PAYPAL_UNIFIED_ADVANCED_CREDIT_DEBIT_CARD_METHOD_NAME]['additionalDescription']);
         $payment->setAction(self::ACTION_PAYPAL_ADVANCED_CREDIT_DEBIT_CARD);
         $payment->setPlugin($this->plugin);
 

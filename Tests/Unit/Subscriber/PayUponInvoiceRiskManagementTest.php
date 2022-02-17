@@ -7,6 +7,7 @@
  */
 
 use PHPUnit\Framework\Constraint\Constraint;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
 use Shopware\Bundle\StoreFrontBundle\Struct\Currency;
@@ -40,6 +41,7 @@ class PayUponInvoiceRiskManagementTest extends TestCase
      * The paymentMethodProvider provides testcases to assert the check
      * succeeds for all payment methods besides
      * PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME.
+     *
      * @dataProvider paymentMethodProvider
      *
      * @param bool $expectedReturnValue
@@ -210,16 +212,32 @@ class PayUponInvoiceRiskManagementTest extends TestCase
         );
     }
 
+    /**
+     * @return MockObject|PaymentMethodProvider
+     */
     protected function getPaymentMethodProvider()
     {
         return static::createMock(PaymentMethodProvider::class);
     }
 
+    /**
+     * @return MockObject|DependencyProvider
+     */
     protected function getDependencyProvider()
     {
-        return static::createMock(DependencyProvider::class);
+        $dependencyProviderMock = static::createMock(DependencyProvider::class);
+
+        $dependencyProviderMock->method('getFront')
+            ->willReturn(static::createConfiguredMock(Enlight_Controller_Front::class, [
+                'Request' => static::createMock(Enlight_Controller_Request_Request::class),
+            ]));
+
+        return $dependencyProviderMock;
     }
 
+    /**
+     * @return MockObject|ValidatorInterface
+     */
     protected function getValidator()
     {
         $validatorMock = static::createMock(ValidatorInterface::class);
@@ -230,6 +248,9 @@ class PayUponInvoiceRiskManagementTest extends TestCase
         return $validatorMock;
     }
 
+    /**
+     * @return MockObject|ContextServiceInterface
+     */
     protected function getContextService()
     {
         $contextServiceMock = static::createMock(ContextServiceInterface::class);
@@ -247,6 +268,9 @@ class PayUponInvoiceRiskManagementTest extends TestCase
         return $contextServiceMock;
     }
 
+    /**
+     * @return MockObject|SettingsServiceInterface
+     */
     protected function getSettingsService()
     {
         $settingsServiceMock = static::createMock(SettingsServiceInterface::class);

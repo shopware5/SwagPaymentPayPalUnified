@@ -51,7 +51,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2ExpressCheckout extends Abstr
         if ($sendShopwareOrderNumber) {
             $shopwareOrderNumber = $this->createShopwareOrder($payPalOrderId, $payPalOrderParameter->getPaymentType());
 
-            $orderNumberPrefix = $this->settingsService->get(SettingsServiceInterface::SETTING_SEND_ORDER_NUMBER);
+            $orderNumberPrefix = $this->settingsService->get(SettingsServiceInterface::SETTING_ORDER_NUMBER_PREFIX);
 
             $invoiceIdPatch = new OrderAddInvoiceIdPatch();
             $invoiceIdPatch->setOp(Patch::OPERATION_ADD);

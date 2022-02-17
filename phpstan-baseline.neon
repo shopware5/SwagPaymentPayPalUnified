@@ -111,36 +111,6 @@ parameters:
 			path: Components/Document/InvoiceDocumentHandler.php
 
 		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\PayPalOrderParameter\\\\PayPalOrderParameter\\:\\:__construct\\(\\) has parameter \\$cart with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: Components/PayPalOrderParameter/PayPalOrderParameter.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\PayPalOrderParameter\\\\PayPalOrderParameter\\:\\:__construct\\(\\) has parameter \\$customer with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: Components/PayPalOrderParameter/PayPalOrderParameter.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\PayPalOrderParameter\\\\PayPalOrderParameter\\:\\:getCart\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: Components/PayPalOrderParameter/PayPalOrderParameter.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\PayPalOrderParameter\\\\PayPalOrderParameter\\:\\:getCustomer\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: Components/PayPalOrderParameter/PayPalOrderParameter.php
-
-		-
-			message: "#^Property SwagPaymentPayPalUnified\\\\Components\\\\PayPalOrderParameter\\\\PayPalOrderParameter\\:\\:\\$cart type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: Components/PayPalOrderParameter/PayPalOrderParameter.php
-
-		-
-			message: "#^Property SwagPaymentPayPalUnified\\\\Components\\\\PayPalOrderParameter\\\\PayPalOrderParameter\\:\\:\\$customer type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: Components/PayPalOrderParameter/PayPalOrderParameter.php
-
-		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\PayPalOrderParameter\\\\ShopwareOrderData\\:\\:__construct\\(\\) has parameter \\$shopwareUserData with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: Components/PayPalOrderParameter/ShopwareOrderData.php
@@ -232,11 +202,6 @@ parameters:
 
 		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\Common\\\\CustomerHelper\\:\\:hasNetPriceCaluclationIndicator\\(\\) has parameter \\$customer with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: Components/Services/Common/CustomerHelper.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\Common\\\\CustomerHelper\\:\\:shouldUseNetPrice\\(\\) has parameter \\$customer with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: Components/Services/Common/CustomerHelper.php
 
@@ -406,27 +371,12 @@ parameters:
 			path: Components/Services/PayPalOrder/AmountProvider.php
 
 		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\PayPalOrder\\\\ItemListProvider\\:\\:getItemList\\(\\) has parameter \\$cart with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: Components/Services/PayPalOrder/ItemListProvider.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\PayPalOrder\\\\ItemListProvider\\:\\:getItemList\\(\\) has parameter \\$customer with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: Components/Services/PayPalOrder/ItemListProvider.php
-
-		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\PayPalOrder\\\\ItemListProvider\\:\\:setName\\(\\) has parameter \\$lineItem with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: Components/Services/PayPalOrder/ItemListProvider.php
 
 		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\PayPalOrder\\\\ItemListProvider\\:\\:setSku\\(\\) has parameter \\$lineItem with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: Components/Services/PayPalOrder/ItemListProvider.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\PayPalOrder\\\\ItemListProvider\\:\\:setTaxInformation\\(\\) has parameter \\$lineItem with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: Components/Services/PayPalOrder/ItemListProvider.php
 
@@ -2661,32 +2611,12 @@ parameters:
 			path: Setup/Installer.php
 
 		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Setup\\\\Installer\\:\\:createPaymentMethods\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Setup/Installer.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Setup\\\\Installer\\:\\:getTranslationKeys\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: Setup/Installer.php
-
-		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Setup\\\\Installer\\:\\:migrate\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: Setup/Installer.php
 
 		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Setup\\\\Installer\\:\\:removeDocumentTemplates\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Setup/Installer.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Setup\\\\Installer\\:\\:writeTranslation\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Setup/Installer.php
-
-		-
-			message: "#^PHPDoc tag @var for variable \\$translationKeys has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: Setup/Installer.php
 
@@ -6724,29 +6654,3 @@ parameters:
 			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Unit\\\\PayPalBundle\\\\Structs\\\\WebhookStructTest\\:\\:testToArray\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: Tests/Unit/PayPalBundle/Structs/WebhookStructTest.php
-
-		-
-			message: "#^Method PayUponInvoiceRiskManagementTest\\:\\:getContextService\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Unit/Subscriber/PayUponInvoiceRiskManagementTest.php
-
-		-
-			message: "#^Method PayUponInvoiceRiskManagementTest\\:\\:getDependencyProvider\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Unit/Subscriber/PayUponInvoiceRiskManagementTest.php
-
-		-
-			message: "#^Method PayUponInvoiceRiskManagementTest\\:\\:getPaymentMethodProvider\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Unit/Subscriber/PayUponInvoiceRiskManagementTest.php
-
-		-
-			message: "#^Method PayUponInvoiceRiskManagementTest\\:\\:getSettingsService\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Unit/Subscriber/PayUponInvoiceRiskManagementTest.php
-
-		-
-			message: "#^Method PayUponInvoiceRiskManagementTest\\:\\:getValidator\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Unit/Subscriber/PayUponInvoiceRiskManagementTest.php
-

@@ -16,11 +16,35 @@ class CustomerHelper
      * Returns a value indicating whether the current customer
      * uses the net price instead of the gross price.
      *
+     * The naming of this method is off from the parameter name, because it
+     * behaves like this:
+     *
+     * Basic settings -> [customer group] -> Show gross price in shop unchecked
+     *   - show_net: false
+     * Basic settings -> [customer group] -> Show gross price in shop checked
+     *   - show_net: true
+     *
+     * So the parameter name is wrong in the core.
+     *
+     * @param array<string,mixed> $customer
+     *
      * @return bool
      */
-    public function shouldUseNetPrice(array $customer)
+    public function usesGrossPrice(array $customer)
     {
         return (bool) $customer['additional']['show_net'];
+    }
+
+    /**
+     * Returns a value indicating whether any VAT will be charged.
+     *
+     * @param array<string,mixed> $customer
+     *
+     * @return bool
+     */
+    public function chargeVat(array $customer)
+    {
+        return (bool) $customer['additional']['charge_vat'];
     }
 
     /**

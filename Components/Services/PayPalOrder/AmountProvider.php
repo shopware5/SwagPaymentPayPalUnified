@@ -107,15 +107,33 @@ class AmountProvider
 
         $shipping = new BreakdownShipping();
         $shipping->setCurrencyCode($currencyCode);
-        $taxTotal = null;
-        $provideTaxTotal = $this->itemsUseNetPrice($purchaseUnit->getItems());
 
-        if ($this->customerHelper->shouldUseNetPrice($customer) && !$this->customerHelper->hasNetPriceCaluclationIndicator($customer)) {
+        $taxTotal = null;
+        $provideTaxTotal = !$this->customerHelper->usesGrossPrice($customer) && !$this->customerHelper->hasNetPriceCaluclationIndicator($customer);
+
+        if ($this->isTaxDeclaredOnItems($purchaseUnit->getItems())) {
+            /**
+             * We need to provide a total tax value which will pass the checks
+             * done by the PayPal-API. The logic it uses is described in the
+             * docs (`tax * quantity` for each item).
+             *
+             * @see https://developer.paypal.com/api/rest/reference/orders/v2/errors#unprocessable-entity (TAX_TOTAL_MISMATCH)
+             */
+            $taxTotalValue = array_reduce($items, static function ($total, Item $item) {
+                return $total + (float) $item->getTax()->getValue() * $item->getQuantity();
+            }, 0.0);
+
+            // When tax is declared for items, providing the total is mandatory.
+            $provideTaxTotal = true;
+        } else {
+            $taxTotalValue = $cart['sAmountTax'];
+        }
+
+        if ($this->customerHelper->usesGrossPrice($customer) && !$this->customerHelper->hasNetPriceCaluclationIndicator($customer)) {
             $shipping->setValue($this->priceFormatter->formatPrice($cart['sShippingcostsWithTax']));
-        } elseif (!$this->customerHelper->shouldUseNetPrice($customer) && !$this->customerHelper->hasNetPriceCaluclationIndicator($customer)) {
+        } elseif (!$this->customerHelper->usesGrossPrice($customer) && !$this->customerHelper->hasNetPriceCaluclationIndicator($customer)) {
             //Case 2: Show net prices in shopware and don't exclude country tax
             $shipping->setValue($this->priceFormatter->formatPrice($cart['sShippingcostsNet']));
-            $provideTaxTotal = true;
         } else {
             //Case 3: No tax handling at all, just use the net amounts.
             $shipping->setValue($this->priceFormatter->formatPrice($cart['sShippingcostsNet']));
@@ -124,7 +142,7 @@ class AmountProvider
         if ($provideTaxTotal) {
             $taxTotal = new TaxTotal();
             $taxTotal->setCurrencyCode($currencyCode);
-            $taxTotal->setValue($this->priceFormatter->formatPrice($cart['sAmountTax']));
+            $taxTotal->setValue($this->priceFormatter->formatPrice($taxTotalValue));
         }
 
         $discount = new Discount();
@@ -145,7 +163,7 @@ class AmountProvider
      *
      * @return bool
      */
-    private function itemsUseNetPrice($items)
+    private function isTaxDeclaredOnItems($items)
     {
         if (empty($items)) {
             return false;

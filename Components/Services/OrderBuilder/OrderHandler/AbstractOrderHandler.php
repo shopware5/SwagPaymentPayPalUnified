@@ -160,7 +160,7 @@ abstract class AbstractOrderHandler implements OrderBuilderHandlerInterface
             $purchaseUnit->setItems($this->itemListProvider->getItemList(
                 $orderParameter->getCart(),
                 $orderParameter->getCustomer(),
-                $orderParameter->getPaymentType() === PaymentType::PAYPAL_PAY_UPON_INVOICE_V2
+                $orderParameter->getPaymentType()
             ));
         }
 

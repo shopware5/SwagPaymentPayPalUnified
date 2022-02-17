@@ -8,20 +8,22 @@
 
 namespace SwagPaymentPayPalUnified\Components\PayPalOrderParameter;
 
+use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
+
 class PayPalOrderParameter
 {
     /**
-     * @var array
+     * @var array<string,mixed>
      */
     private $customer;
 
     /**
-     * @var array
+     * @var array<string,mixed>
      */
     private $cart;
 
     /**
-     * @var string
+     * @var PaymentType::*
      */
     private $paymentType;
 
@@ -36,9 +38,11 @@ class PayPalOrderParameter
     private $paymentToken;
 
     /**
-     * @param string      $paymentType
-     * @param string|null $basketUniqueId
-     * @param string|null $paymentToken
+     * @param array<string,mixed> $customer
+     * @param array<string,mixed> $cart
+     * @param PaymentType::*      $paymentType
+     * @param string|null         $basketUniqueId
+     * @param string|null         $paymentToken
      */
     public function __construct(
         array $customer,
@@ -55,7 +59,7 @@ class PayPalOrderParameter
     }
 
     /**
-     * @return array
+     * @return array<string,mixed>
      */
     public function getCustomer()
     {
@@ -63,7 +67,7 @@ class PayPalOrderParameter
     }
 
     /**
-     * @return array
+     * @return array<string,mixed>
      */
     public function getCart()
     {
@@ -71,7 +75,7 @@ class PayPalOrderParameter
     }
 
     /**
-     * @return string
+     * @return PaymentType::*
      */
     public function getPaymentType()
     {

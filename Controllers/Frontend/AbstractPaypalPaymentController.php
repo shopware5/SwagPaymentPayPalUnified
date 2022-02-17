@@ -160,7 +160,7 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
     /**
      * @param string $paymentMethodName
      *
-     * @return string
+     * @return PaymentType::*
      */
     protected function getPaymentTypeByName($paymentMethodName)
     {

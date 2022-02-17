@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\PayPalBundle\V2\Resource;
 
+use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\RequestType;
 use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
@@ -27,10 +28,19 @@ class OrderResource
      */
     private $arrayFactory;
 
-    public function __construct(ClientService $clientService, OrderArrayFactory $arrayFactory)
-    {
+    /**
+     * @var LoggerServiceInterface
+     */
+    private $loggerService;
+
+    public function __construct(
+        ClientService $clientService,
+        OrderArrayFactory $arrayFactory,
+        LoggerServiceInterface $loggerService
+    ) {
         $this->clientService = $clientService;
         $this->arrayFactory = $arrayFactory;
+        $this->loggerService = $loggerService;
     }
 
     /**
@@ -57,26 +67,18 @@ class OrderResource
      */
     public function create(Order $order, $paymentType, $partnerAttributionId, $minimalResponse = true)
     {
+        $paypalRequestId = null;
+
         $this->clientService->setPartnerAttributionId($partnerAttributionId);
+
         if ($minimalResponse === false) {
             $this->clientService->setHeader('Prefer', 'return=representation');
         }
 
-        /*
-         * This is only necessary, because the Request-Id-Header should be
-         * optional, but isn't. This is a quirk of PayPals staging system again,
-         * so may be removed later on if possible. Otherwise we'll need to
-         * implement some way of storing this alongside the order, as outlined
-         * below.
-         *
-         * TODO: (PT-12531) check back later (after testing against the public sandbox) to either remove or store this value
-         *
-         * @see https://developer.paypal.com/docs/api/reference/api-requests/#paypal-request-id
-         */
         if ($order->getPaymentSource() !== null) {
-            $id = bin2hex((string) openssl_random_pseudo_bytes(16));
+            $paypalRequestId = bin2hex((string) openssl_random_pseudo_bytes(16));
 
-            $this->clientService->setHeader('PayPal-Request-Id', $id);
+            $this->clientService->setHeader('PayPal-Request-Id', $paypalRequestId);
         }
 
         $response = $this->clientService->sendRequest(
@@ -85,7 +87,19 @@ class OrderResource
             $this->arrayFactory->toArray($order, $paymentType)
         );
 
-        return (new Order())->assign($response);
+        $paypalOrder = (new Order())->assign($response);
+
+        if ($paypalRequestId !== null) {
+            $this->loggerService->notify(
+                'PayPal order with payment source created',
+                [
+                    'orderId' => $paypalOrder->getId(),
+                    'requestId' => $paypalRequestId,
+                ]
+            );
+        }
+
+        return $paypalOrder;
     }
 
     /**

@@ -612,7 +612,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
                 title: '{s name="growl/title"}PayPal{/s}',
                 text: '{s name="growl/updateCredentialsFailure"}Your account information could not be updated automatically. Please repeat the authorisation process.{/s}'
             },
-            me.window.title
+            this.window.title
         );
     },
 

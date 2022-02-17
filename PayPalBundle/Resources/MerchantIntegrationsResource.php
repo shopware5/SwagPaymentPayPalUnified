@@ -58,7 +58,6 @@ class MerchantIntegrationsResource
 
         $body = \json_decode($userinfo->getBody(), true);
 
-        // TODO: (PT-12531) Using the 'Caller_acct_num'-header might not be a reliable solution but works for now. We need to get back to PayPal regarding this.
         $payerId = $body['payer_id'] ?: $userinfo->getHeader('Caller_acct_num');
 
         if (!$payerId) {

@@ -22,7 +22,7 @@ class PayPalOrderParameterFacadeTest extends TestCase
     /**
      * @dataProvider createPayPalOrderParameterDefaultDataProvider
      *
-     * @param string            $paymentType
+     * @param PaymentType::*    $paymentType
      * @param ShopwareOrderData $shopwareOrderData
      *
      * @return void
@@ -48,7 +48,7 @@ class PayPalOrderParameterFacadeTest extends TestCase
     /**
      * @dataProvider createPayPalOrderParameterDefaultDataProvider
      *
-     * @param string            $paymentType
+     * @param PaymentType::*    $paymentType
      * @param ShopwareOrderData $shopwareOrderData
      *
      * @return void

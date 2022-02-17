@@ -10,6 +10,7 @@ namespace SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentModels;
 
 use Shopware\Models\Payment\Payment;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
+use SwagPaymentPayPalUnified\Setup\Assets\Translations;
 
 class PayPalClassic extends AbstractPaymentModel
 {
@@ -22,22 +23,11 @@ class PayPalClassic extends AbstractPaymentModel
         $payment->setActive(false);
         $payment->setPosition(self::POSITION_PAYPAL_CLASSIC);
         $payment->setName(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
-        $payment->setDescription('PayPal');
-        $payment->setAdditionalDescription($this->getUnifiedPaymentLogo() . 'Bezahlung per PayPal - einfach, schnell und sicher.');
+        $payment->setDescription(Translations::CONFIG_PAYMENT_TRANSLATIONS['de_DE'][PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME]['description']);
+        $payment->setAdditionalDescription(Translations::CONFIG_PAYMENT_TRANSLATIONS['de_DE'][PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME]['additionalDescription']);
         $payment->setAction(self::ACTION_PAYPAL_CLASSIC);
         $payment->setPlugin($this->plugin);
 
         return $payment;
-    }
-
-    /**
-     * @return string
-     */
-    private function getUnifiedPaymentLogo()
-    {
-        return '<!-- PayPal Logo -->'
-            . '<a href="https://www.paypal.com/de/cgi-bin/webscr?cmd=xpt/cps/popup/OLCWhatIsPayPal-outside" target="_blank" rel="noopener">'
-            . '<img src="{link file=\'frontend/_public/src/img/sidebar-paypal-generic.png\' fullPath}" alt="Logo \'PayPal empfohlen\'">'
-            . '</a><br><!-- PayPal Logo -->';
     }
 }
