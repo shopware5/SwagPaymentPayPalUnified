@@ -10,48 +10,56 @@
                  class="SwagPaymentPayPalUnified\PayPalBundle\Resources\PaymentResource"
                  public="true">
             <argument type="service" id="paypal_unified.client_service"/>
+            <argument type="service" id="paypal_unified.logger_service"/>
         </service>
 
         <service id="paypal_unified.sale_resource"
                  class="SwagPaymentPayPalUnified\PayPalBundle\Resources\SaleResource"
                  public="true">
             <argument type="service" id="paypal_unified.client_service"/>
+            <argument type="service" id="paypal_unified.logger_service"/>
         </service>
 
         <service id="paypal_unified.refund_resource"
                  class="SwagPaymentPayPalUnified\PayPalBundle\Resources\RefundResource"
                  public="true">
             <argument type="service" id="paypal_unified.client_service"/>
+            <argument type="service" id="paypal_unified.logger_service"/>
         </service>
 
         <service id="paypal_unified.authorization_resource"
                  class="SwagPaymentPayPalUnified\PayPalBundle\Resources\AuthorizationResource"
                  public="true">
             <argument type="service" id="paypal_unified.client_service"/>
+            <argument type="service" id="paypal_unified.logger_service"/>
         </service>
 
         <service id="paypal_unified.capture_resource"
                  class="SwagPaymentPayPalUnified\PayPalBundle\Resources\CaptureResource"
                  public="true">
             <argument type="service" id="paypal_unified.client_service"/>
+            <argument type="service" id="paypal_unified.logger_service"/>
         </service>
 
         <service id="paypal_unified.order_resource"
                  class="SwagPaymentPayPalUnified\PayPalBundle\Resources\OrderResource"
                  public="true">
             <argument type="service" id="paypal_unified.client_service"/>
+            <argument type="service" id="paypal_unified.logger_service"/>
         </service>
 
         <service id="paypal_unified.webhook_resource"
                  class="SwagPaymentPayPalUnified\PayPalBundle\Resources\WebhookResource"
                  public="true">
             <argument type="service" id="paypal_unified.client_service"/>
+            <argument type="service" id="paypal_unified.logger_service"/>
         </service>
 
         <service id="paypal_unified.credentials_resource"
                  class="SwagPaymentPayPalUnified\PayPalBundle\Resources\CredentialsResource"
                  public="true">
             <argument type="service" id="http_client"/>
+            <argument type="service" id="paypal_unified.logger_service"/>
         </service>
 
         <service id="paypal_unified.merchant_integrations_resource"
@@ -59,6 +67,7 @@
                  public="true">
             <argument type="service" id="paypal_unified.client_service"/>
             <argument type="service" id="paypal_unified.settings_service"/>
+            <argument type="service" id="paypal_unified.logger_service"/>
         </service>
     </services>
 </container>

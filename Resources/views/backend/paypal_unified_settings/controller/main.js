@@ -230,7 +230,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
 
         var payerId = this.generalRecord.get(payerIdGetterKey);
         if (payerId.trim() !== '') {
-            this.checkBothCapabilies(sandbox, payerId);
+            this.checkBothCapabilities(sandbox, payerId);
 
             return;
         }
@@ -242,7 +242,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
      * @param sandbox { Boolean }
      * @param payerId { String }
      */
-    checkBothCapabilies: function(sandbox, payerId) {
+    checkBothCapabilities: function(sandbox, payerId) {
         var paymentMethodCapabilityNames = [
             this.PAYMENT_METHOD_CAPABILITY_NAME.PAY_UPON_INVOICE,
             this.PAYMENT_METHOD_CAPABILITY_NAME.ADVANCED_CREDIT_DEBIT_CARD

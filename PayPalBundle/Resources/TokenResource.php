@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\PayPalBundle\Resources;
 
+use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\RequestType;
 use SwagPaymentPayPalUnified\PayPalBundle\RequestUri;
 use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService;
@@ -20,9 +21,15 @@ class TokenResource
      */
     private $client;
 
-    public function __construct(ClientService $client)
+    /**
+     * @var LoggerServiceInterface
+     */
+    private $logger;
+
+    public function __construct(ClientService $client, LoggerServiceInterface $logger)
     {
         $this->client = $client;
+        $this->logger = $logger;
     }
 
     /**
@@ -30,6 +37,8 @@ class TokenResource
      */
     public function get(OAuthCredentials $credentials)
     {
+        $this->logger->debug(sprintf('%s GET WITH CREDENTIALS: %s', __METHOD__, $credentials->toString()));
+
         $data = [
             'grant_type' => 'client_credentials',
         ];

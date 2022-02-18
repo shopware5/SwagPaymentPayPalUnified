@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\PayPalBundle\Resources;
 
+use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\RequestType;
 use SwagPaymentPayPalUnified\PayPalBundle\RequestUri;
 use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService;
@@ -19,9 +20,15 @@ class RefundResource
      */
     private $clientService;
 
-    public function __construct(ClientService $clientService)
+    /**
+     * @var LoggerServiceInterface
+     */
+    private $logger;
+
+    public function __construct(ClientService $clientService, LoggerServiceInterface $logger)
     {
         $this->clientService = $clientService;
+        $this->logger = $logger;
     }
 
     /**
@@ -31,6 +38,8 @@ class RefundResource
      */
     public function get($refundId)
     {
+        $this->logger->debug(sprintf('%s GET WITH ID %s', __METHOD__, $refundId));
+
         return $this->clientService->sendRequest(RequestType::GET, sprintf('%s/%s', RequestUri::REFUND_RESOURCE, $refundId));
     }
 }

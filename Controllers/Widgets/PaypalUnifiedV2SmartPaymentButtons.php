@@ -26,6 +26,8 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2SmartPaymentButtons extends Ab
 
     public function createOrderAction()
     {
+        $this->logger->debug(sprintf('%s START', __METHOD__));
+
         $session = $this->dependencyProvider->getSession();
         $shopwareSessionOrderData = $session->get('sOrderVariables');
 
@@ -52,7 +54,11 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2SmartPaymentButtons extends Ab
         $payPalOrderData = $this->orderFactory->createOrder($orderParams);
 
         try {
+            $this->logger->debug(sprintf('%s BEFORE CREATE PAYPAL ORDER', __METHOD__));
+
             $payPalOrder = $this->orderResource->create($payPalOrderData, $orderParams->getPaymentType(), PartnerAttributionId::PAYPAL_ALL_V2, false);
+
+            $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFUL CREATED: ID: %d', __METHOD__, $payPalOrder->getId()));
         } catch (RequestException $exception) {
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
                 ->setCode(ErrorCodes::COMMUNICATION_FAILURE)

@@ -11,6 +11,7 @@ namespace SwagPaymentPayPalUnified\Components\Backend;
 use Doctrine\ORM\EntityManagerInterface;
 use Shopware\Components\HttpClient\RequestException;
 use SwagPaymentPayPalUnified\Models\Settings\General;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\CredentialsResource;
@@ -33,14 +34,21 @@ class CredentialsService
      */
     private $entityManager;
 
+    /**
+     * @var LoggerServiceInterface
+     */
+    private $logger;
+
     public function __construct(
         CredentialsResource $credentialsResource,
         SettingsServiceInterface $settingsService,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        LoggerServiceInterface $logger
     ) {
         $this->credentialsResource = $credentialsResource;
         $this->settingsService = $settingsService;
         $this->entityManager = $entityManager;
+        $this->logger = $logger;
     }
 
     /**
@@ -55,6 +63,17 @@ class CredentialsService
      */
     public function getAccessToken($authCode, $sharedId, $nonce, $sandbox)
     {
+        $this->logger->debug(
+            sprintf(
+                '%s AUTHCODE: %s, SHARED ID: %s, NONCE: %s, SANDBOX: %s',
+                __METHOD__,
+                $authCode,
+                $sharedId,
+                $nonce,
+                $sandbox ? 'TRUE' : 'FALSE'
+            )
+        );
+
         return $this->credentialsResource->getAccessToken($authCode, $sharedId, $nonce, $sandbox);
     }
 
@@ -69,6 +88,16 @@ class CredentialsService
      */
     public function getCredentials($accessToken, $partnerId, $sandbox)
     {
+        $this->logger->debug(
+            sprintf(
+                '%s ACCESS TOKEN: %s, PARTNER ID: %s, SANDBOX: %s',
+                __METHOD__,
+                $accessToken,
+                $partnerId,
+                $sandbox ? 'TRUE' : 'FALSE'
+            )
+        );
+
         return $this->credentialsResource->getCredentials($accessToken, $partnerId, $sandbox);
     }
 
@@ -83,9 +112,20 @@ class CredentialsService
      */
     public function updateCredentials($credentials, $shopId, $sandbox)
     {
+        $this->logger->debug(
+            sprintf(
+                '%s SHOP ID: %s, SANDBOX: %s',
+                __METHOD__,
+                $shopId,
+                $sandbox ? 'TRUE' : 'FALSE'
+            ),
+            $credentials
+        );
+
         $settings = $this->settingsService->getSettings($shopId, SettingsTable::GENERAL);
 
         if (!$settings instanceof General) {
+            $this->logger->debug(sprintf('%s SETTINGS NOT FOUND', __METHOD__));
             throw new UnexpectedValueException(sprintf('Expected instance of %s, got %s.', General::class, $settings === null ? 'null' : \get_class($settings)));
         }
 
@@ -101,5 +141,7 @@ class CredentialsService
 
         $this->entityManager->persist($settings);
         $this->entityManager->flush();
+
+        $this->logger->debug(sprintf('%s SUCCESSFUL', __METHOD__));
     }
 }

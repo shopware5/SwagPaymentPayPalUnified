@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\PayPalBundle\Resources;
 
+use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\RequestType;
 use SwagPaymentPayPalUnified\PayPalBundle\RequestUri;
 use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService;
@@ -20,9 +21,15 @@ class OrderResource
      */
     private $clientService;
 
-    public function __construct(ClientService $clientService)
+    /**
+     * @var LoggerServiceInterface
+     */
+    private $logger;
+
+    public function __construct(ClientService $clientService, LoggerServiceInterface $logger)
     {
         $this->clientService = $clientService;
+        $this->logger = $logger;
     }
 
     /**
@@ -32,6 +39,8 @@ class OrderResource
      */
     public function get($id)
     {
+        $this->logger->debug(sprintf('%s GET WITH ID %s', __METHOD__, $id));
+
         return $this->clientService->sendRequest(RequestType::GET, sprintf('%s/%s', RequestUri::ORDER_RESOURCE, $id));
     }
 
@@ -42,6 +51,8 @@ class OrderResource
      */
     public function capture($id, Capture $capture)
     {
+        $this->logger->debug(sprintf('%s CAPTURE WITH ID %s', __METHOD__, $id), $capture->toArray());
+
         $requestData = $capture->toArray();
 
         return $this->clientService->sendRequest(
@@ -58,6 +69,8 @@ class OrderResource
      */
     public function void($id)
     {
+        $this->logger->debug(sprintf('%s VOID WITH ID %s', __METHOD__, $id));
+
         return $this->clientService->sendRequest(
             RequestType::POST,
             sprintf('%s/%s/do-void', RequestUri::ORDER_RESOURCE, $id)

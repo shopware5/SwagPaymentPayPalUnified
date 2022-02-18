@@ -11,6 +11,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.store.LogLevel', {
 
     data: [
         { id: '0', text: '{s name="normal"}Normal{/s}' },
-        { id: '1', text: '{s name="extended"}Extended{/s}' }
+        { id: '1', text: '{s name="extended"}Extended{/s}' },
+        { id: '2', text: '{s name="debug"}Debugging{/s}' },
     ]
 });

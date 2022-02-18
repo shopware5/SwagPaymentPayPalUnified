@@ -11,6 +11,7 @@ namespace SwagPaymentPayPalUnified\PayPalBundle\Resources;
 use Shopware\Components\HttpClient\HttpClientInterface;
 use Shopware\Components\HttpClient\RequestException;
 use SwagPaymentPayPalUnified\PayPalBundle\BaseURL;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\RequestUri;
 
 class CredentialsResource
@@ -20,9 +21,15 @@ class CredentialsResource
      */
     private $client;
 
-    public function __construct(HttpClientInterface $client)
+    /**
+     * @var LoggerServiceInterface
+     */
+    private $logger;
+
+    public function __construct(HttpClientInterface $client, LoggerServiceInterface $logger)
     {
         $this->client = $client;
+        $this->logger = $logger;
     }
 
     /**
@@ -37,6 +44,17 @@ class CredentialsResource
      */
     public function getAccessToken($authCode, $sharedId, $nonce, $sandbox)
     {
+        $this->logger->debug(
+            sprintf(
+                '%s AUTHCODE: %s, SHARED ID: %s, NONCE: %s, SANDBOX: %s',
+                __METHOD__,
+                $authCode,
+                $sharedId,
+                $nonce,
+                $sandbox ? 'TRUE' : 'FALSE'
+            )
+        );
+
         $data = [
             'grant_type' => 'authorization_code',
             'code' => $authCode,
@@ -65,6 +83,16 @@ class CredentialsResource
      */
     public function getCredentials($accessToken, $partnerId, $sandbox)
     {
+        $this->logger->debug(
+            sprintf(
+                '%s ACCESS TOKEN: %s, PARTNER ID: %s, SANDBOX: %s',
+                __METHOD__,
+                $accessToken,
+                $partnerId,
+                $sandbox ? 'TRUE' : 'FALSE'
+            )
+        );
+
         $response = $this->client->get(
             sprintf('%s%s', $sandbox ? BaseURL::SANDBOX : BaseURL::LIVE, sprintf(RequestUri::CREDENTIALS_RESOURCE, $partnerId)),
             [

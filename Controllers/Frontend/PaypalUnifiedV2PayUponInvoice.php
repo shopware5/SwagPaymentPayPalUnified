@@ -26,6 +26,8 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2PayUponInvoice extends Abstra
 
     public function indexAction()
     {
+        $this->logger->debug(sprintf('%s START', __METHOD__));
+
         $session = $this->dependencyProvider->getSession();
         $shopwareSessionOrderData = $session->get('sOrderVariables');
 
@@ -34,9 +36,13 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2PayUponInvoice extends Abstra
         $orderParams = $this->payPalOrderParameterFacade->createPayPalOrderParameter(PaymentType::PAYPAL_PAY_UPON_INVOICE_V2, $shopwareOrderData);
 
         try {
+            $this->logger->debug(sprintf('%s BEFORE CREATE PAYPAL ORDER', __METHOD__));
+
             $orderData = $this->orderFactory->createOrder($orderParams);
 
             $paypalOrder = $this->orderResource->create($orderData, $orderParams->getPaymentType(), PartnerAttributionId::PAYPAL_ALL_V2, false);
+
+            $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFUL CREATED: ID: %d', __METHOD__, $paypalOrder->getId()));
         } catch (RequestException $exception) {
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
                 ->setCode(ErrorCodes::COMMUNICATION_FAILURE)
@@ -72,7 +78,11 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2PayUponInvoice extends Abstra
             $patchSet[] = $invoiceIdPatch;
 
             try {
+                $this->logger->debug(sprintf('%s UPDATE PAYPAL ORDER WITH ID: %s', __METHOD__, $paypalOrder->getId()));
+
                 $this->orderResource->update($patchSet, $paypalOrder->getId(), PartnerAttributionId::PAYPAL_ALL_V2);
+
+                $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFULLY UPDATED', __METHOD__));
             } catch (RequestException $exception) {
                 $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
                     ->setCode(ErrorCodes::COMMUNICATION_FAILURE)
@@ -89,6 +99,8 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2PayUponInvoice extends Abstra
         if ($this->isPaymentCompleted($paypalOrder->getId())) {
             $paymentStatusService->updatePaymentStatus($paypalOrder->getId(), Status::PAYMENT_STATE_COMPLETELY_PAID);
 
+            $this->logger->debug(sprintf('%s REDIRECT TO checkout/finish', __METHOD__));
+
             $this->redirect([
                 'module' => 'frontend',
                 'controller' => 'checkout',
@@ -96,6 +108,8 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2PayUponInvoice extends Abstra
                 'sUniqueID' => $paypalOrder->getId(),
             ]);
         } else {
+            $this->logger->debug(sprintf('%s SET PAYMENT STATE TO: PAYMENT_STATE_REVIEW_NECESSARY::21', __METHOD__));
+
             $paymentStatusService->updatePaymentStatus($paypalOrder->getId(), Status::PAYMENT_STATE_REVIEW_NECESSARY);
 
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()

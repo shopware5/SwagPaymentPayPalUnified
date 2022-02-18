@@ -14,6 +14,7 @@ use SwagPaymentPayPalUnified\Components\Backend\CaptureService;
 use SwagPaymentPayPalUnified\Components\PaymentStatus;
 use SwagPaymentPayPalUnified\Components\Services\ExceptionHandlerService;
 use SwagPaymentPayPalUnified\Components\Services\PaymentStatusService;
+use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Mocks\AuthorizationResourceMock;
 use SwagPaymentPayPalUnified\Tests\Mocks\CaptureResourceMock;
@@ -24,6 +25,7 @@ class CaptureServiceTest extends TestCase
 {
     use DatabaseTestCaseTrait;
     use OrderTrait;
+    use ContainerTrait;
 
     const CURRENCY = 'EUR';
 
@@ -32,8 +34,8 @@ class CaptureServiceTest extends TestCase
      */
     public function before()
     {
-        $this->modelManager = Shopware()->Container()->get('models');
-        $this->connection = Shopware()->Container()->get('dbal_connection');
+        $this->modelManager = $this->getContainer()->get('models');
+        $this->connection = $this->getContainer()->get('dbal_connection');
     }
 
     public function testCaptureAuthorization()
@@ -160,7 +162,10 @@ class CaptureServiceTest extends TestCase
             new OrderResourceMock(),
             new AuthorizationResourceMock(),
             new CaptureResourceMock(),
-            new PaymentStatusService(Shopware()->Container()->get('models'))
+            new PaymentStatusService(
+                $this->getContainer()->get('models'),
+                $this->getContainer()->get('paypal_unified.logger_service')
+            )
         );
     }
 }

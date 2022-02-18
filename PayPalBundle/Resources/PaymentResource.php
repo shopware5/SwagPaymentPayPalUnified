@@ -9,6 +9,7 @@
 namespace SwagPaymentPayPalUnified\PayPalBundle\Resources;
 
 use Shopware\Components\HttpClient\RequestException;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PatchInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\RequestType;
 use SwagPaymentPayPalUnified\PayPalBundle\RequestUri;
@@ -22,9 +23,15 @@ class PaymentResource
      */
     private $clientService;
 
-    public function __construct(ClientService $clientService)
+    /**
+     * @var LoggerServiceInterface
+     */
+    private $logger;
+
+    public function __construct(ClientService $clientService, LoggerServiceInterface $logger)
     {
         $this->clientService = $clientService;
+        $this->logger = $logger;
     }
 
     /**
@@ -34,6 +41,8 @@ class PaymentResource
      */
     public function create(Payment $payment)
     {
+        $this->logger->debug(sprintf('%s CREATE', __METHOD__));
+
         return $this->clientService->sendRequest(RequestType::POST, RequestUri::PAYMENT_RESOURCE, $payment->toArray());
     }
 
@@ -47,6 +56,8 @@ class PaymentResource
      */
     public function execute($payerId, $paymentId)
     {
+        $this->logger->debug(sprintf('%s EXECUTE WITH PAYER ID %s, PAYMENT ID %s', __METHOD__, $payerId, $paymentId));
+
         $requestData = ['payer_id' => $payerId];
 
         return $this->clientService->sendRequest(
@@ -65,6 +76,8 @@ class PaymentResource
      */
     public function get($paymentId)
     {
+        $this->logger->debug(sprintf('%s GET WITH PAYMENT ID %s', __METHOD__, $paymentId));
+
         return $this->clientService->sendRequest(
             RequestType::GET,
             sprintf('%s/%s', RequestUri::PAYMENT_RESOURCE, $paymentId)
@@ -79,8 +92,20 @@ class PaymentResource
      */
     public function patch($paymentId, array $patches)
     {
+        $this->logger->debug(sprintf('%s PATCH WITH PAYMENT ID %s', __METHOD__, $paymentId));
+
         $requestData = [];
         foreach ($patches as $patch) {
+            $this->logger->debug(
+                sprintf(
+                    '%s PATCH OPERATION: %s, PATH: %s, VALUE: %s',
+                    __METHOD__,
+                    $patch->getOperation(),
+                    $patch->getPath(),
+                    $patch->getValue()
+                )
+            );
+
             $requestData[] = [
                 'op' => $patch->getOperation(),
                 'path' => $patch->getPath(),

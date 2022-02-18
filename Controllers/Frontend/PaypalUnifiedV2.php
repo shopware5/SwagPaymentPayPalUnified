@@ -24,15 +24,21 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
     {
         parent::preDispatch();
 
+        $this->logger->debug(__METHOD__);
+
         if ($this->Request()->isXmlHttpRequest()) {
             $this->Front()->Plugins()->ViewRenderer()->setNoRender();
             $this->Front()->Plugins()->Json()->setRenderer();
             $this->View()->setTemplate();
+
+            $this->logger->debug(sprintf('%s %s', __METHOD__, 'IS XHR REQUEST'));
         }
     }
 
     public function indexAction()
     {
+        $this->logger->debug(sprintf('%s START', __METHOD__));
+
         $session = $this->dependencyProvider->getSession();
 
         $shopwareSessionOrderData = $session->get('sOrderVariables');
@@ -59,8 +65,12 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
         $orderParams = $this->payPalOrderParameterFacade->createPayPalOrderParameter(PaymentType::PAYPAL_CLASSIC_V2, $shopwareOrderData);
 
         try {
+            $this->logger->debug(sprintf('%s BEFORE CREATE PAYPAL ORDER', __METHOD__));
+
             $payPalOrderData = $this->orderFactory->createOrder($orderParams);
             $payPalOrder = $this->orderResource->create($payPalOrderData, $orderParams->getPaymentType(), PartnerAttributionId::PAYPAL_ALL_V2, false);
+
+            $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFUL CREATED: ID: %d', __METHOD__, $payPalOrder->getId()));
         } catch (RequestException $exception) {
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
                 ->setCode(ErrorCodes::COMMUNICATION_FAILURE)
@@ -80,6 +90,8 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
         }
 
         if ($this->Request()->isXmlHttpRequest()) {
+            $this->logger->debug(sprintf('%s IS XHR REQUEST', __METHOD__));
+
             $this->view->assign('token', $payPalOrder->getId());
             $this->view->assign('basketId', $orderParams->getBasketUniqueId());
 
@@ -94,20 +106,44 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
         }
 
         if ($url === null) {
+            $this->logger->debug(sprintf('%s NO URL FOUND', __METHOD__));
+
             throw new \RuntimeException('No link for redirect found');
         }
+
+        $this->logger->debug(sprintf('%s REDIRECT TO: %s', __METHOD__, $url));
 
         $this->redirect($url);
     }
 
     public function returnAction()
     {
+        $this->logger->debug(sprintf('%s START', __METHOD__));
+
         $request = $this->Request();
         $payPalOrderId = $request->getParam('token');
 
         try {
+            $this->logger->debug(sprintf('%s GET PAYPAL ORDER WITH ID: %s', __METHOD__, $payPalOrderId));
+
             $payPalOrder = $this->orderResource->get($payPalOrderId);
+
+            $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFULLY LOADED', __METHOD__));
+        } catch (RequestException $exception) {
+            $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
+                ->setCode(ErrorCodes::COMMUNICATION_FAILURE)
+                ->setException($exception);
+
+            $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
+
+            return;
         } catch (\Exception $exception) {
+            $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
+                ->setCode(ErrorCodes::UNKNOWN)
+                ->setException($exception);
+
+            $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
+
             return;
         }
 
@@ -124,6 +160,8 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
 
         $sendShopwareOrderNumber = $this->getSendOrdernumber();
 
+        $this->logger->debug(sprintf('%s SEND SHOPWARE ORDERNUMBER: %s', __METHOD__, $sendShopwareOrderNumber ? 'TRUE' : 'FALSE'));
+
         if ($sendShopwareOrderNumber) {
             $shopwareOrderNumber = $this->createShopwareOrder($payPalOrderId, $this->getPaymentType($payPalOrder));
 
@@ -135,7 +173,11 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
             $invoiceIdPatch->setPath(OrderAddInvoiceIdPatch::PATH);
 
             try {
+                $this->logger->debug(sprintf('%s UPDATE PAYPAL ORDER WITH ID: %s', __METHOD__, $payPalOrderId));
+
                 $this->orderResource->update([$invoiceIdPatch], $payPalOrder->getId(), PaymentType::PAYPAL_CLASSIC_V2);
+
+                $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFULLY UPDATED', __METHOD__));
             } catch (RequestException $exception) {
                 $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
                     ->setCode(ErrorCodes::COMMUNICATION_FAILURE)
@@ -149,9 +191,17 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
 
         try {
             if ($this->settingsService->get(SettingsServiceInterface::SETTING_INTENT) === PaymentIntentV2::CAPTURE) {
+                $this->logger->debug(sprintf('%s CAPTURE PAYPAL ORDER WITH ID: %s', __METHOD__, $payPalOrderId));
+
                 $this->orderResource->capture($payPalOrder->getId(), PartnerAttributionId::PAYPAL_ALL_V2, false);
+
+                $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFULLY CAPTURED', __METHOD__));
             } elseif ($this->settingsService->get(SettingsServiceInterface::SETTING_INTENT) === PaymentIntentV2::AUTHORIZE) {
+                $this->logger->debug(sprintf('%s AUTHORIZE PAYPAL ORDER WITH ID: %s', __METHOD__, $payPalOrderId));
+
                 $this->orderResource->authorize($payPalOrder->getId(), PartnerAttributionId::PAYPAL_ALL_V2, false);
+
+                $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFULLY AUTHORIZED', __METHOD__));
             }
         } catch (RequestException $exception) {
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
@@ -180,6 +230,8 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
 
             return;
         }
+
+        $this->logger->debug(sprintf('%s REDIRECT TO checkout/finish', __METHOD__));
 
         $this->redirect([
             'module' => 'frontend',

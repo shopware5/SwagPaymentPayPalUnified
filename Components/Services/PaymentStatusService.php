@@ -13,6 +13,7 @@ use Shopware\Models\Order\Order;
 use Shopware\Models\Order\Status;
 use SwagPaymentPayPalUnified\Components\Exception\OrderNotFoundException;
 use SwagPaymentPayPalUnified\Components\PaymentStatus;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 
 class PaymentStatusService
 {
@@ -21,9 +22,15 @@ class PaymentStatusService
      */
     private $modelManager;
 
-    public function __construct(ModelManager $modelManager)
+    /**
+     * @var LoggerServiceInterface
+     */
+    private $logger;
+
+    public function __construct(ModelManager $modelManager, LoggerServiceInterface $logger)
     {
         $this->modelManager = $modelManager;
+        $this->logger = $logger;
     }
 
     /**
@@ -32,10 +39,16 @@ class PaymentStatusService
      */
     public function updatePaymentStatus($parentPayment, $paymentStateId)
     {
+        $this->logger->debug(
+            sprintf('%s PaymentID: %s PaymentStateID : %d', __METHOD__, $parentPayment, $paymentStateId)
+        );
+
         /** @var Order|null $orderModel */
         $orderModel = $this->modelManager->getRepository(Order::class)->findOneBy(['temporaryId' => $parentPayment]);
 
         if (!($orderModel instanceof Order)) {
+            $this->logger->debug(sprintf('%s ORDER WITH TMP ID: %s NOT FOUND', __METHOD__, $parentPayment));
+
             throw new OrderNotFoundException('temporaryId', $parentPayment);
         }
 
@@ -50,5 +63,7 @@ class PaymentStatusService
         }
 
         $this->modelManager->flush($orderModel);
+
+        $this->logger->debug(sprintf('%s UPDATE PAYMENT STATUS SUCCESSFUL', __METHOD__));
     }
 }
