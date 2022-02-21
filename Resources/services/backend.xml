@@ -49,6 +49,7 @@
             <argument type="service" id="paypal_unified.credentials_resource" />
             <argument type="service" id="paypal_unified.settings_service"/>
             <argument type="service" id="models"/>
+            <argument type="service" id="paypal_unified.logger_service"/>
         </service>
     </services>
 </container>
