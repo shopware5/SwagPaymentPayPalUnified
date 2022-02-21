@@ -591,16 +591,6 @@ parameters:
 			path: Components/Services/Validation/SimpleBasketValidator.php
 
 		-
-			message: "#^Cannot access offset 'orderStatus' on array\\<string, mixed\\>\\|Shopware\\\\Components\\\\Model\\\\ModelEntity\\.$#"
-			count: 2
-			path: Controllers/Backend/PaypalUnified.php
-
-		-
-			message: "#^Cannot access offset 'paymentStatus' on array\\<string, mixed\\>\\|Shopware\\\\Components\\\\Model\\\\ModelEntity\\.$#"
-			count: 2
-			path: Controllers/Backend/PaypalUnified.php
-
-		-
 			message: "#^Class Shopware_Controllers_Backend_PaypalUnified extends generic class Shopware_Controllers_Backend_Application but does not specify its types\\: TEntityClass$#"
 			count: 1
 			path: Controllers/Backend/PaypalUnified.php
@@ -622,11 +612,6 @@ parameters:
 
 		-
 			message: "#^Method Shopware_Controllers_Backend_PaypalUnified\\:\\:captureOrderAction\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Controllers/Backend/PaypalUnified.php
-
-		-
-			message: "#^Method Shopware_Controllers_Backend_PaypalUnified\\:\\:getFilterConditions\\(\\) should return array\\<array\\{property\\: string, operator\\: string\\|null, value\\: mixed, expression\\?\\: string\\}\\> but returns non\\-empty\\-array\\<array\\{property\\: string, operator\\?\\: string\\|null, value\\: mixed, expression\\?\\: string\\}\\>\\.$#"
 			count: 1
 			path: Controllers/Backend/PaypalUnified.php
 
@@ -1139,36 +1124,6 @@ parameters:
 			message: "#^Method SwagPaymentPayPalUnified\\\\Models\\\\Settings\\\\PayUponInvoice\\:\\:setShopId\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: Models/Settings/PayUponInvoice.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Models\\\\Settings\\\\Plus\\:\\:setActive\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Models/Settings/Plus.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Models\\\\Settings\\\\Plus\\:\\:setIntegrateThirdPartyMethods\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Models/Settings/Plus.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Models\\\\Settings\\\\Plus\\:\\:setPaymentDescription\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Models/Settings/Plus.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Models\\\\Settings\\\\Plus\\:\\:setPaymentName\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Models/Settings/Plus.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Models\\\\Settings\\\\Plus\\:\\:setRestyle\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Models/Settings/Plus.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Models\\\\Settings\\\\Plus\\:\\:setShopId\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Models/Settings/Plus.php
 
 		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Models\\\\Settings\\\\Plus\\:\\:toArray\\(\\) return type has no value type specified in iterable type array\\.$#"
@@ -6489,4 +6444,3 @@ parameters:
 			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Unit\\\\PayPalBundle\\\\Structs\\\\WebhookStructTest\\:\\:testToArray\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: Tests/Unit/PayPalBundle/Structs/WebhookStructTest.php
-

@@ -69,7 +69,9 @@ CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_settings_plus
     `restyle`                       TINYINT(1) NOT NULL,
     `integrate_third_party_methods` TINYINT(1) NOT NULL,
     `payment_name`                  VARCHAR(255),
-    `payment_description`           VARCHAR(255)
+    `payment_description`           VARCHAR(255),
+    `ppcp_active`                   TINYINT(1),
+    `sandbox_ppcp_active`           TINYINT(1)
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8

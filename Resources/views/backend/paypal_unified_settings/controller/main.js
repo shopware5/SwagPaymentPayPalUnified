@@ -8,6 +8,10 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
         ADVANCED_CREDIT_DEBIT_CARD: 'CUSTOM_CARD_PROCESSING',
     },
 
+    PRODUCT_SUBSCRIPTION_NAME: {
+        PPCP: 'PPCP_STANDARD',
+    },
+
     /**
      * @type { Shopware.apps.PaypalUnifiedSettings.view.Window }
      */
@@ -248,24 +252,30 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
             this.PAYMENT_METHOD_CAPABILITY_NAME.ADVANCED_CREDIT_DEBIT_CARD
         ]
 
-        this.checkIsCapable(sandbox, payerId, paymentMethodCapabilityNames, this.onBeforeSaveSettings, this);
+        var productSubscriptionNames = [
+            this.PRODUCT_SUBSCRIPTION_NAME.PPCP,
+        ];
+
+        this.checkIsCapable(sandbox, payerId, paymentMethodCapabilityNames, productSubscriptionNames, this.onBeforeSaveSettings, this);
     },
 
     /**
      * @param sandbox { Boolean }
      * @param payerId { String }
      * @param paymentMethodCapabilityNames { Array }
+     * @param productSubscriptionNames { Array }
      * @param callback { Function }
      * @param scope { Object }
      */
-    checkIsCapable: function(sandbox, payerId, paymentMethodCapabilityNames, callback, scope) {
+    checkIsCapable: function(sandbox, payerId, paymentMethodCapabilityNames, productSubscriptionNames, callback, scope) {
         Ext.Ajax.request({
             url: this.isCapableUrl,
             jsonData: {
                 shopId: this.shopId,
                 sandbox: sandbox,
                 payerId: payerId,
-                paymentMethodCapabilityNames: paymentMethodCapabilityNames
+                paymentMethodCapabilityNames: paymentMethodCapabilityNames,
+                productSubscriptionNames: productSubscriptionNames,
             },
             callback: Ext.bind(callback, scope)
         });
@@ -292,6 +302,12 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
 
             return;
         }
+
+        if (this.plusRecord.get('active') && isCapable[this.PRODUCT_SUBSCRIPTION_NAME.PPCP]) {
+            this.plusRecord.set('active', false);
+        }
+
+        this.plusRecord.set(sandbox ? 'sandboxPpcpActive' : 'ppcpActive', isCapable[this.PRODUCT_SUBSCRIPTION_NAME.PPCP]);
 
         this.payUponInvoiceRecord.set('active', isCapable[this.PAYMENT_METHOD_CAPABILITY_NAME.PAY_UPON_INVOICE]);
         this.payUponInvoiceRecord.set(setterName, isCapable[this.PAYMENT_METHOD_CAPABILITY_NAME.PAY_UPON_INVOICE]);
@@ -450,6 +466,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
 
     allDataLoaded: function() {
         var generalTab = this.getGeneralTab(),
+            plusTab = this.getPlusTab(),
             isSandBox = false,
             generalSettingGetterKey = 'paypalPayerId',
             payerId;
@@ -478,6 +495,10 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
 
             generalTab.payerIdNotice.show();
         }
+
+        if (this._shouldPlusBeDisabled()) {
+            plusTab.setDisabled(true);
+        }
     },
 
     /**
@@ -494,7 +515,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
         generalTab.behaviourContainer.setDisabled(!active);
         generalTab.errorHandlingContainer.setDisabled(!active);
 
-        this.getPlusTab().setDisabled(!active);
+        this.getPlusTab().setDisabled(!active || this._shouldPlusBeDisabled());
         this.getInstallmentsTab().setDisabled(!active);
         this.getEcTab().setDisabled(!active);
         this.getPayUponInvoiceTab().setDisabled(!active);
@@ -666,6 +687,19 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
             return;
         }
 
+        if (responseJson.hasOwnProperty(this.PRODUCT_SUBSCRIPTION_NAME.PPCP)) {
+            isSubscribed = responseJson[this.PRODUCT_SUBSCRIPTION_NAME.PPCP];
+
+            this.plusRecord.set(sandbox ? 'sandboxPpcpActive' : 'ppcpActive', isSubscribed);
+
+            this.plusRecord.save({
+                callback: function(record) {
+                    me.getPlusTab().loadRecord(record);
+                    me.window.setLoading(false);
+                }
+            });
+        }
+
         if (responseJson.hasOwnProperty(this.PAYMENT_METHOD_CAPABILITY_NAME.PAY_UPON_INVOICE)) {
             newValue = responseJson[this.PAYMENT_METHOD_CAPABILITY_NAME.PAY_UPON_INVOICE];
             this.payUponInvoiceRecord.set(property, newValue);
@@ -769,6 +803,10 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
      */
     _onUpdateCredentialsResponse: function(options, success, response) {
         this.updateCredentialsRequest = null;
+    },
+
+    _shouldPlusBeDisabled: function () {
+        return this.generalRecord.get('sandbox') ? this.plusRecord.get('sandboxPpcpActive') : this.plusRecord.get('ppcpActive');
     }
 });
 // {/block}

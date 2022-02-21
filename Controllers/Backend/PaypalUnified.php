@@ -383,6 +383,10 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
         $paymentStatusNamespace = $this->container->get('snippets')->getNamespace('backend/static/payment_status');
 
         $orderList['data'] = array_map(static function ($order) use ($orderStatusNamespace, $paymentStatusNamespace) {
+            if (!\is_array($order)) {
+                return $order;
+            }
+
             if (!isset($order['orderStatus']['description'])) {
                 $order['orderStatus']['description'] = $orderStatusNamespace->get($order['orderStatus']['name']);
             }
@@ -419,6 +423,7 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
             'property' => 'sOrder.number',
             'expression' => '!=',
             'value' => '0',
+            'operator' => null,
         ];
 
         // Ignore order with PayPal as payment method but without valid transaction ID
@@ -426,6 +431,7 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
             'property' => 'sOrder.transactionId',
             'expression' => '!=',
             'value' => '',
+            'operator' => null,
         ];
 
         return $conditions;
