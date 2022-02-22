@@ -63,6 +63,18 @@ class Plus extends ModelEntity
     private $paymentDescription;
 
     /**
+     * @var bool
+     * @ORM\Column(name="ppcp_active", type="boolean")
+     */
+    private $ppcpActive;
+
+    /**
+     * @var bool
+     * @ORM\Column(name="sandbox_ppcp_active", type="boolean")
+     */
+    private $sandboxPpcpActive;
+
+    /**
      * @return int
      */
     public function getId()
@@ -80,6 +92,8 @@ class Plus extends ModelEntity
 
     /**
      * @param int $shopId
+     *
+     * @return void
      */
     public function setShopId($shopId)
     {
@@ -96,6 +110,8 @@ class Plus extends ModelEntity
 
     /**
      * @param bool $active
+     *
+     * @return void
      */
     public function setActive($active)
     {
@@ -112,6 +128,8 @@ class Plus extends ModelEntity
 
     /**
      * @param bool $restyle
+     *
+     * @return void
      */
     public function setRestyle($restyle)
     {
@@ -128,6 +146,8 @@ class Plus extends ModelEntity
 
     /**
      * @param bool $integrateThirdPartyMethods
+     *
+     * @return void
      */
     public function setIntegrateThirdPartyMethods($integrateThirdPartyMethods)
     {
@@ -144,6 +164,8 @@ class Plus extends ModelEntity
 
     /**
      * @param string $paymentName
+     *
+     * @return void
      */
     public function setPaymentName($paymentName)
     {
@@ -160,6 +182,8 @@ class Plus extends ModelEntity
 
     /**
      * @param string $paymentDescription
+     *
+     * @return void
      */
     public function setPaymentDescription($paymentDescription)
     {
@@ -172,5 +196,41 @@ class Plus extends ModelEntity
     public function toArray()
     {
         return \get_object_vars($this);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isPpcpActive()
+    {
+        return $this->ppcpActive;
+    }
+
+    /**
+     * @param bool $ppcpActive
+     *
+     * @return void
+     */
+    public function setPpcpActive($ppcpActive)
+    {
+        $this->ppcpActive = $ppcpActive;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSandboxPpcpActive()
+    {
+        return $this->sandboxPpcpActive;
+    }
+
+    /**
+     * @param bool $sandboxPpcpActive
+     *
+     * @return void
+     */
+    public function setSandboxPpcpActive($sandboxPpcpActive)
+    {
+        $this->sandboxPpcpActive = $sandboxPpcpActive;
     }
 }

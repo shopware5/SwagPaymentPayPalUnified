@@ -120,6 +120,7 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
         $sandbox = (bool) $this->Request()->getParam('sandbox', false);
         $payerId = $this->Request()->getParam('payerId');
         $paymentMethodCapabilityNames = $this->Request()->getParam('paymentMethodCapabilityNames');
+        $productSubscriptionNames = $this->Request()->getParam('productSubscriptionNames');
 
         if ($shopId === 0) {
             $this->view->assign([
@@ -139,19 +140,19 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
             return;
         }
 
-        if ($paymentMethodCapabilityNames === null) {
+        if (!\is_array($paymentMethodCapabilityNames)) {
             $this->view->assign([
                 'success' => false,
-                'message' => 'The parameter "paymentMethodCapabilityNames" is required.',
+                'message' => 'The parameter "paymentMethodCapabilityNames" should be a array.',
             ]);
 
             return;
         }
 
-        if (!\is_array($paymentMethodCapabilityNames)) {
+        if (!\is_array($productSubscriptionNames)) {
             $this->view->assign([
                 'success' => false,
-                'message' => 'The parameter "paymentMethodCapabilityNames" should be a array.',
+                'message' => 'The parameter "productSubscriptionNames" should be a array.',
             ]);
 
             return;
@@ -163,6 +164,9 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
         try {
             foreach ($paymentMethodCapabilityNames as $paymentMethodCapabilityName) {
                 $viewAssign[$paymentMethodCapabilityName] = $onboardingStatusService->isCapable($payerId, $shopId, $sandbox, $paymentMethodCapabilityName);
+            }
+            foreach ($productSubscriptionNames as $productSubscriptionName) {
+                $viewAssign[$productSubscriptionName] = $onboardingStatusService->isSubscribed($payerId, $shopId, $sandbox, $productSubscriptionName);
             }
         } catch (\Exception $exception) {
             $this->exceptionHandler->handle($exception, 'validate capability');

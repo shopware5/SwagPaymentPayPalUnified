@@ -69,6 +69,7 @@ class UpdateTo400
         $this->insertDefaultButtonStyle();
         $this->addSandboxCredentialsToGeneralSettings();
         $this->addPayerIdToGeneralSettings();
+        $this->addPpcpIndicatorToPlusSettings();
     }
 
     /**
@@ -230,6 +231,26 @@ SQL
             $this->connection->executeQuery(
                 'ALTER TABLE `swag_payment_paypal_unified_settings_general`
                 ADD `sandbox_paypal_payer_id` varchar(255) NULL;'
+            );
+        }
+    }
+
+    /**
+     * @return void
+     */
+    private function addPpcpIndicatorToPlusSettings()
+    {
+        if (!$this->columnService->checkIfColumnExist('swag_payment_paypal_unified_settings_plus', 'ppcp_active')) {
+            $this->connection->executeQuery(
+                'ALTER TABLE `swag_payment_paypal_unified_settings_plus`
+                ADD `ppcp_active` TINYINT(1) NULL;'
+            );
+        }
+
+        if (!$this->columnService->checkIfColumnExist('swag_payment_paypal_unified_settings_plus', 'sandbox_ppcp_active')) {
+            $this->connection->executeQuery(
+                'ALTER TABLE `swag_payment_paypal_unified_settings_plus`
+                ADD `sandbox_ppcp_active` TINYINT(1) NULL;'
             );
         }
     }
