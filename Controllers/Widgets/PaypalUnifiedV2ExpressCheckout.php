@@ -93,7 +93,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout extends Shopwa
         }
 
         /** @phpstan-var CheckoutBasketArray $basketData */
-        $basketData = $this->getBasket() ?: [];
+        $basketData = $this->getBasket();
         $userData = $this->getUserData() ?: [];
 
         $shopwareOrderData = new ShopwareOrderData($userData, $basketData);
