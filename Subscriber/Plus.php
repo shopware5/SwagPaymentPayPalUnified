@@ -29,7 +29,6 @@ use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Components\Services\Common\CustomerHelper;
 use SwagPaymentPayPalUnified\Components\Services\OrderDataService;
 use SwagPaymentPayPalUnified\Components\Services\Plus\PaymentInstructionService;
-use SwagPaymentPayPalUnified\Models\Settings\General;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use SwagPaymentPayPalUnified\PayPalBundle\PartnerAttributionId;
@@ -180,10 +179,6 @@ class Plus implements SubscriberInterface
 
         $isExpressCheckout = (bool) $request->getParam('expressCheckout', false);
         if ($isExpressCheckout) {
-            return;
-        }
-
-        if ((string) $this->settingsService->get(SettingsServiceInterface::SETTING_MERCHANT_LOCATION) !== General::MERCHANT_LOCATION_GERMANY) {
             return;
         }
 

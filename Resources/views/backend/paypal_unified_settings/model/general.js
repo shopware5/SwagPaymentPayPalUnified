@@ -28,7 +28,6 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.model.General', {
         { name: 'landingPageType', type: 'string', defaultValue: 'Login' },
         { name: 'logLevel', type: 'int', defaultValue: 0 },
         { name: 'displayErrors', type: 'bool' },
-        { name: 'merchantLocation', type: 'string', defaultValue: 'germany' },
         { name: 'useSmartPaymentButtons', type: 'bool' },
         { name: 'submitCart', type: 'bool', defaultValue: true },
         { name: 'intent', type: 'string', defaultValue: 'CAPTURE' },

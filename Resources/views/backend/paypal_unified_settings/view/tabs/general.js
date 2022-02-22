@@ -93,13 +93,6 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
             'onChangeShopActivation',
 
             /**
-             * Will be fired when the user changes the merchant location
-             *
-             * @param { String }
-             */
-            'onChangeMerchantLocation',
-
-            /**
              * Will be fired when the user enables/disables the sandbox setting
              *
              * @param { Boolean }
@@ -285,7 +278,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
             inputValue: true,
             uncheckedValue: false,
             fieldLabel: '{s name="fieldset/behaviour/useSmartPaymentButtons"}Use Smart Payment Buttons{/s}',
-            helpText: '{s name="fieldset/behaviour/useSmartPaymentButtons/helpText"}Enable this option to use the PayPal Smart Payment Buttons. Note that the Smart Payment Buttons are not available if your merchant location is Germany. The Smart Payment Buttons always use the in-context mode.{/s}'
+            helpText: '{s name="fieldset/behaviour/useSmartPaymentButtons/helpText"}Enable this option to use the PayPal Smart Payment Buttons. The Smart Payment Buttons always use the in-context mode.{/s}'
         });
 
         me.behaviourContainer = Ext.create('Ext.form.FieldSet', {
@@ -311,20 +304,6 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
                             },
                         ]
                     }),
-                },
-                {
-                    xtype: 'combobox',
-                    name: 'merchantLocation',
-                    fieldLabel: '{s name="fieldset/behaviour/merchantLocation"}Merchant location{/s}',
-                    helpText: '{s name="fieldset/behaviour/merchantLocation/help"}Choose your merchant location. Depending on this, different features are available to you.{/s}',
-                    store: Ext.create('Shopware.apps.PaypalUnifiedSettings.store.MerchantLocation'),
-                    valueField: 'type',
-                    value: 'germany',
-                    listeners: {
-                        'select': function(checkbox) {
-                            me.fireEvent('onChangeMerchantLocation', checkbox);
-                        }
-                    }
                 },
                 {
                     xtype: 'textfield',

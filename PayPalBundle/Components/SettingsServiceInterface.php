@@ -24,7 +24,6 @@ interface SettingsServiceInterface
     const SETTING_SANDBOX_CLIENT_SECRET = 'sandbox_client_secret';
     const SETTING_SHOW_SIDEBAR_LOGO = 'show_sidebar_logo';
     const SETTING_ADVERTISE_INSTALLMENTS = 'advertise_installments';
-    const SETTING_MERCHANT_LOCATION = 'merchant_location';
     const SETTING_INTEGRATE_THIRD_PARTY_METHODS = 'integrate_third_party_methods';
     const SETTING_RESTYLE = 'restyle';
     const SETTING_PAYMENT_NAME = 'payment_name';

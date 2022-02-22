@@ -18,7 +18,6 @@ CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_settings_general
     `display_errors`             TINYINT(1)   NOT NULL,
     `advertise_returns`          TINYINT(1)   NOT NULL,
     `use_smart_payment_buttons`  TINYINT(1)   NOT NULL,
-    `merchant_location`          VARCHAR(255) NOT NULL,
     `submit_cart`                TINYINT(1)   NOT NULL,
     `intent`                     VARCHAR(255) default 'CAPTURE',
     `button_style_color`         VARCHAR(255) NULL,

@@ -86,7 +86,7 @@ class InContext implements SubscriberInterface
         if (!$settings
             || !$settings->getActive()
             || !$settings->getUseInContext()
-            || ($settings->getUseSmartPaymentButtons() && $settings->getMerchantLocation() === GeneralSettingsModel::MERCHANT_LOCATION_OTHER)
+            || $settings->getUseSmartPaymentButtons()
         ) {
             return;
         }
