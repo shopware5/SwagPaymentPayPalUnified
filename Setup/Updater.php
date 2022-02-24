@@ -14,7 +14,6 @@ use Shopware\Components\Model\ModelManager;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Components\Services\Plus\PaymentInstructionService;
-use SwagPaymentPayPalUnified\Models\Settings\General as GeneralSettingsModel;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentModelFactory;
 use SwagPaymentPayPalUnified\Setup\Versions\UpdateTo400;
@@ -221,7 +220,7 @@ UPDATE `swag_payment_paypal_unified_settings_general`
 SET `use_smart_payment_buttons` = 0, `merchant_location` = :location;
 SQL;
 
-            $this->connection->executeQuery($query, ['location' => GeneralSettingsModel::MERCHANT_LOCATION_GERMANY]);
+            $this->connection->executeQuery($query, ['location' => 'germany']);
         }
     }
 

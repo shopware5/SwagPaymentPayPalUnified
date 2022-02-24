@@ -57,10 +57,6 @@ trait SettingsHelperTrait
             $data['useSmartPaymentButtons'] = false;
         }
 
-        if (!isset($data['merchantLocation'])) {
-            $data['merchantLocation'] = GeneralSettingsModel::MERCHANT_LOCATION_GERMANY;
-        }
-
         $model = new GeneralSettingsModel();
         $model->fromArray($data);
 

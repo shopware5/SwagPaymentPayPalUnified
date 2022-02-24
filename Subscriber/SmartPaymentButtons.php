@@ -71,7 +71,6 @@ class SmartPaymentButtons implements SubscriberInterface
 
         if ($generalSettings === null
             || !$generalSettings->getUseSmartPaymentButtons()
-            || $generalSettings->getMerchantLocation() === GeneralSettingsModel::MERCHANT_LOCATION_GERMANY
             || $request->getParam('spbCheckout', false)
         ) {
             return;
@@ -100,7 +99,6 @@ class SmartPaymentButtons implements SubscriberInterface
 
         if ($generalSettings === null
             || !$generalSettings->getUseSmartPaymentButtons()
-            || $generalSettings->getMerchantLocation() === GeneralSettingsModel::MERCHANT_LOCATION_GERMANY
         ) {
             return;
         }

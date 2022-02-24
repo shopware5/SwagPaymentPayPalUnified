@@ -1019,12 +1019,6 @@ parameters:
 			message: "#^Method SwagPaymentPayPalUnified\\\\Models\\\\Settings\\\\General\\:\\:setLogLevel\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: Models/Settings/General.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Models\\\\Settings\\\\General\\:\\:setMerchantLocation\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Models/Settings/General.php
-
 		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Models\\\\Settings\\\\General\\:\\:setOrderNumberPrefix\\(\\) has no return type specified\\.$#"
 			count: 1
@@ -5801,11 +5795,6 @@ parameters:
 			path: Tests/Functional/Subscriber/SmartPaymentButtonsSubscriberTest.php
 
 		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\SmartPaymentButtonsSubscriberTest\\:\\:testAddSmartPaymentButtonsMerchantLocationGermany\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/SmartPaymentButtonsSubscriberTest.php
-
-		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\SmartPaymentButtonsSubscriberTest\\:\\:testAddSmartPaymentButtonsWrongAction\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: Tests/Functional/Subscriber/SmartPaymentButtonsSubscriberTest.php
@@ -5837,11 +5826,6 @@ parameters:
 
 		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\SmartPaymentButtonsSubscriberTest\\:\\:testaddSmartPaymentButtonMarks\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/SmartPaymentButtonsSubscriberTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\SmartPaymentButtonsSubscriberTest\\:\\:testaddSmartPaymentButtonMarksGermanMerchantLocation\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: Tests/Functional/Subscriber/SmartPaymentButtonsSubscriberTest.php
 

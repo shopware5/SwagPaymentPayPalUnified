@@ -9,6 +9,7 @@
 namespace SwagPaymentPayPalUnified\Setup\Versions;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception;
 use Shopware\Components\Model\ModelManager;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Setup\ColumnService;
@@ -70,6 +71,7 @@ class UpdateTo400
         $this->addSandboxCredentialsToGeneralSettings();
         $this->addPayerIdToGeneralSettings();
         $this->addPpcpIndicatorToPlusSettings();
+        $this->removeMerchantLocationSetting();
     }
 
     /**
@@ -252,6 +254,23 @@ SQL
                 'ALTER TABLE `swag_payment_paypal_unified_settings_plus`
                 ADD `sandbox_ppcp_active` TINYINT(1) NULL;'
             );
+        }
+    }
+
+    /**
+     * @throws Exception
+     *
+     * @return void
+     */
+    private function removeMerchantLocationSetting()
+    {
+        $sql = <<<'SQL'
+ALTER TABLE `swag_payment_paypal_unified_settings_general`
+DROP COLUMN `merchant_location`;
+SQL;
+
+        if ($this->columnService->checkIfColumnExist('swag_payment_paypal_unified_settings_general', 'merchant_location')) {
+            $this->connection->executeQuery($sql);
         }
     }
 }

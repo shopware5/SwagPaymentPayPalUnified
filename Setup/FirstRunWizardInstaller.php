@@ -27,7 +27,6 @@ class FirstRunWizardInstaller
             'display_errors' => 0,
             'advertise_returns' => 0,
             'use_smart_payment_buttons' => 0,
-            'merchant_location' => 'germany',
             'landing_page_type' => 'Login',
         ]);
 

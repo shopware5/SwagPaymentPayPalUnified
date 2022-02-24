@@ -118,7 +118,6 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
                 registerWebhook: this.onRegisterWebhook,
                 validateAPI: this.onValidateAPISettings,
                 onChangeShopActivation: this.applyActivationState,
-                onChangeMerchantLocation: this.applyMerchantLocationState,
                 onInContextChange: this.onInContextChange,
                 onChangeSandboxActivation: this.applySandboxActivationState,
                 authCodeReceived: this.onAuthCodeReceivedGeneral
@@ -439,13 +438,6 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
             generalTab.loadRecord(this.generalRecord);
             this.applyActivationState(this.generalRecord.get('active'));
             this.applySandboxActivationState(this.generalRecord.get('sandbox'));
-
-            if (this.generalRecord.get('merchantLocation') === 'other') {
-                plusTab.setDisabled(true);
-                installmentsTab.setDisabled(true);
-            } else {
-                generalTab.smartPaymentButtonsCheckbox.setVisible(false);
-            }
         } else if (settings.installments) {
             this.installmentsRecord = Ext.create('Shopware.apps.PaypalUnifiedSettings.model.Installments', settings.installments);
             installmentsTab.loadRecord(this.installmentsRecord);
@@ -509,8 +501,6 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
     applyActivationState: function(active) {
         var generalTab = this.getGeneralTab();
 
-        this.applyMerchantLocationState(generalTab.smartPaymentButtonsCheckbox);
-
         generalTab.restContainer.setDisabled(!active);
         generalTab.behaviourContainer.setDisabled(!active);
         generalTab.errorHandlingContainer.setDisabled(!active);
@@ -547,34 +537,6 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
 
         this.generalRecord.set('sandbox', active);
         this.allDataLoaded();
-    },
-
-    /**
-     * @param combobox { Ext.form.field.ComboBox }
-     */
-    applyMerchantLocationState: function(combobox) {
-        var generalTab = this.getGeneralTab(),
-            plusTab = this.getPlusTab(),
-            installmentsTab = this.getInstallmentsTab(),
-            payUponInvoiceTab = this.getPayUponInvoiceTab(),
-            AdvancedCreditDebitTab = this.getAdvancedCreditDebitCardTab();
-
-        if (combobox.value === 'other') {
-            plusTab.setDisabled(true);
-            installmentsTab.setDisabled(true);
-            payUponInvoiceTab.setDisabled(true);
-            AdvancedCreditDebitTab.setDisabled(true);
-            this.plusRecord.set('active', false);
-            this.installmentsRecord.set('active', false);
-            this.payUponInvoiceRecord.set('active', false);
-            generalTab.smartPaymentButtonsCheckbox.setVisible(true);
-        } else {
-            plusTab.setDisabled(false);
-            installmentsTab.setDisabled(false);
-            payUponInvoiceTab.setDisabled(false);
-            AdvancedCreditDebitTab.setDisabled(false);
-            generalTab.smartPaymentButtonsCheckbox.setVisible(false);
-        }
     },
 
     /**

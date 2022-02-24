@@ -81,31 +81,11 @@ class SmartPaymentButtonsSubscriberTest extends TestCase
         static::assertNull($view->getAssign('paypalUnifiedUseSmartPaymentButtons'));
     }
 
-    public function testAddSmartPaymentButtonsMerchantLocationGermany()
-    {
-        $this->insertGeneralSettingsFromArray([
-            'shopId' => 1,
-            'useSmartPaymentButtons' => true,
-        ]);
-        $view = new ViewMock(new Enlight_Template_Manager());
-        $request = new Enlight_Controller_Request_RequestTestCase();
-        $request->setActionName('confirm');
-
-        $enlightEventArgs = new Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
-            'request' => $request,
-        ]);
-
-        $this->getSubscriber()->addSmartPaymentButtons($enlightEventArgs);
-        static::assertNull($view->getAssign('paypalUnifiedUseSmartPaymentButtons'));
-    }
-
     public function testAddSmartPaymentButtons()
     {
         $this->insertGeneralSettingsFromArray([
             'shopId' => 1,
             'useSmartPaymentButtons' => true,
-            'merchantLocation' => 'other',
         ]);
         $view = new ViewMock(new Enlight_Template_Manager());
         $request = new Enlight_Controller_Request_RequestTestCase();
@@ -247,7 +227,6 @@ class SmartPaymentButtonsSubscriberTest extends TestCase
         $this->insertGeneralSettingsFromArray([
             'shopId' => 1,
             'useSmartPaymentButtons' => true,
-            'merchantLocation' => 'other',
         ]);
         $view = new ViewMock(new Enlight_Template_Manager());
         $request = new Enlight_Controller_Request_RequestTestCase();
@@ -268,7 +247,6 @@ class SmartPaymentButtonsSubscriberTest extends TestCase
         $this->insertGeneralSettingsFromArray([
             'shopId' => 1,
             'useSmartPaymentButtons' => true,
-            'merchantLocation' => 'other',
         ]);
         $view = new ViewMock(new Enlight_Template_Manager());
         $request = new Enlight_Controller_Request_RequestTestCase();
@@ -292,32 +270,6 @@ class SmartPaymentButtonsSubscriberTest extends TestCase
         $this->insertGeneralSettingsFromArray([
             'shopId' => 1,
             'useSmartPaymentButtons' => false,
-            'merchantLocation' => 'other',
-        ]);
-        $view = new ViewMock(new Enlight_Template_Manager());
-        $request = new Enlight_Controller_Request_RequestTestCase();
-
-        $request->setActionName($action);
-
-        $enlightEventArgs = new Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
-            'request' => $request,
-        ]);
-
-        $this->getSubscriber()->addSmartPaymentButtonMarks($enlightEventArgs);
-        static::assertNull($view->getAssign('paypalUnifiedUseSmartPaymentButtonMarks'));
-    }
-
-    /**
-     * @param string $action
-     * @dataProvider validActions
-     */
-    public function testaddSmartPaymentButtonMarksGermanMerchantLocation($action)
-    {
-        $this->insertGeneralSettingsFromArray([
-            'shopId' => 1,
-            'useSmartPaymentButtons' => true,
-            'merchantLocation' => 'germany',
         ]);
         $view = new ViewMock(new Enlight_Template_Manager());
         $request = new Enlight_Controller_Request_RequestTestCase();
