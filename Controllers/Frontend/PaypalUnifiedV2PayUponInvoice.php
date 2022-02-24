@@ -20,6 +20,10 @@ use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Patches\OrderAddInvoiceIdPatch;
 
 class Shopware_Controllers_Frontend_PaypalUnifiedV2PayUponInvoice extends AbstractPaypalPaymentController
 {
+    const UNPROCESSABLE_ENTITY = 'UNPROCESSABLE_ENTITY';
+    const PAYMENT_SOURCE_INFO_CANNOT_BE_VERIFIED = 'PAYMENT_SOURCE_INFO_CANNOT_BE_VERIFIED';
+    const PAYMENT_SOURCE_DECLINED_BY_PROCESSOR = 'PAYMENT_SOURCE_DECLINED_BY_PROCESSOR';
+
     const MAXIMUM_RETRIES = 32;
     const TIMEOUT = \CURLOPT_TIMEOUT * 2;
     const SLEEP = 1;
@@ -45,7 +49,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2PayUponInvoice extends Abstra
             $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFUL CREATED: ID: %d', __METHOD__, $paypalOrder->getId()));
         } catch (RequestException $exception) {
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
-                ->setCode(ErrorCodes::COMMUNICATION_FAILURE)
+                ->setCode($this->getPuiErrorCode($exception->getBody()))
                 ->setException($exception);
 
             $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
@@ -117,5 +121,27 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2PayUponInvoice extends Abstra
 
             $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
         }
+    }
+
+    /**
+     * @param string $responseBody
+     *
+     * @return int
+     */
+    private function getPuiErrorCode($responseBody)
+    {
+        $body = json_decode($responseBody, true);
+
+        if ($body['name'] === self::UNPROCESSABLE_ENTITY
+            && $body['details'][0]['issue'] === self::PAYMENT_SOURCE_INFO_CANNOT_BE_VERIFIED) {
+            return ErrorCodes::PAYMENT_SOURCE_INFO_CANNOT_BE_VERIFIED;
+        }
+
+        if ($body['name'] === self::UNPROCESSABLE_ENTITY
+            && $body['details'][0]['issue'] === self::PAYMENT_SOURCE_DECLINED_BY_PROCESSOR) {
+            return ErrorCodes::PAYMENT_SOURCE_DECLINED_BY_PROCESSOR;
+        }
+
+        return ErrorCodes::COMMUNICATION_FAILURE;
     }
 }

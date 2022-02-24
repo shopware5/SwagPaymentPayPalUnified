@@ -22,6 +22,7 @@ use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use SwagPaymentPayPalUnified\Subscriber\PayUponInvoiceRiskManagement;
 use Symfony\Component\Validator\Constraints\Collection;
+use Symfony\Component\Validator\Constraints\Date;
 use Symfony\Component\Validator\Constraints\EqualTo;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Range;
@@ -304,7 +305,7 @@ class PayUponInvoiceRiskManagementTest extends TestCase
     {
         return static function (Collection $constraintCollection) {
             static::assertInstanceOf(Collection::class, $constraintCollection);
-            static::assertCount(4, $constraintCollection->fields);
+            static::assertCount(5, $constraintCollection->fields);
 
             foreach ($constraintCollection->fields as $field => $constraint) {
                 $actualConstraint = $constraint->constraints[0];
@@ -321,6 +322,8 @@ class PayUponInvoiceRiskManagementTest extends TestCase
                     static::assertSame(2500.0, $actualConstraint->max);
                 } elseif ($field === 'phoneNumber') {
                     static::assertInstanceOf(NotBlank::class, $actualConstraint);
+                } elseif ($field === 'birthday') {
+                    static::assertInstanceOf(Date::class, $actualConstraint);
                 } else {
                     return false;
                 }
