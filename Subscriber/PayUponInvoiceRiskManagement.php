@@ -20,6 +20,7 @@ use SwagPaymentPayPalUnified\Models\Settings\PayUponInvoice;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use Symfony\Component\Validator\Constraints\Collection;
+use Symfony\Component\Validator\Constraints\Date;
 use Symfony\Component\Validator\Constraints\EqualTo;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Range;
@@ -143,6 +144,7 @@ class PayUponInvoiceRiskManagement implements SubscriberInterface
             'currency' => $this->contextService->getShopContext()->getCurrency()->getCurrency(),
             'amount' => $basket['AmountNumeric'],
             'phoneNumber' => $user['billingaddress']['phone'],
+            'birthday' => $user['additional']['user']['birthday'],
         ];
 
         // Full name, email, delivery and billing address, date of birth, and phone number.
@@ -153,6 +155,7 @@ class PayUponInvoiceRiskManagement implements SubscriberInterface
                 'currency' => new EqualTo('EUR'),
                 'amount' => new Range(['min' => 5.0, 'max' => 2500.00]),
                 'phoneNumber' => new NotBlank(),
+                'birthday' => new Date(),
             ])
         );
 
