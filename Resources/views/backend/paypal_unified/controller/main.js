@@ -40,25 +40,9 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
     apiController: null,
 
     /**
-     * @type { Array }
+     * @type { Shopware.apps.PaypalUnified.ApiV2Types }
      */
-    apiV2Types: [
-        'PayPalClassicV2',
-        'PayPalPlusInvoiceV2',
-        'PayPalExpressV2',
-        'PayPalSmartPaymentButtonsV2',
-        'bancontact',
-        'blik',
-        'eps',
-        'giropay',
-        'ideal',
-        'multibanco',
-        'mybank',
-        'oxxo',
-        'p24',
-        'sofort',
-        'trustly'
-    ],
+    apiV2Types: Ext.create('Shopware.apps.PaypalUnified.ApiV2Types'),
 
     init: function() {
         var me = this;
@@ -334,7 +318,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.Main', {
 
         me.record = record;
 
-        if (Ext.Array.contains(me.apiV2Types, paymentType)) {
+        if (Ext.Array.contains(me.apiV2Types.getV2Types(), paymentType)) {
             return;
         }
 

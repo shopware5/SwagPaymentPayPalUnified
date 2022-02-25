@@ -30,25 +30,32 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebar.order.Details', {
      * @returns { Array }
      */
     createItems: function () {
-        return [{
-            xtype: 'textfield',
+        this.numberField = Ext.create('Ext.form.field.Text', {
             name: 'number',
-            fieldLabel: '{s name="field/number"}Order number{/s}'
-        }, {
-            xtype: 'textfield',
+            fieldLabel: '{s name="field/number"}Order number{/s}',
+            readOnly: true
+        });
+
+        this.transactionIdField = Ext.create('Ext.form.field.Text', {
             name: 'transactionId',
-            fieldLabel: '{s name="field/transactionId"}Transaction ID{/s}'
-        }, {
-            xtype: 'textfield',
+            fieldLabel: '{s name="field/transactionId"}Transaction ID{/s}',
+            readOnly: true
+        });
+
+        this.currencyField = Ext.create('Ext.form.field.Text', {
             name: 'currency',
-            fieldLabel: '{s name="field/currency"}Currency{/s}'
-        }, {
-            xtype: 'textfield',
+            fieldLabel: '{s name="field/currency"}Currency{/s}',
+            readOnly: true
+        });
+
+        this.invoiceAmountField = Ext.create('Ext.form.field.Text', {
             name: 'invoiceAmount',
             itemId: 'invoiceAmount',
-            fieldLabel: '{s name="field/invoiceAmount"}Invoice amount{/s}'
-        }, {
-            xtype: 'base-element-datetime',
+            fieldLabel: '{s name="field/invoiceAmount"}Invoice amount{/s}',
+            readOnly: true
+        });
+
+        this.orderTimeField = Ext.create('Shopware.apps.Base.view.element.DateTime', {
             name: 'orderTime',
             fieldLabel: '{s name="field/orderTime"}Order time{/s}',
             dateCfg: {
@@ -56,18 +63,33 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebar.order.Details', {
             },
             timeCfg: {
                 readOnly: true
-            }
-        }, {
-            xtype: 'textfield',
+            },
+            readOnly: true
+        });
+
+        this.orderStatusField = Ext.create('Ext.form.field.Text', {
             name: 'orderStatus',
             itemId: 'orderStatus',
-            fieldLabel: '{s name="field/orderStatus"}Order status{/s}'
-        }, {
-            xtype: 'textfield',
+            fieldLabel: '{s name="field/orderStatus"}Order status{/s}',
+            readOnly: true
+        });
+
+        this.paymentStatusField = Ext.create('Ext.form.field.Text', {
             name: 'paymentStatus',
             itemId: 'paymentStatus',
-            fieldLabel: '{s name="field/paymentStatus"}Payment status{/s}'
-        }];
+            fieldLabel: '{s name="field/paymentStatus"}Payment status{/s}',
+            readOnly: true
+        });
+
+        return [
+            this.numberField,
+            this.transactionIdField,
+            this.currencyField,
+            this.invoiceAmountField,
+            this.orderTimeField,
+            this.orderStatusField,
+            this.paymentStatusField,
+        ];
     }
 });
 // {/block}
