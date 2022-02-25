@@ -184,25 +184,11 @@
             smallHeight: 25,
 
             /**
-             * PayPal button width small
-             *
-             * @type string
-             */
-            smallWidth: '150px',
-
-            /**
              * PayPal button height medium
              *
              * @type number
              */
             mediumHeight: 35,
-
-            /**
-             * PayPal button width medium
-             *
-             * @type string
-             */
-            mediumWidth: '250px',
 
             /**
              * PayPal button height large
@@ -212,13 +198,6 @@
             largeHeight: 45,
 
             /**
-             * PayPal button width large
-             *
-             * @type string
-             */
-            largeWidth: '350px',
-
-            /**
              * PayPal button height responsive
              *
              * @type number
@@ -226,11 +205,32 @@
             responsiveHeight: 55,
 
             /**
+             * PayPal button width small
+             *
+             * @type string
+             */
+            smallWidthClass: 'paypal-button-width--small',
+
+            /**
+             * PayPal button width medium
+             *
+             * @type string
+             */
+            mediumWidthClass: 'paypal-button-width--medium',
+
+            /**
+             * PayPal button width large
+             *
+             * @type string
+             */
+            largeWidthClass: 'paypal-button-width--large',
+
+            /**
              * PayPal button width responsive
              *
              * @type string
              */
-            responsiveWidth: '100%'
+            responsiveWidthClass: 'paypal-button-width--responsive'
         },
 
         /**
@@ -248,7 +248,7 @@
             }
 
             this.createButtonSizeObject();
-            this.$el.width(this.buttonSize[this.opts.size].width);
+            this.$el.addClass(this.buttonSize[this.opts.size].widthClass);
 
             me.createButton();
 
@@ -263,19 +263,19 @@
             this.buttonSize = {
                 small: {
                     height: this.opts.smallHeight,
-                    width: this.opts.smallWidth
+                    widthClass: this.opts.smallWidthClass
                 },
                 medium: {
                     height: this.opts.mediumHeight,
-                    width: this.opts.mediumWidth
+                    widthClass: this.opts.mediumWidthClass
                 },
                 large: {
                     height: this.opts.largeHeight,
-                    width: this.opts.largeWidth
+                    widthClass: this.opts.largeWidthClass
                 },
                 responsive: {
                     height: this.opts.responsiveHeight,
-                    width: this.opts.responsiveWidth
+                    widthClass: this.opts.responsiveWidthClass
                 }
             };
         },
