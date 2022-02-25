@@ -6,25 +6,9 @@ Ext.define('Shopware.apps.PaypalUnified.controller.ApiV2', {
     paymentTypes: Ext.create('Shopware.apps.PaypalUnified.view.sidebarV2.PaymentTypes.PaymentTypes'),
 
     /**
-     * @type { Array }
+     * @type { Shopware.apps.PaypalUnified.ApiV2Types }
      */
-    apiV2Types: [
-        'PayPalClassicV2',
-        'PayPalPlusInvoiceV2',
-        'PayPalExpressV2',
-        'PayPalSmartPaymentButtonsV2',
-        'bancontact',
-        'blik',
-        'eps',
-        'giropay',
-        'ideal',
-        'multibanco',
-        'mybank',
-        'oxxo',
-        'p24',
-        'sofort',
-        'trustly'
-    ],
+    apiV2Types: Ext.create('Shopware.apps.PaypalUnified.ApiV2Types'),
 
     /**
      * @type { Object }
@@ -91,7 +75,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.ApiV2', {
      * @param { Ext.data.Model } record
      */
     onSelectGridRecord: function(row, record) {
-        if (!Ext.Array.contains(this.apiV2Types, record.get('paymentType'))) {
+        if (!Ext.Array.contains(this.apiV2Types.getV2Types(), record.get('paymentType'))) {
             return;
         }
 

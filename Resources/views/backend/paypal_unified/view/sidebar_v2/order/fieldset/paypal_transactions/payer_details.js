@@ -35,10 +35,19 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebarV2.order.fieldset.paypalTran
         }
 
         this.customerId.setValue(paypalOrderData.payer.payer_id);
+
         this.customerEmail.setValue(paypalOrderData.payer.email_address);
         this.givenName.setValue(paypalOrderData.payer.name.given_name);
         this.surname.setValue(paypalOrderData.payer.name.surname);
-        this.phone.setValue(paypalOrderData.payer.phone.phone_number.national_number);
+
+        if (paypalOrderData.payer.phone !== null &&
+            paypalOrderData.payer.phone.hasOwnProperty('phone_number') &&
+            paypalOrderData.payer.phone.phone_number !== null &&
+            paypalOrderData.payer.phone.phone_number.hasOwnProperty('national_number')
+        ) {
+            this.phone.setValue(paypalOrderData.payer.phone.phone_number.national_number);
+        }
+
         this.countryCode.setValue(paypalOrderData.payer.address.country_code);
     },
 });

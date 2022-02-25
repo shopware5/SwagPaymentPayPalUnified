@@ -9,17 +9,14 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebarV2.tabs.Order', {
     /**
      * @returns { Array }
      */
-    createItems: function () {
-        var me = this,
-            items = [];
+    createItems: function() {
+        this.detailsContainer = Ext.create('Shopware.apps.PaypalUnified.view.sidebar.order.Details');
+        this.customerContainer = Ext.create('Shopware.apps.PaypalUnified.view.sidebar.order.Customer');
 
-        me.detailsContainer = Ext.create('Shopware.apps.PaypalUnified.view.sidebar.order.Details');
-        me.customerContainer = Ext.create('Shopware.apps.PaypalUnified.view.sidebar.order.Customer');
-
-        items.push(me.detailsContainer);
-        items.push(me.customerContainer);
-
-        return items;
+        return [
+            this.detailsContainer,
+            this.customerContainer
+        ];
     },
 
     /**
@@ -27,6 +24,25 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebarV2.tabs.Order', {
      */
     setOrderData: function(paypalOrderData) {
         this.paypalTransactioinTab.setOrderData(paypalOrderData);
+    },
+
+    loadRecord: function(record) {
+        var customer = record.getCustomer().first().raw,
+            orderDetails = record.raw;
+
+        this.detailsContainer.numberField.setValue(orderDetails.number);
+        this.detailsContainer.transactionIdField.setValue(orderDetails.transactionId);
+        this.detailsContainer.currencyField.setValue(orderDetails.currency);
+        this.detailsContainer.invoiceAmountField.setValue(orderDetails.invoiceAmount);
+        this.detailsContainer.orderTimeField.setValue(orderDetails.orderTime);
+        this.detailsContainer.orderStatusField.setValue(orderDetails.orderStatus.name);
+        this.detailsContainer.paymentStatusField.setValue(orderDetails.paymentStatus.name);
+
+        this.customerContainer.salutationField.setValue(customer.salutation);
+        this.customerContainer.firstnameField.setValue(customer.firstname);
+        this.customerContainer.lastnameField.setValue(customer.lastname);
+        this.customerContainer.emailField.setValue(customer.email);
+        this.customerContainer.groupKeyField.setValue(customer.groupKey);
     },
 });
 // {/block}
