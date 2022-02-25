@@ -217,7 +217,7 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
      */
     protected function getSendOrdernumber()
     {
-        return $this->settingsService->get(SettingsServiceInterface::SETTING_SEND_ORDER_NUMBER);
+        return $this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_SEND_ORDER_NUMBER);
     }
 
     /**

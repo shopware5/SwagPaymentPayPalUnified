@@ -16,6 +16,7 @@ use SwagPaymentPayPalUnified\Components\Services\PayPalOrder\AmountProvider;
 use SwagPaymentPayPalUnified\Components\Services\PayPalOrder\ItemListProvider;
 use SwagPaymentPayPalUnified\Components\Services\PhoneNumberBuilder;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\ProcessingInstruction;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
@@ -86,7 +87,7 @@ abstract class AbstractOrderHandler implements OrderBuilderHandlerInterface
      */
     protected function getIntent()
     {
-        $intent = $this->settings->get(SettingsServiceInterface::SETTING_INTENT);
+        $intent = $this->settings->get(SettingsServiceInterface::SETTING_GENERAL_INTENT);
 
         if (!\in_array($intent, [PaymentIntentV2::CAPTURE, PaymentIntentV2::AUTHORIZE], true)) {
             throw new RuntimeException(sprintf('The intent %s is not supported!', $intent));
@@ -154,7 +155,7 @@ abstract class AbstractOrderHandler implements OrderBuilderHandlerInterface
     protected function createPurchaseUnits(PayPalOrderParameter $orderParameter)
     {
         $purchaseUnit = new PurchaseUnit();
-        $submitCart = $this->settings->get(SettingsServiceInterface::SETTING_SUBMIT_CART) || $orderParameter->getPaymentType() === PaymentType::PAYPAL_PAY_UPON_INVOICE_V2;
+        $submitCart = $this->settings->get(SettingsServiceInterface::SETTING_GENERAL_SUBMIT_CART) || $orderParameter->getPaymentType() === PaymentType::PAYPAL_PAY_UPON_INVOICE_V2;
 
         if ($submitCart) {
             $purchaseUnit->setItems($this->itemListProvider->getItemList(
@@ -270,7 +271,7 @@ abstract class AbstractOrderHandler implements OrderBuilderHandlerInterface
     protected function createApplicationContext(PayPalOrderParameter $orderParameter)
     {
         $applicationContext = new ApplicationContext();
-        $applicationContext->setBrandName((string) $this->settings->get(SettingsServiceInterface::SETTING_BRAND_NAME));
+        $applicationContext->setBrandName((string) $this->settings->get(SettingsServiceInterface::SETTING_GENERAL_BRAND_NAME));
         $applicationContext->setLandingPage($this->getLandingPageType());
 
         $applicationContext->setReturnUrl($this->returnUrlHelper->getReturnUrl($orderParameter->getBasketUniqueId(), $orderParameter->getPaymentToken()));
@@ -297,14 +298,13 @@ abstract class AbstractOrderHandler implements OrderBuilderHandlerInterface
             str_replace('_', '-', $shop->getLocale()->getLocale())
         );
 
-        if ($brandName = $this->settings->get(SettingsServiceInterface::SETTING_BRAND_NAME)) {
+        if ($brandName = $this->settings->get(SettingsServiceInterface::SETTING_GENERAL_BRAND_NAME)) {
             $experienceContext->setBrandName($brandName);
         }
 
-        $experienceContext->setLogoUrl('https://example.com/logo.svg'); // TODO: (PT-12488) actually implement setting
-        $experienceContext->setReturnUrl('https://example.com/return'); // TODO: (PT-12488) actually implement or remove, since this is probably only necessary due to a broken API endpoint on PayPals side
-        $experienceContext->setCancelUrl('https://example.com/cancel'); // TODO: (PT-12488) actually implement or remove, since this is probably only necessary due to a broken API endpoint on PayPals side
-        $experienceContext->setCustomerServiceInstructions(['Lorem ipsum']); // TODO: (PT-12488) actually implement setting
+        if ($customerServiceInstructions = $this->settings->get(SettingsServiceInterface::SETTING_PUI_CUSTOMER_SERVICE_INSTRUCTIONS, SettingsTable::PAY_UPON_INVOICE)) {
+            $experienceContext->setCustomerServiceInstructions([$customerServiceInstructions]);
+        }
 
         return $experienceContext;
     }
@@ -314,7 +314,6 @@ abstract class AbstractOrderHandler implements OrderBuilderHandlerInterface
      */
     protected function getLandingPageType()
     {
-        // TODO: (PT-12488) implement setting for this
         return ApplicationContext::LANDING_PAGE_TYPE_NO_PREFERENCE;
     }
 

@@ -142,7 +142,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedApm extends AbstractPaypalPayme
             $shopwareOrderNumber = (string) $this->saveOrder($payPalOrderId, $payPalOrderId, PaymentStatus::PAYMENT_STATUS_OPEN);
             $this->orderDataService->applyPaymentTypeAttribute($shopwareOrderNumber, $this->getPaymentType($payPalOrder));
 
-            $orderNumberPrefix = $this->settingsService->get(SettingsServiceInterface::SETTING_ORDER_NUMBER_PREFIX);
+            $orderNumberPrefix = $this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_ORDER_NUMBER_PREFIX);
 
             $invoiceIdPatch = new OrderAddInvoiceIdPatch();
             $invoiceIdPatch->setOp(Patch::OPERATION_ADD);
@@ -167,14 +167,14 @@ class Shopware_Controllers_Frontend_PaypalUnifiedApm extends AbstractPaypalPayme
         }
 
         try {
-            if ($this->settingsService->get(SettingsServiceInterface::SETTING_INTENT) === PaymentIntentV2::CAPTURE
+            if ($this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_INTENT) === PaymentIntentV2::CAPTURE
                 && strtolower($payPalOrder->getStatus()) !== PaymentStatus::PAYMENT_COMPLETED) {
                 $this->logger->debug(sprintf('%s CAPTURE PAYPAL ORDER WITH ID: %s', __METHOD__, $payPalOrderId));
 
                 $this->orderResource->capture($payPalOrder->getId(), PartnerAttributionId::PAYPAL_ALL_V2, false);
 
                 $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFULLY CAPTURED', __METHOD__));
-            } elseif ($this->settingsService->get(SettingsServiceInterface::SETTING_INTENT) === PaymentIntentV2::AUTHORIZE
+            } elseif ($this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_INTENT) === PaymentIntentV2::AUTHORIZE
                 && strtolower($payPalOrder->getStatus()) !== PaymentStatus::PAYMENT_COMPLETED) {
                 $this->logger->debug(sprintf('%s AUTHORIZE PAYPAL ORDER WITH ID: %s', __METHOD__, $payPalOrderId));
 

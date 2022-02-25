@@ -72,6 +72,7 @@ class UpdateTo400
         $this->addPayerIdToGeneralSettings();
         $this->addPpcpIndicatorToPlusSettings();
         $this->removeMerchantLocationSetting();
+        $this->addCustomerServiceInstructions();
     }
 
     /**
@@ -270,6 +271,23 @@ DROP COLUMN `merchant_location`;
 SQL;
 
         if ($this->columnService->checkIfColumnExist('swag_payment_paypal_unified_settings_general', 'merchant_location')) {
+            $this->connection->executeQuery($sql);
+        }
+    }
+
+    /**
+     * @throws Exception
+     *
+     * @return void
+     */
+    private function addCustomerServiceInstructions()
+    {
+        $sql = <<<'SQL'
+ALTER TABLE `swag_payment_paypal_unified_settings_pay_upon_invoice`
+ADD COLUMN `customer_service_instructions` TEXT NULL;
+SQL;
+
+        if (!$this->columnService->checkIfColumnExist('swag_payment_paypal_unified_settings_pay_upon_invoice', 'customer_service_instructions')) {
             $this->connection->executeQuery($sql);
         }
     }

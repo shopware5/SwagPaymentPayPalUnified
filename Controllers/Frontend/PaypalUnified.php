@@ -219,13 +219,13 @@ class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_F
             $this->client->setPartnerAttributionId(PartnerAttributionId::PAYPAL_SMART_PAYMENT_BUTTONS);
         }
 
-        $sendOrderNumber = (bool) $this->settingsService->get(SettingsServiceInterface::SETTING_SEND_ORDER_NUMBER);
+        $sendOrderNumber = (bool) $this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_SEND_ORDER_NUMBER);
         $orderNumber = '';
 
         // if the order number should be send to PayPal do it before the execute
         if ($sendOrderNumber) {
             $orderNumber = (string) $this->saveOrder($paymentId, $paymentId, PaymentStatus::PAYMENT_STATUS_OPEN);
-            $patchOrderNumber = $this->settingsService->get(SettingsServiceInterface::SETTING_ORDER_NUMBER_PREFIX) . $orderNumber;
+            $patchOrderNumber = $this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_ORDER_NUMBER_PREFIX) . $orderNumber;
 
             /** @var PaymentOrderNumberPatch $paymentPatch */
             $paymentPatch = new PaymentOrderNumberPatch($patchOrderNumber);
@@ -418,7 +418,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_F
             $exceptionHandler = $this->get('paypal_unified.exception_handler_service');
             $error = $exceptionHandler->handle($exception, 'process checkout');
 
-            if ($this->settingsService->hasSettings() && $this->settingsService->get(SettingsServiceInterface::SETTING_DISPLAY_ERRORS)) {
+            if ($this->settingsService->hasSettings() && $this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_DISPLAY_ERRORS)) {
                 $message = $error->getMessage();
                 $name = $error->getName();
             }

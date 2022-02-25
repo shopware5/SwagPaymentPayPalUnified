@@ -37,7 +37,7 @@ class LoggerService implements LoggerServiceInterface
         $this->settings = $settings;
 
         if ($this->settings->hasSettings()) {
-            $this->logLevel = (int) $this->settings->get(SettingsServiceInterface::SETTING_LOG_LEVEL);
+            $this->logLevel = (int) $this->settings->get(SettingsServiceInterface::SETTING_GENERAL_LOG_LEVEL);
         }
     }
 

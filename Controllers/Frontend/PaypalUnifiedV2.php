@@ -156,8 +156,6 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
             return;
         }
 
-        // TODO:: Create paymentType attribute for API_clientService PT-12495, PT-12496
-
         $sendShopwareOrderNumber = $this->getSendOrdernumber();
 
         $this->logger->debug(sprintf('%s SEND SHOPWARE ORDERNUMBER: %s', __METHOD__, $sendShopwareOrderNumber ? 'TRUE' : 'FALSE'));
@@ -165,7 +163,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
         if ($sendShopwareOrderNumber) {
             $shopwareOrderNumber = $this->createShopwareOrder($payPalOrderId, $this->getPaymentType($payPalOrder));
 
-            $orderNumberPrefix = $this->settingsService->get(SettingsServiceInterface::SETTING_ORDER_NUMBER_PREFIX);
+            $orderNumberPrefix = $this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_ORDER_NUMBER_PREFIX);
 
             $invoiceIdPatch = new OrderAddInvoiceIdPatch();
             $invoiceIdPatch->setOp(Patch::OPERATION_ADD);
@@ -190,13 +188,13 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
         }
 
         try {
-            if ($this->settingsService->get(SettingsServiceInterface::SETTING_INTENT) === PaymentIntentV2::CAPTURE) {
+            if ($this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_INTENT) === PaymentIntentV2::CAPTURE) {
                 $this->logger->debug(sprintf('%s CAPTURE PAYPAL ORDER WITH ID: %s', __METHOD__, $payPalOrderId));
 
                 $this->orderResource->capture($payPalOrder->getId(), PartnerAttributionId::PAYPAL_ALL_V2, false);
 
                 $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFULLY CAPTURED', __METHOD__));
-            } elseif ($this->settingsService->get(SettingsServiceInterface::SETTING_INTENT) === PaymentIntentV2::AUTHORIZE) {
+            } elseif ($this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_INTENT) === PaymentIntentV2::AUTHORIZE) {
                 $this->logger->debug(sprintf('%s AUTHORIZE PAYPAL ORDER WITH ID: %s', __METHOD__, $payPalOrderId));
 
                 $this->orderResource->authorize($payPalOrder->getId(), PartnerAttributionId::PAYPAL_ALL_V2, false);
