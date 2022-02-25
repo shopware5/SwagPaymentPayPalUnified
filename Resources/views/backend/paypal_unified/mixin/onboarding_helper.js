@@ -5,6 +5,7 @@
 Ext.define('Shopware.apps.PaypalUnified.mixin.OnboardingHelper', {
     onboardingHelper: {
         snippets: {
+            locale: '{s namespace="backend/base/index" name="script/ext/locale"}{/s}',
             onboardingButton: {
                 label: '{s name="fieldset/rest/onboarding_button/label"}Enrol your account for Pay Upon Invoice here{/s}',
                 text: '{s name="fieldset/rest/onboarding_button/text"}Authorize{/s}'
@@ -40,7 +41,6 @@ Ext.define('Shopware.apps.PaypalUnified.mixin.OnboardingHelper', {
                 partnerLogoUrl: 'https://assets.shopware.com/media/logos/shopware_logo_blue.svg',
                 integrationType: 'FO',
                 features: 'PAYMENT,REFUND,READ_SELLER_DISPUTE,UPDATE_SELLER_DISPUTE,ADVANCED_TRANSACTIONS_SEARCH,ACCESS_MERCHANT_INFORMATION,TRACKING_SHIPMENT_READWRITE',
-                'country.x': 'DE',
                 displayMode: 'minibrowser'
             },
             ppcp: {
@@ -123,13 +123,23 @@ Ext.define('Shopware.apps.PaypalUnified.mixin.OnboardingHelper', {
     },
 
     _getOnboardingParamsGeneral: function () {
+        var localisation = null;
+
+        if (this.onboardingHelper.snippets.locale) {
+            localisation = {
+                'country.x': this.onboardingHelper.snippets.locale.slice(-2).toUpperCase(),
+                'locale.x': this.onboardingHelper.snippets.locale.replace('_', '-')
+            }
+        }
+
         return Object.assign(
             {
                 partnerClientId: this.getSandbox() ? this.onboardingHelper.partner.clientId.sandbox : this.onboardingHelper.partner.clientId.live,
                 partnerId: this.getSandbox() ? this.onboardingHelper.partner.payerId.sandbox : this.onboardingHelper.partner.payerId.live,
-                sellerNonce: this.getSandbox() ? this.onboardingHelper.params.sellerNonce.sandbox : this.onboardingHelper.params.sellerNonce.live
+                sellerNonce: this.getSandbox() ? this.onboardingHelper.params.sellerNonce.sandbox : this.onboardingHelper.params.sellerNonce.live,
             },
-            this.onboardingHelper.params.general
+            this.onboardingHelper.params.general,
+            localisation
         );
     },
 
