@@ -640,6 +640,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
             sandbox,
             payerId,
             [this.PAYMENT_METHOD_CAPABILITY_NAME[button.name]],
+            [],
             this.afterCallCapability,
             this
         )
