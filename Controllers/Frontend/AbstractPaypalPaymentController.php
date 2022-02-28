@@ -129,7 +129,7 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
         $this->paymentMethodProvider = $this->get('paypal_unified.payment_method_provider');
         $this->exceptionHandler = $this->get('paypal_unified.exception_handler_service');
         $this->shopwareConfig = $this->get('config');
-        $this->logger = $this->get('swag_payment_pay_pal_unified.logger');
+        $this->logger = $this->get('paypal_unified.logger_service');
     }
 
     public function cancelAction()

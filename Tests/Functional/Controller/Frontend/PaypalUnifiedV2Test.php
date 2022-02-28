@@ -155,7 +155,7 @@ class PaypalUnifiedV2Test extends TestCase
                 ['paypal_unified.paypal_order_parameter_facade', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $orderParameterFacade],
                 ['paypal_unified.dispatch_validation', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $dispatchValidation],
                 ['paypal_unified.order_factory', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $orderFactory],
-                ['swag_payment_pay_pal_unified.logger', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $logger],
+                ['paypal_unified.logger_service', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $logger],
             ]);
 
         $controller = $this->getController($container);
