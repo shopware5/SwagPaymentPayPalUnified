@@ -110,6 +110,10 @@ class ApmRiskManagement implements SubscriberInterface
             ];
         }
 
+        if (empty($user)) {
+            return true;
+        }
+
         return $args->getSubject()->executeRiskRule('ApmRiskManagementRule', $user, $basket, $currentPaymentName, $currentPaymentId);
     }
 
