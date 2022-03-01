@@ -232,13 +232,14 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
         this.advancedCreditDebitCardRecord.set(this.getAdvancedCreditDebitCardTab().getForm().getValues());
 
         var payerId = this.generalRecord.get(payerIdGetterKey);
+
+        this.saveRecords();
+
         if (payerId.trim() !== '') {
             this.checkBothCapabilities(sandbox, payerId);
 
             return;
         }
-
-        this.saveRecords();
     },
 
     /**

@@ -57,7 +57,7 @@ class MerchantIntegrationsResource
     {
         $this->logger->debug(
             sprintf(
-                '%s PARTNER ID:: %s, SHOP ID: %s, NONCE: %s, PAYER ID:',
+                '%s PARTNER ID: %s, SHOP ID: %s, NONCE: %s, PAYER ID:',
                 __METHOD__,
                 $partnerId,
                 $shopId,
