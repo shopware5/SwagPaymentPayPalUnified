@@ -3,9 +3,10 @@ Ext.define('Shopware.apps.PaypalUnified.ApiV2Types', {
 
     apiV2Types: [
         'PayPalClassicV2',
-        'PayPalPayUponInvoiceV2',
         'PayPalExpressV2',
+        'PayPalPayUponInvoiceV2',
         'PayPalSmartPaymentButtonsV2',
+        'PayPalAdvancedCreditDebitCardV2',
         'bancontact',
         'blik',
         'eps',

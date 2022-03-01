@@ -29,16 +29,26 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebarV2.order.fieldset.paypalTran
     /**
      * @param { Object } paypalOrderData
      */
-    setOrderData: function (paypalOrderData) {
+    setOrderData: function(paypalOrderData) {
         if (paypalOrderData.payer === null) {
             return;
         }
 
-        this.customerId.setValue(paypalOrderData.payer.payer_id);
+        if (paypalOrderData.payer.hasOwnProperty('payer_id')) {
+            this.customerId.setValue(paypalOrderData.payer.payer_id)
+        }
 
-        this.customerEmail.setValue(paypalOrderData.payer.email_address);
-        this.givenName.setValue(paypalOrderData.payer.name.given_name);
-        this.surname.setValue(paypalOrderData.payer.name.surname);
+        if (paypalOrderData.payer.hasOwnProperty('email_address')) {
+            this.customerEmail.setValue(paypalOrderData.payer.email_address);
+        }
+
+        if (paypalOrderData.payer.name !== null &&
+            paypalOrderData.payer.name.hasOwnProperty('given_name') &&
+            paypalOrderData.payer.name.hasOwnProperty('surname')
+        ) {
+            this.givenName.setValue(paypalOrderData.payer.name.given_name);
+            this.surname.setValue(paypalOrderData.payer.name.surname);
+        }
 
         if (paypalOrderData.payer.phone !== null &&
             paypalOrderData.payer.phone.hasOwnProperty('phone_number') &&
@@ -48,7 +58,10 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebarV2.order.fieldset.paypalTran
             this.phone.setValue(paypalOrderData.payer.phone.phone_number.national_number);
         }
 
-        this.countryCode.setValue(paypalOrderData.payer.address.country_code);
+        if (paypalOrderData.payer.address !== null &&
+            paypalOrderData.payer.address.hasOwnProperty('country_code')) {
+            this.countryCode.setValue(paypalOrderData.payer.address.country_code);
+        }
     },
 });
 // {/block}
