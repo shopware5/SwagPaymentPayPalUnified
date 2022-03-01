@@ -79,7 +79,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout extends Shopwa
         $this->payPalOrderParameterFacade = $this->get('paypal_unified.paypal_order_parameter_facade');
         $this->exceptionHandler = $this->get('paypal_unified.exception_handler_service');
         $this->orderFactory = $this->get('paypal_unified.order_factory');
-        $this->logger = $this->get('swag_payment_pay_pal_unified.logger');
+        $this->logger = $this->get('paypal_unified.logger_service');
     }
 
     public function createOrderAction()
