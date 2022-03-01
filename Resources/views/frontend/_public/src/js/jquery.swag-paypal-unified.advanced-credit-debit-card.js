@@ -235,7 +235,7 @@
                 fields: me.getFieldsConfig()
             }).then(me.bindFieldActions.bind(me)).then(function() {
                 me.$el.removeClass(me.opts.isHiddenClass);
-                this.updateAutoResizer();
+                me.updateAutoResizer();
             });
         },
 
