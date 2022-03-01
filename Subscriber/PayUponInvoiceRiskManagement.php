@@ -155,7 +155,7 @@ class PayUponInvoiceRiskManagement implements SubscriberInterface
                 'currency' => new EqualTo('EUR'),
                 'amount' => new Range(['min' => 5.0, 'max' => 2500.00]),
                 'phoneNumber' => new NotBlank(),
-                'birthday' => new Date(),
+                'birthday' => [new NotBlank(), new Date()],
             ])
         );
 
