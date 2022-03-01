@@ -545,10 +545,13 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
         generalTab.restSandboxCredentialsContainer.setDisabled(!active);
 
         generalTab.setSandbox(active);
-        payUponInvoiceTab.setSandbox(active);
-        advancedCreditDebitCardTab.setSandbox(active);
-
         generalTab.refreshOnboardingButton();
+
+        payUponInvoiceTab.setSandbox(active);
+        payUponInvoiceTab.refreshOnboardingButton(payUponInvoiceTab.buttonValue);
+
+        advancedCreditDebitCardTab.setSandbox(active);
+        advancedCreditDebitCardTab.refreshOnboardingButton(advancedCreditDebitCardTab.buttonValue);
 
         this.generalRecord.set('sandbox', active);
         this.allDataLoaded();

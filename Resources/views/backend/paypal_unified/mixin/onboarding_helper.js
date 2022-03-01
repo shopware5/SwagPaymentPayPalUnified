@@ -74,12 +74,12 @@ Ext.define('Shopware.apps.PaypalUnified.mixin.OnboardingHelper', {
     /**
      * @returns { Ext.button.Button }
      */
-    createOnboardingButtonStandalone: function (value) {
+    createOnboardingButtonStandalone: function(value) {
         var me = this;
 
         this.submitValue = value;
 
-        return Ext.create('Ext.button.Button', {
+        this.onboardingOriginButton = Ext.create('Ext.button.Button', {
             text: this.onboardingHelper.snippets.onboardingButton.text,
             cls: 'primary',
             ui: 'shopware-ui',
@@ -100,29 +100,30 @@ Ext.define('Shopware.apps.PaypalUnified.mixin.OnboardingHelper', {
                 height: '28px',
             }
         });
+
+        return this.onboardingOriginButton;
     },
 
-    createOnboardingButtonFormElement: function (value) {
-        var me = this;
-
-        return {
-            xtype: 'fieldcontainer',
+    createOnboardingButtonFormElement: function(value) {
+        this.onbordingOriginButtonContainer = Ext.create('Ext.form.FieldContainer', {
             fieldLabel: this.onboardingHelper.snippets.onboardingButton.label,
             labelWidth: 250,
             items: [
-                me.createOnboardingButtonStandalone(value)
+                this.createOnboardingButtonStandalone(value)
             ]
-        };
+        });
+
+        return this.onbordingOriginButtonContainer;
     },
 
-    getOnboardingParams: function () {
+    getOnboardingParams: function() {
         return Object.assign(
             this._getOnboardingParamsGeneral(),
             this.onboardingHelper.params.combined
         );
     },
 
-    _getOnboardingParamsGeneral: function () {
+    _getOnboardingParamsGeneral: function() {
         var localisation = null;
 
         if (this.onboardingHelper.snippets.locale) {
@@ -146,7 +147,7 @@ Ext.define('Shopware.apps.PaypalUnified.mixin.OnboardingHelper', {
     /**
      * @returns { String }
      */
-    getOnboardingUrl: function () {
+    getOnboardingUrl: function() {
         // {literal}
         return Ext.String.format(
             '{0}?{1}',
@@ -156,10 +157,23 @@ Ext.define('Shopware.apps.PaypalUnified.mixin.OnboardingHelper', {
         // {/literal}
     },
 
+    refreshOnboardingButton: function(value) {
+        if (!this.onbordingOriginButtonContainer) {
+            return;
+        }
+
+        this.onbordingOriginButtonContainer.remove(this.onboardingOriginButton);
+        this.onboardingOriginButton.destroy();
+
+        this.onboardingOriginButton = this.createOnboardingButtonStandalone(value);
+
+        this.onbordingOriginButtonContainer.add(this.onboardingOriginButton);
+    },
+
     /**
      * Fetches PayPal's partner.js and executes it's render-method after load.
      */
-    renderOnboardingButton: function () {
+    renderOnboardingButton: function() {
         if (!window[this.onboardingHelper.payPalScriptOnboardingCallback]) {
             window[this.onboardingHelper.payPalScriptOnboardingCallback] = this._onAuthCodeReceived.bind(this);
         }
@@ -223,7 +237,7 @@ Ext.define('Shopware.apps.PaypalUnified.mixin.OnboardingHelper', {
      *
      * @private
      */
-    _onAuthCodeReceived: function (authCode, sharedId) {
+    _onAuthCodeReceived: function(authCode, sharedId) {
         if (this.getEventTarget() !== null) {
             this.getEventTarget().fireEvent(
                 this.getAuthCodeReceivedEventName(),
