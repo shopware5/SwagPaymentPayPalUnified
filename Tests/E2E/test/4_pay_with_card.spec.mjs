@@ -22,7 +22,7 @@ test.describe("Pay with invoice", () => {
 
         //Change payment
         await page.click('.btn--change-payment');
-        await page.click('text=Kreditkarte oder Debitkarte');
+        await page.click('text=Kredit- oder Debitkarte');
         await page.click('text=Weiter >> nth=1');
         await page.click('input[name="sAGB"]');
 

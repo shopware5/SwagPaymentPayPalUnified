@@ -11,7 +11,7 @@ namespace SwagPaymentPayPalUnified\Setup\Versions;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 use Shopware\Components\Model\ModelManager;
-use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
+use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Setup\ColumnService;
 use SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentInstaller;
 use SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentModelFactory;
@@ -29,7 +29,7 @@ class UpdateTo400
     private $connection;
 
     /**
-     * @var PaymentMethodProvider
+     * @var PaymentMethodProviderInterface
      */
     private $paymentMethodProvider;
 
@@ -46,7 +46,7 @@ class UpdateTo400
     public function __construct(
         ModelManager $modelManager,
         Connection $connection,
-        PaymentMethodProvider $paymentMethodProvider,
+        PaymentMethodProviderInterface $paymentMethodProvider,
         PaymentModelFactory $paymentModelFactory,
         ColumnService $columnService
     ) {

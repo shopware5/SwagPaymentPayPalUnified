@@ -13,6 +13,7 @@ use Enlight_Event_EventArgs;
 use Enlight_Hook_HookArgs;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
+use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Components\Services\RiskManagement\Apm\ValidatorFactory;
 use SwagPaymentPayPalUnified\Components\Services\RiskManagement\Apm\ValueFactory;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
@@ -25,7 +26,7 @@ class ApmRiskManagement implements SubscriberInterface
     const GROUP_UK = 'uk';
 
     /**
-     * @var PaymentMethodProvider
+     * @var PaymentMethodProviderInterface
      */
     private $paymentMethodProvider;
 
@@ -50,7 +51,7 @@ class ApmRiskManagement implements SubscriberInterface
     private $validatorFactory;
 
     public function __construct(
-        PaymentMethodProvider $paymentMethodProvider,
+        PaymentMethodProviderInterface $paymentMethodProvider,
         DependencyProvider $dependencyProvider,
         ValidatorInterface $validator,
         ValueFactory $valueFactory,
@@ -84,7 +85,7 @@ class ApmRiskManagement implements SubscriberInterface
         $user = $args->get('user');
         $paymentId = (int) $args->get('paymentID');
 
-        $activePayments = $this->paymentMethodProvider->getActivePayments($this->paymentMethodProvider->getAlternativePaymentMethodNames());
+        $activePayments = $this->paymentMethodProvider->getActivePayments(PaymentMethodProvider::getAlternativePaymentMethodNames());
 
         $currentPaymentName = null;
         $currentPaymentId = null;

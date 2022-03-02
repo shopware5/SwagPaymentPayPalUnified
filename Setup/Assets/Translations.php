@@ -31,7 +31,7 @@ EOD
                 'additionalDescription' => 'Pay easily, quickly and conveniently with your credit or debit card',
             ],
             PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME => [
-                'description' => 'Invoice',
+                'description' => 'Pay upon invoice',
                 'additionalDescription' => '',
             ],
         ],
@@ -49,7 +49,7 @@ EOD
 EOD
             ],
             PaymentMethodProviderInterface::PAYPAL_UNIFIED_ADVANCED_CREDIT_DEBIT_CARD_METHOD_NAME => [
-                'description' => 'Kreditkarte oder Debitkarte',
+                'description' => 'Kredit- oder Debitkarte',
                 'additionalDescription' => 'Bezahlen Sie einfach, schnell und bequem mit Ihrer Kredit- oder Debitkarte',
             ],
             PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME => [

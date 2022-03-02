@@ -10,10 +10,11 @@ namespace SwagPaymentPayPalUnified\Setup;
 
 use Doctrine\DBAL\Connection;
 use Shopware\Bundle\AttributeBundle\Service\CrudService;
+use Shopware\Bundle\AttributeBundle\Service\CrudServiceInterface;
 use Shopware\Components\Model\ModelManager;
 use Shopware\Models\Plugin\Plugin;
 use Shopware_Components_Translation;
-use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
+use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Setup\Assets\Translations;
 use SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentInstaller;
 use SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentModelFactory;
@@ -31,7 +32,7 @@ class Installer
     private $connection;
 
     /**
-     * @var CrudService
+     * @var CrudService|CrudServiceInterface
      */
     private $attributeCrudService;
 
@@ -51,7 +52,7 @@ class Installer
     private $translationTransformer;
 
     /**
-     * @var PaymentMethodProvider
+     * @var PaymentMethodProviderInterface
      */
     private $paymentMethodProvider;
 
@@ -61,15 +62,16 @@ class Installer
     private $paymentModelFactory;
 
     /**
-     * @param string $bootstrapPath
+     * @param CrudService|CrudServiceInterface $attributeCrudService
+     * @param string                           $bootstrapPath
      */
     public function __construct(
         ModelManager $modelManager,
         Connection $connection,
-        CrudService $attributeCrudService,
+        $attributeCrudService,
         Shopware_Components_Translation $translation,
         TranslationTransformer $translationTransformer,
-        PaymentMethodProvider $paymentMethodProvider,
+        PaymentMethodProviderInterface $paymentMethodProvider,
         PaymentModelFactory $paymentModelCreator,
         $bootstrapPath
     ) {

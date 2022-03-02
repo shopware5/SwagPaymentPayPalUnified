@@ -10,8 +10,8 @@ namespace SwagPaymentPayPalUnified\Setup;
 
 use Doctrine\DBAL\Connection;
 use Shopware\Bundle\AttributeBundle\Service\CrudService;
+use Shopware\Bundle\AttributeBundle\Service\CrudServiceInterface;
 use Shopware\Components\Model\ModelManager;
-use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Components\Services\Plus\PaymentInstructionService;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
@@ -21,7 +21,7 @@ use SwagPaymentPayPalUnified\Setup\Versions\UpdateTo400;
 class Updater
 {
     /**
-     * @var CrudService
+     * @var CrudService|CrudServiceInterface
      */
     private $attributeCrudService;
 
@@ -36,7 +36,7 @@ class Updater
     private $connection;
 
     /**
-     * @var PaymentMethodProvider
+     * @var PaymentMethodProviderInterface
      */
     private $paymentMethodProvider;
 
@@ -50,11 +50,14 @@ class Updater
      */
     private $columnService;
 
+    /**
+     * @param CrudService|CrudServiceInterface $attributeCrudService
+     */
     public function __construct(
-        CrudService $attributeCrudService,
+        $attributeCrudService,
         ModelManager $modelManager,
         Connection $connection,
-        PaymentMethodProvider $paymentMethodProvider,
+        PaymentMethodProviderInterface $paymentMethodProvider,
         PaymentModelFactory $paymentModelFactory
     ) {
         $this->attributeCrudService = $attributeCrudService;

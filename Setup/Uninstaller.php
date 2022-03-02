@@ -10,13 +10,15 @@ namespace SwagPaymentPayPalUnified\Setup;
 
 use Doctrine\DBAL\Connection;
 use Shopware\Bundle\AttributeBundle\Service\CrudService;
+use Shopware\Bundle\AttributeBundle\Service\CrudServiceInterface;
 use Shopware\Components\Model\ModelManager;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
+use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 
 class Uninstaller
 {
     /**
-     * @var CrudService
+     * @var CrudService|CrudServiceInterface
      */
     private $attributeCrudService;
 
@@ -31,15 +33,18 @@ class Uninstaller
     private $connection;
 
     /**
-     * @var PaymentMethodProvider
+     * @var PaymentMethodProviderInterface
      */
     private $paymentMethodProvider;
 
+    /**
+     * @param CrudService|CrudServiceInterface $attributeCrudService
+     */
     public function __construct(
-        CrudService $attributeCrudService,
+        $attributeCrudService,
         ModelManager $modelManager,
         Connection $connection,
-        PaymentMethodProvider $paymentMethodProvider
+        PaymentMethodProviderInterface $paymentMethodProvider
     ) {
         $this->attributeCrudService = $attributeCrudService;
         $this->modelManager = $modelManager;
@@ -62,7 +67,7 @@ class Uninstaller
 
     private function deactivatePayments()
     {
-        foreach ($this->paymentMethodProvider->getAllUnifiedNames() as $paymentMethodName) {
+        foreach (PaymentMethodProvider::getAllUnifiedNames() as $paymentMethodName) {
             $this->paymentMethodProvider->setPaymentMethodActiveFlag($paymentMethodName, false);
         }
     }

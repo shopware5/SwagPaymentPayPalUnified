@@ -181,16 +181,6 @@ parameters:
 			path: Components/PaymentBuilderParameters.php
 
 		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\PaymentMethodProvider\\:\\:setPaymentMethodActiveFlag\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Components/PaymentMethodProvider.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\PaymentMethodProviderInterface\\:\\:setPaymentMethodActiveFlag\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Components/PaymentMethodProviderInterface.php
-
-		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\Common\\\\CartHelper\\:\\:getTotalAmount\\(\\) has parameter \\$cart with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: Components/Services/Common/CartHelper.php
@@ -1019,6 +1009,7 @@ parameters:
 			message: "#^Method SwagPaymentPayPalUnified\\\\Models\\\\Settings\\\\General\\:\\:setLogLevel\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: Models/Settings/General.php
+
 		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Models\\\\Settings\\\\General\\:\\:setOrderNumberPrefix\\(\\) has no return type specified\\.$#"
 			count: 1
@@ -2708,16 +2699,6 @@ parameters:
 			message: "#^Method SwagPaymentPayPalUnified\\\\Subscriber\\\\PayUponInvoiceRiskManagement\\:\\:onExecuteRule\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: Subscriber/PayUponInvoiceRiskManagement.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Subscriber\\\\PaymentMeans\\:\\:onFilterPaymentMeans\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Subscriber/PaymentMeans.php
-
-		-
-			message: "#^PHPDoc tag @var for variable \\$availableMethods has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: Subscriber/PaymentMeans.php
 
 		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Subscriber\\\\Plus\\:\\:addPaymentMethodsAttributes\\(\\) return type has no value type specified in iterable type array\\.$#"
@@ -5230,41 +5211,6 @@ parameters:
 			path: Tests/Functional/Subscriber/OrderTest.php
 
 		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\EventArgsMockWithUnifiedReturn\\:\\:getReturn\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/PaymentMeansSubscriberTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\EventArgsMockWithUnifiedReturn\\:\\:setReturn\\(\\) has parameter \\$result with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/PaymentMeansSubscriberTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\EventArgsMockWithoutReturn\\:\\:getReturn\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/PaymentMeansSubscriberTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\EventArgsMockWithoutReturn\\:\\:setReturn\\(\\) has parameter \\$result with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/PaymentMeansSubscriberTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\EventArgsMockWithoutUnifiedReturn\\:\\:getReturn\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/PaymentMeansSubscriberTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\EventArgsMockWithoutUnifiedReturn\\:\\:setReturn\\(\\) has parameter \\$result with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/PaymentMeansSubscriberTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\PaymentMeansSubscriberTest\\:\\:createTestSettings\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/PaymentMeansSubscriberTest.php
-
-		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\PaymentMeansSubscriberTest\\:\\:insertExpressCheckoutSettings\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: Tests/Functional/Subscriber/PaymentMeansSubscriberTest.php
@@ -5331,61 +5277,6 @@ parameters:
 
 		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\PaymentMeansSubscriberTest\\:\\:startTransactionBefore\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/PaymentMeansSubscriberTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\PaymentMeansSubscriberTest\\:\\:testCanBeCreated\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/PaymentMeansSubscriberTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\PaymentMeansSubscriberTest\\:\\:testGetSubscribedEvents\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/PaymentMeansSubscriberTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\PaymentMeansSubscriberTest\\:\\:testOnFilterPaymentMeansHasNoUnifiedMethodBecauseTheSettingsDontExist\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/PaymentMeansSubscriberTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\PaymentMeansSubscriberTest\\:\\:testOnFilterPaymentMeansHasUnifiedMethod\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/PaymentMeansSubscriberTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\PaymentMeansSubscriberTest\\:\\:testOnFilterPaymentMeansWithoutAvailableMethods\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/PaymentMeansSubscriberTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\PaymentMeansSubscriberTest\\:\\:testOnFilterPaymentMeansWithoutUnifiedMethod\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/PaymentMeansSubscriberTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\SettingsServiceMock\\:\\:get\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/PaymentMeansSubscriberTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\SettingsServiceMock\\:\\:refreshDependencies\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/PaymentMeansSubscriberTest.php
-
-		-
-			message: "#^Property SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\EventArgsMockWithUnifiedReturn\\:\\:\\$result type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/PaymentMeansSubscriberTest.php
-
-		-
-			message: "#^Property SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\EventArgsMockWithoutReturn\\:\\:\\$result type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/PaymentMeansSubscriberTest.php
-
-		-
-			message: "#^Property SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\EventArgsMockWithoutUnifiedReturn\\:\\:\\$result type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: Tests/Functional/Subscriber/PaymentMeansSubscriberTest.php
 
@@ -6258,36 +6149,6 @@ parameters:
 			message: "#^Method PayPalOrderParameterFacadeTest\\:\\:getShopwareOrderData\\(\\) has parameter \\$userData with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: Tests/Unit/Components/PayPalOrderParameter/PayPalOrderParameterFacadeTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Unit\\\\Components\\\\PaymentMethodProviderTest\\:\\:getPaymentMethodProvider\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Unit/Components/PaymentMethodProviderTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Unit\\\\Components\\\\PaymentMethodProviderTest\\:\\:testGetPaymentActive\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Unit/Components/PaymentMethodProviderTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Unit\\\\Components\\\\PaymentMethodProviderTest\\:\\:testGetPaymentId\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Unit/Components/PaymentMethodProviderTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Unit\\\\Components\\\\PaymentMethodProviderTest\\:\\:testGetPaymentMethod\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Unit/Components/PaymentMethodProviderTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Unit\\\\Components\\\\PaymentMethodProviderTest\\:\\:testSetPaymentActive\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Unit/Components/PaymentMethodProviderTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Unit\\\\Components\\\\PaymentMethodProviderTest\\:\\:testSetPaymentInactive\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Unit/Components/PaymentMethodProviderTest.php
 
 		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Unit\\\\Components\\\\Services\\\\ExceptionHandlerServiceTest\\:\\:testCreateService\\(\\) has no return type specified\\.$#"

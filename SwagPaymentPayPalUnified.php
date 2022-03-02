@@ -108,8 +108,9 @@ class SwagPaymentPayPalUnified extends Plugin
         $updater->update($context->getCurrentVersion());
 
         if ($context->getPlugin()->getActive()) {
-            foreach ($this->getPaymentMethodProvider()->getAllUnifiedNames() as $unifiedName) {
-                $this->getPaymentMethodProvider()->setPaymentMethodActiveFlag($unifiedName, true);
+            $paymentMethodProvider = $this->getPaymentMethodProvider();
+            foreach (PaymentMethodProvider::getAllUnifiedNames() as $unifiedName) {
+                $paymentMethodProvider->setPaymentMethodActiveFlag($unifiedName, true);
             }
         }
 
@@ -121,8 +122,9 @@ class SwagPaymentPayPalUnified extends Plugin
      */
     public function activate(ActivateContext $context)
     {
-        foreach ($this->getPaymentMethodProvider()->getAllUnifiedNames() as $unifiedName) {
-            $this->getPaymentMethodProvider()->setPaymentMethodActiveFlag($unifiedName, true);
+        $paymentMethodProvider = $this->getPaymentMethodProvider();
+        foreach (PaymentMethodProvider::getAllUnifiedNames() as $unifiedName) {
+            $paymentMethodProvider->setPaymentMethodActiveFlag($unifiedName, true);
         }
 
         $context->scheduleClearCache(ActivateContext::CACHE_LIST_ALL);
@@ -133,8 +135,9 @@ class SwagPaymentPayPalUnified extends Plugin
      */
     public function deactivate(DeactivateContext $context)
     {
-        foreach ($this->getPaymentMethodProvider()->getAllUnifiedNames() as $unifiedName) {
-            $this->getPaymentMethodProvider()->setPaymentMethodActiveFlag($unifiedName, false);
+        $paymentMethodProvider = $this->getPaymentMethodProvider();
+        foreach (PaymentMethodProvider::getAllUnifiedNames() as $unifiedName) {
+            $paymentMethodProvider->setPaymentMethodActiveFlag($unifiedName, false);
         }
 
         $context->scheduleClearCache(DeactivateContext::CACHE_LIST_ALL);

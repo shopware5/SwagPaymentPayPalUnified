@@ -16,21 +16,21 @@ use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 class PaymentMeans implements SubscriberInterface
 {
     /**
-     * @var int
-     */
-    private $unifiedPaymentId;
-
-    /**
      * @var SettingsServiceInterface
      */
     private $settingsService;
 
+    /**
+     * @var PaymentMethodProviderInterface
+     */
+    private $paymentMethodProvider;
+
     public function __construct(
         SettingsServiceInterface $settingsService,
-        PaymentMethodProvider $paymentMethodProvider
+        PaymentMethodProviderInterface $paymentMethodProvider
     ) {
-        $this->unifiedPaymentId = $paymentMethodProvider->getPaymentId(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
         $this->settingsService = $settingsService;
+        $this->paymentMethodProvider = $paymentMethodProvider;
     }
 
     /**
@@ -43,13 +43,18 @@ class PaymentMeans implements SubscriberInterface
         ];
     }
 
+    /**
+     * @return void
+     */
     public function onFilterPaymentMeans(\Enlight_Event_EventArgs $args)
     {
-        /** @var array $availableMethods */
         $availableMethods = $args->getReturn();
 
+        $activePayPalPaymentMethods = $this->paymentMethodProvider->getActivePayments(PaymentMethodProvider::getAllUnifiedNames());
+        $activePayPalPaymentMethodIds = array_map('\intval', array_values($activePayPalPaymentMethods));
+
         foreach ($availableMethods as $index => $paymentMethod) {
-            if ((int) $paymentMethod['id'] === $this->unifiedPaymentId
+            if (\in_array((int) $paymentMethod['id'], $activePayPalPaymentMethodIds, true)
                 && (!$this->settingsService->hasSettings() || !$this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_ACTIVE))
             ) {
                 //Force unset the payment method, because it's not available without any settings.
