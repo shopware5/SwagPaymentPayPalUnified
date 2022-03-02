@@ -71,6 +71,7 @@ class OnboardingStatusService
     public function isCapable($payerId, $shopId, $sandbox, $targetCapability = self::CAPABILITY_PAY_WITH_PAYPAL)
     {
         $partnerId = self::PARTNER_ID;
+
         if ($sandbox) {
             $partnerId = self::SANDBOX_PARTNER_ID;
         }
