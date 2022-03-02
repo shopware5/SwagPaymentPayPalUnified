@@ -323,7 +323,8 @@ class PayUponInvoiceRiskManagementTest extends TestCase
                 } elseif ($field === 'phoneNumber') {
                     static::assertInstanceOf(NotBlank::class, $actualConstraint);
                 } elseif ($field === 'birthday') {
-                    static::assertInstanceOf(Date::class, $actualConstraint);
+                    static::assertInstanceOf(NotBlank::class, $constraint->constraints[0]);
+                    static::assertInstanceOf(Date::class, $constraint->constraints[1]);
                 } else {
                     return false;
                 }
