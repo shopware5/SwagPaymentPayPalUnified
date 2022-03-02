@@ -134,10 +134,17 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
 
     public function cancelAction()
     {
+        $shopwareErrorCode = ErrorCodes::CANCELED_BY_USER;
+        $paypalErrorCode = $this->request->getParam('errorcode');
+
+        if ($paypalErrorCode === 'processing_error') {
+            $shopwareErrorCode = ErrorCodes::COMMUNICATION_FAILURE;
+        }
+
         $this->logger->debug(sprintf('%s CANCELED_BY_USER', __METHOD__));
 
         $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
-            ->setCode(ErrorCodes::CANCELED_BY_USER);
+            ->setCode($shopwareErrorCode);
 
         $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
     }
