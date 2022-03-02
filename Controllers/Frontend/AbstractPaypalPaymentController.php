@@ -129,15 +129,22 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
         $this->paymentMethodProvider = $this->get('paypal_unified.payment_method_provider');
         $this->exceptionHandler = $this->get('paypal_unified.exception_handler_service');
         $this->shopwareConfig = $this->get('config');
-        $this->logger = $this->get('swag_payment_pay_pal_unified.logger');
+        $this->logger = $this->get('paypal_unified.logger_service');
     }
 
     public function cancelAction()
     {
+        $shopwareErrorCode = ErrorCodes::CANCELED_BY_USER;
+        $paypalErrorCode = $this->request->getParam('errorcode');
+
+        if ($paypalErrorCode === 'processing_error') {
+            $shopwareErrorCode = ErrorCodes::COMMUNICATION_FAILURE;
+        }
+
         $this->logger->debug(sprintf('%s CANCELED_BY_USER', __METHOD__));
 
         $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
-            ->setCode(ErrorCodes::CANCELED_BY_USER);
+            ->setCode($shopwareErrorCode);
 
         $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
     }
@@ -217,7 +224,7 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
      */
     protected function getSendOrdernumber()
     {
-        return $this->settingsService->get(SettingsServiceInterface::SETTING_SEND_ORDER_NUMBER);
+        return $this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_SEND_ORDER_NUMBER);
     }
 
     /**

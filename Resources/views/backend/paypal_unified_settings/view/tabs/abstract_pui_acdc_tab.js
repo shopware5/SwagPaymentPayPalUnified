@@ -13,7 +13,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.AbstractPuiAcdcTab', {
 
     fieldDefaults: {
         anchor: '100%',
-        labelWidth: 250
+        labelWidth: 180
     },
 
     config: {

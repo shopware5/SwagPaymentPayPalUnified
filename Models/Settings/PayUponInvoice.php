@@ -51,6 +51,12 @@ class PayUponInvoice extends ModelEntity
     private $active;
 
     /**
+     * @var string|null
+     * @ORM\Column(name="customer_service_instructions", type="text", length=65535, nullable=true)
+     */
+    private $customerServiceInstructions;
+
+    /**
      * @return int
      */
     public function getId()
@@ -132,10 +138,28 @@ class PayUponInvoice extends ModelEntity
 
     /**
      * @return array{id: int, shopId: int, isOnboardingCompleted: bool, isSandboxOnboardingCompleted: bool, active: bool}
-     * @phpstan-return array<string, mixed>
+     * @return array<string, mixed>
      */
     public function toArray()
     {
         return \get_object_vars($this);
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getCustomerServiceInstructions()
+    {
+        return $this->customerServiceInstructions;
+    }
+
+    /**
+     * @param string|null $customerServiceInstructions
+     *
+     * @return void
+     */
+    public function setCustomerServiceInstructions($customerServiceInstructions)
+    {
+        $this->customerServiceInstructions = $customerServiceInstructions;
     }
 }

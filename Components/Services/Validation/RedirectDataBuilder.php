@@ -65,7 +65,7 @@ class RedirectDataBuilder
     {
         $error = $this->exceptionHandlerService->handle($exception, 'process checkout');
 
-        if ($this->settingsService->hasSettings() && $this->settingsService->get(SettingsServiceInterface::SETTING_DISPLAY_ERRORS)) {
+        if ($this->settingsService->hasSettings() && $this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_DISPLAY_ERRORS)) {
             $this->data['paypal_unified_error_name'] = $error->getName();
             $this->data['paypal_unified_error_message'] = $error->getMessage();
 

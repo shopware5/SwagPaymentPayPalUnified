@@ -109,7 +109,7 @@ class InContext implements SubscriberInterface
         $view->assign('paypalUnifiedLanguageIso', $this->getInContextButtonLanguage($expressSettings));
         $view->assign('paypalUnifiedClientId', $sandbox ? $settings->getSandboxClientId() : $settings->getClientId());
         $view->assign('paypalUnifiedCurrency', $this->contextService->getContext()->getCurrency()->getCurrency());
-        $view->assign('paypalUnifiedIntent', $this->settingsService->get(SettingsServiceInterface::SETTING_INTENT));
+        $view->assign('paypalUnifiedIntent', $this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_INTENT));
     }
 
     public function addInContextInfoToRequest(\Enlight_Controller_ActionEventArgs $args)

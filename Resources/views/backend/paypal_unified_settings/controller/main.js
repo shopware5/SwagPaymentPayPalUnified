@@ -214,11 +214,11 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
     onSaveSettings: function() {
         var generalTabForm = this.getGeneralTab().getForm(),
             ecTabForm = this.getEcTab().getForm(),
+            payUponInvoiceForm = this.getPayUponInvoiceTab().getForm(),
             sandbox = this.generalRecord.get('sandbox'),
             payerIdGetterKey = sandbox ? 'sandboxPaypalPayerId' : 'paypalPayerId';
 
-        if (!generalTabForm.isValid() || !ecTabForm.isValid()) {
-            Shopware.Notification.createGrowlMessage('{s name="growl/title"}PayPal{/s}', '{s name="growl/formValidationError"}Please fill out all fields marked in red.{/s}', this.window.title);
+        if (!this.isTabFormValid(this.getGeneralTab()) || !this.isTabFormValid(this.getEcTab()) || !this.isTabFormValid(this.getPayUponInvoiceTab())) {
             return;
         }
 
@@ -228,7 +228,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
         this.expressCheckoutRecord.set(ecTabForm.getValues());
         this.installmentsRecord.set(this.getInstallmentsTab().getForm().getValues());
         this.plusRecord.set(this.getPlusTab().getForm().getValues());
-        this.payUponInvoiceRecord.set(this.getPayUponInvoiceTab().getForm().getValues());
+        this.payUponInvoiceRecord.set(payUponInvoiceForm.getValues());
         this.advancedCreditDebitCardRecord.set(this.getAdvancedCreditDebitCardTab().getForm().getValues());
 
         var payerId = this.generalRecord.get(payerIdGetterKey);
@@ -239,6 +239,21 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
         }
 
         this.saveRecords();
+    },
+
+    /**
+     * @param tab { Ext.form.Panel }
+     */
+    isTabFormValid: function (tab) {
+        var form = tab.getForm(),
+            isValid = form.isValid();
+
+        if (!isValid) {
+            this.window.tabContainer.setActiveTab(tab);
+            Shopware.Notification.createGrowlMessage('{s name="growl/title"}PayPal{/s}', '{s name="growl/formValidationError"}Please fill out all fields marked in red.{/s}', this.window.title);
+        }
+
+        return isValid;
     },
 
     /**
@@ -530,10 +545,13 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
         generalTab.restSandboxCredentialsContainer.setDisabled(!active);
 
         generalTab.setSandbox(active);
-        payUponInvoiceTab.setSandbox(active);
-        advancedCreditDebitCardTab.setSandbox(active);
-
         generalTab.refreshOnboardingButton();
+
+        payUponInvoiceTab.setSandbox(active);
+        payUponInvoiceTab.refreshOnboardingButton(payUponInvoiceTab.buttonValue);
+
+        advancedCreditDebitCardTab.setSandbox(active);
+        advancedCreditDebitCardTab.refreshOnboardingButton(advancedCreditDebitCardTab.buttonValue);
 
         this.generalRecord.set('sandbox', active);
         this.allDataLoaded();
@@ -625,6 +643,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
             sandbox,
             payerId,
             [this.PAYMENT_METHOD_CAPABILITY_NAME[button.name]],
+            [],
             this.afterCallCapability,
             this
         )

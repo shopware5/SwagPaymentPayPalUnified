@@ -21,6 +21,8 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
         labelWidth: 180
     },
 
+    buttonValue: 'GENERAL',
+
     /**
      * @type { Ext.form.FieldSet }
      */
@@ -419,7 +421,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
     createToolbar: function() {
         var me = this;
 
-        me.onboardingButton = me.createOnboardingButtonStandalone('GENERAL');
+        me.onboardingButton = me.createOnboardingButtonStandalone(this.buttonValue);
 
         return Ext.create('Ext.form.Panel', {
             dock: 'bottom',
@@ -507,7 +509,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
         this.toolbarContainer.remove(this.onboardingButton);
         this.onboardingButton.destroy();
 
-        this.onboardingButton = this.createOnboardingButtonStandalone();
+        this.onboardingButton = this.createOnboardingButtonStandalone(this.buttonValue);
 
         this.toolbarContainer.add(this.onboardingButton);
     },

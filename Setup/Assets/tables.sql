@@ -94,11 +94,12 @@ CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_payment_instruction
 
 CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_settings_pay_upon_invoice
 (
-    `id`                           INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    `shop_id`                      INT(11)    NOT NULL,
-    `onboarding_completed`         TINYINT(1) NOT NULL,
-    `sandbox_onboarding_completed` TINYINT(1) NOT NULL,
-    `active`                       TINYINT(1) NOT NULL
+    `id`                            INT(11)    UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `shop_id`                       INT(11)    NOT NULL,
+    `onboarding_completed`          TINYINT(1) NOT NULL,
+    `sandbox_onboarding_completed`  TINYINT(1) NOT NULL,
+    `active`                        TINYINT(1) NOT NULL,
+    `customer_service_instructions` TEXT       NULL
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8

@@ -9,7 +9,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.AdvancedCreditDebitCar
         'Shopware.apps.PaypalUnified.mixin.OnboardingHelper'
     ],
 
-    buttonValue: 'CUSTOM_CARD_PROCESSING',
+    buttonValue: 'ADVANCED_CREDIT_DEBIT_CARD',
 
     snippets: {
         activationFieldset: {
