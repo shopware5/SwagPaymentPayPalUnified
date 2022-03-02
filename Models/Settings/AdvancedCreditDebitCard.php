@@ -142,7 +142,7 @@ class AdvancedCreditDebitCard extends ModelEntity
 
     /**
      * @return array{id: int, shopId: int, isOnboardingCompleted: bool, isSandboxOnboardingCompleted: bool, active: bool}
-     * @phpstan-return array<string, mixed>
+     * @return array<string, mixed>
      */
     public function toArray()
     {
