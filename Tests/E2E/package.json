@@ -1,0 +1,18 @@
+{
+  "name": "paypal-e2e",
+  "version": "1.0.0",
+  "description": "E2E Test suite for the PayPal plugin",
+  "main": "index.js",
+  "scripts": {
+    "e2e:run": "npx playwright test --workers=1",
+    "e2e:run:headed": "npx playwright test --headed --workers=1",
+    "e2e:run:debug": "npx playwright test --debug"
+  },
+  "dependencies": {
+    "dotenv": "^16.0.0",
+    "mysql": "^2.18.1",
+    "@playwright/test": "^1.19.1"
+  },
+  "devDependencies": {
+  }
+}

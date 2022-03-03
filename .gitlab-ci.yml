@@ -13,11 +13,19 @@ variables:
     GIT_STRATEGY: "clone"
     CHECKOUT_SHOPWARE_BRANCH: "5.7"
     PLUGIN_NAME: "SwagPaymentPayPalUnified"
+    DB_USER: "app"
+    DB_PASSWORD: "app"
+    DB_HOST: "mysql"
+    DB_PORT: 3306
+    DB_NAME: "shopware"
+    SW_HOST: "localhost"
+    SW_BASE_PATH: ""
 
 stages:
     - Code Analysis
     - PHPUnit
     - Shopware Versions
+    - E2E
 
 default:
     tags:
@@ -48,7 +56,7 @@ default:
     - touch recovery/install/data/install.lock
 
 .prepare_installation_script_install_shopware_make: &prepare_installation_script_install_shopware_make
-    - cp .env.dist .env
+    - eval export DB_USER DB_PASSWORD DB_HOST DB_PORT DB_NAME SW_HOST SW_BASE_PATH
     - make init
 
 .prepare_installation_script_install_plugin: &prepare_installation_script_install_plugin
@@ -62,7 +70,7 @@ default:
     - php bin/console sw:cache:clear
 
 .entrypoint_script: &entrypoint_script
-    - /entrypoint supervisord &>/dev/null &
+    - /usr/bin/supervisord -c /etc/supervisord.conf &>/dev/null &
 
 .phpunit_base:
     stage: PHPUnit
@@ -155,6 +163,7 @@ Code Coverage:
         reports:
             junit: ${ARTIFACTS_ROOT}/*.junit.xml
             cobertura: ${ARTIFACTS_ROOT}/*.cobertura.xml
+        expire_in: 1 week
 
 SW 5.2:
     extends: .phpunit_base_pre_v53
@@ -206,3 +215,34 @@ SW 5.7 PHP 7.4:
 SW 5.7 PHP 8.0:
     extends: .phpunit_base
     image: gitlab.shopware.com:5005/shopware/5/product/image/continuous:8.0
+
+E2E:
+    stage: E2E
+    services:
+        - name: mysql:5.7
+          alias: mysql
+    before_script:
+        - sed -i -e "s;__ROOT__;$CI_PROJECT_DIR/shopware;g" /etc/nginx/sites-enabled/shopware.conf
+        - /usr/bin/supervisord -c /etc/supervisord.conf &>/dev/null &
+        - *prepare_files_script
+        - *prepare_installation_script_install_shopware_make
+        - *prepare_installation_script_install_plugin
+        - mv config.php config-original.php
+        - cp ./custom/plugins/${PLUGIN_NAME}/Tests/E2E/config.php config.php
+        - chown -R www-data:www-data .
+        - curl http://localhost/backend/ -v
+    script:
+        - apk add --no-cache make npm nodejs chromium chromium-chromedriver
+        - cd custom/plugins/${PLUGIN_NAME}/Tests/E2E
+        - npm install
+        - >
+         DEBUG=pw:browser* EXECUTION_PATH=/usr/bin/chromium-browser BASE_URL=http://${SW_HOST}
+         PAYPAL_CUSTOMER_EMAIL=${PAYPAL_CUSTOMER_EMAIL} PAYPAL_CUSTOMER_PASSWORD=${PAYPAL_CUSTOMER_PASSWORD} PAYPAL_CREDIT_CARD=${PAYPAL_CREDIT_CARD}
+         PAYPAL_SANDBOX_CLIENT_ID=${PAYPAL_SANDBOX_CLIENT_ID} PAYPAL_SANDBOX_CLIENT_SECRET=${PAYPAL_SANDBOX_CLIENT_SECRET} PAYPAL_SANDBOX_MERCHANT_ID=${PAYPAL_SANDBOX_MERCHANT_ID}
+         MYSQL_HOST=mysql MYSQL_USER=${MYSQL_USER} MYSQL_PASSWORD=${MYSQL_PASSWORD} MYSQL_PORT=3200 MYSQL_DATABASE=${MYSQL_DATABASE}
+         npm run e2e:run
+    artifacts:
+        paths:
+            - shopware/custom/plugins/${PLUGIN_NAME}/Tests/E2E/results/*
+        expire_in: 1 week
+        when: always
