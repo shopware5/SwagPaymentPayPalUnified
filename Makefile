@@ -11,6 +11,21 @@ help:
 
 init: composer-install install-hooks install-plugin install-test-environment ## install the plugin with pre commit hook, requirements and the test environment
 
+init-legacy: composer-install install-hooks ## install the plugin in SW 5.2.27 (latest 5.2) with pre commit hook, requirements and the test environment. Requires SwagCookieConsentManager with branch 5.2.11-5.2.27
+	php ./../../../bin/console sw:database:setup --steps=drop,create,import,importDemodata --env=$(envname)
+	php ./../../../bin/console sw:cache:clear --env=$(envname)
+	php ./../../../bin/console sw:database:setup --steps=setupShop --shop-url=http://localhost --env=$(envname)
+	php ./../../../bin/console sw:snippets:to:db --include-plugins --env=$(envname)
+	php ./../../../bin/console sw:theme:initialize --env=$(envname)
+	php ./../../../bin/console sw:firstrunwizard:disable --env=$(envname)
+	php ./../../../bin/console sw:admin:create --name="Demo" --email="demo@demo.de" --username="demo" --password="demo" --locale=de_DE -n --env=$(envname)
+	touch ./../../../recovery/install/data/install.lock
+	php ./../../../bin/console sw:plugin:refresh --env=$(envname)
+	php ./../../../bin/console sw:plugin:install SwagCookieConsentManager --activate --env=$(envname)
+	php ./../../../bin/console sw:cache:clear --env=$(envname)
+	php ./../../../bin/console sw:plugin:install SwagPaymentPayPalUnified --activate --env=$(envname)
+	php ./../../../bin/console sw:cache:clear --env=$(envname)
+
 composer-install: ## Install composer requirements
 	@echo "Install composer requirements"
 	composer install

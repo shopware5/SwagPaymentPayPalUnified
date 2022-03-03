@@ -30,6 +30,7 @@ use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Transactions\Amount;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Transactions\Amount\Details;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Transactions\ItemList;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Transactions\ItemList\Item;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\ApplicationContext as ApplicationContextV2;
 
 class PaymentBuilderService implements PaymentBuilderInterface
 {
@@ -326,6 +327,15 @@ class PaymentBuilderService implements PaymentBuilderInterface
      */
     private function getLandingPage()
     {
-        return (string) $this->settings->get(SettingsServiceInterface::SETTING_GENERAL_LANDING_PAGE_TYPE);
+        $legacyLoginType = ucfirst(strtolower(ApplicationContextV2::LANDING_PAGE_TYPE_LOGIN));
+        $legacyBillingType = ucfirst(strtolower(ApplicationContextV2::LANDING_PAGE_TYPE_BILLING));
+        $landingPageType = ucfirst(strtolower((string) $this->settings->get(SettingsServiceInterface::SETTING_GENERAL_LANDING_PAGE_TYPE)));
+
+        // We need a fallback because there is a new value available that are not supported here
+        if (!\in_array($landingPageType, [$legacyLoginType, $legacyBillingType])) {
+            $landingPageType = $legacyLoginType;
+        }
+
+        return $landingPageType;
     }
 }

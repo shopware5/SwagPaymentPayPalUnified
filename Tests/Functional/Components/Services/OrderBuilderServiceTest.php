@@ -17,10 +17,12 @@ use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Amount;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Amount\Breakdown;
 use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
+use SwagPaymentPayPalUnified\Tests\Functional\SettingsHelperTrait;
 
 class OrderBuilderServiceTest extends TestCase
 {
     use DatabaseTestCaseTrait;
+    use SettingsHelperTrait;
     use ContainerTrait;
 
     /**
@@ -35,6 +37,14 @@ class OrderBuilderServiceTest extends TestCase
         $sql = file_get_contents(__DIR__ . '/_fixtures/order_builder_service_test.sql');
         static::assertTrue(\is_string($sql));
         $this->getContainer()->get('dbal_connection')->exec($sql);
+
+        $this->insertGeneralSettingsFromArray([
+            'shopId' => 1,
+            'active' => true,
+            'landingPageType' => 'NO_PREFERENCE',
+            'submitCart' => 1,
+            'intent' => 'CAPTURE',
+        ]);
 
         $this->getContainer()->get('session')->offsetSet('sUserId', 3);
 
@@ -76,7 +86,7 @@ class OrderBuilderServiceTest extends TestCase
         static::assertSame('DE', $payPalOrderData->getPayer()->getAddress()->getCountryCode());
 
         // Check application context data
-        static::assertEmpty($payPalOrderData->getApplicationContext()->getBrandName());
+        static::assertSame('DefaultTestBrandName', $payPalOrderData->getApplicationContext()->getBrandName());
         static::assertSame('NO_PREFERENCE', $payPalOrderData->getApplicationContext()->getLandingPage());
         static::assertSame('SET_PROVIDED_ADDRESS', $payPalOrderData->getApplicationContext()->getShippingPreference());
         static::assertSame('PAY_NOW', $payPalOrderData->getApplicationContext()->getUserAction());

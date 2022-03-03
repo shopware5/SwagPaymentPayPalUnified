@@ -6,6 +6,3 @@ INSERT INTO `s_user_addresses` (`id`, `user_id`, `company`, `department`, `salut
 
 INSERT INTO `s_user_addresses_attributes` (`id`, `address_id`, `text1`, `text2`, `text3`, `text4`, `text5`, `text6`) VALUES
     (3,	5,	NULL,	NULL,	NULL,	NULL,	NULL,	NULL);
-
-INSERT INTO `swag_payment_paypal_unified_settings_general` (`id`, `shop_id`, `active`, `client_id`, `client_secret`, `sandbox`, `show_sidebar_logo`, `brand_name`, `landing_page_type`, `send_order_number`, `order_number_prefix`, `use_in_context`, `log_level`, `display_errors`, `advertise_returns`, `use_smart_payment_buttons`, `submit_cart`, `intent`) VALUES
-    (1,	1,	1,	'AQOs-Zqi0kU3aLWsrLVActt1d1u2AhpdLeiddWssUq-y7WnT_kPv4TEFNkTShvrlLFlschWKIi9JCVkl',	'EMATe3fxb-01TvYZxs1QFKf2N2WpQjE_os-XtfBddY5hjyHJ71SEpU4dr7woMlWz5_OYw-kpSwMRQvoD',	1,	1,	'',	'Login',	0,	'',	0,	1,	1,	0,	0,	1,	'CAPTURE');

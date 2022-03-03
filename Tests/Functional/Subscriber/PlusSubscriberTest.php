@@ -573,7 +573,7 @@ class PlusSubscriberTest extends TestCase
             'sendOrderNumber' => 0,
             'logLevel' => 0,
             'displayErrors' => 0,
-            'brandName' => 'TestBrandName',
+            'brandName' => 'PlusTestBrandName',
         ];
     }
 
@@ -592,7 +592,7 @@ class PlusSubscriberTest extends TestCase
         $overwritePaymentName = false
     ) {
         $this->insertGeneralSettingsFromArray([
-            'shopId' => 1,
+            'shopId' => 2,
             'clientId' => 'test',
             'clientSecret' => 'test',
             'sandbox' => true,

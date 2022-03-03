@@ -379,6 +379,8 @@ class FrontendSubscriberTest extends TestCase
      * @param string $module
      * @param string $controller
      * @param string $action
+     *
+     * @return void
      */
     private function setRequestParameterToFront(
         \Enlight_Controller_Request_RequestHttp $request,
