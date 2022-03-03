@@ -72,7 +72,6 @@ class UpdateTo400
         $this->addPayerIdToGeneralSettings();
         $this->addPpcpIndicatorToPlusSettings();
         $this->removeMerchantLocationSetting();
-        $this->addCustomerServiceInstructions();
     }
 
     /**
@@ -145,12 +144,14 @@ class UpdateTo400
         if (!$this->connection->getSchemaManager()->tablesExist(['swag_payment_paypal_unified_settings_pay_upon_invoice'])) {
             $this->connection->executeQuery(
                 <<<'SQL'
-CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_settings_pay_upon_invoice (
-    `id`                           INT(11)    UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    `shop_id`                      INT(11)    NOT NULL,
-    `onboarding_completed`         TINYINT(1) NOT NULL,
-    `sandbox_onboarding_completed` TINYINT(1) NOT NULL,
-    `active`                       TINYINT(1) NOT NULL
+CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_settings_pay_upon_invoice
+(
+    `id`                            INT(11)    UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `shop_id`                       INT(11)    NOT NULL,
+    `onboarding_completed`          TINYINT(1) NOT NULL,
+    `sandbox_onboarding_completed`  TINYINT(1) NOT NULL,
+    `active`                        TINYINT(1) NOT NULL,
+    `customer_service_instructions` TEXT       NULL
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
@@ -168,8 +169,9 @@ SQL
         if (!$this->connection->getSchemaManager()->tablesExist(['swag_payment_paypal_unified_settings_advanced_credit_debit_card'])) {
             $this->connection->executeQuery(
                 <<<'SQL'
-CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_settings_advanced_credit_debit_card (
-    `id`                           INT(11)    UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_settings_advanced_credit_debit_card
+(
+    `id`                           INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     `shop_id`                      INT(11)    NOT NULL,
     `onboarding_completed`         TINYINT(1) NOT NULL,
     `sandbox_onboarding_completed` TINYINT(1) NOT NULL,
@@ -189,12 +191,11 @@ SQL
     private function insertDefaultButtonStyle()
     {
         $this->connection->executeQuery(
-            'UPDATE swag_payment_paypal_unified_settings_general
-                    SET `button_style_color` = "gold",
-                        `button_style_shape` = "rect",
-                        `button_style_size` = "large",
-                        `button_locale` = ""
-                    ;'
+            "UPDATE swag_payment_paypal_unified_settings_general
+             SET `button_style_color` = 'gold',
+                 `button_style_shape` = 'rect',
+                 `button_style_size` = 'large',
+                 `button_locale` = '';"
         );
     }
 
@@ -271,23 +272,6 @@ DROP COLUMN `merchant_location`;
 SQL;
 
         if ($this->columnService->checkIfColumnExist('swag_payment_paypal_unified_settings_general', 'merchant_location')) {
-            $this->connection->executeQuery($sql);
-        }
-    }
-
-    /**
-     * @throws Exception
-     *
-     * @return void
-     */
-    private function addCustomerServiceInstructions()
-    {
-        $sql = <<<'SQL'
-ALTER TABLE `swag_payment_paypal_unified_settings_pay_upon_invoice`
-ADD COLUMN `customer_service_instructions` TEXT NULL;
-SQL;
-
-        if (!$this->columnService->checkIfColumnExist('swag_payment_paypal_unified_settings_pay_upon_invoice', 'customer_service_instructions')) {
             $this->connection->executeQuery($sql);
         }
     }
