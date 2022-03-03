@@ -10,7 +10,6 @@ namespace SwagPaymentPayPalUnified\Subscriber;
 
 use Enlight\Event\SubscriberInterface;
 use Enlight_Controller_Front;
-use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 
@@ -22,13 +21,13 @@ class Order implements SubscriberInterface
     private $front;
 
     /**
-     * @var PaymentMethodProvider
+     * @var PaymentMethodProviderInterface
      */
     private $paymentMethodProvider;
 
     public function __construct(
         Enlight_Controller_Front $front,
-        PaymentMethodProvider $paymentMethodProvider
+        PaymentMethodProviderInterface $paymentMethodProvider
     ) {
         $this->front = $front;
         $this->paymentMethodProvider = $paymentMethodProvider;

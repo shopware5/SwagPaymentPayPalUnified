@@ -24,7 +24,6 @@ use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\ExceptionHandlerServiceInterface;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderInterface;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
-use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Components\Services\Common\CustomerHelper;
 use SwagPaymentPayPalUnified\Components\Services\OrderDataService;
@@ -43,7 +42,7 @@ class Plus implements SubscriberInterface
     const ALLOWED_ACTIONS = ['shippingPayment', 'confirm', 'finish'];
 
     /**
-     * @var PaymentMethodProvider
+     * @var PaymentMethodProviderInterface
      */
     private $paymentMethodProvider;
 
@@ -108,7 +107,7 @@ class Plus implements SubscriberInterface
         ClientService $clientService,
         PaymentResource $paymentResource,
         ExceptionHandlerServiceInterface $exceptionHandlerService,
-        PaymentMethodProvider $paymentMethodProvider
+        PaymentMethodProviderInterface $paymentMethodProvider
     ) {
         $this->settingsService = $settingsService;
         $this->dependencyProvider = $dependencyProvider;

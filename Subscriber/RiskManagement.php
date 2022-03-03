@@ -10,7 +10,6 @@ namespace SwagPaymentPayPalUnified\Subscriber;
 
 use Enlight\Event\SubscriberInterface;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
-use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Components\Services\RiskManagement\RiskManagementHelperInterface;
 
@@ -32,7 +31,7 @@ class RiskManagement implements SubscriberInterface
     private $dependencyProvider;
 
     /**
-     * @var PaymentMethodProvider
+     * @var PaymentMethodProviderInterface
      */
     private $paymentMethodProvider;
 
@@ -40,7 +39,7 @@ class RiskManagement implements SubscriberInterface
         RiskManagementHelperInterface $riskManagementHelper,
         \Enlight_Template_Manager $template,
         DependencyProvider $dependencyProvider,
-        PaymentMethodProvider $paymentMethodProvider
+        PaymentMethodProviderInterface $paymentMethodProvider
     ) {
         $this->riskManagementHelper = $riskManagementHelper;
         $this->template = $template;

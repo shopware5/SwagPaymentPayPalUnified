@@ -12,7 +12,6 @@ use Enlight\Event\SubscriberInterface;
 use Enlight_Controller_ActionEventArgs as ActionEventArgs;
 use Enlight_View_Default as View;
 use Shopware_Components_Snippet_Manager as SnippetManager;
-use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Models\Settings\General as GeneralSettingsModel;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
@@ -30,14 +29,14 @@ class SmartPaymentButtons implements SubscriberInterface
     private $snippetManager;
 
     /**
-     * @var PaymentMethodProvider
+     * @var PaymentMethodProviderInterface
      */
     private $paymentMethodProvider;
 
     public function __construct(
         SettingsServiceInterface $settingsService,
         SnippetManager $snippetManager,
-        PaymentMethodProvider $paymentMethodProvider
+        PaymentMethodProviderInterface $paymentMethodProvider
     ) {
         $this->settingsService = $settingsService;
         $this->snippetManager = $snippetManager;

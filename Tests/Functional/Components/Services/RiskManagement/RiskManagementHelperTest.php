@@ -66,7 +66,7 @@ class RiskManagementHelperTest extends TestCase
 
         $result = $helper->isProductInCategory($context);
 
-        static::assertfalse($result);
+        static::assertFalse($result);
     }
 
     public function testIsCategoryAmongTheParentsShouldBeTrue()
@@ -92,7 +92,7 @@ class RiskManagementHelperTest extends TestCase
 
         $result = $helper->isCategoryAmongTheParents($context);
 
-        static::assertfalse($result);
+        static::assertFalse($result);
     }
 
     public function testHasProductAttributeValueShouldBeTrue()

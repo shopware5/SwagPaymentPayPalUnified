@@ -11,7 +11,6 @@ namespace SwagPaymentPayPalUnified\Subscriber;
 use Doctrine\Common\Collections\ArrayCollection;
 use Enlight\Event\SubscriberInterface;
 use Enlight_View_Default;
-use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Components\Services\RiskManagement\RiskManagementInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
@@ -29,7 +28,7 @@ class Frontend implements SubscriberInterface
     private $settingsService;
 
     /**
-     * @var PaymentMethodProvider
+     * @var PaymentMethodProviderInterface
      */
     private $paymentMethodProvider;
 
@@ -45,7 +44,7 @@ class Frontend implements SubscriberInterface
         $pluginDir,
         SettingsServiceInterface $settingsService,
         RiskManagementInterface $riskManagement,
-        PaymentMethodProvider $paymentMethodProvider
+        PaymentMethodProviderInterface $paymentMethodProvider
     ) {
         $this->pluginDir = $pluginDir;
         $this->settingsService = $settingsService;

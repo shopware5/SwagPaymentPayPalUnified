@@ -22,11 +22,6 @@ class LoggerService implements LoggerServiceInterface
     private $logger;
 
     /**
-     * @var SettingsServiceInterface
-     */
-    private $settings;
-
-    /**
      * @var int
      */
     private $logLevel = self::NORMAL_LOG_LEVEL;
@@ -34,10 +29,9 @@ class LoggerService implements LoggerServiceInterface
     public function __construct(Logger $baseLogger, SettingsServiceInterface $settings)
     {
         $this->logger = $baseLogger;
-        $this->settings = $settings;
 
-        if ($this->settings->hasSettings()) {
-            $this->logLevel = (int) $this->settings->get(SettingsServiceInterface::SETTING_GENERAL_LOG_LEVEL);
+        if ($settings->hasSettings()) {
+            $this->logLevel = (int) $settings->get(SettingsServiceInterface::SETTING_GENERAL_LOG_LEVEL);
         }
     }
 

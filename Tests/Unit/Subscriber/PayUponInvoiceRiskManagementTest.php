@@ -6,6 +6,8 @@
  * file that was distributed with this source code.
  */
 
+namespace SwagPaymentPayPalUnified\Tests\Unit\Subscriber;
+
 use PHPUnit\Framework\Constraint\Constraint;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -51,7 +53,7 @@ class PayUponInvoiceRiskManagementTest extends TestCase
      */
     public function testRiskManagementCheck(
         PayUponInvoiceRiskManagement $subject,
-        Enlight_Hook_HookArgs $args,
+        \Enlight_Hook_HookArgs $args,
         $expectedReturnValue
     ) {
         $actualReturnValue = $subject->afterManageRisks($args);
@@ -71,7 +73,7 @@ class PayUponInvoiceRiskManagementTest extends TestCase
      */
     public function testRiskRuleIsExecutedWhenBasicChecksPass()
     {
-        $adminMock = static::createMock(sAdmin::class);
+        $adminMock = static::createMock(\sAdmin::class);
 
         $adminMock->expects(static::once())
             ->method('executeRiskRule')
@@ -83,7 +85,7 @@ class PayUponInvoiceRiskManagementTest extends TestCase
                 static::anything()
             );
 
-        $argsMock = static::createMock(Enlight_Hook_HookArgs::class);
+        $argsMock = static::createMock(\Enlight_Hook_HookArgs::class);
 
         $argsMock->method('get')
             ->willReturnMap([
@@ -114,7 +116,7 @@ class PayUponInvoiceRiskManagementTest extends TestCase
      */
     public function testConstraintsAreCorrect()
     {
-        $argsMock = static::createMock(Enlight_Event_EventArgs::class);
+        $argsMock = static::createMock(\Enlight_Event_EventArgs::class);
 
         $validatorMock = $this->getValidator();
 
@@ -135,7 +137,7 @@ class PayUponInvoiceRiskManagementTest extends TestCase
      */
     public function returnValueProvider()
     {
-        $argsMock = static::createMock(Enlight_Hook_HookArgs::class);
+        $argsMock = static::createMock(\Enlight_Hook_HookArgs::class);
 
         /*
          * Supposed another validation failed already, the return value will be
@@ -165,7 +167,7 @@ class PayUponInvoiceRiskManagementTest extends TestCase
             $paymentMethodDescription = $paymentMethod instanceof Constraint ? \get_class($paymentMethod) : $paymentMethod;
             $isPayUponInvoice = $paymentMethod === PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME;
 
-            $argsMock = static::createMock(Enlight_Hook_HookArgs::class);
+            $argsMock = static::createMock(\Enlight_Hook_HookArgs::class);
 
             $argsMock->method('get')
                 ->willReturnMap([
@@ -175,7 +177,7 @@ class PayUponInvoiceRiskManagementTest extends TestCase
 
             if ($isPayUponInvoice) {
                 $argsMock->method('getSubject')
-                    ->willReturn(static::createConfiguredMock(sAdmin::class, [
+                    ->willReturn(static::createConfiguredMock(\sAdmin::class, [
                         'executeRiskRule' => true,
                     ]));
             }
@@ -229,8 +231,8 @@ class PayUponInvoiceRiskManagementTest extends TestCase
         $dependencyProviderMock = static::createMock(DependencyProvider::class);
 
         $dependencyProviderMock->method('getFront')
-            ->willReturn(static::createConfiguredMock(Enlight_Controller_Front::class, [
-                'Request' => static::createMock(Enlight_Controller_Request_Request::class),
+            ->willReturn(static::createConfiguredMock(\Enlight_Controller_Front::class, [
+                'Request' => static::createMock(\Enlight_Controller_Request_Request::class),
             ]));
 
         return $dependencyProviderMock;
@@ -299,7 +301,7 @@ class PayUponInvoiceRiskManagementTest extends TestCase
     }
 
     /**
-     * @return Closure
+     * @return \Closure
      */
     protected static function getConstraintCollectionValidator()
     {

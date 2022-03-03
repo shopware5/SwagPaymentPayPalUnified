@@ -6,6 +6,8 @@
  * file that was distributed with this source code.
  */
 
+namespace SwagPaymentPayPalUnified\Tests\Unit\Components\PayPalOrderParameter;
+
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
@@ -71,19 +73,28 @@ class PayPalOrderParameterFacadeTest extends TestCase
         $subject->createPayPalOrderParameter($paymentType, $shopwareOrderData);
     }
 
+    /**
+     * @return array<array{0: PaymentType::PAYPAL_CLASSIC_V2, 1: ShopwareOrderData}>
+     */
     public function createPayPalOrderParameterDefaultDataProvider()
     {
         return [
             [
                 PaymentType::PAYPAL_CLASSIC_V2,
-                $this->getShopwareOrderData(),
+                $this->createConfiguredMock(ShopwareOrderData::class, [
+                    'getShopwareUserData' => [],
+                    'getShopwareBasketData' => [],
+                ]),
             ],
         ];
     }
 
-    protected function getPaymentControllerHelper()
+    /**
+     * @return PaymentControllerHelper|MockObject
+     */
+    private function getPaymentControllerHelper()
     {
-        $paymentControllerHelper = static::createMock(PaymentControllerHelper::class);
+        $paymentControllerHelper = $this->createMock(PaymentControllerHelper::class);
 
         $paymentControllerHelper->method('setGrossPriceFallback')
             ->willReturnArgument(0);
@@ -91,11 +102,14 @@ class PayPalOrderParameterFacadeTest extends TestCase
         return $paymentControllerHelper;
     }
 
-    protected function getDependencyProvider()
+    /**
+     * @return DependencyProvider
+     */
+    private function getDependencyProvider()
     {
-        $dependencyProvider = static::createMock(DependencyProvider::class);
+        $dependencyProvider = $this->createMock(DependencyProvider::class);
 
-        $session = static::createMock(Enlight_Components_Session_Namespace::class);
+        $session = $this->createMock(\Enlight_Components_Session_Namespace::class);
         $session->method('get')
             ->willReturnMap([
                 ['sUserId', null, self::USER_ID],
@@ -107,24 +121,11 @@ class PayPalOrderParameterFacadeTest extends TestCase
         return $dependencyProvider;
     }
 
-    protected function getCartPersister()
-    {
-        $cartPersister = static::createMock(CartPersister::class);
-
-        return $cartPersister;
-    }
-
     /**
-     * @param array|null $userData
-     * @param array|null $basketData
-     *
-     * @return MockObject|ShopwareOrderData
+     * @return CartPersister|MockObject
      */
-    protected function getShopwareOrderData($userData = [], $basketData = [])
+    private function getCartPersister()
     {
-        return static::createConfiguredMock(ShopwareOrderData::class, [
-            'getShopwareUserData' => $userData,
-            'getShopwareBasketData' => $basketData,
-        ]);
+        return $this->createMock(CartPersister::class);
     }
 }

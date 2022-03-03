@@ -175,9 +175,7 @@ class LoggerServiceTest extends TestCase
     {
         $env = $this->getContainer()->getParameter('kernel.environment');
 
-        $fileName = __DIR__ . '/../../../../../../../var/log/plugin_' . $env . '-' . \date('Y-m-d') . '.log';
-
-        return $fileName;
+        return __DIR__ . '/../../../../../../../var/log/plugin_' . $env . '-' . \date('Y-m-d') . '.log';
     }
 
     /**

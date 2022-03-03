@@ -9,7 +9,6 @@
 namespace SwagPaymentPayPalUnified\Components\Services\RiskManagement;
 
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
-use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 
 class RiskManagement implements RiskManagementInterface
@@ -20,13 +19,13 @@ class RiskManagement implements RiskManagementInterface
     private $dependencyProvider;
 
     /**
-     * @var PaymentMethodProvider
+     * @var PaymentMethodProviderInterface
      */
     private $paymentMethodProvider;
 
     public function __construct(
         DependencyProvider $dependencyProvider,
-        PaymentMethodProvider $paymentMethodProvider
+        PaymentMethodProviderInterface $paymentMethodProvider
     ) {
         $this->dependencyProvider = $dependencyProvider;
         $this->paymentMethodProvider = $paymentMethodProvider;

@@ -35,7 +35,7 @@ class RiskManagementServiceTest extends TestCase
         $this->getContainer()->get('dbal_connection')->exec($sql);
 
         $request = new \Enlight_Controller_Request_RequestHttp();
-        $this->setRequestParameterToFront($request, 'frontend', 'listing');
+        $this->setRequestParameterToFront($request);
 
         $this->getContainer()->get('front')->setResponse(new \Enlight_Controller_Response_ResponseHttp());
 

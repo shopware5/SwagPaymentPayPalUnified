@@ -8,13 +8,13 @@
 
 namespace SwagPaymentPayPalUnified\Components\Services\Validation;
 
-use SwagPaymentPayPalUnified\Components\Services\ExceptionHandlerService;
+use SwagPaymentPayPalUnified\Components\ExceptionHandlerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 
 class RedirectDataBuilder
 {
     /**
-     * @var ExceptionHandlerService
+     * @var ExceptionHandlerServiceInterface
      */
     private $exceptionHandlerService;
 
@@ -41,7 +41,7 @@ class RedirectDataBuilder
         'action' => 'shippingPayment',
     ];
 
-    public function __construct(ExceptionHandlerService $exceptionHandlerService, SettingsServiceInterface $settingsService)
+    public function __construct(ExceptionHandlerServiceInterface $exceptionHandlerService, SettingsServiceInterface $settingsService)
     {
         $this->exceptionHandlerService = $exceptionHandlerService;
         $this->settingsService = $settingsService;

@@ -17,7 +17,6 @@ use SwagPaymentPayPalUnified\Components\ButtonLocaleService;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderInterface;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
-use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Components\Services\Common\CustomerHelper;
 use SwagPaymentPayPalUnified\Components\Services\PaymentAddressService;
@@ -62,7 +61,7 @@ class ExpressCheckout implements SubscriberInterface
     private $paymentBuilder;
 
     /**
-     * @var PaymentMethodProvider
+     * @var PaymentMethodProviderInterface
      */
     private $paymentMethodProvider;
 
@@ -95,7 +94,7 @@ class ExpressCheckout implements SubscriberInterface
         ClientService $clientService,
         DependencyProvider $dependencyProvider,
         EsdProductCheckerInterface $esdProductChecker,
-        PaymentMethodProvider $paymentMethodProvider,
+        PaymentMethodProviderInterface $paymentMethodProvider,
         ButtonLocaleService $buttonLocaleService
     ) {
         $this->settingsService = $settingsService;
