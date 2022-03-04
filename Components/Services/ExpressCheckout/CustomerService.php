@@ -21,7 +21,6 @@ use Shopware\Models\Customer\Address;
 use Shopware\Models\Customer\Customer;
 use Shopware_Components_Config as ShopwareConfig;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
-use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
@@ -55,7 +54,7 @@ class CustomerService
     private $registerService;
 
     /**
-     * @var PaymentMethodProvider
+     * @var PaymentMethodProviderInterface
      */
     private $paymentMethodProvider;
 
@@ -87,7 +86,7 @@ class CustomerService
         RegisterServiceInterface $registerService,
         Enlight_Controller_Front $front,
         DependencyProvider $dependencyProvider,
-        PaymentMethodProvider $paymentMethodProvider,
+        PaymentMethodProviderInterface $paymentMethodProvider,
         LoggerServiceInterface $logger
     ) {
         $this->shopwareConfig = $shopwareConfig;

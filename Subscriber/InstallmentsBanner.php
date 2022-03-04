@@ -13,7 +13,6 @@ use Enlight_Controller_ActionEventArgs as ActionEventArgs;
 use Enlight_Controller_Request_Request as Request;
 use Enlight_View_Default as View;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
-use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
@@ -26,7 +25,7 @@ class InstallmentsBanner implements SubscriberInterface
     private $settingsService;
 
     /**
-     * @var PaymentMethodProvider
+     * @var PaymentMethodProviderInterface
      */
     private $paymentMethodProvider;
 
@@ -38,7 +37,7 @@ class InstallmentsBanner implements SubscriberInterface
     public function __construct(
         SettingsServiceInterface $settingsService,
         ContextServiceInterface $contextService,
-        PaymentMethodProvider $paymentMethodProvider
+        PaymentMethodProviderInterface $paymentMethodProvider
     ) {
         $this->settingsService = $settingsService;
         $this->contextService = $contextService;

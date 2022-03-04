@@ -64,7 +64,7 @@ class RiskManagementTest extends TestCase
         Shopware()->Container()->get('dbal_connection')->exec($sql);
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::PRODUCT_ID_SESSION_NAME, null);
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::CATEGORY_ID_SESSION_NAME, 7);
-        $this->setRequestParameterToFront('frontend', 'listing');
+        $this->setRequestParameterToFront();
 
         $eventArgs = $this->getEventArgs();
         $eventArgs->set('value', 3);
@@ -83,7 +83,7 @@ class RiskManagementTest extends TestCase
         Shopware()->Container()->get('dbal_connection')->exec($sql);
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::PRODUCT_ID_SESSION_NAME, null);
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::CATEGORY_ID_SESSION_NAME, 6);
-        $this->setRequestParameterToFront('frontend', 'listing');
+        $this->setRequestParameterToFront();
 
         $eventArgs = $this->getEventArgs();
         $eventArgs->set('value', 3);
@@ -105,7 +105,7 @@ class RiskManagementTest extends TestCase
     {
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::PRODUCT_ID_SESSION_NAME, null);
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::CATEGORY_ID_SESSION_NAME, null);
-        $this->setRequestParameterToFront('frontend', 'listing');
+        $this->setRequestParameterToFront();
 
         static::assertTrue($this->getSubscriber()->onCheckProductCategoryFrom($this->getEventArgs()));
     }
@@ -128,7 +128,7 @@ class RiskManagementTest extends TestCase
         Shopware()->Container()->get('dbal_connection')->exec($sql);
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::CATEGORY_ID_SESSION_NAME, null);
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::PRODUCT_ID_SESSION_NAME, 178);
-        $this->setRequestParameterToFront('frontend', 'listing');
+        $this->setRequestParameterToFront();
 
         $eventArgs = $this->getEventArgs();
         $eventArgs->set('value', 'attr1|2');
@@ -167,7 +167,7 @@ class RiskManagementTest extends TestCase
         Shopware()->Container()->get('dbal_connection')->exec($sql);
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::CATEGORY_ID_SESSION_NAME, null);
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::PRODUCT_ID_SESSION_NAME, 178);
-        $this->setRequestParameterToFront('frontend', 'listing');
+        $this->setRequestParameterToFront();
 
         $eventArgs = $this->getEventArgs();
         $eventArgs->set('value', 'attr1|2');
@@ -183,7 +183,7 @@ class RiskManagementTest extends TestCase
         Shopware()->Container()->get('dbal_connection')->exec($sql);
         Shopware()->Container()->get('session')->offsetUnset(RiskManagementInterface::PRODUCT_ID_SESSION_NAME);
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::CATEGORY_ID_SESSION_NAME, 6);
-        $this->setRequestParameterToFront('frontend', 'listing');
+        $this->setRequestParameterToFront();
         $eventArgs = $this->getEventArgs();
         $eventArgs->set('value', 'attr1|2');
 
@@ -202,7 +202,7 @@ class RiskManagementTest extends TestCase
         Shopware()->Container()->get('dbal_connection')->exec($sql);
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::CATEGORY_ID_SESSION_NAME, null);
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::PRODUCT_ID_SESSION_NAME, 178);
-        $this->setRequestParameterToFront('frontend', 'listing');
+        $this->setRequestParameterToFront();
 
         $eventArgs = $this->getEventArgs();
         $eventArgs->set('value', 'invalidAttr|2');
@@ -218,7 +218,7 @@ class RiskManagementTest extends TestCase
         Shopware()->Container()->get('dbal_connection')->exec($sql);
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::CATEGORY_ID_SESSION_NAME, null);
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::PRODUCT_ID_SESSION_NAME, 178);
-        $this->setRequestParameterToFront('frontend', 'listing');
+        $this->setRequestParameterToFront();
 
         $eventArgs = $this->getEventArgs();
         $eventArgs->set('value', '');
@@ -234,7 +234,7 @@ class RiskManagementTest extends TestCase
         Shopware()->Container()->get('dbal_connection')->exec($sql);
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::CATEGORY_ID_SESSION_NAME, null);
         Shopware()->Container()->get('session')->offsetSet(RiskManagementInterface::PRODUCT_ID_SESSION_NAME, 178);
-        $this->setRequestParameterToFront('frontend', 'listing');
+        $this->setRequestParameterToFront();
 
         $eventArgs = $this->getEventArgs();
         $eventArgs->set('paymentID', 112);

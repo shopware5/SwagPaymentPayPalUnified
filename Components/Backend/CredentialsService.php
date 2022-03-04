@@ -13,7 +13,6 @@ use Shopware\Components\HttpClient\RequestException;
 use SwagPaymentPayPalUnified\Models\Settings\General;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
-use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\CredentialsResource;
 use UnexpectedValueException;
 
@@ -122,7 +121,7 @@ class CredentialsService
             $credentials
         );
 
-        $settings = $this->settingsService->getSettings($shopId, SettingsTable::GENERAL);
+        $settings = $this->settingsService->getSettings($shopId);
 
         if (!$settings instanceof General) {
             $this->logger->debug(sprintf('%s SETTINGS NOT FOUND', __METHOD__));

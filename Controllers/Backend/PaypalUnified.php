@@ -331,7 +331,7 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
 
             $credentialsService->updateCredentials($credentials, $shopId, $sandbox);
 
-            $this->updateOnboardingStatus($shopId, $sandbox, true);
+            $this->updateOnboardingStatus($shopId, $sandbox);
         } catch (\Exception $e) {
             $this->response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
             $this->view->assign([
@@ -459,11 +459,10 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
     /**
      * @param int  $shopId
      * @param bool $sandbox
-     * @param bool $onboardingCompleted
      *
      * @return void
      */
-    private function updateOnboardingStatus($shopId, $sandbox, $onboardingCompleted)
+    private function updateOnboardingStatus($shopId, $sandbox)
     {
         $this->logger->debug(sprintf('%s START', __METHOD__));
 
@@ -495,11 +494,11 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
         $this->logger->debug(sprintf('%s IS SANDBOX: %s', __METHOD__, $sandbox ? 'TRUE' : 'FALSE'));
 
         if ($sandbox) {
-            $puiSettings->setSandboxOnboardingCompleted($onboardingCompleted);
-            $acdcSettings->setSandboxOnboardingCompleted($onboardingCompleted);
+            $puiSettings->setSandboxOnboardingCompleted(true);
+            $acdcSettings->setSandboxOnboardingCompleted(true);
         } else {
-            $puiSettings->setOnboardingCompleted($onboardingCompleted);
-            $acdcSettings->setOnboardingCompleted($onboardingCompleted);
+            $puiSettings->setOnboardingCompleted(true);
+            $acdcSettings->setOnboardingCompleted(true);
         }
 
         $entityManager->persist($puiSettings);

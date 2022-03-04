@@ -13,7 +13,6 @@ use Enlight_Controller_Front;
 use Enlight_Controller_Request_Request;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
-use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Models\Settings\General;
 use SwagPaymentPayPalUnified\Models\Settings\PayUponInvoice;
@@ -30,7 +29,7 @@ use UnexpectedValueException;
 class PayUponInvoiceRiskManagement implements SubscriberInterface
 {
     /**
-     * @var PaymentMethodProvider
+     * @var PaymentMethodProviderInterface
      */
     private $paymentMethodProvider;
 
@@ -55,7 +54,7 @@ class PayUponInvoiceRiskManagement implements SubscriberInterface
     private $settingsService;
 
     public function __construct(
-        PaymentMethodProvider $paymentMethodProvider,
+        PaymentMethodProviderInterface $paymentMethodProvider,
         DependencyProvider $dependencyProvider,
         ValidatorInterface $validator,
         ContextServiceInterface $contextService,

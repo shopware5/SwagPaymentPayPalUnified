@@ -17,6 +17,8 @@ trait DatabaseTestCaseTrait
 
     /**
      * @before
+     *
+     * @return void
      */
     public function startTransactionBefore()
     {
@@ -26,6 +28,8 @@ trait DatabaseTestCaseTrait
 
     /**
      * @after
+     *
+     * @return void
      */
     public function rollbackTransactionAfter()
     {

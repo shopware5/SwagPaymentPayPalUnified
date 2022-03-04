@@ -44,6 +44,7 @@ test.describe("Pay with trustly", () => {
         await page.click('input[name="sAGB"]');
 
         await page.click('button:has-text("Zahlungspflichtig bestellen")');
+        await expect(page.locator('#successSubmit')).toHaveValue('Success');
         await page.click('text=Success');
 
         await expect(page.locator('.teaser--title')).toHaveText(/Vielen Dank für Ihre Bestellung bei Shopware Demo/);

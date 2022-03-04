@@ -12,7 +12,6 @@ use Enlight\Event\SubscriberInterface;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
 use Shopware\Models\Shop\Shop;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
-use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Models\Settings\ExpressCheckout as ExpressSettingsModel;
 use SwagPaymentPayPalUnified\Models\Settings\General as GeneralSettingsModel;
@@ -22,7 +21,7 @@ use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 class InContext implements SubscriberInterface
 {
     /**
-     * @var PaymentMethodProvider
+     * @var PaymentMethodProviderInterface
      */
     private $paymentMethodProvider;
 
@@ -44,7 +43,7 @@ class InContext implements SubscriberInterface
     public function __construct(
         SettingsServiceInterface $settingsService,
         DependencyProvider $dependencyProvider,
-        PaymentMethodProvider $paymentMethodProvider,
+        PaymentMethodProviderInterface $paymentMethodProvider,
         ContextServiceInterface $contextService
     ) {
         $this->settingsService = $settingsService;

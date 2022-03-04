@@ -10,11 +10,13 @@ namespace SwagPaymentPayPalUnified\Tests\Functional\Subscriber;
 
 use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
-use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use SwagPaymentPayPalUnified\Subscriber\PaymentMeans;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\PayPalUnifiedPaymentIdTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\SettingsHelperTrait;
+use SwagPaymentPayPalUnified\Tests\Functional\Subscriber\Mock\PaymentMeansSubscriberTest\EventArgsMockWithoutReturn;
+use SwagPaymentPayPalUnified\Tests\Functional\Subscriber\Mock\PaymentMeansSubscriberTest\EventArgsMockWithoutUnifiedReturn;
+use SwagPaymentPayPalUnified\Tests\Functional\Subscriber\Mock\PaymentMeansSubscriberTest\EventArgsMockWithUnifiedReturn;
 
 class PaymentMeansSubscriberTest extends TestCase
 {
@@ -22,12 +24,18 @@ class PaymentMeansSubscriberTest extends TestCase
     use PayPalUnifiedPaymentIdTrait;
     use SettingsHelperTrait;
 
+    /**
+     * @return void
+     */
     public function testCanBeCreated()
     {
         $subscriber = $this->getSubscriber();
         static::assertSame(PaymentMeans::class, \get_class($subscriber));
     }
 
+    /**
+     * @return void
+     */
     public function testGetSubscribedEvents()
     {
         $events = PaymentMeans::getSubscribedEvents();
@@ -35,6 +43,9 @@ class PaymentMeansSubscriberTest extends TestCase
         static::assertSame('onFilterPaymentMeans', $events['Shopware_Modules_Admin_GetPaymentMeans_DataFilter']);
     }
 
+    /**
+     * @return void
+     */
     public function testOnFilterPaymentMeansWithoutAvailableMethods()
     {
         $subscriber = $this->getSubscriber();
@@ -45,6 +56,9 @@ class PaymentMeansSubscriberTest extends TestCase
         static::assertCount(0, $args->result);
     }
 
+    /**
+     * @return void
+     */
     public function testOnFilterPaymentMeansWithoutUnifiedMethod()
     {
         $subscriber = $this->getSubscriber();
@@ -55,6 +69,9 @@ class PaymentMeansSubscriberTest extends TestCase
         static::assertCount(5, $args->result);
     }
 
+    /**
+     * @return void
+     */
     public function testOnFilterPaymentMeansHasUnifiedMethod()
     {
         $subscriber = $this->getSubscriber(false);
@@ -68,6 +85,9 @@ class PaymentMeansSubscriberTest extends TestCase
         static::assertSame($this->getUnifiedPaymentId(), $result[5]['id']);
     }
 
+    /**
+     * @return void
+     */
     public function testOnFilterPaymentMeansHasNoUnifiedMethodBecauseTheSettingsDontExist()
     {
         $subscriber = $this->getSubscriber(false);
@@ -89,8 +109,12 @@ class PaymentMeansSubscriberTest extends TestCase
     private function getSubscriber($mockSettings = true)
     {
         if ($mockSettings) {
+            $settingServiceMock = $this->createMock(SettingsServiceInterface::class);
+            $settingServiceMock->method('hasSettings')->willReturn(false);
+            $settingServiceMock->method('getSettings')->willReturn(null);
+
             return new PaymentMeans(
-                new SettingsServiceMock(),
+                $settingServiceMock,
                 Shopware()->Container()->get('paypal_unified.payment_method_provider')
             );
         }
@@ -103,6 +127,8 @@ class PaymentMeansSubscriberTest extends TestCase
 
     /**
      * @param bool $active
+     *
+     * @return void
      */
     private function createTestSettings($active = true)
     {
@@ -119,103 +145,5 @@ class PaymentMeansSubscriberTest extends TestCase
             'active' => 1,
             'shopId' => 1,
         ]);
-    }
-}
-
-class SettingsServiceMock implements SettingsServiceInterface
-{
-    public function get($column, $settingsTable = SettingsTable::GENERAL)
-    {
-    }
-
-    public function hasSettings($settingsTable = SettingsTable::GENERAL)
-    {
-        return false;
-    }
-
-    public function getSettings($shopId = null, $settingsTable = SettingsTable::GENERAL)
-    {
-        return null;
-    }
-
-    public function refreshDependencies()
-    {
-    }
-}
-class EventArgsMockWithoutReturn extends \Enlight_Event_EventArgs
-{
-    /**
-     * @var array
-     */
-    public $result;
-
-    public function getReturn()
-    {
-        return [];
-    }
-
-    /**
-     * @param array $result
-     */
-    public function setReturn($result)
-    {
-        $this->result = $result;
-    }
-}
-class EventArgsMockWithoutUnifiedReturn extends \Enlight_Event_EventArgs
-{
-    /**
-     * @var array
-     */
-    public $result;
-
-    public function getReturn()
-    {
-        return [
-            ['id' => 0],
-            ['id' => 1],
-            ['id' => 2],
-            ['id' => 3],
-            ['id' => 4],
-        ];
-    }
-
-    /**
-     * @param array $result
-     */
-    public function setReturn($result)
-    {
-        $this->result = $result;
-    }
-}
-class EventArgsMockWithUnifiedReturn extends \Enlight_Event_EventArgs
-{
-    use PayPalUnifiedPaymentIdTrait;
-
-    /**
-     * @var array
-     */
-    public $result;
-
-    public function getReturn()
-    {
-        $id = $this->getUnifiedPaymentId();
-
-        return [
-            ['id' => 0],
-            ['id' => 1],
-            ['id' => 2],
-            ['id' => 3],
-            ['id' => 4],
-            ['id' => $id],
-        ];
-    }
-
-    /**
-     * @param array $result
-     */
-    public function setReturn($result)
-    {
-        $this->result = $result;
     }
 }

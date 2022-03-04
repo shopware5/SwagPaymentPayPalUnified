@@ -13,7 +13,6 @@ use Enlight_Controller_ActionEventArgs;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
 use Shopware_Controllers_Frontend_Checkout;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
-use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Models\Settings\General as GeneralSettingsModel;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
@@ -24,7 +23,7 @@ use SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\ClientTokenResource;
 class AdvancedCreditDebitCard implements SubscriberInterface
 {
     /**
-     * @var PaymentMethodProvider
+     * @var PaymentMethodProviderInterface
      */
     private $paymentMethodProvider;
 
@@ -53,8 +52,14 @@ class AdvancedCreditDebitCard implements SubscriberInterface
      */
     private $euStatesService;
 
-    public function __construct(PaymentMethodProvider $paymentMethodProvider, SettingsServiceInterface $settingsService, ClientTokenResource $clientTokenResource, ContextServiceInterface $contextService, DependencyProvider $dependencyProvider, EUStates $euStatesService)
-    {
+    public function __construct(
+        PaymentMethodProviderInterface $paymentMethodProvider,
+        SettingsServiceInterface $settingsService,
+        ClientTokenResource $clientTokenResource,
+        ContextServiceInterface $contextService,
+        DependencyProvider $dependencyProvider,
+        EUStates $euStatesService
+    ) {
         $this->paymentMethodProvider = $paymentMethodProvider;
         $this->settingsService = $settingsService;
         $this->clientTokenResource = $clientTokenResource;

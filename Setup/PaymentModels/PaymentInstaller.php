@@ -11,11 +11,12 @@ namespace SwagPaymentPayPalUnified\Setup\PaymentModels;
 use Shopware\Components\Model\ModelManager;
 use Shopware\Models\Payment\Payment;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
+use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 
 class PaymentInstaller
 {
     /**
-     * @var PaymentMethodProvider
+     * @var PaymentMethodProviderInterface
      */
     private $paymentMethodProvider;
 
@@ -30,7 +31,7 @@ class PaymentInstaller
     private $modelManager;
 
     public function __construct(
-        PaymentMethodProvider $paymentMethodProvider,
+        PaymentMethodProviderInterface $paymentMethodProvider,
         PaymentModelFactory $paymentModelFactory,
         ModelManager $modelManager
     ) {
@@ -41,7 +42,7 @@ class PaymentInstaller
 
     public function installPayments()
     {
-        foreach ($this->paymentMethodProvider->getAllUnifiedNames() as $paymentMethodName) {
+        foreach (PaymentMethodProvider::getAllUnifiedNames() as $paymentMethodName) {
             $payment = $this->paymentMethodProvider->getPaymentMethodModel($paymentMethodName);
 
             if ($payment instanceof Payment) {

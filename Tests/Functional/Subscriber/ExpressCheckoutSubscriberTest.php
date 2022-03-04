@@ -19,7 +19,6 @@ use ReflectionClass;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Components\Services\RiskManagement\EsdProductChecker;
-use SwagPaymentPayPalUnified\PayPalBundle\Resources\PaymentResource;
 use SwagPaymentPayPalUnified\Subscriber\ExpressCheckout as ExpressCheckoutSubscriber;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\SettingsHelperTrait;
@@ -32,11 +31,6 @@ class ExpressCheckoutSubscriberTest extends TestCase
 {
     use DatabaseTestCaseTrait;
     use SettingsHelperTrait;
-
-    /**
-     * @var PaymentResource|PaymentResourceMock
-     */
-    private $paymentResource;
 
     public function testConstruct()
     {
@@ -699,10 +693,10 @@ class ExpressCheckoutSubscriberTest extends TestCase
     {
         Shopware()->Container()->set('paypal_unified.client_service', new ClientService());
 
-        $this->paymentResource = Shopware()->Container()->get('paypal_unified.payment_resource');
+        $paymentResource = Shopware()->Container()->get('paypal_unified.payment_resource');
 
         if ($usePaymentResourceMock) {
-            $this->paymentResource = new PaymentResourceMock();
+            $paymentResource = new PaymentResourceMock();
         }
 
         if (!$esdProductChecker instanceof EsdProductChecker) {
@@ -712,7 +706,7 @@ class ExpressCheckoutSubscriberTest extends TestCase
         return new ExpressCheckoutSubscriber(
             Shopware()->Container()->get('paypal_unified.settings_service'),
             Shopware()->Container()->get('session'),
-            $this->paymentResource,
+            $paymentResource,
             Shopware()->Container()->get('paypal_unified.payment_address_service'),
             Shopware()->Container()->get('paypal_unified.payment_builder_service'),
             Shopware()->Container()->get('paypal_unified.client_service'),

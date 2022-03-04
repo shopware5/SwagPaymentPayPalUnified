@@ -14,7 +14,6 @@ use Enlight_Template_Manager as Template;
 use Shopware_Components_Snippet_Manager as SnippetManager;
 use Shopware_Components_Translation;
 use SwagPaymentPayPalUnified\Components\Document\InvoiceDocumentHandler;
-use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Components\Services\Plus\PaymentInstructionService;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
@@ -47,7 +46,7 @@ class Invoice implements SubscriberInterface
     private $templateManager;
 
     /**
-     * @var PaymentMethodProvider
+     * @var PaymentMethodProviderInterface
      */
     private $paymentMethodProvider;
 
@@ -57,7 +56,7 @@ class Invoice implements SubscriberInterface
         SnippetManager $snippetManager,
         Shopware_Components_Translation $translation = null,
         Template $templateManager,
-        PaymentMethodProvider $paymentMethodProvider
+        PaymentMethodProviderInterface $paymentMethodProvider
     ) {
         $this->paymentInstructionsService = $paymentInstructionService;
         $this->dbalConnection = $dbalConnection;

@@ -47,75 +47,52 @@ interface PaymentMethodProviderInterface
     const PAYPAL_UNIFIED_INSTALLMENTS_METHOD_NAME = 'SwagPaymentPayPalUnifiedInstallments';
 
     /**
-     * @param string $paymentMethodName
+     * @param self::* $paymentMethodName
      *
      * @return Payment|null
-     *
-     * @see PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME or PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME
      */
     public function getPaymentMethodModel($paymentMethodName);
 
     /**
-     * @param bool   $active
-     * @param string $paymentMethodName
+     * @param bool    $active
+     * @param self::* $paymentMethodName
      *
-     * @see PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME or PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME
+     * @return void
      */
     public function setPaymentMethodActiveFlag($paymentMethodName, $active);
 
     /**
-     * @param string $paymentMethodName
+     * @param self::* $paymentMethodName
      *
      * @return bool
-     *
-     * @see PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME or PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME
      */
     public function getPaymentMethodActiveFlag($paymentMethodName);
 
     /**
-     * @param string $paymentMethodName
+     * @param self::* $paymentMethodName
      *
      * @return int
-     *
-     * @see PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME or PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME
      */
     public function getPaymentId($paymentMethodName);
 
     /**
-     * @param array<string> $paymentMethodNames
+     * @param array<self::*> $paymentMethodNames
      *
      * @return array<string, int>
      */
     public function getActivePayments(array $paymentMethodNames);
 
     /**
-     * @param array<string> $paymentMethodNames
+     * @param array<self::*> $paymentMethodNames
      *
      * @return array<string, int>
      */
     public function getPayments(array $paymentMethodNames);
 
     /**
-     * @return array<string>
-     */
-    public function getPayPalMethodNames();
-
-    /**
-     * @return array<string>
-     */
-    public function getAlternativePaymentMethodNames();
-
-    /**
-     * @return array<string>
-     */
-    public function getAllUnifiedNames();
-
-    /**
      * @param string $paymentMethodName
      *
      * @return PaymentType::*
-     *
-     * @see PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME or PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME
      */
     public function getPaymentTypeByName($paymentMethodName);
 }

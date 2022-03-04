@@ -9,6 +9,7 @@
 namespace SwagPaymentPayPalUnified\Components\Services\Plus;
 
 use Shopware\Bundle\AttributeBundle\Service\CrudService;
+use Shopware\Bundle\AttributeBundle\Service\CrudServiceInterface;
 use Shopware_Components_Snippet_Manager as SnippetManager;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
@@ -27,13 +28,16 @@ class PlusPaymentBuilderService extends PaymentBuilderService
     const EDD_ATTRIBUTE_COLUMN_NAME = 'swag_paypal_estimated_delivery_date_days';
 
     /**
-     * @var CrudService
+     * @var CrudService|CrudServiceInterface
      */
     private $attributeService;
 
+    /**
+     * @param CrudService|CrudServiceInterface $crudService
+     */
     public function __construct(
         SettingsServiceInterface $settingsService,
-        CrudService $crudService,
+        $crudService,
         SnippetManager $snippetManager,
         DependencyProvider $dependencyProvider,
         PriceFormatter $priceFormatter,

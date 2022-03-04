@@ -18,8 +18,6 @@ use UnexpectedValueException;
 
 class PaymentMethodProvider implements PaymentMethodProviderInterface
 {
-    const PAYMENT_ID_QUERY = 'SELECT `id` FROM s_core_paymentmeans WHERE `name`=:paymentName AND active = 1';
-
     /**
      * @var ModelManager
      */
@@ -66,11 +64,9 @@ class PaymentMethodProvider implements PaymentMethodProviderInterface
      */
     public function getPaymentMethodActiveFlag($paymentMethodName)
     {
-        $sql = 'SELECT `active` FROM s_core_paymentmeans WHERE `name`=:paymentName';
+        $activePaymentMethods = $this->getActivePayments([$paymentMethodName]);
 
-        return (bool) $this->connection->fetchColumn($sql, [
-            ':paymentName' => $paymentMethodName,
-        ]);
+        return \array_key_exists($paymentMethodName, $activePaymentMethods);
     }
 
     /**
@@ -78,9 +74,9 @@ class PaymentMethodProvider implements PaymentMethodProviderInterface
      */
     public function getPaymentId($paymentMethodName)
     {
-        return (int) $this->connection->fetchColumn(self::PAYMENT_ID_QUERY, [
-            ':paymentName' => $paymentMethodName,
-        ]);
+        $paymentMethods = $this->getPayments([$paymentMethodName]);
+
+        return (int) $paymentMethods[$paymentMethodName];
     }
 
     /**
@@ -105,9 +101,9 @@ class PaymentMethodProvider implements PaymentMethodProviderInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @return array{0: self::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME, 1: self::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME, 2: self::PAYPAL_UNIFIED_ADVANCED_CREDIT_DEBIT_CARD_METHOD_NAME}
      */
-    public function getPayPalMethodNames()
+    public static function getPayPalMethodNames()
     {
         return [
             self::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME,
@@ -117,9 +113,9 @@ class PaymentMethodProvider implements PaymentMethodProviderInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @return array{0: self::BANCONTACT_METHOD_NAME, 1: self::BLIK_METHOD_NAME, 2:self::EPS_METHOD_NAME, 3: self::GIROPAY_METHOD_NAME, 4: self::IDEAL_METHOD_NAME, 5: self::MULTIBANCO_METHOD_NAME, 6: self::MY_BANK_METHOD_NAME, 7: self::OXXO_METHOD_NAME, 8: self::P24_METHOD_NAME, 9: self::SOFORT_METHOD_NAME, 10: self::TRUSTLY_METHOD_NAME}
      */
-    public function getAlternativePaymentMethodNames()
+    public static function getAlternativePaymentMethodNames()
     {
         return [
             self::BANCONTACT_METHOD_NAME,
@@ -137,13 +133,13 @@ class PaymentMethodProvider implements PaymentMethodProviderInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @return array<self::*>
      */
-    public function getAllUnifiedNames()
+    public static function getAllUnifiedNames()
     {
         return array_merge(
-            $this->getPayPalMethodNames(),
-            $this->getAlternativePaymentMethodNames()
+            self::getPayPalMethodNames(),
+            self::getAlternativePaymentMethodNames()
         );
     }
 

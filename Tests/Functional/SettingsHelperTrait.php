@@ -16,6 +16,9 @@ use SwagPaymentPayPalUnified\Models\Settings\Plus as PlusSettingsModel;
 
 trait SettingsHelperTrait
 {
+    /**
+     * @return void
+     */
     public function insertGeneralSettings(GeneralSettingsModel $model)
     {
         $em = $this->getEntityManager();
@@ -23,6 +26,11 @@ trait SettingsHelperTrait
         $em->flush();
     }
 
+    /**
+     * @param array<string, mixed> $data
+     *
+     * @return void
+     */
     public function insertGeneralSettingsFromArray(array $data)
     {
         if (!isset($data['showSidebarLogo'])) {
@@ -63,6 +71,9 @@ trait SettingsHelperTrait
         $this->insertGeneralSettings($model);
     }
 
+    /**
+     * @return void
+     */
     public function insertInstallmentsSettings(InstallmentsSettingsModel $model)
     {
         $em = $this->getEntityManager();
@@ -70,6 +81,11 @@ trait SettingsHelperTrait
         $em->flush();
     }
 
+    /**
+     * @param array<string, mixed> $data
+     *
+     * @return void
+     */
     public function insertInstallmentsSettingsFromArray(array $data)
     {
         if (!isset($data['shopId'])) {
@@ -85,6 +101,9 @@ trait SettingsHelperTrait
         $this->insertInstallmentsSettings($model);
     }
 
+    /**
+     * @return void
+     */
     public function insertPlusSettings(PlusSettingsModel $model)
     {
         $em = $this->getEntityManager();
@@ -92,6 +111,11 @@ trait SettingsHelperTrait
         $em->flush();
     }
 
+    /**
+     * @param array<string, mixed> $data
+     *
+     * @return void
+     */
     public function insertPlusSettingsFromArray(array $data)
     {
         if (!isset($data['shopId'])) {
@@ -111,6 +135,9 @@ trait SettingsHelperTrait
         $this->insertPlusSettings($model);
     }
 
+    /**
+     * @return void
+     */
     public function insertExpressCheckoutSettings(ExpressSettingsModel $model)
     {
         $em = $this->getEntityManager();
@@ -118,6 +145,11 @@ trait SettingsHelperTrait
         $em->flush();
     }
 
+    /**
+     * @param array<string, mixed> $data
+     *
+     * @return void
+     */
     public function insertExpressCheckoutSettingsFromArray(array $data)
     {
         if (!isset($data['shopId'])) {
