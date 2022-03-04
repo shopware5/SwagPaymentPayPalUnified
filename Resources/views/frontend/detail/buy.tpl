@@ -15,7 +15,7 @@
 
     {block name='frontend_detail_buy_button_paypal_unified_express_checkout'}
         {if !($sArticle.sConfigurator && !$activeConfiguratorSelection) && $paypalUnifiedEcDetailActive && $paypalIsNotAllowed === false}
-            {include file='frontend/paypal_unified/express_checkout/button_detail.tpl'}
+            {include file='frontend/paypal_unified/express_checkout/button.tpl' isProduct = true}
         {/if}
     {/block}
 {/block}

@@ -76,13 +76,8 @@
                  public="true">
             <argument type="service" id="paypal_unified.settings_service"/>
             <argument type="service" id="session"/>
-            <argument type="service" id="paypal_unified.payment_resource"/>
-            <argument type="service" id="paypal_unified.payment_address_service"/>
-            <argument type="service" id="paypal_unified.express_checkout.payment_builder_service"/>
-            <argument type="service" id="paypal_unified.client_service"/>
             <argument type="service" id="paypal_unified.dependency_provider"/>
-            <argument type="service"
-                      id="SwagPaymentPayPalUnified\Components\Services\RiskManagement\EsdProductChecker"/>
+            <argument type="service" id="SwagPaymentPayPalUnified\Components\Services\RiskManagement\EsdProductChecker"/>
             <argument type="service" id="paypal_unified.payment_method_provider"/>
             <argument type="service" id="paypal_unified.button_locale_service"/>
             <tag name="shopware.event_subscriber"/>

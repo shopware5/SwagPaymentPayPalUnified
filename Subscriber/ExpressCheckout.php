@@ -15,23 +15,12 @@ use Enlight_View_Default as ViewEngine;
 use Shopware\Models\Shop\Shop;
 use SwagPaymentPayPalUnified\Components\ButtonLocaleService;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
-use SwagPaymentPayPalUnified\Components\PaymentBuilderInterface;
-use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
-use SwagPaymentPayPalUnified\Components\Services\Common\CustomerHelper;
-use SwagPaymentPayPalUnified\Components\Services\PaymentAddressService;
 use SwagPaymentPayPalUnified\Components\Services\RiskManagement\EsdProductCheckerInterface;
 use SwagPaymentPayPalUnified\Models\Settings\ExpressCheckout as ExpressSettingsModel;
 use SwagPaymentPayPalUnified\Models\Settings\General as GeneralSettingsModel;
-use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PaymentAddressPatch;
-use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PaymentAmountPatch;
-use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PaymentItemsPatch;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
-use SwagPaymentPayPalUnified\PayPalBundle\PartnerAttributionId;
-use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
-use SwagPaymentPayPalUnified\PayPalBundle\Resources\PaymentResource;
-use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService;
 
 class ExpressCheckout implements SubscriberInterface
 {
@@ -46,29 +35,9 @@ class ExpressCheckout implements SubscriberInterface
     private $session;
 
     /**
-     * @var PaymentResource
-     */
-    private $paymentResource;
-
-    /**
-     * @var PaymentAddressService
-     */
-    private $paymentAddressService;
-
-    /**
-     * @var PaymentBuilderInterface
-     */
-    private $paymentBuilder;
-
-    /**
      * @var PaymentMethodProviderInterface
      */
     private $paymentMethodProvider;
-
-    /**
-     * @var ClientService
-     */
-    private $clientService;
 
     /**
      * @var DependencyProvider
@@ -88,10 +57,6 @@ class ExpressCheckout implements SubscriberInterface
     public function __construct(
         SettingsServiceInterface $settingsService,
         Session $session,
-        PaymentResource $paymentResource,
-        PaymentAddressService $addressRequestService,
-        PaymentBuilderInterface $paymentBuilder,
-        ClientService $clientService,
         DependencyProvider $dependencyProvider,
         EsdProductCheckerInterface $esdProductChecker,
         PaymentMethodProviderInterface $paymentMethodProvider,
@@ -99,10 +64,6 @@ class ExpressCheckout implements SubscriberInterface
     ) {
         $this->settingsService = $settingsService;
         $this->session = $session;
-        $this->paymentResource = $paymentResource;
-        $this->paymentAddressService = $addressRequestService;
-        $this->paymentBuilder = $paymentBuilder;
-        $this->clientService = $clientService;
         $this->dependencyProvider = $dependencyProvider;
         $this->esdProductChecker = $esdProductChecker;
         $this->paymentMethodProvider = $paymentMethodProvider;
@@ -126,6 +87,9 @@ class ExpressCheckout implements SubscriberInterface
         ];
     }
 
+    /**
+     * @return void
+     */
     public function addExpressCheckoutButtonCart(ActionEventArgs $args)
     {
         $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
@@ -178,10 +142,14 @@ class ExpressCheckout implements SubscriberInterface
 
         if ((isset($cart['content']) || $product) && !$this->isUserLoggedIn()) {
             $view->assign('paypalUnifiedUseInContext', $generalSettings->getUseInContext());
+            $this->addEcButtonBehaviour($view, $generalSettings);
             $this->addEcButtonStyleInfo($view, $expressSettings, $generalSettings);
         }
     }
 
+    /**
+     * @return void
+     */
     public function addExpressOrderInfoOnConfirm(ActionEventArgs $args)
     {
         $request = $args->getRequest();
@@ -212,6 +180,9 @@ class ExpressCheckout implements SubscriberInterface
         }
     }
 
+    /**
+     * @return void
+     */
     public function addExpressCheckoutButtonDetail(ActionEventArgs $args)
     {
         if ($args->getSubject()->View()->getAssign('sArticle')['esd'] === true) {
@@ -244,6 +215,9 @@ class ExpressCheckout implements SubscriberInterface
         }
     }
 
+    /**
+     * @return void
+     */
     public function addExpressCheckoutButtonListing(ActionEventArgs $args)
     {
         $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
@@ -280,6 +254,9 @@ class ExpressCheckout implements SubscriberInterface
         $view->assign('paypalUnifiedEcButtonStyleSize', 'small');
     }
 
+    /**
+     * @return void
+     */
     public function addExpressCheckoutButtonLogin(ActionEventArgs $args)
     {
         $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
@@ -317,41 +294,8 @@ class ExpressCheckout implements SubscriberInterface
     }
 
     /**
-     * before the express checkout payment can be executed, the address and amount, which contains the shipping costs,
-     * must be updated, because they may have changed during the process
-     *
-     * @param string $paymentId
+     * @return void
      */
-    private function patchAddressAndAmount($paymentId)
-    {
-        $orderVariables = $this->session->get('sOrderVariables');
-        $userData = $orderVariables['sUserData'];
-        $basketData = $orderVariables['sBasket'];
-        $userData[CustomerHelper::CUSTOMER_GROUP_USE_GROSS_PRICES] = (bool) $this->dependencyProvider->getSession()
-            ->get('sUserGroupData', ['tax' => 1])['tax'];
-
-        $shippingAddress = $this->paymentAddressService->getShippingAddress($userData);
-        $addressPatch = new PaymentAddressPatch($shippingAddress);
-
-        $requestParams = new PaymentBuilderParameters();
-        $requestParams->setBasketData($basketData);
-        $requestParams->setUserData($userData);
-        $requestParams->setPaymentType(PaymentType::PAYPAL_EXPRESS);
-
-        $paymentStruct = $this->paymentBuilder->getPayment($requestParams);
-        $amountPatch = new PaymentAmountPatch($paymentStruct->getTransactions()->getAmount());
-
-        $this->clientService->setPartnerAttributionId(PartnerAttributionId::PAYPAL_ALL_V2);
-
-        $patches = [$addressPatch, $amountPatch];
-        $itemList = $paymentStruct->getTransactions()->getItemList();
-        if ($itemList !== null) {
-            $patches[] = new PaymentItemsPatch($itemList->getItems());
-        }
-
-        $this->paymentResource->patch($paymentId, $patches);
-    }
-
     private function addEcButtonBehaviour(ViewEngine $view, GeneralSettingsModel $generalSettings)
     {
         $sandbox = $generalSettings->getSandbox();
@@ -367,6 +311,9 @@ class ExpressCheckout implements SubscriberInterface
         $view->assign('paypalUnifiedCurrency', $shop->getCurrency()->getCurrency());
     }
 
+    /**
+     * @return void
+     */
     private function addEcButtonStyleInfo(ViewEngine $view, ExpressSettingsModel $expressSettings, GeneralSettingsModel $generalSettings)
     {
         $view->assign([
@@ -378,15 +325,18 @@ class ExpressCheckout implements SubscriberInterface
         ]);
     }
 
+    /**
+     * @return bool
+     */
     private function isUserLoggedIn()
     {
         return (bool) $this->session->get('sUserId');
     }
 
     /**
-     * @param array|null $content
+     * @param array<array<string, mixed>>|null $content
      *
-     * @return array
+     * @return array<int>
      */
     private function getProductIdsFromBasket($content)
     {

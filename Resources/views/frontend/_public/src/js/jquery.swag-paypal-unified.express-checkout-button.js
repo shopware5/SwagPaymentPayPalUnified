@@ -120,11 +120,11 @@
             locale: '',
 
             /**
-             * A boolean indicating if the current page is an product detail page.
+             * A boolean indicating if the current page is a product detail page.
              *
              * @type boolean
              */
-            detailPage: false,
+            buyProductDirectly: false,
 
             /**
              * The selector for the quantity selection on the detail page.
@@ -254,7 +254,7 @@
 
             $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonCart/init', me);
 
-            if (me.opts.detailPage) {
+            if (me.opts.buyProductDirectly) {
                 $.subscribe(me.getEventName('plugin/swAjaxVariant/onRequestData'), $.proxy(me.onChangeVariant, me));
             }
         },
@@ -295,16 +295,29 @@
          */
         isProductExcluded: function() {
             var me = this,
-                productNumbers = [].concat(
-                    me.opts.riskManagementMatchedProducts,
-                    me.opts.esdProducts
-                );
+                productNumber = me.opts.productNumber,
+                excludedProductNumbers,
+                riskManagementMatchedProducts = [],
+                esdProducts = [];
 
-            if (Array.isArray(productNumbers) && $.inArray(me.opts.productNumber, productNumbers) >= 0) {
-                return true;
+            if (productNumber === null || productNumber === '') {
+                return false;
             }
 
-            return false;
+            if (me.opts.riskManagementMatchedProducts !== '') {
+                riskManagementMatchedProducts = me.opts.riskManagementMatchedProducts;
+            }
+
+            if (me.opts.esdProducts !== '') {
+                esdProducts = me.opts.esdProducts;
+            }
+
+            excludedProductNumbers = [].concat(
+                riskManagementMatchedProducts,
+                esdProducts
+            );
+
+            return $.inArray(productNumber, excludedProductNumbers) >= 0;
         },
 
         /**
@@ -418,21 +431,26 @@
          * This method dispatches a request to the `\Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout`-controller (default)
          * which initialises an order at PayPal.
          */
-        createOrder: function(data, actions) {
-            var me = this;
+        createOrder: function() {
+            var me = this,
+                data = {};
 
             $.loadingIndicator.open({
                 closeOnClick: false,
                 delay: 100
             });
 
-            return $.ajax({
-                url: me.opts.createOrderUrl,
-                data: {
+            if (me.opts.buyProductDirectly) {
+                data = {
                     addProduct: true,
                     productNumber: me.opts.productNumber,
                     productQuantity: $(me.opts.productQuantitySelector).val()
-                }
+                };
+            }
+
+            return $.ajax({
+                url: me.opts.createOrderUrl,
+                data: data
             }).then(function(response) {
                 return response.orderId;
             }).promise();
