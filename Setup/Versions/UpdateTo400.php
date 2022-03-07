@@ -72,6 +72,13 @@ class UpdateTo400
         $this->addPayerIdToGeneralSettings();
         $this->addPpcpIndicatorToPlusSettings();
         $this->removeMerchantLocationSetting();
+        $this->migrateLandingPageType();
+        $this->makeShopIdUnique([
+            'swag_payment_paypal_unified_settings_general',
+            'swag_payment_paypal_unified_settings_installments',
+            'swag_payment_paypal_unified_settings_express',
+            'swag_payment_paypal_unified_settings_plus',
+        ]);
     }
 
     /**
@@ -151,7 +158,8 @@ CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_settings_pay_upon_invoice
     `onboarding_completed`          TINYINT(1) NOT NULL,
     `sandbox_onboarding_completed`  TINYINT(1) NOT NULL,
     `active`                        TINYINT(1) NOT NULL,
-    `customer_service_instructions` TEXT       NULL
+    `customer_service_instructions` TEXT       NULL,
+    CONSTRAINT unique_shop_id UNIQUE (`shop_id`)
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
@@ -169,13 +177,13 @@ SQL
         if (!$this->connection->getSchemaManager()->tablesExist(['swag_payment_paypal_unified_settings_advanced_credit_debit_card'])) {
             $this->connection->executeQuery(
                 <<<'SQL'
-CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_settings_advanced_credit_debit_card
-(
-    `id`                           INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_settings_advanced_credit_debit_card (
+    `id`                           INT(11)    UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     `shop_id`                      INT(11)    NOT NULL,
     `onboarding_completed`         TINYINT(1) NOT NULL,
     `sandbox_onboarding_completed` TINYINT(1) NOT NULL,
-    `active`                       TINYINT(1) NOT NULL
+    `active`                       TINYINT(1) NOT NULL,
+    CONSTRAINT unique_shop_id UNIQUE (`shop_id`)
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
@@ -274,5 +282,54 @@ SQL;
         if ($this->columnService->checkIfColumnExist('swag_payment_paypal_unified_settings_general', 'merchant_location')) {
             $this->connection->executeQuery($sql);
         }
+    }
+
+    /**
+     * @throws Exception
+     *
+     * @return void
+     */
+    private function migrateLandingPageType()
+    {
+        $this->connection->executeQuery('UPDATE swag_payment_paypal_unified_settings_general SET landing_page_type = UPPER(landing_page_type)');
+    }
+
+    /**
+     * @param array<int, string> $tables
+     *
+     * @throws Exception
+     *
+     * @return void
+     */
+    private function makeShopIdUnique(array $tables)
+    {
+        foreach ($tables as $tableName) {
+            if ($this->hasShopIdColumnUniqueIndex($tableName)) {
+                continue;
+            }
+
+            $sql = "ALTER TABLE $tableName ADD CONSTRAINT unique_shop_id UNIQUE (`shop_id`)";
+            $this->connection->executeQuery($sql);
+        }
+    }
+
+    /**
+     * @param string $tableName
+     *
+     * @throws Exception
+     *
+     * @return bool
+     */
+    private function hasShopIdColumnUniqueIndex($tableName)
+    {
+        $sql = "SHOW index FROM $tableName WHERE Column_name LIKE 'shop_id' AND Key_name LIKE 'unique_shop_id';";
+
+        $result = $this->connection->fetchAll($sql);
+
+        if (empty($result)) {
+            return false;
+        }
+
+        return true;
     }
 }

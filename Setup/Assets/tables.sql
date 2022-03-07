@@ -1,8 +1,8 @@
 CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_settings_general
 (
     `id`                         INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    `shop_id`                    INT(11)      NOT NULL,
-    `active`                     TINYINT(1),
+    `shop_id`                    INT(11) NOT NULL,
+    `active`                     TINYINT(1) NOT NULL DEFAULT 0,
     `client_id`                  VARCHAR(255),
     `client_secret`              VARCHAR(255),
     `sandbox_client_id`          VARCHAR(255),
@@ -19,13 +19,14 @@ CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_settings_general
     `advertise_returns`          TINYINT(1)   NOT NULL,
     `use_smart_payment_buttons`  TINYINT(1)   NOT NULL,
     `submit_cart`                TINYINT(1)   NOT NULL,
-    `intent`                     VARCHAR(255) default 'CAPTURE',
+    `intent`                     VARCHAR(255) DEFAULT 'CAPTURE',
     `button_style_color`         VARCHAR(255) NULL,
     `button_style_shape`         VARCHAR(255) NULL,
     `button_style_size`          VARCHAR(255) NULL,
     `button_locale`              VARCHAR(5),
     `paypal_payer_id`         VARCHAR(255) NULL,
-    `sandbox_paypal_payer_id` VARCHAR(255) NULL
+    `sandbox_paypal_payer_id` VARCHAR(255) NULL,
+    CONSTRAINT unique_shop_id UNIQUE (`shop_id`)
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
@@ -35,7 +36,8 @@ CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_settings_installments
 (
     `id`                     INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     `shop_id`                INT(11)    NOT NULL,
-    `advertise_installments` TINYINT(1) NOT NULL
+    `advertise_installments` TINYINT(1) NOT NULL,
+    CONSTRAINT unique_shop_id UNIQUE (`shop_id`)
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
@@ -54,7 +56,8 @@ CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_settings_express
     `button_style_shape` VARCHAR(255),
     `button_style_size`  VARCHAR(255),
     `button_locale`      VARCHAR(5),
-    `submit_cart`        TINYINT(1) NOT NULL
+    `submit_cart`        TINYINT(1) NOT NULL,
+    CONSTRAINT unique_shop_id UNIQUE (`shop_id`)
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
@@ -70,7 +73,8 @@ CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_settings_plus
     `payment_name`                  VARCHAR(255),
     `payment_description`           VARCHAR(255),
     `ppcp_active`                   TINYINT(1),
-    `sandbox_ppcp_active`           TINYINT(1)
+    `sandbox_ppcp_active`           TINYINT(1),
+    CONSTRAINT unique_shop_id UNIQUE (`shop_id`)
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
@@ -99,7 +103,8 @@ CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_settings_pay_upon_invoice
     `onboarding_completed`          TINYINT(1) NOT NULL,
     `sandbox_onboarding_completed`  TINYINT(1) NOT NULL,
     `active`                        TINYINT(1) NOT NULL,
-    `customer_service_instructions` TEXT       NULL
+    `customer_service_instructions` TEXT       NULL,
+    CONSTRAINT unique_shop_id UNIQUE (`shop_id`)
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
@@ -111,7 +116,8 @@ CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_settings_advanced_credit_
     `shop_id`                      INT(11)    NOT NULL,
     `onboarding_completed`         TINYINT(1) NOT NULL,
     `sandbox_onboarding_completed` TINYINT(1) NOT NULL,
-    `active`                       TINYINT(1) NOT NULL
+    `active`                       TINYINT(1) NOT NULL,
+    CONSTRAINT unique_shop_id UNIQUE (`shop_id`)
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8

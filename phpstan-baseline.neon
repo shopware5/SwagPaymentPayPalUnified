@@ -3461,11 +3461,6 @@ parameters:
 			path: Tests/Functional/Components/Services/RiskManagement/RiskManagementServiceTest.php
 
 		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Components\\\\Services\\\\RiskManagement\\\\RiskManagementServiceTest\\:\\:setRequestParameterToFront\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Components/Services/RiskManagement/RiskManagementServiceTest.php
-
-		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Components\\\\Services\\\\RiskManagement\\\\RiskManagementServiceTest\\:\\:testIsPayPalNotAllowed\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: Tests/Functional/Components/Services/RiskManagement/RiskManagementServiceTest.php
@@ -4247,11 +4242,6 @@ parameters:
 
 		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\FrontendSubscriberTest\\:\\:resetSession\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/FrontendSubscriberTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\FrontendSubscriberTest\\:\\:setRequestParameterToFront\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: Tests/Functional/Subscriber/FrontendSubscriberTest.php
 

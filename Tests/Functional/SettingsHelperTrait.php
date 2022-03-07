@@ -33,6 +33,10 @@ trait SettingsHelperTrait
      */
     public function insertGeneralSettingsFromArray(array $data)
     {
+        if (!isset($data['active'])) {
+            $data['active'] = false;
+        }
+
         if (!isset($data['showSidebarLogo'])) {
             $data['showSidebarLogo'] = false;
         }
@@ -58,7 +62,7 @@ trait SettingsHelperTrait
         }
 
         if (!isset($data['brandName'])) {
-            $data['brandName'] = 'TestBrandName';
+            $data['brandName'] = 'DefaultTestBrandName';
         }
 
         if (!isset($data['useSmartPaymentButtons'])) {

@@ -283,6 +283,8 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
             helpText: '{s name="fieldset/behaviour/useSmartPaymentButtons/helpText"}Enable this option to use the PayPal Smart Payment Buttons. The Smart Payment Buttons always use the in-context mode.{/s}'
         });
 
+        me.landingPageTypeSelect = Ext.create('Shopware.apps.PaypalUnifiedSettings.view.LandingPageSelect');
+
         me.behaviourContainer = Ext.create('Ext.form.FieldSet', {
             title: '{s name="fieldset/behaviour/title"}Behaviour{/s}',
             items: [
@@ -293,19 +295,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
                     valueField: 'id',
                     value: 'CAPTURE',
                     helpText: '{s name="fieldset/behaviour/intent/help"}(CAPTURE) Complete payment immediately: Payment is automatically collected immediately. (AUTHORIZE) Delayed payment collection: Payment is only authorised.The collection must be made separately.{/s}',
-                    store: Ext.create('Ext.data.Store', {
-                        fields: ['id', 'text'],
-                        data: [
-                            {
-                                id: 'CAPTURE',
-                                text: '{s name="intent/behaviour/immediately"}(CAPTURE) Complete payment immediately{/s}'
-                            },
-                            {
-                                id: 'AUTHORIZE',
-                                text: '{s name="intent/behaviour/later"}(AUTHORIZE) Delayed payment collection{/s}'
-                            },
-                        ]
-                    }),
+                    store: me.createIntentStore()
                 },
                 {
                     xtype: 'textfield',
@@ -335,15 +325,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
                     fieldLabel: '{s name="fieldset/behaviour/submitCart"}Submit cart{/s}',
                     helpText: '{s name="fieldset/behaviour/submitCart/help"}If this option is active, the cart will be submitted to PayPal.{/s}'
                 },
-                {
-                    xtype: 'combobox',
-                    name: 'landingPageType',
-                    helpText: '{s name="fieldset/landingPage/help"}<u>Login</u><br>The PayPal site displays a login screen as landingpage.<br><br><u>Registration</u><br>The PayPal site displays a registration form as landingpage.{/s}',
-                    fieldLabel: '{s name="fieldset/landingPage/title"}PayPal landingpage{/s}',
-                    store: Ext.create('Shopware.apps.PaypalUnifiedSettings.store.LandingPageType'),
-                    valueField: 'type',
-                    value: 'Login'
-                },
+                me.landingPageTypeSelect,
                 {
                     xtype: 'checkbox',
                     name: 'showSidebarLogo',
@@ -367,6 +349,25 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
         });
 
         return me.behaviourContainer;
+    },
+
+    /**
+     * @return { Ext.data.Store }
+     */
+    createIntentStore: function () {
+        return Ext.create('Ext.data.Store', {
+            fields: ['id', 'text'],
+            data: [
+                {
+                    id: 'CAPTURE',
+                    text: '{s name="intent/behaviour/immediately"}(CAPTURE) Complete payment immediately{/s}'
+                },
+                {
+                    id: 'AUTHORIZE',
+                    text: '{s name="intent/behaviour/later"}(AUTHORIZE) Delayed payment collection{/s}'
+                },
+            ]
+        });
     },
 
     createStyleContainer: function() {

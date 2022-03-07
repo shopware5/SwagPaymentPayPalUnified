@@ -272,7 +272,7 @@ abstract class AbstractOrderHandler implements OrderBuilderHandlerInterface
     {
         $applicationContext = new ApplicationContext();
         $applicationContext->setBrandName((string) $this->settings->get(SettingsServiceInterface::SETTING_GENERAL_BRAND_NAME));
-        $applicationContext->setLandingPage($this->getLandingPageType());
+        $applicationContext->setLandingPage($this->settings->get(SettingsServiceInterface::SETTING_GENERAL_LANDING_PAGE_TYPE));
 
         $applicationContext->setReturnUrl($this->returnUrlHelper->getReturnUrl($orderParameter->getBasketUniqueId(), $orderParameter->getPaymentToken()));
         $applicationContext->setCancelUrl($this->returnUrlHelper->getCancelUrl($orderParameter->getBasketUniqueId(), $orderParameter->getPaymentToken()));
@@ -307,14 +307,6 @@ abstract class AbstractOrderHandler implements OrderBuilderHandlerInterface
         }
 
         return $experienceContext;
-    }
-
-    /**
-     * @return string
-     */
-    protected function getLandingPageType()
-    {
-        return ApplicationContext::LANDING_PAGE_TYPE_NO_PREFERENCE;
     }
 
     protected function createPaymentSource(PayPalOrderParameter $orderParameter, Order $order)
