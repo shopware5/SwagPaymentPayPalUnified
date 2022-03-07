@@ -16,21 +16,15 @@ test.describe("Backend testing", () => {
         await page.click('.settings--basic-settings');
         await page.click('text=Für diesen Shop aktivieren:Aktiviere diese Option, um PayPal für diesen Shop zu  >> input[type="button"]')
 
-        await page.click('text=Sandbox aktivieren:Aktiviere diese Option, wenn du die Integration testen möchte >> input[type="button"]');
+        await page.locator('text=Sandbox aktivieren:Aktiviere diese Option, wenn du die Integration testen möchte >> input[type="button"]').scrollIntoViewIfNeeded();
+        await page.locator('text=Sandbox aktivieren:Aktiviere diese Option, wenn du die Integration testen möchte >> input[type="button"]').click();
+
+        await page.locator('input[name="sandboxClientId"]').scrollIntoViewIfNeeded();
         await page.fill('input[name="sandboxClientId"]', credentials.paypalSandboxClientId);
         await page.fill('input[name="sandboxClientSecret"]', credentials.paypalSandboxClientSecret);
 
         await page.locator('button[role="button"]:has-text("PayPal Express Checkout Integration")').click();
         await page.locator('text=\'Direkt zu PayPal\' auf Listing-Seiten:Wenn diese Option aktiv ist, wird der Expr >> input[type="button"]').click();
-
-        // Click button[role="button"]:has-text("PayPal Pay Upon Invoice Integration")
-        await page.locator('button[role="button"]:has-text("PayPal Pay Upon Invoice Integration")').click();
-        // Click textarea[name="customerServiceInstructions"]
-        await page.locator('textarea[name="customerServiceInstructions"]').click();
-        // Fill textarea[name="customerServiceInstructions"]
-        await page.locator('textarea[name="customerServiceInstructions"]').fill('Fill');
-        // Click button[role="button"]:has-text("Grundeinstellungen")
-        await page.locator('button[role="button"]:has-text("Grundeinstellungen")').click();
 
         await Promise.all([
             page.click('text=Speichern'),
@@ -42,6 +36,7 @@ test.describe("Backend testing", () => {
             page.waitForResponse(/.*PaypalUnifiedAdvancedCreditDebitCardSettings.*/),
         ]);
 
+        await page.locator('button[role="button"]:has-text("Grundeinstellungen")').click();
         await page.fill('input[name="sandboxPaypalPayerId"]', credentials.paypalSandboxMerchantId);
 
         await Promise.all([
@@ -54,5 +49,13 @@ test.describe("Backend testing", () => {
             page.waitForResponse(/.*PaypalUnifiedAdvancedCreditDebitCardSettings.*/),
             page.click('text=Speichern'),
         ]);
+
+        await page.locator('button[role="button"]:has-text("PayPal PLUS deaktivieren")').click();
+
+        // Fill textarea[name="customerServiceInstructions"]
+        await page.locator('button[role="button"]:has-text("Grundeinstellungen")').click();
+        await page.locator('textarea[name="customerServiceInstructions"]').fill('This field is required if PayUponInvoice is onboarded');
+
+        await page.click('text=Speichern');
     });
 })

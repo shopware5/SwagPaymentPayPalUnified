@@ -98,15 +98,16 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.AbstractPuiAcdcTab', {
     createActivationFieldsetItems: function() {
         var me = this;
 
+        this.activationField = Ext.create('Ext.form.field.Checkbox', {
+            name: 'active',
+            fieldLabel: me.snippets.activationFieldset.checkboxFieldLabel,
+            boxLabel: me.snippets.activationFieldset.checkboxLabel,
+            inputValue: true,
+            uncheckedValue: false
+        });
+
         return [
-            {
-                xtype: 'checkbox',
-                name: 'active',
-                fieldLabel: me.snippets.activationFieldset.checkboxFieldLabel,
-                boxLabel: me.snippets.activationFieldset.checkboxLabel,
-                inputValue: true,
-                uncheckedValue: false
-            },
+            this.activationField
         ];
     },
 
@@ -158,6 +159,10 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.AbstractPuiAcdcTab', {
             this.onboardingFieldset.hide();
             this.capabilityTestButton.show();
         }
+    },
+
+    isPaymentMethodActive: function() {
+        return this.activationField.getValue();
     },
 });
 // {/block}

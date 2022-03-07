@@ -199,6 +199,8 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
         this.getEcTab().loadRecord(this.expressCheckoutRecord);
         this.getPayUponInvoiceTab().loadRecord(this.payUponInvoiceRecord);
         this.getAdvancedCreditDebitCardTab().loadRecord(this.advancedCreditDebitCardRecord);
+
+        this.isTabFormValid(this.getPayUponInvoiceTab());
     },
 
     /**
@@ -244,7 +246,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
     /**
      * @param tab { Ext.form.Panel }
      */
-    isTabFormValid: function (tab) {
+    isTabFormValid: function(tab) {
         var form = tab.getForm(),
             isValid = form.isValid();
 
@@ -472,6 +474,8 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
     allDataLoaded: function() {
         var generalTab = this.getGeneralTab(),
             plusTab = this.getPlusTab(),
+            payUponInvoiceTab = this.getPayUponInvoiceTab(),
+            advancedCreditDebitCardTab = this.getAdvancedCreditDebitCardTab(),
             isSandBox = false,
             generalSettingGetterKey = 'paypalPayerId',
             payerId;
@@ -479,8 +483,8 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
         generalTab.sandboxPayerIdNotice.hide();
         generalTab.payerIdNotice.hide();
 
-        this.getPayUponInvoiceTab().handleView();
-        this.getAdvancedCreditDebitCardTab().handleView();
+        payUponInvoiceTab.handleView();
+        advancedCreditDebitCardTab.handleView();
 
         if (!this.generalRecord.get('active')) {
             return;
@@ -492,7 +496,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
         }
 
         payerId = this.generalRecord.get(generalSettingGetterKey);
-        if (payerId.trim() === '') {
+        if ((payUponInvoiceTab.isPaymentMethodActive() || advancedCreditDebitCardTab.isPaymentMethodActive()) && payerId.trim() === '') {
             if (isSandBox) {
                 generalTab.sandboxPayerIdNotice.show();
                 return;
@@ -707,7 +711,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
         }
     },
 
-    promptDisablePlus: function () {
+    promptDisablePlus: function() {
         var sandbox = this.generalRecord.get('sandbox'),
             isPlusActive = this.plusRecord.get('active'),
             isSubscribedAlready = this.plusRecord.get(sandbox ? 'sandboxPpcpActive' : 'ppcpActive'),
@@ -736,7 +740,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
         });
     },
 
-    promptDisablePlusHandler: function (buttonId) {
+    promptDisablePlusHandler: function(buttonId) {
         var sandbox = this.generalRecord.get('sandbox');
 
         this.plusRecord.set(sandbox ? 'sandboxPpcpActive' : 'ppcpActive', true);
@@ -818,7 +822,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
         this.updateCredentialsRequest = null;
     },
 
-    _shouldPlusTabBeDisabled: function () {
+    _shouldPlusTabBeDisabled: function() {
         return !this.plusRecord.get('active') &&
             (this.generalRecord.get('sandbox') ? this.plusRecord.get('sandboxPpcpActive') : this.plusRecord.get('ppcpActive'));
     }
