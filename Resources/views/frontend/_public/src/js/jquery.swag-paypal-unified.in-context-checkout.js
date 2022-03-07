@@ -130,6 +130,11 @@
             /**
              * @type string
              */
+            confirmUrl: '',
+
+            /**
+             * @type string
+             */
             finishUrl: '',
 
             /**
@@ -431,17 +436,7 @@
                 theme: 'light'
             });
 
-            return $.ajax({
-                method: 'get',
-                url: this.renderApproveUrl(data)
-            }).then(function(response) {
-                if (response.errorUrl) {
-                    me.onPayPalAPIError();
-                    return;
-                }
-
-                actions.redirect(me.renderFinishUrl(response));
-            }).promise();
+            return actions.redirect(me.renderConfirmUrl(data));
         },
 
         /**
@@ -457,6 +452,21 @@
             }, true);
 
             return [this.opts.onApproveUrl, '?', params].join('');
+        },
+
+        /**
+         * @param data { Object }
+         *
+         * @return { string }
+         */
+        renderConfirmUrl: function(data) {
+            var params = $.param({
+                orderId: data.orderID,
+                payerId: data.payerID,
+                basketId: this.opts.basketId
+            }, true);
+
+            return [this.opts.confirmUrl, '?', params].join('');
         },
 
         /**

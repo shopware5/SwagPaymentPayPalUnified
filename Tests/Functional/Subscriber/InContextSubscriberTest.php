@@ -35,13 +35,15 @@ class InContextSubscriberTest extends TestCase
         $events = InContext::getSubscribedEvents();
 
         static::assertTrue(\is_array($events['Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout']));
-        static::assertCount(2, $events['Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout']);
+        static::assertCount(3, $events['Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout']);
 
         static::assertTrue(\is_array($events['Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout'][0]));
         static::assertTrue(\is_array($events['Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout'][1]));
+        static::assertTrue(\is_array($events['Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout'][2]));
 
         static::assertSame('addInContextButton', $events['Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout'][0][0]);
-        static::assertSame('addInContextInfoToRequest', $events['Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout'][1][0]);
+        static::assertSame('addInfoToPaymentRequest', $events['Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout'][1][0]);
+        static::assertSame('addInContextInfoToRequest', $events['Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout'][2][0]);
     }
 
     public function testAddInContextButtonReturnWrongAction()
@@ -158,6 +160,72 @@ class InContextSubscriberTest extends TestCase
 
         static::assertTrue($view->getAssign('paypalUnifiedModeSandbox'));
         static::assertTrue($view->getAssign('paypalUnifiedUseInContext'));
+    }
+
+    /**
+     * @return void
+     */
+    public function testAddInContextButtonAssignsVariablesOnConfirm()
+    {
+        $view = new ViewMock(new \Enlight_Template_Manager());
+        $request = new \Enlight_Controller_Request_RequestTestCase();
+
+        $request->setActionName('confirm');
+        $request->setParams([
+            'inContextCheckout' => true,
+            'orderId' => 'b53e0880-8141-4d72-a02a-aad475809e77',
+            'payerId' => '218baa37-9296-4288-a61d-256dea8594f4',
+            'basketId' => 'e209dd3b-90b0-4e06-bd67-850fbf23dcac',
+        ]);
+
+        $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
+        ]);
+
+        $this->importSettings(true, true, true);
+
+        $subscriber = $this->getSubscriber();
+        $subscriber->addInContextButton($enlightEventArgs);
+
+        static::assertTrue($view->getAssign('paypalUnifiedInContextCheckout'));
+        static::assertSame('b53e0880-8141-4d72-a02a-aad475809e77', $view->getAssign('paypalUnifiedInContextOrderId'));
+        static::assertSame('218baa37-9296-4288-a61d-256dea8594f4', $view->getAssign('paypalUnifiedInContextPayerId'));
+        static::assertSame('e209dd3b-90b0-4e06-bd67-850fbf23dcac', $view->getAssign('paypalUnifiedInContextBasketId'));
+    }
+
+    /**
+     * @return void
+     */
+    public function testAddInContextButtonAssignsVariablesOnPayment()
+    {
+        $view = new ViewMock(new \Enlight_Template_Manager());
+        $request = new \Enlight_Controller_Request_RequestTestCase();
+        $response = new \Enlight_Controller_Response_ResponseTestCase();
+
+        $request->setActionName('payment');
+        $request->setParams([
+            'inContextCheckout' => true,
+            'orderId' => 'e6087d09-4109-49aa-93be-13f4ee0baa5d',
+            'payerId' => '1880eb91-fb92-4289-9a60-985fba818429',
+            'basketId' => 'daf8a0fd-527b-4700-896e-8a19bc71796f',
+        ]);
+
+        $response->setRedirect('http://127.0.0.1');
+
+        $controller = new DummyController($request, $view, $response);
+
+        $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
+            'subject' => $controller,
+        ]);
+
+        $this->importSettings(true, true, true);
+
+        $subscriber = $this->getSubscriber();
+        $subscriber->addInContextButton($enlightEventArgs);
+
+        static::assertTrue($controller->Response()->isRedirect());
+        // TODO: check contents
+        // static::assertTrue($controller->Response()->getBody());
     }
 
     public function testAddInContextInfoToRequestReturnsBecauseWrongAction()
