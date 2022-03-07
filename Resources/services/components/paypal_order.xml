@@ -5,17 +5,6 @@
            xsi:schemaLocation="https://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
-        <service id="paypal_unified.paypal_order_builder_service"
-                 class="SwagPaymentPayPalUnified\Components\Services\PayPalOrderBuilderService"
-                 public="true">
-            <argument type="service" id="paypal_unified.settings_service"/>
-            <argument type="service" id="paypal_unified.paypal_order.item_list_provider"/>
-            <argument type="service" id="paypal_unified.paypal_order.amount_provider"/>
-            <argument type="service" id="paypal_unified.common.return_url_helper"/>
-            <argument type="service" id="shopware_storefront.context_service"/>
-            <argument type="service" id="paypal_unified.phone_number_builder"/>
-        </service>
-
         <service id="paypal_unified.paypal_order.item_list_provider"
                  class="SwagPaymentPayPalUnified\Components\Services\PayPalOrder\ItemListProvider"
                  public="true">

@@ -49,6 +49,9 @@ else
 	SHOPWARE_ENV=$(envname) ./../../../vendor/phpunit/phpunit/phpunit --verbose --filter $(filter)
 endif
 
+make run-javascript-tests:
+	./../../../themes/Frontend/Responsive/node_modules/.bin/jest -c Tests/Javascript/jest.config.js
+
 CS_FIXER_RUN=
 fix-cs: ## Run the code style fixer
 	./../../../vendor/bin/php-cs-fixer fix -v $(CS_FIXER_RUN)
@@ -61,6 +64,8 @@ check-js-code: check-eslint-frontend check-eslint-backend ## Run esLint
 ESLINT_FIX=
 check-eslint-frontend:
 	./../../../themes/node_modules/eslint/bin/eslint.js --ignore-path .eslintignore -c ./../../../themes/Frontend/.eslintrc.js --global "jQuery,StateManager, PAYPAL, paypal, location" Resources/views/frontend $(ESLINT_FIX)
+	./../../../themes/node_modules/eslint/bin/eslint.js --ignore-path .eslintignore -c ./../../../themes/Frontend/.eslintrc.js --global "jQuery" Tests/Javascript $(ESLINT_FIX)
+	./../../../themes/node_modules/eslint/bin/eslint.js --ignore-path .eslintignore -c ./../../../themes/Frontend/.eslintrc.js --global "jQuery" Tests/E2E $(ESLINT_FIX)
 
 fix-eslint-frontend: ESLINT_FIX= --fix
 fix-eslint-frontend: check-eslint-frontend

@@ -23,7 +23,7 @@ class ClassicOrderHandler extends AbstractOrderHandler
 
     public function supports($paymentType)
     {
-        return \in_array($paymentType, self::SUPPORTED_PAYMENT_TYPES);
+        return \in_array($paymentType, self::SUPPORTED_PAYMENT_TYPES, true);
     }
 
     public function createOrder(PayPalOrderParameter $orderParameter)

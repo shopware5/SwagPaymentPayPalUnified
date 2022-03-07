@@ -20,5 +20,9 @@ function _importInitScripts(connection) {
     const apmFixtures = fs.readFileSync(path.join(path.resolve(''),'setup/sql/apm_fixtures.sql'), 'utf8')
     connection.query(apmFixtures.trim());
 
+    console.log("Activate 'Buy in listing' setting");
+    const buyInListingSetting = fs.readFileSync(path.join(path.resolve(''),'setup/sql/buy_in_listing.sql'), 'utf8')
+    connection.query(buyInListingSetting.trim());
+
     console.log('Finished executing init Scripts');
 }

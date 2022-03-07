@@ -9,12 +9,13 @@
 namespace SwagPaymentPayPalUnified\Components\Services\OrderBuilder\OrderHandler;
 
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\PayPalOrderParameter;
+use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
 
 interface OrderBuilderHandlerInterface
 {
     /**
-     * @param string $paymentType
+     * @param PaymentType::* $paymentType
      *
      * @return bool
      */
