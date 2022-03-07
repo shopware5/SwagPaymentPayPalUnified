@@ -20,6 +20,9 @@ test.describe("Backend testing", () => {
         await page.fill('input[name="sandboxClientId"]', credentials.paypalSandboxClientId);
         await page.fill('input[name="sandboxClientSecret"]', credentials.paypalSandboxClientSecret);
 
+        await page.locator('button[role="button"]:has-text("PayPal Express Checkout Integration")').click();
+        await page.locator('text=\'Direkt zu PayPal\' auf Listing-Seiten:Wenn diese Option aktiv ist, wird der Expr >> input[type="button"]').click();
+
         // Click button[role="button"]:has-text("PayPal Pay Upon Invoice Integration")
         await page.locator('button[role="button"]:has-text("PayPal Pay Upon Invoice Integration")').click();
         // Click textarea[name="customerServiceInstructions"]

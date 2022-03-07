@@ -24,7 +24,6 @@ use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\SettingsHelperTrait;
 use SwagPaymentPayPalUnified\Tests\Mocks\ClientService;
 use SwagPaymentPayPalUnified\Tests\Mocks\DummyController;
-use SwagPaymentPayPalUnified\Tests\Mocks\PaymentResourceMock;
 use SwagPaymentPayPalUnified\Tests\Mocks\ViewMock;
 
 class ExpressCheckoutSubscriberTest extends TestCase
@@ -32,6 +31,9 @@ class ExpressCheckoutSubscriberTest extends TestCase
     use DatabaseTestCaseTrait;
     use SettingsHelperTrait;
 
+    /**
+     * @return void
+     */
     public function testConstruct()
     {
         $subscriber = $this->getSubscriber();
@@ -39,6 +41,9 @@ class ExpressCheckoutSubscriberTest extends TestCase
         static::assertNotNull($subscriber);
     }
 
+    /**
+     * @return void
+     */
     public function testGetSubscribedEvents()
     {
         $events = ExpressCheckoutSubscriber::getSubscribedEvents();
@@ -53,6 +58,9 @@ class ExpressCheckoutSubscriberTest extends TestCase
         static::assertSame('addExpressCheckoutButtonLogin', $events['Enlight_Controller_Action_PostDispatch_Frontend_Register']);
     }
 
+    /**
+     * @return void
+     */
     public function testAddExpressCheckoutButtonCartReturnPaymentMethodInactive()
     {
         $paymentMethodProvider = $this->getPaymentMethodProvider();
@@ -74,6 +82,9 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $paymentMethodProvider->setPaymentMethodActiveFlag(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME, true);
     }
 
+    /**
+     * @return void
+     */
     public function testAddExpressCheckoutButtonCartReturnUnifiedInactive()
     {
         $view = new ViewMock(new Enlight_Template_Manager());
@@ -91,6 +102,9 @@ class ExpressCheckoutSubscriberTest extends TestCase
         static::assertNull($view->getAssign('paypalUnifiedUseInContext'));
     }
 
+    /**
+     * @return void
+     */
     public function testAddExpressCheckoutButtonCartReturnEcInactive()
     {
         $view = new ViewMock(new Enlight_Template_Manager());
@@ -109,6 +123,9 @@ class ExpressCheckoutSubscriberTest extends TestCase
         static::assertNull($view->getAssign('paypalUnifiedUseInContext'));
     }
 
+    /**
+     * @return void
+     */
     public function testAddExpressCheckoutButtonCartReturnWrongController()
     {
         $view = new ViewMock(new Enlight_Template_Manager());
@@ -128,6 +145,9 @@ class ExpressCheckoutSubscriberTest extends TestCase
         static::assertNull($view->getAssign('paypalUnifiedUseInContext'));
     }
 
+    /**
+     * @return void
+     */
     public function testAddExpressCheckoutButtonCartReturnWrongAction()
     {
         $view = new ViewMock(new Enlight_Template_Manager());
@@ -148,6 +168,9 @@ class ExpressCheckoutSubscriberTest extends TestCase
         static::assertNull($view->getAssign('paypalUnifiedUseInContext'));
     }
 
+    /**
+     * @return void
+     */
     public function testAddExpressCheckoutButtonCartAssignsValueToCart()
     {
         $view = new ViewMock(new Enlight_Template_Manager());
@@ -167,8 +190,12 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $subscriber->addExpressCheckoutButtonCart($enlightEventArgs);
 
         static::assertTrue($view->getAssign('paypalUnifiedModeSandbox'));
+        static::assertNotNull($view->getAssign('paypalUnifiedClientId'));
     }
 
+    /**
+     * @return void
+     */
     public function testAddExpressCheckoutButtonCartAssignsValueToAjaxCart()
     {
         $view = new ViewMock(new Enlight_Template_Manager());
@@ -190,6 +217,9 @@ class ExpressCheckoutSubscriberTest extends TestCase
         static::assertTrue($view->getAssign('paypalUnifiedModeSandbox'));
     }
 
+    /**
+     * @return void
+     */
     public function testAddExpressCheckoutButtonCartShouldReturnBecauseEsdProductIsInBasket()
     {
         $view = new ViewMock(new Enlight_Template_Manager());
@@ -203,7 +233,6 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $this->importSettings(true, true, true, true);
 
         $subscriber = $this->getSubscriber(
-            false,
             static::createConfiguredMock(EsdProductChecker::class, [
                 'checkForEsdProducts' => true,
             ])
@@ -216,6 +245,9 @@ class ExpressCheckoutSubscriberTest extends TestCase
         static::assertNull($view->getAssign('paypalUnifiedUseInContext'));
     }
 
+    /**
+     * @return void
+     */
     public function testAddEcInfoOnConfirmReturnWrongAction()
     {
         $view = new ViewMock(new Enlight_Template_Manager());
@@ -233,6 +265,9 @@ class ExpressCheckoutSubscriberTest extends TestCase
         static::assertNull($view->getAssign('paypalUnifiedExpressPaymentId'));
     }
 
+    /**
+     * @return void
+     */
     public function testAddEcInfoOnConfirmReturnNoEc()
     {
         $view = new ViewMock(new Enlight_Template_Manager());
@@ -250,6 +285,9 @@ class ExpressCheckoutSubscriberTest extends TestCase
         static::assertNull($view->getAssign('paypalUnifiedExpressPaymentId'));
     }
 
+    /**
+     * @return void
+     */
     public function testAddEcInfoOnConfirmAssignsCorrectValuesOnConfirmAction()
     {
         $view = new ViewMock(new Enlight_Template_Manager());
@@ -276,6 +314,9 @@ class ExpressCheckoutSubscriberTest extends TestCase
         static::assertTrue($view->getAssign('paypalUnifiedExpressCheckout'));
     }
 
+    /**
+     * @return void
+     */
     public function testAddEcInfoOnConfirmShouldReturnBecauseEsdProductIsInBasket()
     {
         $basket = Shopware()->Modules()->Basket();
@@ -297,7 +338,6 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $this->importSettings(true, true, true, true);
 
         $subscriber = $this->getSubscriber(
-            false,
             static::createConfiguredMock(EsdProductChecker::class, [
                 'checkForEsdProducts' => true,
             ])
@@ -311,6 +351,8 @@ class ExpressCheckoutSubscriberTest extends TestCase
 
     /**
      * @doesNotPerformAssertions
+     *
+     * @return void
      */
     public function testAddPaymentInfoToRequestReturnWrongAction()
     {
@@ -330,6 +372,8 @@ class ExpressCheckoutSubscriberTest extends TestCase
 
     /**
      * @doesNotPerformAssertions
+     *
+     * @return void
      */
     public function testAddPaymentInfoToRequestReturnWrongParam()
     {
@@ -349,6 +393,8 @@ class ExpressCheckoutSubscriberTest extends TestCase
 
     /**
      * @doesNotPerformAssertions
+     *
+     * @return void
      */
     public function testAddPaymentInfoToRequestReturnNoRedirect()
     {
@@ -370,6 +416,9 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $subscriber->addExpressOrderInfoOnConfirm($enlightEventArgs);
     }
 
+    /**
+     * @return void
+     */
     public function testAddExpressCheckoutButtonDetailReturnPaymentMethodInactive()
     {
         $paymentMethodProvider = $this->getPaymentMethodProvider();
@@ -387,6 +436,9 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $paymentMethodProvider->setPaymentMethodActiveFlag(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME, true);
     }
 
+    /**
+     * @return void
+     */
     public function testAddExpressCheckoutButtonDetailReturnUnifiedInactive()
     {
         $view = new ViewMock(new Enlight_Template_Manager());
@@ -400,6 +452,9 @@ class ExpressCheckoutSubscriberTest extends TestCase
         static::assertNull($view->getAssign('paypalUnifiedEcDetailActive'));
     }
 
+    /**
+     * @return void
+     */
     public function testAddExpressCheckoutButtonDetailReturnsBecauseEcInactive()
     {
         $view = new ViewMock(new Enlight_Template_Manager());
@@ -413,6 +468,9 @@ class ExpressCheckoutSubscriberTest extends TestCase
         static::assertNull($view->getAssign('paypalUnifiedEcDetailActive'));
     }
 
+    /**
+     * @return void
+     */
     public function testAddExpressCheckoutButtonDetailReturnEcDetailInactive()
     {
         $view = new ViewMock(new Enlight_Template_Manager());
@@ -426,6 +484,9 @@ class ExpressCheckoutSubscriberTest extends TestCase
         static::assertNull($view->getAssign('paypalUnifiedEcDetailActive'));
     }
 
+    /**
+     * @return void
+     */
     public function testAddExpressCheckoutButtonDetailAssignsCorrectValues()
     {
         $view = new ViewMock(new Enlight_Template_Manager());
@@ -441,6 +502,9 @@ class ExpressCheckoutSubscriberTest extends TestCase
         static::assertTrue($view->getAssign('paypalUnifiedEcDetailActive'));
     }
 
+    /**
+     * @return void
+     */
     public function testAddExpressCheckoutButtonDetailShouldReturnBecauseEsdProduct()
     {
         $view = new ViewMock(new Enlight_Template_Manager());
@@ -457,6 +521,9 @@ class ExpressCheckoutSubscriberTest extends TestCase
         static::assertNull($view->getAssign('paypalUnifiedEcDetailActive'));
     }
 
+    /**
+     * @return void
+     */
     public function testAddExpressCheckoutButtonListingReturnPaymentMethodInactive()
     {
         $paymentMethodProvider = $this->getPaymentMethodProvider();
@@ -474,6 +541,9 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $paymentMethodProvider->setPaymentMethodActiveFlag(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME, true);
     }
 
+    /**
+     * @return void
+     */
     public function testAddExpressCheckoutButtonListingReturnUnifiedInactive()
     {
         $view = new ViewMock(new Enlight_Template_Manager());
@@ -487,6 +557,9 @@ class ExpressCheckoutSubscriberTest extends TestCase
         static::assertNull($view->getAssign('paypalUnifiedEcDetailActive'));
     }
 
+    /**
+     * @return void
+     */
     public function testAddExpressCheckoutButtonListingReturnsBecauseEcInactive()
     {
         $view = new ViewMock(new Enlight_Template_Manager());
@@ -500,6 +573,9 @@ class ExpressCheckoutSubscriberTest extends TestCase
         static::assertNull($view->getAssign('paypalUnifiedEcDetailActive'));
     }
 
+    /**
+     * @return void
+     */
     public function testAddExpressCheckoutButtonListingReturnEcDetailInactive()
     {
         $view = new ViewMock(new Enlight_Template_Manager());
@@ -513,6 +589,9 @@ class ExpressCheckoutSubscriberTest extends TestCase
         static::assertNull($view->getAssign('paypalUnifiedEcDetailActive'));
     }
 
+    /**
+     * @return void
+     */
     public function testAddExpressCheckoutButtonListingAssignsCorrectValues()
     {
         $view = new ViewMock(new Enlight_Template_Manager());
@@ -527,6 +606,9 @@ class ExpressCheckoutSubscriberTest extends TestCase
         static::assertTrue($view->getAssign('paypalUnifiedEcListingActive'));
     }
 
+    /**
+     * @return void
+     */
     public function testAddExpressCheckoutButtonListingAssignsEsdProductNumbers()
     {
         $view = new ViewMock(new Enlight_Template_Manager());
@@ -541,6 +623,9 @@ class ExpressCheckoutSubscriberTest extends TestCase
         static::assertSame('["SW10196"]', $view->getAssign('paypalUnifiedEsdProducts'));
     }
 
+    /**
+     * @return void
+     */
     public function testAddExpressCheckoutButtonLoginReturnPaymentMethodInactive()
     {
         $paymentMethodProvider = $this->getPaymentMethodProvider();
@@ -558,6 +643,9 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $paymentMethodProvider->setPaymentMethodActiveFlag(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME, true);
     }
 
+    /**
+     * @return void
+     */
     public function testAddExpressCheckoutButtonLoginReturnUnifiedInactive()
     {
         $view = new ViewMock(new Enlight_Template_Manager());
@@ -571,6 +659,9 @@ class ExpressCheckoutSubscriberTest extends TestCase
         static::assertNull($view->getAssign('paypalUnifiedEcLoginActive'));
     }
 
+    /**
+     * @return void
+     */
     public function testAddExpressCheckoutButtonLoginReturnsBecauseEcInactive()
     {
         $view = new ViewMock(new Enlight_Template_Manager());
@@ -584,6 +675,9 @@ class ExpressCheckoutSubscriberTest extends TestCase
         static::assertNull($view->getAssign('paypalUnifiedEcLoginActive'));
     }
 
+    /**
+     * @return void
+     */
     public function testAddExpressCheckoutButtonLoginReturnEcDetailInactive()
     {
         $view = new ViewMock(new Enlight_Template_Manager());
@@ -597,6 +691,9 @@ class ExpressCheckoutSubscriberTest extends TestCase
         static::assertNull($view->getAssign('paypalUnifiedEcLoginActive'));
     }
 
+    /**
+     * @return void
+     */
     public function testAddExpressCheckoutButtonLoginAssignsCorrectValues()
     {
         $view = new ViewMock(new Enlight_Template_Manager());
@@ -617,6 +714,9 @@ class ExpressCheckoutSubscriberTest extends TestCase
         static::assertTrue($view->getAssign('paypalUnifiedEcLoginActive'));
     }
 
+    /**
+     * @return void
+     */
     public function testIsUserLoggedInShouldBeTrue()
     {
         Shopware()->Container()->get('session')->offsetSet('sUserId', 100);
@@ -631,6 +731,9 @@ class ExpressCheckoutSubscriberTest extends TestCase
         static::assertTrue($result);
     }
 
+    /**
+     * @return void
+     */
     public function testIsUserLoggedInShouldBeFalse()
     {
         Shopware()->Container()->get('session')->offsetUnset('sUserId');
@@ -654,6 +757,8 @@ class ExpressCheckoutSubscriberTest extends TestCase
      * @param bool $ecOffCanvasActive
      * @param bool $ecListingActive
      * @param bool $ecSubmitCart
+     *
+     * @return void
      */
     private function importSettings(
         $active = false,
@@ -669,6 +774,7 @@ class ExpressCheckoutSubscriberTest extends TestCase
             'active' => $active,
             'shopId' => 1,
             'sandbox' => $sandboxMode,
+            'sandboxClientId' => 'foo',
         ]);
 
         $this->insertExpressCheckoutSettingsFromArray([
@@ -682,22 +788,15 @@ class ExpressCheckoutSubscriberTest extends TestCase
     }
 
     /**
-     * @param bool                   $usePaymentResourceMock
      * @param EsdProductChecker|null $esdProductChecker
      *
      * @throws Exception
      *
      * @return ExpressCheckoutSubscriber
      */
-    private function getSubscriber($usePaymentResourceMock = false, $esdProductChecker = null)
+    private function getSubscriber($esdProductChecker = null)
     {
         Shopware()->Container()->set('paypal_unified.client_service', new ClientService());
-
-        $paymentResource = Shopware()->Container()->get('paypal_unified.payment_resource');
-
-        if ($usePaymentResourceMock) {
-            $paymentResource = new PaymentResourceMock();
-        }
 
         if (!$esdProductChecker instanceof EsdProductChecker) {
             $esdProductChecker = Shopware()->Container()->get(EsdProductChecker::class);
@@ -706,10 +805,6 @@ class ExpressCheckoutSubscriberTest extends TestCase
         return new ExpressCheckoutSubscriber(
             Shopware()->Container()->get('paypal_unified.settings_service'),
             Shopware()->Container()->get('session'),
-            $paymentResource,
-            Shopware()->Container()->get('paypal_unified.payment_address_service'),
-            Shopware()->Container()->get('paypal_unified.payment_builder_service'),
-            Shopware()->Container()->get('paypal_unified.client_service'),
             Shopware()->Container()->get('paypal_unified.dependency_provider'),
             $esdProductChecker,
             Shopware()->Container()->get('paypal_unified.payment_method_provider'),
@@ -727,6 +822,9 @@ class ExpressCheckoutSubscriberTest extends TestCase
         ]);
     }
 
+    /**
+     * @return PaymentMethodProvider
+     */
     private function getPaymentMethodProvider()
     {
         return new PaymentMethodProvider(
