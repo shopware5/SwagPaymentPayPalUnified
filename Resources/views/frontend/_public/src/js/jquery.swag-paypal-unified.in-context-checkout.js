@@ -140,7 +140,7 @@
             useSandbox: false,
 
             /**
-             * Commit the ordernumber to PayPal
+             * Commit the order number to PayPal
              *
              * @type boolean
              */
@@ -191,7 +191,7 @@
              *
              * @type string
              */
-            mediumWidthClass: 'paypal-button-witdh--medium',
+            mediumWidthClass: 'paypal-button-width--medium',
 
             /**
              * PayPal button width large
@@ -295,7 +295,7 @@
         },
 
         /**
-         * Creates the PayPal express checkout button with the loaded PayPal javascript
+         * Creates the PayPal in-context button with the loaded PayPal javascript
          */
         createButton: function() {
             var me = this,
@@ -384,11 +384,6 @@
                 onCancel: this.onCancel.bind(this),
 
                 /**
-                 * Will be called if the payment button is clicked
-                 */
-                onClick: this.onButtonClick.bind(this),
-
-                /**
                  * Will be called if any api error occurred
                  */
                 onError: this.onPayPalAPIError.bind(this)
@@ -409,13 +404,10 @@
                 method: 'get',
                 url: me.opts.createOrderUrl
             }).then(function(response) {
-                if (response.errorUrl) {
-                    me.onPayPalAPIError();
-                    return;
-                }
                 me.opts.basketId = response.basketId;
 
                 return response.token;
+            }, function() {
             }).promise();
         },
 
@@ -479,19 +471,6 @@
             $.publish('plugin/swagPayPalUnifiedInContextCheckout/checkFormValidity', [me, isFormValid, me.$form]);
 
             return isFormValid;
-        },
-
-        /**
-         * called if the paypal button is clicked
-         * clicks the hidden confirm button to trigger the HTML5 validation of the checkout confirm form
-         */
-        onButtonClick: function() {
-            var me = this;
-
-            if (!me.checkFormValidity()) {
-                me.$confirmButton.trigger('click');
-                return false;
-            }
         },
 
         onPayPalAPIError: function() {
