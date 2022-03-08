@@ -51,7 +51,6 @@ class PaymentControllerHelper
         $view = $controller->View();
 
         $controller->Response()->setStatusCode(Response::HTTP_BAD_REQUEST);
-        $view->assign('errorCode', $redirectDataBuilder->getCode());
         if ($redirectDataBuilder->hasException()) {
             $view->assign($redirectDataBuilder->getRedirectData());
         }

@@ -2636,16 +2636,6 @@ parameters:
 			path: Subscriber/Order.php
 
 		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Subscriber\\\\PayUponInvoiceRiskManagement\\:\\:afterManageRisks\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Subscriber/PayUponInvoiceRiskManagement.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Subscriber\\\\PayUponInvoiceRiskManagement\\:\\:onExecuteRule\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Subscriber/PayUponInvoiceRiskManagement.php
-
-		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Subscriber\\\\Plus\\:\\:addPaymentMethodsAttributes\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: Subscriber/Plus.php

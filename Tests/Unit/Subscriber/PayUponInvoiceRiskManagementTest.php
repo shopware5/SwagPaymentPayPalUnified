@@ -23,6 +23,7 @@ use SwagPaymentPayPalUnified\Models\Settings\PayUponInvoice;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use SwagPaymentPayPalUnified\Subscriber\PayUponInvoiceRiskManagement;
+use SwagPaymentPayPalUnified\Tests\Mocks\ViewMock;
 use Symfony\Component\Validator\Constraints\Collection;
 use Symfony\Component\Validator\Constraints\Date;
 use Symfony\Component\Validator\Constraints\EqualTo;
@@ -34,6 +35,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class PayUponInvoiceRiskManagementTest extends TestCase
 {
     const SHOP_ID = 591790496;
+    const PAYMENT_ID_PUI = 101;
 
     /**
      * The returnValueProvider provides a testcase to assert the check fails in
@@ -73,7 +75,7 @@ class PayUponInvoiceRiskManagementTest extends TestCase
      */
     public function testRiskRuleIsExecutedWhenBasicChecksPass()
     {
-        $adminMock = static::createMock(\sAdmin::class);
+        $adminMock = $this->createMock(\sAdmin::class);
 
         $adminMock->expects(static::once())
             ->method('executeRiskRule')
@@ -85,12 +87,12 @@ class PayUponInvoiceRiskManagementTest extends TestCase
                 static::anything()
             );
 
-        $argsMock = static::createMock(\Enlight_Hook_HookArgs::class);
+        $argsMock = $this->createMock(\Enlight_Hook_HookArgs::class);
 
         $argsMock->method('get')
             ->willReturnMap([
                 ['basket', 'fd845875-4ddf-41a6-bbdf-952a20aa598f'],
-                ['paymentID', 101],
+                ['paymentID', self::PAYMENT_ID_PUI],
             ]);
 
         $argsMock->method('getSubject')
@@ -99,7 +101,7 @@ class PayUponInvoiceRiskManagementTest extends TestCase
         $paymentMethodProviderMock = $this->getPaymentMethodProvider();
 
         $paymentMethodProviderMock->method('getPaymentId')
-            ->willReturn(101);
+            ->willReturn(self::PAYMENT_ID_PUI);
 
         $subject = $this->getPayUponInvoiceRiskManagement($paymentMethodProviderMock);
 
@@ -116,7 +118,7 @@ class PayUponInvoiceRiskManagementTest extends TestCase
      */
     public function testConstraintsAreCorrect()
     {
-        $argsMock = static::createMock(\Enlight_Event_EventArgs::class);
+        $argsMock = $this->createMock(\Enlight_Event_EventArgs::class);
 
         $validatorMock = $this->getValidator();
 
@@ -127,17 +129,17 @@ class PayUponInvoiceRiskManagementTest extends TestCase
                 static::callback(self::getConstraintCollectionValidator())
             );
 
-        $subject = $this->getPayUponInvoiceRiskManagement(null, null, $validatorMock);
+        $subject = $this->getPayUponInvoiceRiskManagement(null, $validatorMock);
 
         $subject->onExecuteRule($argsMock);
     }
 
     /**
-     * @return \Generator<array<mixed>>
+     * @return \Generator<array{0: PayUponInvoiceRiskManagement, 1: \Enlight_Hook_HookArgs, 2: true}>
      */
     public function returnValueProvider()
     {
-        $argsMock = static::createMock(\Enlight_Hook_HookArgs::class);
+        $argsMock = $this->createMock(\Enlight_Hook_HookArgs::class);
 
         /*
          * Supposed another validation failed already, the return value will be
@@ -154,7 +156,7 @@ class PayUponInvoiceRiskManagementTest extends TestCase
     }
 
     /**
-     * @return \Generator<array<mixed>>
+     * @return \Generator<array{0: PayUponInvoiceRiskManagement, 1: \Enlight_Hook_HookArgs, 2: bool}>
      */
     public function paymentMethodProvider()
     {
@@ -167,7 +169,7 @@ class PayUponInvoiceRiskManagementTest extends TestCase
             $paymentMethodDescription = $paymentMethod instanceof Constraint ? \get_class($paymentMethod) : $paymentMethod;
             $isPayUponInvoice = $paymentMethod === PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME;
 
-            $argsMock = static::createMock(\Enlight_Hook_HookArgs::class);
+            $argsMock = $this->createMock(\Enlight_Hook_HookArgs::class);
 
             $argsMock->method('get')
                 ->willReturnMap([
@@ -177,7 +179,7 @@ class PayUponInvoiceRiskManagementTest extends TestCase
 
             if ($isPayUponInvoice) {
                 $argsMock->method('getSubject')
-                    ->willReturn(static::createConfiguredMock(\sAdmin::class, [
+                    ->willReturn($this->createConfiguredMock(\sAdmin::class, [
                         'executeRiskRule' => true,
                     ]));
             }
@@ -191,49 +193,177 @@ class PayUponInvoiceRiskManagementTest extends TestCase
     }
 
     /**
-     * @param PaymentMethodProvider|null    $paymentMethodProvider
-     * @param DependencyProvider|null       $dependencyProvider
-     * @param ValidatorInterface|null       $validator
-     * @param ContextServiceInterface|null  $contextService
-     * @param SettingsServiceInterface|null $settingsService
+     * @return void
+     */
+    public function testShouldShowUnconditionally()
+    {
+        $paymentMethodProviderMock = $this->getPaymentMethodProvider();
+        $paymentMethodProviderMock->method('getPaymentId')->willReturn(self::PAYMENT_ID_PUI);
+
+        $request = new \Enlight_Controller_Request_RequestTestCase();
+        $request->setControllerName('checkout');
+        $request->setActionName('shippingPayment');
+        $dependencyProvider = $this->getDependencyProvider($request);
+
+        $argsMock = $this->createMock(\Enlight_Hook_HookArgs::class);
+        $argsMock->method('get')->willReturnMap([['paymentID', self::PAYMENT_ID_PUI]]);
+
+        $subscriber = $this->getPayUponInvoiceRiskManagement($paymentMethodProviderMock, null, $dependencyProvider);
+        static::assertFalse($subscriber->afterManageRisks($argsMock));
+    }
+
+    /**
+     * @return void
+     */
+    public function testOnPostDispatchCheckoutNoPaymentBlocked()
+    {
+        $subscriber = $this->getPayUponInvoiceRiskManagement();
+
+        $view = new ViewMock(new \Enlight_Template_Manager());
+
+        $controller = $this->createMock(\Shopware_Controllers_Frontend_Checkout::class);
+        $controller->method('View')->willReturn($view);
+        $eventArgs = $this->createMock(\Enlight_Controller_ActionEventArgs::class);
+        $eventArgs->method('get')->willReturn($controller);
+
+        $subscriber->onPostDispatchCheckout($eventArgs);
+
+        static::assertNull($view->getAssign(PayUponInvoiceRiskManagement::PAY_PAL_UNIFIED_PAY_UPON_INVOICE_BLOCKED));
+    }
+
+    /**
+     * @return void
+     */
+    public function testOnPostDispatchCheckoutPuiTechnicallyBlocked()
+    {
+        $session = $this->createMock(\Enlight_Components_Session_Namespace::class);
+        $session->expects(static::once())->method('offsetGet')->willReturnMap([
+            [PayUponInvoiceRiskManagement::PAY_PAL_UNIFIED_PAY_UPON_INVOICE_BLOCKED_TECHNICALLY, true],
+        ]);
+        $session->expects(static::once())->method('offsetUnset');
+        $dependencyProvider = $this->getDependencyProvider(null, $session);
+        $subscriber = $this->getPayUponInvoiceRiskManagement(null, null, $dependencyProvider);
+
+        $view = new ViewMock(new \Enlight_Template_Manager());
+        $view->assign('paymentBlocked', true);
+
+        $controller = $this->createMock(\Shopware_Controllers_Frontend_Checkout::class);
+        $controller->method('View')->willReturn($view);
+        $eventArgs = $this->createMock(\Enlight_Controller_ActionEventArgs::class);
+        $eventArgs->method('get')->willReturn($controller);
+
+        $subscriber->onPostDispatchCheckout($eventArgs);
+
+        static::assertNull($view->getAssign(PayUponInvoiceRiskManagement::PAY_PAL_UNIFIED_PAY_UPON_INVOICE_BLOCKED));
+    }
+
+    /**
+     * @return void
+     */
+    public function testOnPostDispatchCheckoutPuiBlocked()
+    {
+        $session = $this->createMock(\Enlight_Components_Session_Namespace::class);
+        $session->expects(static::exactly(2))->method('offsetGet')->willReturnMap([
+            [PayUponInvoiceRiskManagement::PAY_PAL_UNIFIED_PAY_UPON_INVOICE_BLOCKED_TECHNICALLY, null],
+            [PayUponInvoiceRiskManagement::PAY_PAL_UNIFIED_PAY_UPON_INVOICE_BLOCKED, true],
+        ]);
+        $session->expects(static::once())->method('offsetUnset');
+        $dependencyProvider = $this->getDependencyProvider(null, $session);
+        $subscriber = $this->getPayUponInvoiceRiskManagement(null, null, $dependencyProvider);
+
+        $view = new ViewMock(new \Enlight_Template_Manager());
+        $view->assign('paymentBlocked', true);
+
+        $controller = $this->createMock(\Shopware_Controllers_Frontend_Checkout::class);
+        $controller->method('View')->willReturn($view);
+        $eventArgs = $this->createMock(\Enlight_Controller_ActionEventArgs::class);
+        $eventArgs->method('get')->willReturn($controller);
+
+        $subscriber->onPostDispatchCheckout($eventArgs);
+
+        static::assertTrue($view->getAssign(PayUponInvoiceRiskManagement::PAY_PAL_UNIFIED_PAY_UPON_INVOICE_BLOCKED));
+    }
+
+    /**
+     * @return void
+     */
+    public function testSetPaymentMethodBlockedFlagPaymentIsNotPui()
+    {
+        $session = $this->createMock(\Enlight_Components_Session_Namespace::class);
+        $session->expects(static::never())->method('offsetSet');
+        $dependencyProvider = $this->getDependencyProvider(null, $session);
+        $subscriber = $this->getPayUponInvoiceRiskManagement(null, null, $dependencyProvider);
+
+        $eventArgs = $this->createMock(\Enlight_Event_EventArgs::class);
+        $eventArgs->expects(static::once())->method('get')->willReturnMap([
+            ['name', PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME],
+        ]);
+        $subscriber->setPaymentMethodBlockedFlag($eventArgs);
+    }
+
+    /**
+     * @return void
+     */
+    public function testSetPaymentMethodBlockedFlag()
+    {
+        $session = $this->createMock(\Enlight_Components_Session_Namespace::class);
+        $session->expects(static::once())->method('offsetSet');
+        $dependencyProvider = $this->getDependencyProvider(null, $session);
+        $subscriber = $this->getPayUponInvoiceRiskManagement(null, null, $dependencyProvider);
+
+        $eventArgs = $this->createMock(\Enlight_Event_EventArgs::class);
+        $eventArgs->expects(static::once())->method('get')->willReturnMap([
+            ['name', PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME],
+        ]);
+        $subscriber->setPaymentMethodBlockedFlag($eventArgs);
+    }
+
+    /**
+     * @param PaymentMethodProvider|null $paymentMethodProvider
+     * @param ValidatorInterface|null    $validator
+     * @param DependencyProvider|null    $dependencyProvider
      *
      * @return PayUponInvoiceRiskManagement
      */
-    protected function getPayUponInvoiceRiskManagement(
+    private function getPayUponInvoiceRiskManagement(
         $paymentMethodProvider = null,
-        $dependencyProvider = null,
         $validator = null,
-        $contextService = null,
-        $settingsService = null
+        $dependencyProvider = null
     ) {
         return new PayUponInvoiceRiskManagement(
             $paymentMethodProvider ?: $this->getPaymentMethodProvider(),
             $dependencyProvider ?: $this->getDependencyProvider(),
             $validator ?: $this->getValidator(),
-            $contextService ?: $this->getContextService(),
-            $settingsService ?: $this->getSettingsService()
+            $this->getContextService(),
+            $this->getSettingsService()
         );
     }
 
     /**
      * @return MockObject|PaymentMethodProvider
      */
-    protected function getPaymentMethodProvider()
+    private function getPaymentMethodProvider()
     {
-        return static::createMock(PaymentMethodProvider::class);
+        return $this->createMock(PaymentMethodProvider::class);
     }
 
     /**
+     * @param \Enlight_Controller_Request_Request|null $request
+     * @param \Enlight_Components_Session_Namespace    $session
+     *
      * @return MockObject|DependencyProvider
      */
-    protected function getDependencyProvider()
+    private function getDependencyProvider($request = null, $session = null)
     {
-        $dependencyProviderMock = static::createMock(DependencyProvider::class);
+        $dependencyProviderMock = $this->createMock(DependencyProvider::class);
 
         $dependencyProviderMock->method('getFront')
-            ->willReturn(static::createConfiguredMock(\Enlight_Controller_Front::class, [
-                'Request' => static::createMock(\Enlight_Controller_Request_Request::class),
+            ->willReturn($this->createConfiguredMock(\Enlight_Controller_Front::class, [
+                'Request' => $request ?: $this->createMock(\Enlight_Controller_Request_Request::class),
             ]));
+
+        $dependencyProviderMock->method('getSession')
+            ->willReturn($session ?: $this->createMock(\Enlight_Components_Session_Namespace::class));
 
         return $dependencyProviderMock;
     }
@@ -241,12 +371,12 @@ class PayUponInvoiceRiskManagementTest extends TestCase
     /**
      * @return MockObject|ValidatorInterface
      */
-    protected function getValidator()
+    private function getValidator()
     {
-        $validatorMock = static::createMock(ValidatorInterface::class);
+        $validatorMock = $this->createMock(ValidatorInterface::class);
 
         $validatorMock->method('validate')
-            ->willReturn(static::createMock(ConstraintViolationListInterface::class));
+            ->willReturn($this->createMock(ConstraintViolationListInterface::class));
 
         return $validatorMock;
     }
@@ -254,16 +384,16 @@ class PayUponInvoiceRiskManagementTest extends TestCase
     /**
      * @return MockObject|ContextServiceInterface
      */
-    protected function getContextService()
+    private function getContextService()
     {
-        $contextServiceMock = static::createMock(ContextServiceInterface::class);
+        $contextServiceMock = $this->createMock(ContextServiceInterface::class);
 
         $contextServiceMock->method('getShopContext')
-            ->willReturn(static::createConfiguredMock(ShopContextInterface::class, [
-                'getCurrency' => static::createConfiguredMock(Currency::class, [
+            ->willReturn($this->createConfiguredMock(ShopContextInterface::class, [
+                'getCurrency' => $this->createConfiguredMock(Currency::class, [
                     'getCurrency' => 'c63432e0-e10c-4ca0-aae9-e622b43d0285',
                 ]),
-                'getShop' => static::createConfiguredMock(Shop::class, [
+                'getShop' => $this->createConfiguredMock(Shop::class, [
                     'getId' => self::SHOP_ID,
                 ]),
             ]));
@@ -274,14 +404,26 @@ class PayUponInvoiceRiskManagementTest extends TestCase
     /**
      * @return MockObject|SettingsServiceInterface
      */
-    protected function getSettingsService()
+    private function getSettingsService()
     {
-        $settingsServiceMock = static::createMock(SettingsServiceInterface::class);
+        $settingsServiceMock = $this->createMock(SettingsServiceInterface::class);
 
         $settingsServiceMock->method('getSettings')
             ->willReturnMap([
-                [self::SHOP_ID, SettingsTable::GENERAL, (new General())->fromArray(['shopId' => self::SHOP_ID])],
-                [self::SHOP_ID, SettingsTable::PAY_UPON_INVOICE, (new PayUponInvoice())->fromArray(['shopId' => self::SHOP_ID, 'active' => true, 'onboardingCompleted' => true])],
+                [
+                    self::SHOP_ID,
+                    SettingsTable::GENERAL,
+                    (new General())->fromArray(['shopId' => self::SHOP_ID]),
+                ],
+                [
+                    self::SHOP_ID,
+                    SettingsTable::PAY_UPON_INVOICE,
+                    (new PayUponInvoice())->fromArray([
+                        'shopId' => self::SHOP_ID,
+                        'active' => true,
+                        'onboardingCompleted' => true,
+                    ]),
+                ],
             ]);
 
         return $settingsServiceMock;
@@ -290,11 +432,11 @@ class PayUponInvoiceRiskManagementTest extends TestCase
     /**
      * @return array<array<string|Constraint|int>>
      */
-    protected static function getPaymentMethodMap()
+    private static function getPaymentMethodMap()
     {
         return [
             [PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME, 100],
-            [PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME, 101],
+            [PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME, self::PAYMENT_ID_PUI],
             [PaymentMethodProviderInterface::PAYPAL_UNIFIED_INSTALLMENTS_METHOD_NAME, 102],
             [static::anything(), 0],
         ];
@@ -303,7 +445,7 @@ class PayUponInvoiceRiskManagementTest extends TestCase
     /**
      * @return \Closure
      */
-    protected static function getConstraintCollectionValidator()
+    private static function getConstraintCollectionValidator()
     {
         return static function (Collection $constraintCollection) {
             static::assertInstanceOf(Collection::class, $constraintCollection);
