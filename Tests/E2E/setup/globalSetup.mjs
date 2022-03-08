@@ -4,12 +4,15 @@ import MysqlFactory from '../helper/mysqlFactory.mjs';
 import defaultPaypalSettingsSql from '../helper/paypalSqlHelper.mjs';
 
 export default function () {
+
     console.log("Global Setup");
     const connection = MysqlFactory.getInstance();
     _importInitScripts(connection)
+
 }
 
 function _importInitScripts(connection) {
+
     console.log('Executing init Scripts');
 
     console.log("Setting birthday of default user");
@@ -32,4 +35,5 @@ function _importInitScripts(connection) {
     connection.query(defaultPaypalSettingsSql);
 
     console.log('Finished executing init Scripts');
+
 }

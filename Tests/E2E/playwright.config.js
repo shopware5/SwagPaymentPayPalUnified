@@ -96,9 +96,11 @@ const config = {
 
 // Only require for non debian systems
 if (process.env.EXECUTION_PATH) {
+
     config.use.launchOptions = {
         executablePath: process.env.EXECUTION_PATH
     };
+
 }
 
 module.exports = config;

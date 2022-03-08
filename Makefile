@@ -59,13 +59,12 @@ fix-cs: ## Run the code style fixer
 fix-cs-dry: CS_FIXER_RUN= --dry-run
 fix-cs-dry: fix-cs  ## Run the code style fixer in dry mode
 
-check-js-code: check-eslint-frontend check-eslint-backend ## Run esLint
+check-js-code: check-eslint-frontend check-eslint-backend check-eslint-e2e ## Run esLint
 
 ESLINT_FIX=
 check-eslint-frontend:
 	./../../../themes/node_modules/eslint/bin/eslint.js --ignore-path .eslintignore -c ./../../../themes/Frontend/.eslintrc.js --global "jQuery,StateManager, PAYPAL, paypal, location" Resources/views/frontend $(ESLINT_FIX)
 	./../../../themes/node_modules/eslint/bin/eslint.js --ignore-path .eslintignore -c ./../../../themes/Frontend/.eslintrc.js --global "jQuery" Tests/Javascript $(ESLINT_FIX)
-	./../../../themes/node_modules/eslint/bin/eslint.js --ignore-path .eslintignore -c ./../../../themes/Frontend/.eslintrc.js --global "jQuery" Tests/E2E $(ESLINT_FIX)
 
 fix-eslint-frontend: ESLINT_FIX= --fix
 fix-eslint-frontend: check-eslint-frontend
@@ -75,6 +74,12 @@ check-eslint-backend:
 
 fix-eslint-backend: ESLINT_FIX= --fix
 fix-eslint-backend: check-eslint-backend
+
+fix-eslint-e2e: ESLINT_FIX= --fix
+fix-eslint-e2e: check-eslint-e2e
+
+check-eslint-e2e:
+	./../../../themes/node_modules/eslint/bin/eslint.js -c ./Tests/E2E/.eslintrc.js ./Tests/E2E/helper/*.mjs ./Tests/E2E/setup/*.mjs ./Tests/E2E/test/*.mjs $(ESLINT_FIX)
 
 phpstan: ## Run PHPStan
 	./../../../vendor/bin/phpstan analyse .

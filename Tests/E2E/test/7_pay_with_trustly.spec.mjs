@@ -5,7 +5,9 @@ const sweden = '25';
 const sek = '5';
 
 test.describe("Pay with trustly", () => {
+
     test('Buy in sweden customer with sek', async ({ page }) => {
+
         //login
         await page.goto('/account');
         await page.waitForLoadState('load');
@@ -48,5 +50,7 @@ test.describe("Pay with trustly", () => {
         await page.click('text=Success');
 
         await expect(page.locator('.teaser--title')).toHaveText(/Vielen Dank für Ihre Bestellung bei Shopware Demo/);
+    
     });
+
 })

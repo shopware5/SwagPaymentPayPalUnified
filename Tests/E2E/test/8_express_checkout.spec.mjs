@@ -1,7 +1,9 @@
 import { test, expect } from '@playwright/test';
 
 test.describe("Is Express Checkout button available", () => {
+
     test('Check product detail page', async ({ page }) => {
+
         await page.goto('/sommerwelten/beachwear/178/strandtuch-ibiza');
 
         let locator = await page.frameLocator('.component-frame').locator('div[role="button"]');
@@ -14,9 +16,11 @@ test.describe("Is Express Checkout button available", () => {
         ]);
 
         await expect(paypalPage.locator('#headerText')).toHaveText(/PayPal/)
+    
     });
 
     test('Check offcanvas cart', async ({ page }) => {
+
         await page.goto('/sommerwelten/beachwear/178/strandtuch-ibiza');
 
         await page.locator('text=In den Warenkorb').click();
@@ -32,9 +36,11 @@ test.describe("Is Express Checkout button available", () => {
         ]);
 
         await expect(paypalPage.locator('#headerText')).toHaveText(/PayPal/)
+    
     });
 
     test('Check checkout cart page', async ({ page }) => {
+
         await page.goto('/sommerwelten/beachwear/178/strandtuch-ibiza');
 
         await page.locator('text=In den Warenkorb').click();
@@ -52,9 +58,11 @@ test.describe("Is Express Checkout button available", () => {
         ]);
 
         await expect(paypalPage.locator('#headerText')).toHaveText(/PayPal/)
+    
     });
 
     test('Check register page', async ({ page }) => {
+
         await page.goto('/sommerwelten/beachwear/178/strandtuch-ibiza');
 
         await page.locator('text=In den Warenkorb').click();
@@ -72,9 +80,11 @@ test.describe("Is Express Checkout button available", () => {
         ]);
 
         await expect(paypalPage.locator('#headerText')).toHaveText(/PayPal/)
+    
     });
 
     test('Check product listing page', async ({ page }) => {
+
         await page.goto('/sommerwelten/beachwear/');
 
         let locator = await page.frameLocator('.component-frame >> nth=1').locator('div[role="button"]');
@@ -87,5 +97,7 @@ test.describe("Is Express Checkout button available", () => {
         ]);
 
         await expect(paypalPage.locator('#headerText')).toHaveText(/PayPal/)
+    
     });
+
 })

@@ -2,7 +2,9 @@ import { test, expect } from '@playwright/test';
 import credentials from './credentials.mjs';
 
 test.describe("Frontend", () => {
+
     test('Buy a product with paypal', async ({ page }) => {
+
         //login
         await page.goto('/account');
         await page.waitForLoadState('load');
@@ -51,5 +53,7 @@ test.describe("Frontend", () => {
         await page.click('button[form="confirm--form"].is--primary');
 
         await expect(page.locator('.teaser--title')).toHaveText(/Vielen Dank für Ihre Bestellung bei Shopware Demo/);
+    
     });
+
 })

@@ -4,7 +4,9 @@ import credentials from './credentials.mjs';
 const germany = '2';
 
 test.describe("Pay with Giropay", () => {
+
     test('Buy as german customer with euro', async ({ page }) => {
+
         //login
         await page.goto('/account');
         await page.waitForLoadState('load');
@@ -42,5 +44,7 @@ test.describe("Pay with Giropay", () => {
         await page.click('text=Success');
 
         await expect(page.locator('.teaser--title')).toHaveText(/Vielen Dank für Ihre Bestellung bei Shopware Demo/);
+    
     });
+
 })
