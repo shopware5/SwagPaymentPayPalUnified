@@ -45,6 +45,11 @@ test.describe("Frontend", () => {
         // Click [data-testid="submit-button-initial"]
         await paypalPage.locator('button:has-text("Jetzt zahlen")').click();
 
+        await expect(page.locator('.alert.is--success')).toHaveText(/Ihre Zahlung wurde erstellt\. Bitte schließen Sie sie ab, indem Sie Ihre Bestellung bestätigen\./);
+
+        await page.click('input[name="sAGB"]');
+        await page.click('button[form="confirm--form"].is--primary');
+
         await expect(page.locator('.teaser--title')).toHaveText(/Vielen Dank für Ihre Bestellung bei Shopware Demo/);
     });
 })

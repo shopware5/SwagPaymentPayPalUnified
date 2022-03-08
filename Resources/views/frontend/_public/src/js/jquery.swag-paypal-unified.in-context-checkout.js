@@ -125,11 +125,6 @@
             /**
              * @type string
              */
-            onApproveUrl: '',
-
-            /**
-             * @type string
-             */
             confirmUrl: '',
 
             /**
@@ -437,21 +432,6 @@
             });
 
             return actions.redirect(me.renderConfirmUrl(data));
-        },
-
-        /**
-         * @param data { Object }
-         *
-         * @return { string }
-         */
-        renderApproveUrl: function(data) {
-            var params = $.param({
-                token: data.orderID,
-                payerId: data.payerID,
-                basketId: this.opts.basketId
-            }, true);
-
-            return [this.opts.onApproveUrl, '?', params].join('');
         },
 
         /**

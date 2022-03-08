@@ -180,12 +180,13 @@ class InContextSubscriberTest extends TestCase
 
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
             'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
+            'request' => $request,
         ]);
 
         $this->importSettings(true, true, true);
 
         $subscriber = $this->getSubscriber();
-        $subscriber->addInContextButton($enlightEventArgs);
+        $subscriber->addInContextInfoToRequest($enlightEventArgs);
 
         static::assertTrue($view->getAssign('paypalUnifiedInContextCheckout'));
         static::assertSame('b53e0880-8141-4d72-a02a-aad475809e77', $view->getAssign('paypalUnifiedInContextOrderId'));
@@ -196,7 +197,7 @@ class InContextSubscriberTest extends TestCase
     /**
      * @return void
      */
-    public function testAddInContextButtonAssignsVariablesOnPayment()
+    public function testAddInContextInfoToPaymentRequestAssignsVariablesOnPayment()
     {
         $view = new ViewMock(new \Enlight_Template_Manager());
         $request = new \Enlight_Controller_Request_RequestTestCase();
@@ -216,16 +217,28 @@ class InContextSubscriberTest extends TestCase
 
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
             'subject' => $controller,
+            'request' => $request,
+            'response' => $response,
         ]);
 
         $this->importSettings(true, true, true);
 
         $subscriber = $this->getSubscriber();
-        $subscriber->addInContextButton($enlightEventArgs);
+        $subscriber->addInfoToPaymentRequest($enlightEventArgs);
 
         static::assertTrue($controller->Response()->isRedirect());
-        // TODO: check contents
-        // static::assertTrue($controller->Response()->getBody());
+
+        if (\method_exists(static::class, 'assertStringContainsString')) {
+            static::assertStringContainsString(
+                '/PaypalUnifiedV2/return/inContextCheckout/1/token/e6087d09-4109-49aa-93be-13f4ee0baa5d/PayerID/1880eb91-fb92-4289-9a60-985fba818429/basketId/daf8a0fd-527b-4700-896e-8a19bc71796f',
+                $response->getHeader('Location', '')
+            );
+        } else {
+            static::assertContains(
+                '/PaypalUnifiedV2/return/inContextCheckout/1/token/e6087d09-4109-49aa-93be-13f4ee0baa5d/PayerID/1880eb91-fb92-4289-9a60-985fba818429/basketId/daf8a0fd-527b-4700-896e-8a19bc71796f',
+                $response->getHeader('Location', '')
+            );
+        }
     }
 
     public function testAddInContextInfoToRequestReturnsBecauseWrongAction()
@@ -285,7 +298,7 @@ class InContextSubscriberTest extends TestCase
         $view = new ViewMock(new \Enlight_Template_Manager());
         $request = new \Enlight_Controller_Request_RequestTestCase();
         $request->setActionName('payment');
-        $request->setParam('useInContext', true);
+        $request->setParam('inContextCheckout', true);
 
         $response = new \Enlight_Controller_Response_ResponseTestCase();
         $response->setHttpResponseCode(302);
@@ -297,18 +310,18 @@ class InContextSubscriberTest extends TestCase
         ]);
 
         $subscriber = $this->getSubscriber();
-        $subscriber->addInContextInfoToRequest($enlightEventArgs);
+        $subscriber->addInfoToPaymentRequest($enlightEventArgs);
 
         static::assertSame(302, $response->getHttpResponseCode());
         if (\method_exists($this, 'assertStringContainsString')) {
             static::assertStringContainsString(
-                '/PaypalUnified/gateway/useInContext/1',
-                $response->getHeader('Location')
+                '/PaypalUnifiedV2/return/inContextCheckout/1',
+                $response->getHeader('Location', '')
             );
 
             return;
         }
-        static::assertContains('/PaypalUnified/gateway/useInContext/1', $response->getHeader('Location'));
+        static::assertContains('/PaypalUnifiedV2/return/inContextCheckout/1', $response->getHeader('Location'));
     }
 
     /**

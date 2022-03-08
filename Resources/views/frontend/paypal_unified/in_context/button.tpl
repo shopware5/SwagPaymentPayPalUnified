@@ -12,7 +12,6 @@
                  data-useSandbox="{$paypalUnifiedModeSandbox}"
                  data-currency="{$paypalUnifiedCurrency}"
                  data-createOrderUrl="{url controller='PaypalUnifiedV2' action='index' forceSecure}"
-                 data-onApproveUrl="{url controller='PaypalUnifiedV2' action='return' forceSecure}"
                  data-confirmUrl="{url module='frontend' controller='checkout' action='confirm' inContextCheckout=1 forceSecure}"
                  data-finishUrl="{url module='frontend' controller='checkout' action='finish'}"
                  data-paypalIntent="{$paypalUnifiedIntent}"
