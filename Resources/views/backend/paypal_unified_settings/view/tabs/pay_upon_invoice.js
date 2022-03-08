@@ -26,16 +26,22 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.PayUponInvoice', {
         capabilityTestButtonText: '{s name="button/capability/test"}Capability test{/s}'
     },
 
-    initComponent: function () {
+    initComponent: function() {
         this.callParent(arguments);
 
         this.items.insert(
             this.items.indexOf(this.activationFieldSet) + 1,
             this.createSettingsFieldset()
         );
+
+        this.registerEvents()
     },
 
-    createSettingsFieldset: function () {
+    registerEvents: function () {
+        this.activationField.on('change', Ext.bind(this.onActivationChange, this), this);
+    },
+
+    createSettingsFieldset: function() {
         this.settingsFieldSet = Ext.create('Ext.form.FieldSet', {
             items: this.createSettingsFieldsetItems()
         });
@@ -43,19 +49,40 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.PayUponInvoice', {
         return this.settingsFieldSet;
     },
 
-    createSettingsFieldsetItems: function () {
+    handleView: function() {
+        this.callParent(arguments);
+
+        if (!this.hasOwnProperty('customerServiceInstructionsField')) {
+            return;
+        }
+
+        this.customerServiceInstructionsField.setDisabled(true);
+
+        if (this.isOnboardingCompleted() && this.isPaymentMethodActive()) {
+            this.customerServiceInstructionsField.setDisabled(false);
+        }
+    },
+
+    createSettingsFieldsetItems: function() {
+        this.customerServiceInstructionsField = Ext.create('Ext.form.field.TextArea', {
+            name: 'customerServiceInstructions',
+            allowBlank: false,
+            disabled: true,
+            fieldLabel: this.snippets.settingsFieldset.customerServiceInstructionsLabel,
+            emptyText: this.snippets.settingsFieldset.placeholder,
+            flex: 1,
+            anchor: this.fieldDefaults.anchor,
+            labelWidth: this.fieldDefaults.labelWidth,
+            helpText: this.snippets.settingsFieldset.help,
+        });
+
         return [
-            Ext.create('Ext.form.field.TextArea', {
-                name: 'customerServiceInstructions',
-                allowBlank: false,
-                fieldLabel: this.snippets.settingsFieldset.customerServiceInstructionsLabel,
-                emptyText: this.snippets.settingsFieldset.placeholder,
-                flex: 1,
-                anchor: this.fieldDefaults.anchor,
-                labelWidth: this.fieldDefaults.labelWidth,
-                helpText: this.snippets.settingsFieldset.help
-            })
+            this.customerServiceInstructionsField
         ];
-    }
+    },
+
+    onActivationChange: function() {
+        this.handleView();
+    },
 });
 // {/block}
