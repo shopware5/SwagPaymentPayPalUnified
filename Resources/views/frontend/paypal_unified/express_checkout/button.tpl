@@ -10,7 +10,6 @@
                  data-createOrderUrl="{url module=widgets controller=PaypalUnifiedV2ExpressCheckout action=createOrder forceSecure}"
                  data-onApproveUrl="{url module=widgets controller=PaypalUnifiedV2ExpressCheckout action=onApprove forceSecure}"
                  data-confirmUrl="{url module=frontend controller=Checkout action=confirm forceSecure}"
-                 data-logUrl="{url module=widgets controller=PaypalUnifiedV2ExpressCheckout action=logErrorMessage forceSecure}"
                  data-color="{$paypalUnifiedEcButtonStyleColor}"
                  data-shape="{$paypalUnifiedEcButtonStyleShape}"
                  data-size="{$paypalUnifiedEcButtonStyleSize}"

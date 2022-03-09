@@ -11,7 +11,6 @@ use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\PayPalOrderParameterFacadeInterface;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\ShopwareOrderData;
-use SwagPaymentPayPalUnified\Components\Services\ExceptionHandlerService;
 use SwagPaymentPayPalUnified\Components\Services\ExpressCheckout\CustomerService;
 use SwagPaymentPayPalUnified\Components\Services\OrderBuilder\OrderFactory;
 use SwagPaymentPayPalUnified\Components\Services\PaymentControllerHelper;
@@ -52,11 +51,6 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout extends Shopwa
     private $payPalOrderParameterFacade;
 
     /**
-     * @var ExceptionHandlerService
-     */
-    private $exceptionHandler;
-
-    /**
      * @var OrderFactory
      */
     private $orderFactory;
@@ -77,11 +71,13 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout extends Shopwa
         $this->redirectDataBuilderFactory = $this->get('paypal_unified.redirect_data_builder_factory');
         $this->paymentControllerHelper = $this->get('paypal_unified.payment_controller_helper');
         $this->payPalOrderParameterFacade = $this->get('paypal_unified.paypal_order_parameter_facade');
-        $this->exceptionHandler = $this->get('paypal_unified.exception_handler_service');
         $this->orderFactory = $this->get('paypal_unified.order_factory');
         $this->logger = $this->get('paypal_unified.logger_service');
     }
 
+    /**
+     * @return void
+     */
     public function createOrderAction()
     {
         $this->logger->debug(sprintf('%s START', __METHOD__));
@@ -127,6 +123,9 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout extends Shopwa
         $this->View()->assign('orderId', $payPalOrder->getId());
     }
 
+    /**
+     * @return void
+     */
     public function onApproveAction()
     {
         $this->logger->debug(sprintf('%s START', __METHOD__));
@@ -161,17 +160,9 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout extends Shopwa
         ]);
     }
 
-    public function logErrorMessageAction()
-    {
-        $code = $this->request->getParam('code', ErrorCodes::UNKNOWN_EXPRESS_ERROR);
-        $message = $this->request->getParam('message');
-
-        $this->exceptionHandler->handle(
-            new \Exception(sprintf('code: %s%smessage: %s', $code, \PHP_EOL, $message)),
-            'API-ERROR'
-        );
-    }
-
+    /**
+     * @return void
+     */
     private function addProductToCart()
     {
         $this->logger->debug(sprintf('%s START', __METHOD__));
@@ -180,15 +171,15 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout extends Shopwa
         $basketModule = $this->dependencyProvider->getModule('basket');
         $request = $this->Request();
         $productNumber = $request->getParam('productNumber');
-        $qantity = (int) $request->getParam('productQuantity');
+        $quantity = (int) $request->getParam('productQuantity');
 
         $this->logger->debug(sprintf('%s DELETE BASKET', __METHOD__));
 
         $basketModule->sDeleteBasket();
 
-        $this->logger->debug(sprintf('%s ADD PRODUCT WITH NUMBER: %s AND QUANTITY: %d', __METHOD__, $productNumber, $qantity));
+        $this->logger->debug(sprintf('%s ADD PRODUCT WITH NUMBER: %s AND QUANTITY: %d', __METHOD__, $productNumber, $quantity));
 
-        $basketModule->sAddArticle($request->getParam('productNumber'), $qantity);
+        $basketModule->sAddArticle($request->getParam('productNumber'), $quantity);
 
         // add potential discounts or surcharges to prevent an amount mismatch
         // on patching the new amount after the confirmation.
