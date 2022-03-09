@@ -157,7 +157,9 @@ Code Coverage:
             --colors="never"
             --log-junit="${ARTIFACTS_ROOT}/phpunit.junit.xml"
             --coverage-cobertura=${ARTIFACTS_ROOT}/phpunit-coverage.cobertura.xml
+            --coverage-text | sed -E -n '1,/^\s*Lines:\s*([0-9]+(\.[0-9]+)?)%/ p' # See: https://gitlab.shopware.com/shopware/6/product/platform/-/blob/trunk/.gitlab/stages/02-unit.yml#L92
         - sed -i 's/\/shopware\/custom\/plugins\/SwagPaymentPayPalUnified//' ${ARTIFACTS_ROOT}/phpunit-coverage.cobertura.xml # Remove the shopware installation part from the <sources> tag, so the coverage paths are relative to the original plugin root again, not the one inside custom/plugins.
+    coverage: '/^\s*Lines:\s*(\d+(?:\.\d+)?%)/'
     artifacts:
         reports:
             junit: ${ARTIFACTS_ROOT}/*.junit.xml

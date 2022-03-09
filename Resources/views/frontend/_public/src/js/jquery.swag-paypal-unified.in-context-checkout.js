@@ -125,7 +125,7 @@
             /**
              * @type string
              */
-            onApproveUrl: '',
+            confirmUrl: '',
 
             /**
              * @type string
@@ -431,17 +431,7 @@
                 theme: 'light'
             });
 
-            return $.ajax({
-                method: 'get',
-                url: this.renderApproveUrl(data)
-            }).then(function(response) {
-                if (response.errorUrl) {
-                    me.onPayPalAPIError();
-                    return;
-                }
-
-                actions.redirect(me.renderFinishUrl(response));
-            }).promise();
+            return actions.redirect(me.renderConfirmUrl(data));
         },
 
         /**
@@ -449,14 +439,14 @@
          *
          * @return { string }
          */
-        renderApproveUrl: function(data) {
+        renderConfirmUrl: function(data) {
             var params = $.param({
-                token: data.orderID,
+                orderId: data.orderID,
                 payerId: data.payerID,
                 basketId: this.opts.basketId
             }, true);
 
-            return [this.opts.onApproveUrl, '?', params].join('');
+            return [this.opts.confirmUrl, '?', params].join('');
         },
 
         /**

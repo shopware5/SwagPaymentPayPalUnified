@@ -60,6 +60,7 @@ class InContext implements SubscriberInterface
         return [
             'Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout' => [
                 ['addInContextButton'],
+                ['addInfoToPaymentRequest'],
                 ['addInContextInfoToRequest', 100],
             ],
         ];
@@ -114,16 +115,48 @@ class InContext implements SubscriberInterface
     public function addInContextInfoToRequest(\Enlight_Controller_ActionEventArgs $args)
     {
         $request = $args->getRequest();
+        $view = $args->getSubject()->View();
+
         if ($request->getActionName() === 'payment'
             && $request->getParam('useInContext')
             && $args->getResponse()->isRedirect()
         ) {
             $args->getSubject()->redirect([
-                'controller' => 'PaypalUnified',
-                'action' => 'gateway',
+                'controller' => 'PaypalUnifiedV2',
+                'action' => 'return',
                 'useInContext' => true,
             ]);
+        } elseif (\strtolower($request->getActionName()) === 'confirm' && $request->getParam('inContextCheckout', false)) {
+            // This determines, whether the paypal-Buttons need to be rendered
+            $view->assign('paypalUnifiedInContextCheckout', true);
+            $view->assign('paypalUnifiedInContextOrderId', $request->getParam('orderId'));
+            $view->assign('paypalUnifiedInContextPayerId', $request->getParam('payerId'));
+            $view->assign('paypalUnifiedInContextBasketId', $request->getParam('basketId'));
         }
+    }
+
+    /**
+     * @return void
+     */
+    public function addInfoToPaymentRequest(\Enlight_Controller_ActionEventArgs $args)
+    {
+        $request = $args->getRequest();
+
+        if (\strtolower($request->getActionName()) !== 'payment'
+            || !$request->getParam('inContextCheckout', false)
+            || !$args->getResponse()->isRedirect()
+        ) {
+            return;
+        }
+
+        $args->getSubject()->redirect([
+            'controller' => 'PaypalUnifiedV2',
+            'action' => 'return',
+            'inContextCheckout' => true,
+            'token' => $request->getParam('orderId'),
+            'PayerID' => $request->getParam('payerId'),
+            'basketId' => $request->getParam('basketId'),
+        ]);
     }
 
     /**
