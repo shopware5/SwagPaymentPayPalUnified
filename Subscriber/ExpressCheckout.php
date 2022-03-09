@@ -320,7 +320,7 @@ class ExpressCheckout implements SubscriberInterface
             'paypalUnifiedEcButtonStyleColor' => $expressSettings->getButtonStyleColor(),
             'paypalUnifiedEcButtonStyleShape' => $expressSettings->getButtonStyleShape(),
             'paypalUnifiedEcButtonStyleSize' => $expressSettings->getButtonStyleSize(),
-            'paypalUnifiedLanguageIso' => $this->buttonLocaleService->getButtonLocale($expressSettings->getButtonLocale()),
+            'paypalUnifiedButtonLocale' => $this->buttonLocaleService->getButtonLocale($expressSettings->getButtonLocale()),
             'paypalUnifiedIntent' => $generalSettings->getIntent(),
         ]);
     }

@@ -17,7 +17,6 @@ use Shopware\Models\Payment\Payment;
 use Shopware\Models\Shop\Shop;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
-use SwagPaymentPayPalUnified\Components\PaymentStatus;
 
 trait OrderTrait
 {
@@ -40,7 +39,7 @@ trait OrderTrait
     {
         $orderStatus = $this->modelManager->getRepository(Status::class)->find(0);
         self::assertInstanceOf(Status::class, $orderStatus);
-        $paymentStatus = $this->modelManager->getRepository(Status::class)->find(PaymentStatus::PAYMENT_STATUS_OPEN);
+        $paymentStatus = $this->modelManager->getRepository(Status::class)->find(Status::PAYMENT_STATE_OPEN);
         self::assertInstanceOf(Status::class, $paymentStatus);
         $dispatch = $this->modelManager->getRepository(Dispatch::class)->findOneBy([]);
         self::assertInstanceOf(Dispatch::class, $dispatch);

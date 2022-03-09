@@ -6,6 +6,7 @@
  * file that was distributed with this source code.
  */
 
+use SwagPaymentPayPalUnified\Components\ErrorCodes;
 use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentController;
 
 class Shopware_Controllers_Frontend_PaypalUnifiedV2AdvancedCreditDebitCard extends AbstractPaypalPaymentController
@@ -20,6 +21,14 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2AdvancedCreditDebitCard exten
         $session = $this->container->get('session');
 
         $paypalOrderId = $session->offsetGet('paypalOrderId');
+        if (!\is_string($paypalOrderId)) {
+            $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
+                ->setCode(ErrorCodes::UNKNOWN)
+                ->setException(new UnexpectedValueException("Required session parameter 'paypalOrderId' is missing"));
+            $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
+
+            return;
+        }
 
         if ($this->isPaymentCompleted($paypalOrderId)) {
             $session->offsetUnset('paypalOrderId');

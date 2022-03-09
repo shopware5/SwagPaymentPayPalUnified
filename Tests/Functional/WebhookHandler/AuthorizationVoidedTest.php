@@ -9,7 +9,7 @@
 namespace SwagPaymentPayPalUnified\Tests\Functional\WebhookHandler;
 
 use PHPUnit\Framework\TestCase;
-use SwagPaymentPayPalUnified\Components\PaymentStatus;
+use Shopware\Models\Order\Status;
 use SwagPaymentPayPalUnified\Components\Services\PaymentStatusService;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\Webhook\WebhookEventTypes;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Webhook;
@@ -56,7 +56,7 @@ class AuthorizationVoidedTest extends TestCase
         $sql = 'SELECT cleared FROM s_order WHERE id=' . self::TEST_ORDER_ID;
 
         $status = (int) Shopware()->Db()->fetchOne($sql);
-        static::assertSame(PaymentStatus::PAYMENT_STATUS_CANCELLED, $status);
+        static::assertSame(Status::PAYMENT_STATE_THE_PROCESS_HAS_BEEN_CANCELLED, $status);
     }
 
     public function testInvokeReturnsFalseBecauseTheOrderDoesNotExist()

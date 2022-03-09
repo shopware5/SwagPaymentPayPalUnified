@@ -9,12 +9,12 @@
 namespace SwagPaymentPayPalUnified\Controllers\Frontend;
 
 use RuntimeException;
+use Shopware\Models\Order\Status;
 use Shopware_Components_Config;
 use Shopware_Controllers_Frontend_Payment;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
-use SwagPaymentPayPalUnified\Components\PaymentStatus;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\PayPalOrderParameterFacade;
 use SwagPaymentPayPalUnified\Components\Services\DispatchValidation;
 use SwagPaymentPayPalUnified\Components\Services\ExceptionHandlerService;
@@ -355,7 +355,7 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
     {
         $this->logger->debug(sprintf('%s CREATE SHOPWARE ORDER', __METHOD__));
 
-        $orderNumber = (string) $this->saveOrder($payPalOrderId, $payPalOrderId, PaymentStatus::PAYMENT_STATUS_OPEN);
+        $orderNumber = (string) $this->saveOrder($payPalOrderId, $payPalOrderId, Status::PAYMENT_STATE_OPEN);
 
         $this->orderDataService->applyPaymentTypeAttribute($orderNumber, $paymentType);
 

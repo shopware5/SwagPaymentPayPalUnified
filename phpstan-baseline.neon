@@ -811,26 +811,6 @@ parameters:
 			path: Controllers/Frontend/PaypalUnifiedWebhook.php
 
 		-
-			message: "#^Method Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout\\:\\:addProductToCart\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Controllers/Widgets/PaypalUnifiedV2ExpressCheckout.php
-
-		-
-			message: "#^Method Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout\\:\\:createOrderAction\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Controllers/Widgets/PaypalUnifiedV2ExpressCheckout.php
-
-		-
-			message: "#^Method Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout\\:\\:logErrorMessageAction\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Controllers/Widgets/PaypalUnifiedV2ExpressCheckout.php
-
-		-
-			message: "#^Method Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout\\:\\:onApproveAction\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Controllers/Widgets/PaypalUnifiedV2ExpressCheckout.php
-
-		-
 			message: "#^Method Shopware_Controllers_Widgets_PaypalUnifiedV2SmartPaymentButtons\\:\\:createOrderAction\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: Controllers/Widgets/PaypalUnifiedV2SmartPaymentButtons.php
@@ -2634,16 +2614,6 @@ parameters:
 			message: "#^Method SwagPaymentPayPalUnified\\\\Subscriber\\\\Order\\:\\:onFilterOrderAttributes\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: Subscriber/Order.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Subscriber\\\\PayUponInvoiceRiskManagement\\:\\:afterManageRisks\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Subscriber/PayUponInvoiceRiskManagement.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Subscriber\\\\PayUponInvoiceRiskManagement\\:\\:onExecuteRule\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Subscriber/PayUponInvoiceRiskManagement.php
 
 		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Subscriber\\\\Plus\\:\\:addPaymentMethodsAttributes\\(\\) return type has no value type specified in iterable type array\\.$#"

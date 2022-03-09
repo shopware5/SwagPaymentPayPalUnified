@@ -7,6 +7,7 @@
  */
 
 use Shopware\Components\HttpClient\RequestException;
+use Shopware\Models\Order\Status;
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
 use SwagPaymentPayPalUnified\Components\PaymentStatus;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\ShopwareOrderData;
@@ -139,7 +140,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedApm extends AbstractPaypalPayme
         $this->logger->debug(sprintf('%s SEND SHOPWARE ORDERNUMBER: %s', __METHOD__, $sendShopwareOrderNumber ? 'TRUE' : 'FALSE'));
 
         if ($sendShopwareOrderNumber) {
-            $shopwareOrderNumber = (string) $this->saveOrder($payPalOrderId, $payPalOrderId, PaymentStatus::PAYMENT_STATUS_OPEN);
+            $shopwareOrderNumber = (string) $this->saveOrder($payPalOrderId, $payPalOrderId, Status::PAYMENT_STATE_OPEN);
             $this->orderDataService->applyPaymentTypeAttribute($shopwareOrderNumber, $this->getPaymentType($payPalOrder));
 
             $orderNumberPrefix = $this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_ORDER_NUMBER_PREFIX);
@@ -168,14 +169,16 @@ class Shopware_Controllers_Frontend_PaypalUnifiedApm extends AbstractPaypalPayme
 
         try {
             if ($this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_INTENT) === PaymentIntentV2::CAPTURE
-                && strtolower($payPalOrder->getStatus()) !== PaymentStatus::PAYMENT_COMPLETED) {
+                && strtolower($payPalOrder->getStatus()) !== PaymentStatus::PAYMENT_COMPLETED
+            ) {
                 $this->logger->debug(sprintf('%s CAPTURE PAYPAL ORDER WITH ID: %s', __METHOD__, $payPalOrderId));
 
                 $this->orderResource->capture($payPalOrder->getId(), PartnerAttributionId::PAYPAL_ALL_V2, false);
 
                 $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFULLY CAPTURED', __METHOD__));
             } elseif ($this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_INTENT) === PaymentIntentV2::AUTHORIZE
-                && strtolower($payPalOrder->getStatus()) !== PaymentStatus::PAYMENT_COMPLETED) {
+                && strtolower($payPalOrder->getStatus()) !== PaymentStatus::PAYMENT_COMPLETED
+            ) {
                 $this->logger->debug(sprintf('%s AUTHORIZE PAYPAL ORDER WITH ID: %s', __METHOD__, $payPalOrderId));
 
                 $this->orderResource->authorize($payPalOrder->getId(), PartnerAttributionId::PAYPAL_ALL_V2, false);

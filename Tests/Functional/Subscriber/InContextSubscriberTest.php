@@ -353,9 +353,9 @@ class InContextSubscriberTest extends TestCase
     {
         return new InContext(
             Shopware()->Container()->get('paypal_unified.settings_service'),
-            Shopware()->Container()->get('paypal_unified.dependency_provider'),
             Shopware()->Container()->get('paypal_unified.payment_method_provider'),
-            Shopware()->Container()->get('shopware_storefront.context_service')
+            Shopware()->Container()->get('shopware_storefront.context_service'),
+            Shopware()->Container()->get('paypal_unified.button_locale_service')
         );
     }
 }

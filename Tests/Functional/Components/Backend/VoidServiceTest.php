@@ -10,8 +10,8 @@ namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Backend;
 
 use PHPUnit\Framework\TestCase;
 use Shopware\Models\Order\Order;
+use Shopware\Models\Order\Status;
 use SwagPaymentPayPalUnified\Components\Backend\VoidService;
-use SwagPaymentPayPalUnified\Components\PaymentStatus;
 use SwagPaymentPayPalUnified\Components\Services\ExceptionHandlerService;
 use SwagPaymentPayPalUnified\Components\Services\PaymentStatusService;
 use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
@@ -45,7 +45,7 @@ class VoidServiceTest extends TestCase
 
         $order = $this->modelManager->getRepository(Order::class)->find($orderId);
         static::assertInstanceOf(Order::class, $order);
-        static::assertSame(PaymentStatus::PAYMENT_STATUS_CANCELLED, $order->getPaymentStatus()->getId());
+        static::assertSame(Status::PAYMENT_STATE_THE_PROCESS_HAS_BEEN_CANCELLED, $order->getPaymentStatus()->getId());
         static::assertTrue($result['success']);
     }
 
@@ -57,7 +57,7 @@ class VoidServiceTest extends TestCase
 
         $order = $this->modelManager->getRepository(Order::class)->find($orderId);
         static::assertInstanceOf(Order::class, $order);
-        static::assertSame(PaymentStatus::PAYMENT_STATUS_OPEN, $order->getPaymentStatus()->getId());
+        static::assertSame(Status::PAYMENT_STATE_OPEN, $order->getPaymentStatus()->getId());
         static::assertFalse($result['success']);
     }
 
@@ -69,7 +69,7 @@ class VoidServiceTest extends TestCase
 
         $order = $this->modelManager->getRepository(Order::class)->find($orderId);
         static::assertInstanceOf(Order::class, $order);
-        static::assertSame(PaymentStatus::PAYMENT_STATUS_CANCELLED, $order->getPaymentStatus()->getId());
+        static::assertSame(Status::PAYMENT_STATE_THE_PROCESS_HAS_BEEN_CANCELLED, $order->getPaymentStatus()->getId());
         static::assertTrue($result['success']);
     }
 
@@ -81,7 +81,7 @@ class VoidServiceTest extends TestCase
 
         $order = $this->modelManager->getRepository(Order::class)->find($orderId);
         static::assertInstanceOf(Order::class, $order);
-        static::assertSame(PaymentStatus::PAYMENT_STATUS_OPEN, $order->getPaymentStatus()->getId());
+        static::assertSame(Status::PAYMENT_STATE_OPEN, $order->getPaymentStatus()->getId());
         static::assertFalse($result['success']);
     }
 

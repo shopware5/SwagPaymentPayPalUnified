@@ -4,18 +4,18 @@
     $.plugin('swagPayPalUnifiedSmartPaymentButtons', {
         defaults: {
             /**
-             * Determines whether or not only the marks are needed on the current page
+             * Determines whether only the marks are needed on the current page
              *
              * @type boolean
              */
             marksOnly: false,
 
             /**
-             * The URL used to create the payment
+             * The URL used to create the order
              *
              * @type string
              */
-            createPaymentUrl: '',
+            createOrderUrl: '',
 
             /**
              * After approval, redirect to this URL
@@ -25,11 +25,23 @@
             checkoutConfirmUrl: '',
 
             /**
-             * The class name to identify whether or not the paypal sdk has been loaded
+             * This page will be opened when the payment creation fails.
              *
              * @type string
              */
-            scriptLoadedClass: 'paypal-unified--paypal-sdk-loaded',
+            paypalErrorPage: '',
+
+            /**
+             * The class name to identify whether the PayPal sdk has been loaded
+             *
+             * @type string
+             */
+            paypalScriptLoadedSelector: 'paypal-checkout-js-loaded',
+
+            /**
+             * @type string
+             */
+            sdkUrl: 'https://www.paypal.com/sdk/js',
 
             /**
              * Holds the client id
@@ -39,11 +51,25 @@
             clientId: '',
 
             /**
-             * The language ISO (ISO_639) for the Smart Payment Buttons.
+             * @type string
+             */
+            paypalIntent: 'capture',
+
+            /**
+             * The language ISO (ISO_639) or the Smart Payment Buttons.
+             *
+             * for possible values see: https://developer.paypal.com/api/rest/reference/locale-codes/
              *
              * @type string
              */
-            languageIso: 'en_GB',
+            locale: 'en_GB',
+
+            /**
+             * Use PayPal sandbox
+             *
+             * @type boolean
+             */
+            useSandbox: false,
 
             /**
              * Currency which should be used for the Smart Payment Buttons
@@ -91,39 +117,52 @@
 
         createButtons: function() {
             var me = this,
-                $head = $('head'),
-                baseUrl = 'https://www.paypal.com/sdk/js',
-                params = {
-                    'client-id': me.opts.clientId
-                };
+                $head = $('head');
 
-            /**
-             * If marks only are displayed, remove unnecessary parameters
-             * But still load buttons and marks so the buttons are present on the window paypal object
-             */
-            if (me.opts.marksOnly) {
-                params.components = 'marks';
-            } else {
-                params.components = 'marks,buttons';
-                params.commit = false;
-                params.currency = me.opts.currency;
-            }
-
-            if (!$head.hasClass(me.opts.scriptLoadedClass)) {
+            if (!$head.hasClass(this.opts.paypalScriptLoadedSelector)) {
                 $.ajax({
-                    url: baseUrl + '?' + $.param(params, true),
+                    url: this.renderSdkUrl(),
                     dataType: 'script',
                     cache: true,
                     success: function() {
-                        $head.addClass(me.opts.scriptLoadedClass);
+                        $head.addClass(me.opts.paypalScriptLoadedSelector);
                         me.paypal = window.paypal;
                         me.renderButtons();
                     }
                 });
             } else {
-                me.paypal = window.paypal;
-                me.renderButtons();
+                this.paypal = window.paypal;
+                this.renderButtons();
             }
+        },
+
+        renderSdkUrl: function() {
+            var params = {
+                'client-id': this.opts.clientId,
+                intent: this.opts.paypalIntent.toLowerCase()
+            };
+
+            /**
+             * If marks only are displayed, remove unnecessary parameters
+             * But still load buttons and marks so the buttons are present on the window PayPal object
+             */
+            if (this.opts.marksOnly) {
+                params.components = 'marks';
+            } else {
+                params.components = 'marks,buttons';
+                params.commit = false;
+                params.currency = this.opts.currency;
+            }
+
+            if (this.opts.locale.length > 0) {
+                params.locale = this.opts.locale;
+            }
+
+            if (this.opts.useSandbox) {
+                params.debug = true;
+            }
+
+            return [this.opts.sdkUrl, '?', $.param(params, true)].join('');
         },
 
         renderButtons: function() {
@@ -144,8 +183,6 @@
         },
 
         getButtonConfig: function() {
-            var me = this;
-
             return {
                 style: {
                     label: 'checkout'
@@ -154,34 +191,39 @@
                 /**
                  * Will be called if on smarty payment button is clicked
                  */
-                createOrder: me.createOrder.bind(this),
+                createOrder: this.createOrder.bind(this),
 
                 /**
-                 * Will be called if the payment process is approved by paypal
+                 * Will be called if the payment process is approved by PayPal
                  */
-                onApprove: me.onApprove.bind(this),
+                onApprove: this.onApprove.bind(this),
 
                 /**
                  * Will be called if the payment process is cancelled by the customer
                  */
-                onCancel: me.onCancel
+                onCancel: this.onCancel.bind(this),
+
+                /**
+                 * Will be called if any api error occurred
+                 */
+                onError: this.onPayPalAPIError.bind(this)
             };
         },
 
+        /**
+         * @return { Promise }
+         */
         createOrder: function() {
             var me = this;
 
             return $.ajax({
                 method: 'get',
-                url: me.opts.createPaymentUrl
+                url: me.opts.createOrderUrl
             }).then(function(response) {
-                if (response.errorUrl) {
-                    window.location.replace(response.errorUrl);
-                    return;
-                }
                 me.opts.basketId = response.basketId;
 
                 return response.token;
+            }, function() {
             }).promise();
         },
 
@@ -205,19 +247,8 @@
             $.loadingIndicator.close();
         },
 
-        /**
-         * Buffer helper function to set a timeout for a function
-         *
-         * @param {function} fn
-         * @param {number} timeout
-         * @return {number}
-         */
-        buffer: function(fn, timeout) {
-            var me = this;
-
-            timeout = timeout || 500;
-
-            return window.setTimeout(fn.bind(me), timeout);
+        onPayPalAPIError: function() {
+            window.location.replace(this.opts.paypalErrorPage);
         },
 
         destroy: function() {

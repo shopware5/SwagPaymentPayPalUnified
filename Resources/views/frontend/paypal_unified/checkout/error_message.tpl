@@ -39,7 +39,7 @@
             {include file='frontend/_includes/messages.tpl' type='error' content="{s name="error/paymentSourceDeclinedByProcessor"}It is not possible to use the selected payment method. This decision is based on automated data processing.{/s} {s name="error/puiAdditional"}You can find further information in the <a href='https://www.ratepay.com/legal-payment-dataprivacy/' class='is--underline'>Ratepay Data Privacy Statement</a> or you can contact Ratepay using this <a href='https://www.ratepay.com/en/contact/' class='is--underline'>contact form</a>.{/s}"}
         {else}
             {* Unknown error *}
-            {include file='frontend/_includes/messages.tpl' type='error' content="{s name="error/unkown"}An unknown error occurred while processing the payment.{/s}"}
+            {include file='frontend/_includes/messages.tpl' type='error' content="{s name="error/unknown"}An unknown error occurred while processing the payment.{/s}"}
         {/if}
 
 		{if $paypalUnifiedErrorMessage}

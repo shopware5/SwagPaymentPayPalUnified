@@ -28,6 +28,9 @@ use UnexpectedValueException;
 
 class PayUponInvoiceRiskManagement implements SubscriberInterface
 {
+    const PAY_PAL_UNIFIED_PAY_UPON_INVOICE_BLOCKED_TECHNICALLY = 'PayPalUnifiedPayUponInvoiceBlockedTechnically';
+    const PAY_PAL_UNIFIED_PAY_UPON_INVOICE_BLOCKED = 'PayPalUnifiedPayUponInvoiceBlocked';
+
     /**
      * @var PaymentMethodProviderInterface
      */
@@ -80,6 +83,9 @@ class PayUponInvoiceRiskManagement implements SubscriberInterface
         ];
     }
 
+    /**
+     * @return bool
+     */
     public function afterManageRisks(\Enlight_Hook_HookArgs $args)
     {
         if ($args->getReturn() === true) {
@@ -99,12 +105,16 @@ class PayUponInvoiceRiskManagement implements SubscriberInterface
         $generalSettings = $this->settingsService->getSettings($this->contextService->getShopContext()->getShop()->getId());
 
         if (!$generalSettings instanceof General) {
+            $this->dependencyProvider->getSession()->offsetSet(self::PAY_PAL_UNIFIED_PAY_UPON_INVOICE_BLOCKED_TECHNICALLY, true);
+
             return true;
         }
 
         $payUponInvoiceSettings = $this->settingsService->getSettings($this->contextService->getShopContext()->getShop()->getId(), SettingsTable::PAY_UPON_INVOICE);
 
         if (!$payUponInvoiceSettings instanceof PayUponInvoice) {
+            $this->dependencyProvider->getSession()->offsetSet(self::PAY_PAL_UNIFIED_PAY_UPON_INVOICE_BLOCKED_TECHNICALLY, true);
+
             return true;
         }
 
@@ -112,6 +122,8 @@ class PayUponInvoiceRiskManagement implements SubscriberInterface
         $onboardingCompleted = $generalSettings->getSandbox() ? $payUponInvoiceSettings->isSandboxOnboardingCompleted() : $payUponInvoiceSettings->isOnboardingCompleted();
 
         if (!$payUponInvoiceActive || !$onboardingCompleted) {
+            $this->dependencyProvider->getSession()->offsetSet(self::PAY_PAL_UNIFIED_PAY_UPON_INVOICE_BLOCKED_TECHNICALLY, true);
+
             return true;
         }
 
@@ -128,6 +140,9 @@ class PayUponInvoiceRiskManagement implements SubscriberInterface
         return $args->getSubject()->executeRiskRule('PayPalUnifiedInvoiceRiskManagementRule', $user, $basket, '', $paymentId);
     }
 
+    /**
+     * @return bool
+     */
     public function onExecuteRule(\Enlight_Event_EventArgs $args)
     {
         $user = $args->get('user');
@@ -170,10 +185,20 @@ class PayUponInvoiceRiskManagement implements SubscriberInterface
         $controller = $args->get('subject');
         $view = $controller->View();
 
-        if ($view->getAssign('paymentBlocked') && $this->dependencyProvider->getSession()->offsetGet('PayPalUnifiedPayUponInvoiceBlocked')) {
-            $view->assign('PayPalUnifiedPayUponInvoiceBlocked', true);
+        if ($view->getAssign('paymentBlocked') !== true) {
+            return;
+        }
 
-            $this->dependencyProvider->getSession()->offsetUnset('PayPalUnifiedPayUponInvoiceBlocked');
+        if ($this->dependencyProvider->getSession()->offsetGet(self::PAY_PAL_UNIFIED_PAY_UPON_INVOICE_BLOCKED_TECHNICALLY)) {
+            $this->dependencyProvider->getSession()->offsetUnset(self::PAY_PAL_UNIFIED_PAY_UPON_INVOICE_BLOCKED_TECHNICALLY);
+
+            return;
+        }
+
+        if ($this->dependencyProvider->getSession()->offsetGet(self::PAY_PAL_UNIFIED_PAY_UPON_INVOICE_BLOCKED)) {
+            $view->assign(self::PAY_PAL_UNIFIED_PAY_UPON_INVOICE_BLOCKED, true);
+
+            $this->dependencyProvider->getSession()->offsetUnset(self::PAY_PAL_UNIFIED_PAY_UPON_INVOICE_BLOCKED);
         }
     }
 
@@ -187,7 +212,7 @@ class PayUponInvoiceRiskManagement implements SubscriberInterface
             return;
         }
 
-        $this->dependencyProvider->getSession()->offsetSet('PayPalUnifiedPayUponInvoiceBlocked', true);
+        $this->dependencyProvider->getSession()->offsetSet(self::PAY_PAL_UNIFIED_PAY_UPON_INVOICE_BLOCKED, true);
     }
 
     /**

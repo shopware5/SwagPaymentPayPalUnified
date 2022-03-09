@@ -49,13 +49,6 @@
             confirmUrl: '',
 
             /**
-             * URL used to create a error log message
-             *
-             * @type string
-             */
-            logUrl: '',
-
-            /**
              * size of the button
              * possible values:
              *  - small
@@ -453,6 +446,7 @@
                 data: data
             }).then(function(response) {
                 return response.orderId;
+            }, function() {
             }).promise();
         },
 
@@ -473,6 +467,8 @@
                 });
 
                 actions.redirect(url);
+            }, function() {
+                me.onPayPalAPIError();
             }).promise();
         },
 
@@ -480,7 +476,7 @@
             $.loadingIndicator.close();
         },
 
-        onPayPalAPIError: function(response) {
+        onPayPalAPIError: function() {
             $.loadingIndicator.close();
 
             var content = $('<div>').html(this.opts.communicationErrorMessage),
@@ -493,14 +489,6 @@
             content.css('padding', '10px');
 
             $.modal.open(content, config);
-
-            $.ajax({
-                url: this.opts.logUrl,
-                data: {
-                    code: response.code,
-                    message: response.message
-                }
-            });
         },
 
         /**

@@ -28,7 +28,7 @@ test.describe("Frontend", () => {
         await page.click('text=Weiter >> nth=1');
         await page.click('input[name="sAGB"]');
 
-        let locator = await page.frameLocator('.component-frame').locator('div[role="button"]:has-text("Buy Now")');
+        let locator = await page.frameLocator('.component-frame').locator('div[role="button"]:has-text("Jetzt kaufen")');
         await page.waitForLoadState('load');
 
         const [paypalPage] = await Promise.all([
@@ -37,12 +37,12 @@ test.describe("Frontend", () => {
         ]);
 
         // Fill [placeholder="E-Mail-Adresse\ oder\ Handynummer"]
-        await paypalPage.locator('[placeholder="Email\\ or\\ mobile\\ number"]').fill(credentials.paypalCustomerEmail);
+        await paypalPage.locator('[placeholder="E-Mail-Adresse oder Handynummer"]').fill(credentials.paypalCustomerEmail);
 
-        await paypalPage.locator('[placeholder="Password"]').fill(credentials.paypalCustomerPassword);
+        await paypalPage.locator('[placeholder="Passwort"]').fill(credentials.paypalCustomerPassword);
 
         // Click button:has-text("Einloggen")
-        await paypalPage.locator('button:has-text("Log In")').click();
+        await paypalPage.locator('button:has-text("Einloggen")').click();
 
         // Click [data-testid="submit-button-initial"]
         await paypalPage.locator('button:has-text("Jetzt zahlen")').click();
@@ -53,7 +53,7 @@ test.describe("Frontend", () => {
         await page.click('button[form="confirm--form"].is--primary');
 
         await expect(page.locator('.teaser--title')).toHaveText(/Vielen Dank für Ihre Bestellung bei Shopware Demo/);
-    
+
     });
 
 })

@@ -12,7 +12,6 @@ use Shopware\Components\Model\ModelManager;
 use Shopware\Models\Order\Order;
 use Shopware\Models\Order\Status;
 use SwagPaymentPayPalUnified\Components\Exception\OrderNotFoundException;
-use SwagPaymentPayPalUnified\Components\PaymentStatus;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 
 class PaymentStatusService
@@ -56,8 +55,8 @@ class PaymentStatusService
         $orderStatusModel = $this->modelManager->getRepository(Status::class)->find($paymentStateId);
 
         $orderModel->setPaymentStatus($orderStatusModel);
-        if ($paymentStateId === PaymentStatus::PAYMENT_STATUS_PAID
-            || $paymentStateId === PaymentStatus::PAYMENT_STATUS_PARTIALLY_PAID
+        if ($paymentStateId === Status::PAYMENT_STATE_COMPLETELY_PAID
+            || $paymentStateId === Status::PAYMENT_STATE_PARTIALLY_PAID
         ) {
             $orderModel->setClearedDate(new \DateTime());
         }

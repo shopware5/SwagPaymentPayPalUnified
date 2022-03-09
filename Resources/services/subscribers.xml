@@ -97,9 +97,9 @@
                  class="SwagPaymentPayPalUnified\Subscriber\InContext"
                  public="true">
             <argument type="service" id="paypal_unified.settings_service"/>
-            <argument type="service" id="paypal_unified.dependency_provider"/>
             <argument type="service" id="paypal_unified.payment_method_provider"/>
             <argument type="service" id="shopware_storefront.context_service"/>
+            <argument type="service" id="paypal_unified.button_locale_service"/>
             <tag name="shopware.event_subscriber"/>
         </service>
 
@@ -150,6 +150,7 @@
             <argument type="service" id="paypal_unified.settings_service"/>
             <argument type="service" id="snippets"/>
             <argument type="service" id="paypal_unified.payment_method_provider"/>
+            <argument type="service" id="paypal_unified.button_locale_service"/>
             <tag name="shopware.event_subscriber"/>
         </service>
 
@@ -209,6 +210,7 @@
             <argument type="service" id="shopware_storefront.context_service"/>
             <argument type="service" id="paypal_unified.dependency_provider"/>
             <argument type="service" id="paypal_unified.europe_service"/>
+            <argument type="service" id="paypal_unified.button_locale_service"/>
             <tag name="shopware.event_subscriber"/>
         </service>
     </services>

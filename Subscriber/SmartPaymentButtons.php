@@ -12,6 +12,7 @@ use Enlight\Event\SubscriberInterface;
 use Enlight_Controller_ActionEventArgs as ActionEventArgs;
 use Enlight_View_Default as View;
 use Shopware_Components_Snippet_Manager as SnippetManager;
+use SwagPaymentPayPalUnified\Components\ButtonLocaleService;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Models\Settings\General as GeneralSettingsModel;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
@@ -33,14 +34,21 @@ class SmartPaymentButtons implements SubscriberInterface
      */
     private $paymentMethodProvider;
 
+    /**
+     * @var ButtonLocaleService
+     */
+    private $buttonLocaleService;
+
     public function __construct(
         SettingsServiceInterface $settingsService,
         SnippetManager $snippetManager,
-        PaymentMethodProviderInterface $paymentMethodProvider
+        PaymentMethodProviderInterface $paymentMethodProvider,
+        ButtonLocaleService $buttonLocaleService
     ) {
         $this->settingsService = $settingsService;
         $this->snippetManager = $snippetManager;
         $this->paymentMethodProvider = $paymentMethodProvider;
+        $this->buttonLocaleService = $buttonLocaleService;
     }
 
     public static function getSubscribedEvents()
@@ -77,10 +85,14 @@ class SmartPaymentButtons implements SubscriberInterface
 
         $this->changePaymentDescription($view, 'sPayments');
 
+        $sandbox = $generalSettings->getSandbox();
         $view->assign('paypalUnifiedUseSmartPaymentButtons', true);
-        $view->assign('paypalUnifiedSpbClientId', $generalSettings->getSandbox() ? $generalSettings->getSandboxClientId() : $generalSettings->getClientId());
+        $view->assign('paypalUnifiedModeSandbox', $sandbox);
+        $view->assign('paypalUnifiedSpbClientId', $sandbox ? $generalSettings->getSandboxClientId() : $generalSettings->getClientId());
         $view->assign('paypalUnifiedSpbCurrency', $view->getAssign('sBasket')['sCurrencyName']);
         $view->assign('paypalUnifiedPaymentId', $this->paymentMethodProvider->getPaymentId(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME));
+        $view->assign('paypalUnifiedIntent', $this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_INTENT));
+        $view->assign('paypalUnifiedButtonLocale', $this->buttonLocaleService->getButtonLocale($generalSettings->getButtonLocale()));
     }
 
     public function addSmartPaymentButtonMarks(ActionEventArgs $args)
