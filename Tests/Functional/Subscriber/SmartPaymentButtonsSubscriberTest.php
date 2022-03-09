@@ -308,7 +308,8 @@ class SmartPaymentButtonsSubscriberTest extends TestCase
         return new SmartPaymentButtons(
             Shopware()->Container()->get('paypal_unified.settings_service'),
             Shopware()->Container()->get('snippets'),
-            Shopware()->Container()->get('paypal_unified.payment_method_provider')
+            Shopware()->Container()->get('paypal_unified.payment_method_provider'),
+            Shopware()->Container()->get('paypal_unified.button_locale_service')
         );
     }
 }

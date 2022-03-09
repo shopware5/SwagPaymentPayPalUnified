@@ -25,7 +25,7 @@
              data-paypalAddressPatchUrl="{url controller=PaypalUnified action=patchAddress forceSecure}"
              data-paypalCameFromPaymentSelection="{$paypalUnifiedCameFromPaymentSelection}"
              data-paypalRemotePaymentId="{$paypalUnifiedRemotePaymentId}"
-             data-paypalErrorPage="{url controller=checkout action=shippingPayment paypal_unified_error_code=2}">
+             data-paypalErrorPage="{url controller=checkout action=shippingPayment paypal_unified_error_code=2 forceSecure}">
         </div>
     {/block}
 {/block}
