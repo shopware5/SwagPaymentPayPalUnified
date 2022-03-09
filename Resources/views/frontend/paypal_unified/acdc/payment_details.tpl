@@ -7,7 +7,7 @@
              data-clientToken="{$clientToken|escapeHtml}"
              data-cardHolderData="{$cardHolderData|json_encode|escapeHtml}"
              data-currency="{$paypalUnifiedCurrency}"
-             data-locale="{$paypalUnifiedLanguageIso}"
+             data-locale="{$paypalUnifiedButtonLocale}"
              data-createOrderUrl="{url module='widgets' controller='PaypalUnifiedV2AdvancedCreditDebitCard' action='createOrder'}"
              data-captureUrl="{url module='widgets' controller='PaypalUnifiedV2AdvancedCreditDebitCard' action='capture'}"
              data-createOrderUrlFallback="{url module='widgets' controller='PaypalUnifiedV2SmartPaymentButtons' action='createOrder'}"

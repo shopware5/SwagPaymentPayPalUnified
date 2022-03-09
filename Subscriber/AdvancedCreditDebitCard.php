@@ -12,6 +12,7 @@ use Enlight\Event\SubscriberInterface;
 use Enlight_Controller_ActionEventArgs;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
 use Shopware_Controllers_Frontend_Checkout;
+use SwagPaymentPayPalUnified\Components\ButtonLocaleService;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Models\Settings\General as GeneralSettingsModel;
@@ -52,13 +53,19 @@ class AdvancedCreditDebitCard implements SubscriberInterface
      */
     private $euStatesService;
 
+    /**
+     * @var ButtonLocaleService
+     */
+    private $buttonLocaleService;
+
     public function __construct(
         PaymentMethodProviderInterface $paymentMethodProvider,
         SettingsServiceInterface $settingsService,
         ClientTokenResource $clientTokenResource,
         ContextServiceInterface $contextService,
         DependencyProvider $dependencyProvider,
-        EUStates $euStatesService
+        EUStates $euStatesService,
+        ButtonLocaleService $buttonLocaleService
     ) {
         $this->paymentMethodProvider = $paymentMethodProvider;
         $this->settingsService = $settingsService;
@@ -66,6 +73,7 @@ class AdvancedCreditDebitCard implements SubscriberInterface
         $this->contextService = $contextService;
         $this->dependencyProvider = $dependencyProvider;
         $this->euStatesService = $euStatesService;
+        $this->buttonLocaleService = $buttonLocaleService;
     }
 
     /**
@@ -81,8 +89,7 @@ class AdvancedCreditDebitCard implements SubscriberInterface
      */
     public function onCheckout(Enlight_Controller_ActionEventArgs $args)
     {
-        $isSpbCheckout = (bool) $args->getRequest()->getParam('spbCheckout');
-        if ($isSpbCheckout) {
+        if ($args->getRequest()->getParam('spbCheckout')) {
             return;
         }
 
@@ -126,6 +133,8 @@ class AdvancedCreditDebitCard implements SubscriberInterface
             'clientId' => $generalSettings->getSandbox() ? $generalSettings->getSandboxClientId() : $generalSettings->getClientId(),
             'clientToken' => $clientToken->getClientToken(),
             'cardHolderData' => $cardHolderData,
+            'paypalUnifiedCurrency' => $this->contextService->getContext()->getCurrency()->getCurrency(),
+            'paypalUnifiedButtonLocale' => $this->buttonLocaleService->getButtonLocale($generalSettings->getButtonLocale()),
         ];
 
         if (!isset($cardHolderData['contingencies'])) {

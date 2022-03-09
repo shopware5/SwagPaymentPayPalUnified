@@ -10,8 +10,7 @@ namespace SwagPaymentPayPalUnified\Subscriber;
 
 use Enlight\Event\SubscriberInterface;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
-use Shopware\Models\Shop\Shop;
-use SwagPaymentPayPalUnified\Components\DependencyProvider;
+use SwagPaymentPayPalUnified\Components\ButtonLocaleService;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Models\Settings\ExpressCheckout as ExpressSettingsModel;
 use SwagPaymentPayPalUnified\Models\Settings\General as GeneralSettingsModel;
@@ -31,25 +30,25 @@ class InContext implements SubscriberInterface
     private $settingsService;
 
     /**
-     * @var DependencyProvider
-     */
-    private $dependencyProvider;
-
-    /**
      * @var ContextServiceInterface
      */
     private $contextService;
 
+    /**
+     * @var ButtonLocaleService
+     */
+    private $buttonLocaleService;
+
     public function __construct(
         SettingsServiceInterface $settingsService,
-        DependencyProvider $dependencyProvider,
         PaymentMethodProviderInterface $paymentMethodProvider,
-        ContextServiceInterface $contextService
+        ContextServiceInterface $contextService,
+        ButtonLocaleService $buttonLocaleService
     ) {
         $this->settingsService = $settingsService;
-        $this->dependencyProvider = $dependencyProvider;
         $this->paymentMethodProvider = $paymentMethodProvider;
         $this->contextService = $contextService;
+        $this->buttonLocaleService = $buttonLocaleService;
     }
 
     /**
@@ -105,8 +104,7 @@ class InContext implements SubscriberInterface
         $view->assign('paypalUnifiedButtonStyleColor', $settings->getButtonStyleColor());
         $view->assign('paypalUnifiedButtonStyleShape', $settings->getButtonStyleShape());
         $view->assign('paypalUnifiedButtonStyleSize', $settings->getButtonStyleSize());
-        $view->assign('paypalUnifiedButtonLocale', (string) $settings->getButtonLocale());
-        $view->assign('paypalUnifiedLanguageIso', $this->getInContextButtonLanguage($expressSettings));
+        $view->assign('paypalUnifiedButtonLocale', $this->buttonLocaleService->getButtonLocale($settings->getButtonLocale()));
         $view->assign('paypalUnifiedClientId', $sandbox ? $settings->getSandboxClientId() : $settings->getClientId());
         $view->assign('paypalUnifiedCurrency', $this->contextService->getContext()->getCurrency()->getCurrency());
         $view->assign('paypalUnifiedIntent', $this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_INTENT));
@@ -157,26 +155,5 @@ class InContext implements SubscriberInterface
             'PayerID' => $request->getParam('payerId'),
             'basketId' => $request->getParam('basketId'),
         ]);
-    }
-
-    /**
-     * @return string
-     */
-    private function getInContextButtonLanguage(ExpressSettingsModel $expressSettings)
-    {
-        $shop = $this->dependencyProvider->getShop();
-
-        if (!$shop instanceof Shop) {
-            throw new \UnexpectedValueException(sprintf('Tried to access %s, but it\'s not set in the DIC.', Shop::class));
-        }
-
-        $locale = $shop->getLocale()->getLocale();
-        $buttonLocaleFromSetting = (string) $expressSettings->getButtonLocale();
-
-        if ($buttonLocaleFromSetting !== '') {
-            $locale = $buttonLocaleFromSetting;
-        }
-
-        return $locale;
     }
 }

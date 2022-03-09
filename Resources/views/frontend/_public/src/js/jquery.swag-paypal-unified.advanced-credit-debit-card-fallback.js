@@ -55,7 +55,7 @@
             /**
              * @type string
              */
-            paypalErrorPageUrl: '',
+            paypalErrorPage: '',
 
             /**
              * @type string
@@ -182,13 +182,10 @@
                 method: 'get',
                 url: me.opts.createOrderUrlFallback
             }).then(function(response) {
-                if (response.errorUrl) {
-                    window.location.replace(response.errorUrl);
-                    return;
-                }
                 me.opts.basketId = response.basketId;
 
                 return response.token;
+            }, function() {
             }).promise();
         },
 
@@ -227,7 +224,7 @@
         },
 
         onPayPalAPIError: function() {
-            window.location.replace(this.opts.paypalErrorPageUrl);
+            window.location.replace(this.opts.paypalErrorPage);
         }
     });
 })(jQuery, window);

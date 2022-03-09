@@ -210,10 +210,6 @@
                 params.debug = true;
             }
 
-            if (this.opts.currency) {
-                params.currency = this.opts.currency;
-            }
-
             return [this.opts.sdkUrl, '?', $.param(params, true)].join('');
         },
 
@@ -246,8 +242,12 @@
             var me = this;
 
             return $.ajax({
-                type: 'POST', url: this.opts.createOrderUrl
-            }).then(me.onCreatePaypalOrderSuccess.bind(me));
+                type: 'POST',
+                url: this.opts.createOrderUrl
+            }).then(
+                me.onCreatePaypalOrderSuccess.bind(me),
+                me.onError.bind(me)
+            );
         },
 
         bindFieldActions: function(hostedFields) {
@@ -338,7 +338,8 @@
          * @param paypalOrderId { String }
          */
         submitForm: function(paypalOrderId) {
-            var $orderForm = $(this.opts.orderFormSelector), input = document.createElement('input');
+            var $orderForm = $(this.opts.orderFormSelector),
+                input = document.createElement('input');
 
             input.setAttribute('type', 'hidden');
             input.setAttribute('name', 'paypalOrderId');
@@ -356,12 +357,14 @@
          */
         onError: function(response) {
             var jsonResponse = JSON.parse(response.responseText),
-                content = jsonResponse.errorTemplate;
+                content = jsonResponse.errorTemplate,
+                $confirmButton = $('button[type="submit"][form="confirm--form"]');
 
             this.$el.prepend(content);
             this.updateAutoResizer();
 
             $.loadingIndicator.close();
+            $confirmButton.data('plugin_swPreloaderButton').reset();
         },
 
         onComplete: function() {
