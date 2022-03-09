@@ -1,6 +1,6 @@
 module.exports = {
     root: true,
-
+    extends: 'standard',
     parserOptions: {
         "ecmaVersion": "latest",
         "sourceType": "module"
@@ -26,6 +26,10 @@ module.exports = {
         eqeqeq: 0,
         'no-debugger': 0,
         'one-var': 0,
+        semi: [
+            'error',
+            'always'
+        ],
         indent: [
             'error',
             4,

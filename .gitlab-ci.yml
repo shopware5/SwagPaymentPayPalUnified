@@ -129,6 +129,7 @@ JavaScript checks:
         - cd shopware
         - make install-theme-depencencies
         - cd custom/plugins/${PLUGIN_NAME}
+        - (cd Tests/E2E && npm install)
         - make check-js-code
         - make run-javascript-tests
 
@@ -247,3 +248,12 @@ E2E:
             - shopware/custom/plugins/${PLUGIN_NAME}/Tests/E2E/results/*
         expire_in: 1 week
         when: always
+
+E2E 5.2:
+    stage: E2E
+    extends:
+        - E2E
+        - .phpunit_base_pre_v53
+    variables:
+        CHECKOUT_SHOPWARE_BRANCH: "5.2"
+        CHECKOUT_COOKIE_CONSENT_MANAGER_BRANCH: "5.2.11-5.2.27"
