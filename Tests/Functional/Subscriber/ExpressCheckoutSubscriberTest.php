@@ -770,12 +770,19 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $ecListingActive = false,
         $ecSubmitCart = false
     ) {
-        $this->insertGeneralSettingsFromArray([
+        $generalSettings = [
             'active' => $active,
             'shopId' => 1,
             'sandbox' => $sandboxMode,
-            'sandboxClientId' => 'foo',
-        ]);
+        ];
+
+        if ($sandboxMode) {
+            $generalSettings['sandboxClientId'] = '0f3ee59b-3346-421c-be93-ca77921237dc';
+        } else {
+            $generalSettings['clientId'] = '35931479-2ab5-495c-977f-d0a75717e65e';
+        }
+
+        $this->insertGeneralSettingsFromArray($generalSettings);
 
         $this->insertExpressCheckoutSettingsFromArray([
             'cartActive' => $ecCartActive,

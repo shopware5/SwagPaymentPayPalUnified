@@ -147,6 +147,7 @@
         },
 
         init: function() {
+            // TODO: (PT-12652) Disable the buy-button upon initialisation. Enable it again, when the paypal-SDK has finished loading.
             this.applyDataAttributes();
 
             this.insertScript();
@@ -156,6 +157,7 @@
         },
 
         insertScript: function() {
+            // TODO: (PT-12652) This inserts the script on every call. It should be checked, whether the script is already there, before insertion.
             var payPalScript = document.createElement('script');
 
             payPalScript.id = this.opts.paypalScriptId;

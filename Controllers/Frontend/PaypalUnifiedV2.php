@@ -6,12 +6,14 @@
  * file that was distributed with this source code.
  */
 
+use Shopware\Models\Order\Status;
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\ShopwareOrderData;
 use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentController;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Common\Link;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\PaymentIntentV2;
 
 class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymentController
 {
@@ -135,6 +137,8 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
                 $this->orderDataService->removeTransactionId($shopwareOrderNumber);
             }
 
+            $this->paymentStatusService->updatePaymentStatus($payPalOrderId, Status::PAYMENT_STATE_REVIEW_NECESSARY);
+
             return;
         }
 
@@ -143,6 +147,12 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
         }
 
         $this->setTransactionId($shopwareOrderNumber, $capturedPayPalOrder);
+
+        if ($payPalOrder->getIntent() === PaymentIntentV2::CAPTURE) {
+            $this->paymentStatusService->updatePaymentStatus($payPalOrderId, Status::PAYMENT_STATE_COMPLETELY_PAID);
+        } else {
+            $this->paymentStatusService->updatePaymentStatus($payPalOrderId, Status::PAYMENT_STATE_RESERVED);
+        }
 
         if ($this->Request()->isXmlHttpRequest()) {
             $this->view->assign('paypalOrderId', $payPalOrderId);

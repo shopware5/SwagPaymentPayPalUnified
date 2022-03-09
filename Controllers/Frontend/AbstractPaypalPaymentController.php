@@ -24,6 +24,7 @@ use SwagPaymentPayPalUnified\Components\Services\ExceptionHandlerService;
 use SwagPaymentPayPalUnified\Components\Services\OrderBuilder\OrderFactory;
 use SwagPaymentPayPalUnified\Components\Services\OrderDataService;
 use SwagPaymentPayPalUnified\Components\Services\PaymentControllerHelper;
+use SwagPaymentPayPalUnified\Components\Services\PaymentStatusService;
 use SwagPaymentPayPalUnified\Components\Services\Validation\RedirectDataBuilderFactory;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
@@ -121,6 +122,11 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
     protected $shopwareConfig;
 
     /**
+     * @var PaymentStatusService
+     */
+    protected $paymentStatusService;
+
+    /**
      * @var LoggerServiceInterface
      */
     protected $logger;
@@ -139,6 +145,7 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
         $this->paymentMethodProvider = $this->get('paypal_unified.payment_method_provider');
         $this->exceptionHandler = $this->get('paypal_unified.exception_handler_service');
         $this->shopwareConfig = $this->get('config');
+        $this->paymentStatusService = $this->get('paypal_unified.payment_status_service');
         $this->logger = $this->get('paypal_unified.logger_service');
     }
 
@@ -525,16 +532,17 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
     }
 
     /**
-     * @param string         $payPalOrderId
-     * @param PaymentType::* $paymentType
+     * @param string                       $payPalOrderId
+     * @param PaymentType::*               $paymentType
+     * @param Status::PAYMENT_STATE_*|null $paymentStatusId
      *
      * @return string
      */
-    protected function createShopwareOrder($payPalOrderId, $paymentType)
+    protected function createShopwareOrder($payPalOrderId, $paymentType, $paymentStatusId = null)
     {
         $this->logger->debug(sprintf('%s CREATE SHOPWARE ORDER', __METHOD__));
 
-        $orderNumber = (string) $this->saveOrder($payPalOrderId, $payPalOrderId, Status::PAYMENT_STATE_OPEN);
+        $orderNumber = (string) $this->saveOrder($payPalOrderId, $payPalOrderId, $paymentStatusId ?: Status::PAYMENT_STATE_OPEN);
 
         $this->orderDataService->applyPaymentTypeAttribute($orderNumber, $paymentType);
 
