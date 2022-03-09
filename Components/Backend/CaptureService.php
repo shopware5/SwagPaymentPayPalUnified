@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\Components\Backend;
 
+use Shopware\Models\Order\Status;
 use SwagPaymentPayPalUnified\Components\ExceptionHandlerServiceInterface;
 use SwagPaymentPayPalUnified\Components\PaymentStatus;
 use SwagPaymentPayPalUnified\Components\Services\PaymentStatusService;
@@ -141,7 +142,7 @@ class CaptureService
             if ($refundData['state'] === PaymentStatus::PAYMENT_COMPLETED) {
                 $this->paymentStatusService->updatePaymentStatus(
                     $refundData['parent_payment'],
-                    PaymentStatus::PAYMENT_STATUS_REFUNDED
+                    Status::PAYMENT_STATE_RE_CREDITING
                 );
             }
 
@@ -192,12 +193,12 @@ class CaptureService
             if ($isFinal) {
                 $this->paymentStatusService->updatePaymentStatus(
                     $captureData['parent_payment'],
-                    PaymentStatus::PAYMENT_STATUS_PAID
+                    Status::PAYMENT_STATE_COMPLETELY_PAID
                 );
             } else {
                 $this->paymentStatusService->updatePaymentStatus(
                     $captureData['parent_payment'],
-                    PaymentStatus::PAYMENT_STATUS_PARTIALLY_PAID
+                    Status::PAYMENT_STATE_PARTIALLY_PAID
                 );
             }
         }

@@ -10,6 +10,7 @@ use Doctrine\DBAL\Connection;
 use Doctrine\ORM\Query\Expr\Join;
 use Shopware\Components\Model\QueryBuilder;
 use Shopware\Models\Order\Order;
+use Shopware\Models\Order\Status;
 use SwagPaymentPayPalUnified\Components\Backend\CaptureService;
 use SwagPaymentPayPalUnified\Components\Backend\CredentialsService;
 use SwagPaymentPayPalUnified\Components\Backend\PaymentDetailsService;
@@ -231,7 +232,7 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
             if ($refundData['state'] === PaymentStatus::PAYMENT_COMPLETED) {
                 $paymentStatusService->updatePaymentStatus(
                     $refundData['parent_payment'],
-                    PaymentStatus::PAYMENT_STATUS_REFUNDED
+                    Status::PAYMENT_STATE_RE_CREDITING
                 );
             }
 

@@ -8,8 +8,8 @@
 
 namespace SwagPaymentPayPalUnified\WebhookHandlers;
 
+use Shopware\Models\Order\Status;
 use SwagPaymentPayPalUnified\Components\Exception\OrderNotFoundException;
-use SwagPaymentPayPalUnified\Components\PaymentStatus;
 use SwagPaymentPayPalUnified\Components\Services\PaymentStatusService;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\Webhook\WebhookEventTypes;
@@ -51,7 +51,7 @@ class SaleComplete implements WebhookHandler
         try {
             $this->paymentStatusService->updatePaymentStatus(
                 $parentPayment,
-                PaymentStatus::PAYMENT_STATUS_PAID
+                Status::PAYMENT_STATE_COMPLETELY_PAID
             );
 
             return true;

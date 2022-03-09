@@ -7,6 +7,7 @@
  */
 
 use Shopware\Components\HttpClient\RequestException;
+use Shopware\Models\Order\Status;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
 use SwagPaymentPayPalUnified\Components\ExceptionHandlerServiceInterface;
@@ -221,7 +222,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_F
 
         // if the order number should be send to PayPal do it before the execute
         if ($sendOrderNumber) {
-            $orderNumber = (string) $this->saveOrder($paymentId, $paymentId, PaymentStatus::PAYMENT_STATUS_OPEN);
+            $orderNumber = (string) $this->saveOrder($paymentId, $paymentId, Status::PAYMENT_STATE_OPEN);
             $patchOrderNumber = $this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_ORDER_NUMBER_PREFIX) . $orderNumber;
 
             /** @var PaymentOrderNumberPatch $paymentPatch */
@@ -251,7 +252,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_F
         } catch (RequestException $exception) {
             $errorCode = ErrorCodes::COMMUNICATION_FAILURE;
             if ($sendOrderNumber) {
-                $orderDataService->setOrderState($orderNumber, PaymentStatus::ORDER_STATUS_CLARIFICATION_REQUIRED);
+                $orderDataService->setOrderState($orderNumber, Status::ORDER_STATE_CLARIFICATION_REQUIRED);
                 $orderDataService->removeTransactionId($orderNumber);
                 $errorCode = ErrorCodes::COMMUNICATION_FAILURE_FINISH;
             }
@@ -266,7 +267,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_F
 
         // if the order number is not sent to PayPal, save the order here
         if (!$sendOrderNumber) {
-            $orderNumber = (string) $this->saveOrder($paymentId, $paymentId, PaymentStatus::PAYMENT_STATUS_OPEN);
+            $orderNumber = (string) $this->saveOrder($paymentId, $paymentId, Status::PAYMENT_STATE_OPEN);
         }
 
         /** @var RelatedResource $relatedResource */
@@ -283,7 +284,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_F
         // apply the payment status if its completed by PayPal
         $paymentState = $relatedResource->getState();
         if ($paymentState === PaymentStatus::PAYMENT_COMPLETED) {
-            $this->savePaymentStatus($relatedResourceId, $paymentId, PaymentStatus::PAYMENT_STATUS_PAID);
+            $this->savePaymentStatus($relatedResourceId, $paymentId, Status::PAYMENT_STATE_COMPLETELY_PAID);
             $orderDataService->setClearedDate($orderNumber);
         }
 
