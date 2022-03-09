@@ -5,7 +5,9 @@ const mexico = '164';
 const mxn = '4';
 
 test.describe("Pay with OXXO", () => {
+
     test('Buy in mexico customer with mxn', async ({ page }) => {
+
         //login
         await page.goto('/account');
         await page.waitForLoadState('load');
@@ -47,5 +49,7 @@ test.describe("Pay with OXXO", () => {
         await page.click('text=Success');
 
         await expect(page.locator('.teaser--title')).toHaveText(/Vielen Dank für Ihre Bestellung bei Shopware Demo/);
+    
     });
+
 })

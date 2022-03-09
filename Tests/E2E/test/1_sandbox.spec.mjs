@@ -1,8 +1,29 @@
 import { test, expect } from '@playwright/test';
 import credentials from './credentials.mjs';
+import MysqlFactory from '../helper/mysqlFactory.mjs';
+import defaultPaypalSettingsSql from '../helper/paypalSqlHelper.mjs';
+import fs from "fs";
+import path from "path";
+const connection = MysqlFactory.getInstance();
+const truncateTables = fs.readFileSync(path.join(path.resolve(''),'setup/sql/truncate_paypal_tables.sql'), 'utf8');
 
 test.describe("Backend testing", () => {
+
+    test.beforeEach(() => {
+
+        connection.query(truncateTables);
+
+    });
+
+    test.afterEach(() => {
+
+        connection.query(truncateTables);
+        connection.query(defaultPaypalSettingsSql);
+
+    });
+
     test('activate the sandbox', async ({ page }) => {
+
         await page.goto('/backend');
         await expect(page).toHaveTitle(/Backend/);
         await page.fill('input[name="username"]', credentials.defaultBackendUserUsername);
@@ -57,5 +78,7 @@ test.describe("Backend testing", () => {
         await page.locator('textarea[name="customerServiceInstructions"]').fill('This field is required if PayUponInvoice is onboarded');
 
         await page.click('text=Speichern');
+    
     });
+
 })

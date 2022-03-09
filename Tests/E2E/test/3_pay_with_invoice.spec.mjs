@@ -1,8 +1,21 @@
 import { test, expect } from '@playwright/test';
 import credentials from './credentials.mjs';
+import MysqlFactory from '../helper/mysqlFactory.mjs';
+import fs from "fs";
+import path from "path";
+const connection = MysqlFactory.getInstance();
+const resetUserSettings = fs.readFileSync(path.join(path.resolve(''),'setup/sql/reset_user_settings.sql'), 'utf8');
 
 test.describe("Pay with invoice", () => {
+
+    test.beforeEach(() => {
+
+        connection.query(resetUserSettings);
+    
+    })
+
     test('Buy a product with invoice', async ({ page }) => {
+
         //login
         await page.goto('/account');
         await page.waitForLoadState('load');
@@ -31,5 +44,7 @@ test.describe("Pay with invoice", () => {
         await page.click('button:has-text("Zahlungspflichtig bestellen")');
 
         await expect(page.locator('.teaser--title')).toHaveText(/Vielen Dank für Ihre Bestellung bei Shopware Demo/);
+    
     });
+
 })

@@ -10,13 +10,13 @@ const config = {
     globalTeardown: './setup/globalTeardown.mjs',
     globalSetup: './setup/globalSetup.mjs',
     /* Maximum time one test can run for. */
-    timeout: 60 * 1000,
+    timeout: 120000,
     expect: {
     /**
      * Maximum time expect() should wait for the condition to be met.
      * For example in `await expect(locator).toHaveText();`
      */
-        timeout: 10000
+        timeout: 20000
     },
     /* Fail the build on CI if you accidentally left test.only in the source code. */
     forbidOnly: !!process.env.CI,
@@ -96,9 +96,11 @@ const config = {
 
 // Only require for non debian systems
 if (process.env.EXECUTION_PATH) {
+
     config.use.launchOptions = {
         executablePath: process.env.EXECUTION_PATH
     };
+
 }
 
 module.exports = config;

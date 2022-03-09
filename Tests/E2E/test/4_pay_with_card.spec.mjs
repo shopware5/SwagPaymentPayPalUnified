@@ -2,7 +2,9 @@ import { test, expect } from '@playwright/test';
 import credentials from './credentials.mjs';
 
 test.describe("Pay with invoice", () => {
+
     test('Buy a product with invoice', async ({ page }) => {
+
         //login
         await page.goto('/account');
         await page.waitForLoadState('load');
@@ -38,5 +40,7 @@ test.describe("Pay with invoice", () => {
         await page.click('button:has-text("Zahlungspflichtig bestellen")');
 
         await expect(page.locator('.teaser--title')).toHaveText(/Vielen Dank für Ihre Bestellung bei Shopware Demo/);
+    
     });
+
 })
