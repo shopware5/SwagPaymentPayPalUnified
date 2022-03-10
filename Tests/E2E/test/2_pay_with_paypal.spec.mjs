@@ -34,13 +34,11 @@ test.describe('Frontend', () => {
             locator.dispatchEvent('click')
         ]);
 
-        // Fill [placeholder="E-Mail-Adresse\ oder\ Handynummer"]
-        await paypalPage.locator('[placeholder="E-Mail-Adresse oder Handynummer"]').fill(credentials.paypalCustomerEmail);
+        await paypalPage.locator('#email').fill(credentials.paypalCustomerEmail);
 
-        await paypalPage.locator('[placeholder="Passwort"]').fill(credentials.paypalCustomerPassword);
+        await paypalPage.locator('#password').fill(credentials.paypalCustomerPassword);
 
-        // Click button:has-text("Einloggen")
-        await paypalPage.locator('button:has-text("Einloggen")').click();
+        await paypalPage.locator('#btnLogin').click();
 
         // Click [data-testid="submit-button-initial"]
         await paypalPage.locator('button:has-text("Jetzt zahlen")').click();

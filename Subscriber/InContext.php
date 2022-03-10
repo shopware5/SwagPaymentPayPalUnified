@@ -127,7 +127,7 @@ class InContext implements SubscriberInterface
         } elseif (\strtolower($request->getActionName()) === 'confirm' && $request->getParam('inContextCheckout', false)) {
             // This determines, whether the paypal-Buttons need to be rendered
             $view->assign('paypalUnifiedInContextCheckout', true);
-            $view->assign('paypalUnifiedInContextOrderId', $request->getParam('orderId'));
+            $view->assign('paypalUnifiedInContextOrderId', $request->getParam('paypalOrderId'));
             $view->assign('paypalUnifiedInContextPayerId', $request->getParam('payerId'));
             $view->assign('paypalUnifiedInContextBasketId', $request->getParam('basketId'));
         }
@@ -151,7 +151,7 @@ class InContext implements SubscriberInterface
             'controller' => 'PaypalUnifiedV2',
             'action' => 'return',
             'inContextCheckout' => true,
-            'token' => $request->getParam('orderId'),
+            'token' => $request->getParam('paypalOrderId'),
             'PayerID' => $request->getParam('payerId'),
             'basketId' => $request->getParam('basketId'),
         ]);

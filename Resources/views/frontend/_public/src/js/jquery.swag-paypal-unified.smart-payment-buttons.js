@@ -222,14 +222,14 @@
             }).then(function(response) {
                 me.opts.basketId = response.basketId;
 
-                return response.token;
+                return response.paypalOrderId;
             }, function() {
             }).promise();
         },
 
         onApprove: function(data, actions) {
             var confirmUrl = this.opts.checkoutConfirmUrl + '?' + $.param({
-                orderId: data.orderID,
+                paypalOrderId: data.orderID,
                 payerId: data.payerID,
                 basketId: this.opts.basketId
             }, true);

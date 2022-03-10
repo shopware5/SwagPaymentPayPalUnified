@@ -7,7 +7,7 @@ parameters:
     excludePaths:
         - vendor
         - .githooks
-
+        - Tests/E2E
     symfony:
         constant_hassers: false
         container_xml_path: ../../../var/cache/production____REVISION___/container.xml

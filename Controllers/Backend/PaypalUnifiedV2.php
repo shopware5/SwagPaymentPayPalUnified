@@ -8,7 +8,6 @@
 
 use SwagPaymentPayPalUnified\Components\Services\ExceptionHandlerService;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
-use SwagPaymentPayPalUnified\PayPalBundle\PartnerAttributionId;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Payments\Capture;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Payments\Capture\Amount;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Payments\Refund;
@@ -103,7 +102,7 @@ class Shopware_Controllers_Backend_PaypalUnifiedV2 extends Shopware_Controllers_
         try {
             $this->logger->debug(sprintf('%s CAPTURE PAYPAL ORDER WITH ID: %s', __METHOD__, $authorizationId));
 
-            $this->authorizationResource->capture($authorizationId, $capture, PartnerAttributionId::PAYPAL_ALL_V2);
+            $this->authorizationResource->capture($authorizationId, $capture);
 
             $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFULLY AUTHORIZED', __METHOD__));
         } catch (Exception $exception) {
@@ -140,7 +139,7 @@ class Shopware_Controllers_Backend_PaypalUnifiedV2 extends Shopware_Controllers_
         try {
             $this->logger->debug(sprintf('%s CAPTURE PAYPAL ORDER WITH ID: %s', __METHOD__, $captureId));
 
-            $this->captureResource->refund($captureId, $refund, PartnerAttributionId::PAYPAL_ALL_V2);
+            $this->captureResource->refund($captureId, $refund);
 
             $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFULLY CAPTURED', __METHOD__));
         } catch (Exception $exception) {
@@ -166,7 +165,7 @@ class Shopware_Controllers_Backend_PaypalUnifiedV2 extends Shopware_Controllers_
         try {
             $this->logger->debug(sprintf('%s CANCEL AUTHORIZATION OF PAYPAL ORDER WITH ID: %s', __METHOD__, $authorizationId));
 
-            $this->authorizationResource->void($authorizationId, PartnerAttributionId::PAYPAL_ALL_V2);
+            $this->authorizationResource->void($authorizationId);
 
             $this->logger->debug(sprintf('%s CANCEL AUTHORIZATION SUCCESSFUL', __METHOD__));
         } catch (Exception $exception) {

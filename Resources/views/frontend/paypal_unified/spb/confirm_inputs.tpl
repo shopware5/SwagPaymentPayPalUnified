@@ -4,7 +4,7 @@
     {/block}
 
     {block name='frontend_checkout_confirm_paypal_unified_spb_inputs_order_id'}
-        <input type="hidden" value="{$paypalUnifiedSpbOrderId}" name="orderId">
+        <input type="hidden" value="{$paypalUnifiedSpbOrderId}" name="paypalOrderId">
     {/block}
 
     {block name='frontend_checkout_confirm_paypal_unified_spb_inputs_payer_id'}

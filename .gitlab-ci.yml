@@ -246,6 +246,7 @@ E2E:
     artifacts:
         paths:
             - shopware/custom/plugins/${PLUGIN_NAME}/Tests/E2E/results/*
+            - shopware/var/log/*
         expire_in: 1 week
         when: always
 

@@ -7,6 +7,8 @@ import path from 'path';
 const connection = MysqlFactory.getInstance();
 const truncateTables = fs.readFileSync(path.join(path.resolve(''), 'setup/sql/truncate_paypal_tables.sql'), 'utf8');
 
+test.use({ viewport: { width: 1920, height: 1080 } });
+
 test.describe('Backend testing', () => {
     test.beforeEach(() => {
         connection.query(truncateTables);
@@ -69,7 +71,7 @@ test.describe('Backend testing', () => {
 
         // Fill textarea[name="customerServiceInstructions"]
         await page.locator('button[role="button"]:has-text("Grundeinstellungen")').click();
-        await page.locator('textarea[name="customerServiceInstructions"]').fill('This field is required if PayUponInvoice is onboarded');
+        await page.locator('textarea[name="customerServiceInstructions"]').type('This field is required if PayUponInvoice is onboarded');
 
         await page.click('text=Speichern');
     });

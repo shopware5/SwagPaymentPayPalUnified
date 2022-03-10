@@ -406,7 +406,7 @@
             }).then(function(response) {
                 me.opts.basketId = response.basketId;
 
-                return response.token;
+                return response.paypalOrderId;
             }, function() {
             }).promise();
         },
@@ -433,25 +433,12 @@
          */
         renderConfirmUrl: function(data) {
             var params = $.param({
-                orderId: data.orderID,
+                paypalOrderId: data.orderID,
                 payerId: data.payerID,
                 basketId: this.opts.basketId
             }, true);
 
             return [this.opts.confirmUrl, '?', params].join('');
-        },
-
-        /**
-         * @param response { Object }
-         *
-         * @return { string }
-         */
-        renderFinishUrl: function(response) {
-            var finishParams = $.param({
-                sUniqueID: response.paypalOrderId
-            }, true);
-
-            return [this.opts.finishUrl, '?', finishParams].join('');
         },
 
         onCancel: function() {

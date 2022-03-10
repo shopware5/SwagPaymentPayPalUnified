@@ -173,7 +173,7 @@ class InContextSubscriberTest extends TestCase
         $request->setActionName('confirm');
         $request->setParams([
             'inContextCheckout' => true,
-            'orderId' => 'b53e0880-8141-4d72-a02a-aad475809e77',
+            'paypalOrderId' => 'b53e0880-8141-4d72-a02a-aad475809e77',
             'payerId' => '218baa37-9296-4288-a61d-256dea8594f4',
             'basketId' => 'e209dd3b-90b0-4e06-bd67-850fbf23dcac',
         ]);
@@ -206,7 +206,7 @@ class InContextSubscriberTest extends TestCase
         $request->setActionName('payment');
         $request->setParams([
             'inContextCheckout' => true,
-            'orderId' => 'e6087d09-4109-49aa-93be-13f4ee0baa5d',
+            'paypalOrderId' => 'e6087d09-4109-49aa-93be-13f4ee0baa5d',
             'payerId' => '1880eb91-fb92-4289-9a60-985fba818429',
             'basketId' => 'daf8a0fd-527b-4700-896e-8a19bc71796f',
         ]);

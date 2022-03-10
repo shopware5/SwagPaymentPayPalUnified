@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\PayPalBundle\V2\Resource;
 
+use SwagPaymentPayPalUnified\PayPalBundle\PartnerAttributionId;
 use SwagPaymentPayPalUnified\PayPalBundle\RequestType;
 use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Payments\Authorization;
@@ -24,6 +25,7 @@ class AuthorizationResource
     public function __construct(ClientService $clientService)
     {
         $this->clientService = $clientService;
+        $this->clientService->setPartnerAttributionId(PartnerAttributionId::PAYPAL_ALL_V2);
     }
 
     /**
@@ -43,7 +45,6 @@ class AuthorizationResource
 
     /**
      * @param string $authorizationId
-     * @param string $partnerAttributionId
      * @param bool   $minimalResponse
      *
      * @return Capture
@@ -51,10 +52,8 @@ class AuthorizationResource
     public function capture(
         $authorizationId,
         Capture $capture,
-        $partnerAttributionId,
         $minimalResponse = true
     ) {
-        $this->clientService->setPartnerAttributionId($partnerAttributionId);
         if ($minimalResponse === false) {
             $this->clientService->setHeader('Prefer', 'return=representation');
         }
@@ -70,14 +69,11 @@ class AuthorizationResource
 
     /**
      * @param string $authorizationId
-     * @param string $partnerAttributionId
      *
      * @return void
      */
-    public function void($authorizationId, $partnerAttributionId)
+    public function void($authorizationId)
     {
-        $this->clientService->setPartnerAttributionId($partnerAttributionId);
-
         $this->clientService->sendRequest(
             RequestType::POST,
             \sprintf('%s/%s/void', RequestUriV2::AUTHORIZATIONS_RESOURCE, $authorizationId),

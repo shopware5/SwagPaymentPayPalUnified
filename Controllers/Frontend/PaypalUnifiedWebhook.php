@@ -38,9 +38,6 @@ class Shopware_Controllers_Frontend_PaypalUnifiedWebhook extends Enlight_Control
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function preDispatch()
     {
         $this->webhookService = $this->get('paypal_unified.webhook_service');
@@ -56,12 +53,18 @@ class Shopware_Controllers_Frontend_PaypalUnifiedWebhook extends Enlight_Control
         ]);
     }
 
+    /**
+     * @return void
+     */
     public function executeAction()
     {
         $this->Front()->Plugins()->ViewRenderer()->setNoRender();
 
         //Get and decode the post data from the request
         $postData = $this->request->getRawBody();
+        if (!\is_string($postData)) {
+            return;
+        }
         $postData = \json_decode($postData, true);
 
         $this->logger->notify('[Webhook] Received webhook', ['payload' => $postData]);
