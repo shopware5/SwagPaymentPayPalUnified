@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\PayPalBundle\V2\Resource;
 
+use SwagPaymentPayPalUnified\PayPalBundle\PartnerAttributionId;
 use SwagPaymentPayPalUnified\PayPalBundle\RequestType;
 use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Payments\Capture;
@@ -24,6 +25,7 @@ class CaptureResource
     public function __construct(ClientService $clientService)
     {
         $this->clientService = $clientService;
+        $this->clientService->setPartnerAttributionId(PartnerAttributionId::PAYPAL_ALL_V2);
     }
 
     /**
@@ -43,7 +45,6 @@ class CaptureResource
 
     /**
      * @param string $captureId
-     * @param string $partnerAttributionId
      * @param bool   $minimalResponse
      *
      * @return Refund
@@ -51,10 +52,8 @@ class CaptureResource
     public function refund(
         $captureId,
         Refund $refund,
-        $partnerAttributionId,
         $minimalResponse = true
     ) {
-        $this->clientService->setPartnerAttributionId($partnerAttributionId);
         if ($minimalResponse === false) {
             $this->clientService->setHeader('Prefer', 'return=representation');
         }

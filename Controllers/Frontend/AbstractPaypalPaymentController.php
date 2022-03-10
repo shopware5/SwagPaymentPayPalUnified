@@ -27,7 +27,6 @@ use SwagPaymentPayPalUnified\Components\Services\PaymentControllerHelper;
 use SwagPaymentPayPalUnified\Components\Services\Validation\RedirectDataBuilderFactory;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
-use SwagPaymentPayPalUnified\PayPalBundle\PartnerAttributionId;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource;
@@ -173,7 +172,7 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
 
             $payPalOrderData = $this->orderFactory->createOrder($orderParameter);
 
-            $payPalOrder = $this->orderResource->create($payPalOrderData, $orderParameter->getPaymentType(), PartnerAttributionId::PAYPAL_ALL_V2, false);
+            $payPalOrder = $this->orderResource->create($payPalOrderData, $orderParameter->getPaymentType());
 
             $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFUL CREATED - ID: %d', __METHOD__, $payPalOrder->getId()));
         } catch (RequestException $exception) {
@@ -208,7 +207,7 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
         try {
             $this->logger->debug(sprintf('%s UPDATE PAYPAL ORDER WITH ID: %s', __METHOD__, $payPalOrderId));
 
-            $this->orderResource->update($patches, $payPalOrderId, PartnerAttributionId::PAYPAL_ALL_V2);
+            $this->orderResource->update($patches, $payPalOrderId);
 
             $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFULLY UPDATED', __METHOD__));
         } catch (RequestException $exception) {
@@ -248,13 +247,13 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
             if ($this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_INTENT) === PaymentIntentV2::CAPTURE) {
                 $this->logger->debug(sprintf('%s CAPTURE PAYPAL ORDER WITH ID: %s', __METHOD__, $payPalOrderId));
 
-                $this->orderResource->capture($payPalOrderId, PartnerAttributionId::PAYPAL_ALL_V2, false);
+                $this->orderResource->capture($payPalOrderId);
 
                 $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFULLY CAPTURED', __METHOD__));
             } elseif ($this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_INTENT) === PaymentIntentV2::AUTHORIZE) {
                 $this->logger->debug(sprintf('%s AUTHORIZE PAYPAL ORDER WITH ID: %s', __METHOD__, $payPalOrderId));
 
-                $this->orderResource->authorize($payPalOrderId, PartnerAttributionId::PAYPAL_ALL_V2, false);
+                $this->orderResource->authorize($payPalOrderId);
 
                 $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFULLY AUTHORIZED', __METHOD__));
             }

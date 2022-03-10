@@ -9,6 +9,7 @@
 namespace SwagPaymentPayPalUnified\PayPalBundle\V2\Resource;
 
 use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
+use SwagPaymentPayPalUnified\PayPalBundle\PartnerAttributionId;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\RequestType;
 use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService;
@@ -40,6 +41,7 @@ class OrderResource
         LoggerServiceInterface $loggerService
     ) {
         $this->clientService = $clientService;
+        $this->clientService->setPartnerAttributionId(PartnerAttributionId::PAYPAL_ALL_V2);
         $this->arrayFactory = $arrayFactory;
         $this->loggerService = $loggerService;
     }
@@ -60,17 +62,14 @@ class OrderResource
     }
 
     /**
-     * @param string         $partnerAttributionId
      * @param PaymentType::* $paymentType
      * @param bool           $minimalResponse
      *
      * @return Order
      */
-    public function create(Order $order, $paymentType, $partnerAttributionId, $minimalResponse = true)
+    public function create(Order $order, $paymentType, $minimalResponse = true)
     {
         $paypalRequestId = null;
-
-        $this->clientService->setPartnerAttributionId($partnerAttributionId);
 
         if ($minimalResponse === false) {
             $this->clientService->setHeader('Prefer', 'return=representation');
@@ -106,13 +105,11 @@ class OrderResource
     /**
      * @param Patch[] $patches
      * @param string  $orderId
-     * @param string  $partnerAttributionId
      *
      * @return void
      */
-    public function update(array $patches, $orderId, $partnerAttributionId)
+    public function update(array $patches, $orderId)
     {
-        $this->clientService->setPartnerAttributionId($partnerAttributionId);
         $this->clientService->sendRequest(
             RequestType::PATCH,
             \sprintf('%s/%s', RequestUriV2::ORDERS_RESOURCE, $orderId),
@@ -122,17 +119,12 @@ class OrderResource
 
     /**
      * @param string $orderId
-     * @param string $partnerAttributionId
      * @param bool   $minimalResponse
      *
      * @return Order
      */
-    public function capture(
-        $orderId,
-        $partnerAttributionId,
-        $minimalResponse = false
-    ) {
-        $this->clientService->setPartnerAttributionId($partnerAttributionId);
+    public function capture($orderId, $minimalResponse = true)
+    {
         if ($minimalResponse === false) {
             $this->clientService->setHeader('Prefer', 'return=representation');
         }
@@ -148,17 +140,12 @@ class OrderResource
 
     /**
      * @param string $orderId
-     * @param string $partnerAttributionId
      * @param bool   $minimalResponse
      *
      * @return Order
      */
-    public function authorize(
-        $orderId,
-        $partnerAttributionId,
-        $minimalResponse = false
-    ) {
-        $this->clientService->setPartnerAttributionId($partnerAttributionId);
+    public function authorize($orderId, $minimalResponse = true)
+    {
         if ($minimalResponse === false) {
             $this->clientService->setHeader('Prefer', 'return=representation');
         }

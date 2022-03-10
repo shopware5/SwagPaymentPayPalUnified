@@ -33,7 +33,7 @@ class Order extends PayPalApiStruct
     protected $applicationContext;
 
     /**
-     * @var PaymentSource
+     * @var PaymentSource|null
      */
     protected $paymentSource;
 
@@ -125,7 +125,7 @@ class Order extends PayPalApiStruct
     }
 
     /**
-     * @return PaymentSource
+     * @return PaymentSource|null
      */
     public function getPaymentSource()
     {
