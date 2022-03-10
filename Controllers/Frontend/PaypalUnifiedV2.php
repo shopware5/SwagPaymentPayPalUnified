@@ -70,7 +70,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
         if ($this->Request()->isXmlHttpRequest()) {
             $this->logger->debug(sprintf('%s IS XHR REQUEST', __METHOD__));
 
-            $this->view->assign('token', $payPalOrder->getId());
+            $this->view->assign('paypalOrderId', $payPalOrder->getId());
             $this->view->assign('basketId', $orderParams->getBasketUniqueId());
 
             return;
