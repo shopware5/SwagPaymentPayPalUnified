@@ -7,72 +7,25 @@
  */
 
 use Shopware\Components\HttpClient\RequestException;
-use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
-use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\PayPalOrderParameterFacadeInterface;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\ShopwareOrderData;
 use SwagPaymentPayPalUnified\Components\Services\ExpressCheckout\CustomerService;
-use SwagPaymentPayPalUnified\Components\Services\OrderBuilder\OrderFactory;
-use SwagPaymentPayPalUnified\Components\Services\PaymentControllerHelper;
-use SwagPaymentPayPalUnified\Components\Services\Validation\RedirectDataBuilderFactory;
-use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
+use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentController;
 use SwagPaymentPayPalUnified\PayPalBundle\PartnerAttributionId;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
-use SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\OrderResource;
 
 /**
  * @phpstan-import-type CheckoutBasketArray from \Shopware_Controllers_Frontend_Checkout
  */
-class Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout extends Shopware_Controllers_Frontend_Checkout
+class Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout extends AbstractPaypalPaymentController
 {
-    /**
-     * @var DependencyProvider
-     */
-    private $dependencyProvider;
-
-    /**
-     * @var OrderResource
-     */
-    private $orderResource;
-
-    /**
-     * @var RedirectDataBuilderFactory
-     */
-    private $redirectDataBuilderFactory;
-
-    /**
-     * @var PaymentControllerHelper
-     */
-    private $paymentControllerHelper;
-
-    /**
-     * @var PayPalOrderParameterFacadeInterface
-     */
-    private $payPalOrderParameterFacade;
-
-    /**
-     * @var OrderFactory
-     */
-    private $orderFactory;
-
-    /**
-     * @var LoggerServiceInterface
-     */
-    private $logger;
-
     public function preDispatch()
     {
         $this->Front()->Plugins()->ViewRenderer()->setNoRender();
         $this->Front()->Plugins()->Json()->setRenderer();
         $this->View()->setTemplate();
 
-        $this->dependencyProvider = $this->get('paypal_unified.dependency_provider');
-        $this->orderResource = $this->get('paypal_unified.v2.order_resource');
-        $this->redirectDataBuilderFactory = $this->get('paypal_unified.redirect_data_builder_factory');
-        $this->paymentControllerHelper = $this->get('paypal_unified.payment_controller_helper');
-        $this->payPalOrderParameterFacade = $this->get('paypal_unified.paypal_order_parameter_facade');
-        $this->orderFactory = $this->get('paypal_unified.order_factory');
-        $this->logger = $this->get('paypal_unified.logger_service');
+        parent::preDispatch();
     }
 
     /**
@@ -88,9 +41,10 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout extends Shopwa
             $this->addProductToCart();
         }
 
+        $checkoutController = $this->prepareCheckoutController();
         /** @phpstan-var CheckoutBasketArray $basketData */
-        $basketData = $this->getBasket();
-        $userData = $this->getUserData() ?: [];
+        $basketData = $checkoutController->getBasket();
+        $userData = $checkoutController->getUserData() ?: [];
 
         $shopwareOrderData = new ShopwareOrderData($userData, $basketData);
         $orderParams = $this->payPalOrderParameterFacade->createPayPalOrderParameter(PaymentType::PAYPAL_EXPRESS_V2, $shopwareOrderData);
@@ -194,5 +148,19 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout extends Shopwa
         $basketModule->sRefreshBasket();
 
         $this->logger->debug(sprintf('%s PRODUCT SUCCESSFUL ADDED', __METHOD__));
+    }
+
+    /**
+     * @return Shopware_Controllers_Frontend_Checkout
+     */
+    private function prepareCheckoutController()
+    {
+        $checkoutController = new Shopware_Controllers_Frontend_Checkout();
+        $checkoutController->init();
+        $checkoutController->setView($this->View());
+        $checkoutController->setContainer($this->container);
+        $checkoutController->setFront($this->front);
+
+        return $checkoutController;
     }
 }
