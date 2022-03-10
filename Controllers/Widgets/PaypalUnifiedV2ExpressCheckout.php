@@ -47,7 +47,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout extends Abstra
             return;
         }
 
-        $this->View()->assign('orderId', $payPalOrder->getId());
+        $this->View()->assign('paypalOrderId', $payPalOrder->getId());
     }
 
     /**
@@ -71,7 +71,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout extends Abstra
 
         $this->view->assign([
             'expressCheckout' => true,
-            'orderId' => $payPalOrder->getId(),
+            'paypalOrderId' => $payPalOrder->getId(),
         ]);
     }
 

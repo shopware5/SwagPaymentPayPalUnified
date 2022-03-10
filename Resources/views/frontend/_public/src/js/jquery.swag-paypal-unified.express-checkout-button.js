@@ -445,7 +445,7 @@
                 url: me.opts.createOrderUrl,
                 data: data
             }).then(function(response) {
-                return response.orderId;
+                return response.paypalOrderId;
             }, function() {
             }).promise();
         },
@@ -463,7 +463,7 @@
             }).then(function(response) {
                 var url = me.opts.confirmUrl + '?' + $.param({
                     expressCheckout: response.expressCheckout,
-                    orderId: response.orderId
+                    paypalOrderId: response.paypalOrderId
                 });
 
                 actions.redirect(url);

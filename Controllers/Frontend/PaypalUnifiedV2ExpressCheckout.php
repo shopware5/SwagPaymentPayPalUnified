@@ -24,7 +24,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2ExpressCheckout extends Abstr
     {
         $this->logger->debug(sprintf('%s START', __METHOD__));
 
-        $payPalOrderId = $this->request->getParam('orderId');
+        $payPalOrderId = $this->request->getParam('paypalOrderId');
 
         if (!\is_string($payPalOrderId)) {
             $this->logger->debug(sprintf('%s NO ORDER ID GIVEN', __METHOD__));
