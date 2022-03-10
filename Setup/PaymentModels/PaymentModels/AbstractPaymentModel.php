@@ -27,6 +27,7 @@ abstract class AbstractPaymentModel
     const POSITION_SOFORT = -89;
     const POSITION_TRUSTLY = -88;
     const POSITION_ADVANCED_CEDIT_DEBIT_CARD = -87;
+    const POSITION_SEPA = -86;
 
     const ACTION_PAYPAL_CLASSIC = 'PaypalUnifiedV2';
     const ACTION_PAYPAL_PAY_UPON_INVOICE = 'PaypalUnifiedV2PayUponInvoice';

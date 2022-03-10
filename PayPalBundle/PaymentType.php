@@ -21,6 +21,7 @@ final class PaymentType
     const PAYPAL_ADVANCED_CREDIT_DEBIT_CARD = 'PayPalAdvancedCreditDebitCardV2';
     const PAYPAL_EXPRESS_V2 = 'PayPalExpressV2';
     const PAYPAL_SMART_PAYMENT_BUTTONS_V2 = 'PayPalSmartPaymentButtonsV2';
+    const PAYPAL_SEPA = 'PayPalSepa';
 
     const APM_BANCONTACT = 'bancontact';
     const APM_BLIK = 'blik';
