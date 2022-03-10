@@ -6,28 +6,18 @@
  * file that was distributed with this source code.
  */
 
-use Shopware\Components\HttpClient\RequestException;
 use Shopware\Models\Order\Status;
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\ShopwareOrderData;
-use SwagPaymentPayPalUnified\Components\Services\PaymentStatusService;
 use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentController;
-use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
-use SwagPaymentPayPalUnified\PayPalBundle\PartnerAttributionId;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
-use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Patch;
-use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Patches\OrderAddInvoiceIdPatch;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
 
 class Shopware_Controllers_Frontend_PaypalUnifiedV2PayUponInvoice extends AbstractPaypalPaymentController
 {
-    const UNPROCESSABLE_ENTITY = 'UNPROCESSABLE_ENTITY';
-    const PAYMENT_SOURCE_INFO_CANNOT_BE_VERIFIED = 'PAYMENT_SOURCE_INFO_CANNOT_BE_VERIFIED';
-    const PAYMENT_SOURCE_DECLINED_BY_PROCESSOR = 'PAYMENT_SOURCE_DECLINED_BY_PROCESSOR';
-
-    const MAXIMUM_RETRIES = 32;
-    const TIMEOUT = \CURLOPT_TIMEOUT * 2;
-    const SLEEP = 1;
-
+    /**
+     * @return void
+     */
     public function indexAction()
     {
         $this->logger->debug(sprintf('%s START', __METHOD__));
@@ -39,67 +29,27 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2PayUponInvoice extends Abstra
 
         $orderParams = $this->payPalOrderParameterFacade->createPayPalOrderParameter(PaymentType::PAYPAL_PAY_UPON_INVOICE_V2, $shopwareOrderData);
 
-        try {
-            $this->logger->debug(sprintf('%s BEFORE CREATE PAYPAL ORDER', __METHOD__));
-
-            $orderData = $this->orderFactory->createOrder($orderParams);
-
-            $paypalOrder = $this->orderResource->create($orderData, $orderParams->getPaymentType(), PartnerAttributionId::PAYPAL_ALL_V2, false);
-
-            $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFUL CREATED: ID: %d', __METHOD__, $paypalOrder->getId()));
-        } catch (RequestException $exception) {
-            $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
-                ->setCode($this->getPuiErrorCode($exception->getBody()))
-                ->setException($exception);
-
-            $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
-
-            return;
-        } catch (\Exception $exception) {
-            $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
-                ->setCode(ErrorCodes::UNKNOWN)
-                ->setException($exception);
-
-            $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
-
+        $payPalOrder = $this->createPayPalOrder($orderParams);
+        if (!$payPalOrder instanceof Order) {
             return;
         }
 
-        /** @var PaymentStatusService $paymentStatusService */
+        $paypalOrderId = $payPalOrder->getId();
+
+        $shopwareOrderNumber = $this->createShopwareOrder($paypalOrderId, PaymentType::PAYPAL_PAY_UPON_INVOICE_V2);
         $paymentStatusService = $this->get('paypal_unified.payment_status_service');
+        $paymentStatusService->updatePaymentStatus($paypalOrderId, Status::PAYMENT_STATE_RESERVED);
 
-        $shopwareOrderNumber = $this->createShopwareOrder($paypalOrder->getId(), PaymentType::PAYPAL_PAY_UPON_INVOICE_V2);
-        $paymentStatusService->updatePaymentStatus($paypalOrder->getId(), Status::PAYMENT_STATE_RESERVED);
+        if ($this->getSendOrdernumber()) {
+            $invoiceIdPatch = $this->createInvoiceIdPatch($shopwareOrderNumber);
 
-        if ($this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_SEND_ORDER_NUMBER)) {
-            $orderNumberPrefix = $this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_ORDER_NUMBER_PREFIX);
-
-            $invoiceIdPatch = new OrderAddInvoiceIdPatch();
-            $invoiceIdPatch->setOp(Patch::OPERATION_ADD);
-            $invoiceIdPatch->setValue(sprintf('%s%s', $orderNumberPrefix, $shopwareOrderNumber));
-            $invoiceIdPatch->setPath(OrderAddInvoiceIdPatch::PATH);
-
-            $patchSet[] = $invoiceIdPatch;
-
-            try {
-                $this->logger->debug(sprintf('%s UPDATE PAYPAL ORDER WITH ID: %s', __METHOD__, $paypalOrder->getId()));
-
-                $this->orderResource->update($patchSet, $paypalOrder->getId(), PartnerAttributionId::PAYPAL_ALL_V2);
-
-                $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFULLY UPDATED', __METHOD__));
-            } catch (RequestException $exception) {
-                $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
-                    ->setCode(ErrorCodes::COMMUNICATION_FAILURE)
-                    ->setException($exception);
-
-                $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
-
+            if (!$this->updatePayPalOrder($paypalOrderId, [$invoiceIdPatch])) {
                 return;
             }
         }
 
-        if ($this->isPaymentCompleted($paypalOrder->getId())) {
-            $paymentStatusService->updatePaymentStatus($paypalOrder->getId(), Status::PAYMENT_STATE_COMPLETELY_PAID);
+        if ($this->isPaymentCompleted($paypalOrderId)) {
+            $paymentStatusService->updatePaymentStatus($paypalOrderId, Status::PAYMENT_STATE_COMPLETELY_PAID);
 
             $this->logger->debug(sprintf('%s REDIRECT TO checkout/finish', __METHOD__));
 
@@ -107,39 +57,19 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2PayUponInvoice extends Abstra
                 'module' => 'frontend',
                 'controller' => 'checkout',
                 'action' => 'finish',
-                'sUniqueID' => $paypalOrder->getId(),
+                'sUniqueID' => $paypalOrderId,
             ]);
-        } else {
-            $this->logger->debug(sprintf('%s SET PAYMENT STATE TO: PAYMENT_STATE_REVIEW_NECESSARY::21', __METHOD__));
 
-            $paymentStatusService->updatePaymentStatus($paypalOrder->getId(), Status::PAYMENT_STATE_REVIEW_NECESSARY);
-
-            $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
-                ->setCode(ErrorCodes::COMMUNICATION_FAILURE);
-
-            $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
-        }
-    }
-
-    /**
-     * @param string $responseBody
-     *
-     * @return int
-     */
-    private function getPuiErrorCode($responseBody)
-    {
-        $body = json_decode($responseBody, true);
-
-        if ($body['name'] === self::UNPROCESSABLE_ENTITY
-            && $body['details'][0]['issue'] === self::PAYMENT_SOURCE_INFO_CANNOT_BE_VERIFIED) {
-            return ErrorCodes::PAYMENT_SOURCE_INFO_CANNOT_BE_VERIFIED;
+            return;
         }
 
-        if ($body['name'] === self::UNPROCESSABLE_ENTITY
-            && $body['details'][0]['issue'] === self::PAYMENT_SOURCE_DECLINED_BY_PROCESSOR) {
-            return ErrorCodes::PAYMENT_SOURCE_DECLINED_BY_PROCESSOR;
-        }
+        $this->logger->debug(sprintf('%s SET PAYMENT STATE TO: PAYMENT_STATE_REVIEW_NECESSARY::21', __METHOD__));
 
-        return ErrorCodes::COMMUNICATION_FAILURE;
+        $paymentStatusService->updatePaymentStatus($paypalOrderId, Status::PAYMENT_STATE_REVIEW_NECESSARY);
+
+        $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
+            ->setCode(ErrorCodes::COMMUNICATION_FAILURE);
+
+        $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
     }
 }

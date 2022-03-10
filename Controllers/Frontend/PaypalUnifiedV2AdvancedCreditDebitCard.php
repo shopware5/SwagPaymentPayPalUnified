@@ -24,7 +24,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2AdvancedCreditDebitCard exten
         if (!\is_string($paypalOrderId)) {
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
                 ->setCode(ErrorCodes::UNKNOWN)
-                ->setException(new UnexpectedValueException("Required session parameter 'paypalOrderId' is missing"));
+                ->setException(new UnexpectedValueException("Required session parameter 'paypalOrderId' is missing"), '');
             $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
 
             return;

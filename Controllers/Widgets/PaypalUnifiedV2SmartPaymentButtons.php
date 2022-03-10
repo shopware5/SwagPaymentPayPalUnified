@@ -6,12 +6,11 @@
  * file that was distributed with this source code.
  */
 
-use Shopware\Components\HttpClient\RequestException;
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\ShopwareOrderData;
 use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentController;
-use SwagPaymentPayPalUnified\PayPalBundle\PartnerAttributionId;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
 
 class Shopware_Controllers_Widgets_PaypalUnifiedV2SmartPaymentButtons extends AbstractPaypalPaymentController
 {
@@ -24,6 +23,9 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2SmartPaymentButtons extends Ab
         $this->view->setTemplate();
     }
 
+    /**
+     * @return void
+     */
     public function createOrderAction()
     {
         $this->logger->debug(sprintf('%s START', __METHOD__));
@@ -51,29 +53,9 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2SmartPaymentButtons extends Ab
 
         $shopwareOrderData = new ShopwareOrderData($shopwareSessionOrderData['sUserData'], $shopwareSessionOrderData['sBasket']);
         $orderParams = $this->payPalOrderParameterFacade->createPayPalOrderParameter(PaymentType::PAYPAL_SMART_PAYMENT_BUTTONS_V2, $shopwareOrderData);
-        $payPalOrderData = $this->orderFactory->createOrder($orderParams);
 
-        try {
-            $this->logger->debug(sprintf('%s BEFORE CREATE PAYPAL ORDER', __METHOD__));
-
-            $payPalOrder = $this->orderResource->create($payPalOrderData, $orderParams->getPaymentType(), PartnerAttributionId::PAYPAL_ALL_V2, false);
-
-            $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFUL CREATED: ID: %d', __METHOD__, $payPalOrder->getId()));
-        } catch (RequestException $exception) {
-            $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
-                ->setCode(ErrorCodes::COMMUNICATION_FAILURE)
-                ->setException($exception);
-
-            $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
-
-            return;
-        } catch (Exception $exception) {
-            $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
-                ->setCode(ErrorCodes::UNKNOWN)
-                ->setException($exception);
-
-            $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
-
+        $payPalOrder = $this->createPayPalOrder($orderParams);
+        if (!$payPalOrder instanceof Order) {
             return;
         }
 

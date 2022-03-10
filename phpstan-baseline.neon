@@ -541,36 +541,6 @@ parameters:
 			path: Components/Services/Validation/BasketValidatorInterface.php
 
 		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\Validation\\\\RedirectDataBuilder\\:\\:getCode\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Components/Services/Validation/RedirectDataBuilder.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\Validation\\\\RedirectDataBuilder\\:\\:getErrorMessage\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Components/Services/Validation/RedirectDataBuilder.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\Validation\\\\RedirectDataBuilder\\:\\:getErrorName\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Components/Services/Validation/RedirectDataBuilder.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\Validation\\\\RedirectDataBuilder\\:\\:hasException\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Components/Services/Validation/RedirectDataBuilder.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\Validation\\\\RedirectDataBuilder\\:\\:setException\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Components/Services/Validation/RedirectDataBuilder.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\Validation\\\\RedirectDataBuilder\\:\\:setRedirectToFinishAction\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Components/Services/Validation/RedirectDataBuilder.php
-
-		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\Validation\\\\SimpleBasketValidator\\:\\:validate\\(\\) has parameter \\$basket with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: Components/Services/Validation/SimpleBasketValidator.php
@@ -716,16 +686,6 @@ parameters:
 			path: Controllers/Backend/PaypalUnifiedV2.php
 
 		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Controllers\\\\Frontend\\\\AbstractPaypalPaymentController\\:\\:cancelAction\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Controllers/Frontend/AbstractPaypalPaymentController.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Controllers\\\\Frontend\\\\AbstractPaypalPaymentController\\:\\:getPaymentType\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Controllers/Frontend/AbstractPaypalPaymentController.php
-
-		-
 			message: "#^Cannot call method getResources\\(\\) on SwagPaymentPayPalUnified\\\\PayPalBundle\\\\Structs\\\\Payment\\\\Transactions\\\\RelatedResources\\|null\\.$#"
 			count: 1
 			path: Controllers/Frontend/PaypalUnified.php
@@ -769,51 +729,6 @@ parameters:
 			message: "#^Parameter \\#2 \\$customer of method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\Validation\\\\BasketValidatorInterface\\:\\:validate\\(\\) expects array, array\\|null given\\.$#"
 			count: 1
 			path: Controllers/Frontend/PaypalUnified.php
-
-		-
-			message: "#^Method Shopware_Controllers_Frontend_PaypalUnifiedApm\\:\\:indexAction\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Controllers/Frontend/PaypalUnifiedApm.php
-
-		-
-			message: "#^Method Shopware_Controllers_Frontend_PaypalUnifiedApm\\:\\:returnAction\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Controllers/Frontend/PaypalUnifiedApm.php
-
-		-
-			message: "#^Method Shopware_Controllers_Frontend_PaypalUnifiedV2\\:\\:indexAction\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Controllers/Frontend/PaypalUnifiedV2.php
-
-		-
-			message: "#^Method Shopware_Controllers_Frontend_PaypalUnifiedV2\\:\\:returnAction\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Controllers/Frontend/PaypalUnifiedV2.php
-
-		-
-			message: "#^Method Shopware_Controllers_Frontend_PaypalUnifiedV2ExpressCheckout\\:\\:expressCheckoutFinishAction\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Controllers/Frontend/PaypalUnifiedV2ExpressCheckout.php
-
-		-
-			message: "#^Method Shopware_Controllers_Frontend_PaypalUnifiedV2PayUponInvoice\\:\\:indexAction\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Controllers/Frontend/PaypalUnifiedV2PayUponInvoice.php
-
-		-
-			message: "#^Method Shopware_Controllers_Frontend_PaypalUnifiedWebhook\\:\\:executeAction\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Controllers/Frontend/PaypalUnifiedWebhook.php
-
-		-
-			message: "#^Parameter \\#1 \\$json of function json_decode expects string, string\\|false given\\.$#"
-			count: 1
-			path: Controllers/Frontend/PaypalUnifiedWebhook.php
-
-		-
-			message: "#^Method Shopware_Controllers_Widgets_PaypalUnifiedV2SmartPaymentButtons\\:\\:createOrderAction\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Controllers/Widgets/PaypalUnifiedV2SmartPaymentButtons.php
 
 		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Models\\\\PaymentInstruction\\:\\:setAccountHolder\\(\\) has no return type specified\\.$#"
@@ -3569,36 +3484,6 @@ parameters:
 			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Components\\\\Services\\\\Validation\\\\RedirectDataBuilderFactoryTest\\:\\:testCreateRedirectDataBuilder\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: Tests/Functional/Components/Services/Validation/RedirectDataBuilderFactoryTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Components\\\\Services\\\\Validation\\\\RedirectDataBuilderTest\\:\\:createExceptionHandlerServiceMock\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Components/Services/Validation/RedirectDataBuilderTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Components\\\\Services\\\\Validation\\\\RedirectDataBuilderTest\\:\\:createSettingsServiceMock\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Components/Services/Validation/RedirectDataBuilderTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Components\\\\Services\\\\Validation\\\\RedirectDataBuilderTest\\:\\:testACompleteBuild\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Components/Services/Validation/RedirectDataBuilderTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Components\\\\Services\\\\Validation\\\\RedirectDataBuilderTest\\:\\:testSetCode\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Components/Services/Validation/RedirectDataBuilderTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Components\\\\Services\\\\Validation\\\\RedirectDataBuilderTest\\:\\:testSetException\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Components/Services/Validation/RedirectDataBuilderTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Components\\\\Services\\\\Validation\\\\RedirectDataBuilderTest\\:\\:testSetRedirectToFinishAction\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Components/Services/Validation/RedirectDataBuilderTest.php
 
 		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Controller\\\\Frontend\\\\PaypalUnifiedV2Test\\:\\:getController\\(\\) has no return type specified\\.$#"

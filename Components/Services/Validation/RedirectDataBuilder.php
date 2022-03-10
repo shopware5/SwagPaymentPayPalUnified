@@ -29,12 +29,7 @@ class RedirectDataBuilder
     private $hasException = false;
 
     /**
-     * @var bool
-     */
-    private $hasCode = false;
-
-    /**
-     * @var array<string, mixed>
+     * @var array{controller: 'checkout', action: 'shippingPayment'|'finish', paypal_unified_error_code?: int, paypal_unified_error_name?: string|int, paypal_unified_error_message?: string}
      */
     private $data = [
         'controller' => 'checkout',
@@ -56,14 +51,17 @@ class RedirectDataBuilder
     {
         $this->data['paypal_unified_error_code'] = $code;
 
-        $this->hasCode = true;
-
         return $this;
     }
 
-    public function setException(\Exception $exception)
+    /**
+     * @param string $currentAction
+     *
+     * @return RedirectDataBuilder
+     */
+    public function setException(\Exception $exception, $currentAction)
     {
-        $error = $this->exceptionHandlerService->handle($exception, 'process checkout');
+        $error = $this->exceptionHandlerService->handle($exception, $currentAction);
 
         if ($this->settingsService->hasSettings() && $this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_DISPLAY_ERRORS)) {
             $this->data['paypal_unified_error_name'] = $error->getName();
@@ -75,6 +73,9 @@ class RedirectDataBuilder
         return $this;
     }
 
+    /**
+     * @return RedirectDataBuilder
+     */
     public function setRedirectToFinishAction()
     {
         $this->data['action'] = 'finish';
@@ -83,42 +84,42 @@ class RedirectDataBuilder
     }
 
     /**
-     * @return array<string, mixed>
+     * @return array{controller: 'checkout', action: 'shippingPayment'|'finish', paypal_unified_error_code?: int, paypal_unified_error_name?: string|int, paypal_unified_error_message?: string}
      */
     public function getRedirectData()
     {
         return $this->data;
     }
 
+    /**
+     * @return bool
+     */
     public function hasException()
     {
         return $this->hasException;
     }
 
+    /**
+     * @return int|null
+     */
     public function getCode()
     {
-        if ($this->hasCode) {
-            return $this->data['paypal_unified_error_code'];
-        }
-
-        return null;
+        return isset($this->data['paypal_unified_error_code']) ? $this->data['paypal_unified_error_code'] : null;
     }
 
+    /**
+     * @return string|int|null
+     */
     public function getErrorName()
     {
-        if ($this->hasException()) {
-            return $this->data['paypal_unified_error_name'];
-        }
-
-        return null;
+        return isset($this->data['paypal_unified_error_name']) ? $this->data['paypal_unified_error_name'] : null;
     }
 
+    /**
+     * @return string|null
+     */
     public function getErrorMessage()
     {
-        if ($this->hasException()) {
-            return $this->data['paypal_unified_error_message'];
-        }
-
-        return null;
+        return isset($this->data['paypal_unified_error_message']) ? $this->data['paypal_unified_error_message'] : null;
     }
 }

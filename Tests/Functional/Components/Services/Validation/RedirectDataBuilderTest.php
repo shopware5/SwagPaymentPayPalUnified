@@ -16,6 +16,9 @@ use SwagPaymentPayPalUnified\Components\Services\Validation\RedirectDataBuilder;
 
 class RedirectDataBuilderTest extends TestCase
 {
+    /**
+     * @return void
+     */
     public function testSetCode()
     {
         $code = 12;
@@ -29,6 +32,9 @@ class RedirectDataBuilderTest extends TestCase
         static::assertSame($code, $redirectDataBuilder->getCode());
     }
 
+    /**
+     * @return void
+     */
     public function testSetException()
     {
         $exceptionHandlerServiceMock = $this->createExceptionHandlerServiceMock();
@@ -39,7 +45,7 @@ class RedirectDataBuilderTest extends TestCase
 
         static::assertFalse($redirectDataBuilder->hasException());
 
-        $setExceptionResult = $redirectDataBuilder->setException(new \Exception('FooBar'));
+        $setExceptionResult = $redirectDataBuilder->setException(new \Exception('FooBar'), 'test');
         static::assertInstanceOf(RedirectDataBuilder::class, $setExceptionResult);
 
         static::assertTrue($redirectDataBuilder->hasException());
@@ -47,6 +53,9 @@ class RedirectDataBuilderTest extends TestCase
         static::assertSame('ErrorMessage', $redirectDataBuilder->getErrorMessage());
     }
 
+    /**
+     * @return void
+     */
     public function testSetRedirectToFinishAction()
     {
         $redirectDataBuilder = $this->getRedirectDataBuilder();
@@ -57,6 +66,9 @@ class RedirectDataBuilderTest extends TestCase
         static::assertSame('finish', $result);
     }
 
+    /**
+     * @return void
+     */
     public function testACompleteBuild()
     {
         $code = 12;
@@ -73,7 +85,7 @@ class RedirectDataBuilderTest extends TestCase
         static::assertFalse($redirectDataBuilder->hasException());
 
         $redirectDataBuilder->setCode($code)
-            ->setException(new \Exception('TestException'))
+            ->setException(new \Exception('TestException'), 'test')
             ->setRedirectToFinishAction();
 
         static::assertSame($code, $redirectDataBuilder->getCode());
@@ -117,6 +129,9 @@ class RedirectDataBuilderTest extends TestCase
         return new RedirectDataBuilder($exceptionHandlerService, $settingsService);
     }
 
+    /**
+     * @return ExceptionHandlerService
+     */
     private function createExceptionHandlerServiceMock()
     {
         $exceptionHandlerServiceMock = $this->getMockBuilder(ExceptionHandlerService::class)
@@ -128,6 +143,9 @@ class RedirectDataBuilderTest extends TestCase
         return $exceptionHandlerServiceMock;
     }
 
+    /**
+     * @return SettingsService
+     */
     private function createSettingsServiceMock()
     {
         $settingsServiceMock = $this->getMockBuilder(SettingsService::class)

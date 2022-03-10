@@ -9,6 +9,7 @@
 namespace SwagPaymentPayPalUnified\PayPalBundle\V2\Resource;
 
 use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
+use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\RequestType;
 use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
@@ -59,9 +60,9 @@ class OrderResource
     }
 
     /**
-     * @param string $partnerAttributionId
-     * @param string $paymentType
-     * @param bool   $minimalResponse
+     * @param string         $partnerAttributionId
+     * @param PaymentType::* $paymentType
+     * @param bool           $minimalResponse
      *
      * @return Order
      */

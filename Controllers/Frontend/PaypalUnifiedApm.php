@@ -6,22 +6,17 @@
  * file that was distributed with this source code.
  */
 
-use Shopware\Components\HttpClient\RequestException;
-use Shopware\Models\Order\Status;
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
-use SwagPaymentPayPalUnified\Components\PaymentStatus;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\ShopwareOrderData;
 use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentController;
-use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
-use SwagPaymentPayPalUnified\PayPalBundle\PartnerAttributionId;
-use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Common\Link;
-use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Patch;
-use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Patches\OrderAddInvoiceIdPatch;
-use SwagPaymentPayPalUnified\PayPalBundle\V2\PaymentIntentV2;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
 
 class Shopware_Controllers_Frontend_PaypalUnifiedApm extends AbstractPaypalPaymentController
 {
+    /**
+     * @return void
+     */
     public function indexAction()
     {
         $this->logger->debug(sprintf('%s START', __METHOD__));
@@ -55,29 +50,8 @@ class Shopware_Controllers_Frontend_PaypalUnifiedApm extends AbstractPaypalPayme
             $shopwareOrderData
         );
 
-        $payPalOrderData = $this->orderFactory->createOrder($orderParams);
-
-        try {
-            $this->logger->debug(sprintf('%s BEFORE CREATE PAYPAL ORDER', __METHOD__));
-
-            $payPalOrder = $this->orderResource->create($payPalOrderData, $orderParams->getPaymentType(), PartnerAttributionId::PAYPAL_ALL_V2, false);
-
-            $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFUL CREATED - ID: %d', __METHOD__, $payPalOrder->getId()));
-        } catch (RequestException $exception) {
-            $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
-                ->setCode(ErrorCodes::COMMUNICATION_FAILURE)
-                ->setException($exception);
-
-            $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
-
-            return;
-        } catch (\Exception $exception) {
-            $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
-                ->setCode(ErrorCodes::UNKNOWN)
-                ->setException($exception);
-
-            $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
-
+        $payPalOrder = $this->createPayPalOrder($orderParams);
+        if (!$payPalOrder instanceof Order) {
             return;
         }
 
@@ -94,35 +68,17 @@ class Shopware_Controllers_Frontend_PaypalUnifiedApm extends AbstractPaypalPayme
      * Required parameters:
      *  (string) paymentId
      *  (string) PayerID
+     *
+     * @return void
      */
     public function returnAction()
     {
         $this->logger->debug(sprintf('%s START', __METHOD__));
 
-        $request = $this->Request();
-        $payPalOrderId = $request->getParam('token');
+        $payPalOrderId = $this->Request()->getParam('token');
 
-        try {
-            $this->logger->debug(sprintf('%s GET PAYPAL ORDER WITH ID: %s', __METHOD__, $payPalOrderId));
-
-            $payPalOrder = $this->orderResource->get($payPalOrderId);
-
-            $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFULLY LOADED', __METHOD__));
-        } catch (RequestException $exception) {
-            $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
-                ->setCode(ErrorCodes::COMMUNICATION_FAILURE)
-                ->setException($exception);
-
-            $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
-
-            return;
-        } catch (\Exception $exception) {
-            $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
-                ->setCode(ErrorCodes::UNKNOWN)
-                ->setException($exception);
-
-            $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
-
+        $payPalOrder = $this->getPayPalOrder($payPalOrderId);
+        if (!$payPalOrder instanceof Order) {
             return;
         }
 
@@ -136,77 +92,22 @@ class Shopware_Controllers_Frontend_PaypalUnifiedApm extends AbstractPaypalPayme
         }
 
         $sendShopwareOrderNumber = $this->getSendOrdernumber();
-
-        $this->logger->debug(sprintf('%s SEND SHOPWARE ORDERNUMBER: %s', __METHOD__, $sendShopwareOrderNumber ? 'TRUE' : 'FALSE'));
-
         if ($sendShopwareOrderNumber) {
-            $shopwareOrderNumber = (string) $this->saveOrder($payPalOrderId, $payPalOrderId, Status::PAYMENT_STATE_OPEN);
-            $this->orderDataService->applyPaymentTypeAttribute($shopwareOrderNumber, $this->getPaymentType($payPalOrder));
+            $shopwareOrderNumber = $this->createShopwareOrder($payPalOrderId, $this->getPaymentType($payPalOrder));
 
-            $orderNumberPrefix = $this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_ORDER_NUMBER_PREFIX);
+            $invoiceIdPatch = $this->createInvoiceIdPatch($shopwareOrderNumber);
 
-            $invoiceIdPatch = new OrderAddInvoiceIdPatch();
-            $invoiceIdPatch->setOp(Patch::OPERATION_ADD);
-            $invoiceIdPatch->setValue(sprintf('%s%s', $orderNumberPrefix, $shopwareOrderNumber));
-            $invoiceIdPatch->setPath(OrderAddInvoiceIdPatch::PATH);
-
-            try {
-                $this->logger->debug(sprintf('%s UPDATE PAYPAL ORDER WITH ID: %s', __METHOD__, $payPalOrderId));
-
-                $this->orderResource->update([$invoiceIdPatch], $payPalOrder->getId(), PaymentType::PAYPAL_CLASSIC_V2);
-
-                $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFULLY UPDATED', __METHOD__));
-            } catch (RequestException $exception) {
-                $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
-                    ->setCode(ErrorCodes::COMMUNICATION_FAILURE)
-                    ->setException($exception);
-
-                $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
-
+            if (!$this->updatePayPalOrder($payPalOrderId, [$invoiceIdPatch])) {
                 return;
             }
         }
 
-        try {
-            if ($this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_INTENT) === PaymentIntentV2::CAPTURE
-                && strtolower($payPalOrder->getStatus()) !== PaymentStatus::PAYMENT_COMPLETED
-            ) {
-                $this->logger->debug(sprintf('%s CAPTURE PAYPAL ORDER WITH ID: %s', __METHOD__, $payPalOrderId));
-
-                $this->orderResource->capture($payPalOrder->getId(), PartnerAttributionId::PAYPAL_ALL_V2, false);
-
-                $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFULLY CAPTURED', __METHOD__));
-            } elseif ($this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_INTENT) === PaymentIntentV2::AUTHORIZE
-                && strtolower($payPalOrder->getStatus()) !== PaymentStatus::PAYMENT_COMPLETED
-            ) {
-                $this->logger->debug(sprintf('%s AUTHORIZE PAYPAL ORDER WITH ID: %s', __METHOD__, $payPalOrderId));
-
-                $this->orderResource->authorize($payPalOrder->getId(), PartnerAttributionId::PAYPAL_ALL_V2, false);
-
-                $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFULLY AUTHORIZED', __METHOD__));
-            }
-        } catch (RequestException $exception) {
-            $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
-                ->setCode(ErrorCodes::COMMUNICATION_FAILURE)
-                ->setException($exception);
-
-            $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
-
-            return;
-        } catch (\Exception $exception) {
-            $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
-                ->setCode(ErrorCodes::UNKNOWN)
-                ->setException($exception);
-
-            $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
-
+        if (!$this->captureOrAuthorizeOrder($payPalOrder->getId(), $payPalOrder)) {
             return;
         }
 
-        $this->logger->debug(sprintf('%s SEND SHOPWARE ORDERNUMBER: %s', __METHOD__, $sendShopwareOrderNumber ? 'TRUE' : 'FALSE'));
-
         if (!$sendShopwareOrderNumber) {
-            $shopwareOrderNumber = (string) $this->createShopwareOrder($payPalOrderId, $this->getPaymentType($payPalOrder));
+            $this->createShopwareOrder($payPalOrderId, $this->getPaymentType($payPalOrder));
         }
 
         if ($this->Request()->isXmlHttpRequest()) {

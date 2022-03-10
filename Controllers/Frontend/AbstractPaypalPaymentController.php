@@ -9,12 +9,15 @@
 namespace SwagPaymentPayPalUnified\Controllers\Frontend;
 
 use RuntimeException;
+use Shopware\Components\HttpClient\RequestException;
 use Shopware\Models\Order\Status;
 use Shopware_Components_Config;
 use Shopware_Controllers_Frontend_Payment;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
+use SwagPaymentPayPalUnified\Components\PaymentStatus;
+use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\PayPalOrderParameter;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\PayPalOrderParameterFacade;
 use SwagPaymentPayPalUnified\Components\Services\DispatchValidation;
 use SwagPaymentPayPalUnified\Components\Services\ExceptionHandlerService;
@@ -24,9 +27,13 @@ use SwagPaymentPayPalUnified\Components\Services\PaymentControllerHelper;
 use SwagPaymentPayPalUnified\Components\Services\Validation\RedirectDataBuilderFactory;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
+use SwagPaymentPayPalUnified\PayPalBundle\PartnerAttributionId;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Patch;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Patches\OrderAddInvoiceIdPatch;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\PaymentIntentV2;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\PaymentStatusV2;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\OrderResource;
 use UnexpectedValueException;
@@ -49,6 +56,10 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
         PaymentType::APM_SOFORT => 'getSofort',
         PaymentType::APM_TRUSTLY => 'getTrustly',
     ];
+
+    const UNPROCESSABLE_ENTITY = 'UNPROCESSABLE_ENTITY';
+    const PAYMENT_SOURCE_INFO_CANNOT_BE_VERIFIED = 'PAYMENT_SOURCE_INFO_CANNOT_BE_VERIFIED';
+    const PAYMENT_SOURCE_DECLINED_BY_PROCESSOR = 'PAYMENT_SOURCE_DECLINED_BY_PROCESSOR';
 
     /**
      * @var DependencyProvider
@@ -132,6 +143,9 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
         $this->logger = $this->get('paypal_unified.logger_service');
     }
 
+    /**
+     * @return void
+     */
     public function cancelAction()
     {
         $shopwareErrorCode = ErrorCodes::CANCELED_BY_USER;
@@ -149,6 +163,159 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
         $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
     }
 
+    /**
+     * @return Order|null
+     */
+    protected function createPayPalOrder(PayPalOrderParameter $orderParameter)
+    {
+        try {
+            $this->logger->debug(sprintf('%s BEFORE CREATE PAYPAL ORDER', __METHOD__));
+
+            $payPalOrderData = $this->orderFactory->createOrder($orderParameter);
+
+            $payPalOrder = $this->orderResource->create($payPalOrderData, $orderParameter->getPaymentType(), PartnerAttributionId::PAYPAL_ALL_V2, false);
+
+            $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFUL CREATED - ID: %d', __METHOD__, $payPalOrder->getId()));
+        } catch (RequestException $exception) {
+            $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
+                ->setCode($this->getErrorCode($exception->getBody()))
+                ->setException($exception, 'create PayPal order');
+
+            $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
+
+            return null;
+        } catch (\Exception $exception) {
+            $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
+                ->setCode(ErrorCodes::UNKNOWN)
+                ->setException($exception, 'create PayPal order');
+
+            $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
+
+            return null;
+        }
+
+        return $payPalOrder;
+    }
+
+    /**
+     * @param string       $payPalOrderId
+     * @param array<Patch> $patches
+     *
+     * @return bool
+     */
+    protected function updatePayPalOrder($payPalOrderId, array $patches)
+    {
+        try {
+            $this->logger->debug(sprintf('%s UPDATE PAYPAL ORDER WITH ID: %s', __METHOD__, $payPalOrderId));
+
+            $this->orderResource->update($patches, $payPalOrderId, PartnerAttributionId::PAYPAL_ALL_V2);
+
+            $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFULLY UPDATED', __METHOD__));
+        } catch (RequestException $exception) {
+            $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
+                ->setCode($this->getErrorCode($exception->getBody()))
+                ->setException($exception, 'update PayPal order');
+
+            $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
+
+            return false;
+        } catch (\Exception $exception) {
+            $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
+                ->setCode(ErrorCodes::UNKNOWN)
+                ->setException($exception, 'update PayPal order');
+
+            $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @param string     $payPalOrderId
+     * @param Order|null $payPalOrder
+     *
+     * @return bool
+     */
+    protected function captureOrAuthorizeOrder($payPalOrderId, $payPalOrder = null)
+    {
+        if ($payPalOrder instanceof Order && $payPalOrder->getStatus() === PaymentStatus::PAYMENT_COMPLETED) {
+            return true;
+        }
+
+        try {
+            if ($this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_INTENT) === PaymentIntentV2::CAPTURE) {
+                $this->logger->debug(sprintf('%s CAPTURE PAYPAL ORDER WITH ID: %s', __METHOD__, $payPalOrderId));
+
+                $this->orderResource->capture($payPalOrderId, PartnerAttributionId::PAYPAL_ALL_V2, false);
+
+                $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFULLY CAPTURED', __METHOD__));
+            } elseif ($this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_INTENT) === PaymentIntentV2::AUTHORIZE) {
+                $this->logger->debug(sprintf('%s AUTHORIZE PAYPAL ORDER WITH ID: %s', __METHOD__, $payPalOrderId));
+
+                $this->orderResource->authorize($payPalOrderId, PartnerAttributionId::PAYPAL_ALL_V2, false);
+
+                $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFULLY AUTHORIZED', __METHOD__));
+            }
+        } catch (RequestException $exception) {
+            $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
+                ->setCode(ErrorCodes::COMMUNICATION_FAILURE)
+                ->setException($exception, 'capture/authorize PayPal order');
+
+            $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
+
+            return false;
+        } catch (\Exception $exception) {
+            $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
+                ->setCode(ErrorCodes::UNKNOWN)
+                ->setException($exception, 'capture/authorize PayPal order');
+
+            $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @param string $payPalOrderId
+     *
+     * @return Order|null
+     */
+    protected function getPayPalOrder($payPalOrderId)
+    {
+        try {
+            $this->logger->debug(sprintf('%s GET PAYPAL ORDER WITH ID: %s', __METHOD__, $payPalOrderId));
+
+            $payPalOrder = $this->orderResource->get($payPalOrderId);
+
+            $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFULLY LOADED', __METHOD__));
+        } catch (RequestException $exception) {
+            $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
+                ->setCode($this->getErrorCode($exception->getBody()))
+                ->setException($exception, 'get PayPal order');
+
+            $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
+
+            return null;
+        } catch (\Exception $exception) {
+            $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
+                ->setCode(ErrorCodes::UNKNOWN)
+                ->setException($exception, 'get PayPal order');
+
+            $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
+
+            return null;
+        }
+
+        return $payPalOrder;
+    }
+
+    /**
+     * @return PaymentType::*
+     */
     protected function getPaymentType(Order $order)
     {
         if ($this->request->getParam('acdcCheckout', false)) {
@@ -229,7 +396,10 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
      */
     protected function getSendOrdernumber()
     {
-        return $this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_SEND_ORDER_NUMBER);
+        $sendShopwareOrderNumber = (bool) $this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_SEND_ORDER_NUMBER);
+        $this->logger->debug(sprintf('%s SEND SHOPWARE ORDERNUMBER: %s', __METHOD__, $sendShopwareOrderNumber ? 'TRUE' : 'FALSE'));
+
+        return $sendShopwareOrderNumber;
     }
 
     /**
@@ -307,7 +477,10 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
         for ($i = 0; $i <= self::MAXIMUM_RETRIES; ++$i) {
             $this->logger->debug(sprintf('%s POLLING TRY NR: %d AT: %f', __METHOD__, $i, microtime(true)));
 
-            $paypalOrder = $this->orderResource->get($payPalOrderId);
+            $paypalOrder = $this->getPayPalOrder($payPalOrderId);
+            if (!$paypalOrder instanceof Order) {
+                break;
+            }
 
             if ($paypalOrder->getStatus() === PaymentStatusV2::ORDER_COMPLETED) {
                 $currentTime = microtime(true);
@@ -319,16 +492,18 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
 
             if ($i >= self::MAXIMUM_RETRIES || time() >= $start + self::TIMEOUT) {
                 $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
-                    ->setCode(ErrorCodes::COMMUNICATION_FAILURE)
-                    ->setException(new RuntimeException('Maximum retries exceeded.'));
+                    ->setCode(ErrorCodes::UNKNOWN)
+                    ->setException(new RuntimeException('Maximum retries exceeded.'), '');
 
                 $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
 
                 break;
-            } elseif ($paypalOrder->getStatus() === PaymentStatusV2::ORDER_AUTHORIZATION_DENIED) {
+            }
+
+            if ($paypalOrder->getStatus() === PaymentStatusV2::ORDER_AUTHORIZATION_DENIED) {
                 $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
                     ->setCode(ErrorCodes::UNKNOWN)
-                    ->setException(new RuntimeException('Order has not been authorised.'));
+                    ->setException(new RuntimeException('Order has not been authorised.'), '');
 
                 $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
 
@@ -346,8 +521,8 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
     }
 
     /**
-     * @param string $payPalOrderId
-     * @param string $paymentType
+     * @param string         $payPalOrderId
+     * @param PaymentType::* $paymentType
      *
      * @return string
      */
@@ -362,5 +537,57 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
         $this->logger->debug(sprintf('%s ORDER SUCCESSFUL CREATED WITH NUMBER: %s', __METHOD__, $orderNumber));
 
         return $orderNumber;
+    }
+
+    /**
+     * @param string $shopwareOrderNumber
+     *
+     * @return OrderAddInvoiceIdPatch
+     */
+    protected function createInvoiceIdPatch($shopwareOrderNumber)
+    {
+        $orderNumberPrefix = $this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_ORDER_NUMBER_PREFIX);
+
+        $invoiceIdPatch = new OrderAddInvoiceIdPatch();
+        $invoiceIdPatch->setOp(Patch::OPERATION_ADD);
+        $invoiceIdPatch->setValue(sprintf('%s%s', $orderNumberPrefix, $shopwareOrderNumber));
+        $invoiceIdPatch->setPath(OrderAddInvoiceIdPatch::PATH);
+
+        return $invoiceIdPatch;
+    }
+
+    /**
+     * @param string $responseBody
+     *
+     * @return int
+     */
+    private function getErrorCode($responseBody)
+    {
+        $body = json_decode($responseBody, true);
+        if (!\is_array($body)) {
+            return ErrorCodes::COMMUNICATION_FAILURE;
+        }
+
+        $errorTypeString = isset($body['details'][0]['issue']) ? $body['details'][0]['issue'] : '';
+
+        if ($body['name'] === self::UNPROCESSABLE_ENTITY) {
+            if ($errorTypeString === self::PAYMENT_SOURCE_INFO_CANNOT_BE_VERIFIED) {
+                return ErrorCodes::PAYMENT_SOURCE_INFO_CANNOT_BE_VERIFIED;
+            }
+
+            if ($errorTypeString === self::PAYMENT_SOURCE_DECLINED_BY_PROCESSOR) {
+                return ErrorCodes::PAYMENT_SOURCE_DECLINED_BY_PROCESSOR;
+            }
+        }
+
+        if ($errorTypeString === 'INSTRUMENT_DECLINED') {
+            return ErrorCodes::INSTRUMENT_DECLINED;
+        }
+
+        if ($errorTypeString === 'TRANSACTION_REFUSED') {
+            return ErrorCodes::TRANSACTION_REFUSED;
+        }
+
+        return ErrorCodes::COMMUNICATION_FAILURE;
     }
 }
