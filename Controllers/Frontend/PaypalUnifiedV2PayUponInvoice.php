@@ -50,6 +50,11 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2PayUponInvoice extends Abstra
 
         if ($this->isPaymentCompleted($paypalOrderId)) {
             $paymentStatusService->updatePaymentStatus($paypalOrderId, Status::PAYMENT_STATE_COMPLETELY_PAID);
+            $payPalOrder = $this->getPayPalOrder($paypalOrderId);
+            if (!$payPalOrder instanceof Order) {
+                return;
+            }
+            $this->setTransactionId($shopwareOrderNumber, $payPalOrder);
 
             $this->logger->debug(sprintf('%s REDIRECT TO checkout/finish', __METHOD__));
 
@@ -62,6 +67,8 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2PayUponInvoice extends Abstra
 
             return;
         }
+
+        $this->orderDataService->removeTransactionId($shopwareOrderNumber);
 
         $this->logger->debug(sprintf('%s SET PAYMENT STATE TO: PAYMENT_STATE_REVIEW_NECESSARY::21', __METHOD__));
 

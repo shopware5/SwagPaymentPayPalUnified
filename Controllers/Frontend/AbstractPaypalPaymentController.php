@@ -235,25 +235,26 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
      * @param string     $payPalOrderId
      * @param Order|null $payPalOrder
      *
-     * @return bool
+     * @return Order|null
      */
     protected function captureOrAuthorizeOrder($payPalOrderId, $payPalOrder = null)
     {
         if ($payPalOrder instanceof Order && strtolower($payPalOrder->getStatus()) === PaymentStatus::PAYMENT_COMPLETED) {
-            return true;
+            return $payPalOrder;
         }
 
+        $capturedPayPalOrder = null;
         try {
             if ($this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_INTENT) === PaymentIntentV2::CAPTURE) {
                 $this->logger->debug(sprintf('%s CAPTURE PAYPAL ORDER WITH ID: %s', __METHOD__, $payPalOrderId));
 
-                $this->orderResource->capture($payPalOrderId);
+                $capturedPayPalOrder = $this->orderResource->capture($payPalOrderId, false);
 
                 $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFULLY CAPTURED', __METHOD__));
             } elseif ($this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_INTENT) === PaymentIntentV2::AUTHORIZE) {
                 $this->logger->debug(sprintf('%s AUTHORIZE PAYPAL ORDER WITH ID: %s', __METHOD__, $payPalOrderId));
 
-                $this->orderResource->authorize($payPalOrderId);
+                $capturedPayPalOrder = $this->orderResource->authorize($payPalOrderId, false);
 
                 $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFULLY AUTHORIZED', __METHOD__));
             }
@@ -264,7 +265,7 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
 
             $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
 
-            return false;
+            return null;
         } catch (\Exception $exception) {
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
                 ->setCode(ErrorCodes::UNKNOWN)
@@ -272,10 +273,10 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
 
             $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
 
-            return false;
+            return null;
         }
 
-        return true;
+        return $capturedPayPalOrder;
     }
 
     /**
@@ -553,6 +554,40 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
         $invoiceIdPatch->setPath(OrderAddInvoiceIdPatch::PATH);
 
         return $invoiceIdPatch;
+    }
+
+    /**
+     * @param string|null $shopwareOrderNumber
+     *
+     * @return void
+     */
+    protected function setTransactionId($shopwareOrderNumber, Order $payPalOrder)
+    {
+        if (!\is_string($shopwareOrderNumber)) {
+            return;
+        }
+
+        $paymentId = null;
+        $payments = $payPalOrder->getPurchaseUnits()[0]->getPayments();
+        if ($payPalOrder->getIntent() === PaymentIntentV2::CAPTURE) {
+            $captures = $payments->getCaptures();
+            if (!\is_array($captures)) {
+                throw new UnexpectedValueException('PayPal order has intent CAPTURE, but no captures in "payments" object');
+            }
+            $paymentId = $captures[0]->getId();
+        } elseif ($payPalOrder->getIntent() === PaymentIntentV2::AUTHORIZE) {
+            $authorizations = $payments->getAuthorizations();
+            if (!\is_array($authorizations)) {
+                throw new UnexpectedValueException('PayPal order has intent AUTHORIZE, but no authorizations in "payments" object');
+            }
+            $paymentId = $authorizations[0]->getId();
+        }
+
+        if (!\is_string($paymentId)) {
+            return;
+        }
+
+        $this->orderDataService->applyTransactionId($shopwareOrderNumber, $paymentId);
     }
 
     /**

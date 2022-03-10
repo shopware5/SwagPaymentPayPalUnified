@@ -6,9 +6,11 @@
  * file that was distributed with this source code.
  */
 
+use SwagPaymentPayPalUnified\Components\ErrorCodes;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\ShopwareOrderData;
 use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentController;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Patch;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Patches\OrderPurchaseUnitPatch;
 
@@ -27,9 +29,12 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2ExpressCheckout extends Abstr
         $payPalOrderId = $this->request->getParam('paypalOrderId');
 
         if (!\is_string($payPalOrderId)) {
-            $this->logger->debug(sprintf('%s NO ORDER ID GIVEN', __METHOD__));
+            $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
+                ->setCode(ErrorCodes::UNKNOWN)
+                ->setException(new UnexpectedValueException("Required request parameter 'paypalOrderId' is missing"), '');
+            $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
 
-            throw new \RuntimeException('No order ID given.');
+            return;
         }
 
         /** @phpstan-var CheckoutBasketArray $basketData */
@@ -48,9 +53,10 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2ExpressCheckout extends Abstr
 
         $patchSet = [$purchaseUnitPatch];
 
+        $shopwareOrderNumber = null;
         $sendShopwareOrderNumber = $this->getSendOrdernumber();
         if ($sendShopwareOrderNumber) {
-            $shopwareOrderNumber = $this->createShopwareOrder($payPalOrderId, $payPalOrderParameter->getPaymentType());
+            $shopwareOrderNumber = $this->createShopwareOrder($payPalOrderId, PaymentType::PAYPAL_EXPRESS_V2);
 
             $patchSet[] = $this->createInvoiceIdPatch($shopwareOrderNumber);
         }
@@ -59,15 +65,20 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2ExpressCheckout extends Abstr
             return;
         }
 
-        if (!$this->captureOrAuthorizeOrder($payPalOrderId)) {
+        $capturedPayPalOrder = $this->captureOrAuthorizeOrder($payPalOrderId);
+        if (!$capturedPayPalOrder instanceof Order) {
+            if (\is_string($shopwareOrderNumber)) {
+                $this->orderDataService->removeTransactionId($shopwareOrderNumber);
+            }
+
             return;
         }
 
-        $this->logger->debug(sprintf('%s SEND SHOPWARE ORDERNUMBER: %s', __METHOD__, $sendShopwareOrderNumber ? 'TRUE' : 'FALSE'));
-
         if (!$sendShopwareOrderNumber) {
-            $this->createShopwareOrder($payPalOrderId, $payPalOrderParameter->getPaymentType());
+            $shopwareOrderNumber = $this->createShopwareOrder($payPalOrderId, PaymentType::PAYPAL_EXPRESS_V2);
         }
+
+        $this->setTransactionId($shopwareOrderNumber, $capturedPayPalOrder);
 
         $this->logger->debug(sprintf('%s REDIRECT TO checkout/finish', __METHOD__));
 

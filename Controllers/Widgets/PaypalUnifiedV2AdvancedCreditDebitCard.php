@@ -71,15 +71,22 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2AdvancedCreditDebitCard extend
 
         $payPalOrderId = $this->request->getParam('paypalOrderId');
 
-        if (!$payPalOrderId) {
-            throw new UnexpectedValueException('No orderId specified.');
-        }
+        if (!\is_string($payPalOrderId)) {
+            $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
+                ->setCode(ErrorCodes::UNKNOWN)
+                ->setException(new UnexpectedValueException("Required request parameter 'paypalOrderId' is missing"), '');
+            $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
 
-        if (!$this->captureOrAuthorizeOrder($payPalOrderId)) {
             return;
         }
 
-        $this->createShopwareOrder($payPalOrderId, PaymentType::PAYPAL_ADVANCED_CREDIT_DEBIT_CARD);
+        $capturedPayPalOrder = $this->captureOrAuthorizeOrder($payPalOrderId);
+        if (!$capturedPayPalOrder instanceof Order) {
+            return;
+        }
+
+        $shopwareOrderNumber = $this->createShopwareOrder($payPalOrderId, PaymentType::PAYPAL_ADVANCED_CREDIT_DEBIT_CARD);
+        $this->setTransactionId($shopwareOrderNumber, $capturedPayPalOrder);
 
         $this->logger->debug(sprintf('%s SET PAYPAL ORDER ID TO SESSION: ID: %s', __METHOD__, $payPalOrderId));
 
