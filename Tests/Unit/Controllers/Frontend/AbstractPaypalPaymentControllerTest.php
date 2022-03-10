@@ -200,6 +200,10 @@ class AbstractPaypalPaymentControllerTest extends TestCase
     public function getPaymentTypeCheckoutTypeProvider()
     {
         return [
+            '"SEPA" checkout' => [
+                'sepaCheckout',
+                PaymentType::PAYPAL_SEPA,
+            ],
             '"ACDC" checkout' => [
                 'acdcCheckout',
                 PaymentType::PAYPAL_ADVANCED_CREDIT_DEBIT_CARD,

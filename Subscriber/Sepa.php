@@ -34,11 +34,18 @@ class Sepa implements SubscriberInterface
         $this->settingsService = $settingsService;
         $this->contextService = $contextService;
     }
+
+    /**
+     * {@inheritDoc}
+     */
     public static function getSubscribedEvents()
     {
         return ['Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout' => 'onCheckout'];
     }
 
+    /**
+     * @return void
+     */
     public function onCheckout(EventArgs $args)
     {
         /** @var GeneralSettingsModel|null $generalSettings */
@@ -51,7 +58,7 @@ class Sepa implements SubscriberInterface
         $subject = $args->getSubject();
         $view = $subject->View();
 
-        if($subject->Request()->getParam('sepaCheckout', false)) {
+        if ($subject->Request()->getParam('sepaCheckout', false)) {
             return;
         }
 
@@ -67,8 +74,7 @@ class Sepa implements SubscriberInterface
             'paypalUnifiedSpbIntent' => $generalSettings->getIntent(),
             'paypalUnifiedSpbStyleShape' => $generalSettings->getButtonStyleShape(),
             'paypalUnifiedSpbStyleSize' => $generalSettings->getButtonStyleSize(),
-            'paypalUnifiedSpbButtonLocale' => $generalSettings->getButtonLocale()
+            'paypalUnifiedSpbButtonLocale' => $generalSettings->getButtonLocale(),
         ]);
-
     }
 }

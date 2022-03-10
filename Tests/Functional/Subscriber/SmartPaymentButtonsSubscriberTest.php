@@ -202,15 +202,23 @@ class SmartPaymentButtonsSubscriberTest extends TestCase
 
         $this->getSubscriber()->addInfoToPaymentRequest($enlightEventArgs);
 
-        $expected = 'PaypalUnifiedV2/return/spbCheckout/1/acdcCheckout//token//PayerID//basketId/';
+        $expected = [
+            'PaypalUnifiedV2/return/spbCheckout/1/acdcCheckout/',
+            '/token//PayerID//basketId/',
+        ];
 
         static::assertSame(302, $response->getHttpResponseCode());
         if (\method_exists($this, 'assertStringContainsString')) {
-            static::assertStringContainsString($expected, $response->getHeader('Location'));
+            foreach ($expected as $expectedStringPart) {
+                static::assertStringContainsString($expectedStringPart, $response->getHeader('Location'));
+            }
 
             return;
         }
-        static::assertContains($expected, $response->getHeader('Location'));
+
+        foreach ($expected as $expectedStringPart) {
+            static::assertContains($expectedStringPart, $response->getHeader('Location'));
+        }
     }
 
     public function validActions()

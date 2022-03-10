@@ -39,7 +39,7 @@ EOD
                 'additionalDescription' => <<<'EOD'
 <img src="{link file='frontend/_public/src/img/sepa_payment.png' fullPath}" alt="SEPA Direct debit">
 EOD
-            ]
+            ],
         ],
         'de_DE' => [
             PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME => [
@@ -67,7 +67,7 @@ EOD
                 'additionalDescription' => <<<'EOD'
 <img src="{link file='frontend/_public/src/img/sepa_payment.png' fullPath}" alt="SEPA Lastschrift'">
 EOD
-            ]
+            ],
         ],
     ];
 
