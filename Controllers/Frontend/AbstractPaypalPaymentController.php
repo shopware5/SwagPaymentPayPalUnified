@@ -239,7 +239,7 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
      */
     protected function captureOrAuthorizeOrder($payPalOrderId, $payPalOrder = null)
     {
-        if ($payPalOrder instanceof Order && $payPalOrder->getStatus() === PaymentStatus::PAYMENT_COMPLETED) {
+        if ($payPalOrder instanceof Order && strtolower($payPalOrder->getStatus()) === PaymentStatus::PAYMENT_COMPLETED) {
             return true;
         }
 
