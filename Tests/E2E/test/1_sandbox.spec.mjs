@@ -2,28 +2,22 @@ import { test, expect } from '@playwright/test';
 import credentials from './credentials.mjs';
 import MysqlFactory from '../helper/mysqlFactory.mjs';
 import defaultPaypalSettingsSql from '../helper/paypalSqlHelper.mjs';
-import fs from "fs";
-import path from "path";
+import fs from 'fs';
+import path from 'path';
 const connection = MysqlFactory.getInstance();
-const truncateTables = fs.readFileSync(path.join(path.resolve(''),'setup/sql/truncate_paypal_tables.sql'), 'utf8');
+const truncateTables = fs.readFileSync(path.join(path.resolve(''), 'setup/sql/truncate_paypal_tables.sql'), 'utf8');
 
-test.describe("Backend testing", () => {
-
+test.describe('Backend testing', () => {
     test.beforeEach(() => {
-
         connection.query(truncateTables);
-
     });
 
     test.afterEach(() => {
-
         connection.query(truncateTables);
         connection.query(defaultPaypalSettingsSql);
-
     });
 
     test('activate the sandbox', async ({ page }) => {
-
         await page.goto('/backend');
         await expect(page).toHaveTitle(/Backend/);
         await page.fill('input[name="username"]', credentials.defaultBackendUserUsername);
@@ -35,7 +29,7 @@ test.describe("Backend testing", () => {
         await page.hover('.settings--payment-methods');
         await page.hover('.sprite--paypal-unified');
         await page.click('.settings--basic-settings');
-        await page.click('text=Für diesen Shop aktivieren:Aktiviere diese Option, um PayPal für diesen Shop zu  >> input[type="button"]')
+        await page.click('text=Für diesen Shop aktivieren:Aktiviere diese Option, um PayPal für diesen Shop zu  >> input[type="button"]');
 
         await page.locator('text=Sandbox aktivieren:Aktiviere diese Option, wenn du die Integration testen möchte >> input[type="button"]').scrollIntoViewIfNeeded();
         await page.locator('text=Sandbox aktivieren:Aktiviere diese Option, wenn du die Integration testen möchte >> input[type="button"]').click();
@@ -54,7 +48,7 @@ test.describe("Backend testing", () => {
             page.waitForResponse(/.*PaypalUnifiedPlusSettings.*/),
             page.waitForResponse(/.*PaypalUnifiedInstallmentsSettings.*/),
             page.waitForResponse(/.*PaypalUnifiedPayUponInvoiceSettings.*/),
-            page.waitForResponse(/.*PaypalUnifiedAdvancedCreditDebitCardSettings.*/),
+            page.waitForResponse(/.*PaypalUnifiedAdvancedCreditDebitCardSettings.*/)
         ]);
 
         await page.locator('button[role="button"]:has-text("Grundeinstellungen")').click();
@@ -68,7 +62,7 @@ test.describe("Backend testing", () => {
             page.waitForResponse(/.*PaypalUnifiedInstallmentsSettings.*/),
             page.waitForResponse(/.*PaypalUnifiedPayUponInvoiceSettings.*/),
             page.waitForResponse(/.*PaypalUnifiedAdvancedCreditDebitCardSettings.*/),
-            page.click('text=Speichern'),
+            page.click('text=Speichern')
         ]);
 
         await page.locator('button[role="button"]:has-text("PayPal PLUS deaktivieren")').click();
@@ -78,7 +72,5 @@ test.describe("Backend testing", () => {
         await page.locator('textarea[name="customerServiceInstructions"]').fill('This field is required if PayUponInvoice is onboarded');
 
         await page.click('text=Speichern');
-    
     });
-
-})
+});

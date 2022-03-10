@@ -1,4 +1,4 @@
-import 'dotenv/config'
+import 'dotenv/config';
 
 export default {
     mysqlHost: process.env.MYSQL_HOST,

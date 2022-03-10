@@ -1,5 +1,3 @@
 export default function () {
-
-    console.log("Global Teardown");
-
+    console.log('Global Teardown');
 }

@@ -3,11 +3,9 @@ import credentials from './credentials.mjs';
 
 const germany = '2';
 
-test.describe("Pay with Giropay", () => {
-
+test.describe('Pay with Giropay', () => {
     test('Buy as german customer with euro', async ({ page }) => {
-
-        //login
+        // login
         await page.goto('/account');
         await page.waitForLoadState('load');
         await page.fill('#email', credentials.defaultShopCustomerEmail);
@@ -16,11 +14,11 @@ test.describe("Pay with Giropay", () => {
         await expect(page).toHaveURL(/.*account/);
         await expect(page.locator('.account--welcome > .panel--title')).toHaveText(/.*Mustermann.*/);
 
-        //Buy Product
+        // Buy Product
         await page.goto('genusswelten/edelbraende/9/special-finish-lagerkorn-x.o.-32');
         await page.click('.buybox--button');
 
-        //Go to checkout
+        // Go to checkout
         await page.click('.button--checkout');
         await expect(page).toHaveURL(/.*checkout\/confirm/);
 
@@ -30,11 +28,11 @@ test.describe("Pay with Giropay", () => {
         await page.locator('select[name="address\\[country\\]"]').selectOption(germany);
 
         await Promise.all([
-            page.waitForNavigation(/*{ url: 'http://app_server/checkout/confirm' }*/),
+            page.waitForNavigation(/* { url: 'http://app_server/checkout/confirm' } */),
             page.locator('text=Adresse speichern').first().click()
         ]);
 
-        //Change payment
+        // Change payment
         await page.click('.btn--change-payment');
         await page.click('text=Giropay');
         await page.click('text=Weiter >> nth=1');
@@ -44,7 +42,5 @@ test.describe("Pay with Giropay", () => {
         await page.click('text=Success');
 
         await expect(page.locator('.teaser--title')).toHaveText(/Vielen Dank für Ihre Bestellung bei Shopware Demo/);
-    
     });
-
-})
+});
