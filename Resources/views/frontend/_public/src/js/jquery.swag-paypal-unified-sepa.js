@@ -4,11 +4,23 @@
     $.plugin('swagPayPalUnifiedSepa', {
         defaults: {
             /**
-             * Determines whether or not only the marks are needed on the current page
+             * @type string
+             */
+            sdkUrl: 'https://www.paypal.com/sdk/js',
+
+            /**
+             * Use PayPal sandbox
              *
              * @type boolean
              */
-            marksOnly: false,
+            useSandbox: false,
+
+            /**
+             * The URL used to create the order
+             *
+             * @type string
+             */
+            createOrderUrl: '',
 
             /**
              *  @type string
@@ -35,18 +47,6 @@
             locale: '',
 
             /**
-             * @type boolean
-             */
-            tagline: false,
-
-            /**
-             * The URL used to create the payment
-             *
-             * @type string
-             */
-            createPaymentUrl: '',
-
-            /**
              * After approval, redirect to this URL
              *
              * @type string
@@ -58,7 +58,7 @@
              *
              * @type string
              */
-            scriptLoadedClass: 'paypal-unified--paypal-sdk-loaded',
+            paypalScriptLoadedSelector: 'paypal-checkout-js-loaded',
 
             /**
              * Holds the client id
@@ -66,13 +66,6 @@
              * @type string
              */
             clientId: '',
-
-            /**
-             * The language ISO (ISO_639) for the Smart Payment Buttons.
-             *
-             * @type string
-             */
-            languageIso: 'en_GB',
 
             /**
              * Currency which should be used for the Smart Payment Buttons
@@ -163,7 +156,7 @@
 
             $.publish('plugin/swagPayPalUnifiedSepa/init', this);
 
-            this.createButtons();
+            this.createButton();
 
             $.publish('plugin/swagPayPalUnifiedSepa/buttonsCreated', this);
         },
@@ -178,35 +171,50 @@
             $.subscribe(this.getEventName('plugin/swShippingPayment/onInputChanged'), $.proxy(this.createButtons, this));
         },
 
-        createButtons: function() {
+        createButton: function() {
             var me = this,
-                $head = $('head'),
-                baseUrl = 'https://www.paypal.com/sdk/js',
-                params = {
-                    'client-id': this.opts.clientId,
-                    intent: this.opts.intent.toLowerCase(),
-                    components: 'buttons',
-                    currency: this.opts.currency
-                };
+                $head = $('head');
 
-            if (!$head.hasClass(this.opts.scriptLoadedClass)) {
+            if (!$head.hasClass(this.opts.paypalScriptLoadedSelector)) {
                 $.ajax({
-                    url: baseUrl + '?' + $.param(params, true),
+                    url: this.renderSdkUrl(),
                     dataType: 'script',
                     cache: true,
                     success: function() {
-                        $head.addClass(me.opts.scriptLoadedClass);
+                        $head.addClass(me.opts.paypalScriptLoadedSelector);
                         me.paypal = window.paypal;
-                        me.renderButtons();
+                        me.renderButton();
                     }
                 });
             } else {
                 this.paypal = window.paypal;
-                this.renderButtons();
+                this.renderButton();
             }
         },
 
-        renderButtons: function() {
+        renderSdkUrl: function() {
+            var params = {
+                'client-id': this.opts.clientId,
+                intent: this.opts.intent.toLowerCase(),
+                components: 'buttons'
+            };
+
+            if (this.opts.locale.length > 0) {
+                params.locale = this.opts.locale;
+            }
+
+            if (this.opts.useSandbox) {
+                params.debug = true;
+            }
+
+            if (this.opts.currency) {
+                params.currency = this.opts.currency;
+            }
+
+            return [this.opts.sdkUrl, '?', $.param(params, true)].join('');
+        },
+
+        renderButton: function() {
             var buttonConfig = this.getButtonConfig(),
                 el = this.$el.get(0);
 
@@ -221,7 +229,6 @@
                     shape: this.opts.shape,
                     layout: this.opts.layout,
                     label: this.opts.label,
-                    tagline: this.opts.tagline,
                     height: this.buttonSize[this.opts.size].height
                 },
 
@@ -247,26 +254,26 @@
             };
         },
 
+        /**
+         * @return { Promise }
+         */
         createOrder: function() {
             var me = this;
 
             return $.ajax({
                 method: 'get',
-                url: me.opts.createPaymentUrl
+                url: me.opts.createOrderUrl
             }).then(function(response) {
-                if (response.errorUrl) {
-                    window.location.replace(response.errorUrl);
-                    return;
-                }
                 me.opts.basketId = response.basketId;
 
-                return response.token;
+                return response.paypalOrderId;
+            }, function() {
             }).promise();
         },
 
         onApprove: function(data, actions) {
             var confirmUrl = this.opts.checkoutConfirmUrl + '?' + $.param({
-                orderId: data.orderID,
+                paypalOrderId: data.orderID,
                 payerId: data.payerID,
                 basketId: this.opts.basketId
             }, true);
@@ -284,47 +291,7 @@
             $.loadingIndicator.close();
         },
 
-        onPayPalAPIError: function(response) {
-            $.loadingIndicator.close();
-
-            var content = $('<div>').html(this.opts.communicationErrorMessage),
-                config = {
-                    title: this.opts.communicationErrorTitle,
-                    width: 320,
-                    height: 200
-                };
-
-            content.css('padding', '10px');
-
-            $.modal.open(content, config);
-
-            $.ajax({
-                url: this.opts.logUrl,
-                data: {
-                    code: response.code,
-                    message: response.message
-                }
-            });
-        },
-
-        /**
-         * Buffer helper function to set a timeout for a function
-         *
-         * @param {function} fn
-         * @param {number} timeout
-         * @return {number}
-         */
-        buffer: function(fn, timeout) {
-            timeout = timeout || 500;
-
-            return window.setTimeout(fn.bind(this), timeout);
-        },
-
-        destroy: function() {
-            this._destroy();
-        },
-
-        createButtonSizeObject: function () {
+        createButtonSizeObject: function() {
             this.buttonSize = {
                 small: {
                     height: this.opts.smallHeight,
@@ -344,6 +311,10 @@
                 }
             };
         },
+
+        onPayPalAPIError: function() {
+            window.location.replace(this.opts.paypalErrorPage);
+        }
     });
 
     window.StateManager.addPlugin('*[data-paypalUnifiedSepa="true"]', 'swagPayPalUnifiedSepa');

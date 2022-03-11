@@ -10,5 +10,8 @@ export default {
     paypalSandboxClientId: process.env.PAYPAL_SANDBOX_CLIENT_ID,
     paypalSandboxClientSecret: process.env.PAYPAL_SANDBOX_CLIENT_SECRET,
     paypalSandboxMerchantId: process.env.PAYPAL_SANDBOX_MERCHANT_ID,
-    paypalCreditCard: process.env.PAYPAL_CREDIT_CARD
+    paypalCreditCard: process.env.PAYPAL_CREDIT_CARD,
+    sepaIban: process.env.PAYPAL_SEPA_IBAN,
+    sepaBirthday: process.env.PAYPAL_SEPA_BIRTHDAY,
+    sepaPhone: process.env.PAYPAL_SEPA_PHONE
 };

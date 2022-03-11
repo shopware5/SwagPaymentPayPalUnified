@@ -10,7 +10,7 @@
                      data-size="{$paypalUnifiedSpbStyleSize}"
                      data-locale="{$paypalUnifiedSpbButtonLocale}"
                      data-useSandbox="{$paypalUnifiedModeSandbox}"
-                     data-createPaymentUrl="{url module=widgets controller=PaypalUnifiedV2SmartPaymentButtons action=createOrder forceSecure}"
+                     data-createOrderUrl="{url module=widgets controller=PaypalUnifiedV2SmartPaymentButtons action=createOrder forceSecure}"
                      data-paypalErrorPageUrl="{url controller=checkout action=shippingPayment paypal_unified_error_code=2}"
                      data-checkoutConfirmUrl="{url module=frontend controller=checkout action=confirm spbCheckout=1 sepaCheckout=1 forceSecure}">
                 </div>

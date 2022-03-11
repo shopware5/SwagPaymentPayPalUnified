@@ -9,7 +9,7 @@
 namespace SwagPaymentPayPalUnified\Tests\Mocks;
 
 use Enlight_Controller_Request_RequestTestCase;
-use Enlight_Controller_Response_ResponseHttp;
+use Enlight_Controller_Response_ResponseTestCase;
 use Enlight_View_Default;
 
 class DummyController extends \Enlight_Controller_Action
@@ -25,14 +25,14 @@ class DummyController extends \Enlight_Controller_Action
     protected $view;
 
     /**
-     * @var \Enlight_Controller_Response_ResponseHttp
+     * @var \Enlight_Controller_Response_ResponseTestCase
      */
     protected $response;
 
     public function __construct(
         Enlight_Controller_Request_RequestTestCase $request,
         Enlight_View_Default $view,
-        Enlight_Controller_Response_ResponseHttp $response
+        Enlight_Controller_Response_ResponseTestCase $response
     ) {
         $this->request = $request;
         $this->view = $view;

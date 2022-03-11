@@ -89,8 +89,11 @@ class SepaTest extends TestCase
             'shopId' => 1,
         ]);
 
+        $request = new Enlight_Controller_Request_RequestTestCase();
+        $request->setParam('sepaCheckout', true);
+
         $eventArgs = $this->getEnlightEventArgs(
-            new Enlight_Controller_Request_RequestTestCase(['sepaCheckout' => true]),
+            $request,
             $view,
             new Enlight_Controller_Response_ResponseTestCase()
         );
@@ -116,8 +119,11 @@ class SepaTest extends TestCase
             'shopId' => 1,
         ]);
 
+        $request = new Enlight_Controller_Request_RequestTestCase();
+        $request->setParam('sepaCheckout', true);
+
         $eventArgs = $this->getEnlightEventArgs(
-            new Enlight_Controller_Request_RequestTestCase(['sepaCheckout' => true]),
+            $request,
             $view,
             new Enlight_Controller_Response_ResponseTestCase()
         );
