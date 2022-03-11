@@ -91,6 +91,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedApm extends AbstractPaypalPayme
             return;
         }
 
+        $shopwareOrderNumber = null;
         $sendShopwareOrderNumber = $this->getSendOrdernumber();
         if ($sendShopwareOrderNumber) {
             $shopwareOrderNumber = $this->createShopwareOrder($payPalOrderId, $this->getPaymentType($payPalOrder));
@@ -102,12 +103,17 @@ class Shopware_Controllers_Frontend_PaypalUnifiedApm extends AbstractPaypalPayme
             }
         }
 
-        if (!$this->captureOrAuthorizeOrder($payPalOrder->getId(), $payPalOrder)) {
+        $capturedPayPalOrder = $this->captureOrAuthorizeOrder($payPalOrder->getId(), $payPalOrder);
+        if (!$capturedPayPalOrder instanceof Order) {
+            if (\is_string($shopwareOrderNumber)) {
+                $this->orderDataService->removeTransactionId($shopwareOrderNumber);
+            }
+
             return;
         }
 
         if (!$sendShopwareOrderNumber) {
-            $this->createShopwareOrder($payPalOrderId, $this->getPaymentType($payPalOrder));
+            $shopwareOrderNumber = $this->createShopwareOrder($payPalOrderId, $this->getPaymentType($payPalOrder));
         }
 
         if ($this->Request()->isXmlHttpRequest()) {
@@ -119,6 +125,12 @@ class Shopware_Controllers_Frontend_PaypalUnifiedApm extends AbstractPaypalPayme
         }
 
         if ($this->isPaymentCompleted($payPalOrderId)) {
+            $payPalOrder = $this->getPayPalOrder($payPalOrderId);
+            if (!$payPalOrder instanceof Order) {
+                return;
+            }
+            $this->setTransactionId($shopwareOrderNumber, $payPalOrder);
+
             $this->logger->debug(sprintf('%s REDIRECT TO checkout/finish', __METHOD__));
 
             $this->redirect([

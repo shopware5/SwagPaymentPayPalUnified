@@ -117,6 +117,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
             return;
         }
 
+        $shopwareOrderNumber = null;
         $sendShopwareOrderNumber = $this->getSendOrdernumber();
         if ($sendShopwareOrderNumber) {
             $shopwareOrderNumber = $this->createShopwareOrder($payPalOrderId, $this->getPaymentType($payPalOrder));
@@ -128,13 +129,20 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
             }
         }
 
-        if (!$this->captureOrAuthorizeOrder($payPalOrder->getId(), $payPalOrder)) {
+        $capturedPayPalOrder = $this->captureOrAuthorizeOrder($payPalOrder->getId(), $payPalOrder);
+        if (!$capturedPayPalOrder instanceof Order) {
+            if (\is_string($shopwareOrderNumber)) {
+                $this->orderDataService->removeTransactionId($shopwareOrderNumber);
+            }
+
             return;
         }
 
         if (!$sendShopwareOrderNumber) {
-            $this->createShopwareOrder($payPalOrderId, $this->getPaymentType($payPalOrder));
+            $shopwareOrderNumber = $this->createShopwareOrder($payPalOrderId, $this->getPaymentType($payPalOrder));
         }
+
+        $this->setTransactionId($shopwareOrderNumber, $capturedPayPalOrder);
 
         if ($this->Request()->isXmlHttpRequest()) {
             $this->view->assign('paypalOrderId', $payPalOrderId);

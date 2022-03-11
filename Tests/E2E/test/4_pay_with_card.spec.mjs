@@ -1,8 +1,8 @@
 import { test, expect } from '@playwright/test';
 import credentials from './credentials.mjs';
 
-test.describe('Pay with invoice', () => {
-    test('Buy a product with invoice', async ({ page }) => {
+test.describe('Pay with credit card', () => {
+    test('Buy a product with credit card', async ({ page }) => {
         // login
         await page.goto('/account');
         await page.waitForLoadState('load');
@@ -24,16 +24,13 @@ test.describe('Pay with invoice', () => {
         await page.click('.btn--change-payment');
         await page.click('text=Kredit- oder Debitkarte');
         await page.click('text=Weiter >> nth=1');
+
+        await expect(page.locator('.payment--description')).toHaveText(/Kredit- oder Debitkarte/);
         await page.click('input[name="sAGB"]');
 
-        const locatorFieldNumber = await page.frameLocator('#braintree-hosted-field-number').locator('input[name="credit-card-number"]');
-        await locatorFieldNumber.type(credentials.paypalCreditCard);
-
-        const locatorExpiration = await page.frameLocator('#braintree-hosted-field-expirationDate').locator('input[name="expiration"]');
-        await locatorExpiration.type('1130');
-
-        const locatorCvv = await page.frameLocator('#braintree-hosted-field-cvv').locator('input[name="cvv"]');
-        await locatorCvv.type('123');
+        await page.frameLocator('#braintree-hosted-field-number').locator('#credit-card-number').type(credentials.paypalCreditCard);
+        await page.frameLocator('#braintree-hosted-field-expirationDate').locator('#expiration').type('1130');
+        await page.frameLocator('#braintree-hosted-field-cvv').locator('#cvv').type('123');
 
         await page.click('button:has-text("Zahlungspflichtig bestellen")');
 
