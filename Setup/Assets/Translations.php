@@ -34,6 +34,12 @@ EOD
                 'description' => 'Pay upon invoice',
                 'additionalDescription' => '',
             ],
+            PaymentMethodProviderInterface::PAYPAL_UNIFIED_SEPA_METHOD_NAME => [
+                'description' => 'Direct debit',
+                'additionalDescription' => <<<'EOD'
+<img src="{link file='frontend/_public/src/img/sepa_payment.png' fullPath}" alt="SEPA Direct debit">
+EOD
+            ],
         ],
         'de_DE' => [
             PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME => [
@@ -55,6 +61,12 @@ EOD
             PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME => [
                 'description' => 'Kauf auf Rechnung',
                 'additionalDescription' => '',
+            ],
+            PaymentMethodProviderInterface::PAYPAL_UNIFIED_SEPA_METHOD_NAME => [
+                'description' => 'Lastschrift',
+                'additionalDescription' => <<<'EOD'
+<img src="{link file='frontend/_public/src/img/sepa_payment.png' fullPath}" alt="SEPA Lastschrift'">
+EOD
             ],
         ],
     ];

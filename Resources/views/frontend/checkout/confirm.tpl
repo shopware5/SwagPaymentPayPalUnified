@@ -68,6 +68,10 @@
             {block name='frontend_paypal_unified_confirm_smart_payment_buttons'}
                 {include file="frontend/paypal_unified/spb/smart_payment_buttons.tpl"}
             {/block}
+        {elseif $paypalUnifiedSepaPayment && !$paypalUnifiedExpressCheckout && !$paypalUnifiedUsePlus}
+            {block name='frontend_paypal_unified_confirm_sepa_payment_button'}
+                {include file="frontend/paypal_unified/sepa/sepa_payment_button.tpl"}
+            {/block}
         {else}
             {$smarty.block.parent}
         {/if}

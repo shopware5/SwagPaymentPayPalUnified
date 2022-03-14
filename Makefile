@@ -4,6 +4,7 @@ filter := "default"
 dirname := $(notdir $(CURDIR))
 envprefix := $(shell echo "$(dirname)" | tr A-Z a-z)
 envname := $(envprefix)test
+debug := "false"
 
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
@@ -47,6 +48,21 @@ ifeq ($(filter), "default")
 	SHOPWARE_ENV=$(envname) ./../../../vendor/phpunit/phpunit/phpunit --verbose
 else
 	SHOPWARE_ENV=$(envname) ./../../../vendor/phpunit/phpunit/phpunit --verbose --filter $(filter)
+endif
+
+run-e2e-tests:  ## Execute the e2e tests... Use like: ("make run-e2e-tests" | "make run-e2e-tests filter=express" | "make run-e2e-tests filter=express debug=true")
+ifeq ($(debug), true)
+ifeq ($(filter), "default")
+	npm --prefix ./Tests/E2E/ run e2e:run:debug
+else
+	npm --prefix ./Tests/E2E/ run e2e:run:debug $(filter)
+endif
+else
+ifeq ($(filter), "default")
+	npm --prefix ./Tests/E2E/ run e2e:run
+else
+	npm --prefix ./Tests/E2E/ run e2e:run $(filter)
+endif
 endif
 
 make run-javascript-tests:

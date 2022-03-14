@@ -24,6 +24,7 @@ use SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentModels\PayPalAdvancedCre
 use SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentModels\PayPalClassic;
 use SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentModels\PayPalPayUponInvoice;
 use SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentModels\Przelewy24;
+use SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentModels\Sepa;
 use SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentModels\Sofort;
 use SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentModels\Trustly;
 
@@ -51,6 +52,7 @@ class PaymentModelFactory
             PaymentMethodProviderInterface::MULTIBANCO_METHOD_NAME => new MultiBanco($plugin),
             PaymentMethodProviderInterface::OXXO_METHOD_NAME => new Oxxo($plugin),
             PaymentMethodProviderInterface::TRUSTLY_METHOD_NAME => new Trustly($plugin),
+            PaymentMethodProviderInterface::PAYPAL_UNIFIED_SEPA_METHOD_NAME => new Sepa($plugin),
         ];
     }
 
