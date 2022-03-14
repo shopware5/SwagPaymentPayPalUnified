@@ -1,7 +1,18 @@
 import { test, expect } from '@playwright/test';
 import credentials from './credentials.mjs';
+import MysqlFactory from '../helper/mysqlFactory.mjs';
+import fs from 'fs';
+import path from 'path';
+import defaultPaypalSettingsSql from '../helper/paypalSqlHelper.mjs';
+const connection = MysqlFactory.getInstance();
+const truncateTables = fs.readFileSync(path.join(path.resolve(''), 'setup/sql/truncate_paypal_tables.sql'), 'utf8');
 
 test.describe('Is SEPA fully functional', () => {
+    test.beforeEach(() => {
+        connection.query(truncateTables);
+        connection.query(defaultPaypalSettingsSql);
+    });
+
     test('Buy a product with SEPA', async ({ page }) => {
         // Add product to cart
         await page.goto('/sommerwelten/beachwear/178/strandtuch-ibiza');
@@ -13,7 +24,7 @@ test.describe('Is SEPA fully functional', () => {
 
         await page.fill('#email', credentials.defaultShopCustomerEmail);
         await page.fill('#passwort', credentials.defaultShopCustomerPassword);
-        await page.click('.register--login-btn');
+        await page.click('#login--form >> .register--login-btn');
         await expect(page).toHaveURL(/.*checkout\/confirm/);
 
         // Change payment to SEPA

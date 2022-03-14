@@ -1,6 +1,17 @@
 import { test, expect } from '@playwright/test';
+import MysqlFactory from '../helper/mysqlFactory.mjs';
+import fs from 'fs';
+import path from 'path';
+import defaultPaypalSettingsSql from '../helper/paypalSqlHelper.mjs';
+const connection = MysqlFactory.getInstance();
+const truncateTables = fs.readFileSync(path.join(path.resolve(''), 'setup/sql/truncate_paypal_tables.sql'), 'utf8');
 
 test.describe('Is Express Checkout button available', () => {
+    test.beforeEach(() => {
+        connection.query(truncateTables);
+        connection.query(defaultPaypalSettingsSql);
+    });
+
     test('Check product detail page', async ({ page }) => {
         await page.goto('/sommerwelten/beachwear/178/strandtuch-ibiza');
 
