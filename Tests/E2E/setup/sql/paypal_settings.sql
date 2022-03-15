@@ -1,3 +1,11 @@
+TRUNCATE TABLE swag_payment_paypal_unified_payment_instruction;
+TRUNCATE TABLE swag_payment_paypal_unified_settings_advanced_credit_debit_card;
+TRUNCATE TABLE swag_payment_paypal_unified_settings_express;
+TRUNCATE TABLE swag_payment_paypal_unified_settings_general;
+TRUNCATE TABLE swag_payment_paypal_unified_settings_installments;
+TRUNCATE TABLE swag_payment_paypal_unified_settings_pay_upon_invoice;
+TRUNCATE TABLE swag_payment_paypal_unified_settings_plus;
+
 INSERT INTO swag_payment_paypal_unified_settings_advanced_credit_debit_card (id, shop_id, onboarding_completed, sandbox_onboarding_completed, active) VALUES
 (1, 1, 0, 1, 1);
 
@@ -15,3 +23,5 @@ INSERT INTO swag_payment_paypal_unified_settings_pay_upon_invoice (id, shop_id, 
 
 INSERT INTO swag_payment_paypal_unified_settings_plus (id, shop_id, active, restyle, integrate_third_party_methods, payment_name, payment_description, ppcp_active, sandbox_ppcp_active) VALUES
 (1, 1, 0, 0, 0, 'PayPal, Lastschrift oder Kreditkarte', 'Zahlung per Lastschrift oder Kreditkarte ist auch ohne PayPal Konto möglich', 0, 0);
+
+UPDATE s_user_addresses SET country_id = 2 WHERE user_id = 1;

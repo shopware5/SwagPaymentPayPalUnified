@@ -11,6 +11,8 @@ namespace SwagPaymentPayPalUnified\Subscriber;
 use Enlight\Event\SubscriberInterface;
 use Enlight_Controller_ActionEventArgs as EventArgs;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
+use Shopware_Controllers_Frontend_Checkout;
+use SwagPaymentPayPalUnified\Components\ButtonLocaleService;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Models\Settings\General as GeneralSettingsModel;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
@@ -27,12 +29,19 @@ class Sepa implements SubscriberInterface
      */
     private $contextService;
 
+    /**
+     * @var ButtonLocaleService
+     */
+    private $buttonLocaleService;
+
     public function __construct(
         SettingsServiceInterface $settingsService,
-        ContextServiceInterface $contextService
+        ContextServiceInterface $contextService,
+        ButtonLocaleService $buttonLocaleService
     ) {
         $this->settingsService = $settingsService;
         $this->contextService = $contextService;
+        $this->buttonLocaleService = $buttonLocaleService;
     }
 
     /**
@@ -54,7 +63,7 @@ class Sepa implements SubscriberInterface
             return;
         }
 
-        /** @var \Shopware_Controllers_Frontend_Checkout $subject */
+        /** @var Shopware_Controllers_Frontend_Checkout $subject */
         $subject = $args->getSubject();
         $view = $subject->View();
 
@@ -74,7 +83,7 @@ class Sepa implements SubscriberInterface
             'paypalUnifiedSpbIntent' => $generalSettings->getIntent(),
             'paypalUnifiedSpbStyleShape' => $generalSettings->getButtonStyleShape(),
             'paypalUnifiedSpbStyleSize' => $generalSettings->getButtonStyleSize(),
-            'paypalUnifiedSpbButtonLocale' => $generalSettings->getButtonLocale(),
+            'paypalUnifiedSpbButtonLocale' => $this->buttonLocaleService->getButtonLocale($generalSettings->getButtonLocale()),
         ]);
     }
 }

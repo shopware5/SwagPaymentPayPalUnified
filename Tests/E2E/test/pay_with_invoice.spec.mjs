@@ -1,15 +1,11 @@
 import { test, expect } from '@playwright/test';
 import credentials from './credentials.mjs';
 import MysqlFactory from '../helper/mysqlFactory.mjs';
-import fs from 'fs';
-import path from 'path';
 import defaultPaypalSettingsSql from '../helper/paypalSqlHelper.mjs';
 const connection = MysqlFactory.getInstance();
-const truncateTables = fs.readFileSync(path.join(path.resolve(''), 'setup/sql/truncate_paypal_tables.sql'), 'utf8');
 
 test.describe('Pay with invoice', () => {
     test.beforeEach(() => {
-        connection.query(truncateTables);
         connection.query(defaultPaypalSettingsSql);
     });
 
@@ -35,8 +31,6 @@ test.describe('Pay with invoice', () => {
         await page.click('.btn--change-payment');
         await page.click('text=Kauf auf Rechnung');
         await page.click('text=Weiter >> nth=1');
-
-        // await expect(page.locator('.payment--description')).toHaveText(/Kauf auf Rechnung/);
 
         await page.click('input[name="sAGB"]');
         await page.click('button:has-text("Zahlungspflichtig bestellen")');

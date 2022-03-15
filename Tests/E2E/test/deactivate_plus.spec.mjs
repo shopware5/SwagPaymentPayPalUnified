@@ -2,18 +2,14 @@ import { expect, test } from '@playwright/test';
 import defaultPaypalSettingsSql from '../helper/paypalSqlHelper.mjs';
 import updatePlusSettingsSql from '../helper/updatePlusHelper.mjs';
 import MysqlFactory from '../helper/mysqlFactory.mjs';
-import fs from 'fs';
-import path from 'path';
 import credentials from './credentials.mjs';
 
 const connection = MysqlFactory.getInstance();
-const truncateTables = fs.readFileSync(path.join(path.resolve(''), 'setup/sql/truncate_paypal_tables.sql'), 'utf8');
 
 test.use({ viewport: { width: 1920, height: 1080 } });
 
 test.describe('Backend testing: Check if plus popup is shown', () => {
     test.beforeEach(() => {
-        connection.query(truncateTables);
         connection.query(defaultPaypalSettingsSql);
     });
 

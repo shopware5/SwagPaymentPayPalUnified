@@ -37,6 +37,16 @@ test.describe('Backend testing', () => {
         await page.locator('button[role="button"]:has-text("PayPal Express Checkout Integration")').click();
         await page.locator('text=\'Direkt zu PayPal\' auf Listing-Seiten:Wenn diese Option aktiv ist, wird der Expr >> input[type="button"]').click();
 
+        await Promise.all([
+            page.click('text=Speichern'),
+            page.waitForResponse(/.*PaypalUnifiedSettings.*/),
+            page.waitForResponse(/.*PaypalUnifiedExpressSettings.*/),
+            page.waitForResponse(/.*PaypalUnifiedPlusSettings.*/),
+            page.waitForResponse(/.*PaypalUnifiedInstallmentsSettings.*/),
+            page.waitForResponse(/.*PaypalUnifiedPayUponInvoiceSettings.*/),
+            page.waitForResponse(/.*PaypalUnifiedAdvancedCreditDebitCardSettings.*/)
+        ]);
+
         await page.locator('button[role="button"]:has-text("Grundeinstellungen")').click();
         await page.fill('input[name="sandboxPaypalPayerId"]', credentials.paypalSandboxMerchantId);
 

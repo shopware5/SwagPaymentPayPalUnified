@@ -2,14 +2,10 @@ import { test, expect } from '@playwright/test';
 import credentials from './credentials.mjs';
 import defaultPaypalSettingsSql from '../helper/paypalSqlHelper.mjs';
 import MysqlFactory from '../helper/mysqlFactory.mjs';
-import fs from 'fs';
-import path from 'path';
 const connection = MysqlFactory.getInstance();
-const truncateTables = fs.readFileSync(path.join(path.resolve(''), 'setup/sql/truncate_paypal_tables.sql'), 'utf8');
 
 test.describe('Pay with credit card', () => {
     test.beforeEach(() => {
-        connection.query(truncateTables);
         connection.query(defaultPaypalSettingsSql);
     });
 
