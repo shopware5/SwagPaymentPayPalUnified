@@ -6,11 +6,13 @@
  * file that was distributed with this source code.
  */
 
+use Shopware\Models\Order\Status;
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\ShopwareOrderData;
 use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentController;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Common\Link;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\PaymentIntentV2;
 
 class Shopware_Controllers_Frontend_PaypalUnifiedApm extends AbstractPaypalPaymentController
 {
@@ -109,6 +111,8 @@ class Shopware_Controllers_Frontend_PaypalUnifiedApm extends AbstractPaypalPayme
                 $this->orderDataService->removeTransactionId($shopwareOrderNumber);
             }
 
+            $this->paymentStatusService->updatePaymentStatus($payPalOrderId, Status::PAYMENT_STATE_REVIEW_NECESSARY);
+
             return;
         }
 
@@ -130,6 +134,12 @@ class Shopware_Controllers_Frontend_PaypalUnifiedApm extends AbstractPaypalPayme
                 return;
             }
             $this->setTransactionId($shopwareOrderNumber, $payPalOrder);
+
+            if ($payPalOrder->getIntent() === PaymentIntentV2::CAPTURE) {
+                $this->paymentStatusService->updatePaymentStatus($payPalOrderId, Status::PAYMENT_STATE_COMPLETELY_PAID);
+            } else {
+                $this->paymentStatusService->updatePaymentStatus($payPalOrderId, Status::PAYMENT_STATE_RESERVED);
+            }
 
             $this->logger->debug(sprintf('%s REDIRECT TO checkout/finish', __METHOD__));
 

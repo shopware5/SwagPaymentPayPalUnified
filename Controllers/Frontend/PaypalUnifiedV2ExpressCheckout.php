@@ -6,6 +6,7 @@
  * file that was distributed with this source code.
  */
 
+use Shopware\Models\Order\Status;
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\ShopwareOrderData;
 use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentController;
@@ -13,6 +14,7 @@ use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Patch;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Patches\OrderPurchaseUnitPatch;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\PaymentIntentV2;
 
 /**
  * @phpstan-import-type CheckoutBasketArray from \Shopware_Controllers_Frontend_Checkout
@@ -71,6 +73,8 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2ExpressCheckout extends Abstr
                 $this->orderDataService->removeTransactionId($shopwareOrderNumber);
             }
 
+            $this->paymentStatusService->updatePaymentStatus($payPalOrderId, Status::PAYMENT_STATE_REVIEW_NECESSARY);
+
             return;
         }
 
@@ -79,6 +83,12 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2ExpressCheckout extends Abstr
         }
 
         $this->setTransactionId($shopwareOrderNumber, $capturedPayPalOrder);
+
+        if ($capturedPayPalOrder->getIntent() === PaymentIntentV2::CAPTURE) {
+            $this->paymentStatusService->updatePaymentStatus($payPalOrderId, Status::PAYMENT_STATE_COMPLETELY_PAID);
+        } else {
+            $this->paymentStatusService->updatePaymentStatus($payPalOrderId, Status::PAYMENT_STATE_RESERVED);
+        }
 
         $this->logger->debug(sprintf('%s REDIRECT TO checkout/finish', __METHOD__));
 

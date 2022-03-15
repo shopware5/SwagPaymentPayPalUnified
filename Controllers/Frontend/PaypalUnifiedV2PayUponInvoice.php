@@ -12,6 +12,7 @@ use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\ShopwareOrderData;
 use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentController;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\PaymentIntentV2;
 
 class Shopware_Controllers_Frontend_PaypalUnifiedV2PayUponInvoice extends AbstractPaypalPaymentController
 {
@@ -34,27 +35,30 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2PayUponInvoice extends Abstra
             return;
         }
 
-        $paypalOrderId = $payPalOrder->getId();
+        $payPalOrderId = $payPalOrder->getId();
 
-        $shopwareOrderNumber = $this->createShopwareOrder($paypalOrderId, PaymentType::PAYPAL_PAY_UPON_INVOICE_V2);
-        $paymentStatusService = $this->get('paypal_unified.payment_status_service');
-        $paymentStatusService->updatePaymentStatus($paypalOrderId, Status::PAYMENT_STATE_RESERVED);
+        $shopwareOrderNumber = $this->createShopwareOrder($payPalOrderId, PaymentType::PAYPAL_PAY_UPON_INVOICE_V2, Status::PAYMENT_STATE_RESERVED);
 
         if ($this->getSendOrdernumber()) {
             $invoiceIdPatch = $this->createInvoiceIdPatch($shopwareOrderNumber);
 
-            if (!$this->updatePayPalOrder($paypalOrderId, [$invoiceIdPatch])) {
+            if (!$this->updatePayPalOrder($payPalOrderId, [$invoiceIdPatch])) {
                 return;
             }
         }
 
-        if ($this->isPaymentCompleted($paypalOrderId)) {
-            $paymentStatusService->updatePaymentStatus($paypalOrderId, Status::PAYMENT_STATE_COMPLETELY_PAID);
-            $payPalOrder = $this->getPayPalOrder($paypalOrderId);
+        if ($this->isPaymentCompleted($payPalOrderId)) {
+            $payPalOrder = $this->getPayPalOrder($payPalOrderId);
             if (!$payPalOrder instanceof Order) {
                 return;
             }
             $this->setTransactionId($shopwareOrderNumber, $payPalOrder);
+
+            if ($payPalOrder->getIntent() === PaymentIntentV2::CAPTURE) {
+                $this->paymentStatusService->updatePaymentStatus($payPalOrderId, Status::PAYMENT_STATE_COMPLETELY_PAID);
+            } else {
+                $this->paymentStatusService->updatePaymentStatus($payPalOrderId, Status::PAYMENT_STATE_RESERVED);
+            }
 
             $this->logger->debug(sprintf('%s REDIRECT TO checkout/finish', __METHOD__));
 
@@ -62,7 +66,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2PayUponInvoice extends Abstra
                 'module' => 'frontend',
                 'controller' => 'checkout',
                 'action' => 'finish',
-                'sUniqueID' => $paypalOrderId,
+                'sUniqueID' => $payPalOrderId,
             ]);
 
             return;
@@ -72,7 +76,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2PayUponInvoice extends Abstra
 
         $this->logger->debug(sprintf('%s SET PAYMENT STATE TO: PAYMENT_STATE_REVIEW_NECESSARY::21', __METHOD__));
 
-        $paymentStatusService->updatePaymentStatus($paypalOrderId, Status::PAYMENT_STATE_REVIEW_NECESSARY);
+        $this->paymentStatusService->updatePaymentStatus($payPalOrderId, Status::PAYMENT_STATE_REVIEW_NECESSARY);
 
         $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
             ->setCode(ErrorCodes::COMMUNICATION_FAILURE);

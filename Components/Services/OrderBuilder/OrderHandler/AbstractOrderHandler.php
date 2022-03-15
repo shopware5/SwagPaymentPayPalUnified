@@ -84,6 +84,7 @@ abstract class AbstractOrderHandler implements OrderBuilderHandlerInterface
 
     /**
      * @return string
+     * @phpstan-return PaymentIntentV2::*
      */
     protected function getIntent()
     {
