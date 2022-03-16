@@ -175,8 +175,10 @@ class SepaTest extends TestCase
             'intent' => 'CAPTURE',
             'buttonStyleShape' => 'rectangle',
             'buttonStyleSize' => 'large',
-            'buttonLocale' => 'EN',
+            'buttonLocale' => '',
         ];
+
+        $expectedButtonLocale = 'de_DE';
 
         $this->insertGeneralSettingsFromArray($settings);
 
@@ -197,7 +199,7 @@ class SepaTest extends TestCase
         static::assertSame($settings['intent'], $eventArgs->getSubject()->View()->getAssign('paypalUnifiedSpbIntent'));
         static::assertSame($settings['buttonStyleShape'], $eventArgs->getSubject()->View()->getAssign('paypalUnifiedSpbStyleShape'));
         static::assertSame($settings['buttonStyleSize'], $eventArgs->getSubject()->View()->getAssign('paypalUnifiedSpbStyleSize'));
-        static::assertSame($settings['buttonLocale'], $eventArgs->getSubject()->View()->getAssign('paypalUnifiedSpbButtonLocale'));
+        static::assertSame($expectedButtonLocale, $eventArgs->getSubject()->View()->getAssign('paypalUnifiedSpbButtonLocale'));
     }
 
     /**
@@ -207,7 +209,8 @@ class SepaTest extends TestCase
     {
         return new Sepa(
             $this->getContainer()->get('paypal_unified.settings_service'),
-            $this->getContainer()->get('shopware_storefront.context_service')
+            $this->getContainer()->get('shopware_storefront.context_service'),
+            $this->getContainer()->get('paypal_unified.button_locale_service')
         );
     }
 

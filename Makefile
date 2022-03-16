@@ -7,7 +7,7 @@ envname := $(envprefix)test
 debug := "false"
 
 help:
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+	@grep -E '^[0-9a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 .PHONY: help
 
 init: composer-install install-hooks install-plugin install-test-environment ## install the plugin with pre commit hook, requirements and the test environment
@@ -50,7 +50,7 @@ else
 	SHOPWARE_ENV=$(envname) ./../../../vendor/phpunit/phpunit/phpunit --verbose --filter $(filter)
 endif
 
-run-e2e-tests:  ## Execute the e2e tests... Use like: ("make run-e2e-tests" | "make run-e2e-tests filter=express" | "make run-e2e-tests filter=express debug=true")
+run-e2e-tests: ## Executes the E2E tests... (Use like "make run-e2e-tests" | "make run-e2e-tests filter=<filename|phrase>" | "make run-e2e-tests filter=<filename|phrase> debug=true")
 ifeq ($(debug), true)
 ifeq ($(filter), "default")
 	npm --prefix ./Tests/E2E/ run e2e:run:debug

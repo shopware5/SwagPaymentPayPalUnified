@@ -51,3 +51,9 @@ npm run e2e:run express
 ```
 
 Now only every test that matches the name "express" is executed.
+
+# Debug Trace:
+
+1. go to https://trace.playwright.dev/
+
+2. Unzip the artifacts and load the trace of the test

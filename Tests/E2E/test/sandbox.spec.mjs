@@ -1,7 +1,6 @@
 import { test, expect } from '@playwright/test';
 import credentials from './credentials.mjs';
 import MysqlFactory from '../helper/mysqlFactory.mjs';
-import defaultPaypalSettingsSql from '../helper/paypalSqlHelper.mjs';
 import fs from 'fs';
 import path from 'path';
 const connection = MysqlFactory.getInstance();
@@ -12,11 +11,6 @@ test.use({ viewport: { width: 1920, height: 1080 } });
 test.describe('Backend testing', () => {
     test.beforeEach(() => {
         connection.query(truncateTables);
-    });
-
-    test.afterEach(() => {
-        connection.query(truncateTables);
-        connection.query(defaultPaypalSettingsSql);
     });
 
     test('activate the sandbox', async ({ page }) => {
@@ -66,8 +60,6 @@ test.describe('Backend testing', () => {
             page.waitForResponse(/.*PaypalUnifiedAdvancedCreditDebitCardSettings.*/),
             page.click('text=Speichern')
         ]);
-
-        await page.locator('button[role="button"]:has-text("PayPal PLUS deaktivieren")').click();
 
         // Fill textarea[name="customerServiceInstructions"]
         await page.locator('button[role="button"]:has-text("Grundeinstellungen")').click();

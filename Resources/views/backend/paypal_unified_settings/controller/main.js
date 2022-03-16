@@ -670,10 +670,6 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
             return;
         }
 
-        if (responseJson[this.PRODUCT_SUBSCRIPTION_NAME.PPCP]) {
-            this.promptDisablePlus();
-        }
-
         if (responseJson.hasOwnProperty(this.PAYMENT_METHOD_CAPABILITY_NAME.PAY_UPON_INVOICE)) {
             newValue = responseJson[this.PAYMENT_METHOD_CAPABILITY_NAME.PAY_UPON_INVOICE];
             this.payUponInvoiceRecord.set(property, newValue);
@@ -727,17 +723,17 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
             Object.assign(buttonTextConfig, {
                 cancel: '{s name="prompt/disable_plus/button/cancel"}{/s}'
             });
-        }
 
-        Ext.MessageBox.show({
-            title: '{s name="prompt/disable_plus/title"}{/s}',
-            msg: isPlusActive ? '{s name="prompt/disable_plus/message/active"}{/s}' : '{s name="prompt/disable_plus/message/inactive"}{/s}',
-            ui: 'shopware-ui',
-            closable: false,
-            buttons: isPlusActive ? Ext.MessageBox.OKCANCEL : Ext.MessageBox.OK,
-            fn: Ext.bind(this.promptDisablePlusHandler, this),
-            buttonText: buttonTextConfig
-        });
+            Ext.MessageBox.show({
+                title: '{s name="prompt/disable_plus/title"}{/s}',
+                msg: isPlusActive ? '{s name="prompt/disable_plus/message/active"}{/s}' : '{s name="prompt/disable_plus/message/inactive"}{/s}',
+                ui: 'shopware-ui',
+                closable: false,
+                buttons: isPlusActive ? Ext.MessageBox.OKCANCEL : Ext.MessageBox.OK,
+                fn: Ext.bind(this.promptDisablePlusHandler, this),
+                buttonText: buttonTextConfig
+            });
+        }
     },
 
     promptDisablePlusHandler: function(buttonId) {
