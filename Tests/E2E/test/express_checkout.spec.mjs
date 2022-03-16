@@ -81,7 +81,7 @@ test.describe('Is Express Checkout button available', () => {
         await expect(paypalPage.locator('#headerText')).toHaveText(/PayPal/);
     });
 
-    test('Check product listing page', async ({ page }) => {
+    test('Check product listing page @notIn5.2', async ({ page }) => {
         await page.goto('/sommerwelten/beachwear/');
 
         const locator = await page.frameLocator('.component-frame >> nth=1').locator('div[role="button"]');

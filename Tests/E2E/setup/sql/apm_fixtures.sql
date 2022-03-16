@@ -1,3 +1,5 @@
+INSERT IGNORE INTO `s_core_countries` (`id`, `countryname`, `countryiso`, `areaID`, `countryen`, `position`, `notice`,  `taxfree`, `taxfree_ustid`, `taxfree_ustid_checked`, `active`, `iso3`, `display_state_in_registration`, `force_state_in_registration`) VALUES
+    (164, 'Mexiko', 'MX', 2, 'MEXICO', 10, '', 0, 0, 0, 0, 'MEX', 0, 0);
 UPDATE s_core_countries
 set active = 1
 WHERE true;

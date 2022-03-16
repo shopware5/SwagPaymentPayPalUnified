@@ -17,7 +17,7 @@ test.describe('Pay with OXXO', () => {
         await page.waitForLoadState('load');
         await page.fill('#email', credentials.defaultShopCustomerEmail);
         await page.fill('#passwort', credentials.defaultShopCustomerPassword);
-        await page.click('#login--form >> .register--login-btn');
+        await page.click('.register--login-btn');
         await expect(page).toHaveURL(/.*account/);
         await expect(page.locator('h1[class="panel--title"]')).toHaveText(/.*Mustermann.*/);
 
