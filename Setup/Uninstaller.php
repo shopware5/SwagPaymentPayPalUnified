@@ -94,7 +94,9 @@ class Uninstaller
         $sql = 'DROP TABLE IF EXISTS `swag_payment_paypal_unified_settings_express`;
                 DROP TABLE IF EXISTS `swag_payment_paypal_unified_settings_general`;
                 DROP TABLE IF EXISTS `swag_payment_paypal_unified_settings_installments`;
-                DROP TABLE IF EXISTS `swag_payment_paypal_unified_settings_plus`;';
+                DROP TABLE IF EXISTS `swag_payment_paypal_unified_settings_plus`;
+                DROP TABLE IF EXISTS `swag_payment_paypal_unified_settings_advanced_credit_debit_card`;
+                DROP TABLE IF EXISTS `swag_payment_paypal_unified_settings_pay_upon_invoice`;';
 
         $this->connection->exec($sql);
     }

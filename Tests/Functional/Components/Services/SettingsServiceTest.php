@@ -206,7 +206,6 @@ class SettingsServiceTest extends TestCase
     {
         $this->insertExpressCheckoutSettingsFromArray([
             'shopId' => self::SHOP_ID,
-            'active' => self::ACTIVE,
             'detailActive' => true,
             'cartActive' => true,
             'loginActive' => true,

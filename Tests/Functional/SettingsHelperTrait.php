@@ -8,23 +8,16 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional;
 
-use Shopware\Components\Model\ModelManager;
-use SwagPaymentPayPalUnified\Models\Settings\ExpressCheckout as ExpressSettingsModel;
-use SwagPaymentPayPalUnified\Models\Settings\General as GeneralSettingsModel;
-use SwagPaymentPayPalUnified\Models\Settings\Installments as InstallmentsSettingsModel;
-use SwagPaymentPayPalUnified\Models\Settings\Plus as PlusSettingsModel;
+use Enlight_Components_Db_Adapter_Pdo_Mysql;
+use Symfony\Component\Serializer\NameConverter\CamelCaseToSnakeCaseNameConverter;
 
 trait SettingsHelperTrait
 {
     /**
-     * @return void
+     * /**
+     * @var CamelCaseToSnakeCaseNameConverter|null
      */
-    public function insertGeneralSettings(GeneralSettingsModel $model)
-    {
-        $em = $this->getEntityManager();
-        $em->persist($model);
-        $em->flush();
-    }
+    private $camelCaseToSnakeCaseConverter = null;
 
     /**
      * @param array<string, mixed> $data
@@ -33,86 +26,36 @@ trait SettingsHelperTrait
      */
     public function insertGeneralSettingsFromArray(array $data)
     {
-        if (!isset($data['active'])) {
-            $data['active'] = false;
-        }
+        $default = [
+            'id' => null,
+            'shop_id' => 1,
+            'active' => 0,
+            'client_id' => null,
+            'client_secret' => null,
+            'sandbox_client_id' => null,
+            'sandbox_client_secret' => null,
+            'sandbox' => 1,
+            'show_sidebar_logo' => 0,
+            'brand_name' => null,
+            'landing_page_type' => null,
+            'send_order_number' => 0,
+            'order_number_prefix' => null,
+            'use_in_context' => 0,
+            'log_level' => 0,
+            'display_errors' => 0,
+            'advertise_returns' => 0,
+            'use_smart_payment_buttons' => 0,
+            'submit_cart' => 0,
+            'intent' => 'CAPTURE',
+            'button_style_color' => 'gold',
+            'button_style_shape' => 'rectangle',
+            'button_style_size' => 'medium',
+            'button_locale' => null,
+            'paypal_payer_id' => null,
+            'sandbox_paypal_payer_id' => null,
+        ];
 
-        if (!isset($data['showSidebarLogo'])) {
-            $data['showSidebarLogo'] = false;
-        }
-
-        if (!isset($data['useInContext'])) {
-            $data['useInContext'] = false;
-        }
-
-        if (!isset($data['submitCart'])) {
-            $data['submitCart'] = true;
-        }
-
-        if (!isset($data['sendOrderNumber'])) {
-            $data['sendOrderNumber'] = false;
-        }
-
-        if (!isset($data['logLevel'])) {
-            $data['logLevel'] = 1;
-        }
-
-        if (!isset($data['displayErrors'])) {
-            $data['displayErrors'] = true;
-        }
-
-        if (!isset($data['brandName'])) {
-            $data['brandName'] = 'DefaultTestBrandName';
-        }
-
-        if (!isset($data['useSmartPaymentButtons'])) {
-            $data['useSmartPaymentButtons'] = false;
-        }
-
-        $model = new GeneralSettingsModel();
-        $model->fromArray($data);
-
-        $this->insertGeneralSettings($model);
-    }
-
-    /**
-     * @return void
-     */
-    public function insertInstallmentsSettings(InstallmentsSettingsModel $model)
-    {
-        $em = $this->getEntityManager();
-        $em->persist($model);
-        $em->flush();
-    }
-
-    /**
-     * @param array<string, mixed> $data
-     *
-     * @return void
-     */
-    public function insertInstallmentsSettingsFromArray(array $data)
-    {
-        if (!isset($data['shopId'])) {
-            $data['shopId'] = 1;
-        }
-
-        if (!isset($data['advertiseInstallments'])) {
-            $data['advertiseInstallments'] = false;
-        }
-
-        $model = new InstallmentsSettingsModel();
-        $model->fromArray($data);
-        $this->insertInstallmentsSettings($model);
-    }
-
-    /**
-     * @return void
-     */
-    public function insertPlusSettings(PlusSettingsModel $model)
-    {
-        $em = $this->getEntityManager();
-        $em->persist($model);
-        $em->flush();
+        $this->addOrUpdateSettings('swag_payment_paypal_unified_settings_general', $default, $data);
     }
 
     /**
@@ -122,31 +65,37 @@ trait SettingsHelperTrait
      */
     public function insertPlusSettingsFromArray(array $data)
     {
-        if (!isset($data['shopId'])) {
-            $data['shopId'] = 1;
-        }
+        $default = [
+            'id' => null,
+            'shop_id' => 1,
+            'active' => 0,
+            'restyle' => 1,
+            'integrate_third_party_methods' => 0,
+            'payment_name' => null,
+            'payment_description' => null,
+            'ppcp_active' => 0,
+            'sandbox_ppcp_active' => 0,
+        ];
 
-        if (!isset($data['restyle'])) {
-            $data['restyle'] = 0;
-        }
-
-        if (!isset($data['integrateThirdPartyMethods'])) {
-            $data['integrateThirdPartyMethods'] = 0;
-        }
-
-        $model = new PlusSettingsModel();
-        $model->fromArray($data);
-        $this->insertPlusSettings($model);
+        $this->addOrUpdateSettings('swag_payment_paypal_unified_settings_plus', $default, $data);
     }
 
     /**
+     * @param array<string, mixed> $data
+     *
      * @return void
      */
-    public function insertExpressCheckoutSettings(ExpressSettingsModel $model)
+    public function insertAdvancedCreditDebitCardSettingsFromArray(array $data)
     {
-        $em = $this->getEntityManager();
-        $em->persist($model);
-        $em->flush();
+        $default = [
+            'id' => null,
+            'shop_id' => 1,
+            'onboarding_completed' => 0,
+            'sandbox_onboarding_completed' => 0,
+            'active' => 0,
+        ];
+
+        $this->addOrUpdateSettings('swag_payment_paypal_unified_settings_advanced_credit_debit_card', $default, $data);
     }
 
     /**
@@ -156,51 +105,158 @@ trait SettingsHelperTrait
      */
     public function insertExpressCheckoutSettingsFromArray(array $data)
     {
-        if (!isset($data['shopId'])) {
-            $data['shopId'] = 1;
-        }
+        $default = [
+            'id' => null,
+            'shop_id' => 1,
+            'detail_active' => 0,
+            'cart_active' => 0,
+            'off_canvas_active' => 0,
+            'login_active' => 0,
+            'listing_active' => 0,
+            'button_style_color' => 0,
+            'button_style_shape' => 0,
+            'button_style_size' => 0,
+            'button_locale' => 'en_US',
+            'submit_cart' => 0,
+        ];
 
-        if (!isset($data['detailActive'])) {
-            $data['detailActive'] = false;
-        }
-
-        if (!isset($data['cartActive'])) {
-            $data['cartActive'] = false;
-        }
-
-        if (!isset($data['loginActive'])) {
-            $data['loginActive'] = false;
-        }
-
-        if (!isset($data['submitCart'])) {
-            $data['submitCart'] = false;
-        }
-
-        if (!isset($data['intent'])) {
-            $data['intent'] = 0;
-        }
-
-        if (!isset($data['offCanvasActive'])) {
-            $data['offCanvasActive'] = 0;
-        }
-
-        if (!isset($data['listingActive'])) {
-            $data['listingActive'] = 0;
-        }
-
-        if (!isset($data['buttonLocale'])) {
-            $data['buttonLocale'] = 'en_US';
-        }
-
-        $model = new ExpressSettingsModel();
-        $this->insertExpressCheckoutSettings($model->fromArray($data));
+        $this->addOrUpdateSettings('swag_payment_paypal_unified_settings_express', $default, $data);
     }
 
     /**
-     * @return ModelManager
+     * @param array<string, mixed> $data
+     *
+     * @return void
      */
-    private function getEntityManager()
+    public function insertInstallmentsSettingsFromArray(array $data)
     {
-        return Shopware()->Container()->get('models');
+        $default = [
+            'id' => null,
+            'shop_id' => 1,
+            'advertise_installments' => 0,
+        ];
+
+        $this->addOrUpdateSettings('swag_payment_paypal_unified_settings_installments', $default, $data);
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     *
+     * @return void
+     */
+    public function insertPayUponInvoiceSettingsFromArray(array $data)
+    {
+        $default = [
+            'id' => null,
+            'shop_id' => 1,
+            'onboarding_completed' => 0,
+            'sandbox_onboarding_completed' => 0,
+            'active' => 0,
+            'customer_service_instructions' => null,
+        ];
+
+        $this->addOrUpdateSettings('swag_payment_paypal_unified_settings_pay_upon_invoice', $default, $data);
+    }
+
+    /**
+     * @return void
+     */
+    public function clearSettingsTables()
+    {
+        $this->getDbConnection()->exec(
+            'DELETE FROM swag_payment_paypal_unified_settings_express WHERE 1;
+            DELETE FROM swag_payment_paypal_unified_settings_general WHERE 1;
+            DELETE FROM swag_payment_paypal_unified_settings_installments WHERE 1;
+            DELETE FROM swag_payment_paypal_unified_settings_plus WHERE 1;
+            DELETE FROM swag_payment_paypal_unified_payment_instruction WHERE 1;
+            DELETE FROM swag_payment_paypal_unified_settings_advanced_credit_debit_card WHERE 1;
+            DELETE FROM swag_payment_paypal_unified_settings_pay_upon_invoice WHERE 1;'
+        );
+    }
+
+    /**
+     * @param string              $tableName
+     * @param array<string,mixed> $default
+     * @param array<string,mixed> $data
+     *
+     * @return void
+     */
+    private function addOrUpdateSettings($tableName, array $default, array $data)
+    {
+        $dataResult = $this->applyData($data, $default);
+
+        $settingsId = $this->getSettingsByShopId($tableName, $dataResult['shop_id']);
+
+        $dataResult['id'] = $settingsId > 0 ? $settingsId : null;
+
+        $this->insertSettings($tableName, $dataResult);
+    }
+
+    /**
+     * @param string $tableName
+     * @param int    $shopId
+     *
+     * @return int
+     */
+    private function getSettingsByShopId($tableName, $shopId)
+    {
+        $sql = "SELECT id FROM $tableName WHERE shop_id = ?";
+
+        return (int) $this->getDbConnection()->fetchOne($sql, [$shopId]);
+    }
+
+    /**
+     * @return Enlight_Components_Db_Adapter_Pdo_Mysql
+     */
+    private function getDbConnection()
+    {
+        return Shopware()->Container()->get('db');
+    }
+
+    /**
+     * @param string              $tableName
+     * @param array<string|mixed> $data
+     *
+     * @return void
+     */
+    private function insertSettings($tableName, array $data)
+    {
+        if ($data['id'] !== null) {
+            $this->getDbConnection()->update($tableName, $data);
+
+            return;
+        }
+
+        $this->getDbConnection()->insert($tableName, $data);
+    }
+
+    /**
+     * @param array<string,mixed> $data
+     * @param array<string,mixed> $default
+     *
+     * @return array<string,mixed>
+     */
+    private function applyData(array $data, array $default)
+    {
+        foreach ($data as $columnName => $value) {
+            $snakeCaseKey = $this->convertCamelToSnakeCase($columnName);
+            $default[$snakeCaseKey] = $value;
+        }
+
+        return $default;
+    }
+
+    /**
+     * @param string $string
+     *
+     * @return string
+     */
+    private function convertCamelToSnakeCase($string)
+    {
+        if (!$this->camelCaseToSnakeCaseConverter instanceof CamelCaseToSnakeCaseNameConverter) {
+            $this->camelCaseToSnakeCaseConverter = new CamelCaseToSnakeCaseNameConverter();
+        }
+
+        return $this->camelCaseToSnakeCaseConverter->normalize($string);
     }
 }
