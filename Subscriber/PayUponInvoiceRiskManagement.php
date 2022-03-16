@@ -23,6 +23,8 @@ use Symfony\Component\Validator\Constraints\Date;
 use Symfony\Component\Validator\Constraints\EqualTo;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Range;
+use Symfony\Component\Validator\ConstraintViolationInterface;
+use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use UnexpectedValueException;
 
@@ -30,6 +32,7 @@ class PayUponInvoiceRiskManagement implements SubscriberInterface
 {
     const PAY_PAL_UNIFIED_PAY_UPON_INVOICE_BLOCKED_TECHNICALLY = 'PayPalUnifiedPayUponInvoiceBlockedTechnically';
     const PAY_PAL_UNIFIED_PAY_UPON_INVOICE_BLOCKED = 'PayPalUnifiedPayUponInvoiceBlocked';
+    const PAY_PAL_UNIFIED_PAY_UPON_INVOICE_ERROR_LIST_KEY = 'payPalUnifiedPayUponInvoiceErrorList';
 
     /**
      * @var PaymentMethodProviderInterface
@@ -98,10 +101,6 @@ class PayUponInvoiceRiskManagement implements SubscriberInterface
             return false;
         }
 
-        if ($this->shouldShowUnconditionally()) {
-            return false;
-        }
-
         $generalSettings = $this->settingsService->getSettings($this->contextService->getShopContext()->getShop()->getId());
 
         if (!$generalSettings instanceof General) {
@@ -153,27 +152,15 @@ class PayUponInvoiceRiskManagement implements SubscriberInterface
             return false;
         }
 
-        $values = [
-            'country' => $user['additional']['country']['countryiso'],
-            'currency' => $this->contextService->getShopContext()->getCurrency()->getCurrency(),
-            'amount' => $basket['AmountNumeric'],
-            'phoneNumber' => $user['billingaddress']['phone'],
-            'birthday' => $user['additional']['user']['birthday'],
-        ];
+        if ($this->useSimpleValidation()) {
+            $violationList = $this->validateSimple($user['additional']['country']['countryiso']);
 
-        // Full name, email, delivery and billing address, date of birth, and phone number.
-        $violationList = $this->validator->validate(
-            $values,
-            new Collection([
-                'country' => new EqualTo('DE'),
-                'currency' => new EqualTo('EUR'),
-                'amount' => new Range(['min' => 5.0, 'max' => 2500.00]),
-                'phoneNumber' => new NotBlank(),
-                'birthday' => [new NotBlank(), new Date()],
-            ])
-        );
+            return $violationList->count() > 0;
+        }
 
-        return $violationList->count() > 0;
+        $violationList = $this->validateExtended($user, (float) $basket['AmountNumeric']);
+
+        return $this->handleViolationList($violationList);
     }
 
     /**
@@ -196,7 +183,10 @@ class PayUponInvoiceRiskManagement implements SubscriberInterface
         }
 
         if ($this->dependencyProvider->getSession()->offsetGet(self::PAY_PAL_UNIFIED_PAY_UPON_INVOICE_BLOCKED)) {
-            $view->assign(self::PAY_PAL_UNIFIED_PAY_UPON_INVOICE_BLOCKED, true);
+            $view->assign([
+                self::PAY_PAL_UNIFIED_PAY_UPON_INVOICE_BLOCKED => true,
+                self::PAY_PAL_UNIFIED_PAY_UPON_INVOICE_ERROR_LIST_KEY => $this->dependencyProvider->getSession()->offsetGet(self::PAY_PAL_UNIFIED_PAY_UPON_INVOICE_ERROR_LIST_KEY),
+            ]);
 
             $this->dependencyProvider->getSession()->offsetUnset(self::PAY_PAL_UNIFIED_PAY_UPON_INVOICE_BLOCKED);
         }
@@ -216,13 +206,9 @@ class PayUponInvoiceRiskManagement implements SubscriberInterface
     }
 
     /**
-     * In some cases, like showing the list of all payment methods, the PUI
-     * payment method should be shown unconditionally, so customers at least get
-     * the opportunity to see it's available.
-     *
      * @return bool
      */
-    private function shouldShowUnconditionally()
+    private function useSimpleValidation()
     {
         $front = $this->dependencyProvider->getFront();
 
@@ -256,5 +242,75 @@ class PayUponInvoiceRiskManagement implements SubscriberInterface
         }
 
         return false;
+    }
+
+    /**
+     * @return bool
+     */
+    private function handleViolationList(ConstraintViolationListInterface $violationList)
+    {
+        $hasError = $violationList->count() > 0;
+        if (!$hasError) {
+            return false;
+        }
+
+        $errorList = [];
+        /** @var ConstraintViolationInterface $violation */
+        foreach ($violationList as $violation) {
+            $errorList[] = $violation->getPropertyPath();
+        }
+
+        $this->dependencyProvider->getSession()->offsetSet(self::PAY_PAL_UNIFIED_PAY_UPON_INVOICE_ERROR_LIST_KEY, $errorList);
+
+        return true;
+    }
+
+    /**
+     * @param string $countryiso
+     *
+     * @return ConstraintViolationListInterface
+     */
+    private function validateSimple($countryiso)
+    {
+        $values = [
+            'country' => $countryiso,
+            'currency' => $this->contextService->getShopContext()->getCurrency()->getCurrency(),
+        ];
+
+        return $this->validator->validate(
+            $values,
+            new Collection([
+                'country' => new EqualTo('DE'),
+                'currency' => new EqualTo('EUR'),
+            ])
+        );
+    }
+
+    /**
+     * @param array<string,mixed> $user
+     * @param float               $amountNumeric
+     *
+     * @return ConstraintViolationListInterface
+     */
+    private function validateExtended(array $user, $amountNumeric)
+    {
+        $values = [
+            'country' => $user['additional']['country']['countryiso'],
+            'currency' => $this->contextService->getShopContext()->getCurrency()->getCurrency(),
+            'amount' => $amountNumeric,
+            'phoneNumber' => $user['billingaddress']['phone'],
+            'birthday' => $user['additional']['user']['birthday'],
+        ];
+
+        return $this->validator->validate(
+            $values,
+            new Collection([
+                'country' => new EqualTo('DE'),
+                'currency' => new EqualTo('EUR'),
+                'amount' => new Range(['min' => 5.0, 'max' => 2500.00]),
+                'phoneNumber' => new NotBlank(),
+                'birthday' => [new NotBlank(), new Date()],
+            ])
+        );
     }
 }
