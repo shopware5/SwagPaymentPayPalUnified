@@ -80,7 +80,7 @@ class ItemListProvider
             $value = $this->priceFormatter->roundPrice($lineItem['price']);
 
             if (!$this->customerHelper->usesGrossPrice($customer) || $paymentType === PaymentType::PAYPAL_PAY_UPON_INVOICE_V2) {
-                $value = $this->priceFormatter->roundPrice($lineItem['netprice']);
+                $value = $lineItem['netprice'];
             }
 
             // In the following part, we modify the CustomProducts positions.
@@ -188,7 +188,7 @@ class ItemListProvider
         $tax = new Tax();
 
         $tax->setCurrencyCode($currency);
-        $tax->setValue(sprintf('%.2f', $this->getSingleItemTaxAmount($lineItem, $customer)));
+        $tax->setValue((string) $this->getSingleItemTaxAmount($lineItem, $customer));
 
         $item->setTax($tax);
         $item->setTaxRate($lineItem['tax_rate']);
@@ -211,15 +211,7 @@ class ItemListProvider
             return 0.0;
         }
 
-        $tax = (float) str_replace(',', '.', $lineItem['tax']);
-        $quantity = (int) $lineItem['quantity'];
-
-        /*
-         * Unfortunately, there's no indicator on the `lineItem` which would
-         * allow us to see the final tax sum of a **single product** of a line
-         * item, therefore the division by quantity is necessary, since we need
-         * to provide the prices & taxes for a single item to the PayPal-API.
-         */
-        return $quantity > 1 ? $tax / $quantity : $tax;
+        // TODO: Check whether priceNumeric is always set, especially with v5.2.x
+        return $lineItem['priceNumeric'] - $lineItem['netprice'];
     }
 }
