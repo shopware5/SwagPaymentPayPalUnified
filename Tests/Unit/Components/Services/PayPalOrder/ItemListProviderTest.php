@@ -110,7 +110,12 @@ class ItemListProviderTest extends TestCase
      */
     protected function getFirstItem($itemList)
     {
-        static::assertIsArray($itemList);
+        if (\method_exists(self::class, 'assertIsArray')) {
+            static::assertIsArray($itemList);
+        } else {
+            static::assertTrue(\is_array($itemList));
+        }
+
         static::assertNotEmpty($itemList);
 
         $item = array_pop($itemList);
