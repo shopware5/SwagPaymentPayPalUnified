@@ -44,6 +44,7 @@ class OrderBuilderServiceTest extends TestCase
             'landingPageType' => 'NO_PREFERENCE',
             'submitCart' => 1,
             'intent' => 'CAPTURE',
+            'brandName' => 'DefaultTestBrandName',
         ]);
 
         $this->getContainer()->get('session')->offsetSet('sUserId', 3);

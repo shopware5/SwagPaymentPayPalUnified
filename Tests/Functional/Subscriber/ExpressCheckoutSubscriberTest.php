@@ -774,6 +774,7 @@ class ExpressCheckoutSubscriberTest extends TestCase
             'active' => $active,
             'shopId' => 1,
             'sandbox' => $sandboxMode,
+            'brandName' => 'DefaultTestBrandName',
         ];
 
         if ($sandboxMode) {
