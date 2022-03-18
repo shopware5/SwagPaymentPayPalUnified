@@ -252,9 +252,32 @@ E2E:
 
 E2E 5.2:
     stage: E2E
+    image: gitlab.shopware.com:5005/shopware/5/product/image/continuous:5.6
     extends:
         - E2E
-        - .phpunit_base_pre_v53
     variables:
         CHECKOUT_SHOPWARE_BRANCH: "5.2"
         CHECKOUT_COOKIE_CONSENT_MANAGER_BRANCH: "5.2.11-5.2.27"
+    before_script:
+        - sed -i -e "s;__ROOT__;$CI_PROJECT_DIR/shopware;g" /etc/nginx/sites-enabled/shopware.conf
+        - /usr/bin/supervisord -c /etc/supervisord.conf &>/dev/null &
+        - composer self-update --1
+        - *prepare_files_script
+        - *prepare_files_script_cookie_consent_manager
+        - *prepare_installation_script_install_shopware
+        - *prepare_installation_script_install_plugin
+        - *prepare_installation_script_install_cookie_consent_manager_plugin
+        - mv config.php config-original.php
+        - cp ./custom/plugins/${PLUGIN_NAME}/Tests/E2E/config.php config.php
+        - chown -R www-data:www-data .
+        - curl http://localhost/backend/ -v
+    script:
+        - apk add --no-cache make npm nodejs chromium chromium-chromedriver
+        - cd custom/plugins/${PLUGIN_NAME}/Tests/E2E
+        - npm install
+        - >
+         DEBUG=pw:browser* EXECUTION_PATH=/usr/bin/chromium-browser BASE_URL=http://${SW_HOST}
+         PAYPAL_CUSTOMER_EMAIL=${PAYPAL_CUSTOMER_EMAIL} PAYPAL_CUSTOMER_PASSWORD=${PAYPAL_CUSTOMER_PASSWORD} PAYPAL_CREDIT_CARD=${PAYPAL_CREDIT_CARD}
+         PAYPAL_SANDBOX_CLIENT_ID=${PAYPAL_SANDBOX_CLIENT_ID} PAYPAL_SANDBOX_CLIENT_SECRET=${PAYPAL_SANDBOX_CLIENT_SECRET} PAYPAL_SANDBOX_MERCHANT_ID=${PAYPAL_SANDBOX_MERCHANT_ID}
+         MYSQL_HOST=mysql MYSQL_USER=${MYSQL_USER} MYSQL_PASSWORD=${MYSQL_PASSWORD} MYSQL_PORT=3200 MYSQL_DATABASE=${MYSQL_DATABASE}
+         npx playwright test --workers=1 --grep-invert @notIn5.2

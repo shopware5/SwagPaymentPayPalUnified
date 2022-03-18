@@ -116,7 +116,8 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout extends Abstra
      */
     private function prepareCheckoutController()
     {
-        $checkoutController = new Shopware_Controllers_Frontend_Checkout();
+        /** @var Shopware_Controllers_Frontend_Checkout $checkoutController */
+        $checkoutController = Enlight_Class::Instance(Shopware_Controllers_Frontend_Checkout::class, [$this->request, $this->response]);
         $checkoutController->init();
         $checkoutController->setView($this->View());
         $checkoutController->setContainer($this->container);

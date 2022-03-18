@@ -20,7 +20,7 @@ test.describe('Is SEPA fully functional', () => {
 
         await page.fill('#email', credentials.defaultShopCustomerEmail);
         await page.fill('#passwort', credentials.defaultShopCustomerPassword);
-        await page.click('#login--form >> .register--login-btn');
+        await page.click('.register--login-btn');
         await expect(page).toHaveURL(/.*checkout\/confirm/);
 
         // Change payment to SEPA
