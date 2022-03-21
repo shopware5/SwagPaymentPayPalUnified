@@ -12,6 +12,7 @@ use DateInterval;
 use DateTime;
 use DateTimeInterface;
 use Shopware\Components\HttpClient\RequestException;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\Components\Services\Onboarding\IsCapableResult;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\MerchantIntegrationsResource;
 
@@ -54,9 +55,17 @@ class OnboardingStatusService
      */
     private $integrationsResource;
 
-    public function __construct(MerchantIntegrationsResource $integrationsResource)
-    {
+    /**
+     * @var LoggerServiceInterface
+     */
+    private $loggerService;
+
+    public function __construct(
+        MerchantIntegrationsResource $integrationsResource,
+        LoggerServiceInterface $loggerService
+    ) {
         $this->integrationsResource = $integrationsResource;
+        $this->loggerService = $loggerService;
     }
 
     /**
@@ -81,8 +90,13 @@ class OnboardingStatusService
             $response = $this->integrationsResource->getMerchantIntegrations($partnerId, $shopId, $payerId);
 
             if (!\is_array($response)) {
+                // Coarse logging is enough here, as the request parameters are logged inside the resource class
+                $this->loggerService->debug(sprintf('%s MERCHANT INTEGRATIONS CALL UNSUCCESSFUL', __METHOD__));
+
                 return new IsCapableResult(false);
             }
+
+            $this->loggerService->debug(sprintf('%s MERCHANT INTEGRATIONS: %s', __METHOD__, \json_encode($response)));
 
             $capabilities = $response['capabilities'];
             if (!\is_array($capabilities)) {
@@ -125,8 +139,13 @@ class OnboardingStatusService
             $response = $this->integrationsResource->getMerchantIntegrations($partnerId, $shopId, $payerId);
 
             if (!\is_array($response)) {
+                // Coarse logging is enough here, as the request parameters are logged inside the resource class
+                $this->loggerService->debug(sprintf('%s MERCHANT INTEGRATIONS CALL UNSUCCESSFUL', __METHOD__));
+
                 return false;
             }
+
+            $this->loggerService->debug(sprintf('%s MERCHANT INTEGRATIONS: %s', __METHOD__, \json_encode($response)));
 
             $products = $response['products'];
             if (!\is_array($products)) {
