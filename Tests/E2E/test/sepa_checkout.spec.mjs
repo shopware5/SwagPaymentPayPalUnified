@@ -4,6 +4,8 @@ import MysqlFactory from '../helper/mysqlFactory.mjs';
 import defaultPaypalSettingsSql from '../helper/paypalSqlHelper.mjs';
 const connection = MysqlFactory.getInstance();
 
+test.use({ locale: 'de-DE' });
+
 test.describe('Is SEPA fully functional', () => {
     test.beforeEach(() => {
         connection.query(defaultPaypalSettingsSql);

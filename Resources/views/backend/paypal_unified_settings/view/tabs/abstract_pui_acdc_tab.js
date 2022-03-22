@@ -26,6 +26,31 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.AbstractPuiAcdcTab', {
     onboardingMessage: null,
 
     /**
+     * @type { Ext.container.Container }
+     */
+    hasLimitsMessage: null,
+
+    /**
+     * @type { Ext.container.Container }
+     */
+    hasLimitsMessageSandbox: null,
+
+    /**
+     * @type { Boolean }
+     */
+    hasLimits: false,
+
+    /**
+     * @type { String }
+     */
+    hasLimitsIcon: 'sprite-exclamation paypal-has-limits-icon',
+
+    /**
+     * @type { String }
+     */
+    iconClass: 'paypal-has-limits-icon',
+
+    /**
      * @type { Ext.button.Button }
      */
     onboardingButton: null,
@@ -48,6 +73,8 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.AbstractPuiAcdcTab', {
             this.createHiddenCheckboxField('sandboxOnboardingCompleted'),
             this.createActivationFieldset(),
             this.createOnboardingMessage(),
+            this.createHasLimitsMessage(),
+            this.createHasLimitsMessageSandbox(),
             this.createOnboardingFieldset(),
             this.createCapabilityTestButton(),
         ]
@@ -84,6 +111,24 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.AbstractPuiAcdcTab', {
         );
 
         return this.onboardingMessage;
+    },
+
+    createHasLimitsMessage: function() {
+        this.hasLimitsMessage = Shopware.Notification.createBlockMessage(
+            this.snippets.hasLimitsMessage,
+            'alert'
+        );
+
+        return this.hasLimitsMessage;
+    },
+
+    createHasLimitsMessageSandbox: function() {
+        this.hasLimitsMessageSandbox = Shopware.Notification.createBlockMessage(
+            this.snippets.hasLimitsMessageSandbox,
+            'alert'
+        );
+
+        return this.hasLimitsMessageSandbox;
     },
 
     createActivationFieldset: function() {
@@ -152,6 +197,9 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.AbstractPuiAcdcTab', {
         this.activationFieldSet.setDisabled(true);
         this.onboardingFieldset.show();
         this.capabilityTestButton.hide();
+        this.hasLimitsMessage.hide();
+        this.hasLimitsMessageSandbox.hide();
+        this.setIconCls(null);
 
         if (this.isOnboardingCompleted()) {
             this.onboardingMessage.hide();
@@ -159,10 +207,32 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.AbstractPuiAcdcTab', {
             this.onboardingFieldset.hide();
             this.capabilityTestButton.show();
         }
+
+        if (!this.hasLimits) {
+            return;
+        }
+
+        this.setIconCls(this.hasLimitsIcon);
+        this.getSandbox() ? this.hasLimitsMessageSandbox.show() : this.hasLimitsMessage.show();
+        this.adjustIconHeight();
+    },
+
+    adjustIconHeight: function() {
+        var icons = document.getElementsByClassName(this.iconClass);
+
+        Ext.each(icons, function(icon) {
+            icon.style.height = '16px';
+        });
     },
 
     isPaymentMethodActive: function() {
         return this.activationField.getValue();
+    },
+
+    setHasLimits: function(hasLimits) {
+        this.hasLimits = hasLimits;
+
+        this.handleView();
     },
 });
 // {/block}

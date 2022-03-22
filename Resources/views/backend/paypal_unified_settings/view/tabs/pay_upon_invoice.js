@@ -23,7 +23,9 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.PayUponInvoice', {
         },
         onboardingPendingMessage: '{s name="onboardingPendingMessage"}Your account is currently not eligible for accepting payments using Pay Upon Invoice.{/s}',
         registrationSettingsMessage: '{s name="registrationSettingsMessage"}For your customers to be able to pay using this payment method, they will need to provide a phone number as well as their date of birth. Please make sure to activate the corresponding input fields for the registration. (Basic settings - Storefront - Login / Registration){/s}',
-        capabilityTestButtonText: '{s name="button/capability/test"}Capability test{/s}'
+        capabilityTestButtonText: '{s name="button/capability/test"}Capability test{/s}',
+        hasLimitsMessage: '{s name="capability/hasLimits/message/pui"}Please go to your <a href="https://www.paypal.com/businessmanage/limits/liftlimits" target="_blank">PayPal Account</a> and clarify which company documents still need to be submitted in order to use Pay Upon Invoice.{/s}',
+        hasLimitsMessageSandbox: '{s name="capability/hasLimits/message/pui/sandbox"}Please go to your <a href="https://www.sandbox.paypal.com/businessmanage/limits/liftlimits" target="_blank">PayPal Account</a> and clarify which company documents still need to be submitted in order to use Pay Upon Invoice.{/s}'
     },
 
     initComponent: function() {

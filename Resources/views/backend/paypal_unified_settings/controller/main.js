@@ -5,7 +5,9 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
 
     PAYMENT_METHOD_CAPABILITY_NAME: {
         PAY_UPON_INVOICE: 'PAY_UPON_INVOICE',
+        PAY_UPON_INVOICE_HAS_LIMITS: 'PAY_UPON_INVOICE_HAS_LIMITS',
         ADVANCED_CREDIT_DEBIT_CARD: 'CUSTOM_CARD_PROCESSING',
+        ADVANCED_CREDIT_DEBIT_CARD_HAS_LIMITS: 'ADVANCED_CREDIT_DEBIT_CARD_HAS_LIMITS',
     },
 
     PRODUCT_SUBSCRIPTION_NAME: {
@@ -328,6 +330,9 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
 
         this.advancedCreditDebitCardRecord.set('active', responseBody[this.PAYMENT_METHOD_CAPABILITY_NAME.ADVANCED_CREDIT_DEBIT_CARD]);
         this.advancedCreditDebitCardRecord.set(setterName, responseBody[this.PAYMENT_METHOD_CAPABILITY_NAME.ADVANCED_CREDIT_DEBIT_CARD]);
+
+        this.getPayUponInvoiceTab().setHasLimits(responseBody[this.PAYMENT_METHOD_CAPABILITY_NAME.PAY_UPON_INVOICE_HAS_LIMITS])
+        this.getAdvancedCreditDebitCardTab().setHasLimits(responseBody[this.PAYMENT_METHOD_CAPABILITY_NAME.ADVANCED_CREDIT_DEBIT_CARD_HAS_LIMITS])
 
         this.saveRecords();
     },
@@ -661,6 +666,8 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
             responseJson = Ext.JSON.decode(response.responseText),
             sandbox = this.generalRecord.get('sandbox'),
             property = sandbox ? 'sandboxOnboardingCompleted' : 'onboardingCompleted',
+            payUponInvoiceTab = me.getPayUponInvoiceTab(),
+            advancedCreditDebitCardTab = this.getAdvancedCreditDebitCardTab(),
             newValue;
 
         if (responseJson.success === false) {
@@ -672,10 +679,11 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
 
         if (responseJson.hasOwnProperty(this.PAYMENT_METHOD_CAPABILITY_NAME.PAY_UPON_INVOICE)) {
             newValue = responseJson[this.PAYMENT_METHOD_CAPABILITY_NAME.PAY_UPON_INVOICE];
+            payUponInvoiceTab.setHasLimits(responseJson[this.PAYMENT_METHOD_CAPABILITY_NAME.PAY_UPON_INVOICE_HAS_LIMITS])
             this.payUponInvoiceRecord.set(property, newValue);
             this.payUponInvoiceRecord.save({
                 callback: function(record) {
-                    me.getPayUponInvoiceTab().loadRecord(record);
+                    payUponInvoiceTab.loadRecord(record);
                     me.window.setLoading(false);
 
                     Shopware.Notification.createGrowlMessage(
@@ -689,11 +697,12 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
 
         if (responseJson.hasOwnProperty(this.PAYMENT_METHOD_CAPABILITY_NAME.ADVANCED_CREDIT_DEBIT_CARD)) {
             newValue = responseJson[this.PAYMENT_METHOD_CAPABILITY_NAME.ADVANCED_CREDIT_DEBIT_CARD];
+            advancedCreditDebitCardTab.setHasLimits(responseJson[this.PAYMENT_METHOD_CAPABILITY_NAME.ADVANCED_CREDIT_DEBIT_CARD_HAS_LIMITS])
             this.advancedCreditDebitCardRecord.set(property, responseJson[this.PAYMENT_METHOD_CAPABILITY_NAME.ADVANCED_CREDIT_DEBIT_CARD]);
             this.advancedCreditDebitCardRecord.save(
                 {
                     callback: function(record) {
-                        me.getAdvancedCreditDebitCardTab().loadRecord(record);
+                        advancedCreditDebitCardTab.loadRecord(record);
                         me.window.setLoading(false);
 
                         Shopware.Notification.createGrowlMessage(
