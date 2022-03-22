@@ -3641,6 +3641,16 @@ parameters:
 			path: Tests/Functional/Subscriber/AccountTest.php
 
 		-
+			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\AdvancedCreditDebitCardSubscriberTest\\:\\:getSubscriber\\(\\) is unused\\.$#"
+			count: 1
+			path: Tests/Functional/Subscriber/AdvancedCreditDebitCardSubscriberTest.php
+
+		-
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
+			count: 1
+			path: Tests/Functional/Subscriber/AdvancedCreditDebitCardSubscriberTest.php
+
+		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\BackendOrderSubscriberTest\\:\\:prepareOrderAttributes\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: Tests/Functional/Subscriber/BackendOrderSubscriberTest.php
@@ -4899,3 +4909,4 @@ parameters:
 			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Unit\\\\PayPalBundle\\\\Structs\\\\WebhookStructTest\\:\\:testToArray\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: Tests/Unit/PayPalBundle/Structs/WebhookStructTest.php
+

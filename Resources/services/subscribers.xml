@@ -207,7 +207,7 @@
                  public="true">
             <argument type="service" id="paypal_unified.payment_method_provider"/>
             <argument type="service" id="paypal_unified.settings_service"/>
-            <argument type="service" id="paypal_unified.v2.client_toke_resource"/>
+            <argument type="service" id="paypal_unified.v2.client_token_resource"/>
             <argument type="service" id="shopware_storefront.context_service"/>
             <argument type="service" id="paypal_unified.dependency_provider"/>
             <argument type="service" id="paypal_unified.europe_service"/>

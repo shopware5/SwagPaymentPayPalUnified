@@ -159,7 +159,6 @@ class AccountTest extends TestCase
 
     public function testOnPostDispatchAccountCustomerPayment()
     {
-        $this->clearSettingsTables();
         $this->insertGeneralSettingsFromArray(['active' => true]);
         $this->insertPlusSettingsFromArray([
             'shopId' => 1,
