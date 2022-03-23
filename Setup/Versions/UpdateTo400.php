@@ -79,6 +79,7 @@ class UpdateTo400
             'swag_payment_paypal_unified_settings_express',
             'swag_payment_paypal_unified_settings_plus',
         ]);
+        $this->removeLogLevelSetting();
     }
 
     /**
@@ -331,5 +332,22 @@ SQL;
         }
 
         return true;
+    }
+
+    /**
+     * @throws Exception
+     *
+     * @return void
+     */
+    private function removeLogLevelSetting()
+    {
+        $sql = <<<'SQL'
+ALTER TABLE `swag_payment_paypal_unified_settings_general`
+DROP COLUMN `log_level`;
+SQL;
+
+        if ($this->columnService->checkIfColumnExist('swag_payment_paypal_unified_settings_general', 'log_level')) {
+            $this->connection->executeQuery($sql);
+        }
     }
 }

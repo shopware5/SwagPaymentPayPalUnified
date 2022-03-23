@@ -901,11 +901,6 @@ parameters:
 			path: Models/Settings/General.php
 
 		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Models\\\\Settings\\\\General\\:\\:setLogLevel\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Models/Settings/General.php
-
-		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Models\\\\Settings\\\\General\\:\\:setOrderNumberPrefix\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: Models/Settings/General.php

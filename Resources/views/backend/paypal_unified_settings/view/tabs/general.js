@@ -402,14 +402,6 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
                 fieldLabel: '{s name="fieldset/errorHandling/displayErrors"}Display errors{/s}',
                 inputValue: true,
                 uncheckedValue: false
-            }, {
-                xtype: 'combobox',
-                name: 'logLevel',
-                helpText: '{s name="fieldset/errorHandling/logLevel/help"}<u>Normal</u><br>Only errors will be logged to file.<br><br><u>Extended</u>Normal, Warning and Error messages will be logged to file. This is useful for debug environments.{/s}',
-                fieldLabel: '{s name="fieldset/errorHandling/logLevel"}Logging{/s}',
-                store: Ext.create('Shopware.apps.PaypalUnifiedSettings.store.LogLevel'),
-                valueField: 'id',
-                value: 0
             }]
         });
 

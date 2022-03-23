@@ -117,12 +117,6 @@ class General extends ModelEntity
     private $landingPageType;
 
     /**
-     * @var int
-     * @ORM\Column(name="log_level", type="integer")
-     */
-    private $logLevel;
-
-    /**
      * @var bool
      * @ORM\Column(name="display_errors", type="boolean", nullable=false)
      */
@@ -412,22 +406,6 @@ class General extends ModelEntity
     public function setUseInContext($useInContext)
     {
         $this->useInContext = $useInContext;
-    }
-
-    /**
-     * @return int
-     */
-    public function getLogLevel()
-    {
-        return $this->logLevel;
-    }
-
-    /**
-     * @param int $logLevel
-     */
-    public function setLogLevel($logLevel)
-    {
-        $this->logLevel = $logLevel;
     }
 
     /**
