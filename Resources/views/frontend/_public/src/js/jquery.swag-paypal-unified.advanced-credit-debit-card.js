@@ -81,7 +81,7 @@
             /**
              * @type boolean
              */
-            useSandbox: true,
+            useSandbox: false,
 
             /**
              * Cardholder Data for the hosted fields

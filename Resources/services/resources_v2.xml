@@ -31,7 +31,7 @@
             <argument type="service" id="paypal_unified.client_service"/>
         </service>
 
-        <service id="paypal_unified.v2.client_toke_resource"
+        <service id="paypal_unified.v2.client_token_resource"
                  class="SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\ClientTokenResource"
                  public="true">
             <argument type="service" id="paypal_unified.client_service"/>

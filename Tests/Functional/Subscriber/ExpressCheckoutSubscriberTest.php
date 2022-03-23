@@ -68,6 +68,7 @@ class ExpressCheckoutSubscriberTest extends TestCase
 
         $view = new ViewMock(new Enlight_Template_Manager());
         $request = new Enlight_Controller_Request_RequestTestCase();
+        $view->assign('sBasket', ['content' => [['articleID' => 2]]]);
 
         $enlightEventArgs = new Enlight_Controller_ActionEventArgs([
             'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
@@ -89,6 +90,7 @@ class ExpressCheckoutSubscriberTest extends TestCase
     {
         $view = new ViewMock(new Enlight_Template_Manager());
         $request = new Enlight_Controller_Request_RequestTestCase();
+        $view->assign('sBasket', ['content' => [['articleID' => 2]]]);
 
         $enlightEventArgs = new Enlight_Controller_ActionEventArgs([
             'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
@@ -109,6 +111,7 @@ class ExpressCheckoutSubscriberTest extends TestCase
     {
         $view = new ViewMock(new Enlight_Template_Manager());
         $request = new Enlight_Controller_Request_RequestTestCase();
+        $view->assign('sBasket', ['content' => [['articleID' => 2]]]);
 
         $enlightEventArgs = new Enlight_Controller_ActionEventArgs([
             'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
@@ -131,6 +134,7 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $view = new ViewMock(new Enlight_Template_Manager());
         $request = new Enlight_Controller_Request_RequestTestCase();
         $request->setControllerName('detail');
+        $view->assign('sBasket', ['content' => [['articleID' => 2]]]);
 
         $enlightEventArgs = new Enlight_Controller_ActionEventArgs([
             'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
@@ -154,6 +158,7 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $request = new Enlight_Controller_Request_RequestTestCase();
         $request->setControllerName('checkout');
         $request->setActionName('fake');
+        $view->assign('sBasket', ['content' => [['articleID' => 2]]]);
 
         $enlightEventArgs = new Enlight_Controller_ActionEventArgs([
             'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
@@ -177,7 +182,7 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $request = new Enlight_Controller_Request_RequestTestCase();
         $request->setActionName('cart');
         $request->setControllerName('checkout');
-        $view->assign('sBasket', ['content' => [[]]]);
+        $view->assign('sBasket', ['content' => [['articleID' => 2]]]);
 
         $enlightEventArgs = new Enlight_Controller_ActionEventArgs([
             'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
@@ -202,7 +207,7 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $request = new Enlight_Controller_Request_RequestTestCase();
         $request->setActionName('ajaxCart');
         $request->setControllerName('checkout');
-        $view->assign('sBasket', ['content' => [[]]]);
+        $view->assign('sBasket', ['content' => [['articleID' => 2]]]);
 
         $enlightEventArgs = new Enlight_Controller_ActionEventArgs([
             'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
@@ -224,6 +229,7 @@ class ExpressCheckoutSubscriberTest extends TestCase
     {
         $view = new ViewMock(new Enlight_Template_Manager());
         $request = new Enlight_Controller_Request_RequestTestCase();
+        $view->assign('sBasket', ['content' => [['articleID' => 2]]]);
 
         $enlightEventArgs = new Enlight_Controller_ActionEventArgs([
             'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),

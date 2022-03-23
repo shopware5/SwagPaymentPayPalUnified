@@ -89,6 +89,15 @@ class AdvancedCreditDebitCard implements SubscriberInterface
      */
     public function onCheckout(Enlight_Controller_ActionEventArgs $args)
     {
+        /** @var Shopware_Controllers_Frontend_Checkout $subject */
+        $subject = $args->getSubject();
+
+        $paymentMethod = $subject->View()->getAssign('sPayment');
+
+        if ($paymentMethod['name'] !== PaymentMethodProviderInterface::PAYPAL_UNIFIED_ADVANCED_CREDIT_DEBIT_CARD_METHOD_NAME) {
+            return;
+        }
+
         if ($args->getRequest()->getParam('spbCheckout')) {
             return;
         }
@@ -97,6 +106,10 @@ class AdvancedCreditDebitCard implements SubscriberInterface
             $session = $this->dependencyProvider->getSession();
             $session->offsetSet('paypalOrderId', $args->getRequest()->getParam('paypalOrderId'));
 
+            return;
+        }
+
+        if ($args->getRequest()->getActionName() !== 'confirm') {
             return;
         }
 
@@ -115,26 +128,19 @@ class AdvancedCreditDebitCard implements SubscriberInterface
             return;
         }
 
-        /** @var Shopware_Controllers_Frontend_Checkout $subject */
-        $subject = $args->getSubject();
-
-        $paymentMethod = $subject->View()->getAssign('sPayment');
-
-        if ($paymentMethod['name'] !== PaymentMethodProviderInterface::PAYPAL_UNIFIED_ADVANCED_CREDIT_DEBIT_CARD_METHOD_NAME) {
-            return;
-        }
-
         $clientToken = $this->clientTokenResource->generateToken($this->contextService->getShopContext()->getShop()->getId());
 
         $cardHolderData = $this->createCardHolderData($subject->View()->getAssign('sUserData'));
 
+        $sandbox = $generalSettings->getSandbox();
         $viewData = [
             'paypalUnifiedAdvancedCreditDebitCardActive' => true,
-            'clientId' => $generalSettings->getSandbox() ? $generalSettings->getSandboxClientId() : $generalSettings->getClientId(),
+            'clientId' => $sandbox ? $generalSettings->getSandboxClientId() : $generalSettings->getClientId(),
             'clientToken' => $clientToken->getClientToken(),
             'cardHolderData' => $cardHolderData,
             'paypalUnifiedCurrency' => $this->contextService->getContext()->getCurrency()->getCurrency(),
             'paypalUnifiedButtonLocale' => $this->buttonLocaleService->getButtonLocale($generalSettings->getButtonLocale()),
+            'paypalUnifiedModeSandbox' => $sandbox,
         ];
 
         if (!isset($cardHolderData['contingencies'])) {
