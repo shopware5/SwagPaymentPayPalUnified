@@ -6,7 +6,7 @@
  * file that was distributed with this source code.
  */
 
-namespace SwagPaymentPayPalUnified\Tests\Unit\Subscriber;
+namespace SwagPaymentPayPalUnified\Tests\Functional\Subscriber;
 
 use Closure;
 use Enlight_Components_Session_Namespace;
@@ -26,6 +26,7 @@ use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
 use Shopware\Bundle\StoreFrontBundle\Struct\Currency;
 use Shopware\Bundle\StoreFrontBundle\Struct\ShopContextInterface;
 use Shopware\Models\Shop\Shop;
+use Shopware_Components_Config as ShopwareConfig;
 use Shopware_Controllers_Frontend_Checkout;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
@@ -263,37 +264,10 @@ class PayUponInvoiceRiskManagementTest extends TestCase
     /**
      * @return void
      */
-    public function testOnPostDispatchCheckoutPuiTechnicallyBlocked()
-    {
-        $session = $this->createMock(Enlight_Components_Session_Namespace::class);
-        $session->expects(static::once())->method('offsetGet')->willReturnMap([
-            [PayUponInvoiceRiskManagement::PAY_PAL_UNIFIED_PAY_UPON_INVOICE_BLOCKED_TECHNICALLY, true],
-        ]);
-        $session->expects(static::once())->method('offsetUnset');
-        $dependencyProvider = $this->getDependencyProvider(null, $session);
-        $subscriber = $this->getPayUponInvoiceRiskManagement(null, null, $dependencyProvider);
-
-        $view = new ViewMock(new Enlight_Template_Manager());
-        $view->assign('paymentBlocked', true);
-
-        $controller = $this->createMock(Shopware_Controllers_Frontend_Checkout::class);
-        $controller->method('View')->willReturn($view);
-        $eventArgs = $this->createMock(Enlight_Controller_ActionEventArgs::class);
-        $eventArgs->method('get')->willReturn($controller);
-
-        $subscriber->onPostDispatchCheckout($eventArgs);
-
-        static::assertNull($view->getAssign(PayUponInvoiceRiskManagement::PAY_PAL_UNIFIED_PAY_UPON_INVOICE_BLOCKED));
-    }
-
-    /**
-     * @return void
-     */
     public function testOnPostDispatchCheckoutPuiBlocked()
     {
         $session = $this->createMock(Enlight_Components_Session_Namespace::class);
-        $session->expects(static::exactly(3))->method('offsetGet')->willReturnMap([
-            [PayUponInvoiceRiskManagement::PAY_PAL_UNIFIED_PAY_UPON_INVOICE_BLOCKED_TECHNICALLY, null],
+        $session->expects(static::exactly(2))->method('offsetGet')->willReturnMap([
             [PayUponInvoiceRiskManagement::PAY_PAL_UNIFIED_PAY_UPON_INVOICE_BLOCKED, true],
         ]);
         $session->expects(static::once())->method('offsetUnset');
@@ -367,7 +341,6 @@ class PayUponInvoiceRiskManagementTest extends TestCase
 
         $session = $this->createMock(Enlight_Components_Session_Namespace::class);
         $session->method('offsetGet')->willReturnMap([
-            [PayUponInvoiceRiskManagement::PAY_PAL_UNIFIED_PAY_UPON_INVOICE_BLOCKED_TECHNICALLY, false],
             [PayUponInvoiceRiskManagement::PAY_PAL_UNIFIED_PAY_UPON_INVOICE_BLOCKED, true],
             [PayUponInvoiceRiskManagement::PAY_PAL_UNIFIED_PAY_UPON_INVOICE_ERROR_LIST_KEY, $errorList],
         ]);
@@ -454,8 +427,7 @@ class PayUponInvoiceRiskManagementTest extends TestCase
         $subscriber = $this->getPayUponInvoiceRiskManagement(
             $paymentMethodProvider,
             $this->getContainer()->get('validator'),
-            $dependencyProvider,
-            $this->getContainer()->get('shopware_storefront.context_service')
+            $dependencyProvider
         );
 
         $argsMock = $this->createMock(Enlight_Event_EventArgs::class);
@@ -573,9 +545,7 @@ class PayUponInvoiceRiskManagementTest extends TestCase
         $subject = $this->getPayUponInvoiceRiskManagement(
             $paymentMethodProviderMock,
             $this->getContainer()->get('validator'),
-            $this->getContainer()->get('paypal_unified.dependency_provider'),
-            $this->getContainer()->get('shopware_storefront.context_service'),
-            $this->getContainer()->get('paypal_unified.settings_service')
+            $this->getContainer()->get('paypal_unified.dependency_provider')
         );
 
         static::assertTrue($subject->onExecuteRule($argsMock));
@@ -611,9 +581,7 @@ class PayUponInvoiceRiskManagementTest extends TestCase
         $subject = $this->getPayUponInvoiceRiskManagement(
             $paymentMethodProviderMock,
             $this->getContainer()->get('validator'),
-            $this->getContainer()->get('paypal_unified.dependency_provider'),
-            $this->getContainer()->get('shopware_storefront.context_service'),
-            $this->getContainer()->get('paypal_unified.settings_service')
+            $this->getContainer()->get('paypal_unified.dependency_provider')
         );
 
         $expectedErrorList = [
@@ -630,11 +598,144 @@ class PayUponInvoiceRiskManagementTest extends TestCase
     }
 
     /**
+     * @dataProvider checkForMissingTechnicalRequirementsDataProvider
+     *
+     * @param ShopwareConfig|null           $config
+     * @param SettingsServiceInterface|null $settings
+     *
+     * @return void
+     */
+    public function testCheckForMissingTechnicalRequirements($config, $settings)
+    {
+        $subject = $this->getPayUponInvoiceRiskManagement(
+            null,
+            null,
+            null,
+            null,
+            $settings,
+            $config
+        );
+        $argsMock = $this->createMock(Enlight_Event_EventArgs::class);
+
+        static::assertTrue($subject->onExecuteRule($argsMock));
+    }
+
+    /**
+     * @return Generator<string, array{0: ShopwareConfig|null, 1: SettingsServiceInterface|null}>
+     */
+    public function checkForMissingTechnicalRequirementsDataProvider()
+    {
+        $config = $this->createMock(ShopwareConfig::class);
+        $config->method('offsetGet')->willReturnMap([
+            ['showphonenumberfield', false],
+            ['showbirthdayfield', true],
+        ]);
+        yield 'Test phone number field is disabled' => [
+            $config,
+            null,
+        ];
+
+        $config = $this->createMock(ShopwareConfig::class);
+        $config->method('offsetGet')->willReturnMap([
+            ['showphonenumberfield', true],
+            ['showbirthdayfield', false],
+        ]);
+        yield 'Test birthday field is disabled' => [
+            $config,
+            null,
+        ];
+
+        $settingsServiceMock = $this->createMock(SettingsServiceInterface::class);
+        $settingsServiceMock->method('getSettings')
+            ->willReturnMap([
+                [
+                    self::SHOP_ID,
+                    SettingsTable::GENERAL,
+                    null,
+                ],
+            ]);
+
+        yield 'Test no general settings' => [
+            null,
+            $settingsServiceMock,
+        ];
+
+        $settingsServiceMock = $this->createMock(SettingsServiceInterface::class);
+        $settingsServiceMock->method('getSettings')
+            ->willReturnMap([
+                [
+                    self::SHOP_ID,
+                    SettingsTable::GENERAL,
+                    (new General())->fromArray(['shopId' => self::SHOP_ID]),
+                ],
+                [
+                    self::SHOP_ID,
+                    SettingsTable::PAY_UPON_INVOICE,
+                    null,
+                ],
+            ]);
+
+        yield 'Test no pui settings' => [
+            null,
+            $settingsServiceMock,
+        ];
+
+        $settingsServiceMock = $this->createMock(SettingsServiceInterface::class);
+        $settingsServiceMock->method('getSettings')
+            ->willReturnMap([
+                [
+                    self::SHOP_ID,
+                    SettingsTable::GENERAL,
+                    (new General())->fromArray(['shopId' => self::SHOP_ID]),
+                ],
+                [
+                    self::SHOP_ID,
+                    SettingsTable::PAY_UPON_INVOICE,
+                    (new PayUponInvoice())->fromArray([
+                        'shopId' => self::SHOP_ID,
+                        'active' => false,
+                        'onboardingCompleted' => true,
+                    ]),
+                ],
+            ]);
+
+        yield 'Test pui inactive' => [
+            null,
+            $settingsServiceMock,
+        ];
+
+        $settingsServiceMock = $this->createMock(SettingsServiceInterface::class);
+        $settingsServiceMock->method('getSettings')
+            ->willReturnMap([
+                [
+                    self::SHOP_ID,
+                    SettingsTable::GENERAL,
+                    (new General())->fromArray(['shopId' => self::SHOP_ID]),
+                ],
+                [
+                    self::SHOP_ID,
+                    SettingsTable::PAY_UPON_INVOICE,
+                    (new PayUponInvoice())->fromArray([
+                        'shopId' => self::SHOP_ID,
+                        'active' => true,
+                        'onboardingCompleted' => false,
+                    ]),
+                ],
+            ]);
+
+        yield 'Test pui not completely onboarded' => [
+            null,
+            $settingsServiceMock,
+        ];
+    }
+
+    /**
      * @param PaymentMethodProviderInterface|null $paymentMethodProvider
      * @param ValidatorInterface|null             $validator
      * @param DependencyProvider|null             $dependencyProvider
      * @param ContextServiceInterface|null        $contextService
      * @param SettingsServiceInterface|null       $settingsService
+     * @param ShopwareConfig|null                 $shopwareConfig
      *
      * @return PayUponInvoiceRiskManagement
      */
@@ -643,14 +744,16 @@ class PayUponInvoiceRiskManagementTest extends TestCase
         $validator = null,
         $dependencyProvider = null,
         $contextService = null,
-        $settingsService = null
+        $settingsService = null,
+        $shopwareConfig = null
     ) {
         return new PayUponInvoiceRiskManagement(
             $paymentMethodProvider ?: $this->getPaymentMethodProvider(),
             $dependencyProvider ?: $this->getDependencyProvider(),
             $validator ?: $this->getValidator(),
             $contextService ?: $this->getContextService(),
-            $settingsService ?: $this->getSettingsService()
+            $settingsService ?: $this->getSettingsService(),
+            $shopwareConfig ?: $this->getShopwareConfig()
         );
     }
 
@@ -706,7 +809,7 @@ class PayUponInvoiceRiskManagementTest extends TestCase
         $contextServiceMock->method('getShopContext')
             ->willReturn($this->createConfiguredMock(ShopContextInterface::class, [
                 'getCurrency' => $this->createConfiguredMock(Currency::class, [
-                    'getCurrency' => 'c63432e0-e10c-4ca0-aae9-e622b43d0285',
+                    'getCurrency' => 'EUR',
                 ]),
                 'getShop' => $this->createConfiguredMock(Shop::class, [
                     'getId' => self::SHOP_ID,
@@ -791,5 +894,19 @@ class PayUponInvoiceRiskManagementTest extends TestCase
 
             return true;
         };
+    }
+
+    /**
+     * @return ShopwareConfig
+     */
+    private function getShopwareConfig()
+    {
+        $config = $this->createMock(ShopwareConfig::class);
+        $config->method('offsetGet')->willReturnMap([
+            ['showphonenumberfield', true],
+            ['showbirthdayfield', true],
+        ]);
+
+        return $config;
     }
 }
