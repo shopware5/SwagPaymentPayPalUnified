@@ -8,11 +8,14 @@
 
 use SwagPaymentPayPalUnified\Components\ExceptionHandlerServiceInterface;
 use SwagPaymentPayPalUnified\Components\Services\ExceptionHandlerService;
+use SwagPaymentPayPalUnified\Components\Services\OnboardingStatusService;
 use SwagPaymentPayPalUnified\Models\Settings\General as GeneralSettingsModel;
 use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService;
 
 class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Controllers_Backend_Application
 {
+    const HAS_LIMITS_SUFFIX = '_HAS_LIMITS';
+
     /**
      * {@inheritdoc}
      */
@@ -34,12 +37,18 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
     private $exceptionHandler;
 
     /**
+     * @var OnboardingStatusService
+     */
+    private $onboardingStatusService;
+
+    /**
      * {@inheritdoc}
      */
     public function preDispatch()
     {
         $this->clientService = $this->get('paypal_unified.client_service');
         $this->exceptionHandler = $this->get('paypal_unified.exception_handler_service');
+        $this->onboardingStatusService = $this->container->get('paypal_unified.onboarding_status_service');
 
         parent::preDispatch();
     }
@@ -158,15 +167,15 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
             return;
         }
 
-        $onboardingStatusService = $this->container->get('paypal_unified.onboarding_status_service');
-
         $viewAssign = [];
         try {
             foreach ($paymentMethodCapabilityNames as $paymentMethodCapabilityName) {
-                $viewAssign[$paymentMethodCapabilityName] = $onboardingStatusService->isCapable($payerId, $shopId, $sandbox, $paymentMethodCapabilityName);
+                $isCapableResult = $this->onboardingStatusService->getIsCapableResult($payerId, $shopId, $sandbox, $paymentMethodCapabilityName);
+                $viewAssign[$paymentMethodCapabilityName] = $isCapableResult->isCapable();
+                $viewAssign[$paymentMethodCapabilityName . self::HAS_LIMITS_SUFFIX] = $isCapableResult->hasLimits();
             }
             foreach ($productSubscriptionNames as $productSubscriptionName) {
-                $viewAssign[$productSubscriptionName] = $onboardingStatusService->isSubscribed($payerId, $shopId, $sandbox, $productSubscriptionName);
+                $viewAssign[$productSubscriptionName] = $this->onboardingStatusService->isSubscribed($payerId, $shopId, $sandbox, $productSubscriptionName);
             }
         } catch (\Exception $exception) {
             $this->exceptionHandler->handle($exception, 'validate capability');

@@ -17,7 +17,10 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.AdvancedCreditDebitCar
             checkboxLabel: '{s name="fieldset/activation/activate/help"}Enable this option to activate PayPal Advanced Credit Debit Card for this shop.{/s}'
         },
         onboardingPendingMessage: '{s name="onboardingPendingMessage"}Your account is currently not eligible for accepting payments using Advanced Credit Debit Card.{/s}',
-        capabilityTestButtonText: '{s name="button/capability/test"}Capability test{/s}'
+        capabilityTestButtonText: '{s name="button/capability/test"}Capability test{/s}',
+        hasLimitsMessage: '{s name="capability/hasLimits/message/acdc"}Please go to your <a href="https://www.paypal.com/businessmanage/limits/liftlimits" target="_blank">PayPal Account</a> and clarify which company documents still need to be submitted in order to use credit/debit card payment.{/s}',
+        hasLimitsMessageSandbox: '{s name="capability/hasLimits/message/acdc/sandbox"}Please go to your <a href="https://www.sandbox.paypal.com/businessmanage/limits/liftlimits" target="_blank">PayPal Account</a> and clarify which company documents still need to be submitted in order to use credit/debit card payment.{/s}'
     },
 });
 // {/block}
+

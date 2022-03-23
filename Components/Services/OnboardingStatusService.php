@@ -12,6 +12,7 @@ use DateInterval;
 use DateTime;
 use DateTimeInterface;
 use Shopware\Components\HttpClient\RequestException;
+use SwagPaymentPayPalUnified\Components\Services\Onboarding\IsCapableResult;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\MerchantIntegrationsResource;
 
 class OnboardingStatusService
@@ -66,9 +67,9 @@ class OnboardingStatusService
      *
      * @throws RequestException
      *
-     * @return bool
+     * @return IsCapableResult
      */
-    public function isCapable($payerId, $shopId, $sandbox, $targetCapability = self::CAPABILITY_PAY_WITH_PAYPAL)
+    public function getIsCapableResult($payerId, $shopId, $sandbox, $targetCapability = self::CAPABILITY_PAY_WITH_PAYPAL)
     {
         $partnerId = self::PARTNER_ID;
 
@@ -80,12 +81,12 @@ class OnboardingStatusService
             $response = $this->integrationsResource->getMerchantIntegrations($partnerId, $shopId, $payerId);
 
             if (!\is_array($response)) {
-                return false;
+                return new IsCapableResult(false);
             }
 
             $capabilities = $response['capabilities'];
             if (!\is_array($capabilities)) {
-                return false;
+                return new IsCapableResult(false);
             }
 
             $this->lastResponseCapabilities = $capabilities;
@@ -94,11 +95,13 @@ class OnboardingStatusService
 
         foreach ($this->lastResponseCapabilities as $capability) {
             if (\is_array($capability) && \array_key_exists('name', $capability) && $capability['name'] === $targetCapability) {
-                return $capability['status'] && $capability['status'] === self::STATUS_ACTIVE;
+                $isCapable = $capability['status'] && $capability['status'] === self::STATUS_ACTIVE;
+
+                return new IsCapableResult($isCapable, $capability['limits']);
             }
         }
 
-        return false;
+        return new IsCapableResult(false);
     }
 
     /**
