@@ -11,8 +11,12 @@ export default function () {
 function _importInitScripts(connection) {
     console.log('Executing init Scripts');
 
-    console.log('Setting birthday of default user');
-    const setDefaultUserBirthday = fs.readFileSync(path.join(path.resolve(''), 'setup/sql/set_default_user_birthday.sql'), 'utf8');
+    console.log('Enable birthday and phone number field');
+    const setConfig = fs.readFileSync(path.join(path.resolve(''), 'setup/sql/enable_birthday_and_phone.sql'), 'utf8');
+    connection.query(setConfig);
+
+    console.log('Setting birthday and phone number of default customer');
+    const setDefaultUserBirthday = fs.readFileSync(path.join(path.resolve(''), 'setup/sql/set_birthday_and_phone.sql'), 'utf8');
     connection.query(setDefaultUserBirthday);
 
     console.log('Setting up apm fixtures');

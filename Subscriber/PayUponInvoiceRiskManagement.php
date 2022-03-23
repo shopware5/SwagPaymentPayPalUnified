@@ -12,6 +12,7 @@ use Enlight\Event\SubscriberInterface;
 use Enlight_Controller_Front;
 use Enlight_Controller_Request_Request;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
+use Shopware_Components_Config as ShopwareConfig;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Models\Settings\General;
@@ -23,14 +24,12 @@ use Symfony\Component\Validator\Constraints\Date;
 use Symfony\Component\Validator\Constraints\EqualTo;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Range;
-use Symfony\Component\Validator\ConstraintViolationInterface;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use UnexpectedValueException;
 
 class PayUponInvoiceRiskManagement implements SubscriberInterface
 {
-    const PAY_PAL_UNIFIED_PAY_UPON_INVOICE_BLOCKED_TECHNICALLY = 'PayPalUnifiedPayUponInvoiceBlockedTechnically';
     const PAY_PAL_UNIFIED_PAY_UPON_INVOICE_BLOCKED = 'PayPalUnifiedPayUponInvoiceBlocked';
     const PAY_PAL_UNIFIED_PAY_UPON_INVOICE_ERROR_LIST_KEY = 'payPalUnifiedPayUponInvoiceErrorList';
 
@@ -59,18 +58,25 @@ class PayUponInvoiceRiskManagement implements SubscriberInterface
      */
     private $settingsService;
 
+    /**
+     * @var ShopwareConfig
+     */
+    private $config;
+
     public function __construct(
         PaymentMethodProviderInterface $paymentMethodProvider,
         DependencyProvider $dependencyProvider,
         ValidatorInterface $validator,
         ContextServiceInterface $contextService,
-        SettingsServiceInterface $settingsService
+        SettingsServiceInterface $settingsService,
+        ShopwareConfig $config
     ) {
         $this->paymentMethodProvider = $paymentMethodProvider;
         $this->dependencyProvider = $dependencyProvider;
         $this->validator = $validator;
         $this->contextService = $contextService;
         $this->settingsService = $settingsService;
+        $this->config = $config;
     }
 
     /**
@@ -101,31 +107,6 @@ class PayUponInvoiceRiskManagement implements SubscriberInterface
             return false;
         }
 
-        $generalSettings = $this->settingsService->getSettings($this->contextService->getShopContext()->getShop()->getId());
-
-        if (!$generalSettings instanceof General) {
-            $this->dependencyProvider->getSession()->offsetSet(self::PAY_PAL_UNIFIED_PAY_UPON_INVOICE_BLOCKED_TECHNICALLY, true);
-
-            return true;
-        }
-
-        $payUponInvoiceSettings = $this->settingsService->getSettings($this->contextService->getShopContext()->getShop()->getId(), SettingsTable::PAY_UPON_INVOICE);
-
-        if (!$payUponInvoiceSettings instanceof PayUponInvoice) {
-            $this->dependencyProvider->getSession()->offsetSet(self::PAY_PAL_UNIFIED_PAY_UPON_INVOICE_BLOCKED_TECHNICALLY, true);
-
-            return true;
-        }
-
-        $payUponInvoiceActive = $payUponInvoiceSettings->isActive();
-        $onboardingCompleted = $generalSettings->getSandbox() ? $payUponInvoiceSettings->isSandboxOnboardingCompleted() : $payUponInvoiceSettings->isOnboardingCompleted();
-
-        if (!$payUponInvoiceActive || !$onboardingCompleted) {
-            $this->dependencyProvider->getSession()->offsetSet(self::PAY_PAL_UNIFIED_PAY_UPON_INVOICE_BLOCKED_TECHNICALLY, true);
-
-            return true;
-        }
-
         $basket = $args->get('basket');
         $user = $args->get('user');
 
@@ -152,6 +133,10 @@ class PayUponInvoiceRiskManagement implements SubscriberInterface
             return false;
         }
 
+        if ($this->checkForMissingTechnicalRequirements()) {
+            return true;
+        }
+
         if ($this->useSimpleValidation()) {
             $violationList = $this->validateSimple($user['additional']['country']['countryiso']);
 
@@ -173,12 +158,6 @@ class PayUponInvoiceRiskManagement implements SubscriberInterface
         $view = $controller->View();
 
         if ($view->getAssign('paymentBlocked') !== true) {
-            return;
-        }
-
-        if ($this->dependencyProvider->getSession()->offsetGet(self::PAY_PAL_UNIFIED_PAY_UPON_INVOICE_BLOCKED_TECHNICALLY)) {
-            $this->dependencyProvider->getSession()->offsetUnset(self::PAY_PAL_UNIFIED_PAY_UPON_INVOICE_BLOCKED_TECHNICALLY);
-
             return;
         }
 
@@ -255,7 +234,6 @@ class PayUponInvoiceRiskManagement implements SubscriberInterface
         }
 
         $errorList = [];
-        /** @var ConstraintViolationInterface $violation */
         foreach ($violationList as $violation) {
             $errorList[] = $violation->getPropertyPath();
         }
@@ -312,5 +290,38 @@ class PayUponInvoiceRiskManagement implements SubscriberInterface
                 'birthday' => [new NotBlank(), new Date()],
             ])
         );
+    }
+
+    /**
+     * Do not show PUI if the customer has no chance to fill in the required data
+     *
+     * @return bool
+     */
+    private function checkForMissingTechnicalRequirements()
+    {
+        if (!$this->config->offsetGet('showphonenumberfield') || !$this->config->offsetGet('showbirthdayfield')) {
+            return true;
+        }
+
+        $generalSettings = $this->settingsService->getSettings($this->contextService->getShopContext()->getShop()->getId());
+
+        if (!$generalSettings instanceof General) {
+            return true;
+        }
+
+        $payUponInvoiceSettings = $this->settingsService->getSettings($this->contextService->getShopContext()->getShop()->getId(), SettingsTable::PAY_UPON_INVOICE);
+
+        if (!$payUponInvoiceSettings instanceof PayUponInvoice) {
+            return true;
+        }
+
+        $payUponInvoiceActive = $payUponInvoiceSettings->isActive();
+        $onboardingCompleted = $generalSettings->getSandbox() ? $payUponInvoiceSettings->isSandboxOnboardingCompleted() : $payUponInvoiceSettings->isOnboardingCompleted();
+
+        if (!$payUponInvoiceActive || !$onboardingCompleted) {
+            return true;
+        }
+
+        return false;
     }
 }
