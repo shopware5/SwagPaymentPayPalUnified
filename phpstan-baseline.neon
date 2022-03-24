@@ -901,11 +901,6 @@ parameters:
 			path: Models/Settings/General.php
 
 		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Models\\\\Settings\\\\General\\:\\:setLogLevel\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Models/Settings/General.php
-
-		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Models\\\\Settings\\\\General\\:\\:setOrderNumberPrefix\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: Models/Settings/General.php
@@ -2851,11 +2846,6 @@ parameters:
 			path: Tests/Functional/Components/Services/Legacy/LegacyServiceTest.php
 
 		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Components\\\\Services\\\\LoggerServiceTest\\:\\:insertTestSettings\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Components/Services/LoggerServiceTest.php
-
-		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Components\\\\Services\\\\LoggerServiceTest\\:\\:testErrorAddsLine\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: Tests/Functional/Components/Services/LoggerServiceTest.php
@@ -2866,27 +2856,7 @@ parameters:
 			path: Tests/Functional/Components/Services/LoggerServiceTest.php
 
 		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Components\\\\Services\\\\LoggerServiceTest\\:\\:testNotifyReturnsWithoutRequiredLogLevel\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Components/Services/LoggerServiceTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Components\\\\Services\\\\LoggerServiceTest\\:\\:testNotifyReturnsWithoutSettings\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Components/Services/LoggerServiceTest.php
-
-		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Components\\\\Services\\\\LoggerServiceTest\\:\\:testWarningAddsLine\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Components/Services/LoggerServiceTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Components\\\\Services\\\\LoggerServiceTest\\:\\:testWarningReturnsWithoutRequiredLogLevel\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Components/Services/LoggerServiceTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Components\\\\Services\\\\LoggerServiceTest\\:\\:testWarningReturnsWithoutSettings\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: Tests/Functional/Components/Services/LoggerServiceTest.php
 

@@ -26,7 +26,6 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.model.General', {
         { name: 'orderNumberPrefix', type: 'string' },
         { name: 'useInContext', type: 'bool', defaultValue: true },
         { name: 'landingPageType', type: 'string', defaultValue: 'NO_PREFERENCE' },
-        { name: 'logLevel', type: 'int', defaultValue: 0 },
         { name: 'displayErrors', type: 'bool' },
         { name: 'useSmartPaymentButtons', type: 'bool' },
         { name: 'submitCart', type: 'bool', defaultValue: true },

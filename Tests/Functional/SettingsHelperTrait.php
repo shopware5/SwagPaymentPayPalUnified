@@ -41,7 +41,6 @@ trait SettingsHelperTrait
             'send_order_number' => 0,
             'order_number_prefix' => null,
             'use_in_context' => 0,
-            'log_level' => 0,
             'display_errors' => 0,
             'advertise_returns' => 0,
             'use_smart_payment_buttons' => 0,

@@ -38,7 +38,6 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings', {
      * @type { Array }
      */
     stores: [
-        'LogLevel',
         'EcButtonStyleColor',
         'EcButtonStyleShape',
         'EcButtonStyleSize'

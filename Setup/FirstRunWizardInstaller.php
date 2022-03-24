@@ -25,7 +25,6 @@ class FirstRunWizardInstaller
             'show_sidebar_logo' => 0,
             'send_order_number' => 0,
             'use_in_context' => 0,
-            'log_level' => 1,
             'display_errors' => 0,
             'advertise_returns' => 0,
             'use_smart_payment_buttons' => 0,

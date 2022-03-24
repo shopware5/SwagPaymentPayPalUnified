@@ -31,7 +31,6 @@ interface SettingsServiceInterface
     const SETTING_GENERAL_LANDING_PAGE_TYPE = 'landing_page_type';
     const SETTING_GENERAL_SEND_ORDER_NUMBER = 'send_order_number';
     const SETTING_GENERAL_ORDER_NUMBER_PREFIX = 'order_number_prefix';
-    const SETTING_GENERAL_LOG_LEVEL = 'log_level';
     const SETTING_GENERAL_CART_ACTIVE = 'cart_active';
     const SETTING_GENERAL_DETAIL_ACTIVE = 'detail_active';
     const SETTING_GENERAL_LOGIN_ACTIVE = 'login_active';

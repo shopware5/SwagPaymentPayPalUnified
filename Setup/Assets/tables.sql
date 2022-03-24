@@ -14,7 +14,6 @@ CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_settings_general
     `send_order_number`          TINYINT(1)   NOT NULL,
     `order_number_prefix`        VARCHAR(255),
     `use_in_context`             TINYINT(1)   NOT NULL,
-    `log_level`                  INT(11)      NOT NULL,
     `display_errors`             TINYINT(1)   NOT NULL,
     `advertise_returns`          TINYINT(1)   NOT NULL,
     `use_smart_payment_buttons`  TINYINT(1)   NOT NULL,
