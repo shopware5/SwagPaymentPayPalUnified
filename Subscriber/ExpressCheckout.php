@@ -112,6 +112,9 @@ class ExpressCheckout implements SubscriberInterface
         $view = $args->getSubject()->View();
 
         $cart = $view->getAssign('sBasket');
+        if ($cart === null) {
+            $cart = $this->dependencyProvider->getModule('sBasket')->sGetBasket();
+        }
 
         $cartProductIds = $this->getProductIdsFromBasket($cart['content']);
         if ($cartProductIds === []) {
@@ -137,7 +140,6 @@ class ExpressCheckout implements SubscriberInterface
             return;
         }
 
-        $cart = $view->getAssign('sBasket');
         $product = $view->getAssign('sArticle'); // content on modal window of ajaxAddArticleAction
 
         if ((isset($cart['content']) || $product) && !$this->isUserLoggedIn()) {
