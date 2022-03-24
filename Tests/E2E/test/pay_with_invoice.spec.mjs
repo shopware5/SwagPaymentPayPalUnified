@@ -4,6 +4,8 @@ import MysqlFactory from '../helper/mysqlFactory.mjs';
 import defaultPaypalSettingsSql from '../helper/paypalSqlHelper.mjs';
 const connection = MysqlFactory.getInstance();
 
+test.use({ locale: 'de-DE' });
+
 test.describe('Pay with invoice', () => {
     test.beforeEach(() => {
         connection.query(defaultPaypalSettingsSql);

@@ -225,7 +225,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.AbstractPuiAcdcTab', {
             this.capabilityTestButton.show();
         }
 
-        if (!this.hasLimits) {
+        if (!this.hasLimits || !this.getForm().getRecord().get('active')) {
             return;
         }
 
