@@ -19,38 +19,6 @@ class LoggerServiceTest extends TestCase
     use SettingsHelperTrait;
     use ContainerTrait;
 
-    public function testWarningReturnsWithoutSettings()
-    {
-        $fileName = $this->getLogfile();
-
-        //Reset the logfile
-        \file_put_contents($fileName, '');
-
-        $loggerService = $this->getContainer()->get('paypal_unified.logger_service');
-
-        $loggerService->warning('Test message');
-
-        $lastLine = $this->getLastLine($fileName);
-        static::assertEmpty($lastLine);
-    }
-
-    public function testWarningReturnsWithoutRequiredLogLevel()
-    {
-        $fileName = $this->getLogfile();
-
-        //Reset the logfile
-        \file_put_contents($fileName, '');
-
-        $loggerService = $this->getContainer()->get('paypal_unified.logger_service');
-
-        $this->insertTestSettings(2);
-
-        $loggerService->warning('Test message');
-
-        $lastLine = $this->getLastLine($fileName);
-        static::assertEmpty($lastLine);
-    }
-
     public function testWarningAddsLine()
     {
         $fileName = $this->getLogfile();
@@ -75,39 +43,6 @@ class LoggerServiceTest extends TestCase
             return;
         }
         static::assertContains('Test message', $lastLine);
-    }
-
-    public function testNotifyReturnsWithoutSettings()
-    {
-        $fileName = $this->getLogfile();
-
-        //Reset the logfile
-        \file_put_contents($fileName, '');
-
-        $this->getContainer()->reset('paypal_unified.logger_service');
-        $loggerService = $this->getContainer()->get('paypal_unified.logger_service');
-
-        $loggerService->notify('Test message');
-
-        $lastLine = $this->getLastLine($fileName);
-        static::assertEmpty($lastLine);
-    }
-
-    public function testNotifyReturnsWithoutRequiredLogLevel()
-    {
-        $fileName = $this->getLogfile();
-
-        //Reset the logfile
-        \file_put_contents($fileName, '');
-
-        $loggerService = $this->getContainer()->get('paypal_unified.logger_service');
-
-        $this->insertTestSettings(2);
-
-        $loggerService->notify('Test message');
-
-        $lastLine = $this->getLastLine($fileName);
-        static::assertEmpty($lastLine);
     }
 
     public function testNotifyAddsLine()
@@ -158,13 +93,12 @@ class LoggerServiceTest extends TestCase
     }
 
     /**
-     * @param int $logLevel
+     * @return void
      */
-    private function insertTestSettings($logLevel = 1)
+    private function insertTestSettings()
     {
         $this->insertGeneralSettingsFromArray([
             'shopId' => 1,
-            'logLevel' => $logLevel,
         ]);
     }
 

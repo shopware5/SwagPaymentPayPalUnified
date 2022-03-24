@@ -10,7 +10,6 @@ namespace SwagPaymentPayPalUnified\Components\Services;
 
 use Shopware\Components\Logger;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
-use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 
 class LoggerService implements LoggerServiceInterface
 {
@@ -21,18 +20,9 @@ class LoggerService implements LoggerServiceInterface
      */
     private $logger;
 
-    /**
-     * @var int
-     */
-    private $logLevel = self::NORMAL_LOG_LEVEL;
-
-    public function __construct(Logger $baseLogger, SettingsServiceInterface $settings)
+    public function __construct(Logger $baseLogger)
     {
         $this->logger = $baseLogger;
-
-        if ($settings->hasSettings()) {
-            $this->logLevel = (int) $settings->get(SettingsServiceInterface::SETTING_GENERAL_LOG_LEVEL);
-        }
     }
 
     /**
@@ -40,9 +30,7 @@ class LoggerService implements LoggerServiceInterface
      */
     public function debug($message, array $context = [])
     {
-        if ($this->logLevel === self::DEBUG_LOG_LEVEL) {
-            $this->logger->debug($this->createFinalMessage($message), $context);
-        }
+        $this->logger->debug($this->createFinalMessage($message), $context);
     }
 
     /**
@@ -50,9 +38,7 @@ class LoggerService implements LoggerServiceInterface
      */
     public function warning($message, array $context = [])
     {
-        if ($this->logLevel >= self::EXTENDED_LOG_LEVEL) {
-            $this->logger->warning($this->createFinalMessage($message), $context);
-        }
+        $this->logger->warning($this->createFinalMessage($message), $context);
     }
 
     /**
@@ -60,9 +46,7 @@ class LoggerService implements LoggerServiceInterface
      */
     public function notify($message, array $context = [])
     {
-        if ($this->logLevel >= self::EXTENDED_LOG_LEVEL) {
-            $this->logger->notice($this->createFinalMessage($message), $context);
-        }
+        $this->logger->notice($this->createFinalMessage($message), $context);
     }
 
     /**

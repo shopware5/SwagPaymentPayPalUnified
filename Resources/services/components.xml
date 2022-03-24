@@ -36,7 +36,6 @@
                  class="SwagPaymentPayPalUnified\Components\Services\LoggerService"
                  public="true">
             <argument type="service" id="pluginlogger"/>
-            <argument type="service" id="paypal_unified.settings_service"/>
         </service>
 
         <service id="paypal_unified.order_data_service"

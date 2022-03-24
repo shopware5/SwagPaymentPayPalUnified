@@ -12,8 +12,8 @@ use DateInterval;
 use DateTime;
 use DateTimeInterface;
 use Shopware\Components\HttpClient\RequestException;
-use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\Components\Services\Onboarding\IsCapableResult;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\MerchantIntegrationsResource;
 
 class OnboardingStatusService

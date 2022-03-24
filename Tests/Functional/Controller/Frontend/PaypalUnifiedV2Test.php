@@ -17,7 +17,6 @@ use Enlight_Controller_Request_RequestTestCase;
 use Enlight_Controller_Response_ResponseTestCase;
 use Generator;
 use PHPUnit\Framework\TestCase;
-use Psr\Log\LoggerInterface;
 use Shopware\Components\BasketSignature\BasketPersister;
 use Shopware\Components\BasketSignature\BasketSignatureGenerator;
 use Shopware\Components\DependencyInjection\Container;

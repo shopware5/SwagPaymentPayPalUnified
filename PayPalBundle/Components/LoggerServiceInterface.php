@@ -10,12 +10,6 @@ namespace SwagPaymentPayPalUnified\PayPalBundle\Components;
 
 interface LoggerServiceInterface
 {
-    const NORMAL_LOG_LEVEL = 0;
-
-    const EXTENDED_LOG_LEVEL = 1;
-
-    const DEBUG_LOG_LEVEL = 2;
-
     /**
      * Adds a debug statement to the logfile.
      *

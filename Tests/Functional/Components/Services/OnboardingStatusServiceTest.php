@@ -10,6 +10,7 @@ namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services;
 
 use Generator;
 use PHPUnit\Framework\TestCase;
+use SwagPaymentPayPalUnified\Components\Services\LoggerService;
 use SwagPaymentPayPalUnified\Components\Services\OnboardingStatusService;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\MerchantIntegrationsResource;
 
@@ -203,6 +204,8 @@ class OnboardingStatusServiceTest extends TestCase
      */
     private function createOnboardingStatusService(MerchantIntegrationsResource $merchantIntegrationsResourceMock)
     {
-        return new OnboardingStatusService($merchantIntegrationsResourceMock);
+        $logger = $this->createMock(LoggerService::class);
+
+        return new OnboardingStatusService($merchantIntegrationsResourceMock, $logger);
     }
 }
