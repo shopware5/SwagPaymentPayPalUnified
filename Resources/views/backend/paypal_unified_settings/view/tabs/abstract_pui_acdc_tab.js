@@ -55,6 +55,18 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.AbstractPuiAcdcTab', {
      */
     onboardingButton: null,
 
+    /**
+     * Support Text for the activation box
+     *
+     * @type { Boolean }
+     */
+    activationFieldUseSupportText: true,
+
+    /**
+     * @type { String }
+     */
+    activationFieldSupportText: null,
+
     initComponent: function() {
         this.addEvents(this.getAuthCodeReceivedEventName());
 
@@ -141,15 +153,20 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.AbstractPuiAcdcTab', {
     },
 
     createActivationFieldsetItems: function() {
-        var me = this;
+        var me = this,
+            fieldConfig = {
+                name: 'active',
+                fieldLabel: me.snippets.activationFieldset.checkboxFieldLabel,
+                boxLabel: me.snippets.activationFieldset.checkboxLabel,
+                inputValue: true,
+                uncheckedValue: false
+            };
 
-        this.activationField = Ext.create('Ext.form.field.Checkbox', {
-            name: 'active',
-            fieldLabel: me.snippets.activationFieldset.checkboxFieldLabel,
-            boxLabel: me.snippets.activationFieldset.checkboxLabel,
-            inputValue: true,
-            uncheckedValue: false
-        });
+        if (this.activationFieldUseSupportText) {
+            fieldConfig.supportText = this.activationFieldSupportText;
+        }
+
+        this.activationField = Ext.create('Ext.form.field.Checkbox', fieldConfig);
 
         return [
             this.activationField
