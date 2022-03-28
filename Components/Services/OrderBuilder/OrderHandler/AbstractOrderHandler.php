@@ -11,6 +11,7 @@ namespace SwagPaymentPayPalUnified\Components\Services\OrderBuilder\OrderHandler
 use RuntimeException;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\PayPalOrderParameter;
+use SwagPaymentPayPalUnified\Components\Services\Common\PriceFormatter;
 use SwagPaymentPayPalUnified\Components\Services\Common\ReturnUrlHelper;
 use SwagPaymentPayPalUnified\Components\Services\PayPalOrder\AmountProvider;
 use SwagPaymentPayPalUnified\Components\Services\PayPalOrder\ItemListProvider;
@@ -29,6 +30,12 @@ use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\ExperienceContext;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\PayUponInvoice;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Amount;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Amount\Breakdown;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Amount\Breakdown\Discount;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Amount\Breakdown\Handling;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Amount\Breakdown\ItemTotal;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Amount\Breakdown\TaxTotal;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Shipping;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Shipping\Address as ShippingAddress;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Shipping\Name as ShippingName;
@@ -66,13 +73,19 @@ abstract class AbstractOrderHandler implements OrderBuilderHandlerInterface
      */
     private $phoneNumberBuilder;
 
+    /**
+     * @var PriceFormatter
+     */
+    private $priceFormatter;
+
     public function __construct(
         SettingsServiceInterface $settingsService,
         ItemListProvider $itemListProvider,
         AmountProvider $amountProvider,
         ReturnUrlHelper $returnUrlHelper,
         ContextServiceInterface $contextService,
-        PhoneNumberBuilder $phoneNumberBuilder
+        PhoneNumberBuilder $phoneNumberBuilder,
+        PriceFormatter $priceFormatter
     ) {
         $this->settings = $settingsService;
         $this->itemListProvider = $itemListProvider;
@@ -80,6 +93,7 @@ abstract class AbstractOrderHandler implements OrderBuilderHandlerInterface
         $this->returnUrlHelper = $returnUrlHelper;
         $this->contextService = $contextService;
         $this->phoneNumberBuilder = $phoneNumberBuilder;
+        $this->priceFormatter = $priceFormatter;
     }
 
     /**
@@ -179,6 +193,8 @@ abstract class AbstractOrderHandler implements OrderBuilderHandlerInterface
         }
 
         $purchaseUnit->setShipping($this->createShipping($orderParameter->getCustomer()));
+
+        $this->addVirtualHandlingAndDiscounts($purchaseUnit);
 
         return [$purchaseUnit];
     }
@@ -332,5 +348,62 @@ abstract class AbstractOrderHandler implements OrderBuilderHandlerInterface
         $paymentSource->setPayUponInvoice($payUponInvoice);
 
         return $paymentSource;
+    }
+
+    /**
+     * @param PurchaseUnit $purchaseUnit
+     *
+     * @return void
+     */
+    protected function addVirtualHandlingAndDiscounts($purchaseUnit)
+    {
+        $amount = $purchaseUnit->getAmount();
+
+        if (!$amount instanceof Amount) {
+            return;
+        }
+
+        $breakdown = $amount->getBreakdown();
+
+        if (!$breakdown instanceof Breakdown) {
+            return;
+        }
+
+        $itemTotal = $breakdown->getItemTotal();
+        $taxTotal = $breakdown->getTaxTotal();
+
+        if (!$itemTotal instanceof ItemTotal || !$taxTotal instanceof TaxTotal) {
+            return;
+        }
+
+        $itemAmount = (float) $itemTotal->getValue();
+        $taxAmount = (float) $taxTotal->getValue();
+
+        $calculatedItemAmount = array_reduce($purchaseUnit->getItems() ?: [], static function ($carry, $item) {
+            return $carry + (float) $item->getUnitAmount()->getValue() * $item->getQuantity();
+        }, 0.0);
+
+        $calculatedTaxAmount = array_reduce($purchaseUnit->getItems() ?: [], static function ($carry, $item) {
+            return $carry + (float) $item->getTax()->getValue() * $item->getQuantity();
+        }, 0.0);
+
+        $itemDeviation = abs($calculatedItemAmount - $itemAmount);
+        $taxDeviation = abs($calculatedTaxAmount - $taxAmount);
+
+        if ($itemDeviation + $taxDeviation < 0.01) {
+            return;
+        }
+
+        if ($calculatedItemAmount + $calculatedTaxAmount < $itemAmount + $taxAmount) {
+            $breakdown->setDiscount((new Discount())->assign([
+                'value' => $this->priceFormatter->formatPrice($itemDeviation + $taxDeviation + ($breakdown->getDiscount() ? $breakdown->getDiscount()->getValue() : 0.0)),
+                'currencyCode' => $amount->getCurrencyCode(),
+            ]));
+        } else {
+            $breakdown->setHandling((new Handling())->assign([
+                'value' => $this->priceFormatter->formatPrice($itemDeviation + $taxDeviation + ($breakdown->getHandling() ? $breakdown->getHandling()->getValue() : 0.0)),
+                'currencyCode' => $amount->getCurrencyCode(),
+            ]));
+        }
     }
 }

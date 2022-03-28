@@ -56,11 +56,12 @@ class AmountProvider
         $amount->setValue($this->cartHelper->getTotalAmount($cart, $customer));
 
         $items = $purchaseUnit->getItems();
+
+        // Only set breakdown if items are submitted, otherwise the breakdown will be invalid
         if ($items === null) {
             return $amount;
         }
 
-        // Only set breakdown if items are submitted, otherwise the breakdown will be invalid
         $amount->setBreakdown(
             $this->createBreakdown(
                 $items,
@@ -145,15 +146,17 @@ class AmountProvider
             $taxTotal->setValue($this->priceFormatter->formatPrice($taxTotalValue));
         }
 
-        $discount = new Discount();
-        $discount->setCurrencyCode($currencyCode);
-        $discount->setValue($this->priceFormatter->formatPrice($discountValue));
-
         $breakdown = new Breakdown();
         $breakdown->setItemTotal($itemTotal);
         $breakdown->setShipping($shipping);
         $breakdown->setTaxTotal($taxTotal);
-        $breakdown->setDiscount($discount);
+
+        if ($discountValue > 0.0) {
+            $discount = new Discount();
+            $discount->setCurrencyCode($currencyCode);
+            $discount->setValue($this->priceFormatter->formatPrice($discountValue));
+            $breakdown->setDiscount($discount);
+        }
 
         return $breakdown;
     }

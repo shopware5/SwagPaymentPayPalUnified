@@ -8,6 +8,11 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Unit\Components\Services\PayPalOrder;
 
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Amount;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Item;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Item\Tax;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Item\UnitAmount;
+
 class Fixture
 {
     const CUSTOMER = [
@@ -423,5 +428,112 @@ class Fixture
     ];
 
     const PRODUCT_PRICE = self::CART['content'][0]['priceNumeric'];
+    const QUANTITY = self::CART['content'][0]['quantity'];
     const TAX_RATE_PERCENT = self::CART['content'][0]['tax_rate'];
+
+    /**
+     * @return Item
+     */
+    public static function getItemWithRoundedAmounts()
+    {
+        return (new Item())->assign([
+            'name' => 'Test product',
+            'unitAmount' => (new UnitAmount())->assign([
+                'currencyCode' => 'EUR',
+                'value' => sprintf('%.2f', self::getPrice() / self::getTaxRate()),
+            ]),
+            'tax' => (new Tax())->assign([
+                'currencyCode' => 'EUR',
+                'value' => sprintf('%.2f', self::getPrice() - self::getPrice() / self::getTaxRate()),
+            ]),
+            'taxRate' => '19',
+            'quantity' => 10,
+            'sku' => '2df7f76b-3e74-4062-a788-ab260aed5c78',
+            'category' => 'PHYSICAL_GOODS',
+        ]);
+    }
+
+    /**
+     * @return Item
+     */
+    public static function getItem()
+    {
+        return (new Item())->assign([
+            'name' => 'Test product',
+            'unitAmount' => (new UnitAmount())->assign([
+                'currencyCode' => 'EUR',
+                'value' => (string) (self::getPrice() / self::getTaxRate()),
+            ]),
+            'tax' => (new Tax())->assign([
+                'currencyCode' => 'EUR',
+                'value' => (string) (self::getPrice() - self::getPrice() / self::getTaxRate()),
+            ]),
+            'taxRate' => '19',
+            'quantity' => 10,
+            'sku' => '2df7f76b-3e74-4062-a788-ab260aed5c78',
+            'category' => 'PHYSICAL_GOODS',
+        ]);
+    }
+
+    /**
+     * This is the kind of struct currently calculated by the AmountProvider.
+     *
+     * @return Amount
+     */
+    public static function getMiscalculatedAmount()
+    {
+        return (new Amount())->assign([
+            'breakdown' => [
+                'itemTotal' => [
+                    'value' => '83.90',
+                ],
+                'taxTotal' => [
+                    'value' => '15.90',
+                ],
+            ],
+            'value' => '99.90',
+        ]);
+    }
+
+    /**
+     * @return Amount
+     */
+    public static function getAmount()
+    {
+        return (new Amount())->assign([
+            'breakdown' => [
+                'itemTotal' => [
+                    'value' => '83.95',
+                ],
+                'taxTotal' => [
+                    'value' => '15.95',
+                ],
+            ],
+            'value' => '99.90',
+        ]);
+    }
+
+    /**
+     * @return float
+     */
+    public static function getPrice()
+    {
+        return (float) self::PRODUCT_PRICE;
+    }
+
+    /**
+     * @return int
+     */
+    public static function getQuantity()
+    {
+        return (int) self::QUANTITY;
+    }
+
+    /**
+     * @return float|int
+     */
+    public static function getTaxRate()
+    {
+        return (float) self::TAX_RATE_PERCENT / 100 + 1;
+    }
 }

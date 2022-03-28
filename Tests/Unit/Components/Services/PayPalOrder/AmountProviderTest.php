@@ -19,8 +19,6 @@ use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Amount\Break
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Amount\Breakdown\ItemTotal;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Amount\Breakdown\TaxTotal;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Item;
-use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Item\Tax;
-use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Item\UnitAmount;
 
 class AmountProviderTest extends TestCase
 {
@@ -69,30 +67,16 @@ class AmountProviderTest extends TestCase
     }
 
     /**
+     * @dataProvider impreciseDataProvider
+     * @dataProvider preciseDataProvider
+     *
+     * @param Item[] $items
+     *
      * @return void
      */
-    public function testBreakdownIsValid()
+    public function testBreakdownIsValid($items)
     {
-        $price = (float) Fixture::PRODUCT_PRICE;
-        $taxRate = (float) Fixture::TAX_RATE_PERCENT / 100 + 1;
-
-        $this->givenTheItems([
-            (new Item())->assign([
-                'name' => 'Test product',
-                'unitAmount' => (new UnitAmount())->assign([
-                    'currencyCode' => 'EUR',
-                    'value' => (string) ($price / $taxRate),
-                ]),
-                'tax' => (new Tax())->assign([
-                    'currencyCode' => 'EUR',
-                    'value' => (string) ($price - $price / $taxRate),
-                ]),
-                'taxRate' => '19',
-                'quantity' => 10,
-                'sku' => '2df7f76b-3e74-4062-a788-ab260aed5c78',
-                'category' => 'PHYSICAL_GOODS',
-            ]),
-        ]);
+        $this->givenTheItems($items);
 
         $amount = $this->getAmountProvider(
             new CartHelper(new CustomerHelper(), new PriceFormatter()),
@@ -122,18 +106,30 @@ class AmountProviderTest extends TestCase
             $taxTotal + $itemTotal,
             sprintf('The breakdown is inconsistent (itemTotal + taxTotal != total). %.2f + %.2f = %.2f != %.2f', $itemTotal, $taxTotal, $taxTotal + $itemTotal, $total)
         );
+    }
 
-        // Check whether the breakdown is equal with the core calculation
-        static::assertSame(
-            $cartTaxTotal,
-            $taxTotal,
-            sprintf('The breakdown is not consistent with the cart, the tax total differs by %.2f.', abs($cartTaxTotal - $taxTotal))
-        );
-        static::assertSame(
-            $cartItemTotal,
-            $itemTotal,
-            sprintf('The breakdown is not consistent with the cart, the item total differs by %.2f.', abs($cartItemTotal - $itemTotal))
-        );
+    /**
+     * @return array<array{0: Item[]}>
+     */
+    public function preciseDataProvider()
+    {
+        return [
+            [
+                [Fixture::getItem()],
+            ],
+        ];
+    }
+
+    /**
+     * @return array<array{0: Item[]}>
+     */
+    public function impreciseDataProvider()
+    {
+        return [
+            [
+                [Fixture::getItemWithRoundedAmounts()],
+            ],
+        ];
     }
 
     /**

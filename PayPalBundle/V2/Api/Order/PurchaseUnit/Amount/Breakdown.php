@@ -55,7 +55,7 @@ class Breakdown extends PayPalApiStruct
     protected $discount;
 
     /**
-     * @return ItemTotal
+     * @return ItemTotal|null
      */
     public function getItemTotal()
     {
@@ -71,7 +71,7 @@ class Breakdown extends PayPalApiStruct
     }
 
     /**
-     * @return Shipping
+     * @return Shipping|null
      */
     public function getShipping()
     {
@@ -87,7 +87,7 @@ class Breakdown extends PayPalApiStruct
     }
 
     /**
-     * @return Handling
+     * @return Handling|null
      */
     public function getHandling()
     {
@@ -121,7 +121,7 @@ class Breakdown extends PayPalApiStruct
     }
 
     /**
-     * @return Insurance
+     * @return Insurance|null
      */
     public function getInsurance()
     {
@@ -137,7 +137,7 @@ class Breakdown extends PayPalApiStruct
     }
 
     /**
-     * @return ShippingDiscount
+     * @return ShippingDiscount|null
      */
     public function getShippingDiscount()
     {
@@ -153,7 +153,7 @@ class Breakdown extends PayPalApiStruct
     }
 
     /**
-     * @return Discount
+     * @return Discount|null
      */
     public function getDiscount()
     {

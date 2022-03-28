@@ -11,7 +11,7 @@ test.describe('Pay with invoice', () => {
         connection.query(defaultPaypalSettingsSql);
     });
 
-    test('Buy a product with invoice', async ({ page }) => {
+    test('Buy products with "Pay Upon Invoice"', async ({ page }) => {
         // login
         await page.goto('/account');
         await page.waitForLoadState('load');
@@ -36,6 +36,25 @@ test.describe('Pay with invoice', () => {
 
         // Check for the legalText
         await expect(page.locator('.swag-payment-paypal-unified-pay-upon-invoice-legal-text')).toHaveText(/Mit Klicken auf den Button akzeptieren Sie die/);
+
+        await page.click('input[name="sAGB"]');
+        await page.click('button:has-text("Zahlungspflichtig bestellen")');
+
+        await expect(page.locator('.teaser--title')).toHaveText(/Vielen Dank für Ihre Bestellung bei Shopware Demo/);
+
+        // Buy 10 products
+        await page.goto('sommerwelten/172/sonnencreme-sunblocker-lsf-50');
+        await page.locator('select[name="sQuantity"]').selectOption('10');
+        await page.click('.buybox--button');
+
+        // Go to checkout
+        await page.click('.button--checkout');
+        await expect(page).toHaveURL(/.*checkout\/confirm/);
+
+        // Change payment
+        await page.click('.btn--change-payment');
+        await page.click('text=Kauf auf Rechnung');
+        await page.click('text=Weiter >> nth=1');
 
         await page.click('input[name="sAGB"]');
         await page.click('button:has-text("Zahlungspflichtig bestellen")');

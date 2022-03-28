@@ -80,7 +80,7 @@ class ItemListProvider
             $value = $this->priceFormatter->roundPrice($lineItem['price']);
 
             if (!$this->customerHelper->usesGrossPrice($customer) || $paymentType === PaymentType::PAYPAL_PAY_UPON_INVOICE_V2) {
-                $value = $lineItem['netprice'];
+                $value = $this->priceFormatter->roundPrice($lineItem['netprice']);
             }
 
             // In the following part, we modify the CustomProducts positions.
@@ -188,7 +188,7 @@ class ItemListProvider
         $tax = new Tax();
 
         $tax->setCurrencyCode($currency);
-        $tax->setValue((string) $this->getSingleItemTaxAmount($lineItem, $customer));
+        $tax->setValue(sprintf('%.2f', $this->getSingleItemTaxAmount($lineItem, $customer)));
 
         $item->setTax($tax);
         $item->setTaxRate($lineItem['tax_rate']);
@@ -211,7 +211,6 @@ class ItemListProvider
             return 0.0;
         }
 
-        // TODO: Check whether priceNumeric is always set, especially with v5.2.x
-        return $lineItem['priceNumeric'] - $lineItem['netprice'];
+        return $this->priceFormatter->roundPrice($lineItem['priceNumeric']) - $this->priceFormatter->roundPrice($lineItem['netprice']);
     }
 }

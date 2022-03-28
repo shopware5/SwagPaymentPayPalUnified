@@ -79,6 +79,13 @@ class ItemListProviderTest extends TestCase
     }
 
     /**
+     * We currently expect getItemList to round the item unit amount and tax
+     * amount, therefore the comparison is done with sprintf('%.2f').
+     *
+     * This behaviour will lead to rounding errors, but we can anticipate them
+     * this way and prepare a breakdown struct, which the PayPal-API will
+     * accept.
+     *
      * @return void
      */
     public function testItCalculatesItemValuesCorrectly()
@@ -96,11 +103,11 @@ class ItemListProviderTest extends TestCase
         );
 
         $item = $this->getFirstItem($itemList);
-        $price = (float) Fixture::PRODUCT_PRICE;
-        $taxRate = (float) Fixture::TAX_RATE_PERCENT / 100 + 1;
+        $price = Fixture::getPrice();
+        $taxRate = Fixture::getTaxRate();
 
-        static::assertSame($price / $taxRate, (float) $item->getUnitAmount()->getValue());
-        static::assertSame($price - $price / $taxRate, (float) $item->getTax()->getValue());
+        static::assertSame(sprintf('%.2f', $price / $taxRate), $item->getUnitAmount()->getValue());
+        static::assertSame(sprintf('%.2f', $price - $price / $taxRate), $item->getTax()->getValue());
     }
 
     /**
