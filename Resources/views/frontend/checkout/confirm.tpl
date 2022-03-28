@@ -136,6 +136,7 @@
         <div data-paypalUnifiedFraudNet="true"
              data-fraudNetSessionId="{$fraudNetSessionId}"
              data-fraudNetFlowId="{$fraudNetFlowId}"
+             data-fraudnetSandbox="{$fraudnetSandbox}"
         ></div>
         <noscript>
             <img src="https://c.paypal.com/v1/r/d/b/ns?f={$fraudNetSessionId}&s={$fraudNetFlowId}&js=0&r=1"/>

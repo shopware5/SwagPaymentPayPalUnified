@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\PayPalBundle\V2\Resource;
 
+use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\PartnerAttributionId;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
@@ -17,6 +18,7 @@ use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Patch;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\RequestUriV2;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\OrderArrayFactory\OrderArrayFactory;
+use SwagPaymentPayPalUnified\Subscriber\FraudNet;
 
 class OrderResource
 {
@@ -35,15 +37,22 @@ class OrderResource
      */
     private $loggerService;
 
+    /**
+     * @var DependencyProvider
+     */
+    private $dependencyProvider;
+
     public function __construct(
         ClientService $clientService,
         OrderArrayFactory $arrayFactory,
-        LoggerServiceInterface $loggerService
+        LoggerServiceInterface $loggerService,
+        DependencyProvider $dependencyProvider
     ) {
         $this->clientService = $clientService;
         $this->clientService->setPartnerAttributionId(PartnerAttributionId::PAYPAL_ALL_V2);
         $this->arrayFactory = $arrayFactory;
         $this->loggerService = $loggerService;
+        $this->dependencyProvider = $dependencyProvider;
     }
 
     /**
@@ -79,6 +88,11 @@ class OrderResource
             $paypalRequestId = bin2hex((string) openssl_random_pseudo_bytes(16));
 
             $this->clientService->setHeader('PayPal-Request-Id', $paypalRequestId);
+        }
+
+        $payPalMetaDataId = $this->dependencyProvider->getSession()->offsetGet(FraudNet::FRAUD_NET_SESSION_KEY);
+        if (\is_string($payPalMetaDataId)) {
+            $this->clientService->setHeader('PayPal-Client-Metadata-Id', $payPalMetaDataId);
         }
 
         $response = $this->clientService->sendRequest(
