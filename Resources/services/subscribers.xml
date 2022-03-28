@@ -200,6 +200,7 @@
                  class="SwagPaymentPayPalUnified\Subscriber\FraudNet"
                  public="true">
             <argument type="service" id="paypal_unified.dependency_provider"/>
+            <argument type="service" id="paypal_unified.settings_service"/>
             <tag name="shopware.event_subscriber"/>
         </service>
 

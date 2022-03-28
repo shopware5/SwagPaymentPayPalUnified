@@ -13,10 +13,13 @@ use Enlight_Event_EventArgs;
 use Shopware_Controllers_Frontend_Checkout;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 
 class FraudNet implements SubscriberInterface
 {
     const FRAUD_NET_SOURCE_WEBSITE_IDENTIFIER = 'shopware-v5_checkout-page';
+
+    const FRAUD_NET_SESSION_KEY = 'fraudNetSessionId';
 
     const PAYMENT_METHODS_REQUIRED_FRAUD_NET = [
         PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME,
@@ -28,9 +31,15 @@ class FraudNet implements SubscriberInterface
      */
     private $dependencyProvider;
 
-    public function __construct(DependencyProvider $dependencyProvider)
+    /**
+     * @var SettingsServiceInterface
+     */
+    private $settingsService;
+
+    public function __construct(DependencyProvider $dependencyProvider, SettingsServiceInterface $settingsService)
     {
         $this->dependencyProvider = $dependencyProvider;
+        $this->settingsService = $settingsService;
     }
 
     public static function getSubscribedEvents()
@@ -54,9 +63,12 @@ class FraudNet implements SubscriberInterface
             return;
         }
 
-        $subject->View()->assign('fraudNetSessionId', $this->getFraudNetSessionId());
-        $subject->View()->assign('fraudNetFlowId', self::FRAUD_NET_SOURCE_WEBSITE_IDENTIFIER);
-        $subject->View()->assign('usePayPalFraudNet', true);
+        $subject->View()->assign([
+            'fraudNetSessionId' => $this->getFraudNetSessionId(),
+            'fraudNetFlowId' => self::FRAUD_NET_SOURCE_WEBSITE_IDENTIFIER,
+            'fraudnetSandbox' => (bool) $this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_SANDBOX),
+            'usePayPalFraudNet' => true,
+        ]);
     }
 
     /**
@@ -64,11 +76,11 @@ class FraudNet implements SubscriberInterface
      */
     private function getFraudNetSessionId()
     {
-        $fraudNetSessionId = $this->dependencyProvider->getSession()->offsetGet('fraudNetSessionId');
+        $fraudNetSessionId = $this->dependencyProvider->getSession()->offsetGet(self::FRAUD_NET_SESSION_KEY);
 
         if ($fraudNetSessionId === null) {
             $fraudNetSessionId = bin2hex((string) openssl_random_pseudo_bytes(16));
-            $this->dependencyProvider->getSession()->offsetSet('fraudNetSessionId', $fraudNetSessionId);
+            $this->dependencyProvider->getSession()->offsetSet(self::FRAUD_NET_SESSION_KEY, $fraudNetSessionId);
         }
 
         return $fraudNetSessionId;
