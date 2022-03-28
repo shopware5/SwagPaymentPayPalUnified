@@ -325,12 +325,27 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
             this.promptDisablePlus();
         }
 
-        this.payUponInvoiceRecord.set('active', responseBody[this.PAYMENT_METHOD_CAPABILITY_NAME.PAY_UPON_INVOICE]);
+        // If it is "NOT isEligible" and "isActive".. Then set active to the eligibility result
+        if (!responseBody[this.PAYMENT_METHOD_CAPABILITY_NAME.PAY_UPON_INVOICE] && this.payUponInvoiceRecord.get('active')) {
+            this.payUponInvoiceRecord.set('active', responseBody[this.PAYMENT_METHOD_CAPABILITY_NAME.PAY_UPON_INVOICE]);
+        }
+        if (!responseBody[this.PAYMENT_METHOD_CAPABILITY_NAME.ADVANCED_CREDIT_DEBIT_CARD] && this.advancedCreditDebitCardRecord.get('active')) {
+            this.advancedCreditDebitCardRecord.set('active', responseBody[this.PAYMENT_METHOD_CAPABILITY_NAME.ADVANCED_CREDIT_DEBIT_CARD]);
+        }
+
+        // If onboarding "NOT completed" set active to the eligibility result
+        if (!this.payUponInvoiceRecord.get(setterName)) {
+            this.payUponInvoiceRecord.set('active', responseBody[this.PAYMENT_METHOD_CAPABILITY_NAME.PAY_UPON_INVOICE]);
+        }
+        if (!this.advancedCreditDebitCardRecord.get(setterName)) {
+            this.advancedCreditDebitCardRecord.set('active', responseBody[this.PAYMENT_METHOD_CAPABILITY_NAME.ADVANCED_CREDIT_DEBIT_CARD]);
+        }
+
+        // Set onboardingCompleted to the eligibility result
+        this.advancedCreditDebitCardRecord.set(setterName, responseBody[this.PAYMENT_METHOD_CAPABILITY_NAME.ADVANCED_CREDIT_DEBIT_CARD]);
         this.payUponInvoiceRecord.set(setterName, responseBody[this.PAYMENT_METHOD_CAPABILITY_NAME.PAY_UPON_INVOICE]);
 
-        this.advancedCreditDebitCardRecord.set('active', responseBody[this.PAYMENT_METHOD_CAPABILITY_NAME.ADVANCED_CREDIT_DEBIT_CARD]);
-        this.advancedCreditDebitCardRecord.set(setterName, responseBody[this.PAYMENT_METHOD_CAPABILITY_NAME.ADVANCED_CREDIT_DEBIT_CARD]);
-
+        // Set limits result
         this.getPayUponInvoiceTab().setHasLimits(responseBody[this.PAYMENT_METHOD_CAPABILITY_NAME.PAY_UPON_INVOICE_HAS_LIMITS])
         this.getAdvancedCreditDebitCardTab().setHasLimits(responseBody[this.PAYMENT_METHOD_CAPABILITY_NAME.ADVANCED_CREDIT_DEBIT_CARD_HAS_LIMITS])
 
@@ -742,6 +757,8 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
                 fn: Ext.bind(this.promptDisablePlusHandler, this),
                 buttonText: buttonTextConfig
             });
+        } else {
+            this.promptDisablePlusHandler('ok');
         }
     },
 

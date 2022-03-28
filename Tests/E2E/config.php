@@ -19,4 +19,7 @@ return [
         'frontend' => false,
         'backend' => false,
     ],
+    'logger' => [
+        'level' => \Shopware\Components\Logger::DEBUG,
+    ],
 ];

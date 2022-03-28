@@ -57,3 +57,11 @@ Now only every test that matches the name "express" is executed.
 1. go to https://trace.playwright.dev/
 
 2. Unzip the artifacts and load the trace of the test
+
+# Create a basic test with CODEGEN.
+
+1. Got to .../Tests/e2e/test
+2. Execute ```npx playwright codegen YOUR_URL``` and ensure to replace YOUR_URL with your url like "shopware.localhost/backend"
+3. Click through the page to generate a basic test code
+4. Copy the test code to your test file
+5. Adjust the test with waiting for the loading states, expectations and other.

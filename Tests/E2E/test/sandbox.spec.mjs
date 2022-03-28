@@ -3,6 +3,7 @@ import credentials from './credentials.mjs';
 import MysqlFactory from '../helper/mysqlFactory.mjs';
 import fs from 'fs';
 import path from 'path';
+import backendHandleSaveHelper from '../helper/backendHandleSaveHelper.mjs';
 const connection = MysqlFactory.getInstance();
 const truncateTables = fs.readFileSync(path.join(path.resolve(''), 'setup/sql/truncate_paypal_tables.sql'), 'utf8');
 
@@ -37,29 +38,12 @@ test.describe('Backend testing', () => {
         await page.locator('button[role="button"]:has-text("PayPal Express Checkout Integration")').click();
         await page.locator('text=\'Direkt zu PayPal\' auf Listing-Seiten:Wenn diese Option aktiv ist, wird der Expr >> input[type="button"]').click();
 
-        await Promise.all([
-            page.click('text=Speichern'),
-            page.waitForResponse(/.*PaypalUnifiedSettings.*/),
-            page.waitForResponse(/.*PaypalUnifiedExpressSettings.*/),
-            page.waitForResponse(/.*PaypalUnifiedPlusSettings.*/),
-            page.waitForResponse(/.*PaypalUnifiedInstallmentsSettings.*/),
-            page.waitForResponse(/.*PaypalUnifiedPayUponInvoiceSettings.*/),
-            page.waitForResponse(/.*PaypalUnifiedAdvancedCreditDebitCardSettings.*/)
-        ]);
+        await backendHandleSaveHelper.saveWithoutPayerId(page);
 
         await page.locator('button[role="button"]:has-text("Grundeinstellungen")').click();
         await page.fill('input[name="sandboxPaypalPayerId"]', credentials.paypalSandboxMerchantId);
 
-        await Promise.all([
-            page.waitForResponse(/.*isCapable.*/),
-            page.waitForResponse(/.*PaypalUnifiedSettings.*/),
-            page.waitForResponse(/.*PaypalUnifiedExpressSettings.*/),
-            page.waitForResponse(/.*PaypalUnifiedPlusSettings.*/),
-            page.waitForResponse(/.*PaypalUnifiedInstallmentsSettings.*/),
-            page.waitForResponse(/.*PaypalUnifiedPayUponInvoiceSettings.*/),
-            page.waitForResponse(/.*PaypalUnifiedAdvancedCreditDebitCardSettings.*/),
-            page.click('text=Speichern')
-        ]);
+        await backendHandleSaveHelper.save(page);
 
         // Fill textarea[name="customerServiceInstructions"]
         await page.locator('button[role="button"]:has-text("Grundeinstellungen")').click();
