@@ -72,6 +72,16 @@
             {block name='frontend_paypal_unified_confirm_sepa_payment_button'}
                 {include file="frontend/paypal_unified/sepa/sepa_payment_button.tpl"}
             {/block}
+        {elseif $showPayUponInvoiceLegalText}
+            {block name='swag_payment_paypal_unified_pay_upon_invoice_legal_text'}
+                <div class="swag-payment-paypal-unified-pay-upon-invoice-legal-text-container right">
+                    <div class="swag-payment-paypal-unified-pay-upon-invoice-legal-text">
+                        {s name="payUponInvoice/legalText" namespace="frontend/paypal_unified/checkout/confirm"}{/s}
+                    </div>
+
+                    {$smarty.block.parent}
+                </div>
+            {/block}
         {else}
             {$smarty.block.parent}
         {/if}

@@ -220,6 +220,8 @@ SW 5.7 PHP 8.0:
 
 E2E:
     stage: E2E
+    tags:
+        - m5.large
     services:
         - name: mysql:5.7
           alias: mysql

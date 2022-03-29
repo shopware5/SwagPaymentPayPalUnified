@@ -34,6 +34,9 @@ test.describe('Pay with invoice', () => {
         await page.click('text=Kauf auf Rechnung');
         await page.click('text=Weiter >> nth=1');
 
+        // Check for the legalText
+        await expect(page.locator('.swag-payment-paypal-unified-pay-upon-invoice-legal-text')).toHaveText(/Mit Klicken auf den Button akzeptieren Sie die/);
+
         await page.click('input[name="sAGB"]');
         await page.click('button:has-text("Zahlungspflichtig bestellen")');
 
