@@ -21,7 +21,7 @@ const config = {
     /* Fail the build on CI if you accidentally left test.only in the source code. */
     forbidOnly: !!process.env.CI,
     /* Retry on CI only */
-    retries: 0,
+    retries: 3,
     /* The maximum number of test failures for the whole test suite run */
     maxFailures: 1,
     /* Opt out of parallel tests on CI. */
