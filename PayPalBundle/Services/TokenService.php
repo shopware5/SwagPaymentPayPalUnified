@@ -57,6 +57,18 @@ class TokenService
     /**
      * @param int $shopId
      *
+     * @return void
+     */
+    public function invalidateCache($shopId)
+    {
+        $this->logger->debug(sprintf('%s INVALIDATING AUTHENTICATION CACHE FOR SHOP ID: %d', __METHOD__, $shopId));
+
+        $this->cacheManager->getCoreCache()->remove(self::CACHE_ID . $shopId);
+    }
+
+    /**
+     * @param int $shopId
+     *
      * @return Token|false
      */
     private function getTokenFromCache($shopId)

@@ -611,11 +611,6 @@ parameters:
 			path: Controllers/Backend/PaypalUnified.php
 
 		-
-			message: "#^Method Shopware_Controllers_Backend_PaypalUnified\\:\\:updateCredentialsAction\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Controllers/Backend/PaypalUnified.php
-
-		-
 			message: "#^Method Shopware_Controllers_Backend_PaypalUnified\\:\\:voidAuthorizationAction\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: Controllers/Backend/PaypalUnified.php
