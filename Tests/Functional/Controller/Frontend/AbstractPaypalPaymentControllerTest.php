@@ -14,6 +14,7 @@ use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\UnifiedControllerTestCase;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class AbstractPaypalPaymentControllerTest extends UnifiedControllerTestCase
@@ -32,10 +33,10 @@ class AbstractPaypalPaymentControllerTest extends UnifiedControllerTestCase
      */
     public function setRequestStack()
     {
-        $requestStack = new RequestStack();
-        $requestStack->push($this->Request());
-
-        $this->getContainer()->set('request_stack', $requestStack);
+        $requestStack = $this->getContainer()->get('request_stack', ContainerInterface::NULL_ON_INVALID_REFERENCE);
+        if ($requestStack instanceof RequestStack) {
+            $requestStack->push($this->Request());
+        }
         $this->getContainer()->get('front')->setRequest($this->Request());
     }
 
