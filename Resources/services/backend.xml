@@ -51,6 +51,7 @@
             <argument type="service" id="models"/>
             <argument type="service" id="paypal_unified.logger_service"/>
             <argument type="service" id="paypal_unified.client_service"/>
+            <argument type="service" id="paypal_unified.token_service"/>
         </service>
     </services>
 </container>
