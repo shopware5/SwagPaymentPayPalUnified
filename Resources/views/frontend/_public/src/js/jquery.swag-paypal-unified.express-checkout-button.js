@@ -18,18 +18,11 @@
             clientId: '',
 
             /**
-             * Depending on the mode, the library will load the PSP from different locations. live will
-             * load it from paypal.com whereas sandbox will load it from sandbox.paypal.com. The
-             * library will also emit warning to the console if the mode is sandbox (in live mode it will
-             * do so only for required parameters).
+             * Use PayPal debug mode
              *
-             * Available modes:
-             *  - production
-             *  - sandbox
-             *
-             * @type string
+             * @type boolean
              */
-            paypalMode: 'production',
+            useDebugMode: false,
 
             /**
              * URL used to create a new payment
@@ -345,7 +338,7 @@
                 params.locale = this.opts.locale;
             }
 
-            if (this.opts.paypalMode === 'sandbox') {
+            if (this.opts.useDebugMode) {
                 params.debug = true;
             }
 

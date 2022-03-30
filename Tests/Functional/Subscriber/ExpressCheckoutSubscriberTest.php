@@ -194,7 +194,6 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $subscriber = $this->getSubscriber();
         $subscriber->addExpressCheckoutButtonCart($enlightEventArgs);
 
-        static::assertTrue($view->getAssign('paypalUnifiedModeSandbox'));
         static::assertNotNull($view->getAssign('paypalUnifiedClientId'));
     }
 
@@ -219,7 +218,7 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $subscriber = $this->getSubscriber();
         $subscriber->addExpressCheckoutButtonCart($enlightEventArgs);
 
-        static::assertTrue($view->getAssign('paypalUnifiedModeSandbox'));
+        static::assertTrue($view->getAssign('paypalUnifiedEcCartActive'));
     }
 
     /**
@@ -246,7 +245,6 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $subscriber->addExpressCheckoutButtonCart($enlightEventArgs);
 
         static::assertNull($view->getAssign('paypalUnifiedEcCartActive'));
-        static::assertNull($view->getAssign('paypalUnifiedModeSandbox'));
         static::assertNull($view->getAssign('paypalUnifiedEcOffCanvasActive'));
         static::assertNull($view->getAssign('paypalUnifiedUseInContext'));
     }

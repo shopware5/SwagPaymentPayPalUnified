@@ -4,7 +4,8 @@ import defaultPaypalSettingsSql from '../helper/paypalSqlHelper.mjs';
 import credentials from './credentials.mjs';
 const connection = MysqlFactory.getInstance();
 
-test.describe('Is Express Checkout button available', () => {
+// TODO: Fix with PT-12677
+test.fixme('Is Express Checkout button available', () => {
     test.beforeEach(() => {
         connection.query(defaultPaypalSettingsSql);
     });

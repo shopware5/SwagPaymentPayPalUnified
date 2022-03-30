@@ -9,11 +9,11 @@
             sdkUrl: 'https://www.paypal.com/sdk/js',
 
             /**
-             * Use PayPal sandbox
+             * Use PayPal debug mode
              *
              * @type boolean
              */
-            useSandbox: false,
+            useDebugMode: false,
 
             /**
              * The URL used to create the order
@@ -203,7 +203,7 @@
                 params.locale = this.opts.locale;
             }
 
-            if (this.opts.useSandbox) {
+            if (this.opts.useDebugMode) {
                 params.debug = true;
             }
 

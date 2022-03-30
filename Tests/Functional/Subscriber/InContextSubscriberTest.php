@@ -158,7 +158,6 @@ class InContextSubscriberTest extends TestCase
         $subscriber = $this->getSubscriber();
         $subscriber->addInContextButton($enlightEventArgs);
 
-        static::assertTrue($view->getAssign('paypalUnifiedModeSandbox'));
         static::assertTrue($view->getAssign('paypalUnifiedUseInContext'));
     }
 

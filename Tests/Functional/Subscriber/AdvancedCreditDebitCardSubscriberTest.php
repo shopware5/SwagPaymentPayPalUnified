@@ -54,7 +54,7 @@ class AdvancedCreditDebitCardSubscriberTest extends TestCase
         $subscriber = $this->getSubscriber();
         $subscriber->onCheckout($enlightEventArgs);
 
-        static::assertTrue($view->getAssign('paypalUnifiedModeSandbox'));
+        static::assertTrue($view->getAssign('paypalUnifiedAdvancedCreditDebitCardActive'));
     }
 
     /**

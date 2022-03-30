@@ -125,7 +125,6 @@ class ExpressCheckout implements SubscriberInterface
         }
 
         $view->assign('paypalUnifiedEcCartActive', $expressSettings->getCartActive());
-        $view->assign('paypalUnifiedModeSandbox', $generalSettings->getSandbox());
         $view->assign('paypalUnifiedEcOffCanvasActive', $expressSettings->getOffCanvasActive());
 
         $request = $args->getRequest();
@@ -300,9 +299,7 @@ class ExpressCheckout implements SubscriberInterface
      */
     private function addEcButtonBehaviour(ViewEngine $view, GeneralSettingsModel $generalSettings)
     {
-        $sandbox = $generalSettings->getSandbox();
-        $view->assign('paypalUnifiedModeSandbox', $sandbox);
-        $view->assign('paypalUnifiedClientId', $sandbox ? $generalSettings->getSandboxClientId() : $generalSettings->getClientId());
+        $view->assign('paypalUnifiedClientId', $generalSettings->getSandbox() ? $generalSettings->getSandboxClientId() : $generalSettings->getClientId());
 
         $shop = $this->dependencyProvider->getShop();
 
