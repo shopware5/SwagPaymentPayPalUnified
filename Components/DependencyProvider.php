@@ -30,11 +30,17 @@ class DependencyProvider
      */
     public function getShop()
     {
-        if ($this->container->has('shop')) {
-            return $this->container->get('shop');
+        if (!$this->container->initialized('shop')) {
+            return null;
         }
 
-        return null;
+        $shop = $this->container->get('shop');
+
+        if (!$shop instanceof Shop) {
+            return null;
+        }
+
+        return $shop;
     }
 
     /**
@@ -42,11 +48,8 @@ class DependencyProvider
      */
     public function getFront()
     {
-        if ($this->container->has('front')) {
-            /** @var \Enlight_Controller_Front $front */
-            $front = $this->container->get('front');
-
-            return $front;
+        if ($this->container->initialized('front')) {
+            return $this->container->get('front');
         }
 
         return null;
@@ -78,7 +81,7 @@ class DependencyProvider
      */
     public function createPaymentToken()
     {
-        if ($this->container->has(PaymentTokenService::class)) {
+        if ($this->container->initialized(PaymentTokenService::class)) {
             if ($this->isBlacklistedShopwareVersionsForPaymentToken()) {
                 return null;
             }

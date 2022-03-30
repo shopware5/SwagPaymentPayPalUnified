@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\PayPalBundle\Resources;
 
+use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\RequestType;
 use SwagPaymentPayPalUnified\PayPalBundle\RequestUri;
 use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService;
@@ -20,9 +21,15 @@ class CaptureResource
      */
     private $clientService;
 
-    public function __construct(ClientService $clientService)
+    /**
+     * @var LoggerServiceInterface
+     */
+    private $logger;
+
+    public function __construct(ClientService $clientService, LoggerServiceInterface $logger)
     {
         $this->clientService = $clientService;
+        $this->logger = $logger;
     }
 
     /**
@@ -32,7 +39,9 @@ class CaptureResource
      */
     public function get($id)
     {
-        return $this->clientService->sendRequest(RequestType::GET, RequestUri::CAPTURE_RESOURCE . '/' . $id);
+        $this->logger->debug(sprintf('%s GET WITH ID %s', __METHOD__, $id));
+
+        return $this->clientService->sendRequest(RequestType::GET, sprintf('%s/%s', RequestUri::CAPTURE_RESOURCE, $id));
     }
 
     /**
@@ -42,8 +51,14 @@ class CaptureResource
      */
     public function refund($id, CaptureRefund $refund)
     {
+        $this->logger->debug(sprintf('%s REFUND WITH ID %s', __METHOD__, $id), $refund->toArray());
+
         $requestData = $refund->toArray();
 
-        return $this->clientService->sendRequest(RequestType::POST, RequestUri::CAPTURE_RESOURCE . '/' . $id . '/refund', $requestData);
+        return $this->clientService->sendRequest(
+            RequestType::POST,
+            sprintf('%s/%s/refund', RequestUri::CAPTURE_RESOURCE, $id),
+            $requestData
+        );
     }
 }

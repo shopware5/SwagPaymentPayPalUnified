@@ -21,7 +21,7 @@ class ClientService extends OriginalClientService
     {
     }
 
-    public function sendRequest($type, $resourceUri, array $data = [], $jsonPayload = true)
+    public function sendRequest($type, $resourceUri, $data = [], $jsonPayload = true)
     {
         return $this->expectedResult;
     }

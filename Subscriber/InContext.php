@@ -8,10 +8,10 @@
 
 namespace SwagPaymentPayPalUnified\Subscriber;
 
-use Doctrine\DBAL\Connection;
 use Enlight\Event\SubscriberInterface;
-use SwagPaymentPayPalUnified\Components\DependencyProvider;
-use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
+use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
+use SwagPaymentPayPalUnified\Components\ButtonLocaleService;
+use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Models\Settings\ExpressCheckout as ExpressSettingsModel;
 use SwagPaymentPayPalUnified\Models\Settings\General as GeneralSettingsModel;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
@@ -20,14 +20,9 @@ use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 class InContext implements SubscriberInterface
 {
     /**
-     * @var PaymentMethodProvider
+     * @var PaymentMethodProviderInterface
      */
     private $paymentMethodProvider;
-
-    /**
-     * @var Connection
-     */
-    private $connection;
 
     /**
      * @var SettingsServiceInterface
@@ -35,19 +30,25 @@ class InContext implements SubscriberInterface
     private $settingsService;
 
     /**
-     * @var DependencyProvider
+     * @var ContextServiceInterface
      */
-    private $dependencyProvider;
+    private $contextService;
+
+    /**
+     * @var ButtonLocaleService
+     */
+    private $buttonLocaleService;
 
     public function __construct(
-        Connection $connection,
         SettingsServiceInterface $settingsService,
-        DependencyProvider $dependencyProvider
+        PaymentMethodProviderInterface $paymentMethodProvider,
+        ContextServiceInterface $contextService,
+        ButtonLocaleService $buttonLocaleService
     ) {
-        $this->paymentMethodProvider = new PaymentMethodProvider();
-        $this->connection = $connection;
         $this->settingsService = $settingsService;
-        $this->dependencyProvider = $dependencyProvider;
+        $this->paymentMethodProvider = $paymentMethodProvider;
+        $this->contextService = $contextService;
+        $this->buttonLocaleService = $buttonLocaleService;
     }
 
     /**
@@ -58,6 +59,7 @@ class InContext implements SubscriberInterface
         return [
             'Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout' => [
                 ['addInContextButton'],
+                ['addInfoToPaymentRequest'],
                 ['addInContextInfoToRequest', 100],
             ],
         ];
@@ -73,7 +75,7 @@ class InContext implements SubscriberInterface
             return;
         }
 
-        $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag($this->connection);
+        $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
         if (!$swUnifiedActive) {
             return;
         }
@@ -83,7 +85,7 @@ class InContext implements SubscriberInterface
         if (!$settings
             || !$settings->getActive()
             || !$settings->getUseInContext()
-            || ($settings->getUseSmartPaymentButtons() && $settings->getMerchantLocation() === GeneralSettingsModel::MERCHANT_LOCATION_OTHER)
+            || $settings->getUseSmartPaymentButtons()
         ) {
             return;
         }
@@ -94,43 +96,64 @@ class InContext implements SubscriberInterface
             return;
         }
 
+        $sandbox = $settings->getSandbox();
         $view = $controller->View();
-        $view->assign('paypalUnifiedPaymentId', $this->paymentMethodProvider->getPaymentId($this->connection));
-        $view->assign('paypalUnifiedModeSandbox', $settings->getSandbox());
+        $view->assign('paypalUnifiedPaymentId', $this->paymentMethodProvider->getPaymentId(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME));
+        $view->assign('paypalUnifiedModeSandbox', $sandbox);
         $view->assign('paypalUnifiedUseInContext', $settings->getUseInContext());
-        $view->assign('paypalUnifiedEcButtonStyleColor', $expressSettings->getButtonStyleColor());
-        $view->assign('paypalUnifiedEcButtonStyleShape', $expressSettings->getButtonStyleShape());
-        $view->assign('paypalUnifiedEcButtonStyleSize', $expressSettings->getButtonStyleSize());
-        $view->assign('paypalUnifiedLanguageIso', $this->getInContextButtonLanguage($expressSettings));
+        $view->assign('paypalUnifiedButtonStyleColor', $settings->getButtonStyleColor());
+        $view->assign('paypalUnifiedButtonStyleShape', $settings->getButtonStyleShape());
+        $view->assign('paypalUnifiedButtonStyleSize', $settings->getButtonStyleSize());
+        $view->assign('paypalUnifiedButtonLocale', $this->buttonLocaleService->getButtonLocale($settings->getButtonLocale()));
+        $view->assign('paypalUnifiedClientId', $sandbox ? $settings->getSandboxClientId() : $settings->getClientId());
+        $view->assign('paypalUnifiedCurrency', $this->contextService->getContext()->getCurrency()->getCurrency());
+        $view->assign('paypalUnifiedIntent', $this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_INTENT));
     }
 
     public function addInContextInfoToRequest(\Enlight_Controller_ActionEventArgs $args)
     {
         $request = $args->getRequest();
+        $view = $args->getSubject()->View();
+
         if ($request->getActionName() === 'payment'
             && $request->getParam('useInContext')
             && $args->getResponse()->isRedirect()
         ) {
             $args->getSubject()->redirect([
-                'controller' => 'PaypalUnified',
-                'action' => 'gateway',
+                'controller' => 'PaypalUnifiedV2',
+                'action' => 'return',
                 'useInContext' => true,
             ]);
+        } elseif (\strtolower($request->getActionName()) === 'confirm' && $request->getParam('inContextCheckout', false)) {
+            // This determines, whether the paypal-Buttons need to be rendered
+            $view->assign('paypalUnifiedInContextCheckout', true);
+            $view->assign('paypalUnifiedInContextOrderId', $request->getParam('paypalOrderId'));
+            $view->assign('paypalUnifiedInContextPayerId', $request->getParam('payerId'));
+            $view->assign('paypalUnifiedInContextBasketId', $request->getParam('basketId'));
         }
     }
 
     /**
-     * @return string
+     * @return void
      */
-    private function getInContextButtonLanguage(ExpressSettingsModel $expressSettings)
+    public function addInfoToPaymentRequest(\Enlight_Controller_ActionEventArgs $args)
     {
-        $locale = $this->dependencyProvider->getShop()->getLocale()->getLocale();
-        $buttonLocaleFromSetting = (string) $expressSettings->getButtonLocale();
+        $request = $args->getRequest();
 
-        if ($buttonLocaleFromSetting !== '') {
-            $locale = $buttonLocaleFromSetting;
+        if (\strtolower($request->getActionName()) !== 'payment'
+            || !$request->getParam('inContextCheckout', false)
+            || !$args->getResponse()->isRedirect()
+        ) {
+            return;
         }
 
-        return $locale;
+        $args->getSubject()->redirect([
+            'controller' => 'PaypalUnifiedV2',
+            'action' => 'return',
+            'inContextCheckout' => true,
+            'token' => $request->getParam('paypalOrderId'),
+            'PayerID' => $request->getParam('payerId'),
+            'basketId' => $request->getParam('basketId'),
+        ]);
     }
 }

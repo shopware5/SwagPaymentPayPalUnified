@@ -8,10 +8,12 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Subscriber;
 
+use Enlight_Controller_Response_ResponseTestCase;
 use Enlight_Template_Manager;
 use PHPUnit\Framework\TestCase;
 use Shopware\Bundle\StoreFrontBundle\Service\Core\ContextService;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
+use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Subscriber\InstallmentsBanner;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\SettingsHelperTrait;
@@ -46,7 +48,7 @@ class InstallmentsBannerSubscriberTest extends TestCase
         $view = new ViewMock(new Enlight_Template_Manager());
         $request = new \Enlight_Controller_Request_RequestTestCase();
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
         ]);
 
         $result = $subscriber->onPostDispatchSecure($enlightEventArgs);
@@ -63,7 +65,7 @@ class InstallmentsBannerSubscriberTest extends TestCase
         $view = new ViewMock(new Enlight_Template_Manager());
         $request = new \Enlight_Controller_Request_RequestTestCase();
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
         ]);
 
         $subscriber->onPostDispatchSecure($enlightEventArgs);
@@ -73,15 +75,15 @@ class InstallmentsBannerSubscriberTest extends TestCase
 
     public function testOnPostDispatchSecurePaymentMethodInactive()
     {
-        $paymentMethodProvider = new PaymentMethodProvider(Shopware()->Container()->get('models'));
-        $paymentMethodProvider->setPaymentMethodActiveFlag(false);
+        $paymentMethodProvider = $this->getPaymentMethodProvider();
+        $paymentMethodProvider->setPaymentMethodActiveFlag(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME, false);
         $subscriber = $this->getSubscriber();
         $this->createTestSettings();
 
         $view = new ViewMock(new Enlight_Template_Manager());
         $request = new \Enlight_Controller_Request_RequestTestCase();
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
         ]);
 
         $subscriber->onPostDispatchSecure($enlightEventArgs);
@@ -91,15 +93,15 @@ class InstallmentsBannerSubscriberTest extends TestCase
 
     public function testOnPostDispatchSecureInstallmentsBannerInactive()
     {
-        $paymentMethodProvider = new PaymentMethodProvider(Shopware()->Container()->get('models'));
-        $paymentMethodProvider->setPaymentMethodActiveFlag(false);
+        $paymentMethodProvider = $this->getPaymentMethodProvider();
+        $paymentMethodProvider->setPaymentMethodActiveFlag(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME, false);
         $subscriber = $this->getSubscriber();
         $this->createTestSettings(true, false);
 
         $view = new ViewMock(new Enlight_Template_Manager());
         $request = new \Enlight_Controller_Request_RequestTestCase();
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
         ]);
 
         $subscriber->onPostDispatchSecure($enlightEventArgs);
@@ -117,7 +119,7 @@ class InstallmentsBannerSubscriberTest extends TestCase
         $request->setControllerName('foo');
         $request->setActionName('bar');
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
             'request' => $request,
         ]);
 
@@ -141,7 +143,7 @@ class InstallmentsBannerSubscriberTest extends TestCase
         $request->setControllerName('detail');
         $request->setActionName('index');
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
             'request' => $request,
         ]);
 
@@ -165,7 +167,7 @@ class InstallmentsBannerSubscriberTest extends TestCase
         $request->setControllerName('checkout');
         $request->setActionName('cart');
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
             'request' => $request,
         ]);
 
@@ -187,7 +189,7 @@ class InstallmentsBannerSubscriberTest extends TestCase
         $request->setControllerName('detail');
         $request->setActionName('index');
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
             'request' => $request,
         ]);
 
@@ -202,6 +204,7 @@ class InstallmentsBannerSubscriberTest extends TestCase
         $this->createTestSettings();
 
         $sql = \file_get_contents(__DIR__ . '/_fixtures/install_great_britan_pounds.sql');
+        static::assertTrue(\is_string($sql));
         Shopware()->Container()->get('dbal_connection')->exec($sql);
 
         $contextService = Shopware()->Container()->get('shopware_storefront.context_service');
@@ -217,7 +220,7 @@ class InstallmentsBannerSubscriberTest extends TestCase
         $request->setControllerName('detail');
         $request->setActionName('index');
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
             'request' => $request,
         ]);
 
@@ -235,13 +238,14 @@ class InstallmentsBannerSubscriberTest extends TestCase
     {
         return new InstallmentsBanner(
             Shopware()->Container()->get('paypal_unified.settings_service'),
-            Shopware()->Container()->get('dbal_connection'),
-            Shopware()->Container()->get('shopware_storefront.context_service')
+            Shopware()->Container()->get('shopware_storefront.context_service'),
+            Shopware()->Container()->get('paypal_unified.payment_method_provider')
         );
     }
 
     /**
      * @param bool $active
+     * @param bool $advertiseInstallments
      */
     private function createTestSettings($active = true, $advertiseInstallments = true)
     {
@@ -255,5 +259,13 @@ class InstallmentsBannerSubscriberTest extends TestCase
             'shopId' => 1,
             'advertiseInstallments' => $advertiseInstallments,
         ]);
+    }
+
+    private function getPaymentMethodProvider()
+    {
+        return new PaymentMethodProvider(
+            Shopware()->Container()->get('dbal_connection'),
+            Shopware()->Container()->get('models')
+        );
     }
 }

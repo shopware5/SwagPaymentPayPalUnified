@@ -8,12 +8,12 @@
 
 namespace SwagPaymentPayPalUnified\Subscriber;
 
-use Doctrine\DBAL\Connection;
 use Enlight\Event\SubscriberInterface;
 use Enlight_Controller_ActionEventArgs as ActionEventArgs;
 use Enlight_View_Default as View;
 use Shopware_Components_Snippet_Manager as SnippetManager;
-use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
+use SwagPaymentPayPalUnified\Components\ButtonLocaleService;
+use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Models\Settings\General as GeneralSettingsModel;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 
@@ -25,29 +25,30 @@ class SmartPaymentButtons implements SubscriberInterface
     private $settingsService;
 
     /**
-     * @var Connection
-     */
-    private $connection;
-
-    /**
      * @var SnippetManager
      */
     private $snippetManager;
 
     /**
-     * @var PaymentMethodProvider
+     * @var PaymentMethodProviderInterface
      */
     private $paymentMethodProvider;
 
+    /**
+     * @var ButtonLocaleService
+     */
+    private $buttonLocaleService;
+
     public function __construct(
         SettingsServiceInterface $settingsService,
-        Connection $connection,
-        SnippetManager $snippetManager
+        SnippetManager $snippetManager,
+        PaymentMethodProviderInterface $paymentMethodProvider,
+        ButtonLocaleService $buttonLocaleService
     ) {
         $this->settingsService = $settingsService;
-        $this->connection = $connection;
         $this->snippetManager = $snippetManager;
-        $this->paymentMethodProvider = new PaymentMethodProvider();
+        $this->paymentMethodProvider = $paymentMethodProvider;
+        $this->buttonLocaleService = $buttonLocaleService;
     }
 
     public static function getSubscribedEvents()
@@ -77,7 +78,6 @@ class SmartPaymentButtons implements SubscriberInterface
 
         if ($generalSettings === null
             || !$generalSettings->getUseSmartPaymentButtons()
-            || $generalSettings->getMerchantLocation() === GeneralSettingsModel::MERCHANT_LOCATION_GERMANY
             || $request->getParam('spbCheckout', false)
         ) {
             return;
@@ -85,10 +85,14 @@ class SmartPaymentButtons implements SubscriberInterface
 
         $this->changePaymentDescription($view, 'sPayments');
 
+        $sandbox = $generalSettings->getSandbox();
         $view->assign('paypalUnifiedUseSmartPaymentButtons', true);
-        $view->assign('paypalUnifiedSpbClientId', $generalSettings->getClientId());
+        $view->assign('paypalUnifiedModeSandbox', $sandbox);
+        $view->assign('paypalUnifiedSpbClientId', $sandbox ? $generalSettings->getSandboxClientId() : $generalSettings->getClientId());
         $view->assign('paypalUnifiedSpbCurrency', $view->getAssign('sBasket')['sCurrencyName']);
-        $view->assign('paypalUnifiedPaymentId', $this->paymentMethodProvider->getPaymentId($this->connection));
+        $view->assign('paypalUnifiedPaymentId', $this->paymentMethodProvider->getPaymentId(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME));
+        $view->assign('paypalUnifiedIntent', $this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_INTENT));
+        $view->assign('paypalUnifiedButtonLocale', $this->buttonLocaleService->getButtonLocale($generalSettings->getButtonLocale()));
     }
 
     public function addSmartPaymentButtonMarks(ActionEventArgs $args)
@@ -106,7 +110,6 @@ class SmartPaymentButtons implements SubscriberInterface
 
         if ($generalSettings === null
             || !$generalSettings->getUseSmartPaymentButtons()
-            || $generalSettings->getMerchantLocation() === GeneralSettingsModel::MERCHANT_LOCATION_GERMANY
         ) {
             return;
         }
@@ -114,8 +117,8 @@ class SmartPaymentButtons implements SubscriberInterface
         $this->changePaymentDescription($view, 'sPaymentMeans');
 
         $view->assign('paypalUnifiedUseSmartPaymentButtonMarks', true);
-        $view->assign('paypalUnifiedSpbClientId', $generalSettings->getClientId());
-        $view->assign('paypalUnifiedPaymentId', $this->paymentMethodProvider->getPaymentId($this->connection));
+        $view->assign('paypalUnifiedSpbClientId', $generalSettings->getSandbox() ? $generalSettings->getSandboxClientId() : $generalSettings->getClientId());
+        $view->assign('paypalUnifiedPaymentId', $this->paymentMethodProvider->getPaymentId(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME));
     }
 
     public function addSpbInfoOnConfirm(ActionEventArgs $args)
@@ -128,7 +131,9 @@ class SmartPaymentButtons implements SubscriberInterface
         }
 
         $view->assign('paypalUnifiedSpbCheckout', true);
-        $view->assign('paypalUnifiedSpbPaymentId', $request->getParam('paymentId'));
+        $view->assign('paypalUnifiedAdvancedCreditDebitCardCheckout', (bool) $request->getParam('acdcCheckout', false));
+        $view->assign('paypalUnifiedAdvancedSepaCheckout', (bool) $request->getParam('sepaCheckout', false));
+        $view->assign('paypalUnifiedSpbOrderId', $request->getParam('paypalOrderId'));
         $view->assign('paypalUnifiedSpbPayerId', $request->getParam('payerId'));
         $view->assign('paypalUnifiedSpbBasketId', $request->getParam('basketId'));
     }
@@ -145,10 +150,12 @@ class SmartPaymentButtons implements SubscriberInterface
         }
 
         $args->getSubject()->redirect([
-            'controller' => 'PaypalUnified',
+            'controller' => 'PaypalUnifiedV2',
             'action' => 'return',
             'spbCheckout' => true,
-            'paymentId' => $request->getParam('paymentId'),
+            'acdcCheckout' => (bool) $request->getParam('acdcCheckout', false),
+            'sepaCheckout' => (bool) $request->getParam('sepaCheckout', false),
+            'token' => $request->getParam('paypalOrderId'),
             'PayerID' => $request->getParam('payerId'),
             'basketId' => $request->getParam('basketId'),
         ]);
@@ -159,7 +166,7 @@ class SmartPaymentButtons implements SubscriberInterface
      */
     private function changePaymentDescription(View $view, $paymentsViewParameter)
     {
-        $unifiedPaymentId = $this->paymentMethodProvider->getPaymentId($this->connection);
+        $unifiedPaymentId = $this->paymentMethodProvider->getPaymentId(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
         $paymentMethods = $view->getAssign($paymentsViewParameter);
 
         $paymentDescription = $this->snippetManager->getNamespace('frontend/paypal_unified/smart_payment_buttons/payment')->get('description');

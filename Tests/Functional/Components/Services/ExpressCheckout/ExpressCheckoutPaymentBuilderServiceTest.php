@@ -14,6 +14,7 @@ use SwagPaymentPayPalUnified\Components\Services\ExpressCheckout\ExpressCheckout
 use SwagPaymentPayPalUnified\Components\Services\Validation\BasketIdWhitelist;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Transactions\ItemList;
 use SwagPaymentPayPalUnified\Tests\Functional\Components\Services\Mock\SettingsServicePaymentBuilderServiceMock;
 
 class ExpressCheckoutPaymentBuilderServiceTest extends TestCase
@@ -21,7 +22,7 @@ class ExpressCheckoutPaymentBuilderServiceTest extends TestCase
     public function testServiceIsAvailable()
     {
         $service = Shopware()->Container()->get('paypal_unified.express_checkout.payment_builder_service');
-        static::assertSame(ExpressCheckoutPaymentBuilderService::class, \get_class($service));
+        static::assertInstanceOf(ExpressCheckoutPaymentBuilderService::class, $service);
     }
 
     public function testGetPaymentHasCurrency()
@@ -30,7 +31,10 @@ class ExpressCheckoutPaymentBuilderServiceTest extends TestCase
 
         static::assertSame('EUR', $request->getTransactions()->getAmount()->getCurrency());
 
-        foreach ($request->getTransactions()->getItemList()->getItems() as $item) {
+        $itemList = $request->getTransactions()->getItemList();
+        static::assertInstanceOf(ItemList::class, $itemList);
+
+        foreach ($itemList->getItems() as $item) {
             static::assertSame('EUR', $item->getCurrency());
         }
     }
@@ -66,11 +70,22 @@ class ExpressCheckoutPaymentBuilderServiceTest extends TestCase
      */
     private function getExpressCheckoutRequestBuilder(SettingsServiceInterface $settingService)
     {
-        $router = Shopware()->Container()->get('router');
         $snippetManager = Shopware()->Container()->get('snippets');
         $dependencyProvider = Shopware()->Container()->get('paypal_unified.dependency_provider');
+        $priceFormatter = Shopware()->Container()->get('paypal_unified.common.price_formatter');
+        $customerHelper = Shopware()->Container()->get('paypal_unified.common.customer_helper');
+        $cartHelper = Shopware()->Container()->get('paypal_unified.common.cart_helper');
+        $returnUrlHelper = Shopware()->Container()->get('paypal_unified.common.return_url_helper');
 
-        return new ExpressCheckoutPaymentBuilderService($router, $settingService, $snippetManager, $dependencyProvider);
+        return new ExpressCheckoutPaymentBuilderService(
+            $settingService,
+            $snippetManager,
+            $dependencyProvider,
+            $priceFormatter,
+            $customerHelper,
+            $cartHelper,
+            $returnUrlHelper
+        );
     }
 
     /**

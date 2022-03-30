@@ -24,11 +24,6 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.ExpressCheckout', {
     ecActivate: null,
 
     /**
-     * @type { Ext.form.field.ComboBox }
-     */
-    ecIntentSelection: null,
-
-    /**
      * @type { Ext.form.field.Checkbox }
      */
     ecDetailActivate: null,
@@ -87,7 +82,6 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.ExpressCheckout', {
     createItems: function() {
         var me = this;
 
-        me.ecIntentSelection = me.createPaymentIntentSelection();
         me.ecDetailActivate = me.createEcDetailActivate();
         me.ecCartActivate = me.createEcCartActivate();
         me.ecOffCanvasActivate = me.createEcOffCanvasActivate();
@@ -102,7 +96,6 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.ExpressCheckout', {
         return [
             me.createNotice(),
             me.ecActivate,
-            me.ecIntentSelection,
             me.ecDetailActivate,
             me.ecCartActivate,
             me.ecOffCanvasActivate,
@@ -131,33 +124,6 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.ExpressCheckout', {
         };
 
         return infoNotice;
-    },
-
-    /**
-     * @returns { Ext.form.field.ComboBox }
-     */
-    createPaymentIntentSelection: function() {
-        return Ext.create('Ext.form.field.ComboBox', {
-            name: 'intent',
-            fieldLabel: '{s name="intent/field" namespace="backend/paypal_unified_settings/tabs/payment_intent"}{/s}',
-            helpText: '',
-
-            store: {
-                fields: [
-                    { name: 'id', type: 'int' },
-                    { name: 'text', type: 'string' }
-                ],
-
-                data: [
-                    { id: 0, text: '{s name="intent/sale" namespace="backend/paypal_unified_settings/tabs/payment_intent"}Complete payment immediately (Sale){/s}' },
-                    { id: 1, text: '{s name="intent/authCapture" namespace="backend/paypal_unified_settings/tabs/payment_intent"}Delayed payment collection (Auth-Capture){/s}' },
-                    { id: 2, text: '{s name="intent/orderAuthCapture" namespace="backend/paypal_unified_settings/tabs/payment_intent"}Delayed payment collection (Order-Auth-Capture){/s}' }
-                ]
-            },
-
-            valueField: 'id',
-            value: 0
-        });
     },
 
     /**

@@ -4,3 +4,4 @@
 /.phpunit.result.cache
 .psh.yml.override
 .php_cs.cache
+/Tests/E2E/.env

@@ -28,7 +28,7 @@ class PaymentInstructionServiceMock extends PaymentInstructionService
 
         $instructions = new PaymentInstruction();
         $instructions->setAccountHolder('testAccountHolder');
-        $instructions->setAmount(200.50);
+        $instructions->setAmount('200.50');
         $instructions->setBankName('testBankName');
         $instructions->setBic('testBic');
         $instructions->setDueDate('2100-04-04');

@@ -14,7 +14,7 @@ use Enlight_Template_Manager as Template;
 use Shopware_Components_Snippet_Manager as SnippetManager;
 use Shopware_Components_Translation;
 use SwagPaymentPayPalUnified\Components\Document\InvoiceDocumentHandler;
-use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
+use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Components\Services\Plus\PaymentInstructionService;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 
@@ -45,12 +45,18 @@ class Invoice implements SubscriberInterface
      */
     private $templateManager;
 
+    /**
+     * @var PaymentMethodProviderInterface
+     */
+    private $paymentMethodProvider;
+
     public function __construct(
         PaymentInstructionService $paymentInstructionService,
         Connection $dbalConnection,
         SnippetManager $snippetManager,
         Shopware_Components_Translation $translation = null,
-        Template $templateManager
+        Template $templateManager,
+        PaymentMethodProviderInterface $paymentMethodProvider
     ) {
         $this->paymentInstructionsService = $paymentInstructionService;
         $this->dbalConnection = $dbalConnection;
@@ -61,6 +67,7 @@ class Invoice implements SubscriberInterface
         if ($this->translation === null) {
             $this->translation = new Shopware_Components_Translation();
         }
+        $this->paymentMethodProvider = $paymentMethodProvider;
     }
 
     /**
@@ -83,7 +90,7 @@ class Invoice implements SubscriberInterface
             return;
         }
 
-        $unifiedPaymentId = (new PaymentMethodProvider())->getPaymentId($this->dbalConnection);
+        $unifiedPaymentId = $this->paymentMethodProvider->getPaymentId(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
 
         $orderPaymentMethodId = (int) $document->_order->payment['id'];
 
@@ -113,7 +120,7 @@ class Invoice implements SubscriberInterface
     {
         $vars = $eventArgs->getReturn();
 
-        if ($vars['additional']['payment']['name'] !== PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME) {
+        if ($vars['additional']['payment']['name'] !== PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME) {
             return $vars;
         }
 

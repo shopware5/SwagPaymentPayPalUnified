@@ -63,6 +63,7 @@ class SettingsServicePaymentBuilderServiceMock implements SettingsServiceInterfa
 
     public function getSettings($shopId = null, $settingsTable = SettingsTable::GENERAL)
     {
+        return null;
     }
 
     public function get($column, $settingsTable = SettingsTable::GENERAL)
@@ -96,6 +97,7 @@ class SettingsServicePaymentBuilderServiceMock implements SettingsServiceInterfa
 
     public function hasSettings($settingsTable = SettingsTable::GENERAL)
     {
+        return true;
     }
 
     public function refreshDependencies()

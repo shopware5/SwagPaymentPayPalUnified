@@ -18,6 +18,15 @@ final class ErrorCodes
     const BASKET_VALIDATION_ERROR = 6;
     const ADDRESS_VALIDATION_ERROR = 7;
     const NO_DISPATCH_FOR_ORDER = 8;
+    const UNKNOWN_EXPRESS_ERROR = 9;
+    const INSTRUMENT_DECLINED = 10;
+    const TRANSACTION_REFUSED = 11;
+
+    // In order to provoke this error, the buyer must have the email address: payment_source_info_cannot_be_verified@example.com
+    const PAYMENT_SOURCE_INFO_CANNOT_BE_VERIFIED = 12;
+
+    // In order to provoke this error, the buyer must have the email address: payment_source_declined_by_processor@example.com
+    const PAYMENT_SOURCE_DECLINED_BY_PROCESSOR = 13;
 
     private function __construct()
     {

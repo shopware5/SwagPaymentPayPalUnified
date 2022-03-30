@@ -10,15 +10,24 @@ namespace SwagPaymentPayPalUnified\Subscriber;
 
 use Doctrine\DBAL\Connection;
 use Enlight\Event\SubscriberInterface;
+use Enlight_Components_Session_Namespace;
+use Enlight_Controller_Action;
+use Enlight_Controller_ActionEventArgs;
+use Enlight_Controller_Request_Request;
+use Enlight_Event_EventArgs;
+use Enlight_View_Default;
+use Exception;
+use PDO;
+use Shopware\Models\Shop\Shop;
 use Shopware_Components_Snippet_Manager as SnippetManager;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\ExceptionHandlerServiceInterface;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderInterface;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
-use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
+use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
+use SwagPaymentPayPalUnified\Components\Services\Common\CustomerHelper;
 use SwagPaymentPayPalUnified\Components\Services\OrderDataService;
 use SwagPaymentPayPalUnified\Components\Services\Plus\PaymentInstructionService;
-use SwagPaymentPayPalUnified\Models\Settings\General;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use SwagPaymentPayPalUnified\PayPalBundle\PartnerAttributionId;
@@ -26,11 +35,14 @@ use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\PaymentResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
+use UnexpectedValueException;
 
 class Plus implements SubscriberInterface
 {
+    const ALLOWED_ACTIONS = ['shippingPayment', 'confirm', 'finish'];
+
     /**
-     * @var PaymentMethodProvider
+     * @var PaymentMethodProviderInterface
      */
     private $paymentMethodProvider;
 
@@ -84,11 +96,6 @@ class Plus implements SubscriberInterface
      */
     private $exceptionHandlerService;
 
-    /**
-     * @var array
-     */
-    private static $allowedActions = ['shippingPayment', 'confirm', 'finish'];
-
     public function __construct(
         SettingsServiceInterface $settingsService,
         DependencyProvider $dependencyProvider,
@@ -99,9 +106,9 @@ class Plus implements SubscriberInterface
         PaymentBuilderInterface $paymentBuilderService,
         ClientService $clientService,
         PaymentResource $paymentResource,
-        ExceptionHandlerServiceInterface $exceptionHandlerService
+        ExceptionHandlerServiceInterface $exceptionHandlerService,
+        PaymentMethodProviderInterface $paymentMethodProvider
     ) {
-        $this->paymentMethodProvider = new PaymentMethodProvider();
         $this->settingsService = $settingsService;
         $this->dependencyProvider = $dependencyProvider;
         $this->snippetManager = $snippetManager;
@@ -112,6 +119,7 @@ class Plus implements SubscriberInterface
         $this->clientService = $clientService;
         $this->paymentResource = $paymentResource;
         $this->exceptionHandlerService = $exceptionHandlerService;
+        $this->paymentMethodProvider = $paymentMethodProvider;
     }
 
     /**
@@ -128,28 +136,28 @@ class Plus implements SubscriberInterface
     /**
      * Checks the requirements for the payment wall and assigns the data to the view if the payment wall is displayed.
      */
-    public function onPostDispatchCheckout(\Enlight_Controller_ActionEventArgs $args)
+    public function onPostDispatchCheckout(Enlight_Controller_ActionEventArgs $args)
     {
-        $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag($this->connection);
+        $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
         if (!$swUnifiedActive) {
             return;
         }
 
-        $unifiedActive = (bool) $this->settingsService->get('active');
+        $unifiedActive = (bool) $this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_ACTIVE);
         if (!$unifiedActive) {
             return;
         }
 
-        /** @var \Enlight_Controller_Action $controller */
+        /** @var Enlight_Controller_Action $controller */
         $controller = $args->getSubject();
 
-        /** @var \Enlight_Controller_Request_Request $request */
+        /** @var Enlight_Controller_Request_Request $request */
         $request = $controller->Request();
 
-        /** @var \Enlight_Components_Session_Namespace $session */
+        /** @var Enlight_Components_Session_Namespace $session */
         $session = $controller->get('session');
 
-        /** @var \Enlight_View_Default $view */
+        /** @var Enlight_View_Default $view */
         $view = $controller->View();
 
         $errorCode = $request->getParam('paypal_unified_error_code');
@@ -173,17 +181,13 @@ class Plus implements SubscriberInterface
             return;
         }
 
-        if ((string) $this->settingsService->get('merchant_location') !== General::MERCHANT_LOCATION_GERMANY) {
-            return;
-        }
-
-        $usePayPalPlus = (bool) $this->settingsService->get('active', SettingsTable::PLUS);
+        $usePayPalPlus = (bool) $this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_ACTIVE, SettingsTable::PLUS);
         if (!$usePayPalPlus || $controller->Response()->isRedirect()) {
             return;
         }
 
         $action = $request->getActionName();
-        if (!\in_array($action, $this::$allowedActions, true)) {
+        if (!\in_array($action, self::ALLOWED_ACTIONS, true)) {
             $session->offsetUnset('paypalUnifiedCameFromPaymentSelection');
 
             return;
@@ -193,8 +197,8 @@ class Plus implements SubscriberInterface
         if ($payments === null) {
             return;
         }
-        $unifiedPaymentId = $this->paymentMethodProvider->getPaymentId($this->connection);
-        $paymentIds = \array_column($payments, 'id');
+        $unifiedPaymentId = $this->paymentMethodProvider->getPaymentId(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
+        $paymentIds = array_column($payments, 'id');
         if (!\in_array($unifiedPaymentId, $paymentIds)) {
             return;
         }
@@ -217,43 +221,44 @@ class Plus implements SubscriberInterface
     /**
      * @return array
      */
-    public function addPaymentMethodsAttributes(\Enlight_Event_EventArgs $args)
+    public function addPaymentMethodsAttributes(Enlight_Event_EventArgs $args)
     {
         $paymentMethods = $args->getReturn();
 
-        $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag($this->connection);
+        $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
         if (!$swUnifiedActive) {
             return $paymentMethods;
         }
 
-        $unifiedActive = (bool) $this->settingsService->get('active');
+        $unifiedActive = (bool) $this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_ACTIVE);
         if (!$unifiedActive) {
             return $paymentMethods;
         }
 
-        $usePayPalPlus = (bool) $this->settingsService->get('active', SettingsTable::PLUS);
+        $usePayPalPlus = (bool) $this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_ACTIVE, SettingsTable::PLUS);
         if (!$usePayPalPlus) {
             return $paymentMethods;
         }
 
-        $integrateThirdPartyMethods = (bool) $this->settingsService->get('integrate_third_party_methods', SettingsTable::PLUS);
+        $integrateThirdPartyMethods = (bool) $this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_INTEGRATE_THIRD_PARTY_METHODS, SettingsTable::PLUS);
         if (!$integrateThirdPartyMethods) {
             return $paymentMethods;
         }
 
-        $paymentIds = \array_column($paymentMethods, 'id');
+        $paymentIds = array_column($paymentMethods, 'id');
 
         $queryBuilder = $this->connection->createQueryBuilder();
-        $queryBuilder->select(
+        $statement = $queryBuilder->select(
             'paymentmeanID',
             'swag_paypal_unified_display_in_plus_iframe',
             'swag_paypal_unified_plus_iframe_payment_logo'
         )
             ->from('s_core_paymentmeans_attributes')
             ->where('paymentmeanID IN(:paymentIds)')
-            ->setParameter('paymentIds', $paymentIds, Connection::PARAM_INT_ARRAY);
+            ->setParameter('paymentIds', $paymentIds, Connection::PARAM_INT_ARRAY)
+            ->execute();
 
-        $attributes = $queryBuilder->execute()->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_UNIQUE);
+        $attributes = $statement->fetchAll(PDO::FETCH_GROUP | PDO::FETCH_UNIQUE);
 
         foreach ($paymentMethods as &$paymentMethod) {
             if (\array_key_exists($paymentMethod['id'], $attributes)) {
@@ -270,7 +275,7 @@ class Plus implements SubscriberInterface
     /**
      * Handles the finish dispatch and assigns the payment instructions to the template.
      */
-    private function handleFinishDispatch(\Enlight_View_Default $view)
+    private function handleFinishDispatch(Enlight_View_Default $view)
     {
         $orderNumber = $view->getAssign('sOrderNumber');
         $paymentInstructions = $this->paymentInstructionService->getInstructions($orderNumber);
@@ -288,7 +293,7 @@ class Plus implements SubscriberInterface
         }
     }
 
-    private function handleConfirmDispatch(\Enlight_View_Default $view, \Enlight_Components_Session_Namespace $session)
+    private function handleConfirmDispatch(Enlight_View_Default $view, Enlight_Components_Session_Namespace $session)
     {
         // Check if the user is coming from checkout step 2 (payment & shipping)
         $cameFromPaymentSelection = $session->get('paypalUnifiedCameFromPaymentSelection', false);
@@ -298,7 +303,7 @@ class Plus implements SubscriberInterface
         $remotePaymentId = $session->get('paypalUnifiedRemotePaymentId');
 
         $view->assign('paypalUnifiedCameFromPaymentSelection', $cameFromPaymentSelection);
-        $view->assign('paypalUnifiedPaymentId', $this->paymentMethodProvider->getPaymentId($this->connection));
+        $view->assign('paypalUnifiedPaymentId', $this->paymentMethodProvider->getPaymentId(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME));
 
         //If the payment has already been created in the payment selection,
         //we don't have to do anything else.
@@ -314,15 +319,15 @@ class Plus implements SubscriberInterface
             return;
         }
 
-        $view->assign('paypalUnifiedModeSandbox', $this->settingsService->get('sandbox'));
+        $view->assign('paypalUnifiedModeSandbox', $this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_SANDBOX));
         $view->assign('paypalUnifiedRemotePaymentId', $paymentStruct->getId());
         $view->assign('paypalUnifiedApprovalUrl', $paymentStruct->getLinks()[1]->getHref());
         $view->assign('paypalUnifiedLanguageIso', $this->getPaymentWallLanguage());
     }
 
     private function handleShippingPaymentDispatch(
-        \Enlight_View_Default $view,
-        \Enlight_Components_Session_Namespace $session
+        Enlight_View_Default $view,
+        Enlight_Components_Session_Namespace $session
     ) {
         $session->offsetSet('paypalUnifiedCameFromPaymentSelection', true);
         $paymentStruct = $this->createPayment($view->getAssign('sBasket'), $view->getAssign('sUserData'));
@@ -331,8 +336,8 @@ class Plus implements SubscriberInterface
             return;
         }
 
-        $view->assign('paypalUnifiedModeSandbox', $this->settingsService->get('sandbox'));
-        $view->assign('paypalUnifiedPaymentId', $this->paymentMethodProvider->getPaymentId($this->connection));
+        $view->assign('paypalUnifiedModeSandbox', $this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_SANDBOX));
+        $view->assign('paypalUnifiedPaymentId', $this->paymentMethodProvider->getPaymentId(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME));
         $view->assign('paypalUnifiedRemotePaymentId', $paymentStruct->getId());
         $view->assign('paypalUnifiedApprovalUrl', $paymentStruct->getLinks()[1]->getHref());
         $view->assign('paypalUnifiedLanguageIso', $this->getPaymentWallLanguage());
@@ -341,10 +346,10 @@ class Plus implements SubscriberInterface
         //the payment has already been created and can be used on the confirm page.
         $session->offsetSet('paypalUnifiedRemotePaymentId', $paymentStruct->getId());
 
-        $restylePaymentSelection = (bool) $this->settingsService->get('restyle', SettingsTable::PLUS);
+        $restylePaymentSelection = (bool) $this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_RESTYLE, SettingsTable::PLUS);
         $view->assign('paypalUnifiedRestylePaymentSelection', $restylePaymentSelection);
 
-        $integrateThirdPartyMethods = (bool) $this->settingsService->get('integrate_third_party_methods', SettingsTable::PLUS);
+        $integrateThirdPartyMethods = (bool) $this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_INTEGRATE_THIRD_PARTY_METHODS, SettingsTable::PLUS);
         if (!$integrateThirdPartyMethods) {
             return;
         }
@@ -357,7 +362,7 @@ class Plus implements SubscriberInterface
      */
     private function createPayment(array $basketData, array $userData)
     {
-        $userData[PaymentBuilderInterface::CUSTOMER_GROUP_USE_GROSS_PRICES] = (bool) $this->dependencyProvider->getSession()
+        $userData[CustomerHelper::CUSTOMER_GROUP_USE_GROSS_PRICES] = (bool) $this->dependencyProvider->getSession()
             ->get('sUserGroupData', ['tax' => 1])['tax'];
 
         $requestParams = new PaymentBuilderParameters();
@@ -373,7 +378,7 @@ class Plus implements SubscriberInterface
             $payment = $this->paymentResource->create($params);
 
             return Payment::fromArray($payment);
-        } catch (\Exception $ex) {
+        } catch (Exception $ex) {
             $this->exceptionHandlerService->handle($ex, 'create payment for plus payment wall');
 
             return null;
@@ -385,23 +390,29 @@ class Plus implements SubscriberInterface
      */
     private function getPaymentWallLanguage()
     {
-        $languageIso = $this->dependencyProvider->getShop()->getLocale()->getLocale();
+        $shop = $this->dependencyProvider->getShop();
+
+        if (!$shop instanceof Shop) {
+            throw new UnexpectedValueException(sprintf('Tried to access %s, but it\'s not set in the DIC.', Shop::class));
+        }
+
+        $languageIso = $shop->getLocale()->getLocale();
 
         $plusLanguage = 'en_US';
         // use english as default, use german if the locale is from german speaking country (de_DE, de_AT, etc)
         // by now the PPP iFrame does not support other languages
-        if (\strpos($languageIso, 'de_') === 0) {
+        if (strpos($languageIso, 'de_') === 0) {
             $plusLanguage = 'de_DE';
         }
 
         return $plusLanguage;
     }
 
-    private function overwritePaymentName(\Enlight_View_Default $view)
+    private function overwritePaymentName(Enlight_View_Default $view)
     {
-        $unifiedPaymentId = $this->paymentMethodProvider->getPaymentId($this->connection);
-        $paymentName = $this->settingsService->get('payment_name', SettingsTable::PLUS);
-        $paymentDescription = $this->settingsService->get('payment_description', SettingsTable::PLUS);
+        $unifiedPaymentId = $this->paymentMethodProvider->getPaymentId(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
+        $paymentName = $this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_PAYMENT_NAME, SettingsTable::PLUS);
+        $paymentDescription = $this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_PAYMENT_DESCRIPTION, SettingsTable::PLUS);
 
         if ($paymentName === '' || $paymentName === null) {
             return;
@@ -437,12 +448,12 @@ class Plus implements SubscriberInterface
         }
     }
 
-    private function handleIntegratingThirdPartyMethods(\Enlight_View_Default $view)
+    private function handleIntegratingThirdPartyMethods(Enlight_View_Default $view)
     {
         $paymentMethods = $view->getAssign('sPayments');
         $paymentMethodsForPaymentWall = [];
         foreach ($paymentMethods as $key => $paymentMethod) {
-            if ($paymentMethod['name'] === PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME) {
+            if ($paymentMethod['name'] === PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME) {
                 continue;
             }
 
@@ -455,13 +466,13 @@ class Plus implements SubscriberInterface
                     'redirectUrl' => 'http://' . $paymentMethod['id'],
                     // 25 is the max length for payment name
                     // cut here, because the name is needed for a check in jQuery plugin
-                    'methodName' => \substr($paymentMethod['description'], 0, 25),
+                    'methodName' => substr($paymentMethod['description'], 0, 25),
                     'description' => $paymentMethod['additionaldescription'],
                     'imageUrl' => $paymentMethod['swag_paypal_unified_plus_iframe_payment_logo'],
                 ];
             }
         }
 
-        $view->assign('paypalUnifiedPlusPaymentMethodsPaymentWall', \json_encode($paymentMethodsForPaymentWall));
+        $view->assign('paypalUnifiedPlusPaymentMethodsPaymentWall', json_encode($paymentMethodsForPaymentWall));
     }
 }

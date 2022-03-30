@@ -26,7 +26,7 @@ class Address
     private $city;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $state;
 
@@ -94,7 +94,7 @@ class Address
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getState()
     {
@@ -102,7 +102,7 @@ class Address
     }
 
     /**
-     * @param string $state
+     * @param string|null $state
      */
     public function setState($state)
     {

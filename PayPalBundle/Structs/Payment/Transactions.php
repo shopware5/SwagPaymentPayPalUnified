@@ -31,7 +31,7 @@ class Transactions
     private $relatedResources;
 
     /**
-     * @var ShipmentDetails
+     * @var ShipmentDetails|null
      */
     private $shipmentDetails;
 
@@ -78,7 +78,7 @@ class Transactions
     }
 
     /**
-     * @return ShipmentDetails
+     * @return ShipmentDetails|null
      */
     public function getShipmentDetails()
     {
@@ -86,7 +86,7 @@ class Transactions
     }
 
     /**
-     * @param ShipmentDetails $shipmentDetails
+     * @param ShipmentDetails|null $shipmentDetails
      */
     public function setShipmentDetails($shipmentDetails)
     {

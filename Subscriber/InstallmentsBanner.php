@@ -8,13 +8,12 @@
 
 namespace SwagPaymentPayPalUnified\Subscriber;
 
-use Doctrine\DBAL\Connection;
 use Enlight\Event\SubscriberInterface;
 use Enlight_Controller_ActionEventArgs as ActionEventArgs;
 use Enlight_Controller_Request_Request as Request;
 use Enlight_View_Default as View;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
-use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
+use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 
@@ -26,12 +25,7 @@ class InstallmentsBanner implements SubscriberInterface
     private $settingsService;
 
     /**
-     * @var Connection
-     */
-    private $connection;
-
-    /**
-     * @var PaymentMethodProvider
+     * @var PaymentMethodProviderInterface
      */
     private $paymentMethodProvider;
 
@@ -42,13 +36,12 @@ class InstallmentsBanner implements SubscriberInterface
 
     public function __construct(
         SettingsServiceInterface $settingsService,
-        Connection $connection,
-        ContextServiceInterface $contextService
+        ContextServiceInterface $contextService,
+        PaymentMethodProviderInterface $paymentMethodProvider
     ) {
         $this->settingsService = $settingsService;
-        $this->connection = $connection;
-        $this->paymentMethodProvider = new PaymentMethodProvider();
         $this->contextService = $contextService;
+        $this->paymentMethodProvider = $paymentMethodProvider;
     }
 
     /**
@@ -68,7 +61,7 @@ class InstallmentsBanner implements SubscriberInterface
             return;
         }
 
-        $active = (bool) $this->settingsService->get('active');
+        $active = (bool) $this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_ACTIVE);
         if (!$active) {
             return;
         }
@@ -82,7 +75,7 @@ class InstallmentsBanner implements SubscriberInterface
         /** @var View $view */
         $view = $args->getSubject()->View();
 
-        $clientId = $this->settingsService->get('client_id');
+        $clientId = $this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_CLIENT_ID);
         $amount = $this->getAmountForPage($args->getSubject()->Request(), $view);
         $currency = $shopContext->getCurrency()->getCurrency();
         $buyerCountry = $this->getBuyerCountryByCurrencyAndShopCountryIso($currency, $shopLocale);
@@ -142,10 +135,10 @@ class InstallmentsBanner implements SubscriberInterface
     {
         $isInstallmentsCountry = $this->isInstallmentsCountry($shopLocale);
 
-        $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag($this->connection);
+        $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
 
         return $swUnifiedActive
-            && (bool) $this->settingsService->get('advertise_installments', SettingsTable::INSTALLMENTS)
+            && (bool) $this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_ADVERTISE_INSTALLMENTS, SettingsTable::INSTALLMENTS)
             && $isInstallmentsCountry;
     }
 

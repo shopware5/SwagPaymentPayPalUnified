@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\Components\Backend;
 
+use Shopware\Models\Order\Status;
 use SwagPaymentPayPalUnified\Components\ExceptionHandlerServiceInterface;
 use SwagPaymentPayPalUnified\Components\PaymentStatus;
 use SwagPaymentPayPalUnified\Components\Services\PaymentStatusService;
@@ -60,7 +61,7 @@ class VoidService
             if (\strtolower($voidData['state']) === PaymentStatus::PAYMENT_VOIDED) {
                 $this->paymentStatusService->updatePaymentStatus(
                     $voidData['parent_payment'],
-                    PaymentStatus::PAYMENT_STATUS_CANCELLED
+                    Status::PAYMENT_STATE_THE_PROCESS_HAS_BEEN_CANCELLED
                 );
             }
             $viewParameter = [
@@ -91,7 +92,7 @@ class VoidService
             if (\strtolower($voidData['state']) === PaymentStatus::PAYMENT_VOIDED) {
                 $this->paymentStatusService->updatePaymentStatus(
                     $voidData['parent_payment'],
-                    PaymentStatus::PAYMENT_STATUS_CANCELLED
+                    Status::PAYMENT_STATE_THE_PROCESS_HAS_BEEN_CANCELLED
                 );
             }
             $viewParameter = [

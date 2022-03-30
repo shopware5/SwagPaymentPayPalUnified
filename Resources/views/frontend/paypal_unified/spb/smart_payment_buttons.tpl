@@ -11,9 +11,13 @@
                 <div class="paypal-unified--smart-payment-buttons"
                      data-paypalUnifiedSmartPaymentButtons="true"
                      data-clientId="{$paypalUnifiedSpbClientId}"
+                     data-paypalIntent="{$paypalUnifiedIntent}"
                      data-currency="{$paypalUnifiedSpbCurrency}"
-                     data-createPaymentUrl="{url module=widgets controller=PaypalUnifiedSmartPaymentButtons action=createPayment forceSecure}"
-                     data-checkoutConfirmUrl="{url module=frontend controller=checkout action=confirm spbCheckout=1 forceSecure}">
+                     data-locale="{$paypalUnifiedButtonLocale}"
+                     data-useSandbox="{$paypalUnifiedModeSandbox}"
+                     data-createOrderUrl="{url module=widgets controller=PaypalUnifiedV2SmartPaymentButtons action=createOrder forceSecure}"
+                     data-checkoutConfirmUrl="{url module=frontend controller=checkout action=confirm spbCheckout=1 forceSecure}"
+                     data-paypalErrorPage="{url controller=checkout action=shippingPayment paypal_unified_error_code=2 forceSecure}">
                 </div>
             {/if}
         {/block}

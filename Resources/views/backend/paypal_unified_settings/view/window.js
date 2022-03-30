@@ -6,7 +6,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.Window', {
     alias: 'widget.paypal-unified-settings-window',
 
     height: '70%',
-    width: '45%',
+    width: '70%',
     layout: 'anchor',
     autoScroll: true,
 
@@ -44,6 +44,16 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.Window', {
      * @type { Shopware.apps.PaypalUnifiedSettings.view.tabs.ExpressCheckout }
      */
     paypalEcTab: null,
+
+    /**
+     * @type { Shopware.apps.PaypalUnifiedSettings.view.tabs.PayUponInvoice }
+     */
+    paypalPayUponInvoiceTab: null,
+
+    /**
+     * @type { Shopware.apps.PaypalUnifiedSettings.view.tabs.AdvancedCreditDebitCard }
+     */
+    paypalAdvancedCreditDebitCard: null,
 
     /**
      * @type { Shopware.data.Model }
@@ -97,6 +107,8 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.Window', {
         me.paypalPlusTab = Ext.create('Shopware.apps.PaypalUnifiedSettings.view.tabs.Plus');
         me.paypalInstallmentsTab = Ext.create('Shopware.apps.PaypalUnifiedSettings.view.tabs.Installments');
         me.paypalEcTab = Ext.create('Shopware.apps.PaypalUnifiedSettings.view.tabs.ExpressCheckout');
+        me.paypalPayUponInvoiceTab = Ext.create('Shopware.apps.PaypalUnifiedSettings.view.tabs.PayUponInvoice');
+        me.paypalAdvancedCreditDebitCard = Ext.create('Shopware.apps.PaypalUnifiedSettings.view.tabs.AdvancedCreditDebitCard');
 
         me.tabContainer = Ext.create('Ext.tab.Panel', {
             border: false,
@@ -108,7 +120,9 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.Window', {
                 me.generalTab,
                 me.paypalEcTab,
                 me.paypalPlusTab,
-                me.paypalInstallmentsTab
+                me.paypalInstallmentsTab,
+                me.paypalPayUponInvoiceTab,
+                me.paypalAdvancedCreditDebitCard,
             ]
         });
 

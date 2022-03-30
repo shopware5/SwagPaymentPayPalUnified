@@ -17,9 +17,6 @@ use Shopware\Components\Model\ModelEntity;
  */
 class General extends ModelEntity
 {
-    const MERCHANT_LOCATION_GERMANY = 'germany';
-    const MERCHANT_LOCATION_OTHER = 'other';
-
     /**
      * @var int
      *
@@ -52,6 +49,30 @@ class General extends ModelEntity
      * @ORM\Column(name="client_secret", type="string")
      */
     private $clientSecret;
+
+    /**
+     * @var string
+     * @ORM\Column(name="paypal_payer_id", type="string")
+     */
+    private $paypalPayerId;
+
+    /**
+     * @var string
+     * @ORM\Column(name="sandbox_client_id", type="string")
+     */
+    private $sandboxClientId;
+
+    /**
+     * @var string
+     * @ORM\Column(name="sandbox_client_secret", type="string")
+     */
+    private $sandboxClientSecret;
+
+    /**
+     * @var string
+     * @ORM\Column(name="sandbox_paypal_payer_id", type="string")
+     */
+    private $sandboxPaypalPayerId;
 
     /**
      * @var bool
@@ -96,12 +117,6 @@ class General extends ModelEntity
     private $landingPageType;
 
     /**
-     * @var int
-     * @ORM\Column(name="log_level", type="integer")
-     */
-    private $logLevel;
-
-    /**
      * @var bool
      * @ORM\Column(name="display_errors", type="boolean", nullable=false)
      */
@@ -114,16 +129,40 @@ class General extends ModelEntity
     private $useSmartPaymentButtons;
 
     /**
-     * @var string
-     * @ORM\Column(name="merchant_location", type="string", nullable=false)
-     */
-    private $merchantLocation;
-
-    /**
      * @var bool
      * @ORM\Column(name="submit_cart", type="boolean", nullable=false)
      */
     private $submitCart;
+
+    /**
+     * @var string
+     * @ORM\Column(name="intent", type="string", nullable=false)
+     */
+    private $intent;
+
+    /**
+     * @var string
+     * @ORM\Column(name="button_style_color", type="string")
+     */
+    private $buttonStyleColor;
+
+    /**
+     * @var string
+     * @ORM\Column(name="button_style_shape", type="string")
+     */
+    private $buttonStyleShape;
+
+    /**
+     * @var string
+     * @ORM\Column(name="button_style_size", type="string")
+     */
+    private $buttonStyleSize;
+
+    /**
+     * @var string
+     * @ORM\Column(name="button_locale", type="string", length=5)
+     */
+    private $buttonLocale = '';
 
     /**
      * @return int
@@ -203,6 +242,74 @@ class General extends ModelEntity
     public function setClientSecret($clientSecret)
     {
         $this->clientSecret = $clientSecret;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPaypalPayerId()
+    {
+        return $this->paypalPayerId;
+    }
+
+    /**
+     * @param string $paypalPayerId
+     *
+     * @return void
+     */
+    public function setPaypalPayerId($paypalPayerId)
+    {
+        $this->paypalPayerId = $paypalPayerId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSandboxClientId()
+    {
+        return $this->sandboxClientId;
+    }
+
+    /**
+     * @param string $sandboxClientId
+     */
+    public function setSandboxClientId($sandboxClientId)
+    {
+        $this->sandboxClientId = $sandboxClientId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSandboxClientSecret()
+    {
+        return $this->sandboxClientSecret;
+    }
+
+    /**
+     * @param string $sandboxClientSecret
+     */
+    public function setSandboxClientSecret($sandboxClientSecret)
+    {
+        $this->sandboxClientSecret = $sandboxClientSecret;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSandboxPaypalPayerId()
+    {
+        return $this->sandboxPaypalPayerId;
+    }
+
+    /**
+     * @param string $sandboxPaypalPayerId
+     *
+     * @return void
+     */
+    public function setSandboxPaypalPayerId($sandboxPaypalPayerId)
+    {
+        $this->sandboxPaypalPayerId = $sandboxPaypalPayerId;
     }
 
     /**
@@ -302,22 +409,6 @@ class General extends ModelEntity
     }
 
     /**
-     * @return int
-     */
-    public function getLogLevel()
-    {
-        return $this->logLevel;
-    }
-
-    /**
-     * @param int $logLevel
-     */
-    public function setLogLevel($logLevel)
-    {
-        $this->logLevel = $logLevel;
-    }
-
-    /**
      * @return bool
      */
     public function getDisplayErrors()
@@ -366,22 +457,6 @@ class General extends ModelEntity
     }
 
     /**
-     * @return string
-     */
-    public function getMerchantLocation()
-    {
-        return $this->merchantLocation;
-    }
-
-    /**
-     * @param string $merchantLocation
-     */
-    public function setMerchantLocation($merchantLocation)
-    {
-        $this->merchantLocation = $merchantLocation;
-    }
-
-    /**
      * @return bool
      */
     public function getSubmitCart()
@@ -395,6 +470,88 @@ class General extends ModelEntity
     public function setSubmitCart($submitCart)
     {
         $this->submitCart = $submitCart;
+    }
+
+    /**
+     * @return string
+     */
+    public function getIntent()
+    {
+        return $this->intent;
+    }
+
+    /**
+     * @param string $intent
+     *
+     * @return void
+     */
+    public function setIntent($intent)
+    {
+        $this->intent = $intent;
+    }
+
+    /**
+     * @return string
+     */
+    public function getButtonStyleColor()
+    {
+        return $this->buttonStyleColor;
+    }
+
+    /**
+     * @param string $buttonStyleColor
+     */
+    public function setButtonStyleColor($buttonStyleColor)
+    {
+        $this->buttonStyleColor = $buttonStyleColor;
+    }
+
+    /**
+     * @return string
+     */
+    public function getButtonStyleShape()
+    {
+        return $this->buttonStyleShape;
+    }
+
+    /**
+     * @param string $buttonStyleShape
+     */
+    public function setButtonStyleShape($buttonStyleShape)
+    {
+        $this->buttonStyleShape = $buttonStyleShape;
+    }
+
+    /**
+     * @return string
+     */
+    public function getButtonStyleSize()
+    {
+        return $this->buttonStyleSize;
+    }
+
+    /**
+     * @param string $buttonStyleSize
+     */
+    public function setButtonStyleSize($buttonStyleSize)
+    {
+        $this->buttonStyleSize = $buttonStyleSize;
+    }
+
+    /**
+     * @return string
+     */
+    public function getButtonLocale()
+    {
+        return $this->buttonLocale;
+    }
+
+    /**
+     * @param string $buttonLocale
+     */
+    public function setButtonLocale($buttonLocale)
+    {
+        $this->buttonLocale = $buttonLocale;
     }
 
     /**

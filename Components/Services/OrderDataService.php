@@ -9,10 +9,7 @@
 namespace SwagPaymentPayPalUnified\Components\Services;
 
 use Doctrine\DBAL\Connection;
-use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
-use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
-use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
 
 class OrderDataService
 {
@@ -21,17 +18,10 @@ class OrderDataService
      */
     private $dbalConnection;
 
-    /**
-     * @var SettingsServiceInterface
-     */
-    private $settingsService;
-
     public function __construct(
-        Connection $dbalConnection,
-        SettingsServiceInterface $settingsService
+        Connection $dbalConnection
     ) {
         $this->dbalConnection = $dbalConnection;
-        $this->settingsService = $settingsService;
     }
 
     /**
@@ -96,25 +86,12 @@ class OrderDataService
 
     /**
      * @param string $orderNumber
-     * @param bool   $expressCheckout
-     * @param bool   $smartPaymentButtons
+     * @param string $paymentType
      *
      * @see PaymentType
      */
-    public function applyPaymentTypeAttribute($orderNumber, Payment $payment, $expressCheckout = false, $smartPaymentButtons = false)
+    public function applyPaymentTypeAttribute($orderNumber, $paymentType)
     {
-        $paymentType = PaymentType::PAYPAL_CLASSIC;
-
-        if ($expressCheckout) {
-            $paymentType = PaymentType::PAYPAL_EXPRESS;
-        } elseif ($smartPaymentButtons) {
-            $paymentType = PaymentType::PAYPAL_SMART_PAYMENT_BUTTONS;
-        } elseif ($payment->getPaymentInstruction() !== null) {
-            $paymentType = PaymentType::PAYPAL_INVOICE;
-        } elseif ((bool) $this->settingsService->get('active', SettingsTable::PLUS)) {
-            $paymentType = PaymentType::PAYPAL_PLUS;
-        }
-
         $builder = $this->dbalConnection->createQueryBuilder();
 
         //Since joins are being stripped out, we have to select the correct orderId by a sub query.
@@ -134,18 +111,19 @@ class OrderDataService
     }
 
     /**
-     * @param int $orderNumber
+     * @param string $orderNumber
      *
      * @return string
      */
     public function getTransactionId($orderNumber)
     {
         $builder = $this->dbalConnection->createQueryBuilder();
-        $builder->select('o.transactionId')
+        $statement = $builder->select('o.transactionId')
             ->from('s_order', 'o')
             ->where('o.ordernumber = :orderNumber')
-            ->setParameter(':orderNumber', $orderNumber);
+            ->setParameter(':orderNumber', $orderNumber)
+            ->execute();
 
-        return $builder->execute()->fetchColumn();
+        return (string) $statement->fetchColumn();
     }
 }

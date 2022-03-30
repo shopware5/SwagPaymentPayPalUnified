@@ -8,9 +8,13 @@
 
 namespace SwagPaymentPayPalUnified\PayPalBundle\Services;
 
+use Exception;
+use RuntimeException;
 use Shopware\Components\HttpClient\GuzzleFactory;
 use Shopware\Components\HttpClient\GuzzleHttpClient as GuzzleClient;
 use Shopware\Components\HttpClient\RequestException;
+use Shopware\Components\HttpClient\Response;
+use Shopware\Models\Shop\Shop;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\PayPalBundle\BaseURL;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
@@ -47,14 +51,19 @@ class ClientService
     private $client;
 
     /**
-     * @var int
-     */
-    private $shopId;
-
-    /**
      * @var SettingsServiceInterface
      */
     private $settingsService;
+
+    /**
+     * @var DependencyProvider
+     */
+    private $dependencyProvider;
+
+    /**
+     * @var int
+     */
+    private $shopId;
 
     public function __construct(
         SettingsServiceInterface $settingsService,
@@ -67,66 +76,68 @@ class ClientService
         $this->tokenService = $tokenService;
         $this->logger = $logger;
         $this->client = new GuzzleClient($factory);
-
-        $shop = $dependencyProvider->getShop();
+        $this->dependencyProvider = $dependencyProvider;
 
         //Backend does not have any active shop. In order to authenticate there, please use
         //the "configure()"-function instead.
-        if ($shop === null || !$this->settingsService->hasSettings() || !$this->settingsService->get('active')) {
+        if (!$this->settingsService->hasSettings() || !$this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_ACTIVE)) {
             return;
         }
 
-        $this->shopId = $shop->getId();
-
-        $environment = (bool) $this->settingsService->get('sandbox');
+        $environment = (bool) $this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_SANDBOX);
         $environment === true ? $this->baseUrl = BaseURL::SANDBOX : $this->baseUrl = BaseURL::LIVE;
 
         //Set Partner-Attribution-Id
         $this->setPartnerAttributionId(PartnerAttributionId::PAYPAL_CLASSIC); //Default
     }
 
+    /**
+     * @param array<string,mixed> $settings
+     *
+     * @throws RequestException
+     */
     public function configure(array $settings)
     {
-        $this->shopId = $settings['shopId'];
-        $environment = $settings['sandbox'];
-        $environment === true ? $this->baseUrl = BaseURL::SANDBOX : $this->baseUrl = BaseURL::LIVE;
+        $this->logger->debug(sprintf('%s CONFIGURE', __METHOD__), $settings);
+
+        $this->shopId = (int) $settings['shopId'];
+        $sandbox = $settings['sandbox'];
+
+        if ($sandbox) {
+            $this->baseUrl = BaseURL::SANDBOX;
+        } else {
+            $this->baseUrl = BaseURL::LIVE;
+        }
 
         //Create authentication
         $credentials = new OAuthCredentials();
-        $credentials->setRestId($settings['clientId']);
-        $credentials->setRestSecret($settings['clientSecret']);
+
+        $credentials->setRestId($sandbox ? $settings['sandboxClientId'] : $settings['clientId']);
+        $credentials->setRestSecret($sandbox ? $settings['sandboxClientSecret'] : $settings['clientSecret']);
+
         $this->createAuthentication($credentials);
     }
 
     /**
-     * Sends a request and returns the response.
+     * Sends a request and returns the full response.
      * The type can be obtained from RequestType.php
      *
-     * @param string $type
-     * @param string $resourceUri
-     * @param bool   $jsonPayload
+     * @param string            $type
+     * @param string            $resourceUri
+     * @param array<mixed>|null $data
+     * @param bool              $jsonPayload true if the given data should be JSON-encoded
      *
      * @throws RequestException
      *
-     * @return array
+     * @return array<mixed>
      */
-    public function sendRequest($type, $resourceUri, array $data = [], $jsonPayload = true)
+    public function sendRequest($type, $resourceUri, $data = [], $jsonPayload = true)
     {
-        if (!$this->getHeader('Authorization')) {
-            $environment = (bool) $this->settingsService->get('sandbox');
-            $environment === true ? $this->baseUrl = BaseURL::SANDBOX : $this->baseUrl = BaseURL::LIVE;
-
-            //Create authentication
-            $credentials = new OAuthCredentials();
-            $credentials->setRestId($this->settingsService->get('client_id'));
-            $credentials->setRestSecret($this->settingsService->get('client_secret'));
-            $this->createAuthentication($credentials);
-        }
-
+        $httpClient = $this->getClient();
         $resourceUri = $this->baseUrl . $resourceUri;
 
         if ($jsonPayload) {
-            $data = \json_encode($data);
+            $data = json_encode($data);
             if (!\is_string($data)) {
                 $data = null;
             }
@@ -139,36 +150,42 @@ class ClientService
 
         switch ($type) {
             case RequestType::POST:
-                $response = $this->client->post($resourceUri, $this->headers, $data)->getBody();
+                $response = $httpClient->post($resourceUri, $this->headers, $data);
                 break;
 
             case RequestType::GET:
-                $response = $this->client->get($resourceUri, $this->headers)->getBody();
+                $response = $httpClient->get($resourceUri, $this->headers);
                 break;
 
             case RequestType::PATCH:
-                $response = $this->client->patch($resourceUri, $this->headers, $data)->getBody();
+                $response = $httpClient->patch($resourceUri, $this->headers, $data);
                 break;
 
             case RequestType::PUT:
-                $response = $this->client->put($resourceUri, $this->headers, $data)->getBody();
+                $response = $httpClient->put($resourceUri, $this->headers, $data);
                 break;
 
             case RequestType::HEAD:
-                $response = $this->client->head($resourceUri, $this->headers)->getBody();
+                $response = $httpClient->head($resourceUri, $this->headers);
                 break;
 
             case RequestType::DELETE:
-                $response = $this->client->delete($resourceUri, $this->headers)->getBody();
+                $response = $httpClient->delete($resourceUri, $this->headers);
                 break;
 
             default:
-                throw new \RuntimeException('An unsupported request type was provided. The type was: ' . $type);
+                throw new RuntimeException('An unsupported request type was provided. The type was: ' . $type);
         }
 
-        $this->logger->notify('Received data from ' . $resourceUri, ['payload' => $response]);
+        $this->logger->notify(
+            'Received data from ' . $resourceUri,
+            [
+                'payload' => $response->getBody(),
+                'debug-id' => $response->getHeader('Paypal-Debug-Id') ?: '',
+            ]
+        );
 
-        return \json_decode($response, true);
+        return json_decode($response->getBody(), true);
     }
 
     /**
@@ -199,6 +216,40 @@ class ClientService
     }
 
     /**
+     * @throws RequestException
+     *
+     * @return GuzzleClient
+     */
+    public function getClient()
+    {
+        if ($this->getHeader('Authorization')) {
+            return $this->client;
+        }
+
+        $sandbox = (bool) $this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_SANDBOX);
+
+        if ($sandbox) {
+            $this->baseUrl = BaseURL::SANDBOX;
+        } else {
+            $this->baseUrl = BaseURL::LIVE;
+        }
+
+        //Create authentication
+        $credentials = new OAuthCredentials();
+
+        $credentials->setRestId($this->settingsService->get(
+            $sandbox ? SettingsServiceInterface::SETTING_GENERAL_SANDBOX_CLIENT_ID : SettingsServiceInterface::SETTING_GENERAL_CLIENT_ID
+        ));
+        $credentials->setRestSecret($this->settingsService->get(
+            $sandbox ? SettingsServiceInterface::SETTING_GENERAL_SANDBOX_CLIENT_SECRET : SettingsServiceInterface::SETTING_GENERAL_CLIENT_SECRET
+        ));
+
+        $this->createAuthentication($credentials);
+
+        return $this->client;
+    }
+
+    /**
      * Creates the authentication header for the PayPal API.
      * If there is no cached token yet, it will be generated on the fly.
      *
@@ -206,9 +257,20 @@ class ClientService
      */
     private function createAuthentication(OAuthCredentials $credentials)
     {
+        $shop = $this->dependencyProvider->getShop();
+        $shopId = $this->shopId;
+
+        if ($shop instanceof Shop) {
+            $shopId = $shop->getId();
+        }
+
         try {
-            $token = $this->tokenService->getToken($this, $credentials, $this->shopId);
+            $this->logger->debug(sprintf('%s CREATE AUTHENTICATION, WITH CREDENTIALS: %s', __METHOD__, $credentials->toString()));
+
+            $token = $this->tokenService->getToken($this, $credentials, $shopId);
             $this->setHeader('Authorization', $token->getTokenType() . ' ' . $token->getAccessToken());
+
+            $this->logger->debug(sprintf('%s %s', __METHOD__, 'AUTHENTICATION SUCCESSFUL CREATED'));
         } catch (RequestException $requestException) {
             $this->logger->error('Could not create authentication - request exception', [
                 'payload' => $requestException->getBody(),
@@ -216,7 +278,7 @@ class ClientService
             ]);
 
             throw $requestException;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->logger->error('Could not create authentication - unknown exception', [
                 'message' => $e->getMessage(),
                 'stacktrace' => $e->getTraceAsString(),

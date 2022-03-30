@@ -129,5 +129,7 @@ class FrontMock extends \Enlight_Controller_Front
     public function setRequest($request)
     {
         $this->request = $request;
+
+        return $this;
     }
 }

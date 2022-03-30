@@ -9,11 +9,14 @@
         <service id="paypal_unified.plus.payment_builder_service"
                  class="SwagPaymentPayPalUnified\Components\Services\Plus\PlusPaymentBuilderService"
                  public="true">
-            <argument type="service" id="router"/>
             <argument type="service" id="paypal_unified.settings_service"/>
             <argument type="service" id="shopware_attribute.crud_service"/>
             <argument type="service" id="snippets"/>
             <argument type="service" id="paypal_unified.dependency_provider"/>
+            <argument type="service" id="paypal_unified.common.price_formatter"/>
+            <argument type="service" id="paypal_unified.common.customer_helper"/>
+            <argument type="service" id="paypal_unified.common.cart_helper"/>
+            <argument type="service" id="paypal_unified.common.return_url_helper"/>
         </service>
 
         <service id="paypal_unified.payment_instruction_service"

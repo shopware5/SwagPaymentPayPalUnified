@@ -1,0 +1,82 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+
+        <!-- Factory tag: paypal_unified.payment_source_value_handler -->
+        <service id="paypal_unified.payment_source_value_factory"
+                 class="SwagPaymentPayPalUnified\Components\Services\OrderBuilder\PaymentSource\PaymentSourceValueFactory"
+                 public="true">
+        </service>
+
+        <service id="paypal_unified.bancontact_payment_source_value_handler"
+                 class="SwagPaymentPayPalUnified\Components\Services\OrderBuilder\PaymentSource\PaymentSourceValueHandler\BancontactPaymentSourceValueHandler"
+                 public="true">
+            <tag name="paypal_unified.payment_source_value_handler"/>
+        </service>
+
+        <service id="paypal_unified.blik_payment_source_value_handler"
+                 class="SwagPaymentPayPalUnified\Components\Services\OrderBuilder\PaymentSource\PaymentSourceValueHandler\BlikPaymentSourceValueHandler"
+                 public="true">
+            <tag name="paypal_unified.payment_source_value_handler"/>
+        </service>
+
+        <service id="paypal_unified.eps_payment_source_value_handler"
+                 class="SwagPaymentPayPalUnified\Components\Services\OrderBuilder\PaymentSource\PaymentSourceValueHandler\EpsPaymentSourceValueHandler"
+                 public="true">
+            <tag name="paypal_unified.payment_source_value_handler"/>
+        </service>
+
+        <service id="paypal_unified.giropay_payment_source_value_handler"
+                 class="SwagPaymentPayPalUnified\Components\Services\OrderBuilder\PaymentSource\PaymentSourceValueHandler\GiropayPaymentSourceValueHandler"
+                 public="true">
+            <tag name="paypal_unified.payment_source_value_handler"/>
+        </service>
+
+        <service id="paypal_unified.ideal_payment_source_value_handler"
+                 class="SwagPaymentPayPalUnified\Components\Services\OrderBuilder\PaymentSource\PaymentSourceValueHandler\IdealPaymentSourceValueHandler"
+                 public="true">
+            <tag name="paypal_unified.payment_source_value_handler"/>
+        </service>
+
+        <service id="paypal_unified.multibanco_payment_source_value_handler"
+                 class="SwagPaymentPayPalUnified\Components\Services\OrderBuilder\PaymentSource\PaymentSourceValueHandler\MultibancoPaymentSourceValueHandler"
+                 public="true">
+            <tag name="paypal_unified.payment_source_value_handler"/>
+        </service>
+
+        <service id="paypal_unified.mybank_payment_source_value_handler"
+                 class="SwagPaymentPayPalUnified\Components\Services\OrderBuilder\PaymentSource\PaymentSourceValueHandler\MyBankPaymentSourceValueHandler"
+                 public="true">
+            <tag name="paypal_unified.payment_source_value_handler"/>
+        </service>
+
+        <service id="paypal_unified.oxxo_payment_source_value_handler"
+                 class="SwagPaymentPayPalUnified\Components\Services\OrderBuilder\PaymentSource\PaymentSourceValueHandler\OxxoPaymentSourceValueHandler"
+                 public="true">
+            <tag name="paypal_unified.payment_source_value_handler"/>
+        </service>
+
+        <service id="paypal_unified.p24_payment_source_value_handler"
+                 class="SwagPaymentPayPalUnified\Components\Services\OrderBuilder\PaymentSource\PaymentSourceValueHandler\P24PaymentSourceValueHandler"
+                 public="true">
+            <tag name="paypal_unified.payment_source_value_handler"/>
+        </service>
+
+        <service id="paypal_unified.sofort_payment_source_value_handler"
+                 class="SwagPaymentPayPalUnified\Components\Services\OrderBuilder\PaymentSource\PaymentSourceValueHandler\SofortPaymentSourceValueHandler"
+                 public="true">
+            <tag name="paypal_unified.payment_source_value_handler"/>
+        </service>
+
+        <service id="paypal_unified.trustly_payment_source_value_handler"
+                 class="SwagPaymentPayPalUnified\Components\Services\OrderBuilder\PaymentSource\PaymentSourceValueHandler\TrustlyPaymentSourceValueHandler"
+                 public="true">
+            <tag name="paypal_unified.payment_source_value_handler"/>
+        </service>
+
+    </services>
+</container>

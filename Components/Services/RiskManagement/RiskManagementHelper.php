@@ -26,12 +26,18 @@ class RiskManagementHelper implements RiskManagementHelperInterface
     private $dependencyProvider;
 
     /**
-     * @var CrudServiceInterface
+     * @var CrudService|CrudServiceInterface
      */
     private $crudService;
 
-    public function __construct(Connection $connection, DependencyProvider $dependencyProvider, CrudService $crudService)
-    {
+    /**
+     * @param CrudService|CrudServiceInterface $crudService
+     */
+    public function __construct(
+        Connection $connection,
+        DependencyProvider $dependencyProvider,
+        $crudService
+    ) {
         $this->connection = $connection;
         $this->dependencyProvider = $dependencyProvider;
         $this->crudService = $crudService;

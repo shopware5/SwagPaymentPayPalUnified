@@ -1,0 +1,37 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="https://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service id="paypal_unified.common.price_formatter"
+                 class="SwagPaymentPayPalUnified\Components\Services\Common\PriceFormatter"
+                 public="true"/>
+
+        <service id="paypal_unified.common.customer_helper"
+                 class="SwagPaymentPayPalUnified\Components\Services\Common\CustomerHelper"
+                 public="true"/>
+
+        <service id="paypal_unified.common.cart_helper"
+                 class="SwagPaymentPayPalUnified\Components\Services\Common\CartHelper"
+                 public="true">
+            <argument type="service" id="paypal_unified.common.customer_helper"/>
+            <argument type="service" id="paypal_unified.common.price_formatter"/>
+        </service>
+
+        <service id="paypal_unified.common.return_url_helper"
+                 class="SwagPaymentPayPalUnified\Components\Services\Common\ReturnUrlHelper"
+                 public="true">
+            <argument type="service" id="router"/>
+        </service>
+
+        <service id="paypal_unified.common.cart_persister"
+                 class="SwagPaymentPayPalUnified\Components\Services\Common\CartPersister"
+                 public="true">
+            <argument type="service" id="basket_signature_generator" on-invalid="null"/>
+            <argument type="service" id="basket_persister" on-invalid="null"/>
+        </service>
+
+    </services>
+</container>

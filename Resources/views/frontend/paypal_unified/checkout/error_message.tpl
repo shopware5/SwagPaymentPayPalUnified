@@ -22,9 +22,24 @@
         {elseif $paypalUnifiedErrorCode == 8}
             {* No dispatch for order error *}
             {include file='frontend/_includes/messages.tpl' type='error' content="{s name="error/dispatch"}The payment could not be processed because there was no shipping method for your order.{/s}"}
+        {elseif $paypalUnifiedErrorCode == 10}
+            {* Instrument declined *}
+            {* @see https://developer.paypal.com/docs/checkout/standard/customize/handle-funding-failures/#link-handlefundingfailures *}
+            {include file='frontend/_includes/messages.tpl' type='error' content="{s name="error/instrumentDeclined"}The payment could not be processed, because either the billing address associated with the financial instrument could not be confirmed, the transaction exceeds the card limit, or the card issuer denied the transaction.{/s}"}
+        {elseif $paypalUnifiedErrorCode == 11}
+            {* TRANSACTION_REFUSED *}
+            {include file='frontend/_includes/messages.tpl' type='error' content="{s name="error/transaction_refused"}The payment provider has rejected the payment. Please check your entries.{/s}"}
+        {elseif $paypalUnifiedErrorCode == 12}
+            {* PAYMENT_SOURCE_INFO_CANNOT_BE_VERIFIED*}
+            {* @see https://developer.paypal.com/limited-release/orders-apms/pay-upon-invoice/integrate-pui-partners/#link-testyourintegrationbysimulatingsuccessfulandfailurescenarios *}
+            {include file='frontend/_includes/messages.tpl' type='error' content="{s name="error/paymentSourceInfoCannotBeVerified"}The combination of your name and address could not be validated. Please correct your data and try again.{/s} {s name="error/puiAdditional"}You can find further information in the <a href='https://www.ratepay.com/legal-payment-dataprivacy/' class='is--underline'>Ratepay Data Privacy Statement</a> or you can contact Ratepay using this <a href='https://www.ratepay.com/en/contact/' class='is--underline'>contact form</a>.{/s}"}
+        {elseif $paypalUnifiedErrorCode == 13}
+            {* PAYMENT_SOURCE_DECLINED_BY_PROCESSOR *}
+            {* @see https://developer.paypal.com/limited-release/orders-apms/pay-upon-invoice/integrate-pui-partners/#link-testyourintegrationbysimulatingsuccessfulandfailurescenarios *}
+            {include file='frontend/_includes/messages.tpl' type='error' content="{s name="error/paymentSourceDeclinedByProcessor"}It is not possible to use the selected payment method. This decision is based on automated data processing.{/s} {s name="error/puiAdditional"}You can find further information in the <a href='https://www.ratepay.com/legal-payment-dataprivacy/' class='is--underline'>Ratepay Data Privacy Statement</a> or you can contact Ratepay using this <a href='https://www.ratepay.com/en/contact/' class='is--underline'>contact form</a>.{/s}"}
         {else}
             {* Unknown error *}
-            {include file='frontend/_includes/messages.tpl' type='error' content="{s name="error/unkown"}An unknown error occurred while processing the payment.{/s}"}
+            {include file='frontend/_includes/messages.tpl' type='error' content="{s name="error/unknown"}An unknown error occurred while processing the payment.{/s}"}
         {/if}
 
 		{if $paypalUnifiedErrorMessage}

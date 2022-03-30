@@ -8,10 +8,9 @@
 
 namespace SwagPaymentPayPalUnified\Subscriber;
 
-use Doctrine\DBAL\Connection;
 use Enlight\Event\SubscriberInterface;
 use Enlight_Controller_Front;
-use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
+use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 
 class Order implements SubscriberInterface
@@ -22,20 +21,16 @@ class Order implements SubscriberInterface
     private $front;
 
     /**
-     * @var Connection
-     */
-    private $connection;
-
-    /**
-     * @var PaymentMethodProvider
+     * @var PaymentMethodProviderInterface
      */
     private $paymentMethodProvider;
 
-    public function __construct(Enlight_Controller_Front $front, Connection $connection)
-    {
+    public function __construct(
+        Enlight_Controller_Front $front,
+        PaymentMethodProviderInterface $paymentMethodProvider
+    ) {
         $this->front = $front;
-        $this->connection = $connection;
-        $this->paymentMethodProvider = new PaymentMethodProvider();
+        $this->paymentMethodProvider = $paymentMethodProvider;
     }
 
     /**
@@ -51,7 +46,7 @@ class Order implements SubscriberInterface
     public function onFilterOrderAttributes(\Enlight_Event_EventArgs $args)
     {
         $orderParams = $args->get('orderParams');
-        $payPalPaymentId = $this->paymentMethodProvider->getPaymentId($this->connection);
+        $payPalPaymentId = $this->paymentMethodProvider->getPaymentId(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
         if ((int) $orderParams['paymentID'] !== $payPalPaymentId) {
             return;
         }

@@ -8,9 +8,15 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Subscriber;
 
+use Enlight_Controller_ActionEventArgs;
+use Enlight_Controller_Request_RequestTestCase;
+use Enlight_Controller_Response_ResponseTestCase;
+use Enlight_Template_Manager;
 use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
+use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Subscriber\Account;
+use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\SettingsHelperTrait;
 use SwagPaymentPayPalUnified\Tests\Mocks\DummyController;
@@ -18,8 +24,9 @@ use SwagPaymentPayPalUnified\Tests\Mocks\ViewMock;
 
 class AccountTest extends TestCase
 {
-    use DatabaseTestCaseTrait;
     use SettingsHelperTrait;
+    use ContainerTrait;
+    use DatabaseTestCaseTrait;
 
     public function testCanBeCreated()
     {
@@ -39,70 +46,48 @@ class AccountTest extends TestCase
         $subscriber = $this->getSubscriber();
 
         $view = new ViewMock(
-            new \Enlight_Template_Manager()
+            new Enlight_Template_Manager()
         );
         $view->assign($this->getAccountViewAssigns());
 
-        $request = new \Enlight_Controller_Request_RequestTestCase();
+        $request = new Enlight_Controller_Request_RequestTestCase();
         $request->setActionName('fooBar');
 
-        $eventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
+        $eventArgs = new Enlight_Controller_ActionEventArgs([
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
         ]);
 
         $subscriber->onPostDispatchAccount($eventArgs);
         $customerData = $view->getAssign('sUserData');
         static::assertSame('PayPal', $customerData['additional']['payment']['description']);
-    }
-
-    public function testOnPostDispatchAccountNoShop()
-    {
-        $subscriber = $this->getSubscriber();
-        $shop = Shopware()->Container()->get('shop');
-
-        Shopware()->Container()->reset('shop');
-
-        $view = new ViewMock(
-            new \Enlight_Template_Manager()
-        );
-        $view->assign($this->getAccountViewAssigns());
-
-        $request = new \Enlight_Controller_Request_RequestTestCase();
-        $request->setActionName('payment');
-
-        $eventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
-        ]);
-
-        $subscriber->onPostDispatchAccount($eventArgs);
-        $customerData = $view->getAssign('sUserData');
-        static::assertSame('PayPal', $customerData['additional']['payment']['description']);
-        Shopware()->Container()->set('shop', $shop);
     }
 
     public function testOnPostDispatchAccountPaymentMethodInactive()
     {
-        $paymentMethodProvider = new PaymentMethodProvider(Shopware()->Container()->get('models'));
-        $paymentMethodProvider->setPaymentMethodActiveFlag(false);
+        $paymentMethodProvider = new PaymentMethodProvider(
+            Shopware()->Container()->get('dbal_connection'),
+            Shopware()->Container()->get('models')
+        );
+        $paymentMethodProvider->setPaymentMethodActiveFlag(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME, false);
         $subscriber = $this->getSubscriber();
 
         $view = new ViewMock(
-            new \Enlight_Template_Manager()
+            new Enlight_Template_Manager()
         );
         $view->assign($this->getAccountViewAssigns());
 
-        $request = new \Enlight_Controller_Request_RequestTestCase();
+        $request = new Enlight_Controller_Request_RequestTestCase();
         $request->setActionName('index');
 
-        $eventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
+        $eventArgs = new Enlight_Controller_ActionEventArgs([
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
         ]);
 
         $subscriber->onPostDispatchAccount($eventArgs);
         $customerData = $view->getAssign('sUserData');
         static::assertSame('PayPal', $customerData['additional']['payment']['description']);
 
-        $paymentMethodProvider->setPaymentMethodActiveFlag(true);
+        $paymentMethodProvider->setPaymentMethodActiveFlag(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME, true);
     }
 
     public function testOnPostDispatchAccountNoSettings()
@@ -110,15 +95,15 @@ class AccountTest extends TestCase
         $subscriber = $this->getSubscriber();
 
         $view = new ViewMock(
-            new \Enlight_Template_Manager()
+            new Enlight_Template_Manager()
         );
         $view->assign($this->getAccountViewAssigns());
 
-        $request = new \Enlight_Controller_Request_RequestTestCase();
+        $request = new Enlight_Controller_Request_RequestTestCase();
         $request->setActionName('index');
 
-        $eventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
+        $eventArgs = new Enlight_Controller_ActionEventArgs([
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
         ]);
 
         $subscriber->onPostDispatchAccount($eventArgs);
@@ -133,15 +118,15 @@ class AccountTest extends TestCase
         $this->addSettings(false);
 
         $view = new ViewMock(
-            new \Enlight_Template_Manager()
+            new Enlight_Template_Manager()
         );
         $view->assign($this->getAccountViewAssigns());
 
-        $request = new \Enlight_Controller_Request_RequestTestCase();
+        $request = new Enlight_Controller_Request_RequestTestCase();
         $request->setActionName('index');
 
-        $eventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
+        $eventArgs = new Enlight_Controller_ActionEventArgs([
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
         ]);
 
         $subscriber->onPostDispatchAccount($eventArgs);
@@ -156,15 +141,15 @@ class AccountTest extends TestCase
         $this->addSettings(true, '');
 
         $view = new ViewMock(
-            new \Enlight_Template_Manager()
+            new Enlight_Template_Manager()
         );
         $view->assign($this->getAccountViewAssigns());
 
-        $request = new \Enlight_Controller_Request_RequestTestCase();
+        $request = new Enlight_Controller_Request_RequestTestCase();
         $request->setActionName('index');
 
-        $eventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
+        $eventArgs = new Enlight_Controller_ActionEventArgs([
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
         ]);
 
         $subscriber->onPostDispatchAccount($eventArgs);
@@ -174,22 +159,27 @@ class AccountTest extends TestCase
 
     public function testOnPostDispatchAccountCustomerPayment()
     {
-        $subscriber = $this->getSubscriber();
-
-        $this->addSettings();
+        $this->insertGeneralSettingsFromArray(['active' => true]);
+        $this->insertPlusSettingsFromArray([
+            'shopId' => 1,
+            'active' => true,
+            'paymentName' => 'PayPal, Lastschrift oder Kreditkarte',
+            'paymentDescription' => '<br>Zahlung per Lastschrift oder Kreditkarte ist auch ohne PayPal Konto möglich',
+        ]);
 
         $view = new ViewMock(
-            new \Enlight_Template_Manager()
+            new Enlight_Template_Manager()
         );
         $view->assign($this->getAccountViewAssigns());
 
-        $request = new \Enlight_Controller_Request_RequestTestCase();
+        $request = new Enlight_Controller_Request_RequestTestCase();
         $request->setActionName('index');
 
-        $eventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
+        $eventArgs = new Enlight_Controller_ActionEventArgs([
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
         ]);
 
+        $subscriber = $this->getSubscriber();
         $subscriber->onPostDispatchAccount($eventArgs);
         $customerData = $view->getAssign('sUserData');
 
@@ -215,19 +205,19 @@ class AccountTest extends TestCase
         $this->addSettings();
 
         $view = new ViewMock(
-            new \Enlight_Template_Manager()
+            new Enlight_Template_Manager()
         );
         $view->assign($this->getAccountViewAssigns());
 
-        $request = new \Enlight_Controller_Request_RequestTestCase();
+        $request = new Enlight_Controller_Request_RequestTestCase();
         $request->setActionName('index');
 
-        $eventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view),
+        $eventArgs = new Enlight_Controller_ActionEventArgs([
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
         ]);
 
         $subscriber->onPostDispatchAccount($eventArgs);
-        /** @var array $paymentMethods */
+
         $paymentMethods = $view->getAssign('sPaymentMeans');
 
         $unifiedPayment = null;
@@ -258,13 +248,11 @@ class AccountTest extends TestCase
      */
     private function getSubscriber()
     {
-        $subscriber = new Account(
-            Shopware()->Container()->get('dbal_connection'),
+        return new Account(
             Shopware()->Container()->get('paypal_unified.settings_service'),
-            Shopware()->Container()->get('paypal_unified.dependency_provider')
+            Shopware()->Container()->get('paypal_unified.dependency_provider'),
+            Shopware()->Container()->get('paypal_unified.payment_method_provider')
         );
-
-        return $subscriber;
     }
 
     /**

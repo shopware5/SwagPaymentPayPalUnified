@@ -8,9 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services;
 
-use Doctrine\DBAL\Query\QueryBuilder;
 use PHPUnit\Framework\TestCase;
-use SwagPaymentPayPalUnified\Components\Services\Plus\PaymentInstructionService;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Instruction\Amount;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Instruction\RecipientBanking;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\PaymentInstruction;
@@ -20,7 +18,7 @@ class PaymentInstructionServiceTest extends TestCase
 {
     use DatabaseTestCaseTrait;
 
-    const TEST_ORDER_NUMBER = 20001;
+    const TEST_ORDER_NUMBER = '20001';
     const TEST_AMOUNT_VALUE = 50.5;
     const TEST_DUE_DATE = '01-01-2000';
     const TEST_REFERENCE = 'TEST_REFERENCE_NUMBER';
@@ -36,7 +34,6 @@ class PaymentInstructionServiceTest extends TestCase
 
     public function testGetInstruction()
     {
-        /** @var PaymentInstructionService $instructionsService */
         $instructionsService = Shopware()->Container()->get('paypal_unified.payment_instruction_service');
         $instructionsService->createInstructions(self::TEST_ORDER_NUMBER, $this->getTestInstructions());
 
@@ -51,21 +48,20 @@ class PaymentInstructionServiceTest extends TestCase
         static::assertSame(self::TEST_BANK_IBAN, $testInstructions->getIban());
         static::assertSame((string) self::TEST_AMOUNT_VALUE, $testInstructions->getAmount());
 
-        /** @var QueryBuilder $query */
         $query = Shopware()->Container()->get('dbal_connection')->createQueryBuilder();
-
-        $query->select('internalcomment')
+        $statement = $query->select('internalcomment')
             ->from('s_order')
             ->where('ordernumber = :orderNumber')
-            ->setParameter('orderNumber', self::TEST_ORDER_NUMBER);
+            ->setParameter('orderNumber', self::TEST_ORDER_NUMBER)
+            ->execute();
 
-        $internalComment = $query->execute()->fetchColumn();
+        $internalComment = $statement->fetchColumn();
 
         $expected = '
-{"jsonDescription":"Pay Upon Invoice Payment Instructions","orderNumber":20001,"bankName":"TEST_BANK","accountHolder":"TEST_ACCOUNT_HOLDER","iban":"TEST_IBAN","bic":"TEST_BIC","amount":"50.5","dueDate":"01-01-2000","reference":"TEST_REFERENCE_NUMBER"}
+{"jsonDescription":"Pay Upon Invoice Payment Instructions","orderNumber":"20001","bankName":"TEST_BANK","accountHolder":"TEST_ACCOUNT_HOLDER","iban":"TEST_IBAN","bic":"TEST_BIC","amount":"50.5","dueDate":"01-01-2000","reference":"TEST_REFERENCE_NUMBER"}
 ';
 
-        if (\method_exists($this, 'assertStringContainsString')) {
+        if (method_exists($this, 'assertStringContainsString')) {
             static::assertStringContainsString($expected, $internalComment);
 
             return;

@@ -8,14 +8,21 @@
 
 namespace SwagPaymentPayPalUnified\PayPalBundle;
 
-class RequestUri
+final class RequestUri
 {
-    const PAYMENT_RESOURCE = 'payments/payment';
-    const WEBHOOK_RESOURCE = 'notifications/webhooks';
-    const TOKEN_RESOURCE = 'oauth2/token';
-    const SALE_RESOURCE = 'payments/sale';
-    const REFUND_RESOURCE = 'payments/refund';
-    const AUTHORIZATION_RESOURCE = 'payments/authorization';
-    const CAPTURE_RESOURCE = 'payments/capture';
-    const ORDER_RESOURCE = 'payments/orders';
+    const PAYMENT_RESOURCE = 'v1/payments/payment';
+    const WEBHOOK_RESOURCE = 'v1/notifications/webhooks';
+    const TOKEN_RESOURCE = 'v1/oauth2/token';
+    const SALE_RESOURCE = 'v1/payments/sale';
+    const REFUND_RESOURCE = 'v1/payments/refund';
+    const AUTHORIZATION_RESOURCE = 'v1/payments/authorization';
+    const CAPTURE_RESOURCE = 'v1/payments/capture';
+    const ORDER_RESOURCE = 'v1/payments/orders';
+    const CREDENTIALS_RESOURCE = 'v1/customer/partners/%s/merchant-integrations/credentials';
+    const MERCHANT_INTEGRATIONS_RESOURCE = 'v1/customer/partners/%s/merchant-integrations/%s';
+    const USER_INFO_RESOURCE = 'v1/identity/oauth2/userinfo';
+
+    private function __construct()
+    {
+    }
 }

@@ -6,7 +6,7 @@
  * file that was distributed with this source code.
  */
 
-namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services\ExpressCheckout;
+namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services\Plus;
 
 use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
@@ -14,6 +14,7 @@ use SwagPaymentPayPalUnified\Components\Services\Plus\PlusPaymentBuilderService;
 use SwagPaymentPayPalUnified\Components\Services\Validation\BasketIdWhitelist;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Transactions\ShipmentDetails;
 use SwagPaymentPayPalUnified\Tests\Functional\Components\Services\Mock\SettingsServicePaymentBuilderServiceMock;
 
 class PlusPaymentBuilderServiceTest extends TestCase
@@ -63,7 +64,9 @@ class PlusPaymentBuilderServiceTest extends TestCase
 
         $request = $this->getRequestData($eddDays);
 
-        static::assertSame($expectedDate, $request->getTransactions()->getShipmentDetails()->getEstimatedDeliveryDate());
+        $shipmentDetails = $request->getTransactions()->getShipmentDetails();
+        static::assertInstanceOf(ShipmentDetails::class, $shipmentDetails);
+        static::assertSame($expectedDate, $shipmentDetails->getEstimatedDeliveryDate());
 
         $this->deleteEddAttribute();
     }
@@ -94,12 +97,7 @@ class PlusPaymentBuilderServiceTest extends TestCase
      */
     private function getPlusPaymentBuilder(SettingsServiceInterface $settingService)
     {
-        $router = Shopware()->Container()->get('router');
-        $crudService = Shopware()->Container()->get('shopware_attribute.crud_service');
-        $snippetManager = Shopware()->Container()->get('snippets');
-        $dependencyProvider = Shopware()->Container()->get('paypal_unified.dependency_provider');
-
-        return new PlusPaymentBuilderService($router, $settingService, $crudService, $snippetManager, $dependencyProvider);
+        return Shopware()->Container()->get('paypal_unified.plus.payment_builder_service');
     }
 
     /**

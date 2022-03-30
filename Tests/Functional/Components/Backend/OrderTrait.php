@@ -8,13 +8,15 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Backend;
 
+use Doctrine\DBAL\Connection;
 use Shopware\Components\Model\ModelManager;
 use Shopware\Models\Dispatch\Dispatch;
 use Shopware\Models\Order\Order;
 use Shopware\Models\Order\Status;
+use Shopware\Models\Payment\Payment;
 use Shopware\Models\Shop\Shop;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
-use SwagPaymentPayPalUnified\Components\PaymentStatus;
+use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 
 trait OrderTrait
 {
@@ -24,6 +26,11 @@ trait OrderTrait
     protected $modelManager;
 
     /**
+     * @var Connection
+     */
+    protected $connection;
+
+    /**
      * @param string $temporaryId
      *
      * @return int
@@ -31,11 +38,16 @@ trait OrderTrait
     protected function createOrder($temporaryId)
     {
         $orderStatus = $this->modelManager->getRepository(Status::class)->find(0);
-        $paymentStatus = $this->modelManager->getRepository(Status::class)->find(PaymentStatus::PAYMENT_STATUS_OPEN);
+        self::assertInstanceOf(Status::class, $orderStatus);
+        $paymentStatus = $this->modelManager->getRepository(Status::class)->find(Status::PAYMENT_STATE_OPEN);
+        self::assertInstanceOf(Status::class, $paymentStatus);
         $dispatch = $this->modelManager->getRepository(Dispatch::class)->findOneBy([]);
+        self::assertInstanceOf(Dispatch::class, $dispatch);
         $shop = $this->modelManager->getRepository(Shop::class)->find(1);
+        self::assertInstanceOf(Shop::class, $shop);
 
-        $paymentMethod = (new PaymentMethodProvider($this->modelManager))->getPaymentMethodModel();
+        $paymentMethod = (new PaymentMethodProvider($this->connection, $this->modelManager))->getPaymentMethodModel(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
+        self::assertInstanceOf(Payment::class, $paymentMethod);
 
         $order = new Order();
         $order->setOrderStatus($orderStatus);

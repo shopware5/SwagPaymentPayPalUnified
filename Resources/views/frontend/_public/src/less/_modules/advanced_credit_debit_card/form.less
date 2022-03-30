@@ -1,0 +1,24 @@
+#paypal-acdc-form {
+    &:extend(form);
+
+    .acdc-column-container {
+        .column-count(2);
+    }
+
+    input[type="text"] {
+        width: 100%;
+        .unitize(margin-bottom, 8);
+    }
+
+
+    .field {
+        &:extend(input[type="text"]);
+        .unitize(height, 38);
+        .unitize(margin-bottom, 8);
+        width: unset;
+
+        &.has--error {
+            &:extend(input[type="text"].has--error);
+        }
+    }
+}

@@ -5,10 +5,17 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <imports>
+        <import resource="components/common.xml"/>
         <import resource="components/express_checkout.xml"/>
         <import resource="components/legacy.xml"/>
+        <import resource="components/paypal_order.xml"/>
         <import resource="components/plus.xml"/>
         <import resource="components/validation.xml"/>
+        <import resource="components/order_builder.xml" />
+        <import resource="components/payment_source.xml" />
+        <import resource="components/payment_source_value.xml" />
+        <import resource="components/apm_risk_management.xml" />
+        <import resource="components/order_array_factory.xml" />
     </imports>
 
     <services>
@@ -29,14 +36,12 @@
                  class="SwagPaymentPayPalUnified\Components\Services\LoggerService"
                  public="true">
             <argument type="service" id="pluginlogger"/>
-            <argument type="service" id="paypal_unified.settings_service"/>
         </service>
 
         <service id="paypal_unified.order_data_service"
                  class="SwagPaymentPayPalUnified\Components\Services\OrderDataService"
                  public="true">
             <argument type="service" id="dbal_connection"/>
-            <argument type="service" id="paypal_unified.settings_service"/>
         </service>
 
         <service id="paypal_unified.payment_address_service"
@@ -46,16 +51,20 @@
         <service id="paypal_unified.payment_builder_service"
                  class="SwagPaymentPayPalUnified\Components\Services\PaymentBuilderService"
                  public="true">
-            <argument type="service" id="router"/>
             <argument type="service" id="paypal_unified.settings_service"/>
             <argument type="service" id="snippets"/>
             <argument type="service" id="paypal_unified.dependency_provider"/>
+            <argument type="service" id="paypal_unified.common.price_formatter"/>
+            <argument type="service" id="paypal_unified.common.customer_helper"/>
+            <argument type="service" id="paypal_unified.common.cart_helper"/>
+            <argument type="service" id="paypal_unified.common.return_url_helper"/>
         </service>
 
         <service id="paypal_unified.payment_status_service"
                  class="SwagPaymentPayPalUnified\Components\Services\PaymentStatusService"
                  public="true">
             <argument type="service" id="models"/>
+            <argument type="service" id="paypal_unified.logger_service"/>
         </service>
 
         <service id="paypal_unified.settings_service"
@@ -74,7 +83,7 @@
                  class="SwagPaymentPayPalUnified\Components\Services\RiskManagement\RiskManagement"
                  public="true">
             <argument type="service" id="paypal_unified.dependency_provider"/>
-            <argument type="service" id="dbal_connection"/>
+            <argument type="service" id="paypal_unified.payment_method_provider"/>
         </service>
 
         <service id="paypal_unified.risk_management_helper"
@@ -91,5 +100,45 @@
             <argument type="service" id="dbal_connection"/>
         </service>
 
+        <service id="paypal_unified.payment_controller_helper"
+                 class="SwagPaymentPayPalUnified\Components\Services\PaymentControllerHelper"
+                 public="true">
+            <argument type="service" id="paypal_unified.dependency_provider"/>
+        </service>
+
+        <service id="paypal_unified.payment_method_provider"
+                 class="SwagPaymentPayPalUnified\Components\PaymentMethodProvider"
+                 public="true">
+            <argument type="service" id="dbal_connection"/>
+            <argument type="service" id="models"/>
+        </service>
+
+        <service id="paypal_unified.paypal_order_parameter_facade"
+                 class="SwagPaymentPayPalUnified\Components\PayPalOrderParameter\PayPalOrderParameterFacade"
+                 public="true">
+            <argument type="service" id="paypal_unified.payment_controller_helper"/>
+            <argument type="service" id="paypal_unified.dependency_provider"/>
+            <argument type="service" id="paypal_unified.common.cart_persister"/>
+        </service>
+
+        <service id="paypal_unified.onboarding_status_service"
+                 class="SwagPaymentPayPalUnified\Components\Services\OnboardingStatusService"
+                 public="true">
+            <argument type="service" id="paypal_unified.merchant_integrations_resource"/>
+            <argument type="service" id="paypal_unified.logger_service"/>
+        </service>
+
+        <service id="paypal_unified.button_locale_service"
+                 class="SwagPaymentPayPalUnified\Components\ButtonLocaleService"
+                 public="true">
+            <argument type="service" id="paypal_unified.dependency_provider"/>
+        </service>
+
+        <service id="paypal_unified.dispatch_validation"
+                 class="SwagPaymentPayPalUnified\Components\Services\DispatchValidation"
+                 public="true">
+            <argument type="service" id="config"/>
+            <argument type="service" id="paypal_unified.dependency_provider"/>
+        </service>
     </services>
 </container>

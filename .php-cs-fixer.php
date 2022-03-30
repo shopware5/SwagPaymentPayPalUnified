@@ -17,7 +17,8 @@ use PhpCsFixerCustomFixers\Fixer\SingleSpaceBeforeStatementFixer;
 use PhpCsFixerCustomFixers\Fixers;
 
 $finder = PhpCsFixer\Finder::create()
-    ->in(__DIR__);
+    ->in(__DIR__)
+    ->exclude('Tests/E2E');
 
 $header = <<<EOF
 (c) shopware AG <info@shopware.com>

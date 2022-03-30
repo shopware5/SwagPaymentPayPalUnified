@@ -8,7 +8,6 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Backend;
 
-use Doctrine\DBAL\Connection;
 use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\Components\Backend\PaymentDetailsService;
 use SwagPaymentPayPalUnified\Components\Services\ExceptionHandlerService;
@@ -72,7 +71,7 @@ class PaymentDetailsServiceTest extends TestCase
     public function testGetPaymentDetailsLegacy()
     {
         $legacyPaymentId = '99';
-        /** @var Connection $connection */
+
         $connection = Shopware()->Container()->get('dbal_connection');
         $connection->executeQuery(
             \sprintf("INSERT INTO `s_core_paymentmeans` (`id`, `name`) VALUES ( %s, 'paypal');", $legacyPaymentId)

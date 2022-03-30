@@ -9,7 +9,7 @@
 namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services;
 
 use PHPUnit\Framework\TestCase;
-use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
+use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\SettingsHelperTrait;
 
@@ -17,40 +17,7 @@ class LoggerServiceTest extends TestCase
 {
     use DatabaseTestCaseTrait;
     use SettingsHelperTrait;
-
-    public function testWarningReturnsWithoutSettings()
-    {
-        $fileName = $this->getLogfile();
-
-        //Reset the logfile
-        \file_put_contents($fileName, '');
-
-        /** @var LoggerServiceInterface $loggerService */
-        $loggerService = Shopware()->Container()->get('paypal_unified.logger_service');
-
-        $loggerService->warning('Test message');
-
-        $lastLine = $this->getLastLine($fileName);
-        static::assertEmpty($lastLine);
-    }
-
-    public function testWarningReturnsWithoutRequiredLogLevel()
-    {
-        $fileName = $this->getLogfile();
-
-        //Reset the logfile
-        \file_put_contents($fileName, '');
-
-        /** @var LoggerServiceInterface $loggerService */
-        $loggerService = Shopware()->Container()->get('paypal_unified.logger_service');
-
-        $this->insertTestSettings(2);
-
-        $loggerService->warning('Test message');
-
-        $lastLine = $this->getLastLine($fileName);
-        static::assertEmpty($lastLine);
-    }
+    use ContainerTrait;
 
     public function testWarningAddsLine()
     {
@@ -59,14 +26,16 @@ class LoggerServiceTest extends TestCase
         //Reset the logfile
         \file_put_contents($fileName, '');
 
-        /** @var LoggerServiceInterface $loggerService */
-        $loggerService = Shopware()->Container()->get('paypal_unified.logger_service');
-
         $this->insertTestSettings();
+
+        $this->getContainer()->reset('paypal_unified.logger_service');
+        $loggerService = $this->getContainer()->get('paypal_unified.logger_service');
 
         $loggerService->warning('Test message');
 
         $lastLine = $this->getLastLine($fileName);
+
+        static::assertNotNull($lastLine);
 
         if (\method_exists($this, 'assertStringContainsString')) {
             static::assertStringContainsString('Test message', $lastLine);
@@ -76,40 +45,6 @@ class LoggerServiceTest extends TestCase
         static::assertContains('Test message', $lastLine);
     }
 
-    public function testNotifyReturnsWithoutSettings()
-    {
-        $fileName = $this->getLogfile();
-
-        //Reset the logfile
-        \file_put_contents($fileName, '');
-
-        /** @var LoggerServiceInterface $loggerService */
-        $loggerService = Shopware()->Container()->get('paypal_unified.logger_service');
-
-        $loggerService->notify('Test message');
-
-        $lastLine = $this->getLastLine($fileName);
-        static::assertEmpty($lastLine);
-    }
-
-    public function testNotifyReturnsWithoutRequiredLogLevel()
-    {
-        $fileName = $this->getLogfile();
-
-        //Reset the logfile
-        \file_put_contents($fileName, '');
-
-        /** @var LoggerServiceInterface $loggerService */
-        $loggerService = Shopware()->Container()->get('paypal_unified.logger_service');
-
-        $this->insertTestSettings(2);
-
-        $loggerService->notify('Test message');
-
-        $lastLine = $this->getLastLine($fileName);
-        static::assertEmpty($lastLine);
-    }
-
     public function testNotifyAddsLine()
     {
         $fileName = $this->getLogfile();
@@ -117,14 +52,16 @@ class LoggerServiceTest extends TestCase
         //Reset the logfile
         \file_put_contents($fileName, '');
 
-        /** @var LoggerServiceInterface $loggerService */
-        $loggerService = Shopware()->Container()->get('paypal_unified.logger_service');
-
         $this->insertTestSettings();
+
+        $this->getContainer()->reset('paypal_unified.logger_service');
+        $loggerService = $this->getContainer()->get('paypal_unified.logger_service');
 
         $loggerService->notify('Test message');
 
         $lastLine = $this->getLastLine($fileName);
+
+        static::assertNotNull($lastLine);
 
         if (\method_exists($this, 'assertStringContainsString')) {
             static::assertStringContainsString('Test message', $lastLine);
@@ -141,8 +78,7 @@ class LoggerServiceTest extends TestCase
         //Reset the logfile
         \file_put_contents($fileName, '');
 
-        /** @var LoggerServiceInterface $loggerService */
-        $loggerService = Shopware()->Container()->get('paypal_unified.logger_service');
+        $loggerService = $this->getContainer()->get('paypal_unified.logger_service');
 
         $loggerService->error('A very fatal error');
 
@@ -157,13 +93,12 @@ class LoggerServiceTest extends TestCase
     }
 
     /**
-     * @param int $logLevel
+     * @return void
      */
-    private function insertTestSettings($logLevel = 1)
+    private function insertTestSettings()
     {
         $this->insertGeneralSettingsFromArray([
             'shopId' => 1,
-            'logLevel' => $logLevel,
         ]);
     }
 
@@ -172,11 +107,9 @@ class LoggerServiceTest extends TestCase
      */
     private function getLogfile()
     {
-        $env = Shopware()->Container()->getParameter('kernel.environment');
+        $env = $this->getContainer()->getParameter('kernel.environment');
 
-        $fileName = __DIR__ . '/../../../../../../../var/log/plugin_' . $env . '-' . \date('Y-m-d') . '.log';
-
-        return $fileName;
+        return __DIR__ . '/../../../../../../../var/log/plugin_' . $env . '-' . \date('Y-m-d') . '.log';
     }
 
     /**
@@ -186,7 +119,10 @@ class LoggerServiceTest extends TestCase
      */
     private function getLastLine($file)
     {
-        $lines = \explode("\n", \file_get_contents($file));
+        $content = \file_get_contents($file);
+        static::assertTrue(\is_string($content));
+        $lines = \explode("\n", $content);
+        static::assertTrue(\is_array($lines));
         $lineCount = \count($lines);
 
         return $lines[$lineCount - 2]; //the actual last line is blank

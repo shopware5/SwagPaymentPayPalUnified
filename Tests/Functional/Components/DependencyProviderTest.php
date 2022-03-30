@@ -31,14 +31,15 @@ class DependencyProviderTest extends TestCase
     {
         $dp = new DependencyProvider(Shopware()->Container());
 
-        static::assertSame(DetachedShop::class, \get_class($dp->getShop()));
+        static::assertInstanceOf(DetachedShop::class, $dp->getShop());
     }
 
     public function testGetShopReturnNull()
     {
         $dp = new DependencyProvider(new ContainerMockWithNoShop());
+        $shop = $dp->getShop();
 
-        static::assertNull($dp->getShop());
+        static::assertNull($shop);
     }
 
     public function testGetModuleHasModule()

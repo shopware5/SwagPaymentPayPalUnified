@@ -8,43 +8,29 @@
 
 namespace SwagPaymentPayPalUnified\Subscriber;
 
-use Doctrine\DBAL\Connection;
 use Enlight\Event\SubscriberInterface;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
+use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 
 class PaymentMeans implements SubscriberInterface
 {
-    /**
-     * @var int
-     */
-    private $unifiedPaymentId;
-
     /**
      * @var SettingsServiceInterface
      */
     private $settingsService;
 
     /**
-     * @var \Enlight_Components_Session_Namespace
+     * @var PaymentMethodProviderInterface
      */
-    private $session;
-
-    /**
-     * @var Connection
-     */
-    private $connection;
+    private $paymentMethodProvider;
 
     public function __construct(
-        Connection $connection,
         SettingsServiceInterface $settingsService,
-        \Enlight_Components_Session_Namespace $session
+        PaymentMethodProviderInterface $paymentMethodProvider
     ) {
-        $this->connection = $connection;
-        $paymentMethodProvider = new PaymentMethodProvider();
-        $this->unifiedPaymentId = $paymentMethodProvider->getPaymentId($connection);
         $this->settingsService = $settingsService;
-        $this->session = $session;
+        $this->paymentMethodProvider = $paymentMethodProvider;
     }
 
     /**
@@ -57,14 +43,19 @@ class PaymentMeans implements SubscriberInterface
         ];
     }
 
+    /**
+     * @return void
+     */
     public function onFilterPaymentMeans(\Enlight_Event_EventArgs $args)
     {
-        /** @var array $availableMethods */
         $availableMethods = $args->getReturn();
 
+        $activePayPalPaymentMethods = $this->paymentMethodProvider->getActivePayments(PaymentMethodProvider::getAllUnifiedNames());
+        $activePayPalPaymentMethodIds = array_map('\intval', array_values($activePayPalPaymentMethods));
+
         foreach ($availableMethods as $index => $paymentMethod) {
-            if ((int) $paymentMethod['id'] === $this->unifiedPaymentId
-                && (!$this->settingsService->hasSettings() || !$this->settingsService->get('active'))
+            if (\in_array((int) $paymentMethod['id'], $activePayPalPaymentMethodIds, true)
+                && (!$this->settingsService->hasSettings() || !$this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_ACTIVE))
             ) {
                 //Force unset the payment method, because it's not available without any settings.
                 unset($availableMethods[$index]);
@@ -72,30 +63,5 @@ class PaymentMeans implements SubscriberInterface
         }
 
         $args->setReturn($availableMethods);
-    }
-
-    /**
-     * @return array
-     */
-    private function getCustomerData()
-    {
-        $customerData = [];
-        $registerData = $this->session->get('sRegister');
-        $customerData['billingaddress']['company'] = null;
-        if (isset($registerData['billing']['company'])) {
-            $customerData['billingaddress']['company'] = $registerData['billing']['company'];
-        }
-
-        $countryIso = $this->connection->createQueryBuilder()
-            ->select('countryiso')
-            ->from('s_core_countries')
-            ->where('id = :countryId')
-            ->setParameter('countryId', $registerData['billing']['country'])
-            ->execute()
-            ->fetchColumn();
-
-        $customerData['additional']['country']['countryiso'] = $countryIso;
-
-        return $customerData;
     }
 }

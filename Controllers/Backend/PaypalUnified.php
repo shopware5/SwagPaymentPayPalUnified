@@ -10,15 +10,19 @@ use Doctrine\DBAL\Connection;
 use Doctrine\ORM\Query\Expr\Join;
 use Shopware\Components\Model\QueryBuilder;
 use Shopware\Models\Order\Order;
-use Shopware\Models\Shop\Repository as ShopRepository;
-use Shopware\Models\Shop\Shop;
+use Shopware\Models\Order\Status;
 use SwagPaymentPayPalUnified\Components\Backend\CaptureService;
+use SwagPaymentPayPalUnified\Components\Backend\CredentialsService;
 use SwagPaymentPayPalUnified\Components\Backend\PaymentDetailsService;
 use SwagPaymentPayPalUnified\Components\Backend\VoidService;
 use SwagPaymentPayPalUnified\Components\ExceptionHandlerServiceInterface;
-use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
+use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Components\PaymentStatus;
 use SwagPaymentPayPalUnified\Components\Services\PaymentStatusService;
+use SwagPaymentPayPalUnified\Models\Settings\AdvancedCreditDebitCard;
+use SwagPaymentPayPalUnified\Models\Settings\PayUponInvoice;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\AuthorizationResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\CaptureResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\OrderResource;
@@ -26,11 +30,12 @@ use SwagPaymentPayPalUnified\PayPalBundle\Resources\RefundResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\SaleResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\SaleRefund;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Transactions\Amount;
+use Symfony\Component\HttpFoundation\Response;
 
 class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Backend_Application
 {
     /**
-     * @var string
+     * {@inheritdoc}
      */
     protected $model = Order::class;
 
@@ -45,7 +50,7 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
     protected $exceptionHandler;
 
     /**
-     * @var array
+     * @var array<int, string>
      */
     protected $filterFields = [
         'number',
@@ -55,11 +60,18 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
     ];
 
     /**
+     * @var LoggerServiceInterface
+     */
+    private $logger;
+
+    /**
      * {@inheritdoc}
      */
     public function preDispatch()
     {
-        $this->exceptionHandler = $this->get('paypal_unified.exception_handler_service');
+        $this->exceptionHandler = $this->container->get('paypal_unified.exception_handler_service');
+        $this->container->get('paypal_unified.backend.shop_registration_service')->registerShopById((int) $this->request->getParam('shopId'));
+        $this->logger = $this->container->get('paypal_unified.logger_service');
 
         parent::preDispatch();
     }
@@ -72,8 +84,6 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
      */
     public function paymentDetailsAction()
     {
-        $this->registerShopResource();
-
         $paymentId = $this->Request()->getParam('id');
         $paymentMethodId = $this->Request()->getParam('paymentMethodId');
         //For legacy orders, the payment id is the transactionId and not the temporaryId
@@ -88,8 +98,6 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
 
     public function saleDetailsAction()
     {
-        $this->registerShopResource();
-
         $saleId = $this->Request()->getParam('id');
         $view = $this->View();
 
@@ -111,8 +119,6 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
 
     public function refundDetailsAction()
     {
-        $this->registerShopResource();
-
         $saleId = $this->Request()->getParam('id');
         $view = $this->View();
 
@@ -134,8 +140,6 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
 
     public function captureDetailsAction()
     {
-        $this->registerShopResource();
-
         $captureId = $this->Request()->getParam('id');
         $view = $this->View();
 
@@ -157,8 +161,6 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
 
     public function authorizationDetailsAction()
     {
-        $this->registerShopResource();
-
         $authorizationId = $this->Request()->getParam('id');
         $view = $this->View();
 
@@ -180,8 +182,6 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
 
     public function orderDetailsAction()
     {
-        $this->registerShopResource();
-
         $orderId = $this->Request()->getParam('id');
         $view = $this->View();
 
@@ -203,10 +203,8 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
 
     public function refundSaleAction()
     {
-        $this->registerShopResource();
-
         $saleId = $this->Request()->getParam('id');
-        $totalAmount = \number_format($this->Request()->getParam('amount'), 2);
+        $totalAmount = number_format($this->Request()->getParam('amount'), 2);
         $invoiceNumber = $this->Request()->getParam('invoiceNumber');
         $refundCompletely = (bool) $this->Request()->getParam('refundCompletely');
         $currency = $this->Request()->getParam('currency');
@@ -234,7 +232,7 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
             if ($refundData['state'] === PaymentStatus::PAYMENT_COMPLETED) {
                 $paymentStatusService->updatePaymentStatus(
                     $refundData['parent_payment'],
-                    PaymentStatus::PAYMENT_STATUS_REFUNDED
+                    Status::PAYMENT_STATE_RE_CREDITING
                 );
             }
 
@@ -252,10 +250,8 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
 
     public function captureOrderAction()
     {
-        $this->registerShopResource();
-
         $orderId = $this->Request()->getParam('id');
-        $amountToCapture = \number_format($this->Request()->getParam('amount'), 2);
+        $amountToCapture = number_format($this->Request()->getParam('amount'), 2);
         $currency = $this->Request()->getParam('currency');
         $isFinal = (bool) $this->Request()->getParam('isFinal');
 
@@ -268,10 +264,8 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
 
     public function captureAuthorizationAction()
     {
-        $this->registerShopResource();
-
         $authorizationId = $this->Request()->getParam('id');
-        $amountToCapture = \number_format($this->Request()->getParam('amount'), 2);
+        $amountToCapture = number_format($this->Request()->getParam('amount'), 2);
         $currency = $this->Request()->getParam('currency');
         $isFinal = (bool) $this->Request()->getParam('isFinal');
 
@@ -284,10 +278,8 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
 
     public function refundCaptureAction()
     {
-        $this->registerShopResource();
-
         $captureId = $this->Request()->getParam('id');
-        $totalAmount = \number_format($this->Request()->getParam('amount'), 2);
+        $totalAmount = number_format($this->Request()->getParam('amount'), 2);
         $description = $this->Request()->getParam('note');
         $currency = $this->Request()->getParam('currency');
 
@@ -300,8 +292,6 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
 
     public function voidAuthorizationAction()
     {
-        $this->registerShopResource();
-
         $authorizationId = $this->Request()->getParam('id');
 
         /** @var VoidService $voidService */
@@ -313,8 +303,6 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
 
     public function voidOrderAction()
     {
-        $this->registerShopResource();
-
         $orderId = $this->Request()->getParam('id');
 
         /** @var VoidService $voidService */
@@ -322,6 +310,38 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
         $viewParameter = $voidService->voidOrder($orderId);
 
         $this->View()->assign($viewParameter);
+    }
+
+    public function updateCredentialsAction()
+    {
+        $shopId = (int) $this->Request()->getParam('shopId');
+        $partnerId = (string) $this->request->getParam('partnerId');
+        $authCode = (string) $this->request->getParam('authCode');
+        $sharedId = (string) $this->request->getParam('sharedId');
+        $nonce = (string) $this->request->getParam('nonce');
+        $sandbox = (bool) $this->request->getParam('sandbox');
+
+        $this->logger->debug(sprintf('%s START', __METHOD__));
+
+        /** @var CredentialsService $credentialsService */
+        $credentialsService = $this->get('paypal_unified.backend.credentials_service');
+
+        try {
+            $accessToken = $credentialsService->getAccessToken($authCode, $sharedId, $nonce, $sandbox);
+            $credentials = $credentialsService->getCredentials($accessToken, $partnerId, $sandbox);
+
+            $credentialsService->updateCredentials($credentials, $shopId, $sandbox);
+
+            $this->updateOnboardingStatus($shopId, $sandbox);
+        } catch (\Exception $e) {
+            $this->response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
+            $this->view->assign([
+                'exception' => $e->getMessage(),
+                'trace' => $e->getTrace(),
+            ]);
+
+            return;
+        }
     }
 
     /**
@@ -363,7 +383,11 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
         $orderStatusNamespace = $this->container->get('snippets')->getNamespace('backend/static/order_status');
         $paymentStatusNamespace = $this->container->get('snippets')->getNamespace('backend/static/payment_status');
 
-        $orderList['data'] = \array_map(static function ($order) use ($orderStatusNamespace, $paymentStatusNamespace) {
+        $orderList['data'] = array_map(static function ($order) use ($orderStatusNamespace, $paymentStatusNamespace) {
+            if (!\is_array($order)) {
+                return $order;
+            }
+
             if (!isset($order['orderStatus']['description'])) {
                 $order['orderStatus']['description'] = $orderStatusNamespace->get($order['orderStatus']['name']);
             }
@@ -400,6 +424,7 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
             'property' => 'sOrder.number',
             'expression' => '!=',
             'value' => '0',
+            'operator' => null,
         ];
 
         // Ignore order with PayPal as payment method but without valid transaction ID
@@ -407,6 +432,7 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
             'property' => 'sOrder.transactionId',
             'expression' => '!=',
             'value' => '',
+            'operator' => null,
         ];
 
         return $conditions;
@@ -420,7 +446,7 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
         $fields = parent::getModelFields($model, $alias);
 
         if ($model === $this->model) {
-            $fields = \array_merge(
+            $fields = array_merge(
                 $fields,
                 [
                     'customer.email' => ['alias' => 'customer.email', 'type' => 'string'],
@@ -432,21 +458,73 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
     }
 
     /**
+     * @param int  $shopId
+     * @param bool $sandbox
+     *
+     * @return void
+     */
+    private function updateOnboardingStatus($shopId, $sandbox)
+    {
+        $this->logger->debug(sprintf('%s START', __METHOD__));
+
+        $entityManager = $this->container->get('models');
+        $settingsService = $this->container->get('paypal_unified.settings_service');
+
+        $puiSettings = $settingsService->getSettings($shopId, SettingsTable::PAY_UPON_INVOICE);
+        $acdcSettings = $settingsService->getSettings($shopId, SettingsTable::ADVANCED_CREDIT_DEBIT_CARD);
+
+        $defaultSettings = [
+            'shopId' => $shopId,
+            'onboardingCompleted' => false,
+            'sandboxOnboardingCompleted' => false,
+            'active' => false,
+        ];
+
+        if (!$puiSettings instanceof PayUponInvoice) {
+            $this->logger->debug(sprintf('%s CREATE NEW %s SETTINGS OBJECT', __METHOD__, PayUponInvoice::class));
+
+            $puiSettings = (new PayUponInvoice())->fromArray($defaultSettings);
+        }
+
+        if (!$acdcSettings instanceof AdvancedCreditDebitCard) {
+            $this->logger->debug(sprintf('%s CREATE NEW %s SETTINGS OBJECT', __METHOD__, AdvancedCreditDebitCard::class));
+
+            $acdcSettings = (new AdvancedCreditDebitCard())->fromArray($defaultSettings);
+        }
+
+        $this->logger->debug(sprintf('%s IS SANDBOX: %s', __METHOD__, $sandbox ? 'TRUE' : 'FALSE'));
+
+        if ($sandbox) {
+            $puiSettings->setSandboxOnboardingCompleted(true);
+            $acdcSettings->setSandboxOnboardingCompleted(true);
+        } else {
+            $puiSettings->setOnboardingCompleted(true);
+            $acdcSettings->setOnboardingCompleted(true);
+        }
+
+        $entityManager->persist($puiSettings);
+        $entityManager->persist($acdcSettings);
+
+        $entityManager->flush();
+
+        $this->logger->debug(sprintf('%s ONBOARDING STATUS SUCCESSFUL UPDATED', __METHOD__));
+    }
+
+    /**
      * @return QueryBuilder
      */
     private function prepareOrderQueryBuilder(QueryBuilder $builder)
     {
-        $paymentMethodProvider = new PaymentMethodProvider($this->get('models'));
-        $connection = $this->get('dbal_connection');
+        $paymentMethodProvider = $this->get('paypal_unified.payment_method_provider');
 
         // If there was PayPal classic installed earlier, those orders have to be queried.
         $legacyPaymentIds = $this->get('paypal_unified.legacy_service')->getClassicPaymentIds();
-        $paymentIds = [
-            $paymentMethodProvider->getPaymentId($connection),
-            $paymentMethodProvider->getInstallmentPaymentId($connection),
-        ];
 
-        $paymentIds = \array_merge($paymentIds, $legacyPaymentIds);
+        $paymentMethods = $paymentMethodProvider->getAllUnifiedNames();
+        $paymentIds = array_values($paymentMethodProvider->getPayments($paymentMethods));
+        $paymentIds[] = $paymentMethodProvider->getPaymentId(PaymentMethodProviderInterface::PAYPAL_UNIFIED_INSTALLMENTS_METHOD_NAME);
+
+        $paymentIds = array_merge($paymentIds, $legacyPaymentIds);
 
         $builder->innerJoin(
             'sOrder.payment',
@@ -470,26 +548,6 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
         return $builder;
     }
 
-    private function registerShopResource()
-    {
-        $shopId = (int) $this->Request()->getParam('shopId');
-        /** @var ShopRepository $shopRepository */
-        $shopRepository = $this->get('models')->getRepository(Shop::class);
-
-        $shop = $shopRepository->getActiveById($shopId);
-        if ($shop === null) {
-            $shop = $shopRepository->getActiveDefault();
-        }
-
-        if ($this->container->has('shopware.components.shop_registration_service')) {
-            $this->get('shopware.components.shop_registration_service')->registerResources($shop);
-        } else {
-            $shop->registerResources();
-        }
-
-        $this->get('paypal_unified.settings_service')->refreshDependencies();
-    }
-
     /**
      * Checks if one of the filter conditions is "search". If not, the filters were set by the filter panel
      *
@@ -497,6 +555,6 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
      */
     private function isFilterRequest(array $filters)
     {
-        return !\in_array('search', \array_column($filters, 'property'), true);
+        return !\in_array('search', array_column($filters, 'property'), true);
     }
 }

@@ -27,10 +27,7 @@ class ExceptionHandlerServiceTest extends TestCase
     {
         $loggerMock = new LoggerMock();
         $handler = $this->getHandler($loggerMock);
-        $e = new \Exception(
-            'test message',
-            123
-        );
+        $e = new \Exception('test message', 123);
 
         $error = $handler->handle($e, 'testing');
 
@@ -47,14 +44,11 @@ class ExceptionHandlerServiceTest extends TestCase
     {
         $loggerMock = new LoggerMock();
         $handler = $this->getHandler($loggerMock);
-        $e = new RequestException(
-            'test message',
-            123
-        );
+        $e = new RequestException('test message', 123);
 
         $error = $handler->handle($e, 'testing');
 
-        static::assertSame(123, $error->getName());
+        static::assertSame('123', $error->getName());
         static::assertSame('An error occurred: test message', $error->getMessage());
 
         $logErrors = $loggerMock->getErrors();
@@ -67,16 +61,11 @@ class ExceptionHandlerServiceTest extends TestCase
     {
         $loggerMock = new LoggerMock();
         $handler = $this->getHandler($loggerMock);
-        $e = new RequestException(
-            'test message',
-            123,
-            null,
-            'test'
-        );
+        $e = new RequestException('test message', 123, null, 'test');
 
         $error = $handler->handle($e, 'testing');
 
-        static::assertSame(123, $error->getName());
+        static::assertSame('123', $error->getName());
         static::assertSame('An error occurred: test message', $error->getMessage());
 
         $logErrors = $loggerMock->getErrors();
@@ -90,12 +79,9 @@ class ExceptionHandlerServiceTest extends TestCase
     {
         $loggerMock = new LoggerMock();
         $handler = $this->getHandler($loggerMock);
-        $e = new RequestException(
-            'test message',
-            123,
-            null,
-            \json_encode(['error' => 'test error', 'error_description' => 'test error description'])
-        );
+        $jsonString = \json_encode(['error' => 'test error', 'error_description' => 'test error description']);
+        static::assertTrue(\is_string($jsonString));
+        $e = new RequestException('test message', 123, null, $jsonString);
 
         $error = $handler->handle($e, 'testing');
 
@@ -119,16 +105,13 @@ class ExceptionHandlerServiceTest extends TestCase
     {
         $loggerMock = new LoggerMock();
         $handler = $this->getHandler($loggerMock);
-        $e = new RequestException(
-            'test message',
-            123,
-            null,
-            \json_encode([])
-        );
+        $jsonString = \json_encode([]);
+        static::assertTrue(\is_string($jsonString));
+        $e = new RequestException('test message', 123, null, $jsonString);
 
         $error = $handler->handle($e, 'testing');
 
-        static::assertSame(123, $error->getName());
+        static::assertSame('123', $error->getName());
         static::assertSame('An error occurred: test message', $error->getMessage());
 
         $logErrors = $loggerMock->getErrors();
@@ -142,15 +125,17 @@ class ExceptionHandlerServiceTest extends TestCase
     {
         $loggerMock = new LoggerMock();
         $handler = $this->getHandler($loggerMock);
+        $jsonString = \json_encode([
+            'name' => 'error name',
+            'message' => 'error message',
+            'information_link' => 'error link',
+        ]);
+        static::assertTrue(\is_string($jsonString));
         $e = new RequestException(
             'test message',
             123,
             null,
-            \json_encode([
-                'name' => 'error name',
-                'message' => 'error message',
-                'information_link' => 'error link',
-            ])
+            $jsonString
         );
 
         $error = $handler->handle($e, 'testing');
@@ -175,19 +160,21 @@ class ExceptionHandlerServiceTest extends TestCase
     {
         $loggerMock = new LoggerMock();
         $handler = $this->getHandler($loggerMock);
+        $jsonString = \json_encode([
+            'name' => 'error name',
+            'message' => 'error message',
+            'information_link' => 'error link',
+            'details' => [[
+                'field' => 'error field',
+                'issue' => 'error issue',
+            ]],
+        ]);
+        static::assertTrue(\is_string($jsonString));
         $e = new RequestException(
             'test message',
             123,
             null,
-            \json_encode([
-                'name' => 'error name',
-                'message' => 'error message',
-                'information_link' => 'error link',
-                'details' => [[
-                    'field' => 'error field',
-                    'issue' => 'error issue',
-                ]],
-            ])
+            $jsonString
         );
 
         $error = $handler->handle($e, 'testing');

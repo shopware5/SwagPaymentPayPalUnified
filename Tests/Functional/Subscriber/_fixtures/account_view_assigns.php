@@ -6,7 +6,7 @@
  * file that was distributed with this source code.
  */
 
-use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
+use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 
 return [
     'activeBillingAddressId' => '5',
@@ -127,7 +127,7 @@ return [
             'stateShipping' => [],
             'payment' => [
                 'id' => '7',
-                'name' => PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME,
+                'name' => PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME,
                 'description' => 'PayPal',
                 'template' => '',
                 'class' => '',
@@ -205,7 +205,7 @@ Bezahlung per PayPal - einfach, schnell und sicher.',
     'sPaymentMeans' => [
         1 => [
             'id' => '7',
-            'name' => PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME,
+            'name' => PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME,
             'description' => 'PayPal',
             'template' => '',
             'class' => '',

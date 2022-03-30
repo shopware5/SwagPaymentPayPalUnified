@@ -11,10 +11,25 @@ namespace SwagPaymentPayPalUnified\PayPalBundle\Components;
 /**
  * No complete table names can be declared below to avoid references to the actual plugin.
  */
-class SettingsTable
+final class SettingsTable
 {
     const GENERAL = 'general';
     const EXPRESS_CHECKOUT = 'express';
     const INSTALLMENTS = 'installments';
     const PLUS = 'plus';
+    const PAY_UPON_INVOICE = 'pay_upon_invoice';
+    const ADVANCED_CREDIT_DEBIT_CARD = 'advanced_credit_debit_card';
+
+    const FULL = [
+        self::GENERAL => 'swag_payment_paypal_unified_settings_general',
+        self::EXPRESS_CHECKOUT => 'swag_payment_paypal_unified_settings_express',
+        self::INSTALLMENTS => 'swag_payment_paypal_unified_settings_installments',
+        self::PLUS => 'swag_payment_paypal_unified_settings_plus',
+        self::PAY_UPON_INVOICE => 'swag_payment_paypal_unified_settings_pay_upon_invoice',
+        self::ADVANCED_CREDIT_DEBIT_CARD => 'swag_payment_paypal_unified_settings_advanced_credit_debit_card',
+    ];
+
+    private function __construct()
+    {
+    }
 }

@@ -9,10 +9,16 @@
 namespace SwagPaymentPayPalUnified\Components\Services;
 
 use Doctrine\DBAL\Connection;
+use RuntimeException;
 use Shopware\Components\Model\ModelManager;
-use Shopware\Models\Shop\DetachedShop;
+use Shopware\Models\Shop\Shop;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
-use SwagPaymentPayPalUnified\Models\Settings;
+use SwagPaymentPayPalUnified\Models\Settings\AdvancedCreditDebitCard;
+use SwagPaymentPayPalUnified\Models\Settings\ExpressCheckout;
+use SwagPaymentPayPalUnified\Models\Settings\General;
+use SwagPaymentPayPalUnified\Models\Settings\Installments;
+use SwagPaymentPayPalUnified\Models\Settings\PayUponInvoice;
+use SwagPaymentPayPalUnified\Models\Settings\Plus;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 
@@ -29,7 +35,7 @@ class SettingsService implements SettingsServiceInterface
     private $dbalConnection;
 
     /**
-     * @var DetachedShop
+     * @var Shop|null
      */
     private $shop;
 
@@ -65,54 +71,51 @@ class SettingsService implements SettingsServiceInterface
     {
         //If this function is being called in the storefront, the shopId parameter is
         //not required, because it's being provided during the DI.
-        $shopId = $shopId === null ? $this->shop->getId() : $shopId;
-
-        switch ($settingsType) {
-            case SettingsTable::GENERAL:
-                /** @var Settings\General|null $generalSettings */
-                $generalSettings = $this->modelManager->getRepository(Settings\General::class)->findOneBy(
-                    ['shopId' => $shopId]
-                );
-
-                return $generalSettings;
-            case SettingsTable::EXPRESS_CHECKOUT:
-                /** @var Settings\ExpressCheckout|null $expressSettings */
-                $expressSettings = $this->modelManager->getRepository(Settings\ExpressCheckout::class)->findOneBy(
-                    ['shopId' => $shopId]
-                );
-
-                return $expressSettings;
-            case SettingsTable::INSTALLMENTS:
-                /** @var Settings\Installments|null $installmentsSettings */
-                $installmentsSettings = $this->modelManager->getRepository(Settings\Installments::class)->findOneBy(
-                    ['shopId' => $shopId]
-                );
-
-                return $installmentsSettings;
-            case SettingsTable::PLUS:
-                /** @var Settings\Plus|null $plusSettings */
-                $plusSettings = $this->modelManager->getRepository(Settings\Plus::class)->findOneBy(
-                    ['shopId' => $shopId]
-                );
-
-                return $plusSettings;
+        if ($shopId === null && $this->shop instanceof Shop) {
+            $shopId = $this->shop->getId();
         }
 
-        return null;
+        $baseCriteria = [
+            'shopId' => $shopId,
+        ];
+
+        switch ($settingsType) {
+            case SettingsTable::EXPRESS_CHECKOUT:
+                $entity = ExpressCheckout::class;
+                break;
+            case SettingsTable::INSTALLMENTS:
+                $entity = Installments::class;
+                break;
+            case SettingsTable::PLUS:
+                $entity = Plus::class;
+                break;
+            case SettingsTable::PAY_UPON_INVOICE:
+                $entity = PayUponInvoice::class;
+                break;
+            case SettingsTable::ADVANCED_CREDIT_DEBIT_CARD:
+                $entity = AdvancedCreditDebitCard::class;
+                break;
+            default:
+                $entity = General::class;
+        }
+
+        return $this->modelManager
+            ->getRepository($entity)
+            ->findOneBy($baseCriteria);
     }
 
     /**
      * {@inheritdoc}
      *
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
-    public function get($column, $settingsType = SettingsTable::GENERAL)
+    public function get($column, $settingsTable = SettingsTable::GENERAL)
     {
         if ($this->shop === null) {
             throw new \RuntimeException('Could not retrieve a single setting without a shop instance.');
         }
 
-        $table = $this->getTableByType($settingsType);
+        $table = $this->getTableByType($settingsTable);
 
         return $this->dbalConnection->createQueryBuilder()
             ->select($column)
@@ -156,17 +159,10 @@ class SettingsService implements SettingsServiceInterface
      */
     private function getTableByType($settingsType)
     {
-        switch ($settingsType) {
-            case SettingsTable::GENERAL:
-                return 'swag_payment_paypal_unified_settings_general';
-            case SettingsTable::EXPRESS_CHECKOUT:
-                return 'swag_payment_paypal_unified_settings_express';
-            case SettingsTable::INSTALLMENTS:
-                return 'swag_payment_paypal_unified_settings_installments';
-            case SettingsTable::PLUS:
-                return 'swag_payment_paypal_unified_settings_plus';
-            default:
-                throw new \RuntimeException('The provided table ' . $settingsType . ' is not supported');
+        if (\array_key_exists($settingsType, SettingsTable::FULL)) {
+            return SettingsTable::FULL[$settingsType];
         }
+
+        throw new \RuntimeException('The provided table ' . $settingsType . ' is not supported');
     }
 }

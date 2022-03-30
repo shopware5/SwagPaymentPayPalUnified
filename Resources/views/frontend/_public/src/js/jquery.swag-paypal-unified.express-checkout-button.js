@@ -4,6 +4,20 @@
     $.plugin('swagPayPalUnifiedExpressCheckoutButton', {
         defaults: {
             /**
+             * @type string
+             */
+            sdkUrl: 'https://www.paypal.com/sdk/js',
+
+            currency: '',
+
+            /**
+             * The API client-ID identifying a merchant.
+             *
+             * @type string
+             */
+            clientId: '',
+
+            /**
              * Depending on the mode, the library will load the PSP from different locations. live will
              * load it from paypal.com whereas sandbox will load it from sandbox.paypal.com. The
              * library will also emit warning to the console if the mode is sandbox (in live mode it will
@@ -22,7 +36,17 @@
              *
              * @type string
              */
-            createPaymentUrl: '',
+            createOrderUrl: '',
+
+            /**
+             * @type string
+             */
+            onApproveUrl: '',
+
+            /**
+             * @type string
+             */
+            confirmUrl: '',
 
             /**
              * size of the button
@@ -66,18 +90,34 @@
             tagline: false,
 
             /**
-             * The language ISO (ISO_639) for the payment wall.
+             * Button label: https://developer.paypal.com/docs/business/checkout/reference/style-guide/#label
+             *
+             *  @type string
+             */
+            label: 'checkout',
+
+            /**
+             * Button layout: https://developer.paypal.com/docs/business/checkout/reference/style-guide/#layout
+             *
+             *  @type string
+             */
+            layout: 'horizontal',
+
+            /**
+             * The language ISO (ISO_639) locale of the button.
+             *
+             * for possible values see: https://developer.paypal.com/api/rest/reference/locale-codes/
              *
              * @type string
              */
-            paypalLanguage: 'en_US',
+            locale: '',
 
             /**
-             * A boolean indicating if the current page is an product detail page.
+             * A boolean indicating if the current page is a product detail page.
              *
              * @type boolean
              */
-            detailPage: false,
+            buyProductDirectly: false,
 
             /**
              * The selector for the quantity selection on the detail page.
@@ -108,11 +148,82 @@
             riskManagementMatchedProducts: null,
 
             /**
+             * @type string
+             */
+            paypalIntent: 'capture',
+
+            /**
              * Excluded esd products.
              *
              * @type array|null
              */
             esdProducts: null,
+
+            /**
+             * @type string
+             */
+            communicationErrorMessage: '',
+
+            /**
+             * @type string
+             */
+            communicationErrorTitle: '',
+
+            /**
+             * PayPal button height small
+             *
+             * @type number
+             */
+            smallHeight: 25,
+
+            /**
+             * PayPal button height medium
+             *
+             * @type number
+             */
+            mediumHeight: 35,
+
+            /**
+             * PayPal button height large
+             *
+             * @type number
+             */
+            largeHeight: 45,
+
+            /**
+             * PayPal button height responsive
+             *
+             * @type number
+             */
+            responsiveHeight: 55,
+
+            /**
+             * PayPal button width small
+             *
+             * @type string
+             */
+            smallWidthClass: 'paypal-button-width--small',
+
+            /**
+             * PayPal button width medium
+             *
+             * @type string
+             */
+            mediumWidthClass: 'paypal-button-width--medium',
+
+            /**
+             * PayPal button width large
+             *
+             * @type string
+             */
+            largeWidthClass: 'paypal-button-width--large',
+
+            /**
+             * PayPal button width responsive
+             *
+             * @type string
+             */
+            responsiveWidthClass: 'paypal-button-width--responsive'
         },
 
         /**
@@ -129,13 +240,37 @@
                 return;
             }
 
+            this.createButtonSizeObject();
+            this.$el.addClass(this.buttonSize[this.opts.size].widthClass);
+
             me.createButton();
 
             $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonCart/init', me);
 
-            if (me.opts.detailPage) {
+            if (me.opts.buyProductDirectly) {
                 $.subscribe(me.getEventName('plugin/swAjaxVariant/onRequestData'), $.proxy(me.onChangeVariant, me));
             }
+        },
+
+        createButtonSizeObject: function () {
+            this.buttonSize = {
+                small: {
+                    height: this.opts.smallHeight,
+                    widthClass: this.opts.smallWidthClass
+                },
+                medium: {
+                    height: this.opts.mediumHeight,
+                    widthClass: this.opts.mediumWidthClass
+                },
+                large: {
+                    height: this.opts.largeHeight,
+                    widthClass: this.opts.largeWidthClass
+                },
+                responsive: {
+                    height: this.opts.responsiveHeight,
+                    widthClass: this.opts.responsiveWidthClass
+                }
+            };
         },
 
         /**
@@ -153,15 +288,29 @@
          */
         isProductExcluded: function() {
             var me = this,
-                productNumbers = [].concat(
-                    me.opts.riskManagementMatchedProducts,
-                    me.opts.esdProducts
-                );
-            if (Array.isArray(productNumbers) && productNumbers.includes(me.opts.productNumber)) {
-                return true;
+                productNumber = me.opts.productNumber,
+                excludedProductNumbers,
+                riskManagementMatchedProducts = [],
+                esdProducts = [];
+
+            if (productNumber === null || productNumber === '') {
+                return false;
             }
 
-            return false;
+            if (me.opts.riskManagementMatchedProducts !== '') {
+                riskManagementMatchedProducts = me.opts.riskManagementMatchedProducts;
+            }
+
+            if (me.opts.esdProducts !== '') {
+                esdProducts = me.opts.esdProducts;
+            }
+
+            excludedProductNumbers = [].concat(
+                riskManagementMatchedProducts,
+                esdProducts
+            );
+
+            return $.inArray(productNumber, excludedProductNumbers) >= 0;
         },
 
         /**
@@ -169,16 +318,11 @@
          */
         createButton: function() {
             var me = this,
-                paypalScriptUrl = 'https://www.paypalobjects.com/api/checkout.min.js',
                 $head = $('head');
-
-            if (me.opts.paypalMode === 'sandbox') {
-                paypalScriptUrl = 'https://www.paypalobjects.com/api/checkout.js';
-            }
 
             if (!$head.data(me.opts.paypalScriptLoadedSelector)) {
                 $.ajax({
-                    url: paypalScriptUrl,
+                    url: me.renderSdkUrl(me.opts.clientId, me.opts.currency),
                     dataType: 'script',
                     cache: true,
                     success: function() {
@@ -191,6 +335,27 @@
             }
         },
 
+        renderSdkUrl: function(clientId, currency) {
+            var params = {
+                'client-id': clientId,
+                intent: this.opts.paypalIntent.toLowerCase()
+            };
+
+            if (this.opts.locale.length > 0) {
+                params.locale = this.opts.locale;
+            }
+
+            if (this.opts.paypalMode === 'sandbox') {
+                params.debug = true;
+            }
+
+            if (currency) {
+                params.currency = currency;
+            }
+
+            return [this.opts.sdkUrl, '?', $.param(params, true)].join('');
+        },
+
         /**
          * Renders the ECS button
          */
@@ -199,9 +364,11 @@
 
             // wait for the PayPal javascript to be loaded
             me.buffer(function() {
-                me.expressCheckoutButton = paypal.Button.render(me.createPayPalButtonConfiguration(), me.$el.get(0));
+                me.expressCheckoutButton = paypal
+                    .Buttons(me.createPayPalButtonConfiguration())
+                    .render(me.$el.get(0));
 
-                $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonCart/createButton', [ me, me.expressCheckoutButton ]);
+                $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonCart/createButton', [me, me.expressCheckoutButton]);
             });
         },
 
@@ -216,122 +383,112 @@
 
             config = {
                 /**
-                 * environment property of the button
-                 */
-                env: me.opts.paypalMode,
-
-                /**
                  * styling of the button
                  */
                 style: {
-                    size: me.opts.size,
                     shape: me.opts.shape,
                     color: me.opts.color,
-                    tagline: me.opts.tagline
+                    layout: me.opts.layout,
+                    label: me.opts.label,
+                    tagline: me.opts.tagline,
+                    height: this.buttonSize[this.opts.size].height
                 },
-
-                locale: me.opts.paypalLanguage,
 
                 /**
                  * listener for the button
                  */
-                payment: $.proxy(me.onPayPalPayment, me),
+                createOrder: $.proxy(me.createOrder, me),
 
                 /**
-                 * only needed for overlay solution
-                 * called if the customer accepts the payment
+                 * Will be called if the payment process is approved by PayPal
                  */
-                onAuthorize: $.noop
+                onApprove: $.proxy(me.onApprove, me),
+
+                /**
+                 * Will be called if the payment process is cancelled by the customer
+                 */
+                onCancel: this.onCancel.bind(this),
+
+                /**
+                 * Will be called if any api error occurred
+                 */
+                onError: this.onPayPalAPIError.bind(this)
             };
 
-            $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonCart/createConfig', [ me, config ]);
+            $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonCart/createConfig', [me, config]);
 
             return config;
         },
 
         /**
-         * Callback method for the "payment" function of the button.
-         * Calls an action which creates the payment and redirects to the paypal page.
+         * This method dispatches a request to the `\Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout`-controller (default)
+         * which initialises an order at PayPal.
          */
-        onPayPalPayment: function() {
+        createOrder: function() {
             var me = this,
-                token,
-                form;
-
-            $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonCart/beforeCreatePayment', me);
-
-            if (CSRF.checkToken()) {
-                token = CSRF.getToken();
-            }
-
-            form = me.createCreatePaymentForm(token);
+                data = {};
 
             $.loadingIndicator.open({
-                openOverlay: true,
-                closeOnClick: false
+                closeOnClick: false,
+                delay: 100
             });
 
-            // delay the call, so the loading indicator will show up on mobile
-            me.buffer(function() {
-                form.submit();
-            });
-
-            $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonCart/createPayment', me);
-        },
-
-        /**
-         * Creates the form which calls the action.
-         * Appends a new form which stores further required information that are being
-         * used in the action later on.
-         *
-         * @param {String} token
-         * @return {Object}
-         */
-        createCreatePaymentForm: function(token) {
-            var me = this,
-                $form,
-                createField = function(name, val) {
-                    return $('<input>', {
-                        type: 'hidden',
-                        name: name,
-                        value: val
-                    });
+            if (me.opts.buyProductDirectly) {
+                data = {
+                    addProduct: true,
+                    productNumber: me.opts.productNumber,
+                    productQuantity: $(me.opts.productQuantitySelector).val()
                 };
-
-            $form = $('<form>', {
-                action: me.opts.createPaymentUrl,
-                method: 'POST'
-            });
-
-            createField('__csrf_token', token).appendTo($form);
-
-            if (me.opts.detailPage) {
-                createField('addProduct', true).appendTo($form);
-                createField('productNumber', me.getProductNumber()).appendTo($form);
-                createField('productQuantity', me.getProductQuantity()).appendTo($form);
             }
 
-            $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonCart/createRequestForm', [ me, $form ]);
-
-            $form.appendTo($('body'));
-
-            return $form;
+            return $.ajax({
+                url: me.opts.createOrderUrl,
+                data: data
+            }).then(function(response) {
+                return response.paypalOrderId;
+            }, function() {
+            }).promise();
         },
 
         /**
-         * Helper function that returns the current product number.
-         * Will only be used on the product detail page
-         *
-         * @returns {String}
+         * This method dispatches a request to the `\Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout`-controller (default)
+         * which creates a new customer account and also logs the user in.
          */
-        getProductNumber: function() {
+        onApprove: function(data, actions) {
             var me = this;
 
-            if (me.opts.productNumber === null) {
-                throw new Error('Property productNumber is not set');
-            }
+            return $.ajax({
+                url: me.opts.onApproveUrl,
+                data: data
+            }).then(function(response) {
+                var url = me.opts.confirmUrl + '?' + $.param({
+                    expressCheckout: response.expressCheckout,
+                    paypalOrderId: response.paypalOrderId
+                });
 
-            return me.opts.productNumber;
+                actions.redirect(url);
+            }, function() {
+                me.onPayPalAPIError();
+            }).promise();
+        },
+
+        onCancel: function() {
+            $.loadingIndicator.close();
+        },
+
+        onPayPalAPIError: function() {
+            $.loadingIndicator.close();
+
+            var content = $('<div>').html(this.opts.communicationErrorMessage),
+                config = {
+                    title: this.opts.communicationErrorTitle,
+                    width: 320,
+                    height: 200
+                };
+
+            content.css('padding', '10px');
+
+            $.modal.open(content, config);
         },
 
         /**
@@ -342,7 +499,7 @@
          */
         getProductQuantity: function() {
             var me = this,
-                quantity = $(me.opts.productQuantitySelector).val()
+                quantity = $(me.opts.productQuantitySelector).val();
 
             if (quantity === undefined) {
                 return 1;

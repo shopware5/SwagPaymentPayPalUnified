@@ -9,18 +9,20 @@
 namespace SwagPaymentPayPalUnified\Tests\Functional\WebhookHandler;
 
 use PHPUnit\Framework\TestCase;
-use SwagPaymentPayPalUnified\Components\PaymentStatus;
+use Shopware\Models\Order\Status;
 use SwagPaymentPayPalUnified\Components\Services\PaymentStatusService;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\Webhook\WebhookEventTypes;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Webhook;
+use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\WebhookHandlers\SaleRefunded;
 
 class SaleRefundedTest extends TestCase
 {
     use DatabaseTestCaseTrait;
+    use ContainerTrait;
 
-    const TEST_ORDER_ID = 15;
+    const TEST_ORDER_ID = '15';
 
     /**
      * @before
@@ -35,8 +37,8 @@ class SaleRefundedTest extends TestCase
     public function testCanConstruct()
     {
         $instance = new SaleRefunded(
-            Shopware()->Container()->get('paypal_unified.logger_service'),
-            Shopware()->Container()->get('paypal_unified.payment_status_service')
+            $this->getContainer()->get('paypal_unified.logger_service'),
+            $this->getContainer()->get('paypal_unified.payment_status_service')
         );
 
         static::assertInstanceOf(SaleRefunded::class, $instance);
@@ -45,8 +47,8 @@ class SaleRefundedTest extends TestCase
     public function testInvokeReturnsTrueBecauseTheOrderStatusHasBeenUpdated()
     {
         $instance = new SaleRefunded(
-            Shopware()->Container()->get('paypal_unified.logger_service'),
-            Shopware()->Container()->get('paypal_unified.payment_status_service')
+            $this->getContainer()->get('paypal_unified.logger_service'),
+            $this->getContainer()->get('paypal_unified.payment_status_service')
         );
 
         static::assertTrue($instance->invoke($this->getWebhookStruct()));
@@ -54,14 +56,14 @@ class SaleRefundedTest extends TestCase
         $sql = 'SELECT cleared FROM s_order WHERE id=' . self::TEST_ORDER_ID;
 
         $status = (int) Shopware()->Db()->fetchOne($sql);
-        static::assertSame(PaymentStatus::PAYMENT_STATUS_REFUNDED, $status);
+        static::assertSame(Status::PAYMENT_STATE_RE_CREDITING, $status);
     }
 
     public function testInvokeReturnsFalseBecauseTheOrderDoesNotExist()
     {
         $instance = new SaleRefunded(
-            Shopware()->Container()->get('paypal_unified.logger_service'),
-            Shopware()->Container()->get('paypal_unified.payment_status_service')
+            $this->getContainer()->get('paypal_unified.logger_service'),
+            $this->getContainer()->get('paypal_unified.payment_status_service')
         );
 
         static::assertFalse($instance->invoke($this->getWebhookStruct('ORDER_NOT_AVAILABLE')));
@@ -70,8 +72,8 @@ class SaleRefundedTest extends TestCase
     public function testGetEventTypeIsCorrect()
     {
         $instance = new SaleRefunded(
-            Shopware()->Container()->get('paypal_unified.logger_service'),
-            Shopware()->Container()->get('paypal_unified.payment_status_service')
+            $this->getContainer()->get('paypal_unified.logger_service'),
+            $this->getContainer()->get('paypal_unified.payment_status_service')
         );
         static::assertSame(WebhookEventTypes::PAYMENT_SALE_REFUNDED, $instance->getEventType());
     }
@@ -79,8 +81,8 @@ class SaleRefundedTest extends TestCase
     public function testInvokeWillReturnFalseWithoutActiveEntityManager()
     {
         $instance = new SaleRefunded(
-            Shopware()->Container()->get('paypal_unified.logger_service'),
-            new PaymentStatusService(new EntityManagerMock())
+            $this->getContainer()->get('paypal_unified.logger_service'),
+            new PaymentStatusService(new EntityManagerMock(), $this->getContainer()->get('paypal_unified.logger_service'))
         );
 
         static::assertFalse($instance->invoke($this->getWebhookStruct(self::TEST_ORDER_ID)));

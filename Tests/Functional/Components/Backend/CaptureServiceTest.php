@@ -10,10 +10,11 @@ namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Backend;
 
 use PHPUnit\Framework\TestCase;
 use Shopware\Models\Order\Order;
+use Shopware\Models\Order\Status;
 use SwagPaymentPayPalUnified\Components\Backend\CaptureService;
-use SwagPaymentPayPalUnified\Components\PaymentStatus;
 use SwagPaymentPayPalUnified\Components\Services\ExceptionHandlerService;
 use SwagPaymentPayPalUnified\Components\Services\PaymentStatusService;
+use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Mocks\AuthorizationResourceMock;
 use SwagPaymentPayPalUnified\Tests\Mocks\CaptureResourceMock;
@@ -24,6 +25,7 @@ class CaptureServiceTest extends TestCase
 {
     use DatabaseTestCaseTrait;
     use OrderTrait;
+    use ContainerTrait;
 
     const CURRENCY = 'EUR';
 
@@ -32,7 +34,8 @@ class CaptureServiceTest extends TestCase
      */
     public function before()
     {
-        $this->modelManager = Shopware()->Container()->get('models');
+        $this->modelManager = $this->getContainer()->get('models');
+        $this->connection = $this->getContainer()->get('dbal_connection');
     }
 
     public function testCaptureAuthorization()
@@ -45,9 +48,9 @@ class CaptureServiceTest extends TestCase
             true
         );
 
-        /** @var Order $order */
         $order = $this->modelManager->getRepository(Order::class)->find($orderId);
-        static::assertSame(PaymentStatus::PAYMENT_STATUS_PAID, $order->getPaymentStatus()->getId());
+        static::assertInstanceOf(Order::class, $order);
+        static::assertSame(Status::PAYMENT_STATE_COMPLETELY_PAID, $order->getPaymentStatus()->getId());
         static::assertNotNull($order->getClearedDate());
         static::assertTrue($result['success']);
     }
@@ -62,9 +65,9 @@ class CaptureServiceTest extends TestCase
             false
         );
 
-        /** @var Order $order */
         $order = $this->modelManager->getRepository(Order::class)->find($orderId);
-        static::assertSame(PaymentStatus::PAYMENT_STATUS_PARTIALLY_PAID, $order->getPaymentStatus()->getId());
+        static::assertInstanceOf(Order::class, $order);
+        static::assertSame(Status::PAYMENT_STATE_PARTIALLY_PAID, $order->getPaymentStatus()->getId());
         static::assertNotNull($order->getClearedDate());
         static::assertTrue($result['success']);
     }
@@ -79,9 +82,9 @@ class CaptureServiceTest extends TestCase
             true
         );
 
-        /** @var Order $order */
         $order = $this->modelManager->getRepository(Order::class)->find($orderId);
-        static::assertSame(PaymentStatus::PAYMENT_STATUS_OPEN, $order->getPaymentStatus()->getId());
+        static::assertInstanceOf(Order::class, $order);
+        static::assertSame(Status::PAYMENT_STATE_OPEN, $order->getPaymentStatus()->getId());
         static::assertFalse($result['success']);
     }
 
@@ -95,9 +98,9 @@ class CaptureServiceTest extends TestCase
             true
         );
 
-        /** @var Order $order */
         $order = $this->modelManager->getRepository(Order::class)->find($orderId);
-        static::assertSame(PaymentStatus::PAYMENT_STATUS_PAID, $order->getPaymentStatus()->getId());
+        static::assertInstanceOf(Order::class, $order);
+        static::assertSame(Status::PAYMENT_STATE_COMPLETELY_PAID, $order->getPaymentStatus()->getId());
         static::assertNotNull($order->getClearedDate());
         static::assertTrue($result['success']);
     }
@@ -112,9 +115,9 @@ class CaptureServiceTest extends TestCase
             true
         );
 
-        /** @var Order $order */
         $order = $this->modelManager->getRepository(Order::class)->find($orderId);
-        static::assertSame(PaymentStatus::PAYMENT_STATUS_OPEN, $order->getPaymentStatus()->getId());
+        static::assertInstanceOf(Order::class, $order);
+        static::assertSame(Status::PAYMENT_STATE_OPEN, $order->getPaymentStatus()->getId());
         static::assertFalse($result['success']);
     }
 
@@ -128,9 +131,9 @@ class CaptureServiceTest extends TestCase
             ''
         );
 
-        /** @var Order $order */
         $order = $this->modelManager->getRepository(Order::class)->find($orderId);
-        static::assertSame(PaymentStatus::PAYMENT_STATUS_REFUNDED, $order->getPaymentStatus()->getId());
+        static::assertInstanceOf(Order::class, $order);
+        static::assertSame(Status::PAYMENT_STATE_RE_CREDITING, $order->getPaymentStatus()->getId());
         static::assertTrue($result['success']);
     }
 
@@ -144,9 +147,9 @@ class CaptureServiceTest extends TestCase
             ''
         );
 
-        /** @var Order $order */
         $order = $this->modelManager->getRepository(Order::class)->find($orderId);
-        static::assertSame(PaymentStatus::PAYMENT_STATUS_OPEN, $order->getPaymentStatus()->getId());
+        static::assertInstanceOf(Order::class, $order);
+        static::assertSame(Status::PAYMENT_STATE_OPEN, $order->getPaymentStatus()->getId());
         static::assertFalse($result['success']);
     }
 
@@ -159,7 +162,10 @@ class CaptureServiceTest extends TestCase
             new OrderResourceMock(),
             new AuthorizationResourceMock(),
             new CaptureResourceMock(),
-            new PaymentStatusService(Shopware()->Container()->get('models'))
+            new PaymentStatusService(
+                $this->getContainer()->get('models'),
+                $this->getContainer()->get('paypal_unified.logger_service')
+            )
         );
     }
 }

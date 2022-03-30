@@ -21,11 +21,12 @@ class HookArgsWithWrongPaymentId extends \Enlight_Hook_HookArgs
     }
 
     /**
-     * @return \Enlight_Class
+     * @return \Shopware_Components_Document
      */
     public function getSubject()
     {
         $subject = \Enlight_Class::Instance(\Shopware_Components_Document::class);
+        \assert($subject instanceof \Shopware_Components_Document);
 
         $subject->_order = new \Shopware_Models_Document_Order(15);
 

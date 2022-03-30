@@ -34,7 +34,7 @@ class Details
     }
 
     /**
-     * @param float $shipping
+     * @param float|string $shipping
      */
     public function setShipping($shipping)
     {
@@ -50,7 +50,7 @@ class Details
     }
 
     /**
-     * @param float $subTotal
+     * @param float|string $subTotal
      */
     public function setSubTotal($subTotal)
     {

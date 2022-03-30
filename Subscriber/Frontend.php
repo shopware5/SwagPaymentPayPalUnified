@@ -9,10 +9,9 @@
 namespace SwagPaymentPayPalUnified\Subscriber;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\DBAL\Connection;
 use Enlight\Event\SubscriberInterface;
 use Enlight_View_Default;
-use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
+use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Components\Services\RiskManagement\RiskManagementInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 
@@ -29,12 +28,7 @@ class Frontend implements SubscriberInterface
     private $settingsService;
 
     /**
-     * @var Connection
-     */
-    private $connection;
-
-    /**
-     * @var PaymentMethodProvider
+     * @var PaymentMethodProviderInterface
      */
     private $paymentMethodProvider;
 
@@ -49,14 +43,13 @@ class Frontend implements SubscriberInterface
     public function __construct(
         $pluginDir,
         SettingsServiceInterface $settingsService,
-        Connection $connection,
-        RiskManagementInterface $riskManagement
+        RiskManagementInterface $riskManagement,
+        PaymentMethodProviderInterface $paymentMethodProvider
     ) {
         $this->pluginDir = $pluginDir;
         $this->settingsService = $settingsService;
-        $this->connection = $connection;
-        $this->paymentMethodProvider = new PaymentMethodProvider();
         $this->riskManagement = $riskManagement;
+        $this->paymentMethodProvider = $paymentMethodProvider;
     }
 
     /**
@@ -83,10 +76,13 @@ class Frontend implements SubscriberInterface
             $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.payment-wall.js',
             $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.custom-shipping-payment.js',
             $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.express-checkout-button.js',
-            $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.express-checkout-button-in-context.js',
             $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.in-context-checkout.js',
             $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.smart-payment-buttons.js',
             $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.installments-banner.js',
+            $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified-fraudnet.js',
+            $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.advanced-credit-debit-card.js',
+            $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.advanced-credit-debit-card-fallback.js',
+            $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified-sepa.js',
         ];
 
         return new ArrayCollection($jsPath);
@@ -99,7 +95,7 @@ class Frontend implements SubscriberInterface
             return;
         }
 
-        $category = $args->getSubject()->Request()->getParam('sCategory');
+        $category = $controller->Request()->getParam('sCategory');
 
         $controller->View()->assign('paypalIsNotAllowed', $this->riskManagement->isPayPalNotAllowed(null, $category));
     }
@@ -110,13 +106,13 @@ class Frontend implements SubscriberInterface
             return;
         }
 
-        $active = (bool) $this->settingsService->get('active');
+        $active = (bool) $this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_ACTIVE);
         if (!$active) {
             return;
         }
 
-        $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag($this->connection);
-        $showPayPalLogo = $swUnifiedActive && (bool) $this->settingsService->get('show_sidebar_logo');
+        $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
+        $showPayPalLogo = $swUnifiedActive && (bool) $this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_SHOW_SIDEBAR_LOGO);
 
         /** @var Enlight_View_Default $view */
         $view = $args->getSubject()->View();

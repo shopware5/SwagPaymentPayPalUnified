@@ -8,9 +8,8 @@
 
 namespace SwagPaymentPayPalUnified\Components\Services\RiskManagement;
 
-use Doctrine\DBAL\Connection;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
-use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
+use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 
 class RiskManagement implements RiskManagementInterface
 {
@@ -20,14 +19,16 @@ class RiskManagement implements RiskManagementInterface
     private $dependencyProvider;
 
     /**
-     * @var Connection
+     * @var PaymentMethodProviderInterface
      */
-    private $connection;
+    private $paymentMethodProvider;
 
-    public function __construct(DependencyProvider $dependencyProvider, Connection $connection)
-    {
+    public function __construct(
+        DependencyProvider $dependencyProvider,
+        PaymentMethodProviderInterface $paymentMethodProvider
+    ) {
         $this->dependencyProvider = $dependencyProvider;
-        $this->connection = $connection;
+        $this->paymentMethodProvider = $paymentMethodProvider;
     }
 
     /**
@@ -46,7 +47,7 @@ class RiskManagement implements RiskManagementInterface
         /** @var \sBasket $sBasket */
         $sBasket = $this->dependencyProvider->getModule('Basket');
 
-        $paymentId = (new PaymentMethodProvider())->getPaymentId($this->connection);
+        $paymentId = $this->paymentMethodProvider->getPaymentId(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
 
         return $sAdmin->sManageRisks($paymentId, $sBasket->sGetBasket(), $sAdmin->sGetUserData() ?: []);
     }

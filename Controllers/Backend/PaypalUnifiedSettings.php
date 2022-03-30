@@ -8,12 +8,14 @@
 
 use SwagPaymentPayPalUnified\Components\ExceptionHandlerServiceInterface;
 use SwagPaymentPayPalUnified\Components\Services\ExceptionHandlerService;
+use SwagPaymentPayPalUnified\Components\Services\OnboardingStatusService;
 use SwagPaymentPayPalUnified\Models\Settings\General as GeneralSettingsModel;
-use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService;
 
 class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Controllers_Backend_Application
 {
+    const HAS_LIMITS_SUFFIX = '_HAS_LIMITS';
+
     /**
      * {@inheritdoc}
      */
@@ -23,11 +25,6 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
      * {@inheritdoc}
      */
     protected $alias = 'settings';
-
-    /**
-     * @var SettingsServiceInterface
-     */
-    private $settingsService;
 
     /**
      * @var ClientService
@@ -40,13 +37,18 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
     private $exceptionHandler;
 
     /**
+     * @var OnboardingStatusService
+     */
+    private $onboardingStatusService;
+
+    /**
      * {@inheritdoc}
      */
     public function preDispatch()
     {
-        $this->settingsService = $this->get('paypal_unified.settings_service');
         $this->clientService = $this->get('paypal_unified.client_service');
         $this->exceptionHandler = $this->get('paypal_unified.exception_handler_service');
+        $this->onboardingStatusService = $this->container->get('paypal_unified.onboarding_status_service');
 
         parent::preDispatch();
     }
@@ -67,7 +69,7 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
             'action' => 'execute',
             'forceSecure' => 1,
         ]);
-        $url = \str_replace('http://', 'https://', $url);
+        $url = str_replace('http://', 'https://', $url);
 
         try {
             $this->configureClient();
@@ -118,17 +120,94 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
         }
     }
 
+    /**
+     * @return void
+     */
+    public function isCapableAction()
+    {
+        $shopId = (int) $this->Request()->getParam('shopId', 0);
+        $sandbox = (bool) $this->Request()->getParam('sandbox', false);
+        $payerId = $this->Request()->getParam('payerId');
+        $paymentMethodCapabilityNames = $this->Request()->getParam('paymentMethodCapabilityNames');
+        $productSubscriptionNames = $this->Request()->getParam('productSubscriptionNames');
+
+        if ($shopId === 0) {
+            $this->view->assign([
+                'success' => false,
+                'message' => 'The parameter "shopId" is required.',
+            ]);
+
+            return;
+        }
+
+        if ($payerId === null) {
+            $this->view->assign([
+                'success' => false,
+                'message' => 'The parameter "payerId" is required.',
+            ]);
+
+            return;
+        }
+
+        if (!\is_array($paymentMethodCapabilityNames)) {
+            $this->view->assign([
+                'success' => false,
+                'message' => 'The parameter "paymentMethodCapabilityNames" should be a array.',
+            ]);
+
+            return;
+        }
+
+        if (!\is_array($productSubscriptionNames)) {
+            $this->view->assign([
+                'success' => false,
+                'message' => 'The parameter "productSubscriptionNames" should be a array.',
+            ]);
+
+            return;
+        }
+
+        $viewAssign = [];
+        try {
+            foreach ($paymentMethodCapabilityNames as $paymentMethodCapabilityName) {
+                $isCapableResult = $this->onboardingStatusService->getIsCapableResult($payerId, $shopId, $sandbox, $paymentMethodCapabilityName);
+                $viewAssign[$paymentMethodCapabilityName] = $isCapableResult->isCapable();
+                $viewAssign[$paymentMethodCapabilityName . self::HAS_LIMITS_SUFFIX] = $isCapableResult->hasLimits();
+            }
+            foreach ($productSubscriptionNames as $productSubscriptionName) {
+                $viewAssign[$productSubscriptionName] = $this->onboardingStatusService->isSubscribed($payerId, $shopId, $sandbox, $productSubscriptionName);
+            }
+        } catch (\Exception $exception) {
+            $this->exceptionHandler->handle($exception, 'validate capability');
+
+            $this->View()->assign([
+                'success' => false,
+                'message' => $exception->getMessage(),
+            ]);
+
+            return;
+        }
+
+        $viewAssign['success'] = true;
+
+        $this->view->assign($viewAssign);
+    }
+
     private function configureClient()
     {
         $request = $this->Request();
         $shopId = (int) $request->getParam('shopId');
-        $restId = $request->getParam('clientId');
         $sandbox = $request->getParam('sandbox', 'false') !== 'false';
+        $restId = $request->getParam('clientId');
         $restSecret = $request->getParam('clientSecret');
+        $restIdSandbox = $request->getParam('sandboxClientId');
+        $restSecretSandbox = $request->getParam('sandboxClientSecret');
 
         $this->clientService->configure([
             'clientId' => $restId,
             'clientSecret' => $restSecret,
+            'sandboxClientId' => $restIdSandbox,
+            'sandboxClientSecret' => $restSecretSandbox,
             'sandbox' => $sandbox,
             'shopId' => $shopId,
         ]);

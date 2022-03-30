@@ -26,15 +26,19 @@ class FirstRunWizardInstallerTest extends TestCase
 
         $lastInsertId = $connection->lastInsertId();
         $result = $connection->createQueryBuilder()
-            ->select(['client_id', 'client_secret', 'landing_page_type'])
+            ->select([
+                $config['sandbox'] ? 'sandbox_client_id' : 'client_id',
+                $config['sandbox'] ? 'sandbox_client_secret' : 'client_secret',
+                'landing_page_type',
+            ])
             ->from('swag_payment_paypal_unified_settings_general')
             ->where('id = :lastInsertId')
             ->setParameter('lastInsertId', $lastInsertId)
             ->execute()
             ->fetch();
 
-        static::assertSame($config['clientId'], $result['client_id']);
-        static::assertSame($config['clientSecret'], $result['client_secret']);
+        static::assertSame($config['clientId'], $config['sandbox'] ? $result['sandbox_client_id'] : $result['client_id']);
+        static::assertSame($config['clientSecret'], $config['sandbox'] ? $result['sandbox_client_secret'] : $result['client_secret']);
         static::assertSame('Login', $result['landing_page_type']);
     }
 

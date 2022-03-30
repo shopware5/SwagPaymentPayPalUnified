@@ -10,13 +10,15 @@ namespace SwagPaymentPayPalUnified\Setup;
 
 use Doctrine\DBAL\Connection;
 use Shopware\Bundle\AttributeBundle\Service\CrudService;
+use Shopware\Bundle\AttributeBundle\Service\CrudServiceInterface;
 use Shopware\Components\Model\ModelManager;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
+use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 
 class Uninstaller
 {
     /**
-     * @var CrudService
+     * @var CrudService|CrudServiceInterface
      */
     private $attributeCrudService;
 
@@ -30,11 +32,24 @@ class Uninstaller
      */
     private $connection;
 
-    public function __construct(CrudService $attributeCrudService, ModelManager $modelManager, Connection $connection)
-    {
+    /**
+     * @var PaymentMethodProviderInterface
+     */
+    private $paymentMethodProvider;
+
+    /**
+     * @param CrudService|CrudServiceInterface $attributeCrudService
+     */
+    public function __construct(
+        $attributeCrudService,
+        ModelManager $modelManager,
+        Connection $connection,
+        PaymentMethodProviderInterface $paymentMethodProvider
+    ) {
         $this->attributeCrudService = $attributeCrudService;
         $this->modelManager = $modelManager;
         $this->connection = $connection;
+        $this->paymentMethodProvider = $paymentMethodProvider;
     }
 
     /**
@@ -52,8 +67,9 @@ class Uninstaller
 
     private function deactivatePayments()
     {
-        $paymentMethodProvider = new PaymentMethodProvider($this->modelManager);
-        $paymentMethodProvider->setPaymentMethodActiveFlag(false);
+        foreach (PaymentMethodProvider::getAllUnifiedNames() as $paymentMethodName) {
+            $this->paymentMethodProvider->setPaymentMethodActiveFlag($paymentMethodName, false);
+        }
     }
 
     private function removeAttributes()
@@ -78,7 +94,9 @@ class Uninstaller
         $sql = 'DROP TABLE IF EXISTS `swag_payment_paypal_unified_settings_express`;
                 DROP TABLE IF EXISTS `swag_payment_paypal_unified_settings_general`;
                 DROP TABLE IF EXISTS `swag_payment_paypal_unified_settings_installments`;
-                DROP TABLE IF EXISTS `swag_payment_paypal_unified_settings_plus`;';
+                DROP TABLE IF EXISTS `swag_payment_paypal_unified_settings_plus`;
+                DROP TABLE IF EXISTS `swag_payment_paypal_unified_settings_advanced_credit_debit_card`;
+                DROP TABLE IF EXISTS `swag_payment_paypal_unified_settings_pay_upon_invoice`;';
 
         $this->connection->exec($sql);
     }

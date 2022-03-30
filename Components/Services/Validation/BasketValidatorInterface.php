@@ -8,14 +8,14 @@
 
 namespace SwagPaymentPayPalUnified\Components\Services\Validation;
 
-use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
-
 interface BasketValidatorInterface
 {
     /**
      * Validates the basket using the shopware basket and the payment response from PayPal
      *
+     * @param float $total
+     *
      * @return bool
      */
-    public function validate(array $basket, array $customer, Payment $payment);
+    public function validate(array $basket, array $customer, $total);
 }

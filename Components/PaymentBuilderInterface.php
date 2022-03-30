@@ -8,11 +8,15 @@
 
 namespace SwagPaymentPayPalUnified\Components;
 
+use SwagPaymentPayPalUnified\Components\Services\Common\CustomerHelper;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
 
 interface PaymentBuilderInterface
 {
-    const CUSTOMER_GROUP_USE_GROSS_PRICES = 'customerGroupUseGrossPrices';
+    /**
+     * @deprecated Will be removed. Use CustomerHelper::CUSTOMER_GROUP_USE_GROSS_PRICES instead
+     */
+    const CUSTOMER_GROUP_USE_GROSS_PRICES = CustomerHelper::CUSTOMER_GROUP_USE_GROSS_PRICES;
 
     /**
      * The function returns an array with all parameters that are expected by the PayPal API.

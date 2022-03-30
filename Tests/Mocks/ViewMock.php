@@ -20,11 +20,6 @@ class ViewMock extends Enlight_View_Default
     /**
      * @var array
      */
-    private $loadedTemplates = [];
-
-    /**
-     * @var array
-     */
     private $assigns = [];
 
     /**
@@ -33,6 +28,8 @@ class ViewMock extends Enlight_View_Default
     public function addTemplateDir($templateDir, $key = null)
     {
         $this->templates[] = $templateDir;
+
+        return $this;
     }
 
     /**
@@ -46,20 +43,10 @@ class ViewMock extends Enlight_View_Default
     /**
      * {@inheritdoc}
      */
-    public function loadTemplate($path)
-    {
-        $this->loadedTemplates = $path;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function assign($spec, $value = null, $nocache = null, $scope = null)
     {
         if (\is_array($spec)) {
-            $this->assigns = $spec;
+            $this->assigns = array_merge_recursive($this->assigns, $spec);
 
             return $this;
         }

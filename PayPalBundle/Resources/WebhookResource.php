@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\PayPalBundle\Resources;
 
+use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\RequestType;
 use SwagPaymentPayPalUnified\PayPalBundle\RequestUri;
 use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService;
@@ -19,9 +20,15 @@ class WebhookResource
      */
     private $client;
 
-    public function __construct(ClientService $client)
+    /**
+     * @var LoggerServiceInterface
+     */
+    private $logger;
+
+    public function __construct(ClientService $client, LoggerServiceInterface $logger)
     {
         $this->client = $client;
+        $this->logger = $logger;
     }
 
     /**
@@ -29,6 +36,8 @@ class WebhookResource
      */
     public function getList()
     {
+        $this->logger->debug(sprintf('%s GET LIST', __METHOD__));
+
         return $this->client->sendRequest(RequestType::GET, RequestUri::WEBHOOK_RESOURCE);
     }
 
@@ -39,6 +48,8 @@ class WebhookResource
      */
     public function create($url, array $events)
     {
+        $this->logger->debug(sprintf('%s CREATE WITH URL: %s', __METHOD__, $url));
+
         $data = [
             'url' => $url,
             'event_types' => [],

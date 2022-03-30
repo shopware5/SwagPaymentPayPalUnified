@@ -31,18 +31,33 @@ class Widgets implements SubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            'Enlight_Controller_Dispatcher_ControllerPath_Widgets_PaypalUnifiedExpressCheckout' => 'onGetEcControllerPath',
+            'Enlight_Controller_Dispatcher_ControllerPath_Widgets_PaypalUnifiedV2ExpressCheckout' => 'onGetEcV2ControllerPath',
+            'Enlight_Controller_Dispatcher_ControllerPath_Widgets_PaypalUnifiedV2SmartPaymentButtons' => 'onGetSpbV2ControllerPath',
+            'Enlight_Controller_Dispatcher_ControllerPath_Widgets_PaypalUnifiedV2AdvancedCreditDebitCard' => 'onGetAcdcV2ControllerPath',
         ];
     }
 
     /**
-     * Handles the Enlight_Controller_Dispatcher_ControllerPath_Widgets_PaypalUnifiedExpressCheckout event.
-     * Returns the path to the express checkout controller.
-     *
      * @return string
      */
-    public function onGetEcControllerPath()
+    public function onGetSpbV2ControllerPath()
     {
-        return $this->pluginDirectory . '/Controllers/Widgets/PaypalUnifiedExpressCheckout.php';
+        return $this->pluginDirectory . '/Controllers/Widgets/PaypalUnifiedV2SmartPaymentButtons.php';
+    }
+
+    /**
+     * @return string
+     */
+    public function onGetEcV2ControllerPath()
+    {
+        return $this->pluginDirectory . '/Controllers/Widgets/PaypalUnifiedV2ExpressCheckout.php';
+    }
+
+    /**
+     * @return string
+     */
+    public function onGetAcdcV2ControllerPath()
+    {
+        return $this->pluginDirectory . '/Controllers/Widgets/PaypalUnifiedV2AdvancedCreditDebitCard.php';
     }
 }

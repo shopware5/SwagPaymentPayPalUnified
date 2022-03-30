@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\PayPalBundle\Resources;
 
+use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\RequestType;
 use SwagPaymentPayPalUnified\PayPalBundle\RequestUri;
 use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService;
@@ -20,9 +21,15 @@ class SaleResource
      */
     private $clientService;
 
-    public function __construct(ClientService $clientService)
+    /**
+     * @var LoggerServiceInterface
+     */
+    private $logger;
+
+    public function __construct(ClientService $clientService, LoggerServiceInterface $logger)
     {
         $this->clientService = $clientService;
+        $this->logger = $logger;
     }
 
     /**
@@ -32,7 +39,9 @@ class SaleResource
      */
     public function get($saleId)
     {
-        return $this->clientService->sendRequest(RequestType::GET, RequestUri::SALE_RESOURCE . '/' . $saleId);
+        $this->logger->debug(sprintf('%s GET WITH ID %s', __METHOD__, $saleId));
+
+        return $this->clientService->sendRequest(RequestType::GET, sprintf('%s/%s', RequestUri::SALE_RESOURCE, $saleId));
     }
 
     /**
@@ -42,8 +51,14 @@ class SaleResource
      */
     public function refund($saleId, SaleRefund $refund)
     {
+        $this->logger->debug(sprintf('%s REFUND WITH ID %s', __METHOD__, $saleId), $refund->toArray());
+
         $requestData = $refund->toArray();
 
-        return $this->clientService->sendRequest(RequestType::POST, RequestUri::SALE_RESOURCE . '/' . $saleId . '/refund', $requestData);
+        return $this->clientService->sendRequest(
+            RequestType::POST,
+            sprintf('%s/%s/refund', RequestUri::SALE_RESOURCE, $saleId),
+            $requestData
+        );
     }
 }

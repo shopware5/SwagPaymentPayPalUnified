@@ -4,11 +4,10 @@ includes:
 parameters:
     level: 8
     reportUnmatchedIgnoredErrors: true
-    excludes_analyse:
+    excludePaths:
         - vendor
         - .githooks
-        - Tests
-
+        - Tests/E2E
     symfony:
         constant_hassers: false
         container_xml_path: ../../../var/cache/production____REVISION___/container.xml
@@ -22,7 +21,11 @@ parameters:
             '#Class Shopware_Components_Translation constructor invoked with 0 parameters, 2 required#'
         - # Properties are called with magic __get
             '#Access to an undefined property Shopware_Models_Document_Order::#'
-        - # Since we have to support Shopware 5.2 we can not use return types
-            '#Method .* has no return typehint specified#'
+        - # Has different type in older PHPUnit versions needs for older Shopware versions
+            message: '#Parameter \#2 \$haystack of static method PHPUnit\\Framework\\Assert::assertContains\(\) expects iterable, string given#'
+            path: Tests
+        - # Compatibititly trait for different Shopware versions
+            message: '#Call to an undefined method Enlight_Components_Session_Namespace::reset\(\)#'
+            path: Tests/Functional/ResetSessionTrait.php
         # Needs some improvements in the doctrine PHPStan extensions: see https://github.com/phpstan/phpstan-doctrine/pull/167
-        - '#Cannot call method fetch.*\(\) on Doctrine\\DBAL\\.*Statement\|int#'
+        - '#Cannot call method fetch.*\(\) on Doctrine\\DBAL\\.*\|int#'

@@ -8,10 +8,9 @@
 
 namespace SwagPaymentPayPalUnified\Subscriber;
 
-use Doctrine\DBAL\Connection;
 use Enlight\Event\SubscriberInterface;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
-use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
+use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Components\Services\RiskManagement\RiskManagementHelperInterface;
 
 class RiskManagement implements SubscriberInterface
@@ -32,20 +31,20 @@ class RiskManagement implements SubscriberInterface
     private $dependencyProvider;
 
     /**
-     * @var Connection
+     * @var PaymentMethodProviderInterface
      */
-    private $connection;
+    private $paymentMethodProvider;
 
     public function __construct(
         RiskManagementHelperInterface $riskManagementHelper,
         \Enlight_Template_Manager $template,
         DependencyProvider $dependencyProvider,
-        Connection $connection
+        PaymentMethodProviderInterface $paymentMethodProvider
     ) {
         $this->riskManagementHelper = $riskManagementHelper;
         $this->template = $template;
         $this->dependencyProvider = $dependencyProvider;
-        $this->connection = $connection;
+        $this->paymentMethodProvider = $paymentMethodProvider;
     }
 
     public static function getSubscribedEvents()
@@ -178,7 +177,7 @@ class RiskManagement implements SubscriberInterface
             return false;
         }
 
-        if ((int) $paymentId !== (new PaymentMethodProvider())->getPaymentId($this->connection)) {
+        if ((int) $paymentId !== $this->paymentMethodProvider->getPaymentId(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME)) {
             return false;
         }
 

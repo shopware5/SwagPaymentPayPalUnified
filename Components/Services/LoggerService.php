@@ -10,62 +10,60 @@ namespace SwagPaymentPayPalUnified\Components\Services;
 
 use Shopware\Components\Logger;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
-use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 
 class LoggerService implements LoggerServiceInterface
 {
+    const MESSAGE_PREFIX = 'PayPal: ';
+
     /**
      * @var Logger
      */
     private $logger;
 
-    /**
-     * @var SettingsServiceInterface
-     */
-    private $settings;
-
-    public function __construct(Logger $baseLogger, SettingsServiceInterface $settings)
+    public function __construct(Logger $baseLogger)
     {
         $this->logger = $baseLogger;
-        $this->settings = $settings;
     }
 
     /**
-     * @param string $message
+     * {@inheritDoc}
+     */
+    public function debug($message, array $context = [])
+    {
+        $this->logger->debug($this->createFinalMessage($message), $context);
+    }
+
+    /**
+     * {@inheritDoc}
      */
     public function warning($message, array $context = [])
     {
-        if (!$this->settings->hasSettings()) {
-            return;
-        }
-
-        if ((int) $this->settings->get('log_level') === 1) {
-            $finalMessage = 'PayPal: ' . $message;
-            $this->logger->warning($finalMessage, $context);
-        }
+        $this->logger->warning($this->createFinalMessage($message), $context);
     }
 
     /**
-     * @param string $message
+     * {@inheritDoc}
      */
     public function notify($message, array $context = [])
     {
-        if (!$this->settings->hasSettings()) {
-            return;
-        }
+        $this->logger->notice($this->createFinalMessage($message), $context);
+    }
 
-        if ((int) $this->settings->get('log_level') === 1) {
-            $finalMessage = 'PayPal: ' . $message;
-            $this->logger->notice($finalMessage, $context);
-        }
+    /**
+     * {@inheritDoc}
+     */
+    public function error($message, array $context = [])
+    {
+        $this->logger->error($this->createFinalMessage($message), $context);
     }
 
     /**
      * @param string $message
+     *
+     * @return string
      */
-    public function error($message, array $context = [])
+    private function createFinalMessage($message)
     {
-        $finalMessage = 'PayPal: ' . $message;
-        $this->logger->error($finalMessage, $context);
+        return self::MESSAGE_PREFIX . $message;
     }
 }

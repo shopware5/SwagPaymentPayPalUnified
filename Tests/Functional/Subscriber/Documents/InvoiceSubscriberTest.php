@@ -8,8 +8,11 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Subscriber\Documents;
 
+use Enlight_Event_EventArgs;
 use PHPUnit\Framework\TestCase;
-use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
+use ReflectionClass;
+use Shopware_Components_Translation;
+use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Instruction\Amount;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Instruction\RecipientBanking;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\PaymentInstruction;
@@ -25,7 +28,7 @@ class InvoiceSubscriberTest extends TestCase
     use DatabaseTestCaseTrait;
     use PayPalUnifiedPaymentIdTrait;
 
-    const TEST_ORDER_NUMBER = 20001;
+    const TEST_ORDER_NUMBER = '20001';
     const TEST_AMOUNT_VALUE = 50.5;
     const TEST_DUE_DATE = '01-01-2000';
     const TEST_REFERENCE = 'TEST_REFERENCE_NUMBER';
@@ -42,7 +45,7 @@ class InvoiceSubscriberTest extends TestCase
 
     public function testConstructWithoutTranslator()
     {
-        $translatorConstructor = (new \ReflectionClass('Shopware_Components_Translation'))->getConstructor();
+        $translatorConstructor = (new ReflectionClass('Shopware_Components_Translation'))->getConstructor();
         if ($translatorConstructor && !empty($translatorConstructor->getParameters())) {
             static::markTestSkipped('Test makes only sense if the translation component has no constructor parameters');
         }
@@ -52,7 +55,8 @@ class InvoiceSubscriberTest extends TestCase
             Shopware()->Container()->get('dbal_connection'),
             Shopware()->Container()->get('snippets'),
             null,
-            Shopware()->Container()->get('template')
+            Shopware()->Container()->get('template'),
+            Shopware()->Container()->get('paypal_unified.payment_method_provider')
         );
         static::assertNotNull($subscriber);
     }
@@ -104,7 +108,6 @@ class InvoiceSubscriberTest extends TestCase
 
         $subscriber->onBeforeRenderDocument($hookArgs);
 
-        /** @var \Enlight_Template_Manager $view */
         $view = $hookArgs->getTemplate();
 
         static::assertNotNull($view->getVariable('PayPalUnifiedInvoiceInstruction'));
@@ -113,12 +116,12 @@ class InvoiceSubscriberTest extends TestCase
     public function testOnFilterMailVariables()
     {
         $subscriber = $this->getSubscriber();
-        $args = new \Enlight_Event_EventArgs();
+        $args = new Enlight_Event_EventArgs();
 
         $template = [
             'additional' => [
                 'payment' => [
-                    'name' => PaymentMethodProvider::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME,
+                    'name' => PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME,
                     'additionaldescription' => '{link file="frontend/_public/src/img/sidebar-paypal-generic.png" fullPath}',
                 ],
             ],
@@ -136,7 +139,7 @@ class InvoiceSubscriberTest extends TestCase
     public function testOnFilterMailVariablesShouldNotBeRendered()
     {
         $subscriber = $this->getSubscriber();
-        $args = new \Enlight_Event_EventArgs();
+        $args = new Enlight_Event_EventArgs();
 
         $template = [
             'additional' => [
@@ -163,7 +166,8 @@ class InvoiceSubscriberTest extends TestCase
             Shopware()->Container()->get('dbal_connection'),
             Shopware()->Container()->get('snippets'),
             $this->getTranslationService(),
-            Shopware()->Container()->get('template')
+            Shopware()->Container()->get('template'),
+            Shopware()->Container()->get('paypal_unified.payment_method_provider')
         );
     }
 
@@ -211,10 +215,10 @@ class InvoiceSubscriberTest extends TestCase
     {
         $container = Shopware()->Container();
 
-        if ($container->has('translation')) {
+        if ($container->initialized('translation')) {
             return $container->get('translation');
         }
 
-        return new \Shopware_Components_Translation();
+        return new Shopware_Components_Translation($container->get('dbal_connection'), $container);
     }
 }

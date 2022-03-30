@@ -9,8 +9,8 @@
 namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services;
 
 use PHPUnit\Framework\TestCase;
-use SwagPaymentPayPalUnified\Components\PaymentBuilderInterface;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
+use SwagPaymentPayPalUnified\Components\Services\Common\CustomerHelper;
 use SwagPaymentPayPalUnified\Components\Services\PaymentBuilderService;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
@@ -20,7 +20,7 @@ class PaymentBuilderServiceTest extends TestCase
 {
     public function testIsBasketServiceAvailable()
     {
-        $settingService = new SettingsServicePaymentBuilderServiceMock(PaymentType::PAYPAL_CLASSIC, 0);
+        $settingService = new SettingsServicePaymentBuilderServiceMock(false, 0);
 
         $requestService = $this->getRequestService($settingService);
 
@@ -77,7 +77,7 @@ class PaymentBuilderServiceTest extends TestCase
         static::assertSame('EUR', $requestParameters['transactions'][0]['amount']['currency']);
         static::assertSame('114.99', $requestParameters['transactions'][0]['amount']['total']);
         // test the amount details
-        static::assertSame('55', $requestParameters['transactions'][0]['amount']['details']['shipping']);
+        static::assertSame('55.00', $requestParameters['transactions'][0]['amount']['details']['shipping']);
         static::assertSame('59.99', $requestParameters['transactions'][0]['amount']['details']['subtotal']);
         static::assertSame('0.00', $requestParameters['transactions'][0]['amount']['details']['tax']);
     }
@@ -112,7 +112,7 @@ class PaymentBuilderServiceTest extends TestCase
 
         $basketData = $this->getBasketDataArray();
         $userData = $this->getUserDataAsArray();
-        $userData[PaymentBuilderInterface::CUSTOMER_GROUP_USE_GROSS_PRICES] = false;
+        $userData[CustomerHelper::CUSTOMER_GROUP_USE_GROSS_PRICES] = false;
         $userData['additional']['countryShipping']['taxfree'] = '1';
 
         $params = new PaymentBuilderParameters();
@@ -136,7 +136,7 @@ class PaymentBuilderServiceTest extends TestCase
         // Should match
         $userData['additional']['countryShipping']['taxfree'] = true;
 
-        $userData[PaymentBuilderInterface::CUSTOMER_GROUP_USE_GROSS_PRICES] = false;
+        $userData[CustomerHelper::CUSTOMER_GROUP_USE_GROSS_PRICES] = false;
         $userData['additional']['countryShipping']['taxfree_ustid'] = null;
         $userData['shippingaddress']['ustid'] = null;
         $userData['billingaddress']['ustid'] = null;
@@ -164,7 +164,7 @@ class PaymentBuilderServiceTest extends TestCase
         $userData['additional']['countryShipping']['taxfree'] = null;
         $userData['additional']['countryShipping']['taxfree_ustid'] = null;
 
-        $userData[PaymentBuilderInterface::CUSTOMER_GROUP_USE_GROSS_PRICES] = false;
+        $userData[CustomerHelper::CUSTOMER_GROUP_USE_GROSS_PRICES] = false;
         $userData['additional']['countryShipping']['taxfree'] = false;
         $userData['shippingaddress']['ustid'] = null;
         $userData['billingaddress']['ustid'] = null;
@@ -221,7 +221,7 @@ class PaymentBuilderServiceTest extends TestCase
         $userData['shippingaddress']['ustid'] = null;
 
         $userData['additional']['country']['taxfree_ustid'] = '1';
-        $userData[PaymentBuilderInterface::CUSTOMER_GROUP_USE_GROSS_PRICES] = true;
+        $userData[CustomerHelper::CUSTOMER_GROUP_USE_GROSS_PRICES] = true;
 
         $params = new PaymentBuilderParameters();
         $params->setBasketData($basketData);
@@ -246,7 +246,7 @@ class PaymentBuilderServiceTest extends TestCase
         $userData['additional']['countryShipping']['taxfree_ustid'] = '1';
         $userData['billingaddress']['ustid'] = null;
         $userData['shippingaddress']['ustid'] = null;
-        $userData[PaymentBuilderInterface::CUSTOMER_GROUP_USE_GROSS_PRICES] = true;
+        $userData[CustomerHelper::CUSTOMER_GROUP_USE_GROSS_PRICES] = true;
 
         $userData['additional']['country']['taxfree_ustid'] = '1';
 
@@ -274,7 +274,7 @@ class PaymentBuilderServiceTest extends TestCase
         $userData['additional']['countryShipping']['taxfree_ustid'] = '1';
         $userData['billingaddress']['ustid'] = null;
         $userData['shippingaddress']['ustid'] = '1';
-        $userData[PaymentBuilderInterface::CUSTOMER_GROUP_USE_GROSS_PRICES] = false;
+        $userData[CustomerHelper::CUSTOMER_GROUP_USE_GROSS_PRICES] = false;
         $userData['additional']['country']['taxfree_ustid'] = '1';
 
         $params = new PaymentBuilderParameters();
@@ -299,7 +299,7 @@ class PaymentBuilderServiceTest extends TestCase
         $userData['billingaddress']['ustid'] = null;
 
         $userData['additional']['countryShipping']['taxfree_ustid'] = '1';
-        $userData[PaymentBuilderInterface::CUSTOMER_GROUP_USE_GROSS_PRICES] = true;
+        $userData[CustomerHelper::CUSTOMER_GROUP_USE_GROSS_PRICES] = true;
 
         $userData['shippingaddress']['ustid'] = null;
         $userData['additional']['countryShipping']['taxfree'] = null;
@@ -387,7 +387,7 @@ class PaymentBuilderServiceTest extends TestCase
         $requestParameters = $requestParameters->toArray();
 
         static::assertSame('114.99', $requestParameters['transactions'][0]['amount']['total']);
-        static::assertSame('55', $requestParameters['transactions'][0]['amount']['details']['shipping']);
+        static::assertSame('55.00', $requestParameters['transactions'][0]['amount']['details']['shipping']);
         static::assertSame('59.99', $requestParameters['transactions'][0]['amount']['details']['subtotal']);
         static::assertSame('0.00', $requestParameters['transactions'][0]['amount']['details']['tax']);
     }
@@ -402,7 +402,7 @@ class PaymentBuilderServiceTest extends TestCase
 
         $userData['additional']['countryShipping']['taxfree_ustid'] = '1';
         $userData['shippingaddress']['ustid'] = 'VATID123';
-        $userData[PaymentBuilderInterface::CUSTOMER_GROUP_USE_GROSS_PRICES] = false;
+        $userData[CustomerHelper::CUSTOMER_GROUP_USE_GROSS_PRICES] = false;
 
         $params = new PaymentBuilderParameters();
         $params->setBasketData($basketData);
@@ -544,6 +544,7 @@ class PaymentBuilderServiceTest extends TestCase
     /**
      * @param string $paymentType
      * @param int    $intent
+     * @param bool   $longBrandName
      *
      * @return array
      */
@@ -574,11 +575,22 @@ class PaymentBuilderServiceTest extends TestCase
      */
     private function getRequestService(SettingsServiceInterface $settingService)
     {
-        $router = Shopware()->Container()->get('router');
         $snippetManager = Shopware()->Container()->get('snippets');
         $dependencyProvider = Shopware()->Container()->get('paypal_unified.dependency_provider');
+        $priceFormatter = Shopware()->Container()->get('paypal_unified.common.price_formatter');
+        $customerHelper = Shopware()->Container()->get('paypal_unified.common.customer_helper');
+        $cartHelper = Shopware()->Container()->get('paypal_unified.common.cart_helper');
+        $returnUrlHelper = Shopware()->Container()->get('paypal_unified.common.return_url_helper');
 
-        return new PaymentBuilderService($router, $settingService, $snippetManager, $dependencyProvider);
+        return new PaymentBuilderService(
+            $settingService,
+            $snippetManager,
+            $dependencyProvider,
+            $priceFormatter,
+            $customerHelper,
+            $cartHelper,
+            $returnUrlHelper
+        );
     }
 
     /**
@@ -638,7 +650,7 @@ class PaymentBuilderServiceTest extends TestCase
     private function getUserDataAsArray()
     {
         return [
-            PaymentBuilderInterface::CUSTOMER_GROUP_USE_GROSS_PRICES => true,
+            CustomerHelper::CUSTOMER_GROUP_USE_GROSS_PRICES => true,
             'additional' => [
                 'show_net' => true,
                 'countryShipping' => [

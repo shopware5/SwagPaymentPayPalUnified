@@ -87,8 +87,8 @@ Ext.define('Shopware.apps.PaypalUnified.view.capture.Authorize', {
             }, {
                 xtype: 'checkbox',
                 itemId: 'finalCapture',
-                inputValue: true,
-                uncheckedValue: false,
+                inputValue: 1,
+                uncheckedValue: 0,
                 checked: true,
                 fieldLabel: '{s name="field/isFinal"}This is the final capture{/s}'
             }]

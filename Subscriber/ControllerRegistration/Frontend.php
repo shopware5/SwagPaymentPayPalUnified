@@ -32,7 +32,11 @@ class Frontend implements SubscriberInterface
     {
         return [
             'Enlight_Controller_Dispatcher_ControllerPath_Frontend_PaypalUnified' => 'onGetUnifiedControllerPath',
+            'Enlight_Controller_Dispatcher_ControllerPath_Frontend_PaypalUnifiedV2' => 'onGetUnifiedControllerPathV2',
             'Enlight_Controller_Dispatcher_ControllerPath_Frontend_PaypalUnifiedWebhook' => 'onGetWebhookControllerPath',
+            'Enlight_Controller_Dispatcher_ControllerPath_Frontend_PaypalUnifiedV2PayUponInvoice' => 'onGetUnifiedV2PayUponInvoiceControllerPath',
+            'Enlight_Controller_Dispatcher_ControllerPath_Frontend_PaypalUnifiedApm' => 'onGetPaypalUnifiedApmControllerPath',
+            'Enlight_Controller_Dispatcher_ControllerPath_Frontend_PaypalUnifiedAdvancedCreditDebitCard' => 'onGetPaypalUnifiedAdvancedCreditDebitCardControllerPath',
         ];
     }
 
@@ -48,6 +52,14 @@ class Frontend implements SubscriberInterface
     }
 
     /**
+     * @return string
+     */
+    public function onGetUnifiedControllerPathV2()
+    {
+        return $this->pluginDirectory . '/Controllers/Frontend/PaypalUnifiedV2.php';
+    }
+
+    /**
      * Handles the Enlight_Controller_Dispatcher_ControllerPath_Frontend_PaypalUnifiedWebhook event.
      * Returns the path to the webhook controller.
      *
@@ -56,5 +68,29 @@ class Frontend implements SubscriberInterface
     public function onGetWebhookControllerPath()
     {
         return $this->pluginDirectory . '/Controllers/Frontend/PaypalUnifiedWebhook.php';
+    }
+
+    /**
+     * @return string
+     */
+    public function onGetUnifiedV2PayUponInvoiceControllerPath()
+    {
+        return $this->pluginDirectory . '/Controllers/Frontend/PaypalUnifiedV2PayUponInvoice.php';
+    }
+
+    /**
+     * @return string
+     */
+    public function onGetPaypalUnifiedApmControllerPath()
+    {
+        return $this->pluginDirectory . '/Controllers/Frontend/PaypalUnifiedApm.php';
+    }
+
+    /**
+     * @return string
+     */
+    public function onGetPaypalUnifiedAdvancedCreditDebitCardControllerPath()
+    {
+        return $this->pluginDirectory . '/Controllers/Frontend/PaypalUnifiedV2AdvancedCreditDebitCard.php';
     }
 }

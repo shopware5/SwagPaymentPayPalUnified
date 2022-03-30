@@ -8,22 +8,17 @@
 
 namespace SwagPaymentPayPalUnified\Subscriber;
 
-use Doctrine\DBAL\Connection;
 use Enlight\Event\SubscriberInterface;
 use Enlight_Controller_ActionEventArgs as ActionEventArgs;
+use Shopware\Models\Shop\Shop;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
-use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
+use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Models\Settings\Plus;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 
 class Account implements SubscriberInterface
 {
-    /**
-     * @var Connection
-     */
-    private $connection;
-
     /**
      * @var SettingsServiceInterface
      */
@@ -35,19 +30,18 @@ class Account implements SubscriberInterface
     private $dependencyProvider;
 
     /**
-     * @var PaymentMethodProvider
+     * @var PaymentMethodProviderInterface
      */
     private $paymentMethodProvider;
 
     public function __construct(
-        Connection $connection,
         SettingsServiceInterface $settingsService,
-        DependencyProvider $dependencyProvider
+        DependencyProvider $dependencyProvider,
+        PaymentMethodProviderInterface $paymentMethodProvider
     ) {
-        $this->connection = $connection;
         $this->settingsService = $settingsService;
         $this->dependencyProvider = $dependencyProvider;
-        $this->paymentMethodProvider = new PaymentMethodProvider();
+        $this->paymentMethodProvider = $paymentMethodProvider;
     }
 
     /**
@@ -71,17 +65,19 @@ class Account implements SubscriberInterface
             return;
         }
 
-        $shop = $this->dependencyProvider->getShop();
-        if ($shop === null) {
-            return;
-        }
-
-        $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag($this->connection);
+        $swUnifiedActive = $this->paymentMethodProvider->getPaymentMethodActiveFlag(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
         if (!$swUnifiedActive) {
             return;
         }
 
+        $shop = $this->dependencyProvider->getShop();
+
+        if (!$shop instanceof Shop) {
+            throw new \UnexpectedValueException(sprintf('Tried to access %s, but it\'s not set in the DIC.', Shop::class));
+        }
+
         $shopId = $shop->getId();
+
         /** @var Plus|null $plusSettings */
         $plusSettings = $this->settingsService->getSettings($shopId, SettingsTable::PLUS);
 
@@ -97,7 +93,7 @@ class Account implements SubscriberInterface
         }
 
         $view = $controller->View();
-        $unifiedPaymentId = $this->paymentMethodProvider->getPaymentId($this->connection);
+        $unifiedPaymentId = $this->paymentMethodProvider->getPaymentId(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
 
         $customerData = $view->getAssign('sUserData');
         $customerPayment = $customerData['additional']['payment'];

@@ -21,8 +21,9 @@ use Shopware\Models\Customer\Address;
 use Shopware\Models\Customer\Customer;
 use Shopware_Components_Config as ShopwareConfig;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
-use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
-use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
+use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
 use Symfony\Component\Form\FormFactoryInterface;
 
 class CustomerService
@@ -53,7 +54,7 @@ class CustomerService
     private $registerService;
 
     /**
-     * @var PaymentMethodProvider
+     * @var PaymentMethodProviderInterface
      */
     private $paymentMethodProvider;
 
@@ -72,6 +73,11 @@ class CustomerService
      */
     private $adminModule;
 
+    /**
+     * @var LoggerServiceInterface
+     */
+    private $logger;
+
     public function __construct(
         ShopwareConfig $shopwareConfig,
         Connection $connection,
@@ -79,48 +85,55 @@ class CustomerService
         ContextServiceInterface $contextService,
         RegisterServiceInterface $registerService,
         Enlight_Controller_Front $front,
-        DependencyProvider $dependencyProvider
+        DependencyProvider $dependencyProvider,
+        PaymentMethodProviderInterface $paymentMethodProvider,
+        LoggerServiceInterface $logger
     ) {
         $this->shopwareConfig = $shopwareConfig;
         $this->connection = $connection;
         $this->formFactory = $formFactory;
         $this->contextService = $contextService;
         $this->registerService = $registerService;
-        $this->paymentMethodProvider = new PaymentMethodProvider();
         $this->front = $front;
         $this->dependencyProvider = $dependencyProvider;
+        $this->paymentMethodProvider = $paymentMethodProvider;
+        $this->logger = $logger;
     }
 
-    public function createNewCustomer(Payment $paymentStruct)
+    public function createNewCustomer(Order $orderStruct)
     {
         $this->adminModule = $this->dependencyProvider->getModule('admin');
 
-        $payerInfo = $paymentStruct->getPayer()->getPayerInfo();
+        $payer = $orderStruct->getPayer();
         $salutation = $this->getSalutation();
-        $address = $payerInfo->getBillingAddress();
+        $address = $orderStruct->getPurchaseUnits()[0]->getShipping()->getAddress();
         $countryId = $this->getCountryId($address->getCountryCode());
+        $phone = $payer->getPhone();
         $stateId = null;
-        if ($address->getState()) {
-            $stateId = $this->getStateId($countryId, $address->getState());
+
+        if (\is_string($address->getAdminArea1())) {
+            $stateId = $this->getStateId($countryId, $address->getAdminArea1());
         }
 
         $customerData = [
-            'email' => $payerInfo->getEmail(),
-            'password' => $payerInfo->getPayerId(),
+            'email' => $payer->getEmailAddress(),
+            'password' => $payer->getPayerId(),
             'accountmode' => 1,
             'salutation' => $salutation,
-            'firstname' => $payerInfo->getFirstName(),
-            'lastname' => $payerInfo->getLastName(),
-            'street' => $address->getLine1(),
-            'additionalAddressLine1' => $address->getLine2(),
+            'firstname' => $payer->getName()->getGivenName(),
+            'lastname' => $payer->getName()->getSurname(),
+            'street' => $address->getAddressLine1(),
+            'additionalAddressLine1' => $address->getAddressLine2(),
             'zipcode' => $address->getPostalCode(),
-            'city' => $address->getCity(),
+            'city' => $address->getAdminArea2(),
             'country' => $countryId,
             'state' => $stateId,
-            'phone' => $payerInfo->getPhone(),
+            'phone' => $phone !== null ? $phone->getPhoneNumber()->getNationalNumber() : null,
         ];
 
         $customerModel = $this->registerCustomer($customerData);
+
+        $this->logger->debug(sprintf('%s NEW CUSTOMER CREATED WITH ID: %s', __METHOD__, $customerModel->getId()));
 
         $this->loginCustomer($customerModel);
     }
@@ -159,7 +172,7 @@ class CustomerService
         $form = $this->formFactory->create(PersonalFormType::class, $customer);
         $form->submit($customerData);
 
-        $customer->setPaymentId($this->paymentMethodProvider->getPaymentId($this->connection));
+        $customer->setPaymentId($this->paymentMethodProvider->getPaymentId(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME));
 
         $address = new Address();
         $form = $this->formFactory->create(AddressFormType::class, $address);
@@ -190,7 +203,15 @@ class CustomerService
 
     private function loginCustomer(Customer $customerModel)
     {
+        $this->logger->debug(sprintf('%s LOGIN NEW CUSTOMER WITH ID: %s', __METHOD__, $customerModel->getId()));
+
         $request = $this->front->Request();
+
+        if (!$request instanceof \Enlight_Controller_Request_Request) {
+            $this->logger->debug(sprintf('%s NO REQUEST GIVEN', __METHOD__));
+            throw new \UnexpectedValueException(sprintf('Expected instance of %s, got null', \Enlight_Controller_Request_Request::class));
+        }
+
         $request->setPost('email', $customerModel->getEmail());
         $request->setPost('passwordMD5', $customerModel->getPassword());
         $this->adminModule->sLogin(true);
@@ -201,5 +222,7 @@ class CustomerService
         $customerShippingCountry = $customerModel->getDefaultShippingAddress()->getCountry();
         $session->offsetSet('sCountry', $customerShippingCountry->getId());
         $session->offsetSet('sArea', $customerShippingCountry->getArea()->getId());
+
+        $this->logger->debug(sprintf('%s NEW CUSTOMER WITH ID: %s SUCCESSFUL LOGGED IN', __METHOD__, $customerModel->getId()));
     }
 }

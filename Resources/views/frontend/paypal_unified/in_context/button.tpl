@@ -3,14 +3,18 @@
         {block name='frontend_checkout_confirm_paypal_unified_in_context_button_inner'}
             <div class="paypal-unified-in-context--button-container right"
                  data-paypalUnifiedNormalCheckoutButtonInContext="true"
-                 data-paypalMode="{if $paypalUnifiedModeSandbox}sandbox{else}production{/if}"
-                 data-label="buynow"
-                 data-color="{$paypalUnifiedEcButtonStyleColor}"
-                 data-shape="{$paypalUnifiedEcButtonStyleShape}"
-                 data-size="{$paypalUnifiedEcButtonStyleSize}"
-                 data-paypalLanguage="{$paypalUnifiedLanguageIso}"
-                 data-paypalErrorPage="{url controller=checkout action=shippingPayment paypal_unified_error_code=2}"
-                 data-checkoutPaymentUrl="{url controller=checkout action=payment}"
+                 data-color="{$paypalUnifiedButtonStyleColor}"
+                 data-shape="{$paypalUnifiedButtonStyleShape}"
+                 data-size="{$paypalUnifiedButtonStyleSize}"
+                 data-locale="{$paypalUnifiedButtonLocale}"
+                 data-paypalErrorPage="{url controller='checkout' action='shippingPayment' paypal_unified_error_code=2 forceSecure}"
+                 data-clientId="{$paypalUnifiedClientId}"
+                 data-useSandbox="{$paypalUnifiedModeSandbox}"
+                 data-currency="{$paypalUnifiedCurrency}"
+                 data-createOrderUrl="{url controller='PaypalUnifiedV2' action='index' forceSecure}"
+                 data-confirmUrl="{url module='frontend' controller='checkout' action='confirm' inContextCheckout=1 forceSecure}"
+                 data-finishUrl="{url module='frontend' controller='checkout' action='finish' forceSecure}"
+                 data-paypalIntent="{$paypalUnifiedIntent}"
                 {block name='frontend_checkout_confirm_paypal_unified_in_context_button_data'}{/block}>
             </div>
         {/block}

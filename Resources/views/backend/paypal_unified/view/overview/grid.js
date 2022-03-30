@@ -234,7 +234,17 @@ Ext.define('Shopware.apps.PaypalUnified.view.overview.Grid', {
                 return '{s name="type/express"}Express{/s}';
             case 'PayPalSmartPaymentButtons':
                 return '{s name="type/smart_payment_buttons"}Smart Payment Buttons{/s}';
+            case 'PayPalClassicV2':
+                return '{s name="type/classic_v2"}PayPalClassicV2{/s}'
+            case 'PayPalPlusInvoiceV2':
+                return '{s name="type/invoice_v2"}PayPalPlusInvoiceV2{/s}'
+            case 'PayPalExpressV2':
+                return '{s name="type/express_v2"}PayPalExpressV2{/s}'
+            case 'PayPalSmartPaymentButtonsV2':
+                return '{s name="type/smart_payment_buttons_v2"}PayPalSmartPaymentButtonsV2{/s}'
         }
+
+        return record.get('paymentType')
     }
 });
 // {/block}

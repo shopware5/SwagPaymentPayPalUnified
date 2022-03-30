@@ -17,16 +17,19 @@ trait DatabaseTestCaseTrait
 
     /**
      * @before
+     *
+     * @return void
      */
     public function startTransactionBefore()
     {
-        /** @var \Doctrine\DBAL\Connection $dbalConnection */
         $dbalConnection = Shopware()->Container()->get('dbal_connection');
         $dbalConnection->beginTransaction();
     }
 
     /**
      * @after
+     *
+     * @return void
      */
     public function rollbackTransactionAfter()
     {
@@ -36,7 +39,6 @@ trait DatabaseTestCaseTrait
             return;
         }
 
-        /** @var \Doctrine\DBAL\Connection $dbalConnection */
         $dbalConnection = Shopware()->Container()->get('dbal_connection');
         $dbalConnection->rollBack();
     }

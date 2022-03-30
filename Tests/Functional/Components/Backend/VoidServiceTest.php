@@ -10,10 +10,11 @@ namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Backend;
 
 use PHPUnit\Framework\TestCase;
 use Shopware\Models\Order\Order;
+use Shopware\Models\Order\Status;
 use SwagPaymentPayPalUnified\Components\Backend\VoidService;
-use SwagPaymentPayPalUnified\Components\PaymentStatus;
 use SwagPaymentPayPalUnified\Components\Services\ExceptionHandlerService;
 use SwagPaymentPayPalUnified\Components\Services\PaymentStatusService;
+use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Mocks\AuthorizationResourceMock;
 use SwagPaymentPayPalUnified\Tests\Mocks\LoggerMock;
@@ -23,6 +24,7 @@ class VoidServiceTest extends TestCase
 {
     use DatabaseTestCaseTrait;
     use OrderTrait;
+    use ContainerTrait;
 
     const CURRENCY = CaptureServiceTest::CURRENCY;
 
@@ -31,7 +33,8 @@ class VoidServiceTest extends TestCase
      */
     public function before()
     {
-        $this->modelManager = Shopware()->Container()->get('models');
+        $this->modelManager = $this->getContainer()->get('models');
+        $this->connection = $this->getContainer()->get('dbal_connection');
     }
 
     public function testVoidOrder()
@@ -40,9 +43,9 @@ class VoidServiceTest extends TestCase
 
         $result = $this->createVoidService()->voidOrder('');
 
-        /** @var Order $order */
         $order = $this->modelManager->getRepository(Order::class)->find($orderId);
-        static::assertSame(PaymentStatus::PAYMENT_STATUS_CANCELLED, $order->getPaymentStatus()->getId());
+        static::assertInstanceOf(Order::class, $order);
+        static::assertSame(Status::PAYMENT_STATE_THE_PROCESS_HAS_BEEN_CANCELLED, $order->getPaymentStatus()->getId());
         static::assertTrue($result['success']);
     }
 
@@ -52,9 +55,9 @@ class VoidServiceTest extends TestCase
 
         $result = $this->createVoidService()->voidOrder(OrderResourceMock::THROW_EXCEPTION);
 
-        /** @var Order $order */
         $order = $this->modelManager->getRepository(Order::class)->find($orderId);
-        static::assertSame(PaymentStatus::PAYMENT_STATUS_OPEN, $order->getPaymentStatus()->getId());
+        static::assertInstanceOf(Order::class, $order);
+        static::assertSame(Status::PAYMENT_STATE_OPEN, $order->getPaymentStatus()->getId());
         static::assertFalse($result['success']);
     }
 
@@ -64,9 +67,9 @@ class VoidServiceTest extends TestCase
 
         $result = $this->createVoidService()->voidAuthorization('');
 
-        /** @var Order $order */
         $order = $this->modelManager->getRepository(Order::class)->find($orderId);
-        static::assertSame(PaymentStatus::PAYMENT_STATUS_CANCELLED, $order->getPaymentStatus()->getId());
+        static::assertInstanceOf(Order::class, $order);
+        static::assertSame(Status::PAYMENT_STATE_THE_PROCESS_HAS_BEEN_CANCELLED, $order->getPaymentStatus()->getId());
         static::assertTrue($result['success']);
     }
 
@@ -76,9 +79,9 @@ class VoidServiceTest extends TestCase
 
         $result = $this->createVoidService()->voidAuthorization(AuthorizationResourceMock::THROW_EXCEPTION);
 
-        /** @var Order $order */
         $order = $this->modelManager->getRepository(Order::class)->find($orderId);
-        static::assertSame(PaymentStatus::PAYMENT_STATUS_OPEN, $order->getPaymentStatus()->getId());
+        static::assertInstanceOf(Order::class, $order);
+        static::assertSame(Status::PAYMENT_STATE_OPEN, $order->getPaymentStatus()->getId());
         static::assertFalse($result['success']);
     }
 
@@ -90,7 +93,7 @@ class VoidServiceTest extends TestCase
             ),
             new AuthorizationResourceMock(),
             new OrderResourceMock(),
-            new PaymentStatusService($this->modelManager)
+            new PaymentStatusService($this->modelManager, $this->getContainer()->get('paypal_unified.logger_service'))
         );
     }
 }

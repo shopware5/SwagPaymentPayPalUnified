@@ -9,11 +9,14 @@
 namespace SwagPaymentPayPalUnified\Components\Services\Plus;
 
 use Shopware\Bundle\AttributeBundle\Service\CrudService;
-use Shopware\Components\Cart\PaymentTokenService;
-use Shopware\Components\Routing\RouterInterface;
+use Shopware\Bundle\AttributeBundle\Service\CrudServiceInterface;
 use Shopware_Components_Snippet_Manager as SnippetManager;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
+use SwagPaymentPayPalUnified\Components\Services\Common\CartHelper;
+use SwagPaymentPayPalUnified\Components\Services\Common\CustomerHelper;
+use SwagPaymentPayPalUnified\Components\Services\Common\PriceFormatter;
+use SwagPaymentPayPalUnified\Components\Services\Common\ReturnUrlHelper;
 use SwagPaymentPayPalUnified\Components\Services\PaymentBuilderService;
 use SwagPaymentPayPalUnified\Components\Services\Validation\BasketIdWhitelist;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
@@ -25,18 +28,32 @@ class PlusPaymentBuilderService extends PaymentBuilderService
     const EDD_ATTRIBUTE_COLUMN_NAME = 'swag_paypal_estimated_delivery_date_days';
 
     /**
-     * @var CrudService
+     * @var CrudService|CrudServiceInterface
      */
     private $attributeService;
 
+    /**
+     * @param CrudService|CrudServiceInterface $crudService
+     */
     public function __construct(
-        RouterInterface $router,
         SettingsServiceInterface $settingsService,
-        CrudService $crudService,
+        $crudService,
         SnippetManager $snippetManager,
-        DependencyProvider $dependencyProvider
+        DependencyProvider $dependencyProvider,
+        PriceFormatter $priceFormatter,
+        CustomerHelper $customerHelper,
+        CartHelper $cartHelper,
+        ReturnUrlHelper $returnUrlHelper
     ) {
-        parent::__construct($router, $settingsService, $snippetManager, $dependencyProvider);
+        parent::__construct(
+            $settingsService,
+            $snippetManager,
+            $dependencyProvider,
+            $priceFormatter,
+            $customerHelper,
+            $cartHelper,
+            $returnUrlHelper
+        );
 
         $this->attributeService = $crudService;
     }
@@ -54,25 +71,15 @@ class PlusPaymentBuilderService extends PaymentBuilderService
     }
 
     /**
-     * @return false|string
+     * @return string
      */
     private function getReturnUrl()
     {
-        $routingParameters = [
-            'action' => 'return',
-            'controller' => 'PaypalUnified',
-            'forceSecure' => true,
-            'plus' => true,
-            'basketId' => BasketIdWhitelist::WHITELIST_IDS['PayPalPlus'],
-        ];
-
-        // Shopware 5.6+ supports session restoring
-        $token = $this->requestParams->getPaymentToken();
-        if ($token !== null) {
-            $routingParameters[PaymentTokenService::TYPE_PAYMENT_TOKEN] = $token;
-        }
-
-        return $this->router->assemble($routingParameters);
+        return $this->returnUrlHelper->getReturnUrl(
+            BasketIdWhitelist::WHITELIST_IDS['PayPalPlus'],
+            $this->requestParams->getPaymentToken(),
+            ['plus' => true, 'controller' => 'PaypalUnified']
+        );
     }
 
     /**

@@ -83,7 +83,7 @@ class WebhookServiceTest extends TestCase
         $service = new WebhookService();
 
         $this->expectException(WebhookException::class);
-        $service->getWebhookHandler(null);
+        $service->getWebhookHandler('foo_bar');
     }
 
     public function testGetWebhookHandlers()
