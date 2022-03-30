@@ -211,15 +211,6 @@ class ItemListProvider
             return 0.0;
         }
 
-        $tax = (float) str_replace(',', '.', $lineItem['tax']);
-        $quantity = (int) $lineItem['quantity'];
-
-        /*
-         * Unfortunately, there's no indicator on the `lineItem` which would
-         * allow us to see the final tax sum of a **single product** of a line
-         * item, therefore the division by quantity is necessary, since we need
-         * to provide the prices & taxes for a single item to the PayPal-API.
-         */
-        return $quantity > 1 ? $tax / $quantity : $tax;
+        return $this->priceFormatter->roundPrice($lineItem['priceNumeric']) - $this->priceFormatter->roundPrice($lineItem['netprice']);
     }
 }
