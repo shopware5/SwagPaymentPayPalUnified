@@ -6,7 +6,6 @@
                  data-clientId="{$paypalUnifiedClientId}"
                  data-currency="{$paypalUnifiedCurrency}"
                  data-paypalIntent="{$paypalUnifiedIntent}"
-                 data-paypalMode="{if $paypalUnifiedModeSandbox}sandbox{else}production{/if}"
                  data-createOrderUrl="{url module=widgets controller=PaypalUnifiedV2ExpressCheckout action=createOrder forceSecure}"
                  data-onApproveUrl="{url module=widgets controller=PaypalUnifiedV2ExpressCheckout action=onApprove forceSecure}"
                  data-confirmUrl="{url module=frontend controller=Checkout action=confirm forceSecure}"

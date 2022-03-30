@@ -132,15 +132,13 @@ class AdvancedCreditDebitCard implements SubscriberInterface
 
         $cardHolderData = $this->createCardHolderData($subject->View()->getAssign('sUserData'));
 
-        $sandbox = $generalSettings->getSandbox();
         $viewData = [
             'paypalUnifiedAdvancedCreditDebitCardActive' => true,
-            'clientId' => $sandbox ? $generalSettings->getSandboxClientId() : $generalSettings->getClientId(),
+            'clientId' => $generalSettings->getSandbox() ? $generalSettings->getSandboxClientId() : $generalSettings->getClientId(),
             'clientToken' => $clientToken->getClientToken(),
             'cardHolderData' => $cardHolderData,
             'paypalUnifiedCurrency' => $this->contextService->getContext()->getCurrency()->getCurrency(),
             'paypalUnifiedButtonLocale' => $this->buttonLocaleService->getButtonLocale($generalSettings->getButtonLocale()),
-            'paypalUnifiedModeSandbox' => $sandbox,
         ];
 
         if (!isset($cardHolderData['contingencies'])) {

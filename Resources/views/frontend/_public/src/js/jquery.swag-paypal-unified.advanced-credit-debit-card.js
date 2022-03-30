@@ -79,9 +79,11 @@
             clientToken: '',
 
             /**
+             * Use PayPal debug mode
+             *
              * @type boolean
              */
-            useSandbox: false,
+            useDebugMode: false,
 
             /**
              * Cardholder Data for the hosted fields
@@ -208,7 +210,7 @@
                 params.locale = this.opts.locale;
             }
 
-            if (this.opts.useSandbox) {
+            if (this.opts.useDebugMode) {
                 params.debug = true;
             }
 

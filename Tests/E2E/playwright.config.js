@@ -22,8 +22,6 @@ const config = {
     forbidOnly: !!process.env.CI,
     /* Retry on CI only */
     retries: 3,
-    /* The maximum number of test failures for the whole test suite run */
-    maxFailures: 1,
     /* Opt out of parallel tests on CI. */
     workers: 1,
     /* Reporter to use. See https://playwright.dev/docs/test-reporters */

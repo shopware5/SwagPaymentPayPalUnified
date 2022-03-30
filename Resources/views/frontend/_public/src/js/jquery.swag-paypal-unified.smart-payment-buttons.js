@@ -65,11 +65,11 @@
             locale: 'en_GB',
 
             /**
-             * Use PayPal sandbox
+             * Use PayPal debug mode
              *
              * @type boolean
              */
-            useSandbox: false,
+            useDebugMode: false,
 
             /**
              * Currency which should be used for the Smart Payment Buttons
@@ -158,7 +158,7 @@
                 params.locale = this.opts.locale;
             }
 
-            if (this.opts.useSandbox) {
+            if (this.opts.useDebugMode) {
                 params.debug = true;
             }
 

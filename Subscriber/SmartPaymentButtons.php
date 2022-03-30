@@ -85,10 +85,8 @@ class SmartPaymentButtons implements SubscriberInterface
 
         $this->changePaymentDescription($view, 'sPayments');
 
-        $sandbox = $generalSettings->getSandbox();
         $view->assign('paypalUnifiedUseSmartPaymentButtons', true);
-        $view->assign('paypalUnifiedModeSandbox', $sandbox);
-        $view->assign('paypalUnifiedSpbClientId', $sandbox ? $generalSettings->getSandboxClientId() : $generalSettings->getClientId());
+        $view->assign('paypalUnifiedSpbClientId', $generalSettings->getSandbox() ? $generalSettings->getSandboxClientId() : $generalSettings->getClientId());
         $view->assign('paypalUnifiedSpbCurrency', $view->getAssign('sBasket')['sCurrencyName']);
         $view->assign('paypalUnifiedPaymentId', $this->paymentMethodProvider->getPaymentId(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME));
         $view->assign('paypalUnifiedIntent', $this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_INTENT));

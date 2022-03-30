@@ -9,7 +9,6 @@
                  data-locale="{$paypalUnifiedButtonLocale}"
                  data-paypalErrorPage="{url controller='checkout' action='shippingPayment' paypal_unified_error_code=2 forceSecure}"
                  data-clientId="{$paypalUnifiedClientId}"
-                 data-useSandbox="{$paypalUnifiedModeSandbox}"
                  data-currency="{$paypalUnifiedCurrency}"
                  data-createOrderUrl="{url controller='PaypalUnifiedV2' action='index' forceSecure}"
                  data-confirmUrl="{url module='frontend' controller='checkout' action='confirm' inContextCheckout=1 forceSecure}"
