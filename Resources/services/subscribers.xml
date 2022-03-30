@@ -57,13 +57,6 @@
             <tag name="shopware.event_subscriber"/>
         </service>
 
-        <service id="paypal_unified.subscriber.backend_order"
-                 class="SwagPaymentPayPalUnified\Subscriber\BackendOrder"
-                 public="true">
-            <argument type="service" id="dbal_connection"/>
-            <tag name="shopware.event_subscriber"/>
-        </service>
-
         <service id="paypal_unified.subscriber.cookie_consent"
                  class="SwagPaymentPayPalUnified\Subscriber\CookieConsent"
                  public="true">

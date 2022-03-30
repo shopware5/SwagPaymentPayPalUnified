@@ -2451,11 +2451,6 @@ parameters:
 			path: Subscriber/Backend.php
 
 		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Subscriber\\\\BackendOrder\\:\\:onPostDispatchOrder\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Subscriber/BackendOrder.php
-
-		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Subscriber\\\\CookieConsent\\:\\:addPayPalCookie\\(\\) return type has no value type specified in iterable type Shopware\\\\Bundle\\\\CookieBundle\\\\CookieCollection\\.$#"
 			count: 1
 			path: Subscriber/CookieConsent.php
@@ -3619,31 +3614,6 @@ parameters:
 			message: "#^Unreachable statement \\- code above always terminates\\.$#"
 			count: 1
 			path: Tests/Functional/Subscriber/AdvancedCreditDebitCardSubscriberTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\BackendOrderSubscriberTest\\:\\:prepareOrderAttributes\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/BackendOrderSubscriberTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\BackendOrderSubscriberTest\\:\\:testCanBeCreated\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/BackendOrderSubscriberTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\BackendOrderSubscriberTest\\:\\:testGetSubscribedEventsHasCorrectEvents\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/BackendOrderSubscriberTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\BackendOrderSubscriberTest\\:\\:testOnPostDispatchOrderGetList\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/BackendOrderSubscriberTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\BackendOrderSubscriberTest\\:\\:testOnPostDispatchOrderWrongAction\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/BackendOrderSubscriberTest.php
 
 		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\BackendSubscriberTest\\:\\:testCanBeCreated\\(\\) has no return type specified\\.$#"
@@ -4879,4 +4849,3 @@ parameters:
 			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Unit\\\\PayPalBundle\\\\Structs\\\\WebhookStructTest\\:\\:testToArray\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: Tests/Unit/PayPalBundle/Structs/WebhookStructTest.php
-
