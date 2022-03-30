@@ -6,7 +6,8 @@ const connection = MysqlFactory.getInstance();
 
 test.use({ locale: 'de-DE' });
 
-test.describe('Is SEPA fully functional', () => {
+// TODO: Fix with PT-12677
+test.fixme('Is SEPA fully functional', () => {
     test.beforeEach(() => {
         connection.query(defaultPaypalSettingsSql);
     });
@@ -38,8 +39,6 @@ test.describe('Is SEPA fully functional', () => {
             page.waitForEvent('popup'),
             locator.dispatchEvent('click')
         ]);
-
-        test.skip(true, 'Still working on it to fix the test. Buyer country is set by PayPal via the geo ip');
 
         await paypalPage.locator('#bankIban').fill(credentials.sepaIban);
         await paypalPage.locator('#dateOfBirth').fill(credentials.sepaBirthday);
