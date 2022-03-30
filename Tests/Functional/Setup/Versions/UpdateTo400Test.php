@@ -67,6 +67,39 @@ class UpdateTo400Test extends TestCase
     /**
      * @return void
      */
+    public function testMoveSandboxCredentials()
+    {
+        $this->getContainer()->get('dbal_connection')->beginTransaction();
+
+        $this->insertGeneralSettingsFromArray([
+            'clientId' => 'sandbox-client-id',
+            'clientSecret' => 'sandbox-secret',
+        ]);
+
+        $reflectionMethod = (new ReflectionClass(UpdateTo400::class))
+            ->getMethod('addSandboxCredentialsToGeneralSettings');
+        $reflectionMethod->setAccessible(true);
+
+        $updater = $this->createUpdater();
+        $reflectionMethod->invoke($updater);
+
+        $result = $this->getContainer()->get('dbal_connection')->createQueryBuilder()
+            ->select('client_id', 'client_secret', 'sandbox_client_id', 'sandbox_client_secret')
+            ->from('swag_payment_paypal_unified_settings_general')
+            ->execute()
+            ->fetchAll();
+
+        static::assertSame('', $result[0]['client_id']);
+        static::assertSame('', $result[0]['client_secret']);
+        static::assertSame('sandbox-client-id', $result[0]['sandbox_client_id']);
+        static::assertSame('sandbox-secret', $result[0]['sandbox_client_secret']);
+
+        $this->getContainer()->get('dbal_connection')->rollBack();
+    }
+
+    /**
+     * @return void
+     */
     public function testHasShopIdColumnUniqueIndex()
     {
         $this->installTestTables();

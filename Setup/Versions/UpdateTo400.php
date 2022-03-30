@@ -226,6 +226,18 @@ SQL
                 ADD `sandbox_client_secret` varchar(255) NULL;'
             );
         }
+
+        $this->connection->executeUpdate(
+            'UPDATE `swag_payment_paypal_unified_settings_general`
+             SET `sandbox_client_id`=`client_id`, `sandbox_client_secret`=`client_secret`
+             WHERE `sandbox` = 1;'
+        );
+
+        $this->connection->executeUpdate(
+            "UPDATE `swag_payment_paypal_unified_settings_general`
+             SET `client_id` = '', `client_secret` = ''
+             WHERE `sandbox` = 1;"
+        );
     }
 
     /**
