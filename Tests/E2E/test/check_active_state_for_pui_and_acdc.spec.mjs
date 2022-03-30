@@ -9,7 +9,8 @@ const connection = MysqlFactory.getInstance();
 
 test.use({ viewport: { width: 1920, height: 1080 } });
 
-test.describe('Check the active state of PUI and ACDC', () => {
+// TODO: Fix with PT-12677
+test.fixme('Check the active state of PUI and ACDC', () => {
     test('Check active state', async ({ page }) => {
         connection.query(clearPaypalSettingsSql);
 

@@ -6,7 +6,8 @@ const connection = MysqlFactory.getInstance();
 
 test.use({ locale: 'de-DE' });
 
-test.describe('Pay with invoice', () => {
+// TODO: Fix with PT-12677
+test.fixme('Pay with invoice', () => {
     test.beforeEach(() => {
         connection.query(defaultPaypalSettingsSql);
     });
