@@ -64,7 +64,7 @@ Ext.define('Shopware.apps.PaypalUnified.mixin.OnboardingHelper', {
         sandbox: false,
         eventTarget: null,
         authCodeReceivedEventName: null,
-        updateCredentialsUrl: '{url module=backend controller=PayPalUnified action=updateCredentials}'
+        updateCredentialsUrl: '{url module=backend controller=PayPalUnifiedSettings action=updateCredentials}'
     },
 
     constructor: function(config) {

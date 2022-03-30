@@ -17,6 +17,7 @@ use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\CredentialsResource;
+use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService;
 
 class CredentialsServiceTest extends TestCase
 {
@@ -59,6 +60,11 @@ class CredentialsServiceTest extends TestCase
     private $logger;
 
     /**
+     * @var ClientService
+     */
+    private $clientService;
+
+    /**
      * @before
      */
     public function init()
@@ -67,6 +73,7 @@ class CredentialsServiceTest extends TestCase
         $this->settingsService = static::createMock(SettingsServiceInterface::class);
         $this->entityManager = static::createMock(EntityManagerInterface::class);
         $this->logger = static::createMock(LoggerServiceInterface::class);
+        $this->clientService = static::createMock(ClientService::class);
 
         $this->generalSettings = static::createMock(General::class);
     }
@@ -181,13 +188,15 @@ class CredentialsServiceTest extends TestCase
         CredentialsResource $credentialsResource = null,
         SettingsServiceInterface $settingsService = null,
         EntityManagerInterface $entityManager = null,
-        LoggerServiceInterface $loggerService = null
+        LoggerServiceInterface $loggerService = null,
+        ClientService $clientService = null
     ) {
         return new CredentialsService(
             $credentialsResource ?: $this->credentialsResource,
             $settingsService ?: $this->settingsService,
             $entityManager ?: $this->entityManager,
-            $loggerService ?: $this->logger
+            $loggerService ?: $this->logger,
+            $clientService ?: $this->clientService
         );
     }
 

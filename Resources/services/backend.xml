@@ -50,6 +50,7 @@
             <argument type="service" id="paypal_unified.settings_service"/>
             <argument type="service" id="models"/>
             <argument type="service" id="paypal_unified.logger_service"/>
+            <argument type="service" id="paypal_unified.client_service"/>
         </service>
     </services>
 </container>

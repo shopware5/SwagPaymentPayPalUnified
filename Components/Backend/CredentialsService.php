@@ -14,6 +14,7 @@ use SwagPaymentPayPalUnified\Models\Settings\General;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\CredentialsResource;
+use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService;
 use UnexpectedValueException;
 
 class CredentialsService
@@ -38,16 +39,23 @@ class CredentialsService
      */
     private $logger;
 
+    /**
+     * @var ClientService
+     */
+    private $clientService;
+
     public function __construct(
         CredentialsResource $credentialsResource,
         SettingsServiceInterface $settingsService,
         EntityManagerInterface $entityManager,
-        LoggerServiceInterface $logger
+        LoggerServiceInterface $logger,
+        ClientService $clientService
     ) {
         $this->credentialsResource = $credentialsResource;
         $this->settingsService = $settingsService;
         $this->entityManager = $entityManager;
         $this->logger = $logger;
+        $this->clientService = $clientService;
     }
 
     /**
@@ -140,6 +148,15 @@ class CredentialsService
 
         $this->entityManager->persist($settings);
         $this->entityManager->flush();
+
+        $this->clientService->configure([
+            'sandbox' => $settings->getSandbox(),
+            'shopId' => $shopId,
+            'clientId' => $settings->getClientId(),
+            'clientSecret' => $settings->getClientSecret(),
+            'sandboxClientId' => $settings->getSandboxClientId(),
+            'sandboxClientSecret' => $settings->getSandboxClientSecret(),
+        ]);
 
         $this->logger->debug(sprintf('%s SUCCESSFUL', __METHOD__));
     }
