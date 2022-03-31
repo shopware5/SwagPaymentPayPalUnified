@@ -6,8 +6,7 @@ const connection = MysqlFactory.getInstance();
 
 test.use({ locale: 'de-DE' });
 
-// TODO: Fix with PT-12677
-test.fixme('Is SEPA fully functional', () => {
+test.describe('Is SEPA fully functional', () => {
     test.beforeEach(() => {
         connection.query(defaultPaypalSettingsSql);
     });
@@ -39,6 +38,14 @@ test.fixme('Is SEPA fully functional', () => {
             page.waitForEvent('popup'),
             locator.dispatchEvent('click')
         ]);
+
+        await paypalPage.route(/.*fundingSource=sepa.*/, route => {
+            let url = route.request().url();
+            url = url.replace(/buyerCountry=[A-Z]*/, '');
+            url += '&buyerCountry=DE';
+
+            route.continue({ url: url });
+        });
 
         await paypalPage.locator('#bankIban').fill(credentials.sepaIban);
         await paypalPage.locator('#dateOfBirth').fill(credentials.sepaBirthday);

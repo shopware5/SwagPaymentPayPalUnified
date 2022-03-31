@@ -1,26 +1,18 @@
 import { test, expect } from '@playwright/test';
-import credentials from './credentials.mjs';
 import MysqlFactory from '../helper/mysqlFactory.mjs';
 import defaultPaypalSettingsSql from '../helper/paypalSqlHelper.mjs';
+import loginHelper from '../helper/loginHelper.mjs';
 const connection = MysqlFactory.getInstance();
 
 test.use({ locale: 'de-DE' });
 
-// TODO: Fix with PT-12677
-test.fixme('Pay with invoice', () => {
+test.describe('Pay with invoice', () => {
     test.beforeEach(() => {
         connection.query(defaultPaypalSettingsSql);
     });
 
     test('Buy products with "Pay Upon Invoice"', async ({ page }) => {
-        // login
-        await page.goto('/account');
-        await page.waitForLoadState('load');
-        await page.fill('#email', credentials.defaultShopCustomerEmail);
-        await page.fill('#passwort', credentials.defaultShopCustomerPassword);
-        await page.click('.register--login-btn');
-        await expect(page).toHaveURL(/.*account/);
-        await expect(page.locator('h1[class="panel--title"]')).toHaveText(/.*Mustermann.*/);
+        await loginHelper.login(page);
 
         // Buy Product
         await page.goto('genusswelten/edelbraende/9/special-finish-lagerkorn-x.o.-32');

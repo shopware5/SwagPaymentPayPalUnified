@@ -34,7 +34,10 @@ const config = {
         baseURL: process.env.BASE_URL,
 
         /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-        trace: 'on'
+        trace: 'on',
+
+        //Wait for https://github.com/microsoft/playwright/issues/6491
+        //video: 'on',
     },
 
     /* Configure projects for major browsers */
@@ -45,7 +48,7 @@ const config = {
                 ...devices['Desktop Chrome']
             }
         }
-        //
+
         // {
         //   name: 'firefox',
         //   use: {
