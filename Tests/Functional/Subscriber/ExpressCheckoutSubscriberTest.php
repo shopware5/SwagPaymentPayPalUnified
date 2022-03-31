@@ -13,13 +13,19 @@ use Enlight_Controller_Request_RequestHttp;
 use Enlight_Controller_Request_RequestTestCase;
 use Enlight_Controller_Response_ResponseTestCase;
 use Enlight_Template_Manager;
-use Exception;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
+use Shopware\Models\Shop\Shop;
+use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Components\Services\RiskManagement\EsdProductChecker;
+use SwagPaymentPayPalUnified\Components\Services\SettingsService;
+use SwagPaymentPayPalUnified\Models\Settings\ExpressCheckout;
+use SwagPaymentPayPalUnified\Models\Settings\General;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use SwagPaymentPayPalUnified\Subscriber\ExpressCheckout as ExpressCheckoutSubscriber;
+use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\SettingsHelperTrait;
 use SwagPaymentPayPalUnified\Tests\Mocks\ClientService;
@@ -30,6 +36,7 @@ class ExpressCheckoutSubscriberTest extends TestCase
 {
     use DatabaseTestCaseTrait;
     use SettingsHelperTrait;
+    use ContainerTrait;
 
     /**
      * @return void
@@ -191,10 +198,33 @@ class ExpressCheckoutSubscriberTest extends TestCase
 
         $this->importSettings(true, true, true, true);
 
-        $subscriber = $this->getSubscriber();
+        $shop = $this->getContainer()->get('models')->getRepository(Shop::class)->getActiveDefault();
+        $basket = $this->getContainer()->get('modules')->getModule('sBasket');
+
+        $dependencyProviderMock = $this->createMock(DependencyProvider::class);
+        $dependencyProviderMock->method('getShop')->willReturn($shop);
+        $dependencyProviderMock->method('getModule')->willReturnMap([
+            ['sBasket', $basket],
+        ]);
+
+        $generalSettings = new General();
+        $generalSettings->setActive(true);
+        $generalSettings->setSandbox(true);
+        $generalSettings->setSandboxClientId('thisIsATestClientId');
+
+        $expressSettings = new ExpressCheckout();
+        $expressSettings->setLoginActive(false);
+
+        $settingsServiceMock = $this->createMock(SettingsService::class);
+        $settingsServiceMock->method('getSettings')->willReturnMap([
+            [null, SettingsTable::GENERAL, $generalSettings],
+            [null, SettingsTable::EXPRESS_CHECKOUT, $expressSettings],
+        ]);
+
+        $subscriber = $this->getSubscriber(null, $dependencyProviderMock, $settingsServiceMock);
         $subscriber->addExpressCheckoutButtonCart($enlightEventArgs);
 
-        static::assertNotNull($view->getAssign('paypalUnifiedClientId'));
+        static::assertNotNull($enlightEventArgs->getSubject()->View()->getAssign('paypalUnifiedClientId'));
     }
 
     /**
@@ -331,7 +361,7 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $request->setParam('paypalOrderId', 'TEST_PAYMENT_ID');
         $request->setParam('payerId', 'TEST_PAYER_ID');
         $request->setParam('expressCheckout', true);
-        Shopware()->Container()->get('front')->setRequest($request);
+        $this->getContainer()->get('front')->setRequest($request);
         $enlightEventArgs = new Enlight_Controller_ActionEventArgs([
             'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
             'request' => $request,
@@ -496,7 +526,7 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $view = new ViewMock(new Enlight_Template_Manager());
         $enlightEventArgs = $this->createEventArgs($view);
 
-        Shopware()->Container()->get('session')->offsetUnset('sUserId');
+        $this->getContainer()->get('session')->offsetUnset('sUserId');
 
         $this->importSettings(true, true, true);
 
@@ -515,7 +545,7 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $view->assign('sArticle', ['esd' => true]);
         $enlightEventArgs = $this->createEventArgs($view);
         $enlightEventArgs->getSubject()->setRequest(new Enlight_Controller_Request_RequestHttp());
-        Shopware()->Container()->get('session')->offsetUnset('sUserId');
+        $this->getContainer()->get('session')->offsetUnset('sUserId');
 
         $this->importSettings(true, true, true);
 
@@ -723,7 +753,7 @@ class ExpressCheckoutSubscriberTest extends TestCase
      */
     public function testIsUserLoggedInShouldBeTrue()
     {
-        Shopware()->Container()->get('session')->offsetSet('sUserId', 100);
+        $this->getContainer()->get('session')->offsetSet('sUserId', 100);
 
         $reflectionMethod = (new ReflectionClass(ExpressCheckoutSubscriber::class))->getMethod('isUserLoggedIn');
         $reflectionMethod->setAccessible(true);
@@ -740,7 +770,7 @@ class ExpressCheckoutSubscriberTest extends TestCase
      */
     public function testIsUserLoggedInShouldBeFalse()
     {
-        Shopware()->Container()->get('session')->offsetUnset('sUserId');
+        $this->getContainer()->get('session')->offsetUnset('sUserId');
 
         $reflectionMethod = (new ReflectionClass(ExpressCheckoutSubscriber::class))->getMethod('isUserLoggedIn');
         $reflectionMethod->setAccessible(true);
@@ -800,27 +830,35 @@ class ExpressCheckoutSubscriberTest extends TestCase
     }
 
     /**
-     * @param EsdProductChecker|null $esdProductChecker
-     *
-     * @throws Exception
+     * @param EsdProductChecker|null  $esdProductChecker
+     * @param DependencyProvider|null $dependencyProvider
+     * @param SettingsService|null    $settingsService
      *
      * @return ExpressCheckoutSubscriber
      */
-    private function getSubscriber($esdProductChecker = null)
+    private function getSubscriber($esdProductChecker = null, $dependencyProvider = null, $settingsService = null)
     {
-        Shopware()->Container()->set('paypal_unified.client_service', new ClientService());
+        $this->getContainer()->set('paypal_unified.client_service', new ClientService());
+
+        if (!$settingsService instanceof SettingsService) {
+            $settingsService = $this->getContainer()->get('paypal_unified.settings_service');
+        }
 
         if (!$esdProductChecker instanceof EsdProductChecker) {
-            $esdProductChecker = Shopware()->Container()->get(EsdProductChecker::class);
+            $esdProductChecker = $this->getContainer()->get(EsdProductChecker::class);
+        }
+
+        if (!$dependencyProvider instanceof DependencyProvider) {
+            $dependencyProvider = $this->getContainer()->get('paypal_unified.dependency_provider');
         }
 
         return new ExpressCheckoutSubscriber(
-            Shopware()->Container()->get('paypal_unified.settings_service'),
-            Shopware()->Container()->get('session'),
-            Shopware()->Container()->get('paypal_unified.dependency_provider'),
+            $settingsService,
+            $this->getContainer()->get('session'),
+            $dependencyProvider,
             $esdProductChecker,
-            Shopware()->Container()->get('paypal_unified.payment_method_provider'),
-            Shopware()->Container()->get('paypal_unified.button_locale_service')
+            $this->getContainer()->get('paypal_unified.payment_method_provider'),
+            $this->getContainer()->get('paypal_unified.button_locale_service')
         );
     }
 
@@ -840,8 +878,8 @@ class ExpressCheckoutSubscriberTest extends TestCase
     private function getPaymentMethodProvider()
     {
         return new PaymentMethodProvider(
-            Shopware()->Container()->get('dbal_connection'),
-            Shopware()->Container()->get('models')
+            $this->getContainer()->get('dbal_connection'),
+            $this->getContainer()->get('models')
         );
     }
 }
