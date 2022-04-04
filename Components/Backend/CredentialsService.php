@@ -99,7 +99,7 @@ class CredentialsService
      *
      * @throws RequestException
      *
-     * @return array{client_id: string, client_secret: string}
+     * @return array{client_id: string, client_secret: string, payer_id: string}
      */
     public function getCredentials($accessToken, $partnerId, $sandbox)
     {
@@ -117,9 +117,9 @@ class CredentialsService
     }
 
     /**
-     * @param array{client_id: string, client_secret: string} $credentials
-     * @param int                                             $shopId
-     * @param bool                                            $sandbox
+     * @param array{client_id: string, client_secret: string, payer_id: string} $credentials
+     * @param int                                                               $shopId
+     * @param bool                                                              $sandbox
      *
      * @throws UnexpectedValueException
      *
@@ -149,9 +149,11 @@ class CredentialsService
         if ($sandbox) {
             $settings->setSandboxClientId($credentials['client_id']);
             $settings->setSandboxClientSecret($credentials['client_secret']);
+            $settings->setSandboxPaypalPayerId($credentials['payer_id']);
         } else {
             $settings->setClientId($credentials['client_id']);
             $settings->setClientSecret($credentials['client_secret']);
+            $settings->setPaypalPayerId($credentials['payer_id']);
         }
 
         $this->entityManager->persist($settings);

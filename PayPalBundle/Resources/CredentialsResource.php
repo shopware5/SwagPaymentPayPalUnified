@@ -79,7 +79,7 @@ class CredentialsResource
      *
      * @throws RequestException
      *
-     * @return array{client_id: string, client_secret: string}
+     * @return array{client_id: string, client_secret: string, payer_id: string}
      */
     public function getCredentials($accessToken, $partnerId, $sandbox)
     {
