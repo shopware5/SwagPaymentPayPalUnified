@@ -81,11 +81,17 @@ Ext.define('Shopware.apps.PaypalUnified.view.sidebarV2.windows.RefundCaptureWind
      * @return { Number }
      */
     calculateMaxAmount: function() {
-        var captures = this.currentOrderData.purchase_units[0].payments.captures,
-            totalAmount = 0.0;
+        var payments = this.currentOrderData.purchase_units[0].payments;
+        captures = payments.captures,
+        refunds = payments.refunds,
+        totalAmount = 0.0;
 
         Ext.each(captures, function(capture) {
             totalAmount += capture.amount.value;
+        });
+
+        Ext.each(refunds, function (refund) {
+            totalAmount -= refund.amount.value;
         });
 
         return totalAmount;

@@ -29,3 +29,5 @@ parameters:
             path: Tests/Functional/ResetSessionTrait.php
         # Needs some improvements in the doctrine PHPStan extensions: see https://github.com/phpstan/phpstan-doctrine/pull/167
         - '#Cannot call method fetch.*\(\) on Doctrine\\DBAL\\.*\|int#'
+        # The method TestCase::expectException() expects a class-string<Throwabel>. Throwable only avaiable since PHP 7.0
+        - '#Parameter \#1 \$exception of method PHPUnit\\Framework\\TestCase::expectException\(\) expects class-string<Throwable>#'
