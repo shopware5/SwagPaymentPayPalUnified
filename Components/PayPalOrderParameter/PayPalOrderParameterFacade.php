@@ -48,9 +48,7 @@ class PayPalOrderParameterFacade implements PayPalOrderParameterFacadeInterface
     public function createPayPalOrderParameter($paymentType, ShopwareOrderData $shopwareOrderData)
     {
         $session = $this->dependencyProvider->getSession();
-
         $userData = $this->paymentControllerHelper->setGrossPriceFallback($shopwareOrderData->getShopwareUserData());
-        /** @phpstan-var CheckoutBasketArray $cartData */
         $cartData = $shopwareOrderData->getShopwareBasketData();
 
         $basketUniqueId = $this->cartPersister->persist($cartData, $session->get('sUserId'));
