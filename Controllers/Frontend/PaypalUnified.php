@@ -25,6 +25,7 @@ use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PaymentAmountPatch;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PaymentItemsPatch;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PaymentOrderNumberPatch;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use SwagPaymentPayPalUnified\PayPalBundle\PartnerAttributionId;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\PaymentResource;
@@ -298,7 +299,9 @@ class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_F
             $instructionService->createInstructions($orderNumber, $instructions);
         }
 
-        $orderDataService->applyPaymentTypeAttribute($orderNumber, PaymentType::PAYPAL_CLASSIC);
+        $paymentType = $this->determinePaymentType($isExpressCheckout, $isSpbCheckout, $response);
+
+        $orderDataService->applyPaymentTypeAttribute($orderNumber, $paymentType);
 
         $redirectParameter = [
             'module' => 'frontend',
@@ -504,5 +507,28 @@ class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_F
         $session = $this->dependencyProvider->getSession();
 
         return !empty($this->shopwareConfig->get('premiumShippingNoOrder')) && (empty($session->get('sDispatch')) || empty($session->get('sCountry')));
+    }
+
+    /**
+     * @param bool $isExpressCheckout
+     * @param bool $isSpbCheckout
+     *
+     * @return string
+     */
+    private function determinePaymentType($isExpressCheckout, $isSpbCheckout, Payment $response)
+    {
+        $paymentType = PaymentType::PAYPAL_CLASSIC;
+
+        if ($isExpressCheckout) {
+            $paymentType = PaymentType::PAYPAL_EXPRESS;
+        } elseif ($isSpbCheckout) {
+            $paymentType = PaymentType::PAYPAL_SMART_PAYMENT_BUTTONS;
+        } elseif ($response->getPaymentInstruction() !== null) {
+            $paymentType = PaymentType::PAYPAL_INVOICE;
+        } elseif ((bool) $this->settingsService->get('active', SettingsTable::PLUS)) {
+            $paymentType = PaymentType::PAYPAL_PLUS;
+        }
+
+        return $paymentType;
     }
 }
