@@ -5,15 +5,27 @@
     <label lang="de">PayPal</label>
     <label lang="en">PayPal</label>
 
-    <version>4.0.0</version>
+    <version>4.0.1</version>
     <copyright>(c) by shopware AG</copyright>
     <license>MIT</license>
     <link>http://store.shopware.com</link>
     <author>shopware AG</author>
     <compatibility minVersion="5.2.27" maxVersion="5.99.99"/>
 
-    <description lang="de">Dieses Modul bietet Ihnen die beliebtesten PayPal-Produkte aus einer Hand: Den PayPal Express-Button, PayPal PLUS, und Banner für die neue PayPal Ratenzahlung. Und das Beste daran: Mit diesem Modul können Sie alle Produkte einzeln oder gleichzeitig in Ihrem Online-Shop nutzen.</description>
-    <description lang="en">This module offers you the most popular PayPal products from a single source: the PayPal Express button, PayPal PLUS, and banners for the new PayPal Installment Payment. And best of all, this module lets you use all products individually or simultaneously in your online store.</description>
+    <changelog version="4.0.1">
+        <changes lang="de">
+            PT-12667 - PayerId wird nun während der Autorisierung automatisch befüllt;
+            PT-12679 - PayPal Plus Zahlungen werden nun wieder korrekt in der Übersicht gelistet;
+            PT-12680 - Zahlungsstatus wird nun korrekt bei Rückbuchungen gesetzt;
+            PT-12691 - Kauf auf Rechnung verbessert;
+        </changes>
+        <changes lang="en">
+            PT-12667 - PayerId is now automatically set during authorisation;
+            PT-12679 - PayPal Plus payments are now listed correctly in the overview again;
+            PT-12680 - Payment status is now set correctly for refunds;
+            PT-12691 - Improve Pay upon invoice;
+        </changes>
+    </changelog>
 
     <changelog version="4.0.0">
         <changes lang="de">
@@ -481,4 +493,7 @@
         <changes lang="de">Erstveröffentlichung;</changes>
         <changes lang="en">First release;</changes>
     </changelog>
+
+    <description lang="de">Dieses Modul bietet Ihnen die beliebtesten PayPal-Produkte aus einer Hand: PayPal Checkout, PayPal Express-Button und Banner für die neue PayPal Ratenzahlung. Und das Beste daran: Mit diesem Modul können Sie alle Produkte einzeln oder gleichzeitig in Ihrem Online-Shop nutzen.</description>
+    <description lang="en">This module offers you the most popular PayPal products from a single source: PayPal Checkout, PayPal Express button and banners for the new PayPal Installment Payment. And best of all, this module lets you use all products individually or simultaneously in your online store.</description>
 </plugin>

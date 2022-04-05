@@ -47,14 +47,17 @@
         addConfigScript: function() {
             var config = {
                     f: this.opts.fraudNetSessionId,
-                    s: this.opts.fraudNetFlowId,
-                    sandbox: this.opts.fraudnetSandbox
+                    s: this.opts.fraudNetFlowId
                 },
-
                 scriptTag = $('<script/>')
                     .attr('type', 'application/json')
-                    .attr('fncls', this.opts.fraudNetClass)
-                    .html(JSON.stringify(config));
+                    .attr('fncls', this.opts.fraudNetClass);
+
+            if (this.opts.fraudnetSandbox) {
+                config.sandbox = true;
+            }
+
+            scriptTag.html(JSON.stringify(config));
 
             this.body.append(scriptTag);
         },
