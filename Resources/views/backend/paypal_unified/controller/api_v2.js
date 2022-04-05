@@ -255,8 +255,10 @@ Ext.define('Shopware.apps.PaypalUnified.controller.ApiV2', {
 
         formValues = form.getValues();
         formValues.paypalOrderId = this.currentOrderData.id;
+        formValues.shopwareOrderId = this.record.get('id');
 
         window.setLoading(true);
+
         this.callAjax(this.urls.refundOrder, formValues, Ext.bind(this.valuesResponse, this, [window], true));
     },
 
@@ -280,10 +282,20 @@ Ext.define('Shopware.apps.PaypalUnified.controller.ApiV2', {
             return;
         }
 
-        this.onSelectGridRecord(Ext.emptyFn, this.record);
+        this.reloadOrderGrid();
 
         window.close();
         window.destroy();
+    },
+
+    reloadOrderGrid: function() {
+        this.getWindow().gridPanel.getStore().reload({
+            callback: Ext.bind(this.reloadOrderGridCallback, this)
+        });
+    },
+
+    reloadOrderGridCallback: function() {
+        this.onSelectGridRecord(Ext.emptyFn, this.record);
     },
 
     /**

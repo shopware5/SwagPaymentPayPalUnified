@@ -6,11 +6,14 @@
  * file that was distributed with this source code.
  */
 
+use Shopware\Models\Order\Status;
 use SwagPaymentPayPalUnified\Components\Services\ExceptionHandlerService;
+use SwagPaymentPayPalUnified\Components\Services\PaymentStatusService;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Payments\Capture;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Payments\Capture\Amount;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Payments\Refund;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\PaymentStatusV2;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\AuthorizationResource;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\CaptureResource;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\OrderResource;
@@ -42,6 +45,11 @@ class Shopware_Controllers_Backend_PaypalUnifiedV2 extends Shopware_Controllers_
      */
     private $logger;
 
+    /**
+     * @var PaymentStatusService
+     */
+    private $paymentStatusService;
+
     public function preDispatch()
     {
         parent::preDispatch();
@@ -51,6 +59,7 @@ class Shopware_Controllers_Backend_PaypalUnifiedV2 extends Shopware_Controllers_
         $this->captureResource = $this->container->get('paypal_unified.v2.capture_resource');
         $this->exceptionHandler = $this->container->get('paypal_unified.exception_handler_service');
         $this->logger = $this->container->get('paypal_unified.logger_service');
+        $this->paymentStatusService = $this->container->get('paypal_unified.payment_status_service');
 
         $this->container->get('paypal_unified.backend.shop_registration_service')->registerShopById((int) $this->request->getParam('shopId'));
     }
@@ -123,9 +132,10 @@ class Shopware_Controllers_Backend_PaypalUnifiedV2 extends Shopware_Controllers_
     {
         $this->logger->debug(sprintf('%s START', __METHOD__));
 
+        $shopwareOrderId = (int) $this->request->getParam('shopwareOrderId');
         $captureId = $this->request->getParam('captureId');
         $amountToRefund = $this->request->getParam('amount');
-        $currency = $this->Request()->getParam('currency');
+        $currency = $this->request->getParam('currency');
         $note = $this->request->getParam('note');
 
         $amount = new Amount();
@@ -137,11 +147,11 @@ class Shopware_Controllers_Backend_PaypalUnifiedV2 extends Shopware_Controllers_
         $refund->setNoteToPayer($note);
 
         try {
-            $this->logger->debug(sprintf('%s CAPTURE PAYPAL ORDER WITH ID: %s', __METHOD__, $captureId));
+            $this->logger->debug(sprintf('%s REFUND PAYPAL ORDER WITH ID: %s AMOUNT: %d', __METHOD__, $captureId, $amount->getValue()));
 
-            $this->captureResource->refund($captureId, $refund);
+            $refundResult = $this->captureResource->refund($captureId, $refund);
 
-            $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFULLY CAPTURED', __METHOD__));
+            $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFULLY REFUNDED', __METHOD__));
         } catch (Exception $exception) {
             $payPalException = $this->exceptionHandler->handle($exception, 'backend/PaypalUnifiedV2/captureOrder');
             $this->view->assign([
@@ -151,6 +161,10 @@ class Shopware_Controllers_Backend_PaypalUnifiedV2 extends Shopware_Controllers_
             ]);
 
             return;
+        }
+
+        if ($refundResult->getStatus() === PaymentStatusV2::ORDER_CAPTURE_COMPLETED) {
+            $this->paymentStatusService->updatePaymentStatusV2($shopwareOrderId, Status::PAYMENT_STATE_RE_CREDITING);
         }
 
         $this->view->assign(['success' => true]);
