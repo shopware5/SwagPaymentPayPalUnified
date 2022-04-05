@@ -78,7 +78,7 @@ class PlusPaymentBuilderServiceTest extends TestCase
      */
     private function getRequestData($edd = null)
     {
-        $settingService = new SettingsServicePaymentBuilderServiceMock(false, 0);
+        $settingService = new SettingsServicePaymentBuilderServiceMock(false);
 
         $plusPaymentBuilder = $this->getPlusPaymentBuilder($settingService);
 

@@ -17,12 +17,14 @@
             PT-12667 - PayerId wird nun während der Autorisierung automatisch befüllt;
             PT-12679 - PayPal Plus Zahlungen werden nun wieder korrekt in der Übersicht gelistet;
             PT-12680 - Zahlungsstatus wird nun korrekt bei Rückbuchungen gesetzt;
+            PT-12690 - Fehler bei der Benutzung von PayPal PLUS behoben;
             PT-12691 - Kauf auf Rechnung verbessert;
         </changes>
         <changes lang="en">
             PT-12667 - PayerId is now automatically set during authorisation;
             PT-12679 - PayPal Plus payments are now listed correctly in the overview again;
             PT-12680 - Payment status is now set correctly for refunds;
+            PT-12690 - Fix issue while using PayPal PLUS;
             PT-12691 - Improve Pay upon invoice;
         </changes>
     </changelog>
