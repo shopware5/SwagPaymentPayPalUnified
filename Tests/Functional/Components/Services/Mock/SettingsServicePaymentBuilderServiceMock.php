@@ -19,11 +19,6 @@ class SettingsServicePaymentBuilderServiceMock implements SettingsServiceInterfa
     private $plus_active;
 
     /**
-     * @var int
-     */
-    private $paypal_payment_intent;
-
-    /**
      * @var bool
      */
     private $ec_submit_cart;
@@ -40,14 +35,12 @@ class SettingsServicePaymentBuilderServiceMock implements SettingsServiceInterfa
 
     /**
      * @param bool $plusActive
-     * @param int  $paypalPaymentIntent
      * @param bool $submitCartEcs
      * @param bool $submitCartGeneral
-     * @param bool$longBrandName
+     * @param bool $longBrandName
      */
     public function __construct(
         $plusActive,
-        $paypalPaymentIntent,
         $submitCartEcs = true,
         $submitCartGeneral = true,
         $longBrandName = false
@@ -55,7 +48,6 @@ class SettingsServicePaymentBuilderServiceMock implements SettingsServiceInterfa
         // do not delete, even if PHPStorm says they are unused
         // used in the get() method
         $this->plus_active = $plusActive;
-        $this->paypal_payment_intent = $paypalPaymentIntent;
         $this->ec_submit_cart = $submitCartEcs;
         $this->submitCartGeneral = $submitCartGeneral;
         $this->longBrandName = $longBrandName;
@@ -70,10 +62,6 @@ class SettingsServicePaymentBuilderServiceMock implements SettingsServiceInterfa
     {
         if ($column === 'active' && $settingsTable === SettingsTable::PLUS) {
             return $this->plus_active;
-        }
-
-        if ($column === 'intent') {
-            return $this->paypal_payment_intent;
         }
 
         if ($column === 'submit_cart' && $settingsTable === SettingsTable::EXPRESS_CHECKOUT) {

@@ -116,13 +116,8 @@ class PaymentBuilderService implements PaymentBuilderInterface
 
         $applicationContext = $this->getApplicationContext($paymentType);
 
-        if ($paymentType === PaymentType::PAYPAL_EXPRESS || $paymentType === PaymentType::PAYPAL_CLASSIC) {
-            $requestParameters->setIntent(
-                $this->getIntentAsString($this->settings->get(SettingsServiceInterface::SETTING_GENERAL_INTENT))
-            );
-        } else {
-            $requestParameters->setIntent(PaymentIntent::SALE);
-        }
+        // As this is only used for PLUS it is always set to "SALE". Other intents are not possible for PLUS
+        $requestParameters->setIntent(PaymentIntent::SALE);
 
         $payer = new Payer();
         $payer->setPaymentMethod('paypal');
@@ -154,25 +149,6 @@ class PaymentBuilderService implements PaymentBuilderInterface
         $requestParameters->setApplicationContext($applicationContext);
 
         return $requestParameters;
-    }
-
-    /**
-     * @param int $intent
-     *
-     * @return string
-     */
-    private function getIntentAsString($intent)
-    {
-        switch ($intent) {
-            case 0:
-                return PaymentIntent::SALE;
-            case 1:
-                return PaymentIntent::AUTHORIZE;
-            case 2:
-                return PaymentIntent::ORDER;
-            default:
-                throw new \RuntimeException(sprintf('The intent-type %d is not supported!', $intent));
-        }
     }
 
     private function setItemList(Transactions $transactions)

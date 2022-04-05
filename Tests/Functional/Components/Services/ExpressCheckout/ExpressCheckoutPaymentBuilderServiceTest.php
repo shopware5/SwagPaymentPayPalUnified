@@ -51,7 +51,7 @@ class ExpressCheckoutPaymentBuilderServiceTest extends TestCase
      */
     private function getRequestData()
     {
-        $settingService = new SettingsServicePaymentBuilderServiceMock(false, 0);
+        $settingService = new SettingsServicePaymentBuilderServiceMock(false);
 
         $ecRequestService = $this->getExpressCheckoutRequestBuilder($settingService);
 

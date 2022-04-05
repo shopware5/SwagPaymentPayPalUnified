@@ -18,15 +18,21 @@ use SwagPaymentPayPalUnified\Tests\Functional\Components\Services\Mock\SettingsS
 
 class PaymentBuilderServiceTest extends TestCase
 {
+    /**
+     * @return void
+     */
     public function testIsBasketServiceAvailable()
     {
-        $settingService = new SettingsServicePaymentBuilderServiceMock(false, 0);
+        $settingService = new SettingsServicePaymentBuilderServiceMock(false);
 
         $requestService = $this->getRequestService($settingService);
 
         static::assertNotNull($requestService);
     }
 
+    /**
+     * @return void
+     */
     public function testGetPaymentReturnPlusIntent()
     {
         $requestParameters = $this->getRequestData(PaymentType::PAYPAL_PLUS);
@@ -34,6 +40,9 @@ class PaymentBuilderServiceTest extends TestCase
         static::assertSame('sale', $requestParameters['intent']);
     }
 
+    /**
+     * @return void
+     */
     public function testGetPaymentReturnSaleIntentWithoutPlus()
     {
         $requestParameters = $this->getRequestData();
@@ -41,20 +50,9 @@ class PaymentBuilderServiceTest extends TestCase
         static::assertSame('sale', $requestParameters['intent']);
     }
 
-    public function testGetPaymentReturnAuthorizeIntentWithoutPlus()
-    {
-        $requestParameters = $this->getRequestData(PaymentType::PAYPAL_CLASSIC, 1);
-
-        static::assertSame('authorize', $requestParameters['intent']);
-    }
-
-    public function testGetPaymentReturnOrderIntentWithoutPlus()
-    {
-        $requestParameters = $this->getRequestData(PaymentType::PAYPAL_CLASSIC, 2);
-
-        static::assertSame('order', $requestParameters['intent']);
-    }
-
+    /**
+     * @return void
+     */
     public function testGetPaymentReturnValidPayer()
     {
         $requestParameters = $this->getRequestData();
@@ -62,13 +60,19 @@ class PaymentBuilderServiceTest extends TestCase
         static::assertSame('paypal', $requestParameters['payer']['payment_method']);
     }
 
+    /**
+     * @return void
+     */
     public function testGetPaymentCutLongBrandName()
     {
-        $requestParameters = $this->getRequestData(PaymentType::PAYPAL_CLASSIC, 0, true);
+        $requestParameters = $this->getRequestData(PaymentType::PAYPAL_CLASSIC, true);
 
         static::assertSame('Lorem ipsum dolor sit amet consetetur sadipscing elitr sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquya', $requestParameters['application_context']['brand_name']);
     }
 
+    /**
+     * @return void
+     */
     public function testGetPaymentReturnValidTransactions()
     {
         $requestParameters = $this->getRequestData();
@@ -82,9 +86,12 @@ class PaymentBuilderServiceTest extends TestCase
         static::assertSame('0.00', $requestParameters['transactions'][0]['amount']['details']['tax']);
     }
 
+    /**
+     * @return void
+     */
     public function testGetPaymentWithShowGross()
     {
-        $settingService = new SettingsServicePaymentBuilderServiceMock(false, 0);
+        $settingService = new SettingsServicePaymentBuilderServiceMock(false);
         $requestService = $this->getRequestService($settingService);
 
         $basketData = $this->getBasketDataArray();
@@ -105,9 +112,12 @@ class PaymentBuilderServiceTest extends TestCase
         static::assertSame('18.36', $requestParameters['transactions'][0]['amount']['details']['tax']);
     }
 
+    /**
+     * @return void
+     */
     public function testGetPaymentWithShowNetInFrontend()
     {
-        $settingService = new SettingsServicePaymentBuilderServiceMock(false, 0);
+        $settingService = new SettingsServicePaymentBuilderServiceMock(false);
         $requestService = $this->getRequestService($settingService);
 
         $basketData = $this->getBasketDataArray();
@@ -125,9 +135,12 @@ class PaymentBuilderServiceTest extends TestCase
         static::assertSame('96.63', $requestParameters['transactions'][0]['amount']['total']);
     }
 
+    /**
+     * @return void
+     */
     public function testUseNetPriceCalculationShouldBeNetFunctionalTestStep1()
     {
-        $settingService = new SettingsServicePaymentBuilderServiceMock(false, 0);
+        $settingService = new SettingsServicePaymentBuilderServiceMock(false);
         $requestService = $this->getRequestService($settingService);
 
         $basketData = $this->getBasketDataArray();
@@ -152,9 +165,12 @@ class PaymentBuilderServiceTest extends TestCase
         static::assertSame('96.63', $requestParameters['transactions'][0]['amount']['total']);
     }
 
+    /**
+     * @return void
+     */
     public function testUseNetPriceCalculationShouldBeNetFunctionalTestStep2()
     {
-        $settingService = new SettingsServicePaymentBuilderServiceMock(false, 0);
+        $settingService = new SettingsServicePaymentBuilderServiceMock(false);
         $requestService = $this->getRequestService($settingService);
 
         $basketData = $this->getBasketDataArray();
@@ -180,9 +196,12 @@ class PaymentBuilderServiceTest extends TestCase
         static::assertSame('114.99', $requestParameters['transactions'][0]['amount']['total']);
     }
 
+    /**
+     * @return void
+     */
     public function testUseNetPriceCalculationShouldBeNetFunctionalTestStep3()
     {
-        $settingService = new SettingsServicePaymentBuilderServiceMock(false, 0);
+        $settingService = new SettingsServicePaymentBuilderServiceMock(false);
         $requestService = $this->getRequestService($settingService);
 
         $basketData = $this->getBasketDataArray();
@@ -206,9 +225,12 @@ class PaymentBuilderServiceTest extends TestCase
         static::assertSame('96.63', $requestParameters['transactions'][0]['amount']['total']);
     }
 
+    /**
+     * @return void
+     */
     public function testUseNetPriceCalculationShouldBeNetFunctionalTestStep4()
     {
-        $settingService = new SettingsServicePaymentBuilderServiceMock(false, 0);
+        $settingService = new SettingsServicePaymentBuilderServiceMock(false);
         $requestService = $this->getRequestService($settingService);
 
         $basketData = $this->getBasketDataArray();
@@ -233,9 +255,12 @@ class PaymentBuilderServiceTest extends TestCase
         static::assertSame('114.99', $requestParameters['transactions'][0]['amount']['total']);
     }
 
+    /**
+     * @return void
+     */
     public function testUseNetPriceCalculationShouldBeNetFunctionalTestStep5()
     {
-        $settingService = new SettingsServicePaymentBuilderServiceMock(false, 0);
+        $settingService = new SettingsServicePaymentBuilderServiceMock(false);
         $requestService = $this->getRequestService($settingService);
 
         $basketData = $this->getBasketDataArray();
@@ -260,9 +285,12 @@ class PaymentBuilderServiceTest extends TestCase
         static::assertSame('114.99', $requestParameters['transactions'][0]['amount']['total']);
     }
 
+    /**
+     * @return void
+     */
     public function testUseNetPriceCalculationShouldBeGrossFunctionalTestStep6()
     {
-        $settingService = new SettingsServicePaymentBuilderServiceMock(false, 0);
+        $settingService = new SettingsServicePaymentBuilderServiceMock(false);
         $requestService = $this->getRequestService($settingService);
 
         $basketData = $this->getBasketDataArray();
@@ -287,9 +315,12 @@ class PaymentBuilderServiceTest extends TestCase
         static::assertSame('96.63', $requestParameters['transactions'][0]['amount']['total']);
     }
 
+    /**
+     * @return void
+     */
     public function testUseNetPriceCalculationShouldBeGrossFunctionalTestStep7()
     {
-        $settingService = new SettingsServicePaymentBuilderServiceMock(false, 0);
+        $settingService = new SettingsServicePaymentBuilderServiceMock(false);
         $requestService = $this->getRequestService($settingService);
 
         $basketData = $this->getBasketDataArray();
@@ -315,9 +346,12 @@ class PaymentBuilderServiceTest extends TestCase
         static::assertSame('114.99', $requestParameters['transactions'][0]['amount']['total']);
     }
 
+    /**
+     * @return void
+     */
     public function testGetPaymentWithBasketUniqueId()
     {
-        $settingService = new SettingsServicePaymentBuilderServiceMock(false, 0);
+        $settingService = new SettingsServicePaymentBuilderServiceMock(false);
         $requestService = $this->getRequestService($settingService);
 
         $basketData = $this->getBasketDataArray();
@@ -346,9 +380,12 @@ class PaymentBuilderServiceTest extends TestCase
         );
     }
 
+    /**
+     * @return void
+     */
     public function testGetPaymentWithTaxFreeCountry()
     {
-        $settingService = new SettingsServicePaymentBuilderServiceMock(false, 0);
+        $settingService = new SettingsServicePaymentBuilderServiceMock(false);
         $requestService = $this->getRequestService($settingService);
 
         $basketData = $this->getBasketDataArray();
@@ -369,9 +406,12 @@ class PaymentBuilderServiceTest extends TestCase
         static::assertNull($requestParameters['transactions'][0]['amount']['details']['tax']);
     }
 
+    /**
+     * @return void
+     */
     public function testGetPaymentWithTaxFreeCompaniesWithoutVatId()
     {
-        $settingService = new SettingsServicePaymentBuilderServiceMock(false, 0);
+        $settingService = new SettingsServicePaymentBuilderServiceMock(false);
         $requestService = $this->getRequestService($settingService);
 
         $basketData = $this->getBasketDataArray();
@@ -392,9 +432,12 @@ class PaymentBuilderServiceTest extends TestCase
         static::assertSame('0.00', $requestParameters['transactions'][0]['amount']['details']['tax']);
     }
 
+    /**
+     * @return void
+     */
     public function testGetPaymentWithTaxFreeCompaniesWithVatId()
     {
-        $settingService = new SettingsServicePaymentBuilderServiceMock(false, 0);
+        $settingService = new SettingsServicePaymentBuilderServiceMock(false);
         $requestService = $this->getRequestService($settingService);
 
         $basketData = $this->getBasketDataArray();
@@ -417,9 +460,12 @@ class PaymentBuilderServiceTest extends TestCase
         static::assertNull($requestParameters['transactions'][0]['amount']['details']['tax']);
     }
 
+    /**
+     * @return void
+     */
     public function testGetPaymentWithTaxFreeCompaniesWithVatIdShipping()
     {
-        $settingService = new SettingsServicePaymentBuilderServiceMock(false, 0);
+        $settingService = new SettingsServicePaymentBuilderServiceMock(false);
         $requestService = $this->getRequestService($settingService);
 
         $basketData = $this->getBasketDataArray();
@@ -442,6 +488,9 @@ class PaymentBuilderServiceTest extends TestCase
         static::assertNull($requestParameters['transactions'][0]['amount']['details']['tax']);
     }
 
+    /**
+     * @return void
+     */
     public function testGetPaymentReturnValidRedirectUrls()
     {
         $requestParameters = $this->getRequestData();
@@ -450,6 +499,9 @@ class PaymentBuilderServiceTest extends TestCase
         static::assertNotFalse(\stristr($requestParameters['redirect_urls']['cancel_url'], 'cancel'));
     }
 
+    /**
+     * @return void
+     */
     public function testGetPaymentWithCustomProducts()
     {
         $requestParameters = $this->getRequestData();
@@ -460,9 +512,12 @@ class PaymentBuilderServiceTest extends TestCase
         static::assertSame(\round(2 * 59.99 + 1 * 1 + 2 * 2 + 1 * 3, 2), (float) $customProductsOption['price']);
     }
 
+    /**
+     * @return void
+     */
     public function testGetPaymentExpressCheckoutWithoutCart()
     {
-        $settingService = new SettingsServicePaymentBuilderServiceMock(false, 0, false, false);
+        $settingService = new SettingsServicePaymentBuilderServiceMock(false, false, false);
         $requestService = $this->getRequestService($settingService);
 
         $params = new PaymentBuilderParameters();
@@ -476,9 +531,12 @@ class PaymentBuilderServiceTest extends TestCase
         static::assertEmpty($requestService->getPayment($params)->getTransactions()->getItemList());
     }
 
+    /**
+     * @return void
+     */
     public function testGetPaymentExpressCheckoutWithCart()
     {
-        $settingService = new SettingsServicePaymentBuilderServiceMock(false, 0, true, false);
+        $settingService = new SettingsServicePaymentBuilderServiceMock(false, true, false);
         $requestService = $this->getRequestService($settingService);
 
         $params = new PaymentBuilderParameters();
@@ -492,9 +550,12 @@ class PaymentBuilderServiceTest extends TestCase
         static::assertNotEmpty($requestService->getPayment($params)->getTransactions()->getItemList());
     }
 
+    /**
+     * @return void
+     */
     public function testGetPaymentWithoutCart()
     {
-        $settingService = new SettingsServicePaymentBuilderServiceMock(false, 0, false, false);
+        $settingService = new SettingsServicePaymentBuilderServiceMock(false, false, false);
         $requestService = $this->getRequestService($settingService);
 
         $params = new PaymentBuilderParameters();
@@ -508,9 +569,12 @@ class PaymentBuilderServiceTest extends TestCase
         static::assertEmpty($requestService->getPayment($params)->getTransactions()->getItemList());
     }
 
+    /**
+     * @return void
+     */
     public function testGetPaymentWithCart()
     {
-        $settingService = new SettingsServicePaymentBuilderServiceMock(false, 0, false, true);
+        $settingService = new SettingsServicePaymentBuilderServiceMock(false, false, true);
         $requestService = $this->getRequestService($settingService);
 
         $params = new PaymentBuilderParameters();
@@ -522,37 +586,18 @@ class PaymentBuilderServiceTest extends TestCase
         $params->setPaymentType(PaymentType::PAYPAL_CLASSIC);
 
         static::assertNotEmpty($requestService->getPayment($params)->getTransactions()->getItemList());
-    }
-
-    public function testGetIntentAsStringThrowsException()
-    {
-        $settingService = new SettingsServicePaymentBuilderServiceMock(false, 99, true);
-        $requestService = $this->getRequestService($settingService);
-
-        $params = new PaymentBuilderParameters();
-        $basketData = $this->getBasketDataArray();
-        $userData = $this->getUserDataAsArray();
-
-        $params->setBasketData($basketData);
-        $params->setUserData($userData);
-        $params->setPaymentType(PaymentType::PAYPAL_EXPRESS);
-
-        $this->expectException(\RuntimeException::class);
-        $requestService->getPayment($params);
     }
 
     /**
      * @param string $paymentType
-     * @param int    $intent
      * @param bool   $longBrandName
      *
-     * @return array
+     * @return array<string, mixed>
      */
-    private function getRequestData($paymentType = PaymentType::PAYPAL_CLASSIC, $intent = 0, $longBrandName = false)
+    private function getRequestData($paymentType = PaymentType::PAYPAL_CLASSIC, $longBrandName = false)
     {
         $settingService = new SettingsServicePaymentBuilderServiceMock(
             $paymentType === PaymentType::PAYPAL_PLUS,
-            $intent,
             true,
             true,
             $longBrandName
@@ -594,7 +639,7 @@ class PaymentBuilderServiceTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return array<string, mixed>
      */
     private function getBasketDataArray()
     {
@@ -645,7 +690,7 @@ class PaymentBuilderServiceTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return array<string, mixed>
      */
     private function getUserDataAsArray()
     {
