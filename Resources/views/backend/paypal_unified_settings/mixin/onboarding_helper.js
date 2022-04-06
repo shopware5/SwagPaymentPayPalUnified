@@ -1,6 +1,6 @@
 // {block name="backend/index/application"}
 // {$smarty.block.parent}
-// {namespace name="backend/paypal_unified/mixin/onboarding_helper"}
+// {namespace name="backend/paypal_unified_settings/mixin/onboarding_helper"}
 //
 Ext.define('Shopware.apps.PaypalUnified.mixin.OnboardingHelper', {
     onboardingHelper: {
