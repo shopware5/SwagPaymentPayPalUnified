@@ -52,10 +52,12 @@ default:
     - php bin/console sw:firstrunwizard:disable
     - php bin/console sw:admin:create --name="Demo" --email="demo@demo.de" --username="demo" --password="demo" --locale=de_DE -n
     - touch recovery/install/data/install.lock
+    - cp -r custom/plugins/${PLUGIN_NAME}/Tests/config_gitlab.php config.php
 
 .prepare_installation_script_install_shopware_make: &prepare_installation_script_install_shopware_make
     - eval export DB_USER DB_PASSWORD DB_HOST DB_PORT DB_NAME SW_HOST SW_BASE_PATH
     - make init
+    - cp -r custom/plugins/${PLUGIN_NAME}/Tests/config_gitlab.php config.php
 
 .prepare_installation_script_install_plugin: &prepare_installation_script_install_plugin
     - php bin/console sw:plugin:refresh
