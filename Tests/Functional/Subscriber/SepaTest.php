@@ -18,14 +18,16 @@ use SwagPaymentPayPalUnified\Subscriber\Sepa;
 use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\SettingsHelperTrait;
+use SwagPaymentPayPalUnified\Tests\Functional\ShopRegistrationTrait;
 use SwagPaymentPayPalUnified\Tests\Mocks\DummyController;
 use SwagPaymentPayPalUnified\Tests\Mocks\ViewMock;
 
 class SepaTest extends TestCase
 {
-    use DatabaseTestCaseTrait;
     use ContainerTrait;
+    use DatabaseTestCaseTrait;
     use SettingsHelperTrait;
+    use ShopRegistrationTrait;
 
     /**
      * @return void

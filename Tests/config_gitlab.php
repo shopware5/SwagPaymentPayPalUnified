@@ -16,10 +16,7 @@ return [
     ],
 
     'csrfProtection' => [
+        'frontend' => true,
         'backend' => false,
-    ],
-
-    'backendsession' => [
-        'unitTestEnabled' => true,
     ],
 ];

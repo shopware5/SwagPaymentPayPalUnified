@@ -16,12 +16,17 @@ use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Transactions\ShipmentDetails;
 use SwagPaymentPayPalUnified\Tests\Functional\Components\Services\Mock\SettingsServicePaymentBuilderServiceMock;
+use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
+use SwagPaymentPayPalUnified\Tests\Functional\ShopRegistrationTrait;
 
 class PlusPaymentBuilderServiceTest extends TestCase
 {
+    use ContainerTrait;
+    use ShopRegistrationTrait;
+
     public function testServiceIsAvailable()
     {
-        $service = Shopware()->Container()->get('paypal_unified.plus.payment_builder_service');
+        $service = $this->getContainer()->get('paypal_unified.plus.payment_builder_service');
         static::assertSame(PlusPaymentBuilderService::class, \get_class($service));
     }
 
@@ -97,7 +102,7 @@ class PlusPaymentBuilderServiceTest extends TestCase
      */
     private function getPlusPaymentBuilder(SettingsServiceInterface $settingService)
     {
-        return Shopware()->Container()->get('paypal_unified.plus.payment_builder_service');
+        return $this->getContainer()->get('paypal_unified.plus.payment_builder_service');
     }
 
     /**
@@ -154,7 +159,7 @@ class PlusPaymentBuilderServiceTest extends TestCase
 
     private function createEddAttribute()
     {
-        $attributeService = Shopware()->Container()->get('shopware_attribute.crud_service');
+        $attributeService = $this->getContainer()->get('shopware_attribute.crud_service');
 
         $attributeService->update(
             's_articles_attributes',
@@ -165,7 +170,7 @@ class PlusPaymentBuilderServiceTest extends TestCase
 
     private function deleteEddAttribute()
     {
-        $attributeService = Shopware()->Container()->get('shopware_attribute.crud_service');
+        $attributeService = $this->getContainer()->get('shopware_attribute.crud_service');
 
         $attributeService->delete(
             's_articles_attributes',

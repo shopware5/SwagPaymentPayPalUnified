@@ -37,6 +37,7 @@ use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use SwagPaymentPayPalUnified\Subscriber\PayUponInvoiceRiskManagement;
 use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
+use SwagPaymentPayPalUnified\Tests\Functional\ShopRegistrationTrait;
 use SwagPaymentPayPalUnified\Tests\Mocks\ViewMock;
 use Symfony\Component\Validator\Constraints\Collection;
 use Symfony\Component\Validator\Constraints\Date;
@@ -49,6 +50,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class PayUponInvoiceRiskManagementTest extends TestCase
 {
     use ContainerTrait;
+    use ShopRegistrationTrait;
 
     const SHOP_ID = 591790496;
     const PAYMENT_ID_PUI = 101;

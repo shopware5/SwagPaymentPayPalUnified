@@ -14,16 +14,20 @@ use Enlight_Controller_Response_ResponseTestCase;
 use Enlight_Template_Manager;
 use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\Subscriber\SmartPaymentButtons;
+use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\SettingsHelperTrait;
+use SwagPaymentPayPalUnified\Tests\Functional\ShopRegistrationTrait;
 use SwagPaymentPayPalUnified\Tests\Mocks\DummyController;
 use SwagPaymentPayPalUnified\Tests\Mocks\ViewMock;
 use Symfony\Component\HttpFoundation\Response;
 
 class SmartPaymentButtonsSubscriberTest extends TestCase
 {
+    use ContainerTrait;
     use DatabaseTestCaseTrait;
     use SettingsHelperTrait;
+    use ShopRegistrationTrait;
 
     public function testCanBeCreated()
     {
@@ -314,10 +318,10 @@ class SmartPaymentButtonsSubscriberTest extends TestCase
     private function getSubscriber()
     {
         return new SmartPaymentButtons(
-            Shopware()->Container()->get('paypal_unified.settings_service'),
-            Shopware()->Container()->get('snippets'),
-            Shopware()->Container()->get('paypal_unified.payment_method_provider'),
-            Shopware()->Container()->get('paypal_unified.button_locale_service')
+            $this->getContainer()->get('paypal_unified.settings_service'),
+            $this->getContainer()->get('snippets'),
+            $this->getContainer()->get('paypal_unified.payment_method_provider'),
+            $this->getContainer()->get('paypal_unified.button_locale_service')
         );
     }
 }

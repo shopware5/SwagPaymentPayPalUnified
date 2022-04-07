@@ -2506,11 +2506,6 @@ parameters:
 			path: SwagPaymentPayPalUnified.php
 
 		-
-			message: "#^Method PayPalUnifiedTestKernel\\:\\:start\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Bootstrap.php
-
-		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Bundle\\\\AccountBundle\\\\Service\\\\Validator\\\\AddressValidatorDecoratorTest\\:\\:testConstruct\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: Tests/Functional/Bundle/AccountBundle/Service/Validator/AddressValidatorDecoratorTest.php
@@ -3352,11 +3347,6 @@ parameters:
 
 		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\AdvancedCreditDebitCardSubscriberTest\\:\\:getSubscriber\\(\\) is unused\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/AdvancedCreditDebitCardSubscriberTest.php
-
-		-
-			message: "#^Unreachable statement \\- code above always terminates\\.$#"
 			count: 1
 			path: Tests/Functional/Subscriber/AdvancedCreditDebitCardSubscriberTest.php
 

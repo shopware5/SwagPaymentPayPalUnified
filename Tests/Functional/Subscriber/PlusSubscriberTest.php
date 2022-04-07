@@ -17,8 +17,10 @@ use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Subscriber\Plus;
+use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\SettingsHelperTrait;
+use SwagPaymentPayPalUnified\Tests\Functional\ShopRegistrationTrait;
 use SwagPaymentPayPalUnified\Tests\Mocks\DummyController;
 use SwagPaymentPayPalUnified\Tests\Mocks\OrderDataServiceMock;
 use SwagPaymentPayPalUnified\Tests\Mocks\PaymentInstructionServiceMock;
@@ -27,8 +29,10 @@ use SwagPaymentPayPalUnified\Tests\Mocks\ViewMock;
 
 class PlusSubscriberTest extends TestCase
 {
+    use ContainerTrait;
     use DatabaseTestCaseTrait;
     use SettingsHelperTrait;
+    use ShopRegistrationTrait;
 
     public function testCanBeCreated()
     {
@@ -388,7 +392,7 @@ class PlusSubscriberTest extends TestCase
             'subject' => new DummyController($request, $view, $response),
         ]);
 
-        Shopware()->Container()->get('session')->offsetSet('paypalUnifiedCameFromPaymentSelection', false);
+        $this->getContainer()->get('session')->offsetSet('paypalUnifiedCameFromPaymentSelection', false);
 
         $this->getSubscriber()->onPostDispatchCheckout($enlightEventArgs);
 
@@ -531,7 +535,7 @@ class PlusSubscriberTest extends TestCase
     public function testAddPaymentMethodsAttributes()
     {
         $this->createTestSettings(true, true, false, true);
-        Shopware()->Container()->get('dbal_connection')->executeQuery(
+        $this->getContainer()->get('dbal_connection')->executeQuery(
             "INSERT INTO `s_core_paymentmeans_attributes` (`paymentmeanID`, `swag_paypal_unified_display_in_plus_iframe`) VALUES ('6', '1');"
         );
         $eventArgs = new Enlight_Event_EventArgs();
@@ -620,24 +624,24 @@ class PlusSubscriberTest extends TestCase
     private function getSubscriber()
     {
         return new Plus(
-            Shopware()->Container()->get('paypal_unified.settings_service'),
-            Shopware()->Container()->get('paypal_unified.dependency_provider'),
-            Shopware()->Container()->get('snippets'),
-            Shopware()->Container()->get('dbal_connection'),
+            $this->getContainer()->get('paypal_unified.settings_service'),
+            $this->getContainer()->get('paypal_unified.dependency_provider'),
+            $this->getContainer()->get('snippets'),
+            $this->getContainer()->get('dbal_connection'),
             new PaymentInstructionServiceMock(),
             new OrderDataServiceMock(),
-            Shopware()->Container()->get('paypal_unified.plus.payment_builder_service'),
-            Shopware()->Container()->get('paypal_unified.client_service'),
+            $this->getContainer()->get('paypal_unified.plus.payment_builder_service'),
+            $this->getContainer()->get('paypal_unified.client_service'),
             new PaymentResourceMock(),
-            Shopware()->Container()->get('paypal_unified.exception_handler_service'),
-            Shopware()->Container()->get('paypal_unified.payment_method_provider')
+            $this->getContainer()->get('paypal_unified.exception_handler_service'),
+            $this->getContainer()->get('paypal_unified.payment_method_provider')
         );
     }
 
     private function getPaymentMethodProvider()
     {
-        $connection = Shopware()->Container()->get('dbal_connection');
-        $modelManager = Shopware()->Container()->get('models');
+        $connection = $this->getContainer()->get('dbal_connection');
+        $modelManager = $this->getContainer()->get('models');
 
         return new PaymentMethodProvider(
             $connection,

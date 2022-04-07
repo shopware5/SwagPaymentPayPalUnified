@@ -9,7 +9,6 @@
 require __DIR__ . '/../../../../autoload.php';
 
 use Shopware\Kernel;
-use Shopware\Models\Shop\Shop;
 
 class PayPalUnifiedTestKernel extends Kernel
 {
@@ -18,6 +17,9 @@ class PayPalUnifiedTestKernel extends Kernel
      */
     private static $kernel;
 
+    /**
+     * @return void
+     */
     public static function start()
     {
         self::$kernel = new self(\getenv('SHOPWARE_ENV') ?: 'testing', true);
@@ -25,16 +27,6 @@ class PayPalUnifiedTestKernel extends Kernel
 
         $container = self::$kernel->getContainer();
         $container->get('plugins')->Core()->ErrorHandler()->registerErrorHandler(\E_ALL | \E_STRICT);
-
-        $repository = $container->get('models')->getRepository(Shop::class);
-
-        if ($container->initialized('shopware.components.shop_registration_service')) {
-            $container->get('shopware.components.shop_registration_service')->registerResources(
-                $repository->getActiveDefault()
-            );
-        } else {
-            $repository->getActiveDefault()->registerResources();
-        }
 
         if (!self::isPluginInstalledAndActivated()) {
             exit('Error: The plugin is not installed or activated, tests aborted!');

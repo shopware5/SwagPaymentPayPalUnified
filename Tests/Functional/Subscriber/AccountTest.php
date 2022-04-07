@@ -19,14 +19,16 @@ use SwagPaymentPayPalUnified\Subscriber\Account;
 use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\SettingsHelperTrait;
+use SwagPaymentPayPalUnified\Tests\Functional\ShopRegistrationTrait;
 use SwagPaymentPayPalUnified\Tests\Mocks\DummyController;
 use SwagPaymentPayPalUnified\Tests\Mocks\ViewMock;
 
 class AccountTest extends TestCase
 {
-    use SettingsHelperTrait;
     use ContainerTrait;
     use DatabaseTestCaseTrait;
+    use SettingsHelperTrait;
+    use ShopRegistrationTrait;
 
     public function testCanBeCreated()
     {
@@ -65,8 +67,8 @@ class AccountTest extends TestCase
     public function testOnPostDispatchAccountPaymentMethodInactive()
     {
         $paymentMethodProvider = new PaymentMethodProvider(
-            Shopware()->Container()->get('dbal_connection'),
-            Shopware()->Container()->get('models')
+            $this->getContainer()->get('dbal_connection'),
+            $this->getContainer()->get('models')
         );
         $paymentMethodProvider->setPaymentMethodActiveFlag(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME, false);
         $subscriber = $this->getSubscriber();
@@ -249,9 +251,9 @@ class AccountTest extends TestCase
     private function getSubscriber()
     {
         return new Account(
-            Shopware()->Container()->get('paypal_unified.settings_service'),
-            Shopware()->Container()->get('paypal_unified.dependency_provider'),
-            Shopware()->Container()->get('paypal_unified.payment_method_provider')
+            $this->getContainer()->get('paypal_unified.settings_service'),
+            $this->getContainer()->get('paypal_unified.dependency_provider'),
+            $this->getContainer()->get('paypal_unified.payment_method_provider')
         );
     }
 

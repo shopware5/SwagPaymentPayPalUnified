@@ -88,7 +88,7 @@ default:
         - *entrypoint_script
         - cd custom/plugins/${PLUGIN_NAME}
     script:
-        - ../../../vendor/bin/phpunit -v --config="phpunit.xml.dist" --colors="never" --log-junit="${ARTIFACTS_ROOT}/test-log.junit.xml"
+        - ../../../vendor/bin/phpunit --stderr -v --config="phpunit.xml.dist" --colors="never" --log-junit="${ARTIFACTS_ROOT}/test-log.junit.xml"
     artifacts:
         paths:
             - ${ARTIFACTS_ROOT}
@@ -160,6 +160,7 @@ Code Coverage:
     script:
         - php -d pcov.enabled="1" -d pcov.directory="${CI_PROJECT_DIR}" -d pcov.exclude='~(vendor|Tests)~'
             ../../../vendor/bin/phpunit
+            --stderr
             --configuration="phpunit.xml.dist"
             --colors="never"
             --log-junit="${ARTIFACTS_ROOT}/phpunit.junit.xml"

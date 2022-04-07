@@ -23,11 +23,13 @@ use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Shipping\Add
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Shipping\Name as ShippingName;
 use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
+use SwagPaymentPayPalUnified\Tests\Functional\ShopRegistrationTrait;
 
 class CustomerServiceTest extends TestCase
 {
     use DatabaseTestCaseTrait;
     use ContainerTrait;
+    use ShopRegistrationTrait;
 
     public function testServiceIsAvailable()
     {

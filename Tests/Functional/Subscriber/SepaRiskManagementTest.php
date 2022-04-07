@@ -13,6 +13,7 @@ use Enlight_Hook_HookArgs;
 use Generator;
 use PHPUnit\Framework\TestCase;
 use Shopware\Bundle\StoreFrontBundle\Service\Core\ContextService;
+use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Subscriber\SepaRiskManagement;
 use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
@@ -24,17 +25,6 @@ class SepaRiskManagementTest extends TestCase
     use DatabaseTestCaseTrait;
     use SettingsHelperTrait;
     use ContainerTrait;
-
-    /**
-     * @after
-     *
-     * @return void
-     */
-    public function resetContainer()
-    {
-        $this->getContainer()->reset('shopware_storefront.context_service');
-        $this->getContainer()->reset('paypal_unified.subscriber.sepa_risk_management');
-    }
 
     /**
      * @dataProvider afterRiskManagementTestDataProvider
@@ -76,7 +66,7 @@ class SepaRiskManagementTest extends TestCase
             true,
         ];
 
-        yield 'AfterRiskManagement should return TRUE because paypal is not active' => [
+        yield 'AfterRiskManagement should return TRUE because PayPal is not active' => [
             $this->createEnlightHookArgs(false, true),
             true,
             [
@@ -85,27 +75,8 @@ class SepaRiskManagementTest extends TestCase
             ],
         ];
 
-        yield 'AfterRiskManagement should return TRUE because country is not DE' => [
-            $this->createEnlightHookArgs(false, true, null, ['additional' => ['country' => ['countryiso' => 'US']]]),
-            true,
-            [
-                'active' => true,
-                'shopId' => 1,
-            ],
-        ];
-
-        yield 'AfterRiskManagement should return TRUE because the currency is not EUR' => [
-            $this->createEnlightHookArgs(false, true, null, ['additional' => ['country' => ['countryiso' => 'DE']]]),
-            true,
-            [
-                'active' => true,
-                'shopId' => 1,
-            ],
-            true,
-        ];
-
         yield 'AfterRiskManagement should return FALSE because all is OK' => [
-            $this->createEnlightHookArgs(false, true, null, ['additional' => ['country' => ['countryiso' => 'DE']]]),
+            $this->createEnlightHookArgs(false, true),
             false,
             [
                 'active' => true,
@@ -169,19 +140,13 @@ class SepaRiskManagementTest extends TestCase
      */
     private function createSepaRiskManagementSubscriber($useUsCurrency)
     {
-        $this->getContainer()->set('shopware_storefront.context_service', $this->createContextServiceMockWithUsCurrency($useUsCurrency));
-
-        $sepaRiskManagementSubscriber = new SepaRiskManagement(
+        return new SepaRiskManagement(
             $this->getContainer()->get('paypal_unified.payment_method_provider'),
-            $this->getContainer()->get('paypal_unified.dependency_provider'),
+            $this->createDependencyProviderMock(),
             $this->getContainer()->get('validator'),
-            $this->getContainer()->get('shopware_storefront.context_service'),
+            $this->createContextServiceMock($useUsCurrency),
             $this->getContainer()->get('paypal_unified.settings_service')
         );
-
-        $this->getContainer()->set('paypal_unified.subscriber.sepa_risk_management', $sepaRiskManagementSubscriber);
-
-        return $sepaRiskManagementSubscriber;
     }
 
     /**
@@ -201,7 +166,9 @@ class SepaRiskManagementTest extends TestCase
         }
 
         $hookArgsMock = $this->createMock(Enlight_Hook_HookArgs::class);
-        $hookArgsMock->method('getSubject')->willReturn($this->getContainer()->get('modules')->getModule('sAdmin'));
+        $adminModuleMock = $this->createMock(\sAdmin::class);
+        $adminModuleMock->method('executeRiskRule')->willReturn(false);
+        $hookArgsMock->method('getSubject')->willReturn($adminModuleMock);
         $hookArgsMock->method('getReturn')->willReturn($return);
         $hookArgsMock->method('get')->willReturnMap([
             ['paymentID', $paymentId],
@@ -216,9 +183,9 @@ class SepaRiskManagementTest extends TestCase
     /**
      * @param bool $useUsCurrency
      *
-     * @return \PHPUnit\Framework\MockObject\MockObject|ContextService
+     * @return ContextService
      */
-    private function createContextServiceMockWithUsCurrency($useUsCurrency)
+    private function createContextServiceMock($useUsCurrency)
     {
         $shopContext = $this->getContainer()->get('shopware_storefront.context_service')->createShopContext(1, $useUsCurrency ? 2 : 1);
 
@@ -226,5 +193,17 @@ class SepaRiskManagementTest extends TestCase
         $contextServiceMock->method('getShopContext')->willReturn($shopContext);
 
         return $contextServiceMock;
+    }
+
+    /**
+     * @return DependencyProvider
+     */
+    private function createDependencyProviderMock()
+    {
+        $dependencyProvider = $this->createMock(DependencyProvider::class);
+        $session = $this->createMock(\Enlight_Components_Session_Namespace::class);
+        $dependencyProvider->method('getSession')->willReturn($session);
+
+        return $dependencyProvider;
     }
 }
