@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
-import credentials from './credentials.mjs';
 import MysqlFactory from '../helper/mysqlFactory.mjs';
 import defaultPaypalSettingsSql from '../helper/paypalSqlHelper.mjs';
+import loginHelper from '../helper/loginHelper.mjs';
 const connection = MysqlFactory.getInstance();
 const mexico = '164';
 const mxn = '4';
@@ -12,14 +12,7 @@ test.describe('Pay with OXXO', () => {
     });
 
     test('Buy in mexico customer with mxn', async ({ page }) => {
-        // login
-        await page.goto('/account');
-        await page.waitForLoadState('load');
-        await page.fill('#email', credentials.defaultShopCustomerEmail);
-        await page.fill('#passwort', credentials.defaultShopCustomerPassword);
-        await page.click('.register--login-btn');
-        await expect(page).toHaveURL(/.*account/);
-        await expect(page.locator('h1[class="panel--title"]')).toHaveText(/.*Mustermann.*/);
+        await loginHelper.login(page);
 
         // Select MXN
         await page.locator('nav[role="menubar"] select[name="__currency"]').selectOption(mxn);
