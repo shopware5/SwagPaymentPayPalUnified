@@ -11,6 +11,8 @@ namespace SwagPaymentPayPalUnified\Tests\Unit\Controllers\Frontend;
 require_once __DIR__ . '/../../../../Controllers/Frontend/PaypalUnifiedApm.php';
 
 use Shopware\Models\Order\Status;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\PaymentIntentV2;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\PaymentStatusV2;
@@ -86,6 +88,9 @@ class PaypalUnifiedApmTest extends PaypalPaymentControllerTestCase
 
         $this->expectPaymentStatusToBeSetTo($expectedPaymentState);
 
+        $this->settingsService->method('get')->willReturn(static::returnValueMap([
+            [SettingsServiceInterface::SETTING_GENERAL_SEND_ORDER_NUMBER, SettingsTable::GENERAL, true],
+        ]));
         $this->getController(\Shopware_Controllers_Frontend_PaypalUnifiedApm::class)
             ->returnAction();
     }

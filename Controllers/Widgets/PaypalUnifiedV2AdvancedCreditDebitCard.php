@@ -12,7 +12,6 @@ use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\ShopwareOrderData;
 use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentController;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
-use SwagPaymentPayPalUnified\PayPalBundle\V2\PaymentIntentV2;
 
 class Shopware_Controllers_Widgets_PaypalUnifiedV2AdvancedCreditDebitCard extends AbstractPaypalPaymentController
 {
@@ -82,21 +81,52 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2AdvancedCreditDebitCard extend
             return;
         }
 
-        $capturedPayPalOrder = $this->captureOrAuthorizeOrder($payPalOrderId);
-        if (!$capturedPayPalOrder instanceof Order) {
-            $this->paymentStatusService->updatePaymentStatus($payPalOrderId, Status::PAYMENT_STATE_REVIEW_NECESSARY);
+        $payPalOrder = $this->getPayPalOrder($payPalOrderId);
+        if (!$payPalOrder instanceof Order) {
+            $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
+                ->setCode(ErrorCodes::UNKNOWN);
+
+            $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
 
             return;
         }
 
-        $shopwareOrderNumber = $this->createShopwareOrder($payPalOrderId, PaymentType::PAYPAL_ADVANCED_CREDIT_DEBIT_CARD);
-        $this->setTransactionId($shopwareOrderNumber, $capturedPayPalOrder);
+        if (!$this->isCartValid($payPalOrder)) {
+            $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
+                ->setCode(ErrorCodes::BASKET_VALIDATION_ERROR);
 
-        if ($capturedPayPalOrder->getIntent() === PaymentIntentV2::CAPTURE) {
-            $this->paymentStatusService->updatePaymentStatus($payPalOrderId, Status::PAYMENT_STATE_COMPLETELY_PAID);
-        } else {
-            $this->paymentStatusService->updatePaymentStatus($payPalOrderId, Status::PAYMENT_STATE_RESERVED);
+            $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
+
+            return;
         }
+
+        $shopwareOrderNumber = null;
+        $sendShopwareOrderNumber = $this->getSendOrdernumber();
+        if ($sendShopwareOrderNumber) {
+            $shopwareOrderNumber = $this->createShopwareOrder($payPalOrderId, PaymentType::PAYPAL_ADVANCED_CREDIT_DEBIT_CARD);
+
+            $invoiceIdPatch = $this->createInvoiceIdPatch($shopwareOrderNumber);
+
+            if (!$this->updatePayPalOrder($payPalOrderId, [$invoiceIdPatch])) {
+                return;
+            }
+        }
+
+        $capturedPayPalOrder = $this->captureOrAuthorizeOrder($payPalOrderId);
+        if (!$capturedPayPalOrder instanceof Order) {
+            if (\is_string($shopwareOrderNumber)) {
+                $this->orderDataService->removeTransactionId($shopwareOrderNumber);
+                $this->paymentStatusService->updatePaymentStatus($payPalOrderId, Status::PAYMENT_STATE_REVIEW_NECESSARY);
+            }
+
+            return;
+        }
+
+        if (!$sendShopwareOrderNumber) {
+            $shopwareOrderNumber = $this->createShopwareOrder($payPalOrderId, PaymentType::PAYPAL_ADVANCED_CREDIT_DEBIT_CARD);
+        }
+
+        $this->setTransactionId($shopwareOrderNumber, $capturedPayPalOrder);
 
         $this->logger->debug(sprintf('%s SET PAYPAL ORDER ID TO SESSION: ID: %s', __METHOD__, $payPalOrderId));
 
@@ -113,6 +143,6 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2AdvancedCreditDebitCard extend
         $this->logger->debug(sprintf('%s ERROR WITH CODE: %d', __METHOD__, $paypalUnifiedErrorCode ?: ErrorCodes::UNKNOWN));
 
         $this->View()->assign('paypalUnifiedErrorCode', $paypalUnifiedErrorCode ?: ErrorCodes::UNKNOWN);
-        $this->View()->extendsTemplate((string) $this->container->getParameter('paypal_unified.plugin_dir') . '/Resources/views/frontend/paypal_unified/checkout/error_message.tpl');
+        $this->View()->extendsTemplate($this->container->getParameter('paypal_unified.plugin_dir') . '/Resources/views/frontend/paypal_unified/checkout/error_message.tpl');
     }
 }
