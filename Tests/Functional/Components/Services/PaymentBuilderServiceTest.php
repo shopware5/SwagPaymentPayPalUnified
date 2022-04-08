@@ -15,9 +15,14 @@ use SwagPaymentPayPalUnified\Components\Services\PaymentBuilderService;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\Tests\Functional\Components\Services\Mock\SettingsServicePaymentBuilderServiceMock;
+use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
+use SwagPaymentPayPalUnified\Tests\Functional\ShopRegistrationTrait;
 
 class PaymentBuilderServiceTest extends TestCase
 {
+    use ContainerTrait;
+    use ShopRegistrationTrait;
+
     /**
      * @return void
      */
@@ -620,12 +625,12 @@ class PaymentBuilderServiceTest extends TestCase
      */
     private function getRequestService(SettingsServiceInterface $settingService)
     {
-        $snippetManager = Shopware()->Container()->get('snippets');
-        $dependencyProvider = Shopware()->Container()->get('paypal_unified.dependency_provider');
-        $priceFormatter = Shopware()->Container()->get('paypal_unified.common.price_formatter');
-        $customerHelper = Shopware()->Container()->get('paypal_unified.common.customer_helper');
-        $cartHelper = Shopware()->Container()->get('paypal_unified.common.cart_helper');
-        $returnUrlHelper = Shopware()->Container()->get('paypal_unified.common.return_url_helper');
+        $snippetManager = $this->getContainer()->get('snippets');
+        $dependencyProvider = $this->getContainer()->get('paypal_unified.dependency_provider');
+        $priceFormatter = $this->getContainer()->get('paypal_unified.common.price_formatter');
+        $customerHelper = $this->getContainer()->get('paypal_unified.common.customer_helper');
+        $cartHelper = $this->getContainer()->get('paypal_unified.common.cart_helper');
+        $returnUrlHelper = $this->getContainer()->get('paypal_unified.common.return_url_helper');
 
         return new PaymentBuilderService(
             $settingService,

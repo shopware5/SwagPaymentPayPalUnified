@@ -13,15 +13,19 @@ use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Subscriber\InContext;
+use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\SettingsHelperTrait;
+use SwagPaymentPayPalUnified\Tests\Functional\ShopRegistrationTrait;
 use SwagPaymentPayPalUnified\Tests\Mocks\DummyController;
 use SwagPaymentPayPalUnified\Tests\Mocks\ViewMock;
 
 class InContextSubscriberTest extends TestCase
 {
+    use ContainerTrait;
     use DatabaseTestCaseTrait;
     use SettingsHelperTrait;
+    use ShopRegistrationTrait;
 
     public function testConstruct()
     {
@@ -65,8 +69,8 @@ class InContextSubscriberTest extends TestCase
     public function testAddInContextButtonReturnUnifiedInactive()
     {
         $paymentMethodProvider = new PaymentMethodProvider(
-            Shopware()->Container()->get('dbal_connection'),
-            Shopware()->Container()->get('models')
+            $this->getContainer()->get('dbal_connection'),
+            $this->getContainer()->get('models')
         );
 
         $paymentMethodProvider->setPaymentMethodActiveFlag(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME, false);
@@ -351,10 +355,10 @@ class InContextSubscriberTest extends TestCase
     private function getSubscriber()
     {
         return new InContext(
-            Shopware()->Container()->get('paypal_unified.settings_service'),
-            Shopware()->Container()->get('paypal_unified.payment_method_provider'),
-            Shopware()->Container()->get('shopware_storefront.context_service'),
-            Shopware()->Container()->get('paypal_unified.button_locale_service')
+            $this->getContainer()->get('paypal_unified.settings_service'),
+            $this->getContainer()->get('paypal_unified.payment_method_provider'),
+            $this->getContainer()->get('shopware_storefront.context_service'),
+            $this->getContainer()->get('paypal_unified.button_locale_service')
         );
     }
 }

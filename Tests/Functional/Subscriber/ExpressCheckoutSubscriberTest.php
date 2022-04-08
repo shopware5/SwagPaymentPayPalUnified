@@ -28,15 +28,17 @@ use SwagPaymentPayPalUnified\Subscriber\ExpressCheckout as ExpressCheckoutSubscr
 use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\SettingsHelperTrait;
+use SwagPaymentPayPalUnified\Tests\Functional\ShopRegistrationTrait;
 use SwagPaymentPayPalUnified\Tests\Mocks\ClientService;
 use SwagPaymentPayPalUnified\Tests\Mocks\DummyController;
 use SwagPaymentPayPalUnified\Tests\Mocks\ViewMock;
 
 class ExpressCheckoutSubscriberTest extends TestCase
 {
+    use ContainerTrait;
     use DatabaseTestCaseTrait;
     use SettingsHelperTrait;
-    use ContainerTrait;
+    use ShopRegistrationTrait;
 
     /**
      * @return void

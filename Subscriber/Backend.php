@@ -63,7 +63,7 @@ class Backend implements SubscriberInterface
                 $view->assign($nonceType, $this->nonceService->getBase64UrlEncodedRandomNonce());
             }
 
-            $view->extendsTemplate('backend/paypal_unified/mixin/onboarding_helper.js');
+            $view->extendsTemplate('backend/paypal_unified_settings/mixin/onboarding_helper.js');
         }
     }
 

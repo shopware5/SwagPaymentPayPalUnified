@@ -52,10 +52,12 @@ default:
     - php bin/console sw:firstrunwizard:disable
     - php bin/console sw:admin:create --name="Demo" --email="demo@demo.de" --username="demo" --password="demo" --locale=de_DE -n
     - touch recovery/install/data/install.lock
+    - cp -r custom/plugins/${PLUGIN_NAME}/Tests/config_gitlab.php config.php
 
 .prepare_installation_script_install_shopware_make: &prepare_installation_script_install_shopware_make
     - eval export DB_USER DB_PASSWORD DB_HOST DB_PORT DB_NAME SW_HOST SW_BASE_PATH
     - make init
+    - cp -r custom/plugins/${PLUGIN_NAME}/Tests/config_gitlab.php config.php
 
 .prepare_installation_script_install_plugin: &prepare_installation_script_install_plugin
     - php bin/console sw:plugin:refresh
@@ -86,7 +88,7 @@ default:
         - *entrypoint_script
         - cd custom/plugins/${PLUGIN_NAME}
     script:
-        - ../../../vendor/bin/phpunit -v --config="phpunit.xml.dist" --colors="never" --log-junit="${ARTIFACTS_ROOT}/test-log.junit.xml"
+        - ../../../vendor/bin/phpunit --stderr -v --config="phpunit.xml.dist" --colors="never" --log-junit="${ARTIFACTS_ROOT}/test-log.junit.xml"
     artifacts:
         paths:
             - ${ARTIFACTS_ROOT}
@@ -158,6 +160,7 @@ Code Coverage:
     script:
         - php -d pcov.enabled="1" -d pcov.directory="${CI_PROJECT_DIR}" -d pcov.exclude='~(vendor|Tests)~'
             ../../../vendor/bin/phpunit
+            --stderr
             --configuration="phpunit.xml.dist"
             --colors="never"
             --log-junit="${ARTIFACTS_ROOT}/phpunit.junit.xml"

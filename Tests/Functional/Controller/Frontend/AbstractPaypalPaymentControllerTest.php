@@ -13,14 +13,16 @@ use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentControlle
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
+use SwagPaymentPayPalUnified\Tests\Functional\ShopRegistrationTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\UnifiedControllerTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class AbstractPaypalPaymentControllerTest extends UnifiedControllerTestCase
 {
-    use DatabaseTestCaseTrait;
     use ContainerTrait;
+    use DatabaseTestCaseTrait;
+    use ShopRegistrationTrait;
 
     const TRANSACTION_ID = '9999';
 

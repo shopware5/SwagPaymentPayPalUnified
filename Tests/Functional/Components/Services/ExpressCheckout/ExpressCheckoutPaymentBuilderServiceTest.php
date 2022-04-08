@@ -16,12 +16,17 @@ use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Transactions\ItemList;
 use SwagPaymentPayPalUnified\Tests\Functional\Components\Services\Mock\SettingsServicePaymentBuilderServiceMock;
+use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
+use SwagPaymentPayPalUnified\Tests\Functional\ShopRegistrationTrait;
 
 class ExpressCheckoutPaymentBuilderServiceTest extends TestCase
 {
+    use ContainerTrait;
+    use ShopRegistrationTrait;
+
     public function testServiceIsAvailable()
     {
-        $service = Shopware()->Container()->get('paypal_unified.express_checkout.payment_builder_service');
+        $service = $this->getContainer()->get('paypal_unified.express_checkout.payment_builder_service');
         static::assertInstanceOf(ExpressCheckoutPaymentBuilderService::class, $service);
     }
 
@@ -70,12 +75,12 @@ class ExpressCheckoutPaymentBuilderServiceTest extends TestCase
      */
     private function getExpressCheckoutRequestBuilder(SettingsServiceInterface $settingService)
     {
-        $snippetManager = Shopware()->Container()->get('snippets');
-        $dependencyProvider = Shopware()->Container()->get('paypal_unified.dependency_provider');
-        $priceFormatter = Shopware()->Container()->get('paypal_unified.common.price_formatter');
-        $customerHelper = Shopware()->Container()->get('paypal_unified.common.customer_helper');
-        $cartHelper = Shopware()->Container()->get('paypal_unified.common.cart_helper');
-        $returnUrlHelper = Shopware()->Container()->get('paypal_unified.common.return_url_helper');
+        $snippetManager = $this->getContainer()->get('snippets');
+        $dependencyProvider = $this->getContainer()->get('paypal_unified.dependency_provider');
+        $priceFormatter = $this->getContainer()->get('paypal_unified.common.price_formatter');
+        $customerHelper = $this->getContainer()->get('paypal_unified.common.customer_helper');
+        $cartHelper = $this->getContainer()->get('paypal_unified.common.cart_helper');
+        $returnUrlHelper = $this->getContainer()->get('paypal_unified.common.return_url_helper');
 
         return new ExpressCheckoutPaymentBuilderService(
             $settingService,
