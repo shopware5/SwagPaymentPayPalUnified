@@ -2,10 +2,15 @@ import { test, expect } from '@playwright/test';
 import MysqlFactory from '../helper/mysqlFactory.mjs';
 import defaultPaypalSettingsSql from '../helper/paypalSqlHelper.mjs';
 import loginHelper from '../helper/loginHelper.mjs';
+import clearCacheHelper from '../helper/clearCacheHelper.mjs';
 const connection = MysqlFactory.getInstance();
 const germany = '2';
 
 test.describe('Pay with Giropay', () => {
+    test.beforeAll(() => {
+        clearCacheHelper.clearCache();
+    });
+
     test.beforeEach(() => {
         connection.query(defaultPaypalSettingsSql);
     });
@@ -36,6 +41,8 @@ test.describe('Pay with Giropay', () => {
         await page.click('text=Giropay');
         await page.click('text=Weiter >> nth=1');
         await page.click('input[name="sAGB"]');
+
+        await page.waitForLoadState('load');
 
         await page.click('button:has-text("Zahlungspflichtig bestellen")');
         await page.click('text=Success');

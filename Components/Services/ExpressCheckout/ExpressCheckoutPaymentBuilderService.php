@@ -80,7 +80,7 @@ class ExpressCheckoutPaymentBuilderService extends PaymentBuilderService
     private function getReturnUrl()
     {
         return $this->returnUrlHelper->getReturnUrl(
-            BasketIdWhitelist::WHITELIST_IDS['PayPalExpress'], //PayPal Express Checkout basket Id,
+            BasketIdWhitelist::WHITELIST_IDS['PayPalExpress'], // PayPal Express Checkout basket Id,
             $this->requestParams->getPaymentToken(),
             [
                 'controller' => 'PaypalUnifiedExpressCheckout',

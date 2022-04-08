@@ -23,8 +23,9 @@ test.describe('Check the active state of PUI and ACDC', () => {
         await page.click('button[data-action="login"]');
 
         await page.waitForLoadState('load');
+        await page.waitForResponse('**/Index/menu*');
 
-        await page.click('.customers--main');
+        await page.hover('.customers--main');
         await page.hover('.settings--payment-methods');
         await page.hover('.sprite--paypal-unified');
         await page.click('.settings--basic-settings');

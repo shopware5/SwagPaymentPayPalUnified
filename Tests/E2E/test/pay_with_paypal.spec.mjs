@@ -3,9 +3,14 @@ import credentials from './credentials.mjs';
 import defaultPaypalSettingsSql from '../helper/paypalSqlHelper.mjs';
 import MysqlFactory from '../helper/mysqlFactory.mjs';
 import loginHelper from '../helper/loginHelper.mjs';
+import clearCacheHelper from '../helper/clearCacheHelper.mjs';
 const connection = MysqlFactory.getInstance();
 
 test.describe('Frontend', () => {
+    test.beforeAll(() => {
+        clearCacheHelper.clearCache();
+    });
+
     test.beforeEach(() => {
         connection.query(defaultPaypalSettingsSql);
     });

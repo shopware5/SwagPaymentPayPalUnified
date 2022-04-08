@@ -103,7 +103,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_F
         $userData[PaymentBuilderInterface::CUSTOMER_GROUP_USE_GROSS_PRICES] = (bool) $session->get('sUserGroupData', ['tax' => 1])['tax'];
 
         try {
-            //Query all information
+            // Query all information
             $basketData = $orderData['sBasket'];
 
             $requestParams = new PaymentBuilderParameters();
@@ -133,9 +133,9 @@ class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_F
             return;
         }
 
-        //Patch the address data into the payment.
-        //This function is only being called for PayPal classic, therefore,
-        //there is an additional action (patchAddressAction()) for the PayPal plus integration.
+        // Patch the address data into the payment.
+        // This function is only being called for PayPal classic, therefore,
+        // there is an additional action (patchAddressAction()) for the PayPal plus integration.
         /** @var PaymentAddressService $addressService */
         $addressService = $this->get('paypal_unified.payment_address_service');
         $addressPatch = new PaymentAddressPatch($addressService->getShippingAddress($userData));
@@ -181,11 +181,11 @@ class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_F
         $paymentId = $request->getParam('paymentId');
         $basketId = $request->getParam('basketId');
 
-        //Basket validation with shopware 5.2 support
+        // Basket validation with shopware 5.2 support
         if (\in_array($basketId, BasketIdWhitelist::WHITELIST_IDS, true)
             || !$this->container->initialized('basket_signature_generator')
         ) {
-            //For shopware < 5.3 and for whitelisted basket ids
+            // For shopware < 5.3 and for whitelisted basket ids
             try {
                 $payment = $this->paymentResource->get($paymentId);
             } catch (RequestException $exception) {
@@ -196,7 +196,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_F
 
             $basketValid = $this->validateBasketSimple(Payment::fromArray($payment));
         } else {
-            //For shopware > 5.3
+            // For shopware > 5.3
             $basketValid = $this->validateBasketExtended($basketId);
         }
 
@@ -274,7 +274,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_F
         /** @var RelatedResource $relatedResource */
         $relatedResource = $response->getTransactions()->getRelatedResources()->getResources()[0];
 
-        //Use TXN-ID instead of the PaymentId
+        // Use TXN-ID instead of the PaymentId
         $relatedResourceId = $relatedResource->getId();
         if (!$orderDataService->applyTransactionId($orderNumber, $relatedResourceId)) {
             $this->handleError(ErrorCodes::NO_ORDER_TO_PROCESS);
@@ -466,12 +466,12 @@ class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_F
      */
     private function validateBasketExtended($basketId = null)
     {
-        //Shopware 5.3 installed but no basket id that can be validated.
+        // Shopware 5.3 installed but no basket id that can be validated.
         if ($basketId === null) {
             return false;
         }
 
-        //New validation for Shopware 5.3.X
+        // New validation for Shopware 5.3.X
         try {
             $basket = $this->loadBasketFromSignature($basketId);
             $this->verifyBasketSignature($basketId, $basket);

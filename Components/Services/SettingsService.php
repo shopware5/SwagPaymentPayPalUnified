@@ -69,8 +69,8 @@ class SettingsService implements SettingsServiceInterface
      */
     public function getSettings($shopId = null, $settingsType = SettingsTable::GENERAL)
     {
-        //If this function is being called in the storefront, the shopId parameter is
-        //not required, because it's being provided during the DI.
+        // If this function is being called in the storefront, the shopId parameter is
+        // not required, because it's being provided during the DI.
         if ($shopId === null && $this->shop instanceof Shop) {
             $shopId = $this->shop->getId();
         }

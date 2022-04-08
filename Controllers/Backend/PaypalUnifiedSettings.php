@@ -72,7 +72,7 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
      */
     public function registerWebhookAction()
     {
-        //Generate URL
+        // Generate URL
         /** @var Enlight_Controller_Router $router */
         $router = $this->get('front')->Router();
         $url = $router->assemble([

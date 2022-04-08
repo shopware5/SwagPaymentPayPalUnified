@@ -121,7 +121,7 @@ class Frontend implements SubscriberInterface
         $productId = $args->getSubject()->Request()->getParam('sArticle');
         $category = $args->getSubject()->Request()->getParam('sCategory');
 
-        //Assign shop specific and configurable values to the view.
+        // Assign shop specific and configurable values to the view.
         $view->assign('paypalUnifiedShowLogo', $showPayPalLogo);
 
         if (!$this->shouldCheckRiskManagement($args)) {

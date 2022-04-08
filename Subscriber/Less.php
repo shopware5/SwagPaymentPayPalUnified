@@ -46,11 +46,11 @@ class Less implements SubscriberInterface
     public function onCollectLessFiles()
     {
         $less = new LessDefinition(
-            //configuration
+            // configuration
             [],
-            //less files to compile
+            // less files to compile
             [$this->pluginDirectory . '/Resources/views/frontend/_public/src/less/all.less'],
-            //import directory
+            // import directory
             $this->pluginDirectory
         );
 

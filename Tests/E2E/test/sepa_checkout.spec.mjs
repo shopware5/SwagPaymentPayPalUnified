@@ -2,12 +2,18 @@ import { test, expect } from '@playwright/test';
 import credentials from './credentials.mjs';
 import MysqlFactory from '../helper/mysqlFactory.mjs';
 import defaultPaypalSettingsSql from '../helper/paypalSqlHelper.mjs';
+import clearCacheHelper from '../helper/clearCacheHelper.mjs';
 import tryUntilSucceed from '../helper/retryHelper.mjs';
+
 const connection = MysqlFactory.getInstance();
 
 test.use({ locale: 'de-DE' });
 
 test.describe('Is SEPA fully functional', () => {
+    test.beforeAll(() => {
+        clearCacheHelper.clearCache();
+    });
+
     test.beforeEach(() => {
         connection.query(defaultPaypalSettingsSql);
     });

@@ -43,7 +43,7 @@ class TokenResource
             'grant_type' => 'client_credentials',
         ];
 
-        //Set the header temporarily for this request
+        // Set the header temporarily for this request
         $this->client->setHeader('Authorization', $credentials->toString());
 
         return $this->client->sendRequest(RequestType::POST, RequestUri::TOKEN_RESOURCE, $data, false);

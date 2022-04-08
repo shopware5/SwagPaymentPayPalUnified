@@ -1,23 +1,30 @@
 import { test, expect } from '@playwright/test';
 import MysqlFactory from '../helper/mysqlFactory.mjs';
 import defaultPaypalSettingsSql from '../helper/paypalSqlHelper.mjs';
+import clearCacheHelper from '../helper/clearCacheHelper.mjs';
 import credentials from './credentials.mjs';
 import leadingZeroProductSql from '../helper/updateProductNumberAddLeadingZero.mjs';
 import tryUntilSucceed from '../helper/retryHelper.mjs';
+import csrfHelper from '../helper/csrfHelper.mjs';
 
 const connection = MysqlFactory.getInstance();
 
 test.describe('Is Express Checkout button available', () => {
+    test.beforeAll(() => {
+        clearCacheHelper.clearCache();
+    });
+
     test.beforeEach(() => {
         connection.query(defaultPaypalSettingsSql);
     });
 
     test('Check product detail page', async ({ page }) => {
-        await page.goto('/sommerwelten/beachwear/178/strandtuch-ibiza');
-        await page.waitForLoadState('load');
+        await page.goto('/sommerwelten/beachwear/178/strandtuch-ibiza', { waitUntil: 'commit' });
+        await page.waitForResponse(/.*paypal.com.*/);
 
         const locator = await page.frameLocator('.component-frame').locator('.paypal-button');
         await expect(locator).toHaveText(/Direkt zu/);
+        await page.waitForLoadState('load');
 
         const [paypalPage] = await tryUntilSucceed(() => {
             return Promise.all([
@@ -45,12 +52,16 @@ test.describe('Is Express Checkout button available', () => {
         await paypalPage.locator('button:has-text("Jetzt zahlen")').click();
 
         await page.click('input[name="sAGB"]');
+
+        await csrfHelper.checkCsrfCookie(page);
+
         await page.click('button:has-text("Zahlungspflichtig bestellen")');
         await expect(page.locator('.teaser--title')).toHaveText(/Vielen Dank für Ihre Bestellung bei Shopware Demo/);
     });
 
     test('Check offcanvas cart', async ({ page }) => {
-        await page.goto('/sommerwelten/beachwear/178/strandtuch-ibiza');
+        await page.goto('/sommerwelten/beachwear/178/strandtuch-ibiza', { waitUntil: 'commit' });
+        await page.waitForResponse(/.*paypal.com.*/);
 
         await page.locator('text=In den Warenkorb').click();
         await page.waitForLoadState('load');
@@ -58,6 +69,7 @@ test.describe('Is Express Checkout button available', () => {
 
         const locator = await page.frameLocator('.ajax--cart >> .component-frame').locator('.paypal-button');
         await expect(locator).toHaveText(/Direkt zu/);
+        await page.waitForLoadState('load');
 
         const [paypalPage] = await tryUntilSucceed(() => {
             return Promise.all([
@@ -85,6 +97,9 @@ test.describe('Is Express Checkout button available', () => {
         await paypalPage.locator('button:has-text("Jetzt zahlen")').click();
 
         await page.click('input[name="sAGB"]');
+
+        await csrfHelper.checkCsrfCookie(page);
+
         await page.click('button:has-text("Zahlungspflichtig bestellen")');
         await expect(page.locator('.teaser--title')).toHaveText(/Vielen Dank für Ihre Bestellung bei Shopware Demo/);
     });
@@ -95,7 +110,9 @@ test.describe('Is Express Checkout button available', () => {
         await page.locator('text=In den Warenkorb').click();
         await expect(page.locator('.ajax--cart')).toHaveText(/Warenkorb bearbeiten/);
         await page.locator('text=Warenkorb bearbeiten').click();
+
         await expect(page).toHaveURL('/checkout/cart');
+        await page.waitForResponse(/.*paypal.com.*/);
 
         const locator = await page.frameLocator('.component-frame').locator('.paypal-button');
 
@@ -125,6 +142,9 @@ test.describe('Is Express Checkout button available', () => {
         await paypalPage.locator('button:has-text("Jetzt zahlen")').click();
 
         await page.click('input[name="sAGB"]');
+
+        await csrfHelper.checkCsrfCookie(page);
+
         await page.click('button:has-text("Zahlungspflichtig bestellen")');
         await expect(page.locator('.teaser--title')).toHaveText(/Vielen Dank für Ihre Bestellung bei Shopware Demo/);
     });
@@ -139,7 +159,9 @@ test.describe('Is Express Checkout button available', () => {
         await page.locator('text=In den Warenkorb').click();
         await expect(page.locator('.ajax--cart')).toHaveText(/Zur Kasse/);
         await page.locator('text=Zur Kasse').click();
+
         await expect(page).toHaveURL('/checkout/confirm');
+        await page.waitForResponse(/.*paypal.com.*/);
 
         const locator = await page.frameLocator('.component-frame').locator('.paypal-button');
 
@@ -169,12 +191,16 @@ test.describe('Is Express Checkout button available', () => {
         await paypalPage.locator('button:has-text("Jetzt zahlen")').click();
 
         await page.click('input[name="sAGB"]');
+
+        await csrfHelper.checkCsrfCookie(page);
+
         await page.click('button:has-text("Zahlungspflichtig bestellen")');
         await expect(page.locator('.teaser--title')).toHaveText(/Vielen Dank für Ihre Bestellung bei Shopware Demo/);
     });
 
     test('Check product listing page @notIn5.2', async ({ page }) => {
-        await page.goto('/sommerwelten/beachwear/');
+        await page.goto('/sommerwelten/beachwear/', { waitUntil: 'commit' });
+        await page.waitForResponse(/.*paypal.com.*/);
 
         const locator = await page.frameLocator('.component-frame >> nth=1').locator('.paypal-button');
 
@@ -204,11 +230,16 @@ test.describe('Is Express Checkout button available', () => {
         await paypalPage.locator('button:has-text("Jetzt zahlen")').click();
 
         await page.click('input[name="sAGB"]');
+
+        await csrfHelper.checkCsrfCookie(page);
+
         await page.click('button:has-text("Zahlungspflichtig bestellen")');
         await expect(page.locator('.teaser--title')).toHaveText(/Vielen Dank für Ihre Bestellung bei Shopware Demo/);
     });
 
     test('Check product cart modal @notIn5.2', async ({ page }) => {
+        const offcanvasLabelLocator = page.locator('label', { hasText: 'Wenn aktiv, wird der Offcanvas Warenkorb verwendet.' });
+
         await page.goto('/backend');
         await expect(page).toHaveTitle(/Backend/);
 
@@ -217,8 +248,9 @@ test.describe('Is Express Checkout button available', () => {
         await page.click('#button-1019-btnEl');
 
         await page.waitForLoadState('load');
+        await page.waitForResponse('**/Index/menu*');
 
-        await page.click('.settings--main');
+        await page.hover('.settings--main');
         await page.click('.settings--theme-manager');
 
         await page.waitForLoadState('load');
@@ -228,13 +260,18 @@ test.describe('Is Express Checkout button available', () => {
 
         await page.waitForLoadState('load');
 
-        /** Tab -> Konfiguration */
-        await page.click('//html/body/div[6]/div[5]/div[2]/div/div/div/div/div/div[1]/div[1]/div[2]/div/div[2]/em/button/span[1]');
+        await page
+            .locator('.x-tab', { has: page.locator('button', { hasText: 'Konfiguration' }) })
+            .first()
+            .click();
 
         await page.waitForLoadState('load');
 
-        /** Wenn aktiv, wird der Offcanvas Warenkorb verwendet. */
-        await page.click('//html/body/div[6]/div[5]/div[2]/div/div/div/div/div/div[2]/div[2]/div/fieldset[1]/div/table[1]/tbody/tr/td[2]/input');
+        await page
+            .locator('.x-form-cb-checked') // Expect the offcanvas cart to be active
+            .locator('.x-form-item-body', { has: offcanvasLabelLocator })
+            .locator('.x-form-checkbox')
+            .click();
 
         await page.click('text=Speichern');
 
@@ -242,10 +279,17 @@ test.describe('Is Express Checkout button available', () => {
 
         await page.click('text=Themes kompilieren');
 
+        await page.waitForLoadState('load');
+
         await page.goto('/sommerwelten/beachwear/178/strandtuch-ibiza');
 
         await page.locator('text=In den Warenkorb').click();
-        const locator = await page.frameLocator('.js--modal >> .component-frame').locator('.paypal-button');
+
+        await page.waitForLoadState('load');
+
+        await page.waitForResponse(/.*paypal.com.*/);
+
+        const locator = await page.frameLocator('.js--modal .component-frame').locator('.paypal-button');
 
         const [paypalPage] = await tryUntilSucceed(() => {
             return Promise.all([
@@ -265,7 +309,7 @@ test.describe('Is Express Checkout button available', () => {
 
         await page.waitForLoadState('load');
 
-        await page.click('.settings--main');
+        await page.hover('.settings--main');
         await page.click('.settings--theme-manager');
 
         await page.waitForLoadState('load');
@@ -275,25 +319,32 @@ test.describe('Is Express Checkout button available', () => {
 
         await page.waitForLoadState('load');
 
-        /** Tab -> Konfiguration */
-        await page.click('//html/body/div[6]/div[5]/div[2]/div/div/div/div/div/div[1]/div[1]/div[2]/div/div[2]/em/button/span[1]');
+        await page
+            .locator('.x-tab', { has: page.locator('button', { hasText: 'Konfiguration' }) })
+            .first()
+            .click();
 
         await page.waitForLoadState('load');
 
-        /** Wenn aktiv, wird der Offcanvas Warenkorb verwendet. */
-        await page.click('//html/body/div[6]/div[5]/div[2]/div/div/div/div/div/div[2]/div[2]/div/fieldset[1]/div/table[1]/tbody/tr/td[2]/input');
+        await page
+            .locator('.x-form-item-body', { has: offcanvasLabelLocator })
+            .locator('.x-form-checkbox')
+            .click();
 
         await page.click('text=Speichern');
 
         await page.waitForLoadState('load');
 
         await page.click('text=Themes kompilieren');
+
+        await page.waitForLoadState('load');
     });
 
     test('Test if product with order number with leading zero is buy able', async ({ page }) => {
         connection.query(leadingZeroProductSql.setProductNumberWithLeadingZero());
 
-        await page.goto('/genusswelten/koestlichkeiten/272/spachtelmasse');
+        await page.goto('/genusswelten/koestlichkeiten/272/spachtelmasse', { waitUntil: 'commit' });
+        await page.waitForResponse(/.*paypal.com.*/);
 
         const locator = await page.frameLocator('.component-frame').locator('.paypal-button');
         await page.waitForLoadState('load');

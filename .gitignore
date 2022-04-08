@@ -5,3 +5,4 @@
 .psh.yml.override
 .php-cs-fixer.cache
 /Tests/E2E/.env
+.ci/.env

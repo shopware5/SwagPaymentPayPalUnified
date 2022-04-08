@@ -289,8 +289,14 @@
                     theme: 'light'
                 });
 
-                $.loadingIndicator.loader.$loader.css('z-index', 990);
-                $.loadingIndicator.loader.overlay.$overlay.css('z-index', 990);
+                try {
+                    $.loadingIndicator.loader.$loader.css('z-index', 990);
+                    $.loadingIndicator.loader.overlay.$overlay.css('z-index', 990);
+                } catch (e) {
+                    // Compatibility with older versions
+                    $.loadingIndicator.$loader.css('z-index', 990);
+                    $.overlay.getElement().css('z-index', 990);
+                }
 
                 hostedFields.submit(this.opts.cardHolderData)
                     .then(this.captureOrder.bind(this))

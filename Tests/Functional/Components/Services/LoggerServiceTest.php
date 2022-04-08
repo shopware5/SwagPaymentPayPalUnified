@@ -23,7 +23,7 @@ class LoggerServiceTest extends TestCase
     {
         $fileName = $this->getLogfile();
 
-        //Reset the logfile
+        // Reset the logfile
         \file_put_contents($fileName, '');
 
         $this->insertTestSettings();
@@ -49,7 +49,7 @@ class LoggerServiceTest extends TestCase
     {
         $fileName = $this->getLogfile();
 
-        //Reset the logfile
+        // Reset the logfile
         \file_put_contents($fileName, '');
 
         $this->insertTestSettings();
@@ -75,7 +75,7 @@ class LoggerServiceTest extends TestCase
     {
         $fileName = $this->getLogfile();
 
-        //Reset the logfile
+        // Reset the logfile
         \file_put_contents($fileName, '');
 
         $loggerService = $this->getContainer()->get('paypal_unified.logger_service');
@@ -125,6 +125,6 @@ class LoggerServiceTest extends TestCase
         static::assertTrue(\is_array($lines));
         $lineCount = \count($lines);
 
-        return $lines[$lineCount - 2]; //the actual last line is blank
+        return $lines[$lineCount - 2]; // the actual last line is blank
     }
 }

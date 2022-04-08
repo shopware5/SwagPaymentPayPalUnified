@@ -57,7 +57,7 @@ class PaymentMeans implements SubscriberInterface
             if (\in_array((int) $paymentMethod['id'], $activePayPalPaymentMethodIds, true)
                 && (!$this->settingsService->hasSettings() || !$this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_ACTIVE))
             ) {
-                //Force unset the payment method, because it's not available without any settings.
+                // Force unset the payment method, because it's not available without any settings.
                 unset($availableMethods[$index]);
             }
         }

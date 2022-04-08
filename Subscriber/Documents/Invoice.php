@@ -94,7 +94,7 @@ class Invoice implements SubscriberInterface
 
         $orderPaymentMethodId = (int) $document->_order->payment['id'];
 
-        //This order has not been payed with paypal unified.
+        // This order has not been payed with paypal unified.
         if ($orderPaymentMethodId !== $unifiedPaymentId) {
             return;
         }

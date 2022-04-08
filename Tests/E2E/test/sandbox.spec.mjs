@@ -20,9 +20,9 @@ test.describe('Backend testing', () => {
         await page.fill('input[name="username"]', credentials.defaultBackendUserUsername);
         await page.fill('input[name="password"]', credentials.defaultBackendUserPassword);
         await page.click('#button-1019-btnEl');
-        await page.waitForLoadState('networkidle');
+        await page.waitForLoadState('load');
 
-        await page.click('.customers--main');
+        await page.hover('.customers--main');
         await page.hover('.settings--payment-methods');
         await page.hover('.sprite--paypal-unified');
         await page.click('.settings--basic-settings');

@@ -69,7 +69,7 @@ class PaymentDetailsService
         $legacyPaymentIds = $this->legacyService->getClassicPaymentIds();
 
         try {
-            //Check for a legacy payment
+            // Check for a legacy payment
             if (\in_array($paymentMethodId, $legacyPaymentIds, true)) {
                 $viewParameter = $this->prepareLegacyDetails($transactionId);
             } else {
@@ -124,7 +124,7 @@ class PaymentDetailsService
         $viewParameter['history'] = $this->transactionHistoryBuilder->getTransactionHistory($paymentDetails);
 
         if ($paymentDetails['intent'] === PaymentIntent::AUTHORIZE) {
-            //Separately assign the data, to provide an easier usage
+            // Separately assign the data, to provide an easier usage
             $viewParameter['authorization'] = $paymentDetails['transactions'][0]['related_resources'][0]['authorization'];
         } elseif ($paymentDetails['intent'] === PaymentIntent::ORDER) {
             $viewParameter['order'] = $paymentDetails['transactions'][0]['related_resources'][0]['order'];

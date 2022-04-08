@@ -1,0 +1,67 @@
+x-default-environment: &default-environment
+    SW_HOST:
+    SW_BASE_PATH:
+    DB_HOST:
+    DB_PORT:
+    DB_USER:
+    DB_PASSWORD:
+    DB_NAME:
+    ELASTICSEARCH_HOST:
+    PLUGIN_NAME:
+
+x-playwright-environment: &playwright-environment
+    PAYPAL_CUSTOMER_EMAIL:
+    PAYPAL_CUSTOMER_PASSWORD:
+    PAYPAL_CREDIT_CARD:
+    PAYPAL_SANDBOX_CLIENT_ID:
+    PAYPAL_SANDBOX_CLIENT_SECRET:
+    PAYPAL_SANDBOX_MERCHANT_ID:
+    PAYPAL_SEPA_IBAN:
+    PAYPAL_SEPA_PHONE:
+    PAYPAL_SEPA_BIRTHDAY:
+
+services:
+    mysql:
+        image: mysql:5.7
+        environment:
+            MYSQL_RANDOM_ROOT_PASSWORD: "true"
+            MYSQL_USER: "${DB_USER}"
+            MYSQL_PASSWORD: "${DB_PASSWORD}"
+            MYSQL_DATABASE: "${DB_NAME}"
+        tmpfs:
+            - "/var/lib/mysql"
+    shopware:
+        image: gitlab.shopware.com:5005/shopware/5/product/image/aio:latest
+        environment:
+            <<: *default-environment
+        volumes:
+            - "${CI_PROJECT_DIR}:/var/www/html/custom/plugins/SwagPaymentPayPalUnified"
+        depends_on:
+            mysql:
+                condition: "service_started"
+    check-shop-availability:
+        image: curlimages/curl:latest
+        command: [ "-f", "-s", "-I", "-4", "--retry", "10", "--retry-connrefused", "--retry-max-time", "128", "--retry-delay", "5", "http://${SW_HOST}" ]
+        depends_on:
+            shopware:
+                condition: "service_started"
+    playwright:
+        image: mcr.microsoft.com/playwright:v1.22.0-focal
+        environment:
+            <<: *default-environment
+            <<: *playwright-environment
+        user: "pwuser:pwuser"
+        volumes:
+            - "${CI_PROJECT_DIR}:/project"
+        working_dir: "/project/Tests/E2E"
+        command: ["sh", "-c", "npm install && npm run e2e:run"]
+        depends_on:
+            mysql:
+                condition: "service_started"
+            shopware:
+                condition: "service_started"
+            check-shop-availability:
+                condition: "service_completed_successfully"
+    playwright-debug:
+        extends: playwright
+        command: ["sh", "-c", "npm install && npm run e2e:run:debug"]

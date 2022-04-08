@@ -2,11 +2,16 @@ import { test, expect } from '@playwright/test';
 import MysqlFactory from '../helper/mysqlFactory.mjs';
 import defaultPaypalSettingsSql from '../helper/paypalSqlHelper.mjs';
 import loginHelper from '../helper/loginHelper.mjs';
+import clearCacheHelper from '../helper/clearCacheHelper.mjs';
 const connection = MysqlFactory.getInstance();
 const sweden = '25';
 const sek = '5';
 
 test.describe('Pay with trustly', () => {
+    test.beforeAll(() => {
+        clearCacheHelper.clearCache();
+    });
+
     test.beforeEach(() => {
         connection.query(defaultPaypalSettingsSql);
     });
@@ -41,6 +46,8 @@ test.describe('Pay with trustly', () => {
         await page.click('text=Trustly');
         await page.click('text=Weiter >> nth=1');
         await page.click('input[name="sAGB"]');
+
+        await page.waitForLoadState('load');
 
         await page.click('button:has-text("Zahlungspflichtig bestellen")');
         await expect(page.locator('#successSubmit')).toHaveValue('Success');

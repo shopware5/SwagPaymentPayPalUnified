@@ -8,13 +8,12 @@
 
 return [
     'db' => [
-        'username' => 'root',
-        'password' => 'root',
-        'dbname' => 'shopware',
-        'host' => 'mysql',
-        'port' => '3306',
+        'username' => '%db.user%',
+        'password' => '%db.password%',
+        'dbname' => '%db.database%',
+        'host' => '%db.host%',
+        'port' => '%db.port%',
     ],
-
     'csrfProtection' => [
         'frontend' => true,
         'backend' => false,

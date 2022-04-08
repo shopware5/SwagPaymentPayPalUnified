@@ -78,8 +78,8 @@ class ClientService
         $this->client = new GuzzleClient($factory);
         $this->dependencyProvider = $dependencyProvider;
 
-        //Backend does not have any active shop. In order to authenticate there, please use
-        //the "configure()"-function instead.
+        // Backend does not have any active shop. In order to authenticate there, please use
+        // the "configure()"-function instead.
         if (!$this->settingsService->hasSettings() || !$this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_ACTIVE)) {
             return;
         }
@@ -87,8 +87,8 @@ class ClientService
         $environment = (bool) $this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_SANDBOX);
         $environment === true ? $this->baseUrl = BaseURL::SANDBOX : $this->baseUrl = BaseURL::LIVE;
 
-        //Set Partner-Attribution-Id
-        $this->setPartnerAttributionId(PartnerAttributionId::PAYPAL_CLASSIC); //Default
+        // Set Partner-Attribution-Id
+        $this->setPartnerAttributionId(PartnerAttributionId::PAYPAL_CLASSIC); // Default
     }
 
     /**
@@ -109,7 +109,7 @@ class ClientService
             $this->baseUrl = BaseURL::LIVE;
         }
 
-        //Create authentication
+        // Create authentication
         $credentials = new OAuthCredentials();
 
         $credentials->setRestId($sandbox ? $settings['sandboxClientId'] : $settings['clientId']);
@@ -234,7 +234,7 @@ class ClientService
             $this->baseUrl = BaseURL::LIVE;
         }
 
-        //Create authentication
+        // Create authentication
         $credentials = new OAuthCredentials();
 
         $credentials->setRestId($this->settingsService->get(

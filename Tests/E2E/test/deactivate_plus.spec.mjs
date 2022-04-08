@@ -25,7 +25,7 @@ test.describe('Backend testing: Check if plus popup is shown', () => {
 
         await page.waitForLoadState('load');
 
-        await page.click('.customers--main');
+        await page.hover('.customers--main');
         await page.hover('.settings--payment-methods');
         await page.hover('.sprite--paypal-unified');
         await page.click('.settings--basic-settings');
