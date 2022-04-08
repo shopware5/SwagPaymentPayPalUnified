@@ -14,6 +14,11 @@ use Shopware\Models\Order\Status;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Amount;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Payments;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Payments\Authorization;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Payments\Capture;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\PaymentIntentV2;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\PaymentStatusV2;
 use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
@@ -71,11 +76,11 @@ class PaypalUnifiedApmTest extends PaypalPaymentControllerTestCase
             'intent' => $intent,
             'status' => $paypalOrderState,
             'purchaseUnits' => [
-                static::createConfiguredMock(Order\PurchaseUnit::class, [
-                    'getAmount' => static::createMock(Order\PurchaseUnit\Amount::class),
-                    'getPayments' => static::createConfiguredMock(Order\PurchaseUnit\Payments::class, [
-                        'getCaptures' => [static::createMock(Order\PurchaseUnit\Payments\Capture::class)],
-                        'getAuthorizations' => [static::createMock(Order\PurchaseUnit\Payments\Authorization::class)],
+                $this->createConfiguredMock(PurchaseUnit::class, [
+                    'getAmount' => $this->createMock(Amount::class),
+                    'getPayments' => $this->createConfiguredMock(Payments::class, [
+                        'getCaptures' => [$this->createMock(Capture::class)],
+                        'getAuthorizations' => [$this->createMock(Authorization::class)],
                     ]),
                 ]),
             ],
@@ -88,9 +93,10 @@ class PaypalUnifiedApmTest extends PaypalPaymentControllerTestCase
 
         $this->expectPaymentStatusToBeSetTo($expectedPaymentState);
 
-        $this->settingsService->method('get')->willReturn(static::returnValueMap([
+        $this->settingsService->method('get')->willReturnMap([
             [SettingsServiceInterface::SETTING_GENERAL_SEND_ORDER_NUMBER, SettingsTable::GENERAL, true],
-        ]));
+            [SettingsServiceInterface::SETTING_GENERAL_ORDER_NUMBER_PREFIX, SettingsTable::GENERAL, ''],
+        ]);
         $this->getController(\Shopware_Controllers_Frontend_PaypalUnifiedApm::class)
             ->returnAction();
     }
@@ -137,8 +143,7 @@ class PaypalUnifiedApmTest extends PaypalPaymentControllerTestCase
             return [$key, null, $value];
         }, array_keys($parameters), array_values($parameters));
 
-        $this->request->method('getParam')
-            ->will(static::returnValueMap($valueMap));
+        $this->request->method('getParam')->willReturnMap($valueMap);
     }
 
     /**
@@ -149,10 +154,9 @@ class PaypalUnifiedApmTest extends PaypalPaymentControllerTestCase
      */
     private function givenThePayPalOrder($orderId, $order = null)
     {
-        $this->orderResource->method('get')
-            ->will(static::returnValueMap([
-                [$orderId, $order ?: static::createMock(Order::class)],
-            ]));
+        $this->orderResource->method('get')->willReturnMap([
+            [$orderId, $order ?: $this->createMock(Order::class)],
+        ]);
     }
 
     /**
@@ -162,7 +166,7 @@ class PaypalUnifiedApmTest extends PaypalPaymentControllerTestCase
      */
     private function prepareShopwareOrder($orderId)
     {
-        $db = static::createMock(\Enlight_Components_Db_Adapter_Pdo_Mysql::class);
+        $db = $this->createMock(\Enlight_Components_Db_Adapter_Pdo_Mysql::class);
 
         $db->method('fetchOne')
             ->willReturn($orderId);
@@ -243,7 +247,6 @@ class PaypalUnifiedApmTest extends PaypalPaymentControllerTestCase
      */
     private function givenTheCartIsValid()
     {
-        $this->basketValidator->method('validate')
-            ->willReturn(true);
+        $this->basketValidator->method('validate')->willReturn(true);
     }
 }
