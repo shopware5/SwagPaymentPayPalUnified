@@ -5,12 +5,23 @@
     <label lang="de">PayPal</label>
     <label lang="en">PayPal</label>
 
-    <version>4.0.1</version>
+    <version>4.0.2</version>
     <copyright>(c) by shopware AG</copyright>
     <license>MIT</license>
     <link>http://store.shopware.com</link>
     <author>shopware AG</author>
     <compatibility minVersion="5.2.27" maxVersion="5.99.99"/>
+
+    <changelog version="4.0.2">
+        <changes lang="de">
+            PT-12692 - Das PayPal-Bestellmodul lässt sich wieder öffnen, wenn der Shop eine virtuelle URL konfiguriert hat.
+            PT-12697 - Fehler beim Error-Handling von Kreditkartenzahlungen;
+        </changes>
+        <changes lang="en">
+            PT-12692 - The PayPal order module can be opened again if the shop has configured a virtual URL.
+            PT-12697 - Fixed error handling of credit card payments;
+        </changes>
+    </changelog>
 
     <changelog version="4.0.1">
         <changes lang="de">
