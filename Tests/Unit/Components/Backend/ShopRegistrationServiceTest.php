@@ -19,13 +19,13 @@ use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 class ShopRegistrationServiceTest extends TestCase
 {
     /**
-     * @beforeClass
+     * @before
      *
      * @return void
      */
     public function skipTestIfShopRegistrationServiceInterfaceDoesNotExist()
     {
-        if (!class_exists(ShopRegistrationServiceInterface::class)) {
+        if (!interface_exists(ShopRegistrationServiceInterface::class)) {
             static::markTestSkipped(sprintf('Skipping %s, as %s does not exist.', self::class, 'Shopware\Components\ShopRegistrationServiceInterface'));
         }
     }
@@ -45,7 +45,7 @@ class ShopRegistrationServiceTest extends TestCase
      */
     public function testThrowsInvalidArgumentException()
     {
-        static::expectException(\InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
 
         /* @phpstan-ignore-next-line */
         $this->getShopRegistrationService()->registerShopById('9d253e94-457c-4943-aa3c-03304d1a8347');
@@ -60,19 +60,19 @@ class ShopRegistrationServiceTest extends TestCase
      */
     public function testDefaultIsUsedWhenNoShopIsFound($shopExists)
     {
-        $shopRepositoryMock = static::createMock(Repository::class);
+        $shopRepositoryMock = $this->createMock(Repository::class);
 
         $shopRepositoryMock->method('getActiveById')
-            ->willReturn($shopExists ? static::createMock(Shop::class) : null);
+            ->willReturn($shopExists ? $this->createMock(Shop::class) : null);
 
         $shopRepositoryMock->method('getActiveDefault')
-            ->willReturn(static::createMock(Shop::class));
+            ->willReturn($this->createMock(Shop::class));
 
         $shopRepositoryMock->expects($shopExists ? static::never() : static::once())
             ->method('getActiveDefault');
 
         $registrationService = $this->getShopRegistrationService(
-            static::createConfiguredMock(ModelManager::class, [
+            $this->createConfiguredMock(ModelManager::class, [
                 'getRepository' => $shopRepositoryMock,
             ])
         );
@@ -89,9 +89,9 @@ class ShopRegistrationServiceTest extends TestCase
      */
     public function testRegisterResourcesIsCalled($registrationServiceProvided)
     {
-        $shopRepositoryMock = static::createMock(Repository::class);
-        $shopMock = static::createMock(Shop::class);
-        $registrationServiceMock = static::createMock(ShopRegistrationServiceInterface::class);
+        $shopRepositoryMock = $this->createMock(Repository::class);
+        $shopMock = $this->createMock(Shop::class);
+        $registrationServiceMock = $this->createMock(ShopRegistrationServiceInterface::class);
 
         $shopMock->expects($registrationServiceProvided ? static::never() : static::once())
             ->method('registerResources');
@@ -104,7 +104,7 @@ class ShopRegistrationServiceTest extends TestCase
             ->with($shopMock);
 
         $registrationService = $this->getShopRegistrationService(
-            static::createConfiguredMock(ModelManager::class, [
+            $this->createConfiguredMock(ModelManager::class, [
                 'getRepository' => $shopRepositoryMock,
             ]),
             null,
@@ -157,8 +157,8 @@ class ShopRegistrationServiceTest extends TestCase
         $registrationService = null
     ) {
         return new ShopRegistrationService(
-            $modelManager instanceof ModelManager ? $modelManager : static::createMock(ModelManager::class),
-            $settingsService instanceof SettingsServiceInterface ? $settingsService : static::createMock(SettingsServiceInterface::class),
+            $modelManager instanceof ModelManager ? $modelManager : $this->createMock(ModelManager::class),
+            $settingsService instanceof SettingsServiceInterface ? $settingsService : $this->createMock(SettingsServiceInterface::class),
             $registrationService
         );
     }

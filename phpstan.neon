@@ -35,4 +35,3 @@ parameters:
             message: "#^Unreachable statement \\- code above always terminates\\.$#"
             paths:
                  - Tests/Functional/Subscriber/AdvancedCreditDebitCardSubscriberTest.php
-                 - Tests/Functional/Subscriber/FrontendSubscriberTest.php

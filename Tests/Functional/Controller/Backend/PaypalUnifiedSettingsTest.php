@@ -170,13 +170,16 @@ class PaypalUnifiedSettingsTest extends TestCase
      */
     private function createRequestMock($shopId = null, $payerId = null, array $paymentMethodCapabilityNames = null, array $productSubscriptionNames = null)
     {
-        return new RequestMock([
+        $request = new RequestMock();
+        $request->setParams([
             'shopId' => $shopId,
             'payerId' => $payerId,
             'paymentMethodCapabilityNames' => $paymentMethodCapabilityNames,
             'productSubscriptionNames' => $productSubscriptionNames,
             'sandbox' => true,
         ]);
+
+        return $request;
     }
 
     /**
@@ -184,7 +187,9 @@ class PaypalUnifiedSettingsTest extends TestCase
      */
     private function createController(RequestMock $requestMock)
     {
-        $controller = new Shopware_Controllers_Backend_PaypalUnifiedSettings();
+        $response = new \Enlight_Controller_Response_ResponseTestCase();
+        /** @var Shopware_Controllers_Backend_PaypalUnifiedSettings $controller */
+        $controller = \Enlight_Class::Instance(Shopware_Controllers_Backend_PaypalUnifiedSettings::class, [$requestMock, $response]);
 
         $controller->setRequest($requestMock);
         $controller->setContainer($this->getContainer());

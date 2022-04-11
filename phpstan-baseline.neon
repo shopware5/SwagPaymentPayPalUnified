@@ -2991,46 +2991,6 @@ parameters:
 			path: Tests/Functional/Components/Services/RiskManagement/RiskManagementHelperTest.php
 
 		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Components\\\\Services\\\\RiskManagement\\\\RiskManagementServiceTest\\:\\:getRiskManagement\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Components/Services/RiskManagement/RiskManagementServiceTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Components\\\\Services\\\\RiskManagement\\\\RiskManagementServiceTest\\:\\:testIsPayPalNotAllowed\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Components/Services/RiskManagement/RiskManagementServiceTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Components\\\\Services\\\\RiskManagement\\\\RiskManagementServiceTest\\:\\:testIsPayPalNotAllowedIsProductInCategory\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Components/Services/RiskManagement/RiskManagementServiceTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Components\\\\Services\\\\RiskManagement\\\\RiskManagementServiceTest\\:\\:testIsPayPalNotAllowedIsProductInCategoryByCategory\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Components/Services/RiskManagement/RiskManagementServiceTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Components\\\\Services\\\\RiskManagement\\\\RiskManagementServiceTest\\:\\:testIsPayPalNotAllowedTestAttrIs\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Components/Services/RiskManagement/RiskManagementServiceTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Components\\\\Services\\\\RiskManagement\\\\RiskManagementServiceTest\\:\\:testIsPayPalNotAllowedTestAttrIsCategory\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Components/Services/RiskManagement/RiskManagementServiceTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Components\\\\Services\\\\RiskManagement\\\\RiskManagementServiceTest\\:\\:testIsPayPalNotAllowedTestAttrIsNot\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Components/Services/RiskManagement/RiskManagementServiceTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Components\\\\Services\\\\RiskManagement\\\\RiskManagementServiceTest\\:\\:testIsPayPalNotAllowedTestAttrIsNotCatagory\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Components/Services/RiskManagement/RiskManagementServiceTest.php
-
-		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Components\\\\Services\\\\SettingsServiceTest\\:\\:createExpressTestSettings\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: Tests/Functional/Components/Services/SettingsServiceTest.php

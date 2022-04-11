@@ -100,6 +100,7 @@ class FrontendSubscriberTest extends TestCase
         $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
             'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
         ]);
+        $this->getContainer()->get('front')->setRequest($request);
 
         $subscriber->onPostDispatchSecure($enlightEventArgs);
 
@@ -164,7 +165,6 @@ class FrontendSubscriberTest extends TestCase
 
     public function testOnPostDispatchSecureShouldAssignDataToViewShouldBeTrue()
     {
-        static::markTestSkipped('Needs more time for investigation');
         Shopware()->Front()->setRequest(new \Enlight_Controller_Request_RequestHttp());
 
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_product_in_category.sql');
@@ -192,7 +192,6 @@ class FrontendSubscriberTest extends TestCase
 
     public function testOnPostDispatchSecureShouldAssignDataToViewShouldBeFalse()
     {
-        static::markTestSkipped('Needs more time for investigation');
         Shopware()->Front()->setRequest(new \Enlight_Controller_Request_RequestHttp());
 
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_product_in_category.sql');
