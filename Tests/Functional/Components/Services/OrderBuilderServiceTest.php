@@ -96,11 +96,11 @@ class OrderBuilderServiceTest extends TestCase
         static::assertSame('PAY_NOW', $payPalOrderData->getApplicationContext()->getUserAction());
 
         if (method_exists($this, 'assertStringContainsString')) {
-            static::assertStringContainsString('http://localhost/PaypalUnifiedV2/return', $payPalOrderData->getApplicationContext()->getReturnUrl());
-            static::assertStringContainsString('http://localhost/PaypalUnifiedV2/cancel', $payPalOrderData->getApplicationContext()->getCancelUrl());
+            static::assertStringContainsString('/PaypalUnifiedV2/return', $payPalOrderData->getApplicationContext()->getReturnUrl());
+            static::assertStringContainsString('/PaypalUnifiedV2/cancel', $payPalOrderData->getApplicationContext()->getCancelUrl());
         } else {
-            static::assertContains('http://localhost/PaypalUnifiedV2/return', $payPalOrderData->getApplicationContext()->getReturnUrl());
-            static::assertContains('http://localhost/PaypalUnifiedV2/cancel', $payPalOrderData->getApplicationContext()->getCancelUrl());
+            static::assertContains('/PaypalUnifiedV2/return', $payPalOrderData->getApplicationContext()->getReturnUrl());
+            static::assertContains('/PaypalUnifiedV2/cancel', $payPalOrderData->getApplicationContext()->getCancelUrl());
         }
 
         // Check purchase units

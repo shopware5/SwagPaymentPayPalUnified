@@ -9,15 +9,23 @@
 namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services\RiskManagement;
 
 use PHPUnit\Framework\TestCase;
+use Shopware\Bundle\AttributeBundle\Repository\CustomerRepository;
 use SwagPaymentPayPalUnified\Components\Services\RiskManagement\RiskManagement;
 use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
+use SwagPaymentPayPalUnified\Tests\Functional\ShopRegistrationTrait;
 
 class RiskManagementServiceTest extends TestCase
 {
     use ContainerTrait;
     use DatabaseTestCaseTrait;
+    use ShopRegistrationTrait;
 
+    const SKIP_MESSAGE = 'This test causes FrontendSubscriberTest::testOnPostDispatchSecureShouldAssignFalseToView and FrontendSubscriberTest::testOnPostDispatchSecureShouldAssignDataToViewShouldBeTrue to fail on Shopware 5.4 an older';
+
+    /**
+     * @return void
+     */
     public function testIsPayPalNotAllowed()
     {
         $this->getContainer()->get('session')->offsetSet('sUserId', null);
@@ -28,6 +36,9 @@ class RiskManagementServiceTest extends TestCase
         static::assertFalse($this->getRiskManagement()->isPayPalNotAllowed());
     }
 
+    /**
+     * @return void
+     */
     public function testIsPayPalNotAllowedTestAttrIsNot()
     {
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_attr_is_not.sql');
@@ -43,7 +54,10 @@ class RiskManagementServiceTest extends TestCase
         static::assertTrue($this->getRiskManagement()->isPayPalNotAllowed(37));
     }
 
-    public function testIsPayPalNotAllowedTestAttrIsNotCatagory()
+    /**
+     * @return void
+     */
+    public function testIsPayPalNotAllowedTestAttrIsNotCategory()
     {
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_attr_is_not.sql');
         static::assertTrue(\is_string($sql));
@@ -64,6 +78,9 @@ class RiskManagementServiceTest extends TestCase
         }
     }
 
+    /**
+     * @return void
+     */
     public function testIsPayPalNotAllowedTestAttrIs()
     {
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_attr_is.sql');
@@ -79,6 +96,9 @@ class RiskManagementServiceTest extends TestCase
         static::assertFalse($this->getRiskManagement()->isPayPalNotAllowed(37));
     }
 
+    /**
+     * @return void
+     */
     public function testIsPayPalNotAllowedTestAttrIsCategory()
     {
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_attr_is.sql');
@@ -100,35 +120,39 @@ class RiskManagementServiceTest extends TestCase
         }
     }
 
+    /**
+     * @return void
+     */
     public function testIsPayPalNotAllowedIsProductInCategory()
     {
+        if (!class_exists(CustomerRepository::class)) {
+            static::markTestSkipped(self::SKIP_MESSAGE);
+        }
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_product_in_category.sql');
         static::assertTrue(\is_string($sql));
         $this->getContainer()->get('dbal_connection')->exec($sql);
 
-        $request = new \Enlight_Controller_Request_RequestHttp();
-        $this->setRequestParameterToFront($request, 'frontend', 'detail');
-
-        $this->getContainer()->get('front')->setResponse(new \Enlight_Controller_Response_ResponseHttp());
-
-        static::assertTrue($this->getRiskManagement()->isPayPalNotAllowed('178'));
+        static::assertTrue($this->getRiskManagement()->isPayPalNotAllowed(178));
     }
 
+    /**
+     * @return void
+     */
     public function testIsPayPalNotAllowedIsProductInCategoryByCategory()
     {
+        if (!class_exists(CustomerRepository::class)) {
+            static::markTestSkipped(self::SKIP_MESSAGE);
+        }
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_product_in_category.sql');
         static::assertTrue(\is_string($sql));
         $this->getContainer()->get('dbal_connection')->exec($sql);
 
-        $request = new \Enlight_Controller_Request_RequestHttp();
-        $this->setRequestParameterToFront($request, 'frontend', 'detail');
-
-        $this->getContainer()->get('front')->setRequest($request);
-        $this->getContainer()->get('front')->setResponse(new \Enlight_Controller_Response_ResponseHttp());
-
-        static::assertTrue($this->getRiskManagement()->isPayPalNotAllowed(null, '6'));
+        static::assertTrue($this->getRiskManagement()->isPayPalNotAllowed(null, 6));
     }
 
+    /**
+     * @return RiskManagement
+     */
     private function getRiskManagement()
     {
         return new RiskManagement(

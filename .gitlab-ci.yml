@@ -155,6 +155,7 @@ PHP analyze:
         - make phpstan
     artifacts:
 
+
 Code Coverage:
     extends: .phpunit_base
     script:
