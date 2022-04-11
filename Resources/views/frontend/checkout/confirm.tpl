@@ -56,6 +56,16 @@
     {/block}
 {/block}
 
+{* PayPal PUI integration *}
+{block name='frontend_checkout_confirm_left_payment_method'}
+    {$smarty.block.parent}
+    {block name='frontend_checkout_confirm_premiums_paypal_unified_pay_upon_invoice'}
+        {if $showPayUponInvoiceBirthdayField || $showPayUponInvoicePhoneField}
+            {include file='frontend/paypal_unified/pay_upon_invoice/extra_fields.tpl'}
+        {/if}
+    {/block}
+{/block}
+
 {* PayPal In-Context and SPB integration *}
 {block name='frontend_checkout_confirm_submit'}
     {block name='frontend_checkout_confirm_submit_paypal_unified_in_context'}

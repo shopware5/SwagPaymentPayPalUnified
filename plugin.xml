@@ -12,6 +12,15 @@
     <author>shopware AG</author>
     <compatibility minVersion="5.2.27" maxVersion="5.99.99"/>
 
+    <changelog version="REPLACE_GLOBAL_WITH_NEXT_VERSION">
+        <changes lang="de">
+            PT-12674 - Zusätzliche Felder für Telefonnummer und Geburtstag beim kauf auf Rechnung hinzugefügt;
+        </changes>
+        <changes lang="en">
+            PT-12674 - Added additional phone number and birthday fields for pay upon invoice;
+        </changes>
+    </changelog>
+
     <changelog version="4.0.2">
         <changes lang="de">
             PT-12692 - Das PayPal-Bestellmodul lässt sich wieder öffnen, wenn der Shop eine virtuelle URL konfiguriert hat;

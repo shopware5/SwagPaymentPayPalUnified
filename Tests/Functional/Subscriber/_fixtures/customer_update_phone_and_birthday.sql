@@ -1,0 +1,5 @@
+INSERT INTO `s_user` (`id`, `password`, `encoder`, `email`, `active`, `accountmode`, `confirmationkey`, `paymentID`, `firstlogin`, `lastlogin`, `sessionID`, `newsletter`, `validation`, `affiliate`, `customergroup`, `paymentpreset`, `language`, `subshopID`, `referer`, `pricegroupID`, `internalcomment`, `failedlogins`, `lockeduntil`, `default_billing_address_id`, `default_shipping_address_id`, `title`, `salutation`, `firstname`, `lastname`, `birthday`, `customernumber`) VALUES
+    (999999,	'$2y$10$cjEIiEC.9LAE9SDMYpjy2uiYa6ymOWyZ6Ys.U1EkDwWuS8pj/slc6',	'bcrypt',	'unit@test.com',	1,	0,	'',	5,	'2022-04-11',	'2022-04-11 12:38:51',	'797a819c388e98664f53739bde4130d6',	0,	'',	0,	'EK',	0,	'1',	1,	'',	NULL,	'',	0,	NULL,	222223,	222223,	NULL,	'mr',	'Unit',	'Tester',	NULL,	'20006');
+
+INSERT INTO `s_user_addresses` (`id`, `user_id`, `company`, `department`, `salutation`, `title`, `firstname`, `lastname`, `street`, `zipcode`, `city`, `country_id`, `state_id`, `ustid`, `phone`, `additional_address_line1`, `additional_address_line2`) VALUES
+    (1000000,	999999,	NULL,	NULL,	'mr',	NULL,	'Unit',	'Tester',	'UnitTest 42',	'42424',	'UnitTest',	2,	NULL,	NULL,	NULL,	NULL,	NULL);
