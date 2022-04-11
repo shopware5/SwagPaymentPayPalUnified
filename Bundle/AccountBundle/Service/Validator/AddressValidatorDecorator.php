@@ -45,7 +45,7 @@ class AddressValidatorDecorator implements AddressValidatorInterface
         }
 
         $controllerName = $request->getControllerName();
-        $payPalController = ['paypal_unified_express_checkout', 'paypalunifiedexpresscheckout'];
+        $payPalController = ['paypal_unified_express_checkout', 'paypalunifiedexpresscheckout', 'paypalunifiedv2expresscheckout'];
         if (!\in_array(\strtolower($controllerName), $payPalController, true)) {
             $this->innerValidator->validate($address);
 
