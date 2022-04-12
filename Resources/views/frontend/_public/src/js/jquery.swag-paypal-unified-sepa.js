@@ -23,6 +23,11 @@
             createOrderUrl: '',
 
             /**
+             * @type string
+             */
+            paypalErrorPageUrl: '',
+
+            /**
              *  @type string
              */
             layout: 'horizontal',
@@ -196,7 +201,7 @@
             var params = {
                 'client-id': this.opts.clientId,
                 intent: this.opts.intent.toLowerCase(),
-                components: 'buttons'
+                components: 'buttons,funding-eligibility'
             };
 
             if (this.opts.locale.length > 0) {
@@ -217,6 +222,12 @@
         renderButton: function() {
             var buttonConfig = this.getButtonConfig(),
                 el = this.$el.get(0);
+
+            // if (!this.paypal.isFundingEligible(this.paypal.FUNDING.SEPA)) {
+            if (!false) {
+                this.onPayPalAPIError();
+                return;
+            }
 
             this.paypal.Buttons(buttonConfig).render(el);
         },
@@ -313,7 +324,7 @@
         },
 
         onPayPalAPIError: function() {
-            window.location.replace(this.opts.paypalErrorPage);
+            window.location.replace(this.opts.paypalErrorPageUrl);
         }
     });
 

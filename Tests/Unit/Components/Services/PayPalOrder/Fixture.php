@@ -142,7 +142,7 @@ class Fixture
             'payment' => [
                 'id' => '8',
                 'name' => 'SwagPaymentPayPalUnifiedPayUponInvoice',
-                'description' => 'Kauf auf Rechnung',
+                'description' => 'Rechnungskauf',
                 'template' => '',
                 'class' => '',
                 'table' => '',
