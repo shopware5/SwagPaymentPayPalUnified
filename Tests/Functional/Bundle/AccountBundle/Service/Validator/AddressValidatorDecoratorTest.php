@@ -52,7 +52,7 @@ class AddressValidatorDecoratorTest extends TestCase
     public function testValidateThrowValidationExceptionCountry()
     {
         $request = new \Enlight_Controller_Request_RequestTestCase();
-        $request->setControllerName('PaypalUnifiedExpressCheckout');
+        $request->setControllerName('PaypalUnifiedV2ExpressCheckout');
         $front = new FrontMock();
         $front->setRequest($request);
 
@@ -65,7 +65,7 @@ class AddressValidatorDecoratorTest extends TestCase
     public function testValidateThrowNoValidationException()
     {
         $request = new \Enlight_Controller_Request_RequestTestCase();
-        $request->setControllerName('PaypalUnifiedExpressCheckout');
+        $request->setControllerName('PaypalUnifiedV2ExpressCheckout');
         $front = new FrontMock();
         $front->setRequest($request);
 

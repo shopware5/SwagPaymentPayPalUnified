@@ -20,6 +20,9 @@ use SwagPaymentPayPalUnified\Components\Services\Validation\BasketIdWhitelist;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
 
+/**
+ * @deprecated Will be removed in 5.0.0 without replacement
+ */
 class ExpressCheckoutPaymentBuilderService extends PaymentBuilderService
 {
     public function __construct(
