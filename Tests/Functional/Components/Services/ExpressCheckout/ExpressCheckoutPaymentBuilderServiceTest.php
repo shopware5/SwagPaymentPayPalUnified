@@ -19,6 +19,9 @@ use SwagPaymentPayPalUnified\Tests\Functional\Components\Services\Mock\SettingsS
 use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\ShopRegistrationTrait;
 
+/**
+ * @deprecated Will be removed in 5.0.0 without replacement
+ */
 class ExpressCheckoutPaymentBuilderServiceTest extends TestCase
 {
     use ContainerTrait;

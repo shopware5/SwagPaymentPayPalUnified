@@ -26,6 +26,9 @@ use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
 use Symfony\Component\Form\FormFactoryInterface;
 
+/**
+ * @deprecated Will be removed in 5.0.0 without replacement
+ */
 class CustomerService
 {
     /**
