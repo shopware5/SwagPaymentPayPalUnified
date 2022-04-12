@@ -12,12 +12,14 @@
     <author>shopware AG</author>
     <compatibility minVersion="5.2.27" maxVersion="5.99.99"/>
 
-    <changelog version="REPLACE_GLOBAL_WITH_NEXT_VERSION">
+    <changelog version="REPLACE_GLOBALLY_WITH_NEXT_VERSION">
         <changes lang="de">
-            PT-12674 - Zusätzliche Felder für Telefonnummer und Geburtstag beim kauf auf Rechnung hinzugefügt;
+            PT-12674 - Zusätzliche Felder für Telefonnummer und Geburtstag für den Kauf auf Rechnung hinzugefügt;
+            PT-12709 - Adressvalidierung bei Nutzung von Express-Checkout korrigiert;
         </changes>
         <changes lang="en">
-            PT-12674 - Added additional phone number and birthday fields for pay upon invoice;
+            PT-12674 - Added additional fields for phone number and birthday for Pay upon invoice;
+            PT-12709 - Fixes address validation while using Express-Checkout;
         </changes>
     </changelog>
 
