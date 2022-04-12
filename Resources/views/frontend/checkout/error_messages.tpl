@@ -6,11 +6,7 @@
         {$content = "<b>{s name='error/payUponInvoiceBlocked' namespace='frontend/paypal_unified/checkout/messages'}{/s}</b><ul class='alert--list'>"}
 
         {foreach $payPalUnifiedPayUponInvoiceErrorList as $error}
-            {if $error === '[phoneNumber]'}
-                {$content = "$content<li class='list--entry'>{s name='error/payUponInvoiceBlocked/phoneNumber' namespace='frontend/paypal_unified/checkout/messages'}{/s}</li>"}
-            {elseif $error === '[birthday]'}
-                {$content = "$content<li class='list--entry'>{s name='error/payUponInvoiceBlocked/birthday' namespace='frontend/paypal_unified/checkout/messages'}{/s}</li>"}
-            {elseif $error === '[amount]'}
+            {if $error === '[amount]'}
                 {$content = "$content<li class='list--entry'>{s name='error/payUponInvoiceBlocked/amount' namespace='frontend/paypal_unified/checkout/messages'}{/s}</li>"}
             {/if}
         {/foreach}

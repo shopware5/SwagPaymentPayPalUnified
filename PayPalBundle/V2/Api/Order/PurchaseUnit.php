@@ -53,7 +53,7 @@ class PurchaseUnit extends PayPalApiStruct
     protected $items;
 
     /**
-     * @var Shipping
+     * @var Shipping|null
      */
     protected $shipping;
 
@@ -189,7 +189,7 @@ class PurchaseUnit extends PayPalApiStruct
     }
 
     /**
-     * @return Shipping
+     * @return Shipping|null
      */
     public function getShipping()
     {
@@ -197,7 +197,7 @@ class PurchaseUnit extends PayPalApiStruct
     }
 
     /**
-     * @param Shipping $shipping
+     * @param Shipping|null $shipping
      *
      * @return void
      */

@@ -445,21 +445,6 @@
             $.loadingIndicator.close();
         },
 
-        /**
-         * validates the checkout confirm form
-         *
-         * @return { boolean }
-         */
-        checkFormValidity: function() {
-            var me = this,
-                form = me.$form.get(0),
-                isFormValid = form.checkValidity();
-
-            $.publish('plugin/swagPayPalUnifiedInContextCheckout/checkFormValidity', [me, isFormValid, me.$form]);
-
-            return isFormValid;
-        },
-
         onPayPalAPIError: function() {
             window.location.replace(this.opts.paypalErrorPage);
         }

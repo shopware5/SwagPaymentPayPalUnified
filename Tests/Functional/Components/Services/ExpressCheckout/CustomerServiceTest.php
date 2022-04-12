@@ -25,9 +25,6 @@ use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\ShopRegistrationTrait;
 
-/**
- * @deprecated Will be removed in 5.0.0 without replacement
- */
 class CustomerServiceTest extends TestCase
 {
     use DatabaseTestCaseTrait;

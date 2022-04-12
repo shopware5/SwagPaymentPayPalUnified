@@ -16,10 +16,12 @@
         <changes lang="de">
             PT-12674 - Zusätzliche Felder für Telefonnummer und Geburtstag für den Kauf auf Rechnung hinzugefügt;
             PT-12709 - Adressvalidierung bei Nutzung von Express-Checkout korrigiert;
+            PT-12700 - Nettopreisbehandlung verbessert;
         </changes>
         <changes lang="en">
             PT-12674 - Added additional fields for phone number and birthday for Pay upon invoice;
             PT-12709 - Fixes address validation while using Express-Checkout;
+            PT-12700 - Improve net price handling;
         </changes>
     </changelog>
 
