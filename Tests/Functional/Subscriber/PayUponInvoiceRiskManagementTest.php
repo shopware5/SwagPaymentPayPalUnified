@@ -459,64 +459,16 @@ class PayUponInvoiceRiskManagementTest extends TestCase
             ['key' => PayUponInvoiceRiskManagement::PAY_PAL_UNIFIED_PAY_UPON_INVOICE_ERROR_LIST_KEY, 'value' => ['[amount]']],
         ];
 
-        yield 'Risk management rule check birthday' => [
+        yield 'Risk management rule check amount, country' => [
             [
                 'additional' => [
-                    'country' => ['countryiso' => 'DE'],
-                    'user' => ['birthday' => null],
-                ],
-                'billingaddress' => ['phone' => '01519999999'],
-            ],
-            ['AmountNumeric' => 5.99],
-            ['key' => PayUponInvoiceRiskManagement::PAY_PAL_UNIFIED_PAY_UPON_INVOICE_ERROR_LIST_KEY, 'value' => ['[birthday]']],
-        ];
-
-        yield 'Risk management rule check phoneNumber' => [
-            [
-                'additional' => [
-                    'country' => ['countryiso' => 'DE'],
-                    'user' => ['birthday' => '1970-01-01'],
-                ],
-                'billingaddress' => ['phone' => null],
-            ],
-            ['AmountNumeric' => 5.99],
-            ['key' => PayUponInvoiceRiskManagement::PAY_PAL_UNIFIED_PAY_UPON_INVOICE_ERROR_LIST_KEY, 'value' => ['[phoneNumber]']],
-        ];
-
-        yield 'Risk management rule check phoneNumber, birthday' => [
-            [
-                'additional' => [
-                    'country' => ['countryiso' => 'DE'],
-                    'user' => ['birthday' => null],
-                ],
-                'billingaddress' => ['phone' => null],
-            ],
-            ['AmountNumeric' => 5.99],
-            ['key' => PayUponInvoiceRiskManagement::PAY_PAL_UNIFIED_PAY_UPON_INVOICE_ERROR_LIST_KEY, 'value' => ['[phoneNumber]', '[birthday]']],
-        ];
-
-        yield 'Risk management rule check amount, birthday' => [
-            [
-                'additional' => [
-                    'country' => ['countryiso' => 'DE'],
+                    'country' => ['countryiso' => 'US'],
                     'user' => ['birthday' => null],
                 ],
                 'billingaddress' => ['phone' => '01519999999'],
             ],
             ['AmountNumeric' => 1.99],
-            ['key' => PayUponInvoiceRiskManagement::PAY_PAL_UNIFIED_PAY_UPON_INVOICE_ERROR_LIST_KEY, 'value' => ['[amount]', '[birthday]']],
-        ];
-
-        yield 'Risk management rule check amount, phoneNumber, birthday' => [
-            [
-                'additional' => [
-                    'country' => ['countryiso' => 'DE'],
-                    'user' => ['birthday' => null],
-                ],
-                'billingaddress' => ['phone' => null],
-            ],
-            ['AmountNumeric' => 1.99],
-            ['key' => PayUponInvoiceRiskManagement::PAY_PAL_UNIFIED_PAY_UPON_INVOICE_ERROR_LIST_KEY, 'value' => ['[amount]', '[phoneNumber]', '[birthday]']],
+            ['key' => PayUponInvoiceRiskManagement::PAY_PAL_UNIFIED_PAY_UPON_INVOICE_ERROR_LIST_KEY, 'value' => ['[country]', '[amount]']],
         ];
     }
 
@@ -588,8 +540,6 @@ class PayUponInvoiceRiskManagementTest extends TestCase
 
         $expectedErrorList = [
             '[amount]',
-            '[phoneNumber]',
-            '[birthday]',
         ];
 
         static::assertTrue($subject->onExecuteRule($argsMock));
@@ -614,8 +564,7 @@ class PayUponInvoiceRiskManagementTest extends TestCase
             null,
             null,
             null,
-            $settings,
-            $config
+            $settings
         );
         $argsMock = $this->createMock(Enlight_Event_EventArgs::class);
 
@@ -627,26 +576,6 @@ class PayUponInvoiceRiskManagementTest extends TestCase
      */
     public function checkForMissingTechnicalRequirementsDataProvider()
     {
-        $config = $this->createMock(ShopwareConfig::class);
-        $config->method('offsetGet')->willReturnMap([
-            ['showphonenumberfield', false],
-            ['showbirthdayfield', true],
-        ]);
-        yield 'Test phone number field is disabled' => [
-            $config,
-            null,
-        ];
-
-        $config = $this->createMock(ShopwareConfig::class);
-        $config->method('offsetGet')->willReturnMap([
-            ['showphonenumberfield', true],
-            ['showbirthdayfield', false],
-        ]);
-        yield 'Test birthday field is disabled' => [
-            $config,
-            null,
-        ];
-
         $settingsServiceMock = $this->createMock(SettingsServiceInterface::class);
         $settingsServiceMock->method('getSettings')
             ->willReturnMap([
@@ -737,7 +666,6 @@ class PayUponInvoiceRiskManagementTest extends TestCase
      * @param DependencyProvider|null             $dependencyProvider
      * @param ContextServiceInterface|null        $contextService
      * @param SettingsServiceInterface|null       $settingsService
-     * @param ShopwareConfig|null                 $shopwareConfig
      *
      * @return PayUponInvoiceRiskManagement
      */
@@ -746,16 +674,14 @@ class PayUponInvoiceRiskManagementTest extends TestCase
         $validator = null,
         $dependencyProvider = null,
         $contextService = null,
-        $settingsService = null,
-        $shopwareConfig = null
+        $settingsService = null
     ) {
         return new PayUponInvoiceRiskManagement(
             $paymentMethodProvider ?: $this->getPaymentMethodProvider(),
             $dependencyProvider ?: $this->getDependencyProvider(),
             $validator ?: $this->getValidator(),
             $contextService ?: $this->getContextService(),
-            $settingsService ?: $this->getSettingsService(),
-            $shopwareConfig ?: $this->getShopwareConfig()
+            $settingsService ?: $this->getSettingsService()
         );
     }
 
@@ -869,7 +795,7 @@ class PayUponInvoiceRiskManagementTest extends TestCase
     {
         return static function (Collection $constraintCollection) {
             static::assertInstanceOf(Collection::class, $constraintCollection);
-            static::assertCount(5, $constraintCollection->fields);
+            static::assertCount(3, $constraintCollection->fields);
 
             foreach ($constraintCollection->fields as $field => $constraint) {
                 $actualConstraint = $constraint->constraints[0];

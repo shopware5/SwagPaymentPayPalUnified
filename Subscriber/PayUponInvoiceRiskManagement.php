@@ -9,20 +9,21 @@
 namespace SwagPaymentPayPalUnified\Subscriber;
 
 use Enlight\Event\SubscriberInterface;
+use Enlight_Controller_ActionEventArgs;
 use Enlight_Controller_Front;
 use Enlight_Controller_Request_Request;
+use Enlight_Event_EventArgs;
+use Enlight_Hook_HookArgs;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
-use Shopware_Components_Config as ShopwareConfig;
+use Shopware_Controllers_Frontend_Checkout;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Models\Settings\General;
-use SwagPaymentPayPalUnified\Models\Settings\PayUponInvoice;
+use SwagPaymentPayPalUnified\Models\Settings\PayUponInvoice as PayUponInvoiceModel;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use Symfony\Component\Validator\Constraints\Collection;
-use Symfony\Component\Validator\Constraints\Date;
 use Symfony\Component\Validator\Constraints\EqualTo;
-use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Range;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -58,25 +59,18 @@ class PayUponInvoiceRiskManagement implements SubscriberInterface
      */
     private $settingsService;
 
-    /**
-     * @var ShopwareConfig
-     */
-    private $config;
-
     public function __construct(
         PaymentMethodProviderInterface $paymentMethodProvider,
         DependencyProvider $dependencyProvider,
         ValidatorInterface $validator,
         ContextServiceInterface $contextService,
-        SettingsServiceInterface $settingsService,
-        ShopwareConfig $config
+        SettingsServiceInterface $settingsService
     ) {
         $this->paymentMethodProvider = $paymentMethodProvider;
         $this->dependencyProvider = $dependencyProvider;
         $this->validator = $validator;
         $this->contextService = $contextService;
         $this->settingsService = $settingsService;
-        $this->config = $config;
     }
 
     /**
@@ -95,7 +89,7 @@ class PayUponInvoiceRiskManagement implements SubscriberInterface
     /**
      * @return bool
      */
-    public function afterManageRisks(\Enlight_Hook_HookArgs $args)
+    public function afterManageRisks(Enlight_Hook_HookArgs $args)
     {
         if ($args->getReturn() === true) {
             return true;
@@ -123,7 +117,7 @@ class PayUponInvoiceRiskManagement implements SubscriberInterface
     /**
      * @return bool
      */
-    public function onExecuteRule(\Enlight_Event_EventArgs $args)
+    public function onExecuteRule(Enlight_Event_EventArgs $args)
     {
         $user = $args->get('user');
         $basket = $args->get('basket');
@@ -151,9 +145,9 @@ class PayUponInvoiceRiskManagement implements SubscriberInterface
     /**
      * @return void
      */
-    public function onPostDispatchCheckout(\Enlight_Controller_ActionEventArgs $args)
+    public function onPostDispatchCheckout(Enlight_Controller_ActionEventArgs $args)
     {
-        /** @var \Shopware_Controllers_Frontend_Checkout $controller */
+        /** @var Shopware_Controllers_Frontend_Checkout $controller */
         $controller = $args->get('subject');
         $view = $controller->View();
 
@@ -174,7 +168,7 @@ class PayUponInvoiceRiskManagement implements SubscriberInterface
     /**
      * @return void
      */
-    public function setPaymentMethodBlockedFlag(\Enlight_Event_EventArgs $args)
+    public function setPaymentMethodBlockedFlag(Enlight_Event_EventArgs $args)
     {
         // Only show the message if the customer actually chose pay upon invoice
         if ($args->get('name') !== PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME) {
@@ -276,8 +270,6 @@ class PayUponInvoiceRiskManagement implements SubscriberInterface
             'country' => $user['additional']['country']['countryiso'],
             'currency' => $this->contextService->getShopContext()->getCurrency()->getCurrency(),
             'amount' => $amountNumeric,
-            'phoneNumber' => $user['billingaddress']['phone'],
-            'birthday' => $user['additional']['user']['birthday'],
         ];
 
         return $this->validator->validate(
@@ -286,8 +278,6 @@ class PayUponInvoiceRiskManagement implements SubscriberInterface
                 'country' => new EqualTo('DE'),
                 'currency' => new EqualTo('EUR'),
                 'amount' => new Range(['min' => 5.0, 'max' => 2500.00]),
-                'phoneNumber' => new NotBlank(),
-                'birthday' => [new NotBlank(), new Date()],
             ])
         );
     }
@@ -299,19 +289,13 @@ class PayUponInvoiceRiskManagement implements SubscriberInterface
      */
     private function checkForMissingTechnicalRequirements()
     {
-        if (!$this->config->offsetGet('showphonenumberfield') || !$this->config->offsetGet('showbirthdayfield')) {
-            return true;
-        }
-
         $generalSettings = $this->settingsService->getSettings($this->contextService->getShopContext()->getShop()->getId());
-
         if (!$generalSettings instanceof General) {
             return true;
         }
 
         $payUponInvoiceSettings = $this->settingsService->getSettings($this->contextService->getShopContext()->getShop()->getId(), SettingsTable::PAY_UPON_INVOICE);
-
-        if (!$payUponInvoiceSettings instanceof PayUponInvoice) {
+        if (!$payUponInvoiceSettings instanceof PayUponInvoiceModel) {
             return true;
         }
 
