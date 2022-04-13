@@ -31,6 +31,15 @@
     {block name='frontend_checkout_payment_content_paypal_unified_plus'}
         {if $paypalUnifiedUsePlus && $paypalUnifiedApprovalUrl && $paypalUnifiedRestylePaymentSelection}
             {include file='frontend/paypal_unified/plus/checkout/custom_shipping_payment/change_payment.tpl'}
+        {elseif $paypalUnifiedUseSepa}
+            {$smarty.block.parent}
+            <div data-swagPayPalUnifiedSepaEligibility="true"
+                 data-clientId="{$paypalUnifiedSpbClientId}"
+                 data-intent="{$paypalUnifiedSpbIntent}"
+                 data-locale="{$paypalUnifiedSpbButtonLocale}"
+                 data-currency="{$paypalUnifiedSpbCurrency}"
+                 data-sepaPaymentMethodId="{$paypalUnifiedSepaPaymentId}">
+            </div>
         {else}
             {$smarty.block.parent}
         {/if}

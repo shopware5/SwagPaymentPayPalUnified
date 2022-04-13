@@ -260,8 +260,8 @@ E2E:
             - shopware/var/log/*
         expire_in: 1 week
         when: always
-#    only:
-#        - master
+    only:
+        - master
 
 E2E 5.2:
     stage: E2E
@@ -293,5 +293,5 @@ E2E 5.2:
          PAYPAL_SANDBOX_CLIENT_ID=${PAYPAL_SANDBOX_CLIENT_ID} PAYPAL_SANDBOX_CLIENT_SECRET=${PAYPAL_SANDBOX_CLIENT_SECRET} PAYPAL_SANDBOX_MERCHANT_ID=${PAYPAL_SANDBOX_MERCHANT_ID}
          MYSQL_HOST=mysql MYSQL_USER=${MYSQL_USER} MYSQL_PASSWORD=${MYSQL_PASSWORD} MYSQL_PORT=3200 MYSQL_DATABASE=${MYSQL_DATABASE}
          npx playwright test --workers=1 --grep-invert @notIn5.2
-#    only:
-#        - master
+    only:
+        - master

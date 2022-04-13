@@ -223,9 +223,8 @@
             var buttonConfig = this.getButtonConfig(),
                 el = this.$el.get(0);
 
-            // if (!this.paypal.isFundingEligible(this.paypal.FUNDING.SEPA)) {
-            if (!false) {
-                this.onPayPalAPIError();
+            if (!this.paypal.isFundingEligible(this.paypal.FUNDING.SEPA)) {
+                this.onPayPalAPIError($.param({ sepaIsNotEligible: true }));
                 return;
             }
 
@@ -323,8 +322,17 @@
             };
         },
 
-        onPayPalAPIError: function() {
-            window.location.replace(this.opts.paypalErrorPageUrl);
+        /**
+         * @param { string|null } extraParams
+         */
+        onPayPalAPIError: function(extraParams) {
+            var errorPageUrl = this.opts.paypalErrorPageUrl;
+
+            if (extraParams !== null) {
+                errorPageUrl += '?' + extraParams;
+            }
+
+            window.location.replace(errorPageUrl);
         }
     });
 
