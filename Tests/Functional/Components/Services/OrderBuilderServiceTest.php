@@ -17,7 +17,8 @@ use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Amount;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Amount\Breakdown;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Amount\Breakdown\Discount;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Amount\Breakdown\ItemTotal;
-use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Amount\Breakdown\Shipping;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Amount\Breakdown\Shipping as ShippingCosts;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Shipping as ShippingAddress;
 use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\SettingsHelperTrait;
@@ -120,7 +121,7 @@ class OrderBuilderServiceTest extends TestCase
         static::assertSame('EUR', $amount->getBreakdown()->getItemTotal()->getCurrencyCode());
         static::assertSame('468.96', $amount->getBreakdown()->getItemTotal()->getValue());
 
-        static::assertInstanceOf(Shipping::class, $amount->getBreakdown()->getShipping());
+        static::assertInstanceOf(ShippingCosts::class, $amount->getBreakdown()->getShipping());
         static::assertSame('EUR', $amount->getBreakdown()->getShipping()->getCurrencyCode());
         static::assertSame('75.00', $amount->getBreakdown()->getShipping()->getValue());
 
@@ -130,14 +131,16 @@ class OrderBuilderServiceTest extends TestCase
             static::assertSame('0.00', $amount->getBreakdown()->getDiscount()->getValue());
         }
 
+        $shippingAddress = $payPalOrderData->getPurchaseUnits()[0]->getShipping();
+        static::assertInstanceOf(ShippingAddress::class, $shippingAddress);
         // Check purchase units shipping
-        static::assertSame('PhpUnit Tester', $payPalOrderData->getPurchaseUnits()[0]->getShipping()->getName()->getFullName());
-        static::assertSame('FooBarStreet, 42', $payPalOrderData->getPurchaseUnits()[0]->getShipping()->getAddress()->getAddressLine1());
-        static::assertNull($payPalOrderData->getPurchaseUnits()[0]->getShipping()->getAddress()->getAddressLine2());
-        static::assertNull($payPalOrderData->getPurchaseUnits()[0]->getShipping()->getAddress()->getAdminArea1());
-        static::assertSame('SinCity', $payPalOrderData->getPurchaseUnits()[0]->getShipping()->getAddress()->getAdminArea2());
-        static::assertSame('12345', $payPalOrderData->getPurchaseUnits()[0]->getShipping()->getAddress()->getPostalCode());
-        static::assertSame('DE', $payPalOrderData->getPurchaseUnits()[0]->getShipping()->getAddress()->getCountryCode());
+        static::assertSame('PhpUnit Tester', $shippingAddress->getName()->getFullName());
+        static::assertSame('FooBarStreet, 42', $shippingAddress->getAddress()->getAddressLine1());
+        static::assertNull($shippingAddress->getAddress()->getAddressLine2());
+        static::assertNull($shippingAddress->getAddress()->getAdminArea1());
+        static::assertSame('SinCity', $shippingAddress->getAddress()->getAdminArea2());
+        static::assertSame('12345', $shippingAddress->getAddress()->getPostalCode());
+        static::assertSame('DE', $shippingAddress->getAddress()->getCountryCode());
 
         // Check purchase units items
         static::assertTrue(\is_array($payPalOrderData->getPurchaseUnits()[0]->getItems()));

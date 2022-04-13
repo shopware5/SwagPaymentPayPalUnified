@@ -24,11 +24,9 @@ use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Shipping;
 use Symfony\Component\Form\FormFactoryInterface;
 
-/**
- * @deprecated Will be removed in 5.0.0 without replacement
- */
 class CustomerService
 {
     /**
@@ -105,11 +103,18 @@ class CustomerService
 
     public function createNewCustomer(Order $orderStruct)
     {
+        $shipping = $orderStruct->getPurchaseUnits()[0]->getShipping();
+        if (!$shipping instanceof Shipping) {
+            $this->logger->error(sprintf('%s COULD NOT CREATE CUSTOMER. ADDRESS IS MISSING', __METHOD__));
+
+            return;
+        }
+
         $this->adminModule = $this->dependencyProvider->getModule('admin');
 
         $payer = $orderStruct->getPayer();
         $salutation = $this->getSalutation();
-        $address = $orderStruct->getPurchaseUnits()[0]->getShipping()->getAddress();
+        $address = $shipping->getAddress();
         $countryId = $this->getCountryId($address->getCountryCode());
         $phone = $payer->getPhone();
         $stateId = null;

@@ -194,6 +194,12 @@ abstract class AbstractOrderHandler implements OrderBuilderHandlerInterface
 
         $purchaseUnit->setShipping($this->createShipping($orderParameter->getCustomer()));
 
+        // Its only necessary for PayUponInvoice because it's the only paymentMethod with tax information
+        // See: SwagPaymentPayPalUnified/Components/Services/PayPalOrder/ItemListProvider.php:134
+        if ($orderParameter->getPaymentType() !== PaymentType::PAYPAL_PAY_UPON_INVOICE_V2) {
+            return [$purchaseUnit];
+        }
+
         $this->addVirtualHandlingAndDiscounts($purchaseUnit);
 
         return [$purchaseUnit];
