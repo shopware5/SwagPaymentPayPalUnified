@@ -15,15 +15,17 @@
     <changelog version="REPLACE_GLOBALLY_WITH_NEXT_VERSION">
         <changes lang="de">
             PT-12674 - Zusätzliche Felder für Telefonnummer und Geburtstag für den Rechnungskauf hinzugefügt;
-            PT-12703 - Verhalten der Zahlungsart Lastschrift verbessert;
-            PT-12709 - Adressvalidierung bei Nutzung von Express-Checkout korrigiert;
             PT-12700 - Nettopreisbehandlung verbessert;
+            PT-12703 - Verhalten der Zahlungsart Lastschrift verbessert;
+            PT-12705 - Verbesserung der UI im Einstellungsmodul;
+            PT-12709 - Adressvalidierung bei Nutzung von Express-Checkout korrigiert;
         </changes>
         <changes lang="en">
             PT-12674 - Added additional fields for phone number and birthday for Pay upon invoice;
-            PT-12703 - Improved behaviour of the direct debit payment type;
-            PT-12709 - Fixes address validation while using Express-Checkout;
             PT-12700 - Improve net price handling;
+            PT-12703 - Improved behaviour of the direct debit payment type;
+            PT-12705 - Improvement of the UI in the settings module;
+            PT-12709 - Fixes address validation while using Express-Checkout;
         </changes>
     </changelog>
 

@@ -31,11 +31,6 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.AbstractPuiAcdcTab', {
     hasLimitsMessage: null,
 
     /**
-     * @type { Ext.container.Container }
-     */
-    hasLimitsMessageSandbox: null,
-
-    /**
      * @type { Boolean }
      */
     hasLimits: false,
@@ -86,7 +81,6 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.AbstractPuiAcdcTab', {
             this.createActivationFieldset(),
             this.createOnboardingMessage(),
             this.createHasLimitsMessage(),
-            this.createHasLimitsMessageSandbox(),
             this.createOnboardingFieldset(),
             this.createCapabilityTestButton(),
         ]
@@ -132,15 +126,6 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.AbstractPuiAcdcTab', {
         );
 
         return this.hasLimitsMessage;
-    },
-
-    createHasLimitsMessageSandbox: function() {
-        this.hasLimitsMessageSandbox = Shopware.Notification.createBlockMessage(
-            this.snippets.hasLimitsMessageSandbox,
-            'alert'
-        );
-
-        return this.hasLimitsMessageSandbox;
     },
 
     createActivationFieldset: function() {
@@ -215,7 +200,6 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.AbstractPuiAcdcTab', {
         this.onboardingFieldset.show();
         this.capabilityTestButton.hide();
         this.hasLimitsMessage.hide();
-        this.hasLimitsMessageSandbox.hide();
         this.setIconCls(null);
 
         if (this.isOnboardingCompleted()) {
@@ -225,13 +209,17 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.AbstractPuiAcdcTab', {
             this.capabilityTestButton.show();
         }
 
-        if (!this.hasLimits || !this.getForm().getRecord().get('active')) {
+        if (!this.hasLimits || this.getSandbox() || !this.getForm().getRecord().get('active')) {
             return;
         }
 
+        this.showHasLimits();
+    },
+
+    showHasLimits: function () {
         this.setIconCls(this.hasLimitsIcon);
-        this.getSandbox() ? this.hasLimitsMessageSandbox.show() : this.hasLimitsMessage.show();
         this.adjustIconHeight();
+        this.hasLimitsMessage.show();
     },
 
     adjustIconHeight: function() {
