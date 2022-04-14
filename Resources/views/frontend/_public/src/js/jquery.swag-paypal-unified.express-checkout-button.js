@@ -353,11 +353,31 @@
          * Renders the ECS button
          */
         renderButton: function() {
-            this.expressCheckoutButton = paypal
-                .Buttons(this.createPayPalButtonConfiguration())
-                .render(this.$el.get(0));
+            var me = this;
 
-            $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonCart/createButton', [this, this.expressCheckoutButton]);
+            // wait for the PayPal javascript to be loaded
+            me.buffer(function() {
+                me.expressCheckoutButton = paypal
+                    .Buttons(me.createPayPalButtonConfiguration())
+                    .render(me.$el.get(0));
+
+                $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonCart/createButton', [me, me.expressCheckoutButton]);
+            });
+        },
+
+        /**
+         * Buffer helper function to set a timeout for a function
+         *
+         * @param {function} fn
+         * @param {number} timeout
+         * @return {number}
+         */
+        buffer: function(fn, timeout) {
+            var me = this;
+
+            timeout = timeout || 100;
+
+            return window.setTimeout(fn.bind(me), timeout);
         },
 
         /**
