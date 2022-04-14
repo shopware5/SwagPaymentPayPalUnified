@@ -24,7 +24,7 @@ test.describe('Pay with invoice', () => {
 
         // Change payment
         await page.click('.btn--change-payment');
-        await page.click('text=Kauf auf Rechnung');
+        await page.click('text=Rechnungskauf');
         await page.click('text=Weiter >> nth=1');
 
         // Check for the legalText
@@ -46,7 +46,7 @@ test.describe('Pay with invoice', () => {
 
         // Change payment
         await page.click('.btn--change-payment');
-        await page.click('text=Kauf auf Rechnung');
+        await page.click('text=Rechnungskauf');
         await page.click('text=Weiter >> nth=1');
 
         await page.click('input[name="sAGB"]');

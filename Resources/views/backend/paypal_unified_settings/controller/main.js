@@ -240,8 +240,6 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
 
         if (payerId.trim() !== '') {
             this.checkBothCapabilities(sandbox, payerId);
-
-            return;
         }
     },
 

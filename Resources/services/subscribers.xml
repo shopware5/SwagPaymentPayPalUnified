@@ -215,6 +215,7 @@
             <argument type="service" id="paypal_unified.settings_service"/>
             <argument type="service" id="shopware_storefront.context_service"/>
             <argument type="service" id="paypal_unified.button_locale_service"/>
+            <argument type="service" id="paypal_unified.payment_method_provider"/>
             <tag name="shopware.event_subscriber"/>
         </service>
 

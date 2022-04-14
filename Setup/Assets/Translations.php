@@ -59,7 +59,7 @@ EOD
                 'additionalDescription' => 'Bezahlen Sie einfach, schnell und bequem mit Ihrer Kredit- oder Debitkarte',
             ],
             PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME => [
-                'description' => 'Kauf auf Rechnung',
+                'description' => 'Rechnungskauf',
                 'additionalDescription' => '',
             ],
             PaymentMethodProviderInterface::PAYPAL_UNIFIED_SEPA_METHOD_NAME => [

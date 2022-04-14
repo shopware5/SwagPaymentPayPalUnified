@@ -14,12 +14,14 @@
 
     <changelog version="REPLACE_GLOBALLY_WITH_NEXT_VERSION">
         <changes lang="de">
-            PT-12674 - Zusätzliche Felder für Telefonnummer und Geburtstag für den Kauf auf Rechnung hinzugefügt;
+            PT-12674 - Zusätzliche Felder für Telefonnummer und Geburtstag für den Rechnungskauf hinzugefügt;
+            PT-12703 - Verhalten der Zahlungsart Lastschrift verbessert;
             PT-12709 - Adressvalidierung bei Nutzung von Express-Checkout korrigiert;
             PT-12700 - Nettopreisbehandlung verbessert;
         </changes>
         <changes lang="en">
             PT-12674 - Added additional fields for phone number and birthday for Pay upon invoice;
+            PT-12703 - Improved behaviour of the direct debit payment type;
             PT-12709 - Fixes address validation while using Express-Checkout;
             PT-12700 - Improve net price handling;
         </changes>
@@ -42,7 +44,7 @@
             PT-12679 - PayPal Plus Zahlungen werden nun wieder korrekt in der Übersicht gelistet;
             PT-12680 - Zahlungsstatus wird nun korrekt bei Rückbuchungen gesetzt;
             PT-12690 - Fehler bei der Benutzung von PayPal PLUS behoben;
-            PT-12691 - Kauf auf Rechnung verbessert;
+            PT-12691 - Rechnungskauf verbessert;
         </changes>
         <changes lang="en">
             PT-12667 - PayerId is now automatically set during authorisation;
@@ -55,7 +57,7 @@
 
     <changelog version="4.0.0">
         <changes lang="de">
-            PT-12487 - Integration neue Zahlungsart 'Kauf auf Rechnung';
+            PT-12487 - Integration neue Zahlungsart 'Rechnungskauf';
             PT-12487 - Integration neue Zahlungsart 'Kredit- oder Debitkarte';
             PT-12487 - Integration mehrerer Drittanbieter-Zahlungsarten wie 'sofort', 'giropay', 'ideal' und mehr;
         </changes>

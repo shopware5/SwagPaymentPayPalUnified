@@ -12,6 +12,7 @@ use Enlight_Controller_ActionEventArgs;
 use Enlight_Controller_Request_RequestTestCase;
 use Enlight_Controller_Response_ResponseTestCase;
 use Enlight_Template_Manager;
+use Generator;
 use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Subscriber\Sepa;
@@ -205,6 +206,101 @@ class SepaTest extends TestCase
     }
 
     /**
+     * @dataProvider addVarsForEligibilityTestDataProvider
+     *
+     * @param string              $actionName
+     * @param array<string,mixed> $settings
+     * @param bool                $expectResult
+     *
+     * @return void
+     */
+    public function testAddVarsForEligibility($actionName, array $settings, $expectResult)
+    {
+        $subscriber = $this->createSubscriber();
+
+        if (!empty($settings)) {
+            $this->insertGeneralSettingsFromArray($settings);
+        }
+
+        $view = new ViewMock(new Enlight_Template_Manager());
+        $request = new Enlight_Controller_Request_RequestTestCase();
+        $request->setActionName($actionName);
+
+        $eventArgs = $this->getEnlightEventArgs(
+            $request,
+            $view,
+            new Enlight_Controller_Response_ResponseTestCase()
+        );
+
+        $subscriber->addVarsForEligibility($eventArgs);
+
+        $results = $view->getAssign();
+
+        if (!$expectResult) {
+            static::assertNull($results['paypalUnifiedSpbClientId']);
+            static::assertNull($results['paypalUnifiedSpbIntent']);
+            static::assertNull($results['paypalUnifiedSpbButtonLocale']);
+            static::assertNull($results['paypalUnifiedSpbCurrency']);
+            static::assertNull($results['paypalUnifiedSepaPaymentId']);
+        } else {
+            static::assertNotEmpty($results['paypalUnifiedSpbClientId'], 'paypalUnifiedSpbClientId is empty');
+            static::assertNotEmpty($results['paypalUnifiedSpbIntent'], 'paypalUnifiedSpbIntent is empty');
+            static::assertNotEmpty($results['paypalUnifiedSpbButtonLocale'], 'paypalUnifiedSpbButtonLocale is empty');
+            static::assertNotEmpty($results['paypalUnifiedSpbCurrency'], 'paypalUnifiedSpbCurrency is empty');
+            static::assertNotEmpty($results['paypalUnifiedSepaPaymentId'], 'paypalUnifiedSepaPaymentId is empty');
+        }
+    }
+
+    /**
+     * @return Generator<array<int,mixed>>
+     */
+    public function addVarsForEligibilityTestDataProvider()
+    {
+        $defaultSettings = [
+            'active' => true,
+            'shopId' => 1,
+            'sandbox' => true,
+            'sandboxClientId' => 'testClientId',
+            'intent' => 'CAPTURE',
+        ];
+
+        $inactiveSettings = [
+            'active' => false,
+            'shopId' => 1,
+        ];
+
+        yield 'shouldAssignNothing because action name does not match' => [
+            'anyAction',
+            $defaultSettings,
+            false,
+        ];
+
+        yield 'shouldAssignNothing because there a no settings' => [
+            'payment',
+            [],
+            false,
+        ];
+
+        yield 'shouldAssignNothing because paypal is inactive' => [
+            'payment',
+            $inactiveSettings,
+            false,
+        ];
+
+        yield 'shouldAssign because action payment match' => [
+            'payment',
+            $defaultSettings,
+            true,
+        ];
+
+        yield 'shouldAssign because action shippingPayment match' => [
+            'shippingPayment',
+            $defaultSettings,
+            true,
+        ];
+    }
+
+    /**
      * @return Sepa
      */
     private function createSubscriber()
@@ -212,7 +308,8 @@ class SepaTest extends TestCase
         return new Sepa(
             $this->getContainer()->get('paypal_unified.settings_service'),
             $this->getContainer()->get('shopware_storefront.context_service'),
-            $this->getContainer()->get('paypal_unified.button_locale_service')
+            $this->getContainer()->get('paypal_unified.button_locale_service'),
+            $this->getContainer()->get('paypal_unified.payment_method_provider')
         );
     }
 
