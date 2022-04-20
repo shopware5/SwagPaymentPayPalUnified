@@ -14,7 +14,7 @@ use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\Eps;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\Giropay;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\Ideal;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\Multibanco;
-use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\MyBank;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\Mybank;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\Oxxo;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\P24;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\PayUponInvoice;
@@ -60,7 +60,7 @@ class PaymentSource extends PayPalApiStruct
     protected $multibanco;
 
     /**
-     * @var MyBank|null
+     * @var Mybank|null
      */
     protected $mybank;
 
@@ -197,7 +197,7 @@ class PaymentSource extends PayPalApiStruct
     }
 
     /**
-     * @return MyBank|null
+     * @return Mybank|null
      */
     public function getMybank()
     {
@@ -205,7 +205,7 @@ class PaymentSource extends PayPalApiStruct
     }
 
     /**
-     * @param MyBank|null $mybank
+     * @param Mybank|null $mybank
      */
     public function setMybank($mybank)
     {

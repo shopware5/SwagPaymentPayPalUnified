@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\Controllers\Frontend;
 
+use Exception;
 use RuntimeException;
 use Shopware\Components\HttpClient\RequestException;
 use Shopware\Models\Order\Status;
@@ -55,6 +56,7 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
         PaymentType::APM_P24 => 'getP24',
         PaymentType::APM_SOFORT => 'getSofort',
         PaymentType::APM_TRUSTLY => 'getTrustly',
+        PaymentType::APM_EPS => 'getEps',
     ];
 
     const UNPROCESSABLE_ENTITY = 'UNPROCESSABLE_ENTITY';
@@ -190,7 +192,7 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
             $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
 
             return null;
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
                 ->setCode(ErrorCodes::UNKNOWN)
                 ->setException($exception, 'create PayPal order');
@@ -225,7 +227,7 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
             $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
 
             return false;
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
                 ->setCode(ErrorCodes::UNKNOWN)
                 ->setException($exception, 'update PayPal order');
@@ -273,7 +275,7 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
             $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
 
             return null;
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
                 ->setCode(ErrorCodes::UNKNOWN)
                 ->setException($exception, 'capture/authorize PayPal order');
@@ -307,7 +309,7 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
             $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
 
             return null;
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
                 ->setCode(ErrorCodes::UNKNOWN)
                 ->setException($exception, 'get PayPal order');

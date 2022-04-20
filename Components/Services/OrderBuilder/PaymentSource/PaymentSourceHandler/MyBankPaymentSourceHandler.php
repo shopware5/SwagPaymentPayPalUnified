@@ -12,7 +12,7 @@ use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\PayPalOrderParamete
 use SwagPaymentPayPalUnified\Components\Services\OrderBuilder\PaymentSource\AbstractPaymentSourceHandler;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource;
-use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\MyBank;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\Mybank;
 use UnexpectedValueException;
 
 class MyBankPaymentSourceHandler extends AbstractPaymentSourceHandler
@@ -32,7 +32,7 @@ class MyBankPaymentSourceHandler extends AbstractPaymentSourceHandler
     {
         $apmPaymentSourceValue = $this->paymentSourceValueFactory->createPaymentSourceValue($orderParameter);
 
-        if (!$apmPaymentSourceValue instanceof MyBank) {
+        if (!$apmPaymentSourceValue instanceof Mybank) {
             throw new UnexpectedValueException(
                 sprintf(
                     'Payment source MyBank expected. Got "%s"',

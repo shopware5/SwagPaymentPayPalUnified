@@ -8,6 +8,6 @@
 
 namespace SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource;
 
-class MyBank extends AbstractApmPaymentSource
+class Mybank extends AbstractApmPaymentSource
 {
 }

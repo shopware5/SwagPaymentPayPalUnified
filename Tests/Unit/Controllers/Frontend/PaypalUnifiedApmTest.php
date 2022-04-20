@@ -10,7 +10,10 @@ namespace SwagPaymentPayPalUnified\Tests\Unit\Controllers\Frontend;
 
 require_once __DIR__ . '/../../../../Controllers/Frontend/PaypalUnifiedApm.php';
 
+use Enlight_Components_Db_Adapter_Pdo_Mysql;
+use Enlight_Exception;
 use Shopware\Models\Order\Status;
+use Shopware_Controllers_Frontend_PaypalUnifiedApm;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
@@ -97,7 +100,7 @@ class PaypalUnifiedApmTest extends PaypalPaymentControllerTestCase
             [SettingsServiceInterface::SETTING_GENERAL_SEND_ORDER_NUMBER, SettingsTable::GENERAL, true],
             [SettingsServiceInterface::SETTING_GENERAL_ORDER_NUMBER_PREFIX, SettingsTable::GENERAL, ''],
         ]);
-        $this->getController(\Shopware_Controllers_Frontend_PaypalUnifiedApm::class)
+        $this->getController(Shopware_Controllers_Frontend_PaypalUnifiedApm::class)
             ->returnAction();
     }
 
@@ -166,7 +169,7 @@ class PaypalUnifiedApmTest extends PaypalPaymentControllerTestCase
      */
     private function prepareShopwareOrder($orderId)
     {
-        $db = $this->createMock(\Enlight_Components_Db_Adapter_Pdo_Mysql::class);
+        $db = $this->createMock(Enlight_Components_Db_Adapter_Pdo_Mysql::class);
 
         $db->method('fetchOne')
             ->willReturn($orderId);
@@ -213,7 +216,7 @@ class PaypalUnifiedApmTest extends PaypalPaymentControllerTestCase
     }
 
     /**
-     * @throws \Enlight_Exception
+     * @throws Enlight_Exception
      *
      * @return void
      */

@@ -115,7 +115,6 @@ class ApmOrderHandler implements OrderBuilderHandlerInterface
     protected function createPurchaseUnits(PayPalOrderParameter $orderParameter)
     {
         $purchaseUnit = new PurchaseUnit();
-        $purchaseUnit->setReferenceId($orderParameter->getPaymentType());
 
         $amount = new ApmAmount();
         $amount->setValue($this->priceFormatter->formatPrice($orderParameter->getCart()['AmountNumeric']));

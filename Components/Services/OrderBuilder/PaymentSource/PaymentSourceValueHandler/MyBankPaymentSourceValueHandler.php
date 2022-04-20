@@ -10,7 +10,7 @@ namespace SwagPaymentPayPalUnified\Components\Services\OrderBuilder\PaymentSourc
 
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\PayPalOrderParameter;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
-use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\MyBank;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\Mybank;
 
 class MyBankPaymentSourceValueHandler extends AbstractPaymentSourceValueHandler
 {
@@ -27,7 +27,7 @@ class MyBankPaymentSourceValueHandler extends AbstractPaymentSourceValueHandler
      */
     public function createPaymentSourceValue(PayPalOrderParameter $orderParameter)
     {
-        $paymentSourceValue = new MyBank();
+        $paymentSourceValue = new Mybank();
 
         $this->setDefaultValues($paymentSourceValue, $orderParameter);
 
