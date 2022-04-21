@@ -5,14 +5,14 @@
     <label lang="de">PayPal</label>
     <label lang="en">PayPal</label>
 
-    <version>4.0.2</version>
+    <version>4.1.0</version>
     <copyright>(c) by shopware AG</copyright>
     <license>MIT</license>
     <link>http://store.shopware.com</link>
     <author>shopware AG</author>
     <compatibility minVersion="5.2.27" maxVersion="5.99.99"/>
 
-    <changelog version="REPLACE_GLOBALLY_WITH_NEXT_VERSION">
+    <changelog version="4.1.0">
         <changes lang="de">
             PT-12674 - Zusätzliche Felder für Telefonnummer und Geburtstag für den Rechnungskauf hinzugefügt;
             PT-12700 - Nettopreisbehandlung verbessert;
