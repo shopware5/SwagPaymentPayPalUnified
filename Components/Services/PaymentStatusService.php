@@ -9,10 +9,13 @@
 namespace SwagPaymentPayPalUnified\Components\Services;
 
 use DateTime;
+use Doctrine\DBAL\Connection;
+use PDO;
 use Shopware\Components\Model\ModelManager;
 use Shopware\Models\Order\Order;
 use Shopware\Models\Order\Status;
 use SwagPaymentPayPalUnified\Components\Exception\OrderNotFoundException;
+use SwagPaymentPayPalUnified\Models\Settings\General;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use UnexpectedValueException;
 
@@ -28,10 +31,26 @@ class PaymentStatusService
      */
     private $logger;
 
-    public function __construct(ModelManager $modelManager, LoggerServiceInterface $logger)
-    {
+    /**
+     * @var Connection
+     */
+    private $connection;
+
+    /**
+     * @var SettingsService
+     */
+    private $settingsService;
+
+    public function __construct(
+        ModelManager $modelManager,
+        LoggerServiceInterface $logger,
+        Connection $connection,
+        SettingsService $settingsService
+    ) {
         $this->modelManager = $modelManager;
         $this->logger = $logger;
+        $this->connection = $connection;
+        $this->settingsService = $settingsService;
     }
 
     /**
@@ -105,5 +124,58 @@ class PaymentStatusService
         $this->modelManager->flush($shopwareOrder);
 
         $this->logger->debug(sprintf('%s UPDATE PAYMENT STATUS SUCCESSFUL', __METHOD__));
+    }
+
+    /**
+     * @param string $shopwareOrderNumber
+     *
+     * @return void
+     */
+    public function setOrderAndPaymentStatusForFailedOrder($shopwareOrderNumber)
+    {
+        /** @var General $settings */
+        $settings = $this->settingsService->getSettings();
+
+        $orderStatusId = $settings->getOrderStatusOnFailedPayment();
+        $paymentStatusId = $settings->getPaymentStatusOnFailedPayment();
+        $shopwareOrderId = $this->getOrderIdByOrderNumber($shopwareOrderNumber);
+
+        $this->updateOrder($shopwareOrderId, $orderStatusId, $paymentStatusId);
+    }
+
+    /**
+     * @param int $shopwareOrderId
+     * @param int $orderStatusId
+     * @param int $paymentStatusId
+     *
+     * @return void
+     */
+    private function updateOrder($shopwareOrderId, $orderStatusId, $paymentStatusId)
+    {
+        $this->connection->createQueryBuilder()
+            ->update('s_order')
+            ->set('status', ':orderStatusId')
+            ->set('cleared', ':paymentStatusId')
+            ->where('id = :shopwareOrderId')
+            ->setParameter('orderStatusId', $orderStatusId)
+            ->setParameter('paymentStatusId', $paymentStatusId)
+            ->setParameter('shopwareOrderId', $shopwareOrderId)
+            ->execute();
+    }
+
+    /**
+     * @param string $shopwareOrderNumber
+     *
+     * @return int
+     */
+    private function getOrderIdByOrderNumber($shopwareOrderNumber)
+    {
+        return (int) $this->connection->createQueryBuilder()
+            ->select(['id'])
+            ->from('s_order')
+            ->where('ordernumber = :orderNumber')
+            ->setParameter('orderNumber', $shopwareOrderNumber)
+            ->execute()
+            ->fetch(PDO::FETCH_COLUMN);
     }
 }

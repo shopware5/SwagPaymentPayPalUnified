@@ -37,12 +37,20 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2PayUponInvoice extends Abstra
 
         $payPalOrderId = $payPalOrder->getId();
 
+        // Save basket before create the order
+        $basketData = $this->basketRestoreService->getCartData();
+
         $shopwareOrderNumber = $this->createShopwareOrder($payPalOrderId, PaymentType::PAYPAL_PAY_UPON_INVOICE_V2, Status::PAYMENT_STATE_RESERVED);
 
         if ($this->getSendOrdernumber()) {
             $invoiceIdPatch = $this->createInvoiceIdPatch($shopwareOrderNumber);
-
             if (!$this->updatePayPalOrder($payPalOrderId, [$invoiceIdPatch])) {
+                // If an error occurred while updating the PayPalOrder
+                // - Set the order and payment state to the order
+                $this->paymentStatusService->setOrderAndPaymentStatusForFailedOrder($shopwareOrderNumber);
+                // - Restore the basket
+                $this->basketRestoreService->restoreCart($basketData);
+
                 return;
             }
         }

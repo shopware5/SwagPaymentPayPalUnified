@@ -283,6 +283,26 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
             helpText: '{s name="fieldset/behaviour/useSmartPaymentButtons/helpText"}Enable this option to use the PayPal Smart Payment Buttons. The Smart Payment Buttons always use the in-context mode.{/s}'
         });
 
+        me.orderStatusSelect = Ext.create('Ext.form.field.ComboBox', {
+            name: 'orderStatusOnFailedPayment',
+            fieldLabel: '{s name="fieldset/behaviour/orderStatusOnFailedPayment"}Order status for failed transactions{/s}',
+            store: Ext.create('Shopware.apps.Base.store.OrderStatus').load(),
+            displayField: 'description',
+            valueField: 'id',
+            value: -1,
+            disabled: true,
+        });
+
+        me.paymentStatusSelect = Ext.create('Ext.form.field.ComboBox', {
+            name: 'paymentStatusOnFailedPayment',
+            fieldLabel: '{s name="fieldset/behaviour/paymentStatusOnFailedPayment"}Payment status for failed transactions{/s}',
+            store: Ext.create('Shopware.apps.Base.store.PaymentStatus').load(),
+            displayField: 'description',
+            valueField: 'id',
+            value: 35,
+            disabled: true,
+        });
+
         me.landingPageTypeSelect = Ext.create('Shopware.apps.PaypalUnifiedSettings.view.LandingPageSelect');
 
         me.behaviourContainer = Ext.create('Ext.form.FieldSet', {
@@ -343,6 +363,8 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
                     boxLabel: '{s name="fieldset/behaviour/sendOrderNumber/help"}Enable this option to send the order number to PayPal after an order has been completed.{/s}',
                     handler: Ext.bind(me.onSendOrderNumberChecked, me)
                 },
+                me.orderStatusSelect,
+                me.paymentStatusSelect,
                 me.orderNumberPrefix,
                 me.smartPaymentButtonsCheckbox
             ]
@@ -512,9 +534,9 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
      * @param { Boolean } checked
      */
     onSendOrderNumberChecked: function(element, checked) {
-        var me = this;
-
-        me.orderNumberPrefix.setDisabled(!checked);
+        this.orderNumberPrefix.setDisabled(!checked);
+        this.orderStatusSelect.setDisabled(!checked);
+        this.paymentStatusSelect.setDisabled(!checked);
     },
 
     onValidateAPIButtonClick: function() {

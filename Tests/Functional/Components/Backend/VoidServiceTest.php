@@ -93,7 +93,12 @@ class VoidServiceTest extends TestCase
             ),
             new AuthorizationResourceMock(),
             new OrderResourceMock(),
-            new PaymentStatusService($this->modelManager, $this->getContainer()->get('paypal_unified.logger_service'))
+            new PaymentStatusService(
+                $this->modelManager,
+                $this->getContainer()->get('paypal_unified.logger_service'),
+                $this->getContainer()->get('dbal_connection'),
+                $this->getContainer()->get('paypal_unified.settings_service')
+            )
         );
     }
 }

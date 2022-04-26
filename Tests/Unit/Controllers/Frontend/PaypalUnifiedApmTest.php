@@ -11,7 +11,6 @@ namespace SwagPaymentPayPalUnified\Tests\Unit\Controllers\Frontend;
 require_once __DIR__ . '/../../../../Controllers/Frontend/PaypalUnifiedApm.php';
 
 use Enlight_Components_Db_Adapter_Pdo_Mysql;
-use Enlight_Exception;
 use Shopware\Models\Order\Status;
 use Shopware_Controllers_Frontend_PaypalUnifiedApm;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
@@ -25,13 +24,13 @@ use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Payments\Cap
 use SwagPaymentPayPalUnified\PayPalBundle\V2\PaymentIntentV2;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\PaymentStatusV2;
 use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
+use SwagPaymentPayPalUnified\Tests\Functional\ShopRegistrationTrait;
 use SwagPaymentPayPalUnified\Tests\Unit\PaypalPaymentControllerTestCase;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 class PaypalUnifiedApmTest extends PaypalPaymentControllerTestCase
 {
     use ContainerTrait;
+    use ShopRegistrationTrait;
 
     const PAYPAL_ORDER_ID = '85713e7f-b5c1-4f4b-b28b-8a9626bb3209';
     const SHOPWARE_ORDER_ID = '749d7b69-b542-498e-93a2-2c06ffc07d9b';
@@ -213,20 +212,6 @@ class PaypalUnifiedApmTest extends PaypalPaymentControllerTestCase
 
         $this->getContainer()->get('session')
             ->offsetSet('sOrderVariables', $orderVariables);
-    }
-
-    /**
-     * @throws Enlight_Exception
-     *
-     * @return void
-     */
-    private function prepareRequestStack()
-    {
-        $requestStack = $this->getContainer()->get('request_stack', ContainerInterface::NULL_ON_INVALID_REFERENCE);
-        if ($requestStack instanceof RequestStack) {
-            $requestStack->push($this->request);
-        }
-        $this->getContainer()->get('front')->setRequest($this->request);
     }
 
     /**

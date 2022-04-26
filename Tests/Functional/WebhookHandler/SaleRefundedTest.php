@@ -82,7 +82,12 @@ class SaleRefundedTest extends TestCase
     {
         $instance = new SaleRefunded(
             $this->getContainer()->get('paypal_unified.logger_service'),
-            new PaymentStatusService(new EntityManagerMock(), $this->getContainer()->get('paypal_unified.logger_service'))
+            new PaymentStatusService(
+                new EntityManagerMock(),
+                $this->getContainer()->get('paypal_unified.logger_service'),
+                $this->getContainer()->get('dbal_connection'),
+                $this->getContainer()->get('paypal_unified.settings_service')
+            )
         );
 
         static::assertFalse($instance->invoke($this->getWebhookStruct(self::TEST_ORDER_ID)));

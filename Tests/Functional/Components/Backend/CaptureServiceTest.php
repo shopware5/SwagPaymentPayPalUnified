@@ -164,7 +164,9 @@ class CaptureServiceTest extends TestCase
             new CaptureResourceMock(),
             new PaymentStatusService(
                 $this->getContainer()->get('models'),
-                $this->getContainer()->get('paypal_unified.logger_service')
+                $this->getContainer()->get('paypal_unified.logger_service'),
+                $this->getContainer()->get('dbal_connection'),
+                $this->getContainer()->get('paypal_unified.settings_service')
             )
         );
     }

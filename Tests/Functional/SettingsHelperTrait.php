@@ -52,6 +52,8 @@ trait SettingsHelperTrait
             'button_locale' => null,
             'paypal_payer_id' => null,
             'sandbox_paypal_payer_id' => null,
+            'order_status_on_failed_payment' => -1,
+            'payment_status_on_failed_payment' => 35,
         ];
 
         $this->addOrUpdateSettings('swag_payment_paypal_unified_settings_general', $default, $data);

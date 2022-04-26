@@ -12,6 +12,15 @@
     <author>shopware AG</author>
     <compatibility minVersion="5.2.27" maxVersion="5.99.99"/>
 
+    <changelog version="4.1.1">
+        <changes lang="de">
+            PT-12704 - Verbessert das Verhalten bei fehlgeschlagenen Zahlungen, wenn die Bestellnummer an PayPal übertragen wird;
+        </changes>
+        <changes lang="en">
+            PT-12704 - Improves the behaviour in case of failed payments when the order number is transmitted to PayPal;
+        </changes>
+    </changelog>
+
     <changelog version="4.1.0">
         <changes lang="de">
             PT-12674 - Zusätzliche Felder für Telefonnummer und Geburtstag für den Rechnungskauf hinzugefügt;

@@ -20,6 +20,7 @@ use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Components\PaymentStatus;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\PayPalOrderParameter;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\PayPalOrderParameterFacade;
+use SwagPaymentPayPalUnified\Components\Services\CartRestoreService;
 use SwagPaymentPayPalUnified\Components\Services\DispatchValidation;
 use SwagPaymentPayPalUnified\Components\Services\ExceptionHandlerService;
 use SwagPaymentPayPalUnified\Components\Services\OrderBuilder\OrderFactory;
@@ -27,6 +28,7 @@ use SwagPaymentPayPalUnified\Components\Services\OrderDataService;
 use SwagPaymentPayPalUnified\Components\Services\PaymentControllerHelper;
 use SwagPaymentPayPalUnified\Components\Services\PaymentStatusService;
 use SwagPaymentPayPalUnified\Components\Services\Validation\RedirectDataBuilderFactory;
+use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentControllerResults\HandleOrderWithSendOrderNumberResult;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
@@ -133,6 +135,11 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
      */
     protected $logger;
 
+    /**
+     * @var CartRestoreService
+     */
+    protected $basketRestoreService;
+
     public function preDispatch()
     {
         $this->dependencyProvider = $this->get('paypal_unified.dependency_provider');
@@ -149,6 +156,7 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
         $this->shopwareConfig = $this->get('config');
         $this->paymentStatusService = $this->get('paypal_unified.payment_status_service');
         $this->logger = $this->get('paypal_unified.logger_service');
+        $this->basketRestoreService = $this->get('paypal_unified.cart_restore_service');
     }
 
     /**
@@ -169,6 +177,33 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
             ->setCode($shopwareErrorCode);
 
         $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
+    }
+
+    /**
+     * @param array<int,Patch> $patches
+     *
+     * @return HandleOrderWithSendOrderNumberResult
+     */
+    protected function handleOrderWithSendOrderNumber(Order $paypalOrder, array $patches = [])
+    {
+        // Save basket before create the order
+        $basketData = $this->basketRestoreService->getCartData();
+
+        $shopwareOrderNumber = $this->createShopwareOrder($paypalOrder->getId(), $this->getPaymentType($paypalOrder));
+
+        $patches[] = $this->createInvoiceIdPatch($shopwareOrderNumber);
+
+        if (!$this->updatePayPalOrder($paypalOrder->getId(), $patches)) {
+            // If an error occurred while updating the PayPalOrder
+            // - Set the order and payment state to the order
+            $this->paymentStatusService->setOrderAndPaymentStatusForFailedOrder($shopwareOrderNumber);
+            // - Restore the basket
+            $this->basketRestoreService->restoreCart($basketData);
+
+            return new HandleOrderWithSendOrderNumberResult(false, $shopwareOrderNumber);
+        }
+
+        return new HandleOrderWithSendOrderNumberResult(true, $shopwareOrderNumber);
     }
 
     /**
@@ -206,8 +241,8 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
     }
 
     /**
-     * @param string       $payPalOrderId
-     * @param array<Patch> $patches
+     * @param string           $payPalOrderId
+     * @param array<int,Patch> $patches
      *
      * @return bool
      */
