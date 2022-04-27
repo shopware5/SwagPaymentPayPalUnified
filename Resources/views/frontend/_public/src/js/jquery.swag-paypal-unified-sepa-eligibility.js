@@ -135,4 +135,8 @@
     });
 
     window.StateManager.addPlugin('*[data-swagPayPalUnifiedSepaEligibility="true"]', 'swagPayPalUnifiedSepaEligibility');
+
+    $.subscribe('plugin/swShippingPayment/onInputChanged', function() {
+        window.StateManager.addPlugin('*[data-swagPayPalUnifiedSepaEligibility="true"]', 'swagPayPalUnifiedSepaEligibility');
+    });
 })(jQuery, window);
