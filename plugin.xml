@@ -15,9 +15,11 @@
     <changelog version="4.1.1">
         <changes lang="de">
             PT-12704 - Verbessert das Verhalten bei fehlgeschlagenen Zahlungen, wenn die Bestellnummer an PayPal übertragen wird;
+            PT-12722 - Behebt Fehler in der Zahlungsart-Auswahl;
         </changes>
         <changes lang="en">
             PT-12704 - Improves the behaviour in case of failed payments when the order number is transmitted to PayPal;
+            PT-12722 - Fixes error in the payment method selection;
         </changes>
     </changelog>
 
