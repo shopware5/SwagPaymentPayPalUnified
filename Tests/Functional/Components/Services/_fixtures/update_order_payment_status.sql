@@ -1,0 +1,5 @@
+INSERT INTO `s_order` (`id`, `ordernumber`, `userID`, `invoice_amount`, `invoice_amount_net`, `invoice_shipping`, `invoice_shipping_net`, `ordertime`, `status`, `cleared`, `paymentID`, `transactionID`, `comment`, `customercomment`, `internalcomment`, `net`, `taxfree`, `partnerID`, `temporaryID`, `referer`, `cleareddate`, `trackingcode`, `language`, `dispatchID`, `currency`, `currencyFactor`, `subshopID`, `remote_addr`, `deviceType`) VALUES
+    (1998563, '29008',	1,	75.94,	63.81,	35.99,	30.24,	'2022-04-26 04:57:15',	-1,	35,	14,	'6BH162346W935841F',	'',	'',	'',	0,	0,	'',	'6BH162346W935841F',	'',	NULL,	'',	'1',	10,	'EUR',	1,	1,	'172.19.0.0',	'desktop');
+
+INSERT INTO `s_order_details` (`id`, `orderID`, `ordernumber`, `articleID`, `articleordernumber`, `price`, `quantity`, `name`, `status`, `shipped`, `shippedgroup`, `releasedate`, `modus`, `esdarticle`, `taxID`, `tax_rate`, `config`, `ean`, `unit`, `pack_unit`, `articleDetailID`) VALUES
+    (229,	1998563,	'29008',	170,	'SW10170',	39.95,	1,	'Sonnenbrille \"Red\"',	0,	0,	0,	'0000-00-00',	0,	0,	1,	19,	'',	'',	'',	'',	394);

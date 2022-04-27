@@ -58,12 +58,22 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2ExpressCheckout extends Abstr
         $shopwareOrderNumber = null;
         $sendShopwareOrderNumber = $this->getSendOrdernumber();
         if ($sendShopwareOrderNumber) {
-            $shopwareOrderNumber = $this->createShopwareOrder($payPalOrderId, PaymentType::PAYPAL_EXPRESS_V2);
+            $result = $this->handleOrderWithSendOrderNumber($payPalOrderData, $patchSet);
+            $shopwareOrderNumber = $result->getShopwareOrderNumber();
+            if (!$result->getSuccess()) {
+                $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
+                    ->setCode(ErrorCodes::COMMUNICATION_FAILURE);
 
-            $patchSet[] = $this->createInvoiceIdPatch($shopwareOrderNumber);
-        }
+                $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
 
-        if (!$this->updatePayPalOrder($payPalOrderId, $patchSet)) {
+                return;
+            }
+        } elseif (!$this->updatePayPalOrder($payPalOrderId, $patchSet)) {
+            $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
+                ->setCode(ErrorCodes::COMMUNICATION_FAILURE);
+
+            $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
+
             return;
         }
 

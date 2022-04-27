@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Unit\Controllers\Frontend;
 
+use ReflectionClass;
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
 use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentController;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
@@ -36,19 +37,25 @@ class AbstractPaypalPaymentControllerTest extends PaypalPaymentControllerTestCas
 
     /**
      * @param string $checkoutType
-     * @param string $paymentType
+     * @param string $expectedPaymentType
      *
      * @dataProvider getPaymentTypeCheckoutTypeProvider
      *
      * @return void
      */
-    public function testGetPaymentTypeReturnsEarlyForCertainCheckoutTypes($checkoutType, $paymentType)
+    public function testGetPaymentTypeReturnsEarlyForCertainCheckoutTypes($checkoutType, $expectedPaymentType)
     {
         $this->givenTheCheckoutTypeEquals($checkoutType);
 
+        $controller = $this->getController(TestPaypalPaymentController::class);
+        $reflectionMethod = (new ReflectionClass(TestPaypalPaymentController::class))->getMethod('getPaymentType');
+        $reflectionMethod->setAccessible(true);
+
+        $paymentType = $reflectionMethod->invoke($controller, new Order());
+
         static::assertSame(
-            $paymentType,
-            $this->getController(TestPaypalPaymentController::class)->getPaymentType(new Order())
+            $expectedPaymentType,
+            $paymentType
         );
     }
 
@@ -135,11 +142,4 @@ class AbstractPaypalPaymentControllerTest extends PaypalPaymentControllerTestCas
 
 class TestPaypalPaymentController extends AbstractPaypalPaymentController
 {
-    /**
-     * @return int|string
-     */
-    public function getPaymentType(Order $order)
-    {
-        return parent::getPaymentType($order);
-    }
 }

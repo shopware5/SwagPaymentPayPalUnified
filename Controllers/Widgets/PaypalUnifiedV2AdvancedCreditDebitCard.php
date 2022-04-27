@@ -103,11 +103,14 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2AdvancedCreditDebitCard extend
         $shopwareOrderNumber = null;
         $sendShopwareOrderNumber = $this->getSendOrdernumber();
         if ($sendShopwareOrderNumber) {
-            $shopwareOrderNumber = $this->createShopwareOrder($payPalOrderId, PaymentType::PAYPAL_ADVANCED_CREDIT_DEBIT_CARD);
+            $result = $this->handleOrderWithSendOrderNumber($payPalOrder);
+            $shopwareOrderNumber = $result->getShopwareOrderNumber();
+            if (!$result->getSuccess()) {
+                $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
+                    ->setCode(ErrorCodes::COMMUNICATION_FAILURE);
 
-            $invoiceIdPatch = $this->createInvoiceIdPatch($shopwareOrderNumber);
+                $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
 
-            if (!$this->updatePayPalOrder($payPalOrderId, [$invoiceIdPatch])) {
                 return;
             }
         }

@@ -33,7 +33,9 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.model.General', {
         { name: 'buttonStyleColor', type: 'string', defaultValue: 'gold' },
         { name: 'buttonStyleShape', type: 'string', defaultValue: 'rect' },
         { name: 'buttonStyleSize', type: 'string', defaultValue: 'large' },
-        { name: 'buttonLocale', type: 'string', defaultValue: '' }
+        { name: 'buttonLocale', type: 'string', defaultValue: '' },
+        { name: 'orderStatusOnFailedPayment', type: 'int', defaultValue: -1 },
+        { name: 'paymentStatusOnFailedPayment', type: 'int', defaultValue: 35 }
     ]
 });
 // {/block}

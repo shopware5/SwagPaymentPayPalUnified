@@ -9,6 +9,7 @@
 namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services;
 
 use Generator;
+use PDO;
 use PHPUnit\Framework\TestCase;
 use Shopware\Models\Order\Order;
 use Shopware\Models\Order\Status;
@@ -17,12 +18,16 @@ use SwagPaymentPayPalUnified\Components\Services\LoggerService;
 use SwagPaymentPayPalUnified\Components\Services\PaymentStatusService;
 use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
+use SwagPaymentPayPalUnified\Tests\Functional\SettingsHelperTrait;
+use SwagPaymentPayPalUnified\Tests\Functional\ShopRegistrationTrait;
 use UnexpectedValueException;
 
 class PaymentStatusServiceTest extends TestCase
 {
     use DatabaseTestCaseTrait;
     use ContainerTrait;
+    use SettingsHelperTrait;
+    use ShopRegistrationTrait;
 
     const ANY_ID = 9999;
     const SHOPWARE_ORDER_ID = 66;
@@ -41,7 +46,7 @@ class PaymentStatusServiceTest extends TestCase
      */
     public function testUpdatePaymentStatusV2($shopwareOrderId, $paymentStateId, $expectsException, $exceptionClassString = null)
     {
-        $sql = \file_get_contents(__DIR__ . '/_fixtures/order_payment_state_test.sql');
+        $sql = file_get_contents(__DIR__ . '/_fixtures/order_payment_state_test.sql');
         static::assertTrue(\is_string($sql));
 
         $this->getContainer()->get('dbal_connection')->exec($sql);
@@ -93,13 +98,48 @@ class PaymentStatusServiceTest extends TestCase
     }
 
     /**
+     * @return void
+     */
+    public function testSetOrderAndPaymentStatusForFailedOrder()
+    {
+        $orderNumber = '29008';
+
+        $sql = file_get_contents(__DIR__ . '/_fixtures/update_order_payment_status.sql');
+        static::assertTrue(\is_string($sql));
+        $this->getContainer()->get('dbal_connection')->exec($sql);
+
+        $this->insertGeneralSettingsFromArray([
+            'active' => 1,
+            'order_status_on_failed_payment' => 1000,
+            'payment_status_on_failed_payment' => 1000,
+        ]);
+
+        $paymentStatusService = $this->createPaymentStatusService();
+
+        $paymentStatusService->setOrderAndPaymentStatusForFailedOrder($orderNumber);
+
+        $result = $this->getContainer()->get('dbal_connection')->createQueryBuilder()
+            ->select(['status', 'cleared'])
+            ->from('s_order')
+            ->where('ordernumber = :orderNumber')
+            ->setParameter('orderNumber', $orderNumber)
+            ->execute()
+            ->fetch(PDO::FETCH_ASSOC);
+
+        static::assertSame('1000', $result['status']);
+        static::assertSame('1000', $result['cleared']);
+    }
+
+    /**
      * @return PaymentStatusService
      */
     private function createPaymentStatusService()
     {
         return new PaymentStatusService(
             $this->getContainer()->get('models'),
-            $this->createMock(LoggerService::class)
+            $this->createMock(LoggerService::class),
+            $this->getContainer()->get('dbal_connection'),
+            $this->getContainer()->get('paypal_unified.settings_service')
         );
     }
 }

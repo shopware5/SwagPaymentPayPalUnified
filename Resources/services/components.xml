@@ -11,11 +11,11 @@
         <import resource="components/paypal_order.xml"/>
         <import resource="components/plus.xml"/>
         <import resource="components/validation.xml"/>
-        <import resource="components/order_builder.xml" />
-        <import resource="components/payment_source.xml" />
-        <import resource="components/payment_source_value.xml" />
-        <import resource="components/apm_risk_management.xml" />
-        <import resource="components/order_array_factory.xml" />
+        <import resource="components/order_builder.xml"/>
+        <import resource="components/payment_source.xml"/>
+        <import resource="components/payment_source_value.xml"/>
+        <import resource="components/apm_risk_management.xml"/>
+        <import resource="components/order_array_factory.xml"/>
     </imports>
 
     <services>
@@ -65,6 +65,8 @@
                  public="true">
             <argument type="service" id="models"/>
             <argument type="service" id="paypal_unified.logger_service"/>
+            <argument type="service" id="dbal_connection"/>
+            <argument type="service" id="paypal_unified.settings_service"/>
         </service>
 
         <service id="paypal_unified.settings_service"
@@ -139,6 +141,13 @@
                  public="true">
             <argument type="service" id="config"/>
             <argument type="service" id="paypal_unified.dependency_provider"/>
+        </service>
+
+        <service id="paypal_unified.cart_restore_service"
+                 class="SwagPaymentPayPalUnified\Components\Services\CartRestoreService"
+                 public="true">
+            <argument type="service" id="paypal_unified.dependency_provider"/>
+            <argument type="service" id="models"/>
         </service>
     </services>
 </container>

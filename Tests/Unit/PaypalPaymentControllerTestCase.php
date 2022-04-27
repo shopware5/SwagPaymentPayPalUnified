@@ -8,16 +8,21 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Unit;
 
+use Enlight_Class;
 use Enlight_Controller_Request_RequestHttp;
 use Enlight_Controller_Response_ResponseHttp;
+use Enlight_Template_Manager;
+use Enlight_View_Default;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Shopware\Components\BasketSignature\BasketPersister;
 use Shopware\Components\DependencyInjection\Bridge\Config;
 use Shopware\Components\DependencyInjection\Container;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\ExceptionHandlerServiceInterface;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\PayPalOrderParameterFacadeInterface;
+use SwagPaymentPayPalUnified\Components\Services\CartRestoreService;
 use SwagPaymentPayPalUnified\Components\Services\DispatchValidation;
 use SwagPaymentPayPalUnified\Components\Services\OrderBuilder\OrderFactory;
 use SwagPaymentPayPalUnified\Components\Services\OrderDataService;
@@ -30,10 +35,15 @@ use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentControlle
 use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\OrderResource;
+use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
+use UnexpectedValueException;
 
 class PaypalPaymentControllerTestCase extends TestCase
 {
+    use ContainerTrait;
+
     /**
      * @var MockObject|DependencyProvider
      */
@@ -125,6 +135,16 @@ class PaypalPaymentControllerTestCase extends TestCase
     protected $redirectDataBuilder;
 
     /**
+     * @var MockObject|CartRestoreService
+     */
+    protected $basketRestoreService;
+
+    /**
+     * @var MockObject|BasketPersister
+     */
+    protected $basketPersister;
+
+    /**
      * @before
      *
      * @return void
@@ -145,11 +165,15 @@ class PaypalPaymentControllerTestCase extends TestCase
         $this->shopwareConfig = static::createMock(Config::class);
         $this->paymentStatusService = static::createMock(PaymentStatusService::class);
         $this->logger = static::createMock(LoggerServiceInterface::class);
+        $this->basketRestoreService = static::createMock(CartRestoreService::class);
+        $this->basketPersister = static::createMock(BasketPersister::class);
         $this->basketValidator = static::createMock(BasketValidatorInterface::class);
         $this->request = static::createMock(Enlight_Controller_Request_RequestHttp::class);
         $this->response = static::createMock(Enlight_Controller_Response_ResponseHttp::class);
 
         $this->redirectDataBuilder = $this->getRedirectDataBuilder();
+
+        $this->prepareRequestStack();
     }
 
     /**
@@ -160,11 +184,11 @@ class PaypalPaymentControllerTestCase extends TestCase
         $mock = static::createMock(RedirectDataBuilder::class);
 
         $mock->method('setCode')
-            ->will(static::returnSelf());
+            ->willReturnSelf();
         $mock->method('setException')
-            ->will(static::returnSelf());
+            ->willReturnSelf();
         $mock->method('setRedirectToFinishAction')
-            ->will(static::returnSelf());
+            ->willReturnSelf();
 
         return $mock;
     }
@@ -201,14 +225,17 @@ class PaypalPaymentControllerTestCase extends TestCase
         Config $shopwareConfig = null,
         PaymentStatusService $paymentStatusService = null,
         LoggerServiceInterface $logger = null,
+        CartRestoreService $basketRestoreService = null,
+        BasketPersister $basketPersister = null,
         BasketValidatorInterface $basketValidator = null,
         Enlight_Controller_Request_RequestHttp $request = null,
-        Enlight_Controller_Response_ResponseHttp $response = null
+        Enlight_Controller_Response_ResponseHttp $response = null,
+        Enlight_View_Default $view = null
     ) {
         $container = static::createMock(Container::class);
 
         $container->method('get')
-            ->will(static::returnValueMap([
+            ->willReturnMap([
                 ['paypal_unified.dependency_provider', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $dependencyProvider ?: $this->dependencyProvider],
                 ['paypal_unified.redirect_data_builder_factory', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $redirectDataBuilderFactory ?: $this->redirectDataBuilderFactory],
                 ['paypal_unified.payment_controller_helper', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $paymentControllerHelper ?: $this->paymentControllerHelper],
@@ -224,9 +251,11 @@ class PaypalPaymentControllerTestCase extends TestCase
                 ['paypal_unified.payment_status_service', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $paymentStatusService ?: $this->paymentStatusService],
                 ['paypal_unified.logger_service', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $logger ?: $this->logger],
                 ['paypal_unified.simple_basket_validator', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $basketValidator ?: $this->basketValidator],
-            ]));
+                ['paypal_unified.cart_restore_service', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $basketRestoreService ?: $this->basketRestoreService],
+                ['basket_persister', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $basketPersister ?: $this->basketPersister],
+            ]);
 
-        $controller = \Enlight_Class::Instance(
+        $controller = Enlight_Class::Instance(
             $controllerClass,
             [
                 $request ?: $this->request, // Setting request for Shopware <= v5.2
@@ -235,14 +264,31 @@ class PaypalPaymentControllerTestCase extends TestCase
         );
 
         if (!$controller instanceof $controllerClass) {
-            throw new \UnexpectedValueException(sprintf('Instantiation of controller %s failed.', $controllerClass));
+            throw new UnexpectedValueException(sprintf('Instantiation of controller %s failed.', $controllerClass));
+        }
+
+        if ($view === null) {
+            $view = new Enlight_View_Default(new Enlight_Template_Manager());
         }
 
         $controller->setContainer($container);
         $controller->setRequest($request ?: $this->request); // Set request for Shopware > v5.2
         $controller->setResponse($response ?: $this->response); // Set response for Shopware > v5.2
+        $controller->setView($view);
         $controller->preDispatch();
 
         return $controller;
+    }
+
+    /**
+     * @return void
+     */
+    protected function prepareRequestStack()
+    {
+        $requestStack = $this->getContainer()->get('request_stack', ContainerInterface::NULL_ON_INVALID_REFERENCE);
+        if ($requestStack instanceof RequestStack) {
+            $requestStack->push($this->request);
+        }
+        $this->getContainer()->get('front')->setRequest($this->request);
     }
 }

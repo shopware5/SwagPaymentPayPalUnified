@@ -165,6 +165,18 @@ class General extends ModelEntity
     private $buttonLocale = '';
 
     /**
+     * @var int
+     * @ORM\Column(name="order_status_on_failed_payment", type="integer")
+     */
+    private $orderStatusOnFailedPayment;
+
+    /**
+     * @var int
+     * @ORM\Column(name="payment_status_on_failed_payment", type="integer")
+     */
+    private $paymentStatusOnFailedPayment;
+
+    /**
      * @return int
      */
     public function getId()
@@ -560,5 +572,41 @@ class General extends ModelEntity
     public function toArray()
     {
         return \get_object_vars($this);
+    }
+
+    /**
+     * @return int
+     */
+    public function getOrderStatusOnFailedPayment()
+    {
+        return $this->orderStatusOnFailedPayment;
+    }
+
+    /**
+     * @param int $orderStatusOnFailedPayment
+     *
+     * @return void
+     */
+    public function setOrderStatusOnFailedPayment($orderStatusOnFailedPayment)
+    {
+        $this->orderStatusOnFailedPayment = $orderStatusOnFailedPayment;
+    }
+
+    /**
+     * @return int
+     */
+    public function getPaymentStatusOnFailedPayment()
+    {
+        return $this->paymentStatusOnFailedPayment;
+    }
+
+    /**
+     * @param int $paymentStatusOnFailedPayment
+     *
+     * @return void
+     */
+    public function setPaymentStatusOnFailedPayment($paymentStatusOnFailedPayment)
+    {
+        $this->paymentStatusOnFailedPayment = $paymentStatusOnFailedPayment;
     }
 }
