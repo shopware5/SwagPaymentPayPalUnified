@@ -44,6 +44,7 @@ class CartRestoreService
     public function getCartData()
     {
         $this->logger->debug(sprintf('%s GET DOCTRINE CART OBJECTS', __METHOD__));
+
         $cart = $this->modelManager->getRepository(Cart::class)
             ->findBy(['sessionId' => $this->dependencyProvider->getSession()->offsetGet('sessionId')]);
 

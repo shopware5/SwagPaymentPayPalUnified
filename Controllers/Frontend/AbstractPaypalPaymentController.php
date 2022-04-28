@@ -188,6 +188,7 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
     protected function handleOrderWithSendOrderNumber(Order $paypalOrder, $paymentType, array $patches = [])
     {
         $this->logger->debug(sprintf('%s START', __METHOD__));
+
         // Save basket before create the order
         $cartData = $this->basketRestoreService->getCartData();
 
@@ -204,12 +205,12 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
 
             $this->logger->debug(sprintf('%s FAILS', __METHOD__));
 
-            return new HandleOrderWithSendOrderNumberResult(false, $shopwareOrderNumber);
+            return new HandleOrderWithSendOrderNumberResult(false, $shopwareOrderNumber, $cartData);
         }
 
         $this->logger->debug(sprintf('%s SUCCESS', __METHOD__));
 
-        return new HandleOrderWithSendOrderNumberResult(true, $shopwareOrderNumber);
+        return new HandleOrderWithSendOrderNumberResult(true, $shopwareOrderNumber, $cartData);
     }
 
     /**
@@ -282,20 +283,16 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
     }
 
     /**
-     * @param string     $payPalOrderId
-     * @param bool       $sendShopwareOrderNumber
-     * @param Order|null $payPalOrder
+     * @param string                                    $payPalOrderId
+     * @param Order|null                                $payPalOrder
+     * @param HandleOrderWithSendOrderNumberResult|null $orderWithSendOrderNumberResult
      *
      * @return Order|null
      */
-    protected function captureOrAuthorizeOrder($payPalOrderId, $sendShopwareOrderNumber, $payPalOrder = null)
+    protected function captureOrAuthorizeOrder($payPalOrderId, $payPalOrder = null, $orderWithSendOrderNumberResult = null)
     {
         if ($payPalOrder instanceof Order && strtolower($payPalOrder->getStatus()) === PaymentStatus::PAYMENT_COMPLETED) {
             return $payPalOrder;
-        }
-
-        if ($sendShopwareOrderNumber) {
-            $cartData = $this->basketRestoreService->getCartData();
         }
 
         $capturedPayPalOrder = null;
@@ -314,8 +311,9 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
                 $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFULLY AUTHORIZED', __METHOD__));
             }
         } catch (RequestException $exception) {
-            if ($sendShopwareOrderNumber) {
-                $this->basketRestoreService->restoreCart($cartData);
+            if ($orderWithSendOrderNumberResult instanceof HandleOrderWithSendOrderNumberResult) {
+                $this->paymentStatusService->setOrderAndPaymentStatusForFailedOrder($orderWithSendOrderNumberResult->getShopwareOrderNumber());
+                $this->basketRestoreService->restoreCart($orderWithSendOrderNumberResult->getCartData());
             }
 
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
@@ -326,8 +324,9 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
 
             return null;
         } catch (Exception $exception) {
-            if ($sendShopwareOrderNumber) {
-                $this->basketRestoreService->restoreCart($cartData);
+            if ($orderWithSendOrderNumberResult instanceof HandleOrderWithSendOrderNumberResult) {
+                $this->paymentStatusService->setOrderAndPaymentStatusForFailedOrder($orderWithSendOrderNumberResult->getShopwareOrderNumber());
+                $this->basketRestoreService->restoreCart($orderWithSendOrderNumberResult->getCartData());
             }
 
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()

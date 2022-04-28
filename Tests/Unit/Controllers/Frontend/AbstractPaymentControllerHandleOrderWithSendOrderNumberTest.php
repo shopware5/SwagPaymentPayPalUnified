@@ -17,6 +17,7 @@ use Shopware_Controllers_Frontend_PaypalUnifiedApm as PaypalUnifiedApm;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\Services\CartRestoreService;
 use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentControllerResults\HandleOrderWithSendOrderNumberResult;
+use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\OrderResource;
 use SwagPaymentPayPalUnified\Tests\Functional\SettingsHelperTrait;
@@ -111,7 +112,7 @@ class AbstractPaymentControllerHandleOrderWithSendOrderNumberTest extends Paypal
         $reflectionMethod = (new ReflectionClass(PaypalUnifiedApm::class))->getMethod('handleOrderWithSendOrderNumber');
         $reflectionMethod->setAccessible(true);
 
-        $result = $reflectionMethod->invoke($controller, $paypalOrder);
+        $result = $reflectionMethod->invokeArgs($controller, [$paypalOrder, PaymentType::APM_GIROPAY]);
 
         $basketResult = $basketRestoreService->getCartData();
 

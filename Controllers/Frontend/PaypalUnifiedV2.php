@@ -119,6 +119,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
             return;
         }
 
+        $result = null;
         $shopwareOrderNumber = null;
         $sendShopwareOrderNumber = $this->getSendOrdernumber();
         if ($sendShopwareOrderNumber) {
@@ -134,7 +135,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
             }
         }
 
-        $capturedPayPalOrder = $this->captureOrAuthorizeOrder($payPalOrder->getId(), $sendShopwareOrderNumber, $payPalOrder);
+        $capturedPayPalOrder = $this->captureOrAuthorizeOrder($payPalOrder->getId(), $payPalOrder, $result);
         if (!$capturedPayPalOrder instanceof Order) {
             if (\is_string($shopwareOrderNumber)) {
                 $this->orderDataService->removeTransactionId($shopwareOrderNumber);

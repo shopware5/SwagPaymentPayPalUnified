@@ -55,6 +55,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2ExpressCheckout extends Abstr
 
         $patchSet = [$purchaseUnitPatch];
 
+        $result = null;
         $shopwareOrderNumber = null;
         $sendShopwareOrderNumber = $this->getSendOrdernumber();
         if ($sendShopwareOrderNumber) {
@@ -77,7 +78,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2ExpressCheckout extends Abstr
             return;
         }
 
-        $capturedPayPalOrder = $this->captureOrAuthorizeOrder($payPalOrderId, $sendShopwareOrderNumber);
+        $capturedPayPalOrder = $this->captureOrAuthorizeOrder($payPalOrderId, null, $result);
         if (!$capturedPayPalOrder instanceof Order) {
             if (\is_string($shopwareOrderNumber)) {
                 $this->orderDataService->removeTransactionId($shopwareOrderNumber);

@@ -225,7 +225,7 @@ class PaypalPaymentControllerTestCase extends TestCase
         Config $shopwareConfig = null,
         PaymentStatusService $paymentStatusService = null,
         LoggerServiceInterface $logger = null,
-        CartRestoreService $basketRestoreService = null,
+        CartRestoreService $cartRestoreService = null,
         BasketPersister $basketPersister = null,
         BasketValidatorInterface $basketValidator = null,
         Enlight_Controller_Request_RequestHttp $request = null,
@@ -251,7 +251,7 @@ class PaypalPaymentControllerTestCase extends TestCase
                 ['paypal_unified.payment_status_service', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $paymentStatusService ?: $this->paymentStatusService],
                 ['paypal_unified.logger_service', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $logger ?: $this->logger],
                 ['paypal_unified.simple_basket_validator', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $basketValidator ?: $this->basketValidator],
-                ['paypal_unified.cart_restore_service', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $basketRestoreService ?: $this->basketRestoreService],
+                ['paypal_unified.cart_restore_service', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $cartRestoreService ?: $this->basketRestoreService],
                 ['basket_persister', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $basketPersister ?: $this->basketPersister],
             ]);
 

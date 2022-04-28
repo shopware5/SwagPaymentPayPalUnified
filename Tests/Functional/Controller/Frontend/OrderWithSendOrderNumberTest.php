@@ -18,6 +18,7 @@ use Enlight_Components_Session_Namespace;
 use Enlight_Controller_Request_RequestTestCase;
 use Exception;
 use Generator;
+use ReflectionClass;
 use Shopware_Controllers_Frontend_PaypalUnifiedApm;
 use Shopware_Controllers_Frontend_PaypalUnifiedV2;
 use Shopware_Controllers_Frontend_PaypalUnifiedV2ExpressCheckout;
@@ -35,11 +36,13 @@ use SwagPaymentPayPalUnified\Components\Services\Validation\RedirectDataBuilder;
 use SwagPaymentPayPalUnified\Components\Services\Validation\RedirectDataBuilderFactoryInterface;
 use SwagPaymentPayPalUnified\Components\Services\Validation\SimpleBasketValidator;
 use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentController;
+use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentControllerResults\HandleOrderWithSendOrderNumberResult;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Amount;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\PaymentIntentV2;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\OrderResource;
 use SwagPaymentPayPalUnified\Tests\Functional\SettingsHelperTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\ShopRegistrationTrait;
@@ -168,6 +171,57 @@ class OrderWithSendOrderNumberTest extends PaypalPaymentControllerTestCase
     }
 
     /**
+     * @return void
+     */
+    public function testCaptureOrAuthorizeOrderShouldRestoreTheBasket()
+    {
+        $controller = $this->getController(
+            Shopware_Controllers_Widgets_PaypalUnifiedV2AdvancedCreditDebitCard::class,
+            $this->createDependencyProvider(),
+            $this->createRedirectDataBuilderFactory(),
+            null,
+            null,
+            $this->createPayPalOrderParameterFacade(),
+            $this->createOrderResource(),
+            $this->createOrderFactory(),
+            $this->createSettingService(),
+            null,
+            null,
+            null,
+            null,
+            $this->createPaymentStatusServiceExpectsMethodCall(),
+            null,
+            $this->getContainer()->get('paypal_unified.cart_restore_service'),
+            null,
+            $this->createBasketValidator(),
+            $this->createRequest()
+        );
+
+        $session = $this->getContainer()->get('session');
+        $session->set('id', self::SESSION_ID);
+        $session->offsetSet('sessionId', self::SESSION_ID);
+
+        $result = new HandleOrderWithSendOrderNumberResult(true, '08154711', $this->getContainer()->get('paypal_unified.cart_restore_service')->getCartData());
+
+        // Fake create order
+        $this->getContainer()->get('dbal_connection')->createQueryBuilder()
+            ->delete('s_order_basket')
+            ->where('sessionID = :sessionId')
+            ->setParameter('sessionId', self::SESSION_ID)
+            ->execute();
+
+        $captureOrAuthorizeOrderReflectionMethod = (new ReflectionClass(Shopware_Controllers_Widgets_PaypalUnifiedV2AdvancedCreditDebitCard::class))->getMethod('captureOrAuthorizeOrder');
+        $captureOrAuthorizeOrderReflectionMethod->setAccessible(true);
+
+        // Execute test case and get results
+        $result = $captureOrAuthorizeOrderReflectionMethod->invokeArgs($controller, [self::TRANSACTION_ID, null, $result]);
+        $cartResult = $this->getContainer()->get('paypal_unified.cart_restore_service')->getCartData();
+
+        static::assertNull($result);
+        static::assertCount(8, $cartResult);
+    }
+
+    /**
      * @return SettingsService
      */
     private function createSettingService()
@@ -175,6 +229,7 @@ class OrderWithSendOrderNumberTest extends PaypalPaymentControllerTestCase
         $settingServiceMock = $this->createMock(SettingsService::class);
         $settingServiceMock->method('get')->willReturnMap([
             [SettingsServiceInterface::SETTING_GENERAL_SEND_ORDER_NUMBER, SettingsTable::GENERAL, 1],
+            [SettingsServiceInterface::SETTING_GENERAL_INTENT, SettingsTable::GENERAL, PaymentIntentV2::CAPTURE],
         ]);
 
         return $settingServiceMock;
@@ -189,6 +244,7 @@ class OrderWithSendOrderNumberTest extends PaypalPaymentControllerTestCase
         $orderResourceMock->method('get')->willReturn($this->createPayPalOrder());
         $orderResourceMock->method('create')->willReturn($this->createPayPalOrder());
         $orderResourceMock->method('update')->willThrowException(new Exception('phpUnitTestException'));
+        $orderResourceMock->method('capture')->willThrowException(new Exception('phpUnitTestException'));
 
         return $orderResourceMock;
     }

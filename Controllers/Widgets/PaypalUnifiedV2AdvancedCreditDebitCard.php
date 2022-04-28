@@ -100,6 +100,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2AdvancedCreditDebitCard extend
             return;
         }
 
+        $result = null;
         $shopwareOrderNumber = null;
         $sendShopwareOrderNumber = $this->getSendOrdernumber();
         if ($sendShopwareOrderNumber) {
@@ -115,7 +116,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2AdvancedCreditDebitCard extend
             }
         }
 
-        $capturedPayPalOrder = $this->captureOrAuthorizeOrder($payPalOrderId, $sendShopwareOrderNumber);
+        $capturedPayPalOrder = $this->captureOrAuthorizeOrder($payPalOrderId, null, $result);
         if (!$capturedPayPalOrder instanceof Order) {
             if (\is_string($shopwareOrderNumber)) {
                 $this->orderDataService->removeTransactionId($shopwareOrderNumber);
