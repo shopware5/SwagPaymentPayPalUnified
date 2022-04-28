@@ -77,7 +77,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2ExpressCheckout extends Abstr
             return;
         }
 
-        $capturedPayPalOrder = $this->captureOrAuthorizeOrder($payPalOrderId);
+        $capturedPayPalOrder = $this->captureOrAuthorizeOrder($payPalOrderId, $sendShopwareOrderNumber);
         if (!$capturedPayPalOrder instanceof Order) {
             if (\is_string($shopwareOrderNumber)) {
                 $this->orderDataService->removeTransactionId($shopwareOrderNumber);

@@ -134,7 +134,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
             }
         }
 
-        $capturedPayPalOrder = $this->captureOrAuthorizeOrder($payPalOrder->getId(), $payPalOrder);
+        $capturedPayPalOrder = $this->captureOrAuthorizeOrder($payPalOrder->getId(), $sendShopwareOrderNumber, $payPalOrder);
         if (!$capturedPayPalOrder instanceof Order) {
             if (\is_string($shopwareOrderNumber)) {
                 $this->orderDataService->removeTransactionId($shopwareOrderNumber);

@@ -115,7 +115,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2AdvancedCreditDebitCard extend
             }
         }
 
-        $capturedPayPalOrder = $this->captureOrAuthorizeOrder($payPalOrderId);
+        $capturedPayPalOrder = $this->captureOrAuthorizeOrder($payPalOrderId, $sendShopwareOrderNumber);
         if (!$capturedPayPalOrder instanceof Order) {
             if (\is_string($shopwareOrderNumber)) {
                 $this->orderDataService->removeTransactionId($shopwareOrderNumber);

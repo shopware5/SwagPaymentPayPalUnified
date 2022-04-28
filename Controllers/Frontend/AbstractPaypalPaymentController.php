@@ -187,7 +187,7 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
     protected function handleOrderWithSendOrderNumber(Order $paypalOrder, array $patches = [])
     {
         // Save basket before create the order
-        $basketData = $this->basketRestoreService->getCartData();
+        $cartData = $this->basketRestoreService->getCartData();
 
         $shopwareOrderNumber = $this->createShopwareOrder($paypalOrder->getId(), $this->getPaymentType($paypalOrder));
 
@@ -198,7 +198,7 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
             // - Set the order and payment state to the order
             $this->paymentStatusService->setOrderAndPaymentStatusForFailedOrder($shopwareOrderNumber);
             // - Restore the basket
-            $this->basketRestoreService->restoreCart($basketData);
+            $this->basketRestoreService->restoreCart($cartData);
 
             return new HandleOrderWithSendOrderNumberResult(false, $shopwareOrderNumber);
         }
@@ -277,14 +277,19 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
 
     /**
      * @param string     $payPalOrderId
+     * @param bool       $sendShopwareOrderNumber
      * @param Order|null $payPalOrder
      *
      * @return Order|null
      */
-    protected function captureOrAuthorizeOrder($payPalOrderId, $payPalOrder = null)
+    protected function captureOrAuthorizeOrder($payPalOrderId, $sendShopwareOrderNumber, $payPalOrder = null)
     {
         if ($payPalOrder instanceof Order && strtolower($payPalOrder->getStatus()) === PaymentStatus::PAYMENT_COMPLETED) {
             return $payPalOrder;
+        }
+
+        if ($sendShopwareOrderNumber) {
+            $cartData = $this->basketRestoreService->getCartData();
         }
 
         $capturedPayPalOrder = null;
@@ -303,6 +308,10 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
                 $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFULLY AUTHORIZED', __METHOD__));
             }
         } catch (RequestException $exception) {
+            if ($sendShopwareOrderNumber) {
+                $this->basketRestoreService->restoreCart($cartData);
+            }
+
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
                 ->setCode(ErrorCodes::COMMUNICATION_FAILURE)
                 ->setException($exception, 'capture/authorize PayPal order');
@@ -311,6 +320,10 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
 
             return null;
         } catch (Exception $exception) {
+            if ($sendShopwareOrderNumber) {
+                $this->basketRestoreService->restoreCart($cartData);
+            }
+
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
                 ->setCode(ErrorCodes::UNKNOWN)
                 ->setException($exception, 'capture/authorize PayPal order');
