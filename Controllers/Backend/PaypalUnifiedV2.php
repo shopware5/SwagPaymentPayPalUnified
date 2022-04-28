@@ -153,7 +153,7 @@ class Shopware_Controllers_Backend_PaypalUnifiedV2 extends Shopware_Controllers_
 
             $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFULLY REFUNDED', __METHOD__));
         } catch (Exception $exception) {
-            $payPalException = $this->exceptionHandler->handle($exception, 'backend/PaypalUnifiedV2/captureOrder');
+            $payPalException = $this->exceptionHandler->handle($exception, 'backend/PaypalUnifiedV2/refundOrder');
             $this->view->assign([
                 'success' => false,
                 'code' => $payPalException->getCode(),
@@ -183,7 +183,7 @@ class Shopware_Controllers_Backend_PaypalUnifiedV2 extends Shopware_Controllers_
 
             $this->logger->debug(sprintf('%s CANCEL AUTHORIZATION SUCCESSFUL', __METHOD__));
         } catch (Exception $exception) {
-            $payPalException = $this->exceptionHandler->handle($exception, 'backend/PaypalUnifiedV2/captureOrder');
+            $payPalException = $this->exceptionHandler->handle($exception, 'backend/PaypalUnifiedV2/cancelAuthorization');
             $this->view->assign([
                 'success' => false,
                 'code' => $payPalException->getCode(),

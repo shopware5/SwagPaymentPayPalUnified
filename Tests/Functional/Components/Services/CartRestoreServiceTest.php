@@ -18,6 +18,7 @@ use SwagPaymentPayPalUnified\Components\Services\CartRestoreService;
 use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\ShopRegistrationTrait;
+use SwagPaymentPayPalUnified\Tests\Mocks\LoggerMock;
 
 class CartRestoreServiceTest extends TestCase
 {
@@ -132,7 +133,8 @@ class CartRestoreServiceTest extends TestCase
     {
         return new CartRestoreService(
             $this->createDependencyProviderMock(),
-            $this->getContainer()->get('models')
+            $this->getContainer()->get('models'),
+            new LoggerMock()
         );
     }
 

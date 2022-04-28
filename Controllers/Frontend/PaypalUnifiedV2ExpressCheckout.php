@@ -58,7 +58,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2ExpressCheckout extends Abstr
         $shopwareOrderNumber = null;
         $sendShopwareOrderNumber = $this->getSendOrdernumber();
         if ($sendShopwareOrderNumber) {
-            $result = $this->handleOrderWithSendOrderNumber($payPalOrderData, $patchSet);
+            $result = $this->handleOrderWithSendOrderNumber($payPalOrderData, PaymentType::PAYPAL_EXPRESS_V2, $patchSet);
             $shopwareOrderNumber = $result->getShopwareOrderNumber();
             if (!$result->getSuccess()) {
                 $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()

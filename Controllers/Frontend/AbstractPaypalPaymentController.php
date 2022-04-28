@@ -181,15 +181,17 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
 
     /**
      * @param array<int,Patch> $patches
+     * @param PaymentType::*   $paymentType
      *
      * @return HandleOrderWithSendOrderNumberResult
      */
-    protected function handleOrderWithSendOrderNumber(Order $paypalOrder, array $patches = [])
+    protected function handleOrderWithSendOrderNumber(Order $paypalOrder, $paymentType, array $patches = [])
     {
+        $this->logger->debug(sprintf('%s START', __METHOD__));
         // Save basket before create the order
         $cartData = $this->basketRestoreService->getCartData();
 
-        $shopwareOrderNumber = $this->createShopwareOrder($paypalOrder->getId(), $this->getPaymentType($paypalOrder));
+        $shopwareOrderNumber = $this->createShopwareOrder($paypalOrder->getId(), $paymentType);
 
         $patches[] = $this->createInvoiceIdPatch($shopwareOrderNumber);
 
@@ -200,8 +202,12 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
             // - Restore the basket
             $this->basketRestoreService->restoreCart($cartData);
 
+            $this->logger->debug(sprintf('%s FAILS', __METHOD__));
+
             return new HandleOrderWithSendOrderNumberResult(false, $shopwareOrderNumber);
         }
+
+        $this->logger->debug(sprintf('%s SUCCESS', __METHOD__));
 
         return new HandleOrderWithSendOrderNumberResult(true, $shopwareOrderNumber);
     }
@@ -561,10 +567,10 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
                 break;
             }
 
-            if ($paypalOrder->getStatus() === PaymentStatusV2::ORDER_AUTHORIZATION_DENIED) {
+            if ($paypalOrder->getStatus() === PaymentStatusV2::ORDER_VOIDED) {
                 $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
                     ->setCode(ErrorCodes::UNKNOWN)
-                    ->setException(new RuntimeException('Order has not been authorised.'), '');
+                    ->setException(new RuntimeException('Order has been voided.'), '');
 
                 $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
 

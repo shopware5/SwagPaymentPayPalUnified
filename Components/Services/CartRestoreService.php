@@ -12,6 +12,7 @@ use Shopware\Components\Model\ModelManager;
 use Shopware\Models\Attribute\OrderBasket as CartAttributes;
 use Shopware\Models\Order\Basket as Cart;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 
 class CartRestoreService
 {
@@ -25,10 +26,16 @@ class CartRestoreService
      */
     private $modelManager;
 
-    public function __construct(DependencyProvider $dependencyProvider, ModelManager $modelManager)
+    /**
+     * @var LoggerServiceInterface
+     */
+    private $logger;
+
+    public function __construct(DependencyProvider $dependencyProvider, ModelManager $modelManager, LoggerServiceInterface $logger)
     {
         $this->dependencyProvider = $dependencyProvider;
         $this->modelManager = $modelManager;
+        $this->logger = $logger;
     }
 
     /**
@@ -36,6 +43,7 @@ class CartRestoreService
      */
     public function getCartData()
     {
+        $this->logger->debug(sprintf('%s GET DOCTRINE CART OBJECTS', __METHOD__));
         $cart = $this->modelManager->getRepository(Cart::class)
             ->findBy(['sessionId' => $this->dependencyProvider->getSession()->offsetGet('sessionId')]);
 
@@ -52,6 +60,8 @@ class CartRestoreService
             $this->modelManager->detach($attribute);
         }
 
+        $this->logger->debug(sprintf('%s RETURNED DOCTRINE CART OBJECTS', __METHOD__));
+
         return $cart;
     }
 
@@ -62,10 +72,14 @@ class CartRestoreService
      */
     public function restoreCart(array $cartData)
     {
+        $this->logger->debug(sprintf('%s RESTORE_CART', __METHOD__));
+
         foreach ($cartData as $cartItem) {
             $this->modelManager->persist($cartItem);
         }
 
         $this->modelManager->flush();
+
+        $this->logger->debug(sprintf('%s RESTORE CART COMPLETED', __METHOD__));
     }
 }

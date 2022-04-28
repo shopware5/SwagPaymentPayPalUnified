@@ -133,12 +133,18 @@ class PaymentStatusService
      */
     public function setOrderAndPaymentStatusForFailedOrder($shopwareOrderNumber)
     {
-        /** @var General $settings */
+        $this->logger->debug(sprintf('%s shopwareOrderNumber: %s', __METHOD__, $shopwareOrderNumber));
+
         $settings = $this->settingsService->getSettings();
+        if (!$settings instanceof General) {
+            throw new \RuntimeException('Could not read general PayPal settings');
+        }
 
         $orderStatusId = $settings->getOrderStatusOnFailedPayment();
         $paymentStatusId = $settings->getPaymentStatusOnFailedPayment();
         $shopwareOrderId = $this->getOrderIdByOrderNumber($shopwareOrderNumber);
+
+        $this->logger->debug(sprintf('%s UPDATE ORDER WITH ID %s AND STATUS ID %s AND PAYMENT STATUS ID %s', __METHOD__, $shopwareOrderId, $orderStatusId, $paymentStatusId));
 
         $this->updateOrder($shopwareOrderId, $orderStatusId, $paymentStatusId);
     }
@@ -161,6 +167,8 @@ class PaymentStatusService
             ->setParameter('paymentStatusId', $paymentStatusId)
             ->setParameter('shopwareOrderId', $shopwareOrderId)
             ->execute();
+
+        $this->logger->debug(sprintf('%s ORDER UPDATED', __METHOD__));
     }
 
     /**

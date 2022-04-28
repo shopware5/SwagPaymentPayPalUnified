@@ -97,7 +97,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedApm extends AbstractPaypalPayme
         $sendShopwareOrderNumber = $this->getSendOrdernumber();
 
         if ($sendShopwareOrderNumber) {
-            $result = $this->handleOrderWithSendOrderNumber($payPalOrder);
+            $result = $this->handleOrderWithSendOrderNumber($payPalOrder, $this->getPaymentType($payPalOrder));
             $shopwareOrderNumber = $result->getShopwareOrderNumber();
             if (!$result->getSuccess()) {
                 $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
