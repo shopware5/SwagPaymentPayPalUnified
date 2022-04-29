@@ -140,7 +140,7 @@ class PaypalPaymentControllerTestCase extends TestCase
     protected $basketRestoreService;
 
     /**
-     * @var MockObject|BasketPersister
+     * @var BasketPersister|null
      */
     protected $basketPersister;
 
@@ -151,25 +151,25 @@ class PaypalPaymentControllerTestCase extends TestCase
      */
     public function init()
     {
-        $this->dependencyProvider = static::createMock(DependencyProvider::class);
-        $this->redirectDataBuilderFactory = static::createMock(RedirectDataBuilderFactoryInterface::class);
-        $this->paymentControllerHelper = static::createMock(PaymentControllerHelper::class);
-        $this->dispatchValidator = static::createMock(DispatchValidation::class);
-        $this->payPalOrderParameterFacade = static::createMock(PayPalOrderParameterFacadeInterface::class);
-        $this->orderResource = static::createMock(OrderResource::class);
-        $this->orderFactory = static::createMock(OrderFactory::class);
-        $this->settingsService = static::createMock(SettingsServiceInterface::class);
-        $this->orderDataService = static::createMock(OrderDataService::class);
-        $this->paymentMethodProvider = static::createMock(PaymentMethodProviderInterface::class);
-        $this->exceptionHandler = static::createMock(ExceptionHandlerServiceInterface::class);
-        $this->shopwareConfig = static::createMock(Config::class);
-        $this->paymentStatusService = static::createMock(PaymentStatusService::class);
-        $this->logger = static::createMock(LoggerServiceInterface::class);
-        $this->basketRestoreService = static::createMock(CartRestoreService::class);
-        $this->basketPersister = static::createMock(BasketPersister::class);
-        $this->basketValidator = static::createMock(BasketValidatorInterface::class);
-        $this->request = static::createMock(Enlight_Controller_Request_RequestHttp::class);
-        $this->response = static::createMock(Enlight_Controller_Response_ResponseHttp::class);
+        $this->dependencyProvider = $this->createMock(DependencyProvider::class);
+        $this->redirectDataBuilderFactory = $this->createMock(RedirectDataBuilderFactoryInterface::class);
+        $this->paymentControllerHelper = $this->createMock(PaymentControllerHelper::class);
+        $this->dispatchValidator = $this->createMock(DispatchValidation::class);
+        $this->payPalOrderParameterFacade = $this->createMock(PayPalOrderParameterFacadeInterface::class);
+        $this->orderResource = $this->createMock(OrderResource::class);
+        $this->orderFactory = $this->createMock(OrderFactory::class);
+        $this->settingsService = $this->createMock(SettingsServiceInterface::class);
+        $this->orderDataService = $this->createMock(OrderDataService::class);
+        $this->paymentMethodProvider = $this->createMock(PaymentMethodProviderInterface::class);
+        $this->exceptionHandler = $this->createMock(ExceptionHandlerServiceInterface::class);
+        $this->shopwareConfig = $this->createMock(Config::class);
+        $this->paymentStatusService = $this->createMock(PaymentStatusService::class);
+        $this->logger = $this->createMock(LoggerServiceInterface::class);
+        $this->basketRestoreService = $this->createMock(CartRestoreService::class);
+        $this->basketPersister = class_exists(BasketPersister::class) ? $this->createMock(BasketPersister::class) : null;
+        $this->basketValidator = $this->createMock(BasketValidatorInterface::class);
+        $this->request = $this->createMock(Enlight_Controller_Request_RequestHttp::class);
+        $this->response = $this->createMock(Enlight_Controller_Response_ResponseHttp::class);
 
         $this->redirectDataBuilder = $this->getRedirectDataBuilder();
 
@@ -181,7 +181,7 @@ class PaypalPaymentControllerTestCase extends TestCase
      */
     protected function getRedirectDataBuilder()
     {
-        $mock = static::createMock(RedirectDataBuilder::class);
+        $mock = $this->createMock(RedirectDataBuilder::class);
 
         $mock->method('setCode')
             ->willReturnSelf();
@@ -232,7 +232,7 @@ class PaypalPaymentControllerTestCase extends TestCase
         Enlight_Controller_Response_ResponseHttp $response = null,
         Enlight_View_Default $view = null
     ) {
-        $container = static::createMock(Container::class);
+        $container = $this->createMock(Container::class);
 
         $container->method('get')
             ->willReturnMap([

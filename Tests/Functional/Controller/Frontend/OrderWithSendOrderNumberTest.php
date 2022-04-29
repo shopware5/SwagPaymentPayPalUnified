@@ -107,10 +107,10 @@ class OrderWithSendOrderNumberTest extends PaypalPaymentControllerTestCase
         $userData = require __DIR__ . '/../../../_fixtures/s_user_data.php';
 
         $session = $this->getContainer()->get('session');
-        $session->set('id', self::SESSION_ID);
+        $session->offsetSet('id', self::SESSION_ID);
         $session->offsetSet('sessionId', self::SESSION_ID);
-        $session->set('sUserId', 1);
-        $session->set('sOrderVariables', $userData);
+        $session->offsetSet('sUserId', 1);
+        $session->offsetSet('sOrderVariables', $userData);
 
         $this->insertGeneralSettingsFromArray([
             'active' => 1,
@@ -198,7 +198,7 @@ class OrderWithSendOrderNumberTest extends PaypalPaymentControllerTestCase
         );
 
         $session = $this->getContainer()->get('session');
-        $session->set('id', self::SESSION_ID);
+        $session->offsetSet('id', self::SESSION_ID);
         $session->offsetSet('sessionId', self::SESSION_ID);
 
         $result = new HandleOrderWithSendOrderNumberResult(true, '08154711', $this->getContainer()->get('paypal_unified.cart_restore_service')->getCartData());
