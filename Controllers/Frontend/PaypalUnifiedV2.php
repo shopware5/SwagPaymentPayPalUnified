@@ -119,10 +119,11 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
             return;
         }
 
+        $result = null;
         $shopwareOrderNumber = null;
         $sendShopwareOrderNumber = $this->getSendOrdernumber();
         if ($sendShopwareOrderNumber) {
-            $result = $this->handleOrderWithSendOrderNumber($payPalOrder);
+            $result = $this->handleOrderWithSendOrderNumber($payPalOrder, $this->getPaymentType($payPalOrder));
             $shopwareOrderNumber = $result->getShopwareOrderNumber();
             if (!$result->getSuccess()) {
                 $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
@@ -134,7 +135,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
             }
         }
 
-        $capturedPayPalOrder = $this->captureOrAuthorizeOrder($payPalOrder->getId(), $payPalOrder);
+        $capturedPayPalOrder = $this->captureOrAuthorizeOrder($payPalOrder->getId(), $payPalOrder, $result);
         if (!$capturedPayPalOrder instanceof Order) {
             if (\is_string($shopwareOrderNumber)) {
                 $this->orderDataService->removeTransactionId($shopwareOrderNumber);

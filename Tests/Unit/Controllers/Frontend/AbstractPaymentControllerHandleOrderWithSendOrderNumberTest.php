@@ -17,6 +17,7 @@ use Shopware_Controllers_Frontend_PaypalUnifiedApm as PaypalUnifiedApm;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\Services\CartRestoreService;
 use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentControllerResults\HandleOrderWithSendOrderNumberResult;
+use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\OrderResource;
 use SwagPaymentPayPalUnified\Tests\Functional\SettingsHelperTrait;
@@ -111,7 +112,7 @@ class AbstractPaymentControllerHandleOrderWithSendOrderNumberTest extends Paypal
         $reflectionMethod = (new ReflectionClass(PaypalUnifiedApm::class))->getMethod('handleOrderWithSendOrderNumber');
         $reflectionMethod->setAccessible(true);
 
-        $result = $reflectionMethod->invoke($controller, $paypalOrder);
+        $result = $reflectionMethod->invokeArgs($controller, [$paypalOrder, PaymentType::APM_GIROPAY]);
 
         $basketResult = $basketRestoreService->getCartData();
 
@@ -150,10 +151,10 @@ class AbstractPaymentControllerHandleOrderWithSendOrderNumberTest extends Paypal
         $userData = require __DIR__ . '/../../../_fixtures/s_user_data.php';
 
         $session = $this->getContainer()->get('session');
-        $session->set('id', self::SESSION_ID);
+        $session->offsetSet('id', self::SESSION_ID);
         $session->offsetSet('sessionId', self::SESSION_ID);
-        $session->set('sUserId', 1);
-        $session->set('sOrderVariables', $userData);
+        $session->offsetSet('sUserId', 1);
+        $session->offsetSet('sOrderVariables', $userData);
 
         $dependencyProviderMock = $this->createMock(DependencyProvider::class);
         $dependencyProviderMock->method('getSession')->willReturn($session);

@@ -55,10 +55,11 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2ExpressCheckout extends Abstr
 
         $patchSet = [$purchaseUnitPatch];
 
+        $result = null;
         $shopwareOrderNumber = null;
         $sendShopwareOrderNumber = $this->getSendOrdernumber();
         if ($sendShopwareOrderNumber) {
-            $result = $this->handleOrderWithSendOrderNumber($payPalOrderData, $patchSet);
+            $result = $this->handleOrderWithSendOrderNumber($payPalOrderData, PaymentType::PAYPAL_EXPRESS_V2, $patchSet);
             $shopwareOrderNumber = $result->getShopwareOrderNumber();
             if (!$result->getSuccess()) {
                 $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
@@ -77,7 +78,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2ExpressCheckout extends Abstr
             return;
         }
 
-        $capturedPayPalOrder = $this->captureOrAuthorizeOrder($payPalOrderId);
+        $capturedPayPalOrder = $this->captureOrAuthorizeOrder($payPalOrderId, null, $result);
         if (!$capturedPayPalOrder instanceof Order) {
             if (\is_string($shopwareOrderNumber)) {
                 $this->orderDataService->removeTransactionId($shopwareOrderNumber);

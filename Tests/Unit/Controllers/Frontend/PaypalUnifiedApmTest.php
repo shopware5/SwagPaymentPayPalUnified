@@ -13,6 +13,7 @@ require_once __DIR__ . '/../../../../Controllers/Frontend/PaypalUnifiedApm.php';
 use Enlight_Components_Db_Adapter_Pdo_Mysql;
 use Shopware\Models\Order\Status;
 use Shopware_Controllers_Frontend_PaypalUnifiedApm;
+use SwagPaymentPayPalUnified\Components\Services\CartRestoreService;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
@@ -99,7 +100,25 @@ class PaypalUnifiedApmTest extends PaypalPaymentControllerTestCase
             [SettingsServiceInterface::SETTING_GENERAL_SEND_ORDER_NUMBER, SettingsTable::GENERAL, true],
             [SettingsServiceInterface::SETTING_GENERAL_ORDER_NUMBER_PREFIX, SettingsTable::GENERAL, ''],
         ]);
-        $this->getController(Shopware_Controllers_Frontend_PaypalUnifiedApm::class)
+
+        $this->getController(
+            Shopware_Controllers_Frontend_PaypalUnifiedApm::class,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            $this->createCartRestoreService()
+        )
             ->returnAction();
     }
 
@@ -236,5 +255,16 @@ class PaypalUnifiedApmTest extends PaypalPaymentControllerTestCase
     private function givenTheCartIsValid()
     {
         $this->basketValidator->method('validate')->willReturn(true);
+    }
+
+    /**
+     * @return CartRestoreService
+     */
+    private function createCartRestoreService()
+    {
+        $basketRestoreServiceMock = $this->createMock(CartRestoreService::class);
+        $basketRestoreServiceMock->method('getCartData')->willReturn([]);
+
+        return $basketRestoreServiceMock;
     }
 }

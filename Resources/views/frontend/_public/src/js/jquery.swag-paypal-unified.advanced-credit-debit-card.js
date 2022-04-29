@@ -360,11 +360,16 @@
          * @param response { Response }
          */
         onError: function(response) {
-            var jsonResponse = JSON.parse(response.responseText),
-                content = jsonResponse.errorTemplate,
+            var jsonResponse,
+                content,
                 $confirmButton = $('button[type="submit"][form="confirm--form"]');
 
-            this.$el.prepend(content);
+            if (response.responseText !== '') {
+                jsonResponse = JSON.parse(response.responseText);
+                content = jsonResponse.errorTemplate;
+                this.$el.prepend(content);
+            }
+
             this.updateAutoResizer();
 
             $.loadingIndicator.close();

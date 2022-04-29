@@ -148,6 +148,7 @@
                  public="true">
             <argument type="service" id="paypal_unified.dependency_provider"/>
             <argument type="service" id="models"/>
+            <argument type="service" id="paypal_unified.logger_service"/>
         </service>
     </services>
 </container>

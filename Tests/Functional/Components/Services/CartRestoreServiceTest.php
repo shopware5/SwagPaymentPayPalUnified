@@ -18,6 +18,7 @@ use SwagPaymentPayPalUnified\Components\Services\CartRestoreService;
 use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\ShopRegistrationTrait;
+use SwagPaymentPayPalUnified\Tests\Mocks\LoggerMock;
 
 class CartRestoreServiceTest extends TestCase
 {
@@ -109,13 +110,20 @@ class CartRestoreServiceTest extends TestCase
 
                 if ($basketAttributes === null) {
                     static::assertSame('SHIPPINGDISCOUNT', $basketItem->getOrderNumber());
-                } else {
+                } elseif (\method_exists($this, 'assertStringContainsString')) {
                     static::assertStringContainsString(self::ATTRIBUTE_PREFIX, (string) $basketAttributes->getAttribute1());
                     static::assertStringContainsString(self::ATTRIBUTE_PREFIX, (string) $basketAttributes->getAttribute2());
                     static::assertStringContainsString(self::ATTRIBUTE_PREFIX, (string) $basketAttributes->getAttribute3());
                     static::assertStringContainsString(self::ATTRIBUTE_PREFIX, (string) $basketAttributes->getAttribute4());
                     static::assertStringContainsString(self::ATTRIBUTE_PREFIX, (string) $basketAttributes->getAttribute5());
                     static::assertStringContainsString(self::ATTRIBUTE_PREFIX, (string) $basketAttributes->getAttribute6());
+                } else {
+                    static::assertContains(self::ATTRIBUTE_PREFIX, (string) $basketAttributes->getAttribute1());
+                    static::assertContains(self::ATTRIBUTE_PREFIX, (string) $basketAttributes->getAttribute2());
+                    static::assertContains(self::ATTRIBUTE_PREFIX, (string) $basketAttributes->getAttribute3());
+                    static::assertContains(self::ATTRIBUTE_PREFIX, (string) $basketAttributes->getAttribute4());
+                    static::assertContains(self::ATTRIBUTE_PREFIX, (string) $basketAttributes->getAttribute5());
+                    static::assertContains(self::ATTRIBUTE_PREFIX, (string) $basketAttributes->getAttribute6());
                 }
             }
         }
@@ -132,7 +140,8 @@ class CartRestoreServiceTest extends TestCase
     {
         return new CartRestoreService(
             $this->createDependencyProviderMock(),
-            $this->getContainer()->get('models')
+            $this->getContainer()->get('models'),
+            new LoggerMock()
         );
     }
 
@@ -155,7 +164,9 @@ class CartRestoreServiceTest extends TestCase
     private function createSessionMock()
     {
         $sessionMock = $this->createMock(Enlight_Components_Session_Namespace::class);
-        $sessionMock->method('getId')->willReturn('restoreBasketSessionId');
+        if (method_exists(Enlight_Components_Session_Namespace::class, 'getId')) {
+            $sessionMock->method('getId')->willReturn('restoreBasketSessionId');
+        }
         $sessionMock->method('get')->willReturn('restoreBasketSessionId');
         $sessionMock->method('offsetGet')->willReturn('restoreBasketSessionId');
 
