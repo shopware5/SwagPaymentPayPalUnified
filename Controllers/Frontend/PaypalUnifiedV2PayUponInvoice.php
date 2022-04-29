@@ -38,7 +38,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2PayUponInvoice extends Abstra
         $payPalOrderId = $payPalOrder->getId();
 
         // Save basket before create the order
-        $basketData = $this->basketRestoreService->getCartData();
+        $basketData = $this->cartRestoreService->getCartData();
 
         $shopwareOrderNumber = $this->createShopwareOrder($payPalOrderId, PaymentType::PAYPAL_PAY_UPON_INVOICE_V2, Status::PAYMENT_STATE_RESERVED);
 
@@ -49,7 +49,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2PayUponInvoice extends Abstra
                 // - Set the order and payment state to the order
                 $this->paymentStatusService->setOrderAndPaymentStatusForFailedOrder($shopwareOrderNumber);
                 // - Restore the basket
-                $this->basketRestoreService->restoreCart($basketData);
+                $this->cartRestoreService->restoreCart($basketData);
 
                 return;
             }

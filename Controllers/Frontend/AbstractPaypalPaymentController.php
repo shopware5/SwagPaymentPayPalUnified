@@ -138,7 +138,7 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
     /**
      * @var CartRestoreService
      */
-    protected $basketRestoreService;
+    protected $cartRestoreService;
 
     public function preDispatch()
     {
@@ -156,7 +156,7 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
         $this->shopwareConfig = $this->get('config');
         $this->paymentStatusService = $this->get('paypal_unified.payment_status_service');
         $this->logger = $this->get('paypal_unified.logger_service');
-        $this->basketRestoreService = $this->get('paypal_unified.cart_restore_service');
+        $this->cartRestoreService = $this->get('paypal_unified.cart_restore_service');
     }
 
     /**
@@ -190,7 +190,7 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
         $this->logger->debug(sprintf('%s START', __METHOD__));
 
         // Save basket before create the order
-        $cartData = $this->basketRestoreService->getCartData();
+        $cartData = $this->cartRestoreService->getCartData();
 
         $shopwareOrderNumber = $this->createShopwareOrder($paypalOrder->getId(), $paymentType);
 
@@ -201,7 +201,7 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
             // - Set the order and payment state to the order
             $this->paymentStatusService->setOrderAndPaymentStatusForFailedOrder($shopwareOrderNumber);
             // - Restore the basket
-            $this->basketRestoreService->restoreCart($cartData);
+            $this->cartRestoreService->restoreCart($cartData);
 
             $this->logger->debug(sprintf('%s FAILS', __METHOD__));
 
@@ -313,7 +313,7 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
         } catch (RequestException $exception) {
             if ($orderWithSendOrderNumberResult instanceof HandleOrderWithSendOrderNumberResult) {
                 $this->paymentStatusService->setOrderAndPaymentStatusForFailedOrder($orderWithSendOrderNumberResult->getShopwareOrderNumber());
-                $this->basketRestoreService->restoreCart($orderWithSendOrderNumberResult->getCartData());
+                $this->cartRestoreService->restoreCart($orderWithSendOrderNumberResult->getCartData());
             }
 
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
@@ -326,7 +326,7 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
         } catch (Exception $exception) {
             if ($orderWithSendOrderNumberResult instanceof HandleOrderWithSendOrderNumberResult) {
                 $this->paymentStatusService->setOrderAndPaymentStatusForFailedOrder($orderWithSendOrderNumberResult->getShopwareOrderNumber());
-                $this->basketRestoreService->restoreCart($orderWithSendOrderNumberResult->getCartData());
+                $this->cartRestoreService->restoreCart($orderWithSendOrderNumberResult->getCartData());
             }
 
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
