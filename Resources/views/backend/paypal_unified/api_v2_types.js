@@ -7,6 +7,7 @@ Ext.define('Shopware.apps.PaypalUnified.ApiV2Types', {
         'PayPalPayUponInvoiceV2',
         'PayPalSmartPaymentButtonsV2',
         'PayPalAdvancedCreditDebitCardV2',
+        'PayPalSepa',
         'bancontact',
         'blik',
         'eps',
