@@ -225,9 +225,42 @@
         expressCheckoutButton: null,
 
         init: function() {
-            var me = this;
+            var me = this,
+                booleanPropertyList = [
+                    'useDebugMode',
+                    'tagline',
+                    'buyProductDirectly',
+                ];
 
-            me.applyDataAttributes();
+            me.applyDataAttributes(false);
+
+            $.each(booleanPropertyList, function (index, key) {
+                // TODO: REMOVE AFTER DEBUG
+                console.log(key);
+                // TODO: REMOVE AFTER DEBUG
+                // TODO: REMOVE AFTER DEBUG
+                console.log(me.opts[key]);
+                // TODO: REMOVE AFTER DEBUG
+
+                if (typeof me.opts[key] == "boolean") {
+                    // TODO: REMOVE AFTER DEBUG
+                    console.log('isBool');
+                    // TODO: REMOVE AFTER DEBUG
+                    return;
+                }
+
+                if (me.opts[key] === 'true') {
+                    me.opts[key] = true;
+                }
+
+                if (me.opts[key] === 'false') {
+                    me.opts[key] = false;
+                }
+            });
+
+            // TODO: REMOVE AFTER DEBUG
+            console.log(me.opts);
+            // TODO: REMOVE AFTER DEBUG
 
             if (me.isProductExcluded()) {
                 return;

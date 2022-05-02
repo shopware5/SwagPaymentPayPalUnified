@@ -94,7 +94,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout extends Abstra
 
         $this->logger->debug(sprintf('%s ADD PRODUCT WITH NUMBER: %s AND QUANTITY: %d', __METHOD__, $productNumber, $quantity));
 
-        $basketModule->sAddArticle($request->getParam('productNumber'), $quantity);
+        $basketModule->sAddArticle($productNumber, $quantity);
 
         // add potential discounts or surcharges to prevent an amount mismatch
         // on patching the new amount after the confirmation.
