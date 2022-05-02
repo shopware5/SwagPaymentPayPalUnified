@@ -12,39 +12,95 @@ test.describe('Is Express Checkout button available', () => {
     });
 
     test('Check product detail page', async ({ page }) => {
-        await page.goto('/sommerwelten/beachwear/178/strandtuch-ibiza');
+        page.on('frameattached', await function (frame) {
+            frame.waitForLoadState('load');
+        });
 
-        const locator = await page.frameLocator('.component-frame').locator('div[role="button"]');
-        await expect(locator).toHaveText(/Direkt zu/);
+        await page.goto('/sommerwelten/beachwear/178/strandtuch-ibiza');
         await page.waitForLoadState('load');
+
+        const locator = await page.frameLocator('.component-frame').locator('.paypal-button');
+        await expect(locator).toHaveText(/Direkt zu/);
+
+        await page.waitForTimeout(5000);
 
         const [paypalPage] = await Promise.all([
             page.waitForEvent('popup'),
-            locator.click()
+            locator.dispatchEvent('click')
         ]);
 
+        await paypalPage.route(/.*checkoutnow.*/, route => {
+            let url = route.request().url();
+            url = url.replace(/buyerCountry=[A-Z]*/, '');
+            url += '&buyerCountry=DE';
+
+            route.continue({ url: url });
+        });
+
         await expect(paypalPage.locator('#headerText')).toHaveText(/PayPal/);
+
+        await paypalPage.locator('#email').fill(credentials.paypalCustomerEmail);
+        await paypalPage.locator('button:has-text("Weiter")').click();
+        await paypalPage.locator('#password').fill(credentials.paypalCustomerPassword);
+        await paypalPage.locator('#btnLogin').click();
+
+        // Click [data-testid="submit-button-initial"]
+        await paypalPage.locator('button:has-text("Jetzt zahlen")').click();
+
+        await page.click('input[name="sAGB"]');
+        await page.click('button:has-text("Zahlungspflichtig bestellen")');
+        await expect(page.locator('.teaser--title')).toHaveText(/Vielen Dank für Ihre Bestellung bei Shopware Demo/);
     });
 
     test('Check offcanvas cart', async ({ page }) => {
+        await page.on('frameattached', await function (frame) {
+            frame.waitForLoadState('load');
+        });
+
         await page.goto('/sommerwelten/beachwear/178/strandtuch-ibiza');
 
         await page.locator('text=In den Warenkorb').click();
+        await page.waitForLoadState('load');
         await expect(page.locator('.ajax--cart')).toHaveText(/Warenkorb bearbeiten/);
 
-        const locator = await page.frameLocator('.ajax--cart >> .component-frame').locator('div[role="button"]');
+        const locator = await page.frameLocator('.ajax--cart >> .component-frame').locator('.paypal-button');
         await expect(locator).toHaveText(/Direkt zu/);
-        await page.waitForLoadState('load');
+
+        await page.waitForTimeout(5000);
 
         const [paypalPage] = await Promise.all([
             page.waitForEvent('popup'),
-            locator.click()
+            locator.dispatchEvent('click')
         ]);
 
+        await paypalPage.route(/.*checkoutnow.*/, route => {
+            let url = route.request().url();
+            url = url.replace(/buyerCountry=[A-Z]*/, '');
+            url += '&buyerCountry=DE';
+
+            route.continue({ url: url });
+        });
+
         await expect(paypalPage.locator('#headerText')).toHaveText(/PayPal/);
+
+        await paypalPage.locator('#email').fill(credentials.paypalCustomerEmail);
+        await paypalPage.locator('button:has-text("Weiter")').click();
+        await paypalPage.locator('#password').fill(credentials.paypalCustomerPassword);
+        await paypalPage.locator('#btnLogin').click();
+
+        // Click [data-testid="submit-button-initial"]
+        await paypalPage.locator('button:has-text("Jetzt zahlen")').click();
+
+        await page.click('input[name="sAGB"]');
+        await page.click('button:has-text("Zahlungspflichtig bestellen")');
+        await expect(page.locator('.teaser--title')).toHaveText(/Vielen Dank für Ihre Bestellung bei Shopware Demo/);
     });
 
     test('Check checkout cart page', async ({ page }) => {
+        page.on('frameattached', await function (frame) {
+            frame.waitForLoadState('load');
+        });
+
         await page.goto('/sommerwelten/beachwear/178/strandtuch-ibiza');
 
         await page.locator('text=In den Warenkorb').click();
@@ -52,19 +108,43 @@ test.describe('Is Express Checkout button available', () => {
         await page.locator('text=Warenkorb bearbeiten').click();
         await expect(page).toHaveURL('/checkout/cart');
 
-        const locator = await page.frameLocator('.component-frame').locator('div[role="button"]');
-        await expect(locator).toHaveText(/Direkt zu/);
-        await page.waitForLoadState('load');
+        const locator = await page.frameLocator('.component-frame').locator('.paypal-button');
+
+        await page.waitForTimeout(5000);
 
         const [paypalPage] = await Promise.all([
             page.waitForEvent('popup'),
-            locator.click()
+            locator.dispatchEvent('click')
         ]);
 
+        await paypalPage.route(/.*checkoutnow.*/, route => {
+            let url = route.request().url();
+            url = url.replace(/buyerCountry=[A-Z]*/, '');
+            url += '&buyerCountry=DE';
+
+            route.continue({ url: url });
+        });
+
         await expect(paypalPage.locator('#headerText')).toHaveText(/PayPal/);
+
+        await paypalPage.locator('#email').fill(credentials.paypalCustomerEmail);
+        await paypalPage.locator('button:has-text("Weiter")').click();
+        await paypalPage.locator('#password').fill(credentials.paypalCustomerPassword);
+        await paypalPage.locator('#btnLogin').click();
+
+        // Click [data-testid="submit-button-initial"]
+        await paypalPage.locator('button:has-text("Jetzt zahlen")').click();
+
+        await page.click('input[name="sAGB"]');
+        await page.click('button:has-text("Zahlungspflichtig bestellen")');
+        await expect(page.locator('.teaser--title')).toHaveText(/Vielen Dank für Ihre Bestellung bei Shopware Demo/);
     });
 
     test('Check register page', async ({ page }) => {
+        page.on('frameattached', await function (frame) {
+            frame.waitForLoadState('load');
+        });
+
         await page.goto('/sommerwelten/beachwear/178/strandtuch-ibiza');
 
         await page.locator('text=In den Warenkorb').click();
@@ -72,34 +152,82 @@ test.describe('Is Express Checkout button available', () => {
         await page.locator('text=Zur Kasse').click();
         await expect(page).toHaveURL('/checkout/confirm');
 
-        const locator = await page.frameLocator('.component-frame').locator('div[role="button"]');
-        await expect(locator).toHaveText(/Direkt zu/);
-        await page.waitForLoadState('load');
+        const locator = await page.frameLocator('.component-frame').locator('.paypal-button');
+
+        await page.waitForTimeout(5000);
 
         const [paypalPage] = await Promise.all([
             page.waitForEvent('popup'),
             locator.dispatchEvent('click')
         ]);
 
+        await paypalPage.route(/.*checkoutnow.*/, route => {
+            let url = route.request().url();
+            url = url.replace(/buyerCountry=[A-Z]*/, '');
+            url += '&buyerCountry=DE';
+
+            route.continue({ url: url });
+        });
+
         await expect(paypalPage.locator('#headerText')).toHaveText(/PayPal/);
+
+        await paypalPage.locator('#email').fill(credentials.paypalCustomerEmail);
+        await paypalPage.locator('button:has-text("Weiter")').click();
+        await paypalPage.locator('#password').fill(credentials.paypalCustomerPassword);
+        await paypalPage.locator('#btnLogin').click();
+
+        // Click [data-testid="submit-button-initial"]
+        await paypalPage.locator('button:has-text("Jetzt zahlen")').click();
+
+        await page.click('input[name="sAGB"]');
+        await page.click('button:has-text("Zahlungspflichtig bestellen")');
+        await expect(page.locator('.teaser--title')).toHaveText(/Vielen Dank für Ihre Bestellung bei Shopware Demo/);
     });
 
     test('Check product listing page @notIn5.2', async ({ page }) => {
+        page.on('frameattached', await function (frame) {
+            frame.waitForLoadState('load');
+        });
+
         await page.goto('/sommerwelten/beachwear/');
 
-        const locator = await page.frameLocator('.component-frame >> nth=1').locator('div[role="button"]');
-        await expect(locator).toHaveText(/Direkt zu/);
-        await page.waitForLoadState('load');
+        const locator = await page.frameLocator('.component-frame >> nth=1').locator('.paypal-button');
+
+        await page.waitForTimeout(5000);
 
         const [paypalPage] = await Promise.all([
             page.waitForEvent('popup'),
             locator.dispatchEvent('click')
         ]);
 
+        await paypalPage.route(/.*checkoutnow.*/, route => {
+            let url = route.request().url();
+            url = url.replace(/buyerCountry=[A-Z]*/, '');
+            url += '&buyerCountry=DE';
+
+            route.continue({ url: url });
+        });
+
         await expect(paypalPage.locator('#headerText')).toHaveText(/PayPal/);
+
+        await paypalPage.locator('#email').fill(credentials.paypalCustomerEmail);
+        await paypalPage.locator('button:has-text("Weiter")').click();
+        await paypalPage.locator('#password').fill(credentials.paypalCustomerPassword);
+        await paypalPage.locator('#btnLogin').click();
+
+        // Click [data-testid="submit-button-initial"]
+        await paypalPage.locator('button:has-text("Jetzt zahlen")').click();
+
+        await page.click('input[name="sAGB"]');
+        await page.click('button:has-text("Zahlungspflichtig bestellen")');
+        await expect(page.locator('.teaser--title')).toHaveText(/Vielen Dank für Ihre Bestellung bei Shopware Demo/);
     });
 
     test('Check product cart modal @notIn5.2', async ({ page }) => {
+        page.on('frameattached', await function (frame) {
+            frame.waitForLoadState('load');
+        });
+
         await page.goto('/backend');
         await expect(page).toHaveTitle(/Backend/);
 
@@ -133,22 +261,16 @@ test.describe('Is Express Checkout button available', () => {
 
         await page.click('text=Themes kompilieren');
 
-        await page.waitForLoadState('load');
-
         await page.goto('/sommerwelten/beachwear/178/strandtuch-ibiza');
 
         await page.locator('text=In den Warenkorb').click();
+        const locator = await page.frameLocator('.js--modal >> .component-frame').locator('.paypal-button');
 
-        await page.waitForLoadState('load');
-
-        const locator = await page.frameLocator('.js--modal >> .component-frame').locator('div[role="button"]');
-
-        await expect(locator).toHaveText(/Direkt zu/);
-        await page.waitForLoadState('load');
+        await page.waitForTimeout(5000);
 
         const [paypalPage] = await Promise.all([
             page.waitForEvent('popup'),
-            locator.click()
+            locator.dispatchEvent('click')
         ]);
 
         await expect(paypalPage.locator('#headerText')).toHaveText(/PayPal/);
