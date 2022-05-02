@@ -2,6 +2,8 @@ import { test, expect } from '@playwright/test';
 import MysqlFactory from '../helper/mysqlFactory.mjs';
 import defaultPaypalSettingsSql from '../helper/paypalSqlHelper.mjs';
 import credentials from './credentials.mjs';
+import leadingZeroProductSql from '../helper/updateProductNumberAddLeadingZero.mjs';
+
 const connection = MysqlFactory.getInstance();
 
 test.describe('Is Express Checkout button available', () => {
@@ -183,5 +185,23 @@ test.describe('Is Express Checkout button available', () => {
         await page.waitForLoadState('load');
 
         await page.click('text=Themes kompilieren');
+    });
+
+    test('Test if product with order number with leading zero is buy able', async ({ page }) => {
+        connection.query(leadingZeroProductSql.setProductNumberWithLeadingZero());
+
+        await page.goto('/genusswelten/koestlichkeiten/272/spachtelmasse');
+
+        const locator = await page.frameLocator('.component-frame').locator('.paypal-button');
+        await page.waitForLoadState('load');
+
+        const [paypalPage] = await Promise.all([
+            page.waitForEvent('popup'),
+            locator.dispatchEvent('click')
+        ]);
+
+        await expect(paypalPage.locator('#headerText')).toHaveText(/PayPal/);
+
+        connection.query(leadingZeroProductSql.reset());
     });
 });

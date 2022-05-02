@@ -8,6 +8,9 @@
              */
             sdkUrl: 'https://www.paypal.com/sdk/js',
 
+            /**
+             * @type string
+             */
             currency: '',
 
             /**
@@ -225,60 +228,30 @@
         expressCheckoutButton: null,
 
         init: function() {
-            var me = this,
-                booleanPropertyList = [
-                    'useDebugMode',
-                    'tagline',
-                    'buyProductDirectly',
-                ];
+            this.applyDataAttributes();
+            this.applyOrderNumberDataAttribute();
 
-            me.applyDataAttributes(false);
-
-            $.each(booleanPropertyList, function (index, key) {
-                // TODO: REMOVE AFTER DEBUG
-                console.log(key);
-                // TODO: REMOVE AFTER DEBUG
-                // TODO: REMOVE AFTER DEBUG
-                console.log(me.opts[key]);
-                // TODO: REMOVE AFTER DEBUG
-
-                if (typeof me.opts[key] == "boolean") {
-                    // TODO: REMOVE AFTER DEBUG
-                    console.log('isBool');
-                    // TODO: REMOVE AFTER DEBUG
-                    return;
-                }
-
-                if (me.opts[key] === 'true') {
-                    me.opts[key] = true;
-                }
-
-                if (me.opts[key] === 'false') {
-                    me.opts[key] = false;
-                }
-            });
-
-            // TODO: REMOVE AFTER DEBUG
-            console.log(me.opts);
-            // TODO: REMOVE AFTER DEBUG
-
-            if (me.isProductExcluded()) {
+            if (this.isProductExcluded()) {
                 return;
             }
 
             this.createButtonSizeObject();
             this.$el.addClass(this.buttonSize[this.opts.size].widthClass);
 
-            me.createButton();
+            this.createButton();
 
-            $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonCart/init', me);
+            $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonCart/init', this);
 
-            if (me.opts.buyProductDirectly) {
-                $.subscribe(me.getEventName('plugin/swAjaxVariant/onRequestData'), $.proxy(me.onChangeVariant, me));
+            if (this.opts.buyProductDirectly) {
+                $.subscribe(this.getEventName('plugin/swAjaxVariant/onRequestData'), $.proxy(this.onChangeVariant, this));
             }
         },
 
-        createButtonSizeObject: function () {
+        applyOrderNumberDataAttribute: function () {
+            this.opts.productNumber = this.$el.attr('data-productNumber');
+        },
+
+        createButtonSizeObject: function() {
             this.buttonSize = {
                 small: {
                     height: this.opts.smallHeight,

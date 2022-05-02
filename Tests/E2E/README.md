@@ -60,7 +60,7 @@ Now only every test that matches the name "express" is executed.
 
 # Create a basic test with CODEGEN.
 
-1. Got to .../Tests/e2e/test
+1. Got to .../Tests/E2E/test
 2. Execute ```npx playwright codegen YOUR_URL``` and ensure to replace YOUR_URL with your url like "shopware.localhost/backend"
 3. Click through the page to generate a basic test code
 4. Copy the test code to your test file
