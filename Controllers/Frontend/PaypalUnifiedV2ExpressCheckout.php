@@ -47,6 +47,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2ExpressCheckout extends Abstr
         $payPalOrderParameter = $this->payPalOrderParameterFacade->createPayPalOrderParameter(PaymentType::PAYPAL_EXPRESS_V2, $shopwareOrderData);
 
         $payPalOrderData = $this->orderFactory->createOrder($payPalOrderParameter);
+        $payPalOrderData->setId($payPalOrderId);
 
         $purchaseUnitPatch = new OrderPurchaseUnitPatch();
         $purchaseUnitPatch->setPath(OrderPurchaseUnitPatch::PATH);

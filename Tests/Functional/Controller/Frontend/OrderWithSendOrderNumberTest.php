@@ -219,6 +219,71 @@ class OrderWithSendOrderNumberTest extends PaypalPaymentControllerTestCase
 
         static::assertNull($result);
         static::assertCount(8, $cartResult);
+
+        $session->unsetAll();
+    }
+
+    /**
+     * @return void
+     */
+    public function testExpressCheckoutFinishActionTheBasketItemsDontDuplicate()
+    {
+        $userData = require __DIR__ . '/../../../_fixtures/s_user_data.php';
+
+        $session = $this->getContainer()->get('session');
+        $session->offsetSet('id', self::SESSION_ID);
+        $session->offsetSet('sessionId', self::SESSION_ID);
+        $session->offsetSet('sUserId', 1);
+        $session->offsetSet('sOrderVariables', $userData);
+
+        $this->insertGeneralSettingsFromArray([
+            'active' => 1,
+            'send_order_number' => 1,
+        ]);
+
+        $request = $this->createRequest();
+        $request->setParam('paypalOrderId', self::TRANSACTION_ID);
+
+        $cartRestoreService = $this->getContainer()->get('paypal_unified.cart_restore_service');
+
+        $payPalOrder = $this->createPayPalOrder();
+
+        $reflectionProperty = (new ReflectionClass(Order::class))->getProperty('id');
+        $reflectionProperty->setAccessible(true);
+        $reflectionProperty->setValue($payPalOrder, null);
+
+        $orderFactoryMock = $this->createMock(OrderFactory::class);
+        $orderFactoryMock->method('createOrder')->willReturn($payPalOrder);
+
+        $controller = $this->getController(
+            Shopware_Controllers_Frontend_PaypalUnifiedV2ExpressCheckout::class,
+            $this->createDependencyProvider(),
+            $this->createRedirectDataBuilderFactory(),
+            null,
+            null,
+            $this->createPayPalOrderParameterFacade(),
+            $this->createOrderResource(),
+            $orderFactoryMock,
+            $this->createSettingService(),
+            null,
+            null,
+            null,
+            null,
+            $this->createPaymentStatusServiceExpectsMethodCall(),
+            null,
+            $cartRestoreService,
+            null,
+            $this->createBasketValidator(),
+            $request
+        );
+
+        $controller->expressCheckoutFinishAction();
+
+        $cartData = $cartRestoreService->getCartData();
+
+        static::assertCount(8, $cartData);
+
+        $session->unsetAll();
     }
 
     /**

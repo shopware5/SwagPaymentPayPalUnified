@@ -12,6 +12,15 @@
     <author>shopware AG</author>
     <compatibility minVersion="5.2.27" maxVersion="5.99.99"/>
 
+    <changelog version="4.1.2">
+        <changes lang="de">
+            PT-12740 - Fehler bei der Benutzung von PayPal Express behoben;
+        </changes>
+        <changes lang="en">
+            PT-12740 - Fixed an error while using PayPal Express;
+        </changes>
+    </changelog>
+
     <changelog version="4.1.1">
         <changes lang="de">
             PT-12704 - Verbessert das Verhalten bei fehlgeschlagenen Zahlungen, wenn die Bestellnummer an PayPal übertragen wird;
