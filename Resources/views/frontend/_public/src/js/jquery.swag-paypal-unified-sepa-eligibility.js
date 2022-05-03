@@ -115,7 +115,7 @@
             var params = {
                 'client-id': this.opts.clientId,
                 intent: this.opts.intent.toLowerCase(),
-                components: 'funding-eligibility'
+                components: 'funding-eligibility,marks'
             };
 
             if (this.opts.locale.length > 0) {
