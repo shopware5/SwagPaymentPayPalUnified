@@ -8,6 +8,9 @@
              */
             sdkUrl: 'https://www.paypal.com/sdk/js',
 
+            /**
+             * @type string
+             */
             currency: '',
 
             /**
@@ -225,27 +228,30 @@
         expressCheckoutButton: null,
 
         init: function() {
-            var me = this;
+            this.applyDataAttributes();
+            this.applyOrderNumberDataAttribute();
 
-            me.applyDataAttributes();
-
-            if (me.isProductExcluded()) {
+            if (this.isProductExcluded()) {
                 return;
             }
 
             this.createButtonSizeObject();
             this.$el.addClass(this.buttonSize[this.opts.size].widthClass);
 
-            me.createButton();
+            this.createButton();
 
-            $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonCart/init', me);
+            $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonCart/init', this);
 
-            if (me.opts.buyProductDirectly) {
-                $.subscribe(me.getEventName('plugin/swAjaxVariant/onRequestData'), $.proxy(me.onChangeVariant, me));
+            if (this.opts.buyProductDirectly) {
+                $.subscribe(this.getEventName('plugin/swAjaxVariant/onRequestData'), $.proxy(this.onChangeVariant, this));
             }
         },
 
-        createButtonSizeObject: function () {
+        applyOrderNumberDataAttribute: function () {
+            this.opts.productNumber = this.$el.attr('data-productNumber');
+        },
+
+        createButtonSizeObject: function() {
             this.buttonSize = {
                 small: {
                     height: this.opts.smallHeight,
