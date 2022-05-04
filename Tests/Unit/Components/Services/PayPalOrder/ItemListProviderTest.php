@@ -18,6 +18,7 @@ use SwagPaymentPayPalUnified\Components\Services\PayPalOrder\ItemListProvider;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Item;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Item\Tax;
 
 class ItemListProviderTest extends TestCase
 {
@@ -75,7 +76,10 @@ class ItemListProviderTest extends TestCase
             PaymentType::PAYPAL_PAY_UPON_INVOICE_V2
         );
 
-        static::assertEmpty((float) $this->getFirstItem($itemList)->getTax()->getValue());
+        $tax = $this->getFirstItem($itemList)->getTax();
+
+        static::assertInstanceOf(Tax::class, $tax);
+        static::assertEmpty((float) $tax->getValue());
     }
 
     /**
@@ -106,6 +110,7 @@ class ItemListProviderTest extends TestCase
         $price = Fixture::getPrice();
         $taxRate = Fixture::getTaxRate();
 
+        static::assertInstanceOf(Tax::class, $item->getTax());
         static::assertSame(sprintf('%.2f', $price / $taxRate), $item->getUnitAmount()->getValue());
         static::assertSame(sprintf('%.2f', $price - $price / $taxRate), $item->getTax()->getValue());
     }

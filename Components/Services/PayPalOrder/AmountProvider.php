@@ -19,6 +19,7 @@ use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Amount\Break
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Amount\Breakdown\Shipping as BreakdownShipping;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Amount\Breakdown\TaxTotal;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Item;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Item\Tax;
 
 class AmountProvider
 {
@@ -55,16 +56,8 @@ class AmountProvider
         $amount->setCurrencyCode($currencyCode);
         $amount->setValue($this->cartHelper->getTotalAmount($cart, $customer));
 
-        $items = $purchaseUnit->getItems();
-
-        // Only set breakdown if items are submitted, otherwise the breakdown will be invalid
-        if ($items === null) {
-            return $amount;
-        }
-
         $amount->setBreakdown(
             $this->createBreakdown(
-                $items,
                 $purchaseUnit,
                 $currencyCode,
                 $cart,
@@ -76,13 +69,11 @@ class AmountProvider
     }
 
     /**
-     * @param Item[] $items
      * @param string $currencyCode
      *
-     * @return Breakdown
+     * @return Breakdown|null
      */
     private function createBreakdown(
-        array $items,
         PurchaseUnit $purchaseUnit,
         $currencyCode,
         array $cart,
@@ -91,10 +82,20 @@ class AmountProvider
         $itemTotalValue = 0.0;
         $discountValue = 0.0;
         $newItems = [];
-        foreach ($items as $item) {
+
+        // Only set breakdown if items are submitted, otherwise the breakdown will be invalid
+        if ($purchaseUnit->getItems() === null) {
+            return null;
+        }
+
+        foreach ($purchaseUnit->getItems() as $item) {
             $itemUnitAmount = (float) $item->getUnitAmount()->getValue();
             if ($itemUnitAmount < 0.0) {
-                $discountValue += ($itemUnitAmount * -1);
+                if (!$item->getTax() instanceof Tax) {
+                    $discountValue += $item->getQuantity() * abs($itemUnitAmount);
+                } else {
+                    $discountValue += $item->getQuantity() * (abs($itemUnitAmount) + abs($item->getTax()->getValue()));
+                }
             } else {
                 $itemTotalValue += $item->getQuantity() * $itemUnitAmount;
                 $newItems[] = $item;
@@ -120,7 +121,11 @@ class AmountProvider
              *
              * @see https://developer.paypal.com/api/rest/reference/orders/v2/errors#unprocessable-entity (TAX_TOTAL_MISMATCH)
              */
-            $taxTotalValue = array_reduce($items, static function ($total, Item $item) {
+            $taxTotalValue = array_reduce($newItems, static function ($total, Item $item) {
+                if (!$item->getTax() instanceof Tax) {
+                    return $total;
+                }
+
                 return $total + (float) $item->getTax()->getValue() * $item->getQuantity();
             }, 0.0);
 
