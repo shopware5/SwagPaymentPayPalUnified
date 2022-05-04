@@ -147,7 +147,7 @@
              * But still load buttons and marks so the buttons are present on the window PayPal object
              */
             if (this.opts.marksOnly) {
-                params.components = 'marks';
+                params.components = 'funding-eligibility,marks';
             } else {
                 params.components = 'marks,buttons';
                 params.commit = false;
