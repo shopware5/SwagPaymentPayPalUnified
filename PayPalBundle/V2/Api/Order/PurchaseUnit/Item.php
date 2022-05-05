@@ -28,7 +28,7 @@ class Item extends PayPalApiStruct
     protected $unitAmount;
 
     /**
-     * @var Tax
+     * @var Tax|null
      */
     protected $tax;
 
@@ -97,7 +97,7 @@ class Item extends PayPalApiStruct
     }
 
     /**
-     * @return Tax
+     * @return Tax|null
      */
     public function getTax()
     {

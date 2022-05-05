@@ -36,6 +36,7 @@ use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Amount\Break
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Amount\Breakdown\Handling;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Amount\Breakdown\ItemTotal;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Amount\Breakdown\TaxTotal;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Item\Tax;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Shipping;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Shipping\Address as ShippingAddress;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Shipping\Name as ShippingName;
@@ -390,6 +391,10 @@ abstract class AbstractOrderHandler implements OrderBuilderHandlerInterface
         }, 0.0);
 
         $calculatedTaxAmount = array_reduce($purchaseUnit->getItems() ?: [], static function ($carry, $item) {
+            if (!$item->getTax() instanceof Tax) {
+                return $carry;
+            }
+
             return $carry + (float) $item->getTax()->getValue() * $item->getQuantity();
         }, 0.0);
 

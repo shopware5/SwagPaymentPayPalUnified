@@ -12,6 +12,15 @@
     <author>shopware AG</author>
     <compatibility minVersion="5.2.27" maxVersion="5.99.99"/>
 
+    <changelog version="REPLACE_GLOBALLY_WITH_NEXT_VERSION">
+        <changes lang="de">
+            PT-12675 - Behebt Problem mit Rabatten während eines Rechnungskaufes;
+        </changes>
+        <changes lang="en">
+            PT-12675 - Fixes problem with discounts during an invoice purchase;
+        </changes>
+    </changelog>
+
     <changelog version="4.1.2">
         <changes lang="de">
             PT-12739 - Fehler bei PayPal Express behoben, wenn die Artikelnummer nummerisch sind und führende Nullen haben;
