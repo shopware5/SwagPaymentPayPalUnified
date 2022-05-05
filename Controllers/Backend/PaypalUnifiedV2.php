@@ -61,7 +61,12 @@ class Shopware_Controllers_Backend_PaypalUnifiedV2 extends Shopware_Controllers_
         $this->logger = $this->container->get('paypal_unified.logger_service');
         $this->paymentStatusService = $this->container->get('paypal_unified.payment_status_service');
 
-        $this->container->get('paypal_unified.backend.shop_registration_service')->registerShopById((int) $this->request->getParam('shopId'));
+        $shopId = (int) $this->request->getParam('shopId', 0);
+        if ($shopId === 0) {
+            throw new UnexpectedValueException('Request parameter shopId is required');
+        }
+
+        $this->container->get('paypal_unified.backend.shop_registration_service')->registerShopById($shopId);
     }
 
     public function orderDetailsAction()
