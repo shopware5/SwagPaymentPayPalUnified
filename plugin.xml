@@ -16,10 +16,12 @@
         <changes lang="de">
             PT-12675 - Behebt Problem mit Rabatten während eines Rechnungskaufes;
             PT-12733 - Behebt Fehler bei Rückzahlungen mit Subshops;
+            PT-12745 - Verbessert den Bezahlvorgang mit Kredit- oder Debitkarte;
         </changes>
         <changes lang="en">
             PT-12675 - Fixes problem with discounts during an invoice purchase;
             PT-12733 - Fixes bug with refunds with subshops;
+            PT-12745 - Improves the payment process with credit or debit card;
         </changes>
     </changelog>
 
