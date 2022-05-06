@@ -18,6 +18,7 @@ use Enlight_View_Default;
 use Exception;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
+use Shopware\Models\Shop\Shop;
 use Shopware_Controllers_Backend_PaypalUnifiedV2;
 use SwagPaymentPayPalUnified\Components\Services\ExceptionHandlerService;
 use SwagPaymentPayPalUnified\Components\Services\LoggerService;
@@ -25,9 +26,65 @@ use SwagPaymentPayPalUnified\Components\Services\PaymentStatusService;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Payments\Refund;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\PaymentStatusV2;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\CaptureResource;
+use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
+use UnexpectedValueException;
 
 class PaypalUnifiedV2Test extends TestCase
 {
+    use ContainerTrait;
+
+    /**
+     * @return void
+     */
+    public function testPreDispatchShouldThrowException()
+    {
+        $request = new Enlight_Controller_Request_RequestTestCase();
+        $response = new Enlight_Controller_Response_ResponseTestCase();
+
+        $controller = Enlight_Class::Instance(Shopware_Controllers_Backend_PaypalUnifiedV2::class, [$request, $response]);
+        static::assertInstanceOf(Shopware_Controllers_Backend_PaypalUnifiedV2::class, $controller);
+
+        if (method_exists($controller, 'setRequest')) {
+            $controller->setRequest($request);
+        }
+
+        $controller->setRequest($request);
+        $controller->setContainer($this->getContainer());
+
+        static::expectException(UnexpectedValueException::class);
+
+        $controller->preDispatch();
+    }
+
+    /**
+     * @return void
+     */
+    public function testPreDispatchShouldUpdateShopId()
+    {
+        $request = new Enlight_Controller_Request_RequestTestCase();
+        $request->setParam('shopId', 2);
+
+        $response = new Enlight_Controller_Response_ResponseTestCase();
+
+        $controller = Enlight_Class::Instance(Shopware_Controllers_Backend_PaypalUnifiedV2::class, [$request, $response]);
+
+        static::assertInstanceOf(Shopware_Controllers_Backend_PaypalUnifiedV2::class, $controller);
+
+        if (method_exists($controller, 'setRequest')) {
+            $controller->setRequest($request);
+        }
+
+        $controller->setContainer($this->getContainer());
+
+        $controller->preDispatch();
+
+        $shop = $this->getContainer()->get('paypal_unified.dependency_provider')->getShop();
+        static::assertInstanceOf(Shop::class, $shop);
+        static::assertSame(2, $shop->getId());
+
+        $this->getContainer()->get('paypal_unified.backend.shop_registration_service')->registerShopById(1);
+    }
+
     /**
      * @return void
      */

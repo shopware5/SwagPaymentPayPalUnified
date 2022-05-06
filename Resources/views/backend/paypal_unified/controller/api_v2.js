@@ -101,24 +101,19 @@ Ext.define('Shopware.apps.PaypalUnified.controller.ApiV2', {
      * @param { Function } callback
      */
     getOrderById: function(id, paymentMethodId, transactionId, callback) {
-        Ext.Ajax.request({
-            url: this.urls.orderDetails,
-            params: {
-                id: id,
-                paymentMethodId: paymentMethodId,
-                transactionId: transactionId,
-                shopId: this.getCurrentShopId()
-            },
-            callback: callback
-        });
+        var params =  {
+            id: id,
+            paymentMethodId: paymentMethodId,
+            transactionId: transactionId,
+        };
+
+        this.callAjax(this.urls.orderDetails, params, callback)
     },
 
     /**
-     * @param { Object } request
-     * @param { Object } opts
      * @param { Object } response
      */
-    orderDetailsV2Callback: function(request, opts, response) {
+    orderDetailsV2Callback: function(response) {
         var responseObject = Ext.JSON.decode(response.responseText);
 
         if (responseObject.success === false) {
@@ -152,7 +147,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.ApiV2', {
      * @returns { Number }
      */
     getCurrentShopId: function() {
-        return this.getRecord().get('languageIso');
+        return this.record.getLanguageSubShop().first().get('id')
     },
 
     onCaptureButtonClick: function() {
@@ -181,7 +176,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.ApiV2', {
 
         var window = this.getWindow(),
             parameter = {
-                authorizationId: this.currentOrderData.purchase_units[0].payments.authorizations[0].id
+                authorizationId: this.currentOrderData.purchase_units[0].payments.authorizations[0].id,
             };
 
         window.setLoading(true);
@@ -306,6 +301,10 @@ Ext.define('Shopware.apps.PaypalUnified.controller.ApiV2', {
     },
 
     callAjax: function(url, parameter, callback) {
+        if (!parameter.hasOwnProperty('shopId')) {
+            parameter.shopId = this.getCurrentShopId();
+        }
+
         Ext.Ajax.request({
             url: url,
             params: parameter,

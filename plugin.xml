@@ -15,9 +15,11 @@
     <changelog version="REPLACE_GLOBALLY_WITH_NEXT_VERSION">
         <changes lang="de">
             PT-12675 - Behebt Problem mit Rabatten während eines Rechnungskaufes;
+            PT-12733 - Behebt Fehler bei Rückzahlungen mit Subshops;
         </changes>
         <changes lang="en">
             PT-12675 - Fixes problem with discounts during an invoice purchase;
+            PT-12733 - Fixes bug with refunds with subshops;
         </changes>
     </changelog>
 
