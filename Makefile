@@ -45,9 +45,16 @@ install-test-environment: ## Installs the plugin test environment
 
 run-tests: ## Execute the php unit tests... (You can use the filter parameter "make run-tests filter=yourFilterPhrase")
 ifeq ($(filter), "default")
-	SHOPWARE_ENV=$(envname) ./../../../vendor/phpunit/phpunit/phpunit --verbose
+	SHOPWARE_ENV=$(envname) ./../../../vendor/phpunit/phpunit/phpunit --verbose --stderr
 else
-	SHOPWARE_ENV=$(envname) ./../../../vendor/phpunit/phpunit/phpunit --verbose --filter $(filter)
+	SHOPWARE_ENV=$(envname) ./../../../vendor/phpunit/phpunit/phpunit --verbose --stderr --filter $(filter)
+endif
+
+run-tests-legacy: ## Execute the php unit tests in SW 5.2.27 (latest 5.2)... (You can use the filter parameter "make run-tests filter=yourFilterPhrase")
+ifeq ($(filter), "default")
+	SHOPWARE_ENV=$(envname) ./../../../vendor/phpunit/phpunit/phpunit --verbose --stderr
+else
+	SHOPWARE_ENV=$(envname) ./../../../vendor/phpunit/phpunit/phpunit --verbose --stderr --filter $(filter)
 endif
 
 run-e2e-tests: ## Executes the E2E tests... (Use like "make run-e2e-tests" | "make run-e2e-tests filter=<filename|phrase>" | "make run-e2e-tests filter=<filename|phrase> debug=true")

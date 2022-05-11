@@ -21,6 +21,8 @@ use UnexpectedValueException;
 
 class PaymentStatusService
 {
+    const EPSILON = 0.00000001;
+
     /**
      * @var ModelManager
      */
@@ -147,6 +149,46 @@ class PaymentStatusService
         $this->logger->debug(sprintf('%s UPDATE ORDER WITH ID %s AND STATUS ID %s AND PAYMENT STATUS ID %s', __METHOD__, $shopwareOrderId, $orderStatusId, $paymentStatusId));
 
         $this->updateOrder($shopwareOrderId, $orderStatusId, $paymentStatusId);
+    }
+
+    /**
+     * @param bool  $finalize
+     * @param float $amountToCapture
+     * @param float $maxCaptureAmount
+     *
+     * @return int
+     */
+    public function determinePaymentStausForCapturing($finalize, $amountToCapture, $maxCaptureAmount)
+    {
+        if ($finalize) {
+            return Status::PAYMENT_STATE_COMPLETELY_PAID;
+        }
+
+        $amountToCapture = (float) $amountToCapture;
+        $maxCaptureAmount = (float) $maxCaptureAmount;
+
+        if ($amountToCapture < $maxCaptureAmount) {
+            return Status::PAYMENT_STATE_PARTIALLY_PAID;
+        }
+
+        if ($this->floatsEquals($amountToCapture, $maxCaptureAmount)) {
+            return Status::PAYMENT_STATE_COMPLETELY_PAID;
+        }
+
+        throw new UnexpectedValueException(
+            sprintf('The amount of %f is larger than the max possible amount of %f', $amountToCapture, $maxCaptureAmount)
+        );
+    }
+
+    /**
+     * @param float $valueOne
+     * @param float $valueTwo
+     *
+     * @return bool
+     */
+    private function floatsEquals($valueOne, $valueTwo)
+    {
+        return abs($valueOne - $valueTwo) < self::EPSILON;
     }
 
     /**

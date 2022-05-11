@@ -8,8 +8,10 @@
 
 use Shopware\Models\Order\Status;
 use SwagPaymentPayPalUnified\Components\Services\ExceptionHandlerService;
+use SwagPaymentPayPalUnified\Components\Services\OrderPropertyHelper;
 use SwagPaymentPayPalUnified\Components\Services\PaymentStatusService;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Payments\Authorization;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Payments\Capture;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Payments\Capture\Amount;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Payments\Refund;
@@ -20,6 +22,11 @@ use SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\OrderResource;
 
 class Shopware_Controllers_Backend_PaypalUnifiedV2 extends Shopware_Controllers_Backend_ExtJs
 {
+    /**
+     * @var OrderPropertyHelper
+     */
+    private $orderPropertyHelper;
+
     /**
      * @var OrderResource
      */
@@ -60,6 +67,7 @@ class Shopware_Controllers_Backend_PaypalUnifiedV2 extends Shopware_Controllers_
         $this->exceptionHandler = $this->container->get('paypal_unified.exception_handler_service');
         $this->logger = $this->container->get('paypal_unified.logger_service');
         $this->paymentStatusService = $this->container->get('paypal_unified.payment_status_service');
+        $this->orderPropertyHelper = $this->get('paypal_unified.order_property_helper');
 
         $shopId = (int) $this->request->getParam('shopId', 0);
         if ($shopId === 0) {
@@ -102,8 +110,10 @@ class Shopware_Controllers_Backend_PaypalUnifiedV2 extends Shopware_Controllers_
 
         $authorizationId = $this->Request()->getParam('authorizationId');
         $amountToCapture = $this->Request()->getParam('amount');
+        $maxCaptureAmount = $this->Request()->getParam('maxCaptureAmount');
         $currency = $this->Request()->getParam('currency');
         $finalize = (bool) $this->Request()->getParam('finalize', false);
+        $shopwareOrderId = $this->Request()->getParam('shopwareOrderId');
 
         $amount = new Amount();
         $amount->setCurrencyCode($currency);
@@ -129,6 +139,11 @@ class Shopware_Controllers_Backend_PaypalUnifiedV2 extends Shopware_Controllers_
 
             return;
         }
+
+        $this->paymentStatusService->updatePaymentStatusV2(
+            $shopwareOrderId,
+            $this->paymentStatusService->determinePaymentStausForCapturing($finalize, $amountToCapture, $maxCaptureAmount)
+        );
 
         $this->view->assign(['success' => true]);
     }
@@ -168,7 +183,7 @@ class Shopware_Controllers_Backend_PaypalUnifiedV2 extends Shopware_Controllers_
             return;
         }
 
-        if ($refundResult->getStatus() === PaymentStatusV2::ORDER_CAPTURE_COMPLETED) {
+        if ($refundResult->getStatus() === PaymentStatusV2::ORDER_REFUND_COMPLETED) {
             $this->paymentStatusService->updatePaymentStatusV2($shopwareOrderId, Status::PAYMENT_STATE_RE_CREDITING);
         }
 
@@ -180,11 +195,15 @@ class Shopware_Controllers_Backend_PaypalUnifiedV2 extends Shopware_Controllers_
         $this->logger->debug(sprintf('%s START', __METHOD__));
 
         $authorizationId = $this->Request()->getParam('authorizationId');
+        $paypalOrderId = $this->Request()->getParam('paypalOrderId');
+        $shopwareOrderId = $this->Request()->getParam('shopwareOrderId');
 
         try {
             $this->logger->debug(sprintf('%s CANCEL AUTHORIZATION OF PAYPAL ORDER WITH ID: %s', __METHOD__, $authorizationId));
 
             $this->authorizationResource->void($authorizationId);
+
+            $paypalOrder = $this->orderResource->get($paypalOrderId);
 
             $this->logger->debug(sprintf('%s CANCEL AUTHORIZATION SUCCESSFUL', __METHOD__));
         } catch (Exception $exception) {
@@ -196,6 +215,14 @@ class Shopware_Controllers_Backend_PaypalUnifiedV2 extends Shopware_Controllers_
             ]);
 
             return;
+        }
+
+        $authorization = $this->orderPropertyHelper->getAuthorization($paypalOrder);
+        if ($authorization instanceof Authorization && $authorization->getStatus() === PaymentStatusV2::ORDER_VOIDED) {
+            $this->paymentStatusService->updatePaymentStatusV2(
+                $shopwareOrderId,
+                Status::PAYMENT_STATE_THE_PROCESS_HAS_BEEN_CANCELLED
+            );
         }
 
         $this->view->assign(['success' => true]);

@@ -25,15 +25,19 @@ use SwagPaymentPayPalUnified\Components\Services\DispatchValidation;
 use SwagPaymentPayPalUnified\Components\Services\ExceptionHandlerService;
 use SwagPaymentPayPalUnified\Components\Services\OrderBuilder\OrderFactory;
 use SwagPaymentPayPalUnified\Components\Services\OrderDataService;
+use SwagPaymentPayPalUnified\Components\Services\OrderPropertyHelper;
 use SwagPaymentPayPalUnified\Components\Services\PaymentControllerHelper;
 use SwagPaymentPayPalUnified\Components\Services\PaymentStatusService;
 use SwagPaymentPayPalUnified\Components\Services\Validation\RedirectDataBuilderFactory;
+use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentControllerResults\DeterminedStatus;
 use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentControllerResults\HandleOrderWithSendOrderNumberResult;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Payments\Authorization;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Payments\Capture;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Patch;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Patches\OrderAddInvoiceIdPatch;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\PaymentIntentV2;
@@ -140,6 +144,11 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
      */
     protected $cartRestoreService;
 
+    /**
+     * @var OrderPropertyHelper
+     */
+    protected $orderPropertyHelper;
+
     public function preDispatch()
     {
         $this->dependencyProvider = $this->get('paypal_unified.dependency_provider');
@@ -157,6 +166,7 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
         $this->paymentStatusService = $this->get('paypal_unified.payment_status_service');
         $this->logger = $this->get('paypal_unified.logger_service');
         $this->cartRestoreService = $this->get('paypal_unified.cart_restore_service');
+        $this->orderPropertyHelper = $this->get('paypal_unified.order_property_helper');
     }
 
     /**
@@ -540,7 +550,7 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
 
         $this->logger->debug(sprintf('%s START POLLING AT: %f', __METHOD__, $start));
 
-        for ($i = 0; $i <= self::MAXIMUM_RETRIES; ++$i) {
+        for ($i = 0; $i <= static::MAXIMUM_RETRIES; ++$i) {
             $this->logger->debug(sprintf('%s POLLING TRY NR: %d AT: %f', __METHOD__, $i, microtime(true)));
 
             $paypalOrder = $this->getPayPalOrder($payPalOrderId);
@@ -548,7 +558,8 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
                 break;
             }
 
-            if ($paypalOrder->getStatus() === PaymentStatusV2::ORDER_COMPLETED) {
+            $determinedStatus = $this->determineStatus($paypalOrder);
+            if ($determinedStatus->isSuccess()) {
                 $currentTime = microtime(true);
                 $elapsedTime = $currentTime - $start;
                 $this->logger->debug(sprintf('%s POLLING SUCCESSFUL AFTER TRY NR: %d AT: %f AFTER: %f SECONDS', __METHOD__, $i, $currentTime, $elapsedTime));
@@ -556,7 +567,7 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
                 return true;
             }
 
-            if ($i >= self::MAXIMUM_RETRIES || time() >= $start + self::TIMEOUT) {
+            if ($i >= static::MAXIMUM_RETRIES || time() >= $start + static::TIMEOUT) {
                 $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
                     ->setCode(ErrorCodes::UNKNOWN)
                     ->setException(new RuntimeException('Maximum retries exceeded.'), '');
@@ -566,7 +577,7 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
                 break;
             }
 
-            if ($paypalOrder->getStatus() === PaymentStatusV2::ORDER_VOIDED) {
+            if ($determinedStatus->isPaymentFailed()) {
                 $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
                     ->setCode(ErrorCodes::UNKNOWN)
                     ->setException(new RuntimeException('Order has been voided.'), '');
@@ -576,7 +587,7 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
                 break;
             }
 
-            sleep(self::SLEEP);
+            sleep(static::SLEEP);
         }
 
         $currentTime = microtime(true);
@@ -690,5 +701,45 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
         }
 
         return ErrorCodes::COMMUNICATION_FAILURE;
+    }
+
+    /**
+     * @return DeterminedStatus
+     */
+    private function determineStatus(Order $paypalOrder)
+    {
+        $successStatusDetermined = false;
+        $paymentFailed = false;
+
+        switch ($paypalOrder->getIntent()) {
+            case PaymentIntentV2::AUTHORIZE:
+                $authorization = $this->orderPropertyHelper->getAuthorization($paypalOrder);
+                if (!$authorization instanceof Authorization) {
+                    break;
+                }
+
+                $successStatusDetermined = $authorization->getStatus() === PaymentStatusV2::ORDER_AUTHORIZATION_CREATED;
+                $paymentFailed = \in_array($authorization->getStatus(), [
+                    PaymentStatusV2::ORDER_AUTHORIZATION_DENIED,
+                    PaymentStatusV2::ORDER_AUTHORIZATION_PARTIALLY_CREATED,
+                    PaymentStatusV2::ORDER_AUTHORIZATION_VOIDED,
+                    PaymentStatusV2::ORDER_AUTHORIZATION_EXPIRED,
+                ]);
+                break;
+            case PaymentIntentV2::CAPTURE:
+                $capture = $this->orderPropertyHelper->getFirstCapture($paypalOrder);
+                if (!$capture instanceof Capture) {
+                    break;
+                }
+
+                $successStatusDetermined = $capture->getStatus() === PaymentStatusV2::ORDER_CAPTURE_COMPLETED;
+                $paymentFailed = \in_array($capture->getStatus(), [
+                    PaymentStatusV2::ORDER_CAPTURE_DECLINED,
+                    PaymentStatusV2::ORDER_CAPTURE_FAILED,
+                ]);
+                break;
+        }
+
+        return new DeterminedStatus($successStatusDetermined, $paymentFailed);
     }
 }

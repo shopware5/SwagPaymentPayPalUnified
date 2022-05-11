@@ -150,5 +150,9 @@
             <argument type="service" id="models"/>
             <argument type="service" id="paypal_unified.logger_service"/>
         </service>
+
+        <service id="paypal_unified.order_property_helper"
+                 class="SwagPaymentPayPalUnified\Components\Services\OrderPropertyHelper"
+                 public="true"/>
     </services>
 </container>
