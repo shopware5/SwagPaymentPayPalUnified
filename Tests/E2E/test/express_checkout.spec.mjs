@@ -22,11 +22,9 @@ test.describe('Is Express Checkout button available', () => {
         const locator = await page.frameLocator('.component-frame').locator('.paypal-button');
         await expect(locator).toHaveText(/Direkt zu/);
 
-        await page.waitForTimeout(5000);
-
         const [paypalPage] = await Promise.all([
             page.waitForEvent('popup'),
-            locator.dispatchEvent('click')
+            locator.click()
         ]);
 
         await paypalPage.route(/.*checkoutnow.*/, route => {
@@ -66,11 +64,9 @@ test.describe('Is Express Checkout button available', () => {
         const locator = await page.frameLocator('.ajax--cart >> .component-frame').locator('.paypal-button');
         await expect(locator).toHaveText(/Direkt zu/);
 
-        await page.waitForTimeout(5000);
-
         const [paypalPage] = await Promise.all([
             page.waitForEvent('popup'),
-            locator.dispatchEvent('click')
+            locator.click()
         ]);
 
         await paypalPage.route(/.*checkoutnow.*/, route => {
@@ -110,11 +106,10 @@ test.describe('Is Express Checkout button available', () => {
 
         const locator = await page.frameLocator('.component-frame').locator('.paypal-button');
 
-        await page.waitForTimeout(5000);
 
         const [paypalPage] = await Promise.all([
             page.waitForEvent('popup'),
-            locator.dispatchEvent('click')
+            locator.click()
         ]);
 
         await paypalPage.route(/.*checkoutnow.*/, route => {
@@ -154,11 +149,9 @@ test.describe('Is Express Checkout button available', () => {
 
         const locator = await page.frameLocator('.component-frame').locator('.paypal-button');
 
-        await page.waitForTimeout(5000);
-
         const [paypalPage] = await Promise.all([
             page.waitForEvent('popup'),
-            locator.dispatchEvent('click')
+            locator.click()
         ]);
 
         await paypalPage.route(/.*checkoutnow.*/, route => {
@@ -193,11 +186,9 @@ test.describe('Is Express Checkout button available', () => {
 
         const locator = await page.frameLocator('.component-frame >> nth=1').locator('.paypal-button');
 
-        await page.waitForTimeout(5000);
-
         const [paypalPage] = await Promise.all([
             page.waitForEvent('popup'),
-            locator.dispatchEvent('click')
+            locator.click()
         ]);
 
         await paypalPage.route(/.*checkoutnow.*/, route => {
@@ -266,11 +257,9 @@ test.describe('Is Express Checkout button available', () => {
         await page.locator('text=In den Warenkorb').click();
         const locator = await page.frameLocator('.js--modal >> .component-frame').locator('.paypal-button');
 
-        await page.waitForTimeout(5000);
-
         const [paypalPage] = await Promise.all([
             page.waitForEvent('popup'),
-            locator.dispatchEvent('click')
+            locator.click()
         ]);
 
         await expect(paypalPage.locator('#headerText')).toHaveText(/PayPal/);
@@ -319,7 +308,7 @@ test.describe('Is Express Checkout button available', () => {
 
         const [paypalPage] = await Promise.all([
             page.waitForEvent('popup'),
-            locator.dispatchEvent('click')
+            locator.click()
         ]);
 
         await expect(paypalPage.locator('#headerText')).toHaveText(/PayPal/);

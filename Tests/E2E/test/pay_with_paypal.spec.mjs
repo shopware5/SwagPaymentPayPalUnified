@@ -34,8 +34,6 @@ test.describe('Frontend', () => {
         const locator = await page.frameLocator('.component-frame').locator('.paypal-button:has-text("Jetzt kaufen")');
         await page.waitForLoadState('load');
 
-        await page.waitForTimeout(7000);
-
         const [paypalPage] = await Promise.all([
             page.waitForEvent('popup'),
             locator.dispatchEvent('click')
