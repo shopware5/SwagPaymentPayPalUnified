@@ -5,22 +5,22 @@
     <label lang="de">PayPal</label>
     <label lang="en">PayPal</label>
 
-    <version>4.1.2</version>
+    <version>4.1.3</version>
     <copyright>(c) by shopware AG</copyright>
     <license>MIT</license>
     <link>http://store.shopware.com</link>
     <author>shopware AG</author>
     <compatibility minVersion="5.2.27" maxVersion="5.99.99"/>
 
-    <changelog version="REPLACE_GLOBALLY_WITH_NEXT_VERSION">
+    <changelog version="4.1.3">
         <changes lang="de">
             PT-12675 - Behebt Problem mit Rabatten während eines Rechnungskaufes;
-            PT-12733 - Behebt Fehler bei Rückzahlungen mit Subshops;
+            PT-12733 - Behebt Fehler bei Rückzahlungen von Bestellungen aus Subshops;
             PT-12745 - Verbessert den Bezahlvorgang mit Kredit- oder Debitkarte;
         </changes>
         <changes lang="en">
             PT-12675 - Fixes problem with discounts during an invoice purchase;
-            PT-12733 - Fixes bug with refunds with subshops;
+            PT-12733 - Fixes bug with refunds of orders from subshops;
             PT-12745 - Improves the payment process with credit or debit card;
         </changes>
     </changelog>
