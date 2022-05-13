@@ -131,6 +131,64 @@ class PaymentStatusServiceTest extends TestCase
     }
 
     /**
+     * @dataProvider determinePaymentStausForCapturingTestDataProvider
+     *
+     * @param bool  $finalize
+     * @param float $amountToCapture
+     * @param float $maxCaptureAmount
+     * @param int   $expectedResult
+     *
+     * @return void
+     */
+    public function testDeterminePaymentStausForCapturing($finalize, $amountToCapture, $maxCaptureAmount, $expectedResult = null)
+    {
+        $service = $this->createPaymentStatusService();
+
+        if ($expectedResult === null) {
+            $this->expectException(UnexpectedValueException::class);
+        }
+
+        $result = $service->determinePaymentStausForCapturing($finalize, $amountToCapture, $maxCaptureAmount);
+
+        if ($expectedResult !== null) {
+            static::assertSame($expectedResult, $result);
+        }
+    }
+
+    /**
+     * @return Generator<array<int,mixed>>
+     */
+    public function determinePaymentStausForCapturingTestDataProvider()
+    {
+        yield 'Is finalized' => [
+            true,
+            0.00,
+            0.00,
+            Status::PAYMENT_STATE_COMPLETELY_PAID,
+        ];
+
+        yield 'Not finalized amountToCapture is less than maxCaptureAmount' => [
+            false,
+            5.00,
+            6.00,
+            Status::PAYMENT_STATE_PARTIALLY_PAID,
+        ];
+
+        yield 'Not finalized amountToCapture equals maxCaptureAmount' => [
+            false,
+            5.00,
+            5.00,
+            Status::PAYMENT_STATE_COMPLETELY_PAID,
+        ];
+
+        yield 'Not finalized amountToCapture is larger than maxCaptureAmount' => [
+            false,
+            6.00,
+            5.00,
+        ];
+    }
+
+    /**
      * @return PaymentStatusService
      */
     private function createPaymentStatusService()

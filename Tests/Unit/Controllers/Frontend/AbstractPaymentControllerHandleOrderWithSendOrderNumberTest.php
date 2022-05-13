@@ -92,21 +92,13 @@ class AbstractPaymentControllerHandleOrderWithSendOrderNumberTest extends Paypal
         $this->prepareRequestStack();
         $controller = $this->getController(
             PaypalUnifiedApm::class,
-            null,
-            $this->getContainer()->get('paypal_unified.redirect_data_builder_factory'),
-            null,
-            null,
-            null,
-            $orderResourceMock,
-            null,
-            null,
-            $orderDataService,
-            null,
-            null,
-            null,
-            $paymentStatusService,
-            null,
-            $basketRestoreService
+            [
+                self::SERVICE_REDIRECT_DATA_BUILDER_FACTORY => $this->getContainer()->get('paypal_unified.redirect_data_builder_factory'),
+                self::SERVICE_ORDER_DATA_SERVICE => $orderDataService,
+                self::SERVICE_ORDER_RESOURCE => $orderResourceMock,
+                self::SERVICE_PAYMENT_STATUS_SERVICE => $paymentStatusService,
+                self::SERVICE_CART_RESTORE_SERVICE => $basketRestoreService,
+            ]
         );
 
         $reflectionMethod = (new ReflectionClass(PaypalUnifiedApm::class))->getMethod('handleOrderWithSendOrderNumber');
@@ -178,7 +170,7 @@ class AbstractPaymentControllerHandleOrderWithSendOrderNumberTest extends Paypal
         $amount->setCurrencyCode('EUR');
 
         $payee = new Order\PurchaseUnit\Payee();
-        $payee->setEmailAddress('sb-h3rzg14140643@business.example.com');
+        $payee->setEmailAddress('test@business.example.com');
 
         $purchaseUnit = new Order\PurchaseUnit();
         $purchaseUnit->setAmount($amount);

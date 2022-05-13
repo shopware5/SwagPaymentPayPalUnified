@@ -177,6 +177,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.ApiV2', {
         var window = this.getWindow(),
             parameter = {
                 authorizationId: this.currentOrderData.purchase_units[0].payments.authorizations[0].id,
+                paypalOrderId: this.currentOrderData.id
             };
 
         window.setLoading(true);
@@ -202,7 +203,8 @@ Ext.define('Shopware.apps.PaypalUnified.controller.ApiV2', {
         }
 
         window.setLoading(false);
-        this.onSelectGridRecord(Ext.emptyFn, this.record);
+
+        this.reloadOrderGrid();
     },
 
     onRefundButtonClick: function() {
@@ -250,7 +252,6 @@ Ext.define('Shopware.apps.PaypalUnified.controller.ApiV2', {
 
         formValues = form.getValues();
         formValues.paypalOrderId = this.currentOrderData.id;
-        formValues.shopwareOrderId = this.record.get('id');
 
         window.setLoading(true);
 
@@ -303,6 +304,10 @@ Ext.define('Shopware.apps.PaypalUnified.controller.ApiV2', {
     callAjax: function(url, parameter, callback) {
         if (!parameter.hasOwnProperty('shopId')) {
             parameter.shopId = this.getCurrentShopId();
+        }
+
+        if (!parameter.hasOwnProperty('shopwareOrderId')) {
+            parameter.shopwareOrderId = this.record.get('id');
         }
 
         Ext.Ajax.request({

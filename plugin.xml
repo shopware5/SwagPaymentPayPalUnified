@@ -12,6 +12,15 @@
     <author>shopware AG</author>
     <compatibility minVersion="5.2.27" maxVersion="5.99.99"/>
 
+    <changelog version="REPLACE_GLOBALLY_WITH_NEXT_VERSION">
+        <changes lang="de">
+            PT-12748 - Verbessert das Setzen des aktuellen Zahlungsstatus bei Transaktionen;
+        </changes>
+        <changes lang="en">
+            PT-12748 - Improves the setting of the current payment status for transactions;
+        </changes>
+    </changelog>
+
     <changelog version="4.1.3">
         <changes lang="de">
             PT-12675 - Behebt Problem mit Rabatten während eines Rechnungskaufes;

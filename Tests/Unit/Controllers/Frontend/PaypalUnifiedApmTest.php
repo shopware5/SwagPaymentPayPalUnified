@@ -52,8 +52,6 @@ class PaypalUnifiedApmTest extends PaypalPaymentControllerTestCase
      */
     public function init()
     {
-        parent::init();
-
         $this->prepareRequestStack();
     }
 
@@ -96,28 +94,18 @@ class PaypalUnifiedApmTest extends PaypalPaymentControllerTestCase
 
         $this->expectPaymentStatusToBeSetTo($expectedPaymentState);
 
-        $this->settingsService->method('get')->willReturnMap([
+        $settingsServiceMock = $this->getMockedService(self::SERVICE_SETTINGS_SERVICE);
+
+        $settingsServiceMock->method('get')->willReturnMap([
             [SettingsServiceInterface::SETTING_GENERAL_SEND_ORDER_NUMBER, SettingsTable::GENERAL, true],
             [SettingsServiceInterface::SETTING_GENERAL_ORDER_NUMBER_PREFIX, SettingsTable::GENERAL, ''],
         ]);
 
         $this->getController(
             Shopware_Controllers_Frontend_PaypalUnifiedApm::class,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            $this->createCartRestoreService()
+            [
+                self::SERVICE_CART_RESTORE_SERVICE => $this->createCartRestoreService(),
+            ]
         )
             ->returnAction();
     }
@@ -175,7 +163,9 @@ class PaypalUnifiedApmTest extends PaypalPaymentControllerTestCase
      */
     private function givenThePayPalOrder($orderId, $order = null)
     {
-        $this->orderResource->method('get')->willReturnMap([
+        $orderResourceMock = $this->getMockedService(self::SERVICE_ORDER_RESOURCE);
+
+        $orderResourceMock->method('get')->willReturnMap([
             [$orderId, $order ?: $this->createMock(Order::class)],
         ]);
     }
@@ -241,7 +231,9 @@ class PaypalUnifiedApmTest extends PaypalPaymentControllerTestCase
      */
     private function expectPaymentStatusToBeSetTo($status, $paypalOrderId = null)
     {
-        $this->paymentStatusService->expects(static::once())
+        $paymentStatusServiceMock = $this->getMockedService(self::SERVICE_PAYMENT_STATUS_SERVICE);
+
+        $paymentStatusServiceMock->expects(static::once())
             ->method('updatePaymentStatus')
             ->with(
                 $paypalOrderId ?: self::PAYPAL_ORDER_ID,
@@ -254,7 +246,9 @@ class PaypalUnifiedApmTest extends PaypalPaymentControllerTestCase
      */
     private function givenTheCartIsValid()
     {
-        $this->basketValidator->method('validate')->willReturn(true);
+        $basketValidatorMock = $this->getMockedService(self::SERVICE_SIMPLE_BASKET_VALIDATOR);
+
+        $basketValidatorMock->method('validate')->willReturn(true);
     }
 
     /**

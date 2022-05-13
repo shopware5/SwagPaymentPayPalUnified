@@ -119,23 +119,17 @@ class OrderWithSendOrderNumberTest extends PaypalPaymentControllerTestCase
 
         $controller = $this->getController(
             $controllerClassName,
-            $this->createDependencyProvider(),
-            $this->createRedirectDataBuilderFactory(),
-            null,
-            null,
-            $this->createPayPalOrderParameterFacade(),
-            $this->createOrderResource(),
-            $this->createOrderFactory(),
-            $this->createSettingService(),
-            null,
-            null,
-            null,
-            null,
-            $this->createPaymentStatusServiceExpectsMethodCall(),
-            null,
-            $this->createBasketRestoreServiceExpectMethodCalls(),
-            null,
-            $this->createBasketValidator(),
+            [
+                self::SERVICE_DEPENDENCY_PROVIDER => $this->createDependencyProvider(),
+                self::SERVICE_REDIRECT_DATA_BUILDER_FACTORY => $this->createRedirectDataBuilderFactory(),
+                self::SERVICE_ORDER_PARAMETER_FACADE => $this->createPayPalOrderParameterFacade(),
+                self::SERVICE_ORDER_RESOURCE => $this->createOrderResource(),
+                self::SERVICE_ORDER_FACTORY => $this->createOrderFactory(),
+                self::SERVICE_SETTINGS_SERVICE => $this->createSettingService(),
+                self::SERVICE_PAYMENT_STATUS_SERVICE => $this->createPaymentStatusServiceExpectsMethodCall(),
+                self::SERVICE_CART_RESTORE_SERVICE => $this->createBasketRestoreServiceExpectMethodCalls(),
+                self::SERVICE_SIMPLE_BASKET_VALIDATOR => $this->createBasketValidator(),
+            ],
             $this->createRequest()
         );
 
@@ -177,23 +171,17 @@ class OrderWithSendOrderNumberTest extends PaypalPaymentControllerTestCase
     {
         $controller = $this->getController(
             Shopware_Controllers_Widgets_PaypalUnifiedV2AdvancedCreditDebitCard::class,
-            $this->createDependencyProvider(),
-            $this->createRedirectDataBuilderFactory(),
-            null,
-            null,
-            $this->createPayPalOrderParameterFacade(),
-            $this->createOrderResource(),
-            $this->createOrderFactory(),
-            $this->createSettingService(),
-            null,
-            null,
-            null,
-            null,
-            $this->createPaymentStatusServiceExpectsMethodCall(),
-            null,
-            $this->getContainer()->get('paypal_unified.cart_restore_service'),
-            null,
-            $this->createBasketValidator(),
+            [
+                self::SERVICE_DEPENDENCY_PROVIDER => $this->createDependencyProvider(),
+                self::SERVICE_REDIRECT_DATA_BUILDER_FACTORY => $this->createRedirectDataBuilderFactory(),
+                self::SERVICE_ORDER_PARAMETER_FACADE => $this->createPayPalOrderParameterFacade(),
+                self::SERVICE_ORDER_RESOURCE => $this->createOrderResource(),
+                self::SERVICE_ORDER_FACTORY => $this->createOrderFactory(),
+                self::SERVICE_SETTINGS_SERVICE => $this->createSettingService(),
+                self::SERVICE_PAYMENT_STATUS_SERVICE => $this->createPaymentStatusServiceExpectsMethodCall(),
+                self::SERVICE_CART_RESTORE_SERVICE => $this->getContainer()->get('paypal_unified.cart_restore_service'),
+                self::SERVICE_SIMPLE_BASKET_VALIDATOR => $this->createBasketValidator(),
+            ],
             $this->createRequest()
         );
 
@@ -257,23 +245,17 @@ class OrderWithSendOrderNumberTest extends PaypalPaymentControllerTestCase
 
         $controller = $this->getController(
             Shopware_Controllers_Frontend_PaypalUnifiedV2ExpressCheckout::class,
-            $this->createDependencyProvider(),
-            $this->createRedirectDataBuilderFactory(),
-            null,
-            null,
-            $this->createPayPalOrderParameterFacade(),
-            $this->createOrderResource(),
-            $orderFactoryMock,
-            $this->createSettingService(),
-            null,
-            null,
-            null,
-            null,
-            $this->createPaymentStatusServiceExpectsMethodCall(),
-            null,
-            $cartRestoreService,
-            null,
-            $this->createBasketValidator(),
+            [
+                self::SERVICE_DEPENDENCY_PROVIDER => $this->createDependencyProvider(),
+                self::SERVICE_REDIRECT_DATA_BUILDER_FACTORY => $this->createRedirectDataBuilderFactory(),
+                self::SERVICE_ORDER_PARAMETER_FACADE => $this->createPayPalOrderParameterFacade(),
+                self::SERVICE_ORDER_RESOURCE => $this->createOrderResource(),
+                self::SERVICE_ORDER_FACTORY => $orderFactoryMock,
+                self::SERVICE_SETTINGS_SERVICE => $this->createSettingService(),
+                self::SERVICE_PAYMENT_STATUS_SERVICE => $this->createPaymentStatusServiceExpectsMethodCall(),
+                self::SERVICE_CART_RESTORE_SERVICE => $cartRestoreService,
+                self::SERVICE_SIMPLE_BASKET_VALIDATOR => $this->createBasketValidator(),
+            ],
             $request
         );
 
@@ -426,7 +408,7 @@ class OrderWithSendOrderNumberTest extends PaypalPaymentControllerTestCase
         $amount->setCurrencyCode('EUR');
 
         $payee = new Order\PurchaseUnit\Payee();
-        $payee->setEmailAddress('sb-h3rzg14140643@business.example.com');
+        $payee->setEmailAddress('test@business.example.com');
 
         $purchaseUnit = new Order\PurchaseUnit();
         $purchaseUnit->setAmount($amount);

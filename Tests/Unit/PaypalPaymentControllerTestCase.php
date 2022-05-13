@@ -18,6 +18,7 @@ use PHPUnit\Framework\TestCase;
 use Shopware\Components\BasketSignature\BasketPersister;
 use Shopware\Components\DependencyInjection\Bridge\Config;
 use Shopware\Components\DependencyInjection\Container;
+use SwagPaymentPayPalUnified\Components\Backend\ShopRegistrationService;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\ExceptionHandlerServiceInterface;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
@@ -26,14 +27,20 @@ use SwagPaymentPayPalUnified\Components\Services\CartRestoreService;
 use SwagPaymentPayPalUnified\Components\Services\DispatchValidation;
 use SwagPaymentPayPalUnified\Components\Services\OrderBuilder\OrderFactory;
 use SwagPaymentPayPalUnified\Components\Services\OrderDataService;
+use SwagPaymentPayPalUnified\Components\Services\OrderPropertyHelper;
 use SwagPaymentPayPalUnified\Components\Services\PaymentControllerHelper;
 use SwagPaymentPayPalUnified\Components\Services\PaymentStatusService;
 use SwagPaymentPayPalUnified\Components\Services\Validation\BasketValidatorInterface;
 use SwagPaymentPayPalUnified\Components\Services\Validation\RedirectDataBuilder;
 use SwagPaymentPayPalUnified\Components\Services\Validation\RedirectDataBuilderFactoryInterface;
-use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentController;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Payments;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Payments\Authorization;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Payments\Capture;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\PaymentStatusV2;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\AuthorizationResource;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\CaptureResource;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\OrderResource;
 use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -44,80 +51,28 @@ class PaypalPaymentControllerTestCase extends TestCase
 {
     use ContainerTrait;
 
-    /**
-     * @var MockObject|DependencyProvider
-     */
-    protected $dependencyProvider;
-
-    /**
-     * @var MockObject|RedirectDataBuilderFactoryInterface
-     */
-    protected $redirectDataBuilderFactory;
-
-    /**
-     * @var MockObject|PaymentControllerHelper
-     */
-    protected $paymentControllerHelper;
-
-    /**
-     * @var MockObject|DispatchValidation
-     */
-    protected $dispatchValidator;
-
-    /**
-     * @var MockObject|PayPalOrderParameterFacadeInterface
-     */
-    protected $payPalOrderParameterFacade;
-
-    /**
-     * @var MockObject|OrderResource
-     */
-    protected $orderResource;
-
-    /**
-     * @var MockObject|OrderFactory
-     */
-    protected $orderFactory;
-
-    /**
-     * @var MockObject|SettingsServiceInterface
-     */
-    protected $settingsService;
-
-    /**
-     * @var MockObject|OrderDataService
-     */
-    protected $orderDataService;
-
-    /**
-     * @var MockObject|PaymentMethodProviderInterface
-     */
-    protected $paymentMethodProvider;
-
-    /**
-     * @var MockObject|ExceptionHandlerServiceInterface
-     */
-    protected $exceptionHandler;
-
-    /**
-     * @var MockObject|Config
-     */
-    protected $shopwareConfig;
-
-    /**
-     * @var MockObject|PaymentStatusService
-     */
-    protected $paymentStatusService;
-
-    /**
-     * @var MockObject|LoggerServiceInterface
-     */
-    protected $logger;
-
-    /**
-     * @var MockObject|BasketValidatorInterface
-     */
-    protected $basketValidator;
+    const SERVICE_DEPENDENCY_PROVIDER = 'paypal_unified.dependency_provider';
+    const SERVICE_REDIRECT_DATA_BUILDER = 'paypal_unified.redirect_data_builder';
+    const SERVICE_REDIRECT_DATA_BUILDER_FACTORY = 'paypal_unified.redirect_data_builder_factory';
+    const SERVICE_PAYMENT_CONTROLLER_HELPER = 'paypal_unified.payment_controller_helper';
+    const SERVICE_DISPATCH_VALIDATION = 'paypal_unified.dispatch_validation';
+    const SERVICE_ORDER_PARAMETER_FACADE = 'paypal_unified.paypal_order_parameter_facade';
+    const SERVICE_ORDER_RESOURCE = 'paypal_unified.v2.order_resource';
+    const SERVICE_ORDER_FACTORY = 'paypal_unified.order_factory';
+    const SERVICE_SETTINGS_SERVICE = 'paypal_unified.settings_service';
+    const SERVICE_ORDER_DATA_SERVICE = 'paypal_unified.order_data_service';
+    const SERVICE_PAYMENT_METHOD_PROVIDER = 'paypal_unified.payment_method_provider';
+    const SERVICE_EXCEPTION_HANDLER_SERVICE = 'paypal_unified.exception_handler_service';
+    const SERVICE_SHOPWARE_CONFIG = 'config';
+    const SERVICE_PAYMENT_STATUS_SERVICE = 'paypal_unified.payment_status_service';
+    const SERVICE_LOGGER_SERVICE = 'paypal_unified.logger_service';
+    const SERVICE_SIMPLE_BASKET_VALIDATOR = 'paypal_unified.simple_basket_validator';
+    const SERVICE_CART_RESTORE_SERVICE = 'paypal_unified.cart_restore_service';
+    const SERVICE_BASKET_PERSISTER = 'basket_persister';
+    const SERVICE_ORDER_PROPERTY_HELPER = 'paypal_unified.order_property_helper';
+    const SERVICE_SHOP_REGISTRATION_SERVICE = 'paypal_unified.backend.shop_registration_service';
+    const SERVICE_AUTHORIZATION_RESOURCE = 'paypal_unified.v2.authorization_resource';
+    const SERVICE_CAPTURE_RESOURCE = 'paypal_unified.v2.capture_resource';
 
     /**
      * @var MockObject|Enlight_Controller_Request_RequestHttp
@@ -130,50 +85,63 @@ class PaypalPaymentControllerTestCase extends TestCase
     protected $response;
 
     /**
-     * @var MockObject|RedirectDataBuilder
+     * @var array<self::SERVICE_*,MockObject>
      */
-    protected $redirectDataBuilder;
+    protected $injections;
 
     /**
-     * @var MockObject|CartRestoreService
+     * @var OrderPropertyHelper|null
      */
-    protected $basketRestoreService;
+    protected $orderPropertyHelper;
 
     /**
-     * @var BasketPersister|null
+     * @param string|null      $name
+     * @param array<int,mixed> $data
      */
-    protected $basketPersister;
-
-    /**
-     * @before
-     *
-     * @return void
-     */
-    public function init()
+    public function __construct($name = null, array $data = [], $dataName = '')
     {
-        $this->dependencyProvider = $this->createMock(DependencyProvider::class);
-        $this->redirectDataBuilderFactory = $this->createMock(RedirectDataBuilderFactoryInterface::class);
-        $this->paymentControllerHelper = $this->createMock(PaymentControllerHelper::class);
-        $this->dispatchValidator = $this->createMock(DispatchValidation::class);
-        $this->payPalOrderParameterFacade = $this->createMock(PayPalOrderParameterFacadeInterface::class);
-        $this->orderResource = $this->createMock(OrderResource::class);
-        $this->orderFactory = $this->createMock(OrderFactory::class);
-        $this->settingsService = $this->createMock(SettingsServiceInterface::class);
-        $this->orderDataService = $this->createMock(OrderDataService::class);
-        $this->paymentMethodProvider = $this->createMock(PaymentMethodProviderInterface::class);
-        $this->exceptionHandler = $this->createMock(ExceptionHandlerServiceInterface::class);
-        $this->shopwareConfig = $this->createMock(Config::class);
-        $this->paymentStatusService = $this->createMock(PaymentStatusService::class);
-        $this->logger = $this->createMock(LoggerServiceInterface::class);
-        $this->basketRestoreService = $this->createMock(CartRestoreService::class);
-        $this->basketPersister = class_exists(BasketPersister::class) ? $this->createMock(BasketPersister::class) : null;
-        $this->basketValidator = $this->createMock(BasketValidatorInterface::class);
+        parent::__construct($name, $data, $dataName);
+
+        $this->injections[self::SERVICE_DEPENDENCY_PROVIDER] = $this->createMock(DependencyProvider::class);
+        $this->injections[self::SERVICE_REDIRECT_DATA_BUILDER] = $this->getRedirectDataBuilder();
+        $this->injections[self::SERVICE_REDIRECT_DATA_BUILDER_FACTORY] = $this->createMock(RedirectDataBuilderFactoryInterface::class);
+        $this->injections[self::SERVICE_PAYMENT_CONTROLLER_HELPER] = $this->createMock(PaymentControllerHelper::class);
+        $this->injections[self::SERVICE_DISPATCH_VALIDATION] = $this->createMock(DispatchValidation::class);
+        $this->injections[self::SERVICE_ORDER_PARAMETER_FACADE] = $this->createMock(PayPalOrderParameterFacadeInterface::class);
+        $this->injections[self::SERVICE_ORDER_RESOURCE] = $this->createMock(OrderResource::class);
+        $this->injections[self::SERVICE_ORDER_FACTORY] = $this->createMock(OrderFactory::class);
+        $this->injections[self::SERVICE_SETTINGS_SERVICE] = $this->createMock(SettingsServiceInterface::class);
+        $this->injections[self::SERVICE_ORDER_DATA_SERVICE] = $this->createMock(OrderDataService::class);
+        $this->injections[self::SERVICE_PAYMENT_METHOD_PROVIDER] = $this->createMock(PaymentMethodProviderInterface::class);
+        $this->injections[self::SERVICE_EXCEPTION_HANDLER_SERVICE] = $this->createMock(ExceptionHandlerServiceInterface::class);
+        $this->injections[self::SERVICE_SHOPWARE_CONFIG] = $this->createMock(Config::class);
+        $this->injections[self::SERVICE_PAYMENT_STATUS_SERVICE] = $this->createMock(PaymentStatusService::class);
+        $this->injections[self::SERVICE_LOGGER_SERVICE] = $this->createMock(LoggerServiceInterface::class);
+        $this->injections[self::SERVICE_SIMPLE_BASKET_VALIDATOR] = $this->createMock(BasketValidatorInterface::class);
+        $this->injections[self::SERVICE_CART_RESTORE_SERVICE] = $this->createMock(CartRestoreService::class);
+        $this->injections[self::SERVICE_ORDER_PROPERTY_HELPER] = $this->createOrderPropertyHelper();
+        $this->injections[self::SERVICE_SHOP_REGISTRATION_SERVICE] = $this->createMock(ShopRegistrationService::class);
+        $this->injections[self::SERVICE_AUTHORIZATION_RESOURCE] = $this->createMock(AuthorizationResource::class);
+        $this->injections[self::SERVICE_CAPTURE_RESOURCE] = $this->createMock(CaptureResource::class);
+
+        if (class_exists(BasketPersister::class)) {
+            $this->injections[self::SERVICE_BASKET_PERSISTER] = $this->createMock(BasketPersister::class);
+        }
+
         $this->request = $this->createMock(Enlight_Controller_Request_RequestHttp::class);
         $this->response = $this->createMock(Enlight_Controller_Response_ResponseHttp::class);
 
-        $this->redirectDataBuilder = $this->getRedirectDataBuilder();
-
         $this->prepareRequestStack();
+    }
+
+    /**
+     * @param self::SERVICE_* $serviceKey
+     *
+     * @return MockObject
+     */
+    protected function getMockedService($serviceKey)
+    {
+        return $this->injections[$serviceKey];
     }
 
     /**
@@ -198,62 +166,41 @@ class PaypalPaymentControllerTestCase extends TestCase
      */
     protected function prepareRedirectDataBuilderFactory(RedirectDataBuilder $redirectDataBuilder = null)
     {
-        $this->redirectDataBuilderFactory->method('createRedirectDataBuilder')
-            ->willReturn($redirectDataBuilder ?: $this->redirectDataBuilder);
+        $redirectDataBuilderFactoryMock = $this->getMockedService(self::SERVICE_REDIRECT_DATA_BUILDER_FACTORY);
+
+        $redirectDataBuilderFactoryMock->method('createRedirectDataBuilder')
+            ->willReturn($redirectDataBuilder ?: $this->getMockedService(self::SERVICE_REDIRECT_DATA_BUILDER));
     }
 
     /**
-     * @template T of AbstractPaypalPaymentController
+     * @template T of \SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentController|\Enlight_Controller_Action
      *
-     * @param class-string<T> $controllerClass
+     * @param class-string<T>               $controllerClass
+     * @param array<self::SERVICE_*,object> $services
      *
      * @return T
      */
     protected function getController(
         $controllerClass,
-        DependencyProvider $dependencyProvider = null,
-        RedirectDataBuilderFactoryInterface $redirectDataBuilderFactory = null,
-        PaymentControllerHelper $paymentControllerHelper = null,
-        DispatchValidation $dispatchValidator = null,
-        PayPalOrderParameterFacadeInterface $payPalOrderParameterFacade = null,
-        OrderResource $orderResource = null,
-        OrderFactory $orderFactory = null,
-        SettingsServiceInterface $settingsService = null,
-        OrderDataService $orderDataService = null,
-        PaymentMethodProviderInterface $paymentMethodProvider = null,
-        ExceptionHandlerServiceInterface $exceptionHandler = null,
-        Config $shopwareConfig = null,
-        PaymentStatusService $paymentStatusService = null,
-        LoggerServiceInterface $logger = null,
-        CartRestoreService $cartRestoreService = null,
-        BasketPersister $basketPersister = null,
-        BasketValidatorInterface $basketValidator = null,
+        array $services,
         Enlight_Controller_Request_RequestHttp $request = null,
         Enlight_Controller_Response_ResponseHttp $response = null,
         Enlight_View_Default $view = null
     ) {
         $container = $this->createMock(Container::class);
 
+        $returnMap = [];
+        foreach ($this->injections as $serviceId => $service) {
+            if (isset($services[$serviceId])) {
+                $returnMap[] = [$serviceId, ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $services[$serviceId]];
+                continue;
+            }
+
+            $returnMap[] = [$serviceId, ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $service];
+        }
+
         $container->method('get')
-            ->willReturnMap([
-                ['paypal_unified.dependency_provider', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $dependencyProvider ?: $this->dependencyProvider],
-                ['paypal_unified.redirect_data_builder_factory', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $redirectDataBuilderFactory ?: $this->redirectDataBuilderFactory],
-                ['paypal_unified.payment_controller_helper', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $paymentControllerHelper ?: $this->paymentControllerHelper],
-                ['paypal_unified.dispatch_validation', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $dispatchValidator ?: $this->dispatchValidator],
-                ['paypal_unified.paypal_order_parameter_facade', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $payPalOrderParameterFacade ?: $this->payPalOrderParameterFacade],
-                ['paypal_unified.v2.order_resource', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $orderResource ?: $this->orderResource],
-                ['paypal_unified.order_factory', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $orderFactory ?: $this->orderFactory],
-                ['paypal_unified.settings_service', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $settingsService ?: $this->settingsService],
-                ['paypal_unified.order_data_service', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $orderDataService ?: $this->orderDataService],
-                ['paypal_unified.payment_method_provider', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $paymentMethodProvider ?: $this->paymentMethodProvider],
-                ['paypal_unified.exception_handler_service', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $exceptionHandler ?: $this->exceptionHandler],
-                ['config', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $shopwareConfig ?: $this->shopwareConfig],
-                ['paypal_unified.payment_status_service', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $paymentStatusService ?: $this->paymentStatusService],
-                ['paypal_unified.logger_service', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $logger ?: $this->logger],
-                ['paypal_unified.simple_basket_validator', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $basketValidator ?: $this->basketValidator],
-                ['paypal_unified.cart_restore_service', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $cartRestoreService ?: $this->basketRestoreService],
-                ['basket_persister', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $basketPersister ?: $this->basketPersister],
-            ]);
+            ->willReturnMap($returnMap);
 
         $controller = Enlight_Class::Instance(
             $controllerClass,
@@ -290,5 +237,41 @@ class PaypalPaymentControllerTestCase extends TestCase
             $requestStack->push($this->request);
         }
         $this->getContainer()->get('front')->setRequest($this->request);
+    }
+
+    /**
+     * @return MockObject
+     */
+    private function createOrderPropertyHelper()
+    {
+        $capture = new Capture();
+        $capture->setStatus(PaymentStatusV2::ORDER_CAPTURE_COMPLETED);
+
+        $authorization = new Authorization();
+        $authorization->setStatus(PaymentStatusV2::ORDER_AUTHORIZATION_CREATED);
+
+        $payments = new Payments();
+        $payments->setCaptures([$capture]);
+        $payments->setAuthorizations([$authorization]);
+
+        $orderPaymentHelperMock = $this->createMock(OrderPropertyHelper::class);
+        $orderPaymentHelperMock->method('getFirstCapture')->willReturn($capture);
+        $orderPaymentHelperMock->method('getAuthorization')->willReturn($authorization);
+        $orderPaymentHelperMock->method('getPayments')->willReturn($payments);
+
+        return $orderPaymentHelperMock;
+    }
+
+    /**
+     * @return RedirectDataBuilder
+     */
+    private function createRedirectDataBuilder()
+    {
+        $redirectDataBuilderMock = $this->createMock(RedirectDataBuilder::class);
+        $redirectDataBuilderMock->method('setCode')->willReturn($redirectDataBuilderMock);
+        $redirectDataBuilderMock->method('setException')->willReturn($redirectDataBuilderMock);
+        $redirectDataBuilderMock->method('setRedirectToFinishAction')->willReturn($redirectDataBuilderMock);
+
+        return $redirectDataBuilderMock;
     }
 }
