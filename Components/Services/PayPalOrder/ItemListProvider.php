@@ -65,21 +65,25 @@ class ItemListProvider
             return null;
         }
 
-        $currency = $cart['sCurrencyName'];
         /** @var Item[] $items */
         $items = [];
+
+        $currency = $cart['sCurrencyName'];
+        $useGrossPrices = $this->customerHelper->usesGrossPrice($customer);
+        $isPayUponInvoice = $paymentType === PaymentType::PAYPAL_PAY_UPON_INVOICE_V2;
 
         $customProductMainLineItemKey = 0;
         $customProductsHint = $this->snippetManager->getNamespace('frontend/paypal_unified/checkout/item_list')
             ->get('paymentBuilder/customProductsHint', ' incl. surcharges for Custom Products configuration');
 
         foreach ($lineItems as $key => $lineItem) {
+            $isEsdProduct = (int) $lineItem['esdarticle'] > 0;
             $label = $lineItem['articlename'];
             $number = (string) $lineItem['ordernumber'];
             $quantity = $lineItem['quantity'];
-            $value = $this->priceFormatter->roundPrice($lineItem['price']);
+            $value = $this->priceFormatter->roundPrice($lineItem['priceNumeric']);
 
-            if (!$this->customerHelper->usesGrossPrice($customer) || $paymentType === PaymentType::PAYPAL_PAY_UPON_INVOICE_V2) {
+            if (!$useGrossPrices || $isPayUponInvoice) {
                 $value = $this->priceFormatter->roundPrice($lineItem['netprice']);
             }
 
@@ -124,14 +128,9 @@ class ItemListProvider
 
             $item->setUnitAmount($unitAmount);
             $item->setQuantity($quantity);
+            $item->setCategory($isEsdProduct ? PayPalCategory::DIGITAL_GOODS : PayPalCategory::PHYSICAL_GOODS);
 
-            if ((int) $lineItem['esdarticle'] > 0) {
-                $item->setCategory('DIGITAL_GOODS');
-            } else {
-                $item->setCategory('PHYSICAL_GOODS');
-            }
-
-            if ($paymentType === PaymentType::PAYPAL_PAY_UPON_INVOICE_V2) {
+            if ($isPayUponInvoice || !$useGrossPrices) {
                 $this->setTaxInformation($currency, $lineItem, $customer, $item);
             }
 
@@ -211,6 +210,10 @@ class ItemListProvider
             return 0.0;
         }
 
-        return $this->priceFormatter->roundPrice($lineItem['priceNumeric']) - $this->priceFormatter->roundPrice($lineItem['netprice']);
+        if ($this->customerHelper->usesGrossPrice($customer)) {
+            return $this->priceFormatter->roundPrice($lineItem['priceNumeric']) - $this->priceFormatter->roundPrice($lineItem['netprice']);
+        }
+
+        return $this->priceFormatter->roundPrice($this->priceFormatter->roundPrice($lineItem['tax']) / $lineItem['quantity']);
     }
 }

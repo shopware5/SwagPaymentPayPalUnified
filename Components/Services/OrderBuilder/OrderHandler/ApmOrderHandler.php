@@ -10,6 +10,7 @@ namespace SwagPaymentPayPalUnified\Components\Services\OrderBuilder\OrderHandler
 
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\PayPalOrderParameter;
+use SwagPaymentPayPalUnified\Components\Services\Common\CustomerHelper;
 use SwagPaymentPayPalUnified\Components\Services\Common\PriceFormatter;
 use SwagPaymentPayPalUnified\Components\Services\Common\ReturnUrlHelper;
 use SwagPaymentPayPalUnified\Components\Services\OrderBuilder\PaymentSource\PaymentSourceFactory;
@@ -54,16 +55,23 @@ class ApmOrderHandler implements OrderBuilderHandlerInterface
      */
     protected $paymentSourceFactory;
 
+    /**
+     * @var CustomerHelper
+     */
+    private $customerHelper;
+
     public function __construct(
         ContextServiceInterface $contextService,
         ReturnUrlHelper $returnUrlHelper,
         PriceFormatter $priceFormatter,
-        PaymentSourceFactory $paymentSourceFactory
+        PaymentSourceFactory $paymentSourceFactory,
+        CustomerHelper $customerHelper
     ) {
         $this->contextService = $contextService;
         $this->returnUrlHelper = $returnUrlHelper;
         $this->priceFormatter = $priceFormatter;
         $this->paymentSourceFactory = $paymentSourceFactory;
+        $this->customerHelper = $customerHelper;
     }
 
     /**
@@ -116,8 +124,20 @@ class ApmOrderHandler implements OrderBuilderHandlerInterface
     {
         $purchaseUnit = new PurchaseUnit();
 
+        $amountKey = 'AmountNumeric';
+        $chargeVat = $this->customerHelper->chargeVat($orderParameter->getCustomer());
+        $useGrossPrices = $this->customerHelper->usesGrossPrice($orderParameter->getCustomer());
+
+        if ($chargeVat && !$useGrossPrices) {
+            $amountKey = 'sAmountWithTax';
+        }
+
+        if (!$chargeVat) {
+            $amountKey = 'AmountNetNumeric';
+        }
+
         $amount = new ApmAmount();
-        $amount->setValue($this->priceFormatter->formatPrice($orderParameter->getCart()['AmountNumeric']));
+        $amount->setValue($this->priceFormatter->formatPrice($orderParameter->getCart()[$amountKey]));
         $amount->setCurrencyCode($orderParameter->getCart()['sCurrencyName']);
 
         $purchaseUnit->setAmount($amount);

@@ -38,7 +38,11 @@ class CartHelper
 
         //Case 2: Show net prices in shopware and don't exclude country tax
         if (!$this->customerHelper->usesGrossPrice($customer) && !$this->customerHelper->hasNetPriceCaluclationIndicator($customer)) {
-            return $this->priceFormatter->formatPrice($cart['AmountWithTaxNumeric']);
+            if ($this->customerHelper->chargeVat($customer)) {
+                return $this->priceFormatter->formatPrice($cart['AmountWithTaxNumeric']);
+            }
+
+            return $this->priceFormatter->formatPrice($cart['AmountNetNumeric']);
         }
 
         //Case 3: No tax handling at all, just use the net amounts.

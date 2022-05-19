@@ -15,9 +15,11 @@
     <changelog version="REPLACE_GLOBALLY_WITH_NEXT_VERSION">
         <changes lang="de">
             PT-12748 - Verbessert das Setzen des aktuellen Zahlungsstatus bei Transaktionen;
+            PT-12754 - Behebt Probleme mit dem ermitteln der Steuern;
         </changes>
         <changes lang="en">
             PT-12748 - Improves the setting of the current payment status for transactions;
+            PT-12754 - Fixes problems with determining the taxes;
         </changes>
     </changelog>
 
