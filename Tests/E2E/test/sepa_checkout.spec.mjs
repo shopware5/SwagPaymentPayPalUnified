@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test';
 import credentials from './credentials.mjs';
 import MysqlFactory from '../helper/mysqlFactory.mjs';
 import defaultPaypalSettingsSql from '../helper/paypalSqlHelper.mjs';
+import tryUntilSucceed from '../helper/retryHelper.mjs';
 const connection = MysqlFactory.getInstance();
 
 test.use({ locale: 'de-DE' });
@@ -34,10 +35,12 @@ test.describe('Is SEPA fully functional', () => {
         const locator = await page.frameLocator('.component-frame').locator('div[data-funding-source="sepa"]');
         await page.waitForLoadState('load');
 
-        const [paypalPage] = await Promise.all([
-            page.waitForEvent('popup'),
-            locator.dispatchEvent('click')
-        ]);
+        const [paypalPage] = await tryUntilSucceed(() => {
+            return Promise.all([
+                page.waitForEvent('popup'),
+                locator.dispatchEvent('click')
+            ]);
+        });
 
         await paypalPage.route(/.*fundingSource=sepa.*/, route => {
             let url = route.request().url();

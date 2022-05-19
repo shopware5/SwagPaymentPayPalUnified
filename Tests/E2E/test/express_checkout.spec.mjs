@@ -3,6 +3,7 @@ import MysqlFactory from '../helper/mysqlFactory.mjs';
 import defaultPaypalSettingsSql from '../helper/paypalSqlHelper.mjs';
 import credentials from './credentials.mjs';
 import leadingZeroProductSql from '../helper/updateProductNumberAddLeadingZero.mjs';
+import tryUntilSucceed from '../helper/retryHelper.mjs';
 
 const connection = MysqlFactory.getInstance();
 
@@ -12,10 +13,6 @@ test.describe('Is Express Checkout button available', () => {
     });
 
     test('Check product detail page', async ({ page }) => {
-        page.on('frameattached', await function (frame) {
-            frame.waitForLoadState('load');
-        });
-
         await page.goto('/sommerwelten/beachwear/178/strandtuch-ibiza');
         await page.waitForLoadState('load');
 
@@ -24,12 +21,10 @@ test.describe('Is Express Checkout button available', () => {
 
         const [paypalPage] = await tryUntilSucceed(() => {
             return Promise.all([
-                page.waitForEvent('popup', {
-                    timeout: 10000
-                }),
+                page.waitForEvent('popup'),
                 locator.dispatchEvent('click')
             ]);
-        })
+        });
 
         await paypalPage.route(/.*checkoutnow.*/, route => {
             let url = route.request().url();
@@ -55,10 +50,6 @@ test.describe('Is Express Checkout button available', () => {
     });
 
     test('Check offcanvas cart', async ({ page }) => {
-        await page.on('frameattached', await function (frame) {
-            frame.waitForLoadState('load');
-        });
-
         await page.goto('/sommerwelten/beachwear/178/strandtuch-ibiza');
 
         await page.locator('text=In den Warenkorb').click();
@@ -70,12 +61,10 @@ test.describe('Is Express Checkout button available', () => {
 
         const [paypalPage] = await tryUntilSucceed(() => {
             return Promise.all([
-                page.waitForEvent('popup', {
-                    timeout: 10000
-                }),
+                page.waitForEvent('popup'),
                 locator.dispatchEvent('click')
             ]);
-        })
+        });
 
         await paypalPage.route(/.*checkoutnow.*/, route => {
             let url = route.request().url();
@@ -101,10 +90,6 @@ test.describe('Is Express Checkout button available', () => {
     });
 
     test('Check checkout cart page', async ({ page }) => {
-        page.on('frameattached', await function (frame) {
-            frame.waitForLoadState('load');
-        });
-
         await page.goto('/sommerwelten/beachwear/178/strandtuch-ibiza');
 
         await page.locator('text=In den Warenkorb').click();
@@ -116,12 +101,10 @@ test.describe('Is Express Checkout button available', () => {
 
         const [paypalPage] = await tryUntilSucceed(() => {
             return Promise.all([
-                page.waitForEvent('popup', {
-                    timeout: 10000
-                }),
+                page.waitForEvent('popup'),
                 locator.dispatchEvent('click')
             ]);
-        })
+        });
 
         await paypalPage.route(/.*checkoutnow.*/, route => {
             let url = route.request().url();
@@ -162,12 +145,10 @@ test.describe('Is Express Checkout button available', () => {
 
         const [paypalPage] = await tryUntilSucceed(() => {
             return Promise.all([
-                page.waitForEvent('popup', {
-                    timeout: 10000
-                }),
+                page.waitForEvent('popup'),
                 locator.dispatchEvent('click')
             ]);
-        })
+        });
 
         await paypalPage.route(/.*checkoutnow.*/, route => {
             let url = route.request().url();
@@ -193,22 +174,16 @@ test.describe('Is Express Checkout button available', () => {
     });
 
     test('Check product listing page @notIn5.2', async ({ page }) => {
-        page.on('frameattached', await function (frame) {
-            frame.waitForLoadState('load');
-        });
-
         await page.goto('/sommerwelten/beachwear/');
 
         const locator = await page.frameLocator('.component-frame >> nth=1').locator('.paypal-button');
 
         const [paypalPage] = await tryUntilSucceed(() => {
             return Promise.all([
-                page.waitForEvent('popup', {
-                    timeout: 10000
-                }),
+                page.waitForEvent('popup'),
                 locator.dispatchEvent('click')
             ]);
-        })
+        });
 
         await paypalPage.route(/.*checkoutnow.*/, route => {
             let url = route.request().url();
@@ -234,10 +209,6 @@ test.describe('Is Express Checkout button available', () => {
     });
 
     test('Check product cart modal @notIn5.2', async ({ page }) => {
-        page.on('frameattached', await function (frame) {
-            frame.waitForLoadState('load');
-        });
-
         await page.goto('/backend');
         await expect(page).toHaveTitle(/Backend/);
 
@@ -278,12 +249,10 @@ test.describe('Is Express Checkout button available', () => {
 
         const [paypalPage] = await tryUntilSucceed(() => {
             return Promise.all([
-                page.waitForEvent('popup', {
-                    timeout: 10000
-                }),
+                page.waitForEvent('popup'),
                 locator.dispatchEvent('click')
             ]);
-        })
+        });
 
         await expect(paypalPage.locator('#headerText')).toHaveText(/PayPal/);
 
@@ -333,26 +302,13 @@ test.describe('Is Express Checkout button available', () => {
 
         const [paypalPage] = await tryUntilSucceed(() => {
             return Promise.all([
-                page.waitForEvent('popup', {
-                    timeout: 10000
-                }),
+                page.waitForEvent('popup'),
                 locator.dispatchEvent('click')
             ]);
-        })
+        });
 
         await expect(paypalPage.locator('#headerText')).toHaveText(/PayPal/);
 
         connection.query(leadingZeroProductSql.reset());
     });
-
-    async function tryUntilSucceed(promiseFn, maxTries = 3) {
-        try {
-            return await promiseFn();
-        } catch (e) {
-            if (maxTries > 0) {
-                return tryUntilSucceed(promiseFn, maxTries - 1);
-            }
-            throw e;
-        }
-    }
 });
