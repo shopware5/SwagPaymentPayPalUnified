@@ -3311,6 +3311,11 @@ parameters:
 			path: Tests/Functional/Subscriber/AdvancedCreditDebitCardSubscriberTest.php
 
 		-
+			message: "#^Class Enlight_Hook_HookArgs constructor invoked with 1 parameter, 2\\-3 required\\.$#"
+			count: 1
+			path: Tests/Functional/Subscriber/AdvancedCreditDebitCartRiskManagementTest.php
+
+		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\BackendSubscriberTest\\:\\:testCanBeCreated\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: Tests/Functional/Subscriber/BackendSubscriberTest.php

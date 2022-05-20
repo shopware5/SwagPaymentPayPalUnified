@@ -112,8 +112,8 @@ default:
         - *prepare_files_script
         - *prepare_files_script_cookie_consent_manager
         - *prepare_installation_script_install_shopware
-        - *prepare_installation_script_install_plugin
         - *prepare_installation_script_install_cookie_consent_manager_plugin
+        - *prepare_installation_script_install_plugin
         - cd custom/plugins/${PLUGIN_NAME}
 
 .phpunit_base_pre_v53:
