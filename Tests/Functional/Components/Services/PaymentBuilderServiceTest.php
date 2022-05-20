@@ -703,6 +703,7 @@ class PaymentBuilderServiceTest extends TestCase
             CustomerHelper::CUSTOMER_GROUP_USE_GROSS_PRICES => true,
             'additional' => [
                 'show_net' => true,
+                'charge_vat' => true,
                 'countryShipping' => [
                     'taxfree' => '0',
                 ],
