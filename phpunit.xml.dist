@@ -19,6 +19,6 @@
         </whitelist>
     </filter>
     <php>
-        <ini name="display_errors" value="true"/>
+        <ini name="display_errors" value="-1"/>
     </php>
 </phpunit>
