@@ -1,4 +1,5 @@
 {block name="paypal_unified_advanced_credit_debit_card_form_wrapper"}
+
     <div class="container">
         <div id="paypal-acdc-form"
              class="is--hidden"
@@ -16,6 +17,9 @@
              data-placeholderCardNumber="{s namespace="frontend/paypal_unified/checkout/confirm" name="fields/cardNumber"}Card number{/s}"
              data-placeholderExpiryDate="{s namespace="frontend/paypal_unified/checkout/confirm" name="fields/expiryDate"}Expiry date (MM/YY){/s}"
              data-placeholderSecurityCode="{s namespace="frontend/paypal_unified/checkout/confirm" name="fields/cvv"}Security code (CVV){/s}">
+            <div class="paypal--acdc-submit-error is--hidden">
+                {include file='frontend/_includes/messages.tpl' type='error' content="{s namespace='frontend/paypal_unified/checkout/confirm' name="fields/submitError"}Please check your credit card details.{/s}"}
+            </div>
             <div>
                 <label for="paypal-acdc-number"
                        class="is--hidden">{s namespace="frontend/paypal_unified/checkout/confirm" name="fields/cardNumber"}Card number{/s}
