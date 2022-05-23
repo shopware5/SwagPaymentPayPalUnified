@@ -51,6 +51,11 @@
             /**
              * @type string
              */
+            onSubmitErrorMessageSelector: '.paypal--acdc-submit-error',
+
+            /**
+             * @type string
+             */
             sdkUrl: 'https://www.paypal.com/sdk/js',
 
             /**
@@ -179,7 +184,7 @@
         /**
          * @return { Object }
          */
-        getFieldsConfig: function () {
+        getFieldsConfig: function() {
             return {
                 number: {
                     selector: this.opts.acdcNumberSelector,
@@ -233,10 +238,13 @@
             paypal.HostedFields.render({
                 createOrder: me.createPaypalOrder.bind(me),
                 fields: me.getFieldsConfig()
-            }).then(me.bindFieldActions.bind(me)).then(function() {
-                me.$el.removeClass(me.opts.isHiddenClass);
-                me.updateAutoResizer();
-            });
+            }).then(me.bindFieldActions.bind(me))
+                .then(me.showHostedFields.bind(me));
+        },
+
+        showHostedFields: function() {
+            this.$el.removeClass(this.opts.isHiddenClass);
+            this.updateAutoResizer();
         },
 
         /**
@@ -285,8 +293,17 @@
                 $.loadingIndicator.loader.overlay.$overlay.css('z-index', 990);
 
                 hostedFields.submit(this.opts.cardHolderData)
-                    .then(this.captureOrder.bind(this));
+                    .then(this.captureOrder.bind(this))
+                    .catch(this.onSubmitError.bind(this));
             }
+        },
+
+        onSubmitError: function() {
+            $(this.opts.onSubmitErrorMessageSelector).removeClass(this.opts.isHiddenClass);
+
+            this.resetPreloaderPlugin(true);
+
+            $.loadingIndicator.close();
         },
 
         /**
@@ -364,8 +381,7 @@
          */
         onError: function(response) {
             var jsonResponse,
-                content,
-                $confirmButton = $('button[type="submit"][form="confirm--form"]');
+                content;
 
             if (response.responseText !== '') {
                 jsonResponse = JSON.parse(response.responseText);
@@ -375,8 +391,9 @@
 
             this.updateAutoResizer();
 
+            this.resetPreloaderPlugin(true);
+
             $.loadingIndicator.close();
-            $confirmButton.data('plugin_swPreloaderButton').reset();
         },
 
         onComplete: function() {
