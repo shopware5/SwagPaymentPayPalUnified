@@ -54,11 +54,10 @@ class PaypalUnifiedV2Test extends PaypalPaymentControllerTestCase
      * @param array<string,mixed> $requestParams
      * @param bool                $authorizationResourceExpectException
      * @param int                 $expectedPaymentStatus
-     * @param bool                $determinePaymentStausForCapturingExpectException
      *
      * @return void
      */
-    public function testCaptureOrder(array $requestParams, $authorizationResourceExpectException, $expectedPaymentStatus, $determinePaymentStausForCapturingExpectException = false)
+    public function testCaptureOrder(array $requestParams, $authorizationResourceExpectException, $expectedPaymentStatus)
     {
         $this->insatllOrderForToTestUpdatePaymentStatus();
 
@@ -82,11 +81,6 @@ class PaypalUnifiedV2Test extends PaypalPaymentControllerTestCase
             ],
             $request
         );
-
-        if ($determinePaymentStausForCapturingExpectException) {
-            $this->expectException(UnexpectedValueException::class);
-            $this->expectExceptionMessage('The amount of 6.000000 is larger than the max possible amount of 5.000000');
-        }
 
         $controller->captureOrderAction();
 
@@ -120,7 +114,6 @@ class PaypalUnifiedV2Test extends PaypalPaymentControllerTestCase
             ['amount' => '6.00', 'maxCaptureAmount' => '5.00', 'finalize' => false, 'shopwareOrderId' => '173000', 'authorizationId' => '1', 'currency' => 'EUR', 'shopId' => 1],
             false,
             self::DEFAULT_PAYMENT_STATE,
-            true,
         ];
 
         yield 'Expect success false because of a error while capturing' => [

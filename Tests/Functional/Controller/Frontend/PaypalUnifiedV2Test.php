@@ -164,7 +164,7 @@ class PaypalUnifiedV2Test extends TestCase
     }
 
     /**
-     * @return Generator
+     * @return Generator<array<int,mixed>>
      */
     public function orderDataProvider()
     {
