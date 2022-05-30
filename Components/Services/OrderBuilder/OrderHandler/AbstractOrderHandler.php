@@ -407,12 +407,12 @@ abstract class AbstractOrderHandler implements OrderBuilderHandlerInterface
 
         if ($calculatedItemAmount + $calculatedTaxAmount < $itemAmount + $taxAmount) {
             $breakdown->setDiscount((new Discount())->assign([
-                'value' => $this->priceFormatter->formatPrice($itemDeviation + $taxDeviation + ($breakdown->getDiscount() ? $breakdown->getDiscount()->getValue() : 0.0)),
+                'value' => $this->priceFormatter->formatPrice($itemDeviation + $taxDeviation + ($breakdown->getDiscount() ? (float) $breakdown->getDiscount()->getValue() : 0.0)),
                 'currencyCode' => $amount->getCurrencyCode(),
             ]));
         } else {
             $breakdown->setHandling((new Handling())->assign([
-                'value' => $this->priceFormatter->formatPrice($itemDeviation + $taxDeviation + ($breakdown->getHandling() ? $breakdown->getHandling()->getValue() : 0.0)),
+                'value' => $this->priceFormatter->formatPrice($itemDeviation + $taxDeviation + ($breakdown->getHandling() ? (float) $breakdown->getHandling()->getValue() : 0.0)),
                 'currencyCode' => $amount->getCurrencyCode(),
             ]));
         }

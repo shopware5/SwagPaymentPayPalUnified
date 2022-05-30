@@ -149,11 +149,11 @@ class AbstractOrderHandlerTest extends TestCase
         $finalAmount = (float) $breakdown->getItemTotal()->getValue() + (float) $breakdown->getTaxTotal()->getValue();
 
         if ($breakdown->getDiscount() instanceof Discount) {
-            $finalAmount -= $breakdown->getDiscount()->getValue();
+            $finalAmount -= (float) $breakdown->getDiscount()->getValue();
         }
 
         if ($breakdown->getHandling() instanceof Handling) {
-            $finalAmount += $breakdown->getHandling()->getValue();
+            $finalAmount += (float) $breakdown->getHandling()->getValue();
         }
 
         static::assertEquals(
