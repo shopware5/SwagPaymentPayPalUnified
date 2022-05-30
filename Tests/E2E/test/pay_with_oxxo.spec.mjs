@@ -7,6 +7,8 @@ const mexico = '164';
 const mxn = '4';
 
 test.describe('Pay with OXXO', () => {
+    test.skip('PT-12775: Not yet stable');
+
     test.beforeEach(() => {
         connection.query(defaultPaypalSettingsSql);
     });

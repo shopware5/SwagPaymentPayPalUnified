@@ -45,12 +45,17 @@ cp .env.dist .env
 npm run e2e:run
 ```
 
-6. Run single test
+6. Run single test file
 ```
 npm run e2e:run express
 ```
 
-Now only every test that matches the name "express" is executed.
+Now only every test file that matches the name "express" is executed.
+
+7. Debug single test
+```
+npm run e2e:run:debug:test "Check product listing page @notIn5.2"
+```
 
 # Debug Trace:
 

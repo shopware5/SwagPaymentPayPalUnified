@@ -5,8 +5,11 @@
     "main": "index.js",
     "scripts": {
         "e2e:run": "npx playwright test --workers=1",
+        "e2e:run:single": "npx playwright test --workers=1 -g",
         "e2e:run:headed": "npx playwright test --headed --workers=1",
-        "e2e:run:debug": "DEBUG=pw:api npx playwright test --debug"
+        "e2e:run:debug": "DEBUG=pw:api npx playwright test --debug",
+        "e2e:run:debug:test": "npx playwright test --debug -g",
+        "e2e:codegen": "npx playwright codegen"
     },
     "dependencies": {
         "@playwright/test": "^1.19.1",

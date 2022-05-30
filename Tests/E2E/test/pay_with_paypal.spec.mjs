@@ -11,6 +11,10 @@ test.describe('Frontend', () => {
     });
 
     test('Buy a product with paypal', async ({ page }) => {
+        page.on('frameattached', await function (frame) {
+            frame.waitForLoadState('load');
+        });
+
         await loginHelper.login(page);
 
         // Buy Product
@@ -27,7 +31,7 @@ test.describe('Frontend', () => {
         await page.click('text=Weiter >> nth=1');
         await page.click('input[name="sAGB"]');
 
-        const locator = await page.frameLocator('.component-frame').locator('div[role="button"]:has-text("Jetzt kaufen")');
+        const locator = await page.frameLocator('.component-frame').locator('.paypal-button:has-text("Jetzt kaufen")');
         await page.waitForLoadState('load');
 
         const [paypalPage] = await Promise.all([
