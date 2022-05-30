@@ -133,7 +133,7 @@ JavaScript checks:
         - unzip -q plugin.zip -d shopware/custom/plugins/${PLUGIN_NAME}
     script:
         - cd shopware
-        - make install-theme-depencencies
+        - make .make.install.npm-dependencies
         - cd custom/plugins/${PLUGIN_NAME}
         - (cd Tests/E2E && npm install)
         - make check-js-code

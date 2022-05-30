@@ -23,7 +23,7 @@ class TransactionsHistoryBuilderServiceTest extends TestCase
         $testPaymentData = $this->getTestSalePaymentDetails();
 
         $testHistory = $historyBuilderService->getTransactionHistory($testPaymentData);
-        static::assertSame(16.939999999999998, $testHistory['maxRefundableAmount']);
+        static::assertSame(16.94, $testHistory['maxRefundableAmount']);
     }
 
     public function testGetSalesHistoryCount()

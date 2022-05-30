@@ -2356,11 +2356,6 @@ parameters:
 			path: Subscriber/Backend.php
 
 		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Subscriber\\\\CookieConsent\\:\\:addPayPalCookie\\(\\) return type has no value type specified in iterable type Shopware\\\\Bundle\\\\CookieBundle\\\\CookieCollection\\.$#"
-			count: 1
-			path: Subscriber/CookieConsent.php
-
-		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Subscriber\\\\Documents\\\\Invoice\\:\\:onBeforeRenderDocument\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: Subscriber/Documents/Invoice.php
@@ -3152,11 +3147,6 @@ parameters:
 
 		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Controller\\\\Frontend\\\\PaypalUnifiedV2Test\\:\\:getController\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Controller/Frontend/PaypalUnifiedV2Test.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Controller\\\\Frontend\\\\PaypalUnifiedV2Test\\:\\:orderDataProvider\\(\\) return type has no value type specified in iterable type Generator\\.$#"
 			count: 1
 			path: Tests/Functional/Controller/Frontend/PaypalUnifiedV2Test.php
 
