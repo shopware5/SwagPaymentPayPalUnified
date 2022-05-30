@@ -14,12 +14,14 @@
 
     <changelog version="REPLACE_GLOBALLY_WITH_NEXT_VERSION">
         <changes lang="de">
+            PT-11456 - Berücksichtigt Namen in der Lieferadresse beim Express-Checkout, wenn dieser verfügbar ist;
             PT-12718 - Behebt fehlerhaftes Verhalten beim Aktivieren / Deaktivieren der Zahlungsart Kredit- oder Debitkarte;
             PT-12748 - Verbessert das Setzen des aktuellen Zahlungsstatus bei Transaktionen;
-            PT-12754 - Behebt Probleme mit dem ermitteln der Steuern;
-            PT-12769 - Behebt Probleme mit dem Kredit- oder Debitkarten-Checkout;
+            PT-12754 - Behebt Probleme beim Ermitteln der Steuern;
+            PT-12769 - Behebt Probleme mit Kredit- oder Debitkarten-Checkout;
         </changes>
         <changes lang="en">
+            PT-11456 - Considers name of shipping address if provided during Express Checkout;
             PT-12718 - Fixes incorrect behaviour when activating / deactivating the payment type credit or debit card;
             PT-12748 - Improves the setting of the current payment status for transactions;
             PT-12754 - Fixes problems with determining the taxes;

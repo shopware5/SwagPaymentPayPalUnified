@@ -2671,26 +2671,6 @@ parameters:
 			path: Tests/Functional/Components/DependencyProviderTest.php
 
 		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Components\\\\Services\\\\ExpressCheckout\\\\CustomerServiceTest\\:\\:setFrontRequest\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Components/Services/ExpressCheckout/CustomerServiceTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Components\\\\Services\\\\ExpressCheckout\\\\CustomerServiceTest\\:\\:testConstruct\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Components/Services/ExpressCheckout/CustomerServiceTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Components\\\\Services\\\\ExpressCheckout\\\\CustomerServiceTest\\:\\:testCreateNewCustomer\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Components/Services/ExpressCheckout/CustomerServiceTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Components\\\\Services\\\\ExpressCheckout\\\\CustomerServiceTest\\:\\:testServiceIsAvailable\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Components/Services/ExpressCheckout/CustomerServiceTest.php
-
-		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Components\\\\Services\\\\ExpressCheckout\\\\ExpressCheckoutPaymentBuilderServiceTest\\:\\:getBasketDataArray\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: Tests/Functional/Components/Services/ExpressCheckout/ExpressCheckoutPaymentBuilderServiceTest.php

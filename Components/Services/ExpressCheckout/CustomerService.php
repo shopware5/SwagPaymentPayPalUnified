@@ -10,13 +10,10 @@ namespace SwagPaymentPayPalUnified\Components\Services\ExpressCheckout;
 
 use Doctrine\DBAL\Connection;
 use Enlight_Controller_Front;
-use sAdmin;
 use Shopware\Bundle\AccountBundle\Form\Account\AddressFormType;
 use Shopware\Bundle\AccountBundle\Form\Account\PersonalFormType;
 use Shopware\Bundle\AccountBundle\Service\RegisterServiceInterface;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
-use Shopware\Bundle\StoreFrontBundle\Struct\Shop;
-use Shopware\Bundle\StoreFrontBundle\Struct\ShopContextInterface;
 use Shopware\Models\Customer\Address;
 use Shopware\Models\Customer\Customer;
 use Shopware_Components_Config as ShopwareConfig;
@@ -70,11 +67,6 @@ class CustomerService
     private $dependencyProvider;
 
     /**
-     * @var sAdmin
-     */
-    private $adminModule;
-
-    /**
      * @var LoggerServiceInterface
      */
     private $logger;
@@ -103,18 +95,25 @@ class CustomerService
 
     public function createNewCustomer(Order $orderStruct)
     {
-        $shipping = $orderStruct->getPurchaseUnits()[0]->getShipping();
-        if (!$shipping instanceof Shipping) {
-            $this->logger->error(sprintf('%s COULD NOT CREATE CUSTOMER. ADDRESS IS MISSING', __METHOD__));
+        $payer = $orderStruct->getPayer();
+        if (!empty($orderStruct->getPurchaseUnits())) {
+            $shipping = $orderStruct->getPurchaseUnits()[0]->getShipping();
+            if (!$shipping instanceof Shipping) {
+                $this->logger->error(sprintf('%s COULD NOT CREATE CUSTOMER. ADDRESS IS MISSING', __METHOD__));
 
-            return;
+                return;
+            }
+            $address = $shipping->getAddress();
+            $names = \explode(' ', $shipping->getName()->getFullName());
+            $firstName = \array_shift($names);
+            $lastName = \implode(' ', $names);
+        } else {
+            $address = $payer->getAddress();
+            $firstName = $payer->getName()->getGivenName();
+            $lastName = $payer->getName()->getSurname();
         }
 
-        $this->adminModule = $this->dependencyProvider->getModule('admin');
-
-        $payer = $orderStruct->getPayer();
         $salutation = $this->getSalutation();
-        $address = $shipping->getAddress();
         $countryId = $this->getCountryId($address->getCountryCode());
         $phone = $payer->getPhone();
         $stateId = null;
@@ -128,8 +127,8 @@ class CustomerService
             'password' => $payer->getPayerId(),
             'accountmode' => 1,
             'salutation' => $salutation,
-            'firstname' => $payer->getName()->getGivenName(),
-            'lastname' => $payer->getName()->getSurname(),
+            'firstname' => $firstName,
+            'lastname' => $lastName,
             'street' => $address->getAddressLine1(),
             'additionalAddressLine1' => $address->getAddressLine2(),
             'zipcode' => $address->getPostalCode(),
@@ -186,10 +185,7 @@ class CustomerService
         $form = $this->formFactory->create(AddressFormType::class, $address);
         $form->submit($customerData);
 
-        /** @var ShopContextInterface $context */
         $context = $this->contextService->getShopContext();
-
-        /** @var Shop $shop */
         $shop = $context->getShop();
 
         $this->registerService->register($shop, $customer, $address, $address);
@@ -222,7 +218,7 @@ class CustomerService
 
         $request->setPost('email', $customerModel->getEmail());
         $request->setPost('passwordMD5', $customerModel->getPassword());
-        $this->adminModule->sLogin(true);
+        $this->dependencyProvider->getModule('admin')->sLogin(true);
 
         // Set country and area to session, so the cart will be calculated correctly,
         // e.g. the country changed and has different taxes
