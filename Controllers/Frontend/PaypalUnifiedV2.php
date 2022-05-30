@@ -61,8 +61,13 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
             return;
         }
 
+        $isPayLater = (bool) $this->Request()->getParam('paypalUnifiedPayLater', false);
         $shopwareOrderData = new ShopwareOrderData($shopwareSessionOrderData['sUserData'], $shopwareSessionOrderData['sBasket']);
-        $orderParams = $this->payPalOrderParameterFacade->createPayPalOrderParameter(PaymentType::PAYPAL_CLASSIC_V2, $shopwareOrderData);
+
+        $orderParams = $this->payPalOrderParameterFacade->createPayPalOrderParameter(
+            $isPayLater ? PaymentType::PAYPAL_PAY_LATER : PaymentType::PAYPAL_CLASSIC_V2,
+            $shopwareOrderData
+        );
 
         $payPalOrder = $this->createPayPalOrder($orderParams);
         if (!$payPalOrder instanceof Order) {

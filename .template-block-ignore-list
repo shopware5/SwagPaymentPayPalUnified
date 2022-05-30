@@ -1,0 +1,8 @@
+{block name='frontend_checkout_confirm_left_payment_method'}
+{block name='frontend_checkout_confirm_premiums'}
+{block name='frontend_index_header_javascript_jquery_lib'}
+{block name='frontend_index_header_javascript_jquery_lib_paypal_unified_plus'}
+{block name='paypal_unified_installments_banner_data_attributes'}
+{block name='frontend_checkout_payment_fieldset_input_label'}
+{block name='frontend_checkout_payment_fieldset_description'}
+{block name='frontend_checkout_confirm_paypal_unified_ec_inputs'}

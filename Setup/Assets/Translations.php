@@ -40,6 +40,13 @@ EOD
 <img src="{link file='frontend/_public/src/img/sepa_payment.png' fullPath}" alt="SEPA Direct debit">
 EOD
             ],
+            PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_LATER_METHOD_NAME => [
+                'description' => 'PayPal, Pay later',
+                'additionalDescription' => <<<'EOD'
+<!-- PayPal PayLater Message -->
+<div data-pp-message data-pp-style-logo-type="primary" data-pp-placement="payment" data-pp-style-logo-position="left" data-pp-style-text-size="14" data-pp-style-text-color="black" style="margin-top: 5px;"></div>
+EOD
+            ],
         ],
         'de_DE' => [
             PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME => [
@@ -66,6 +73,13 @@ EOD
                 'description' => 'Lastschrift',
                 'additionalDescription' => <<<'EOD'
 <img src="{link file='frontend/_public/src/img/sepa_payment.png' fullPath}" alt="SEPA Lastschrift'">
+EOD
+            ],
+            PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_LATER_METHOD_NAME => [
+                'description' => 'PayPal, Später bezahlen',
+                'additionalDescription' => <<<'EOD'
+<!-- PayPal PayLater Message -->
+<div data-pp-message data-pp-style-logo-type="primary" data-pp-placement="payment" data-pp-style-logo-position="left" data-pp-style-text-size="14" data-pp-style-text-color="black" style="margin-top: 5px;"></div>
 EOD
             ],
         ],

@@ -24,6 +24,8 @@ interface PaymentMethodProviderInterface
 
     const PAYPAL_UNIFIED_SEPA_METHOD_NAME = 'SwagPaymentPayPalUnifiedSepa';
 
+    const PAYPAL_UNIFIED_PAY_LATER_METHOD_NAME = 'SwagPaymentPayPalUnifiedPayLater';
+
     const BANCONTACT_METHOD_NAME = 'SwagPaymentPayPalUnifiedBancontact';
 
     const BLIK_METHOD_NAME = 'SwagPaymentPayPalUnifiedBlik';

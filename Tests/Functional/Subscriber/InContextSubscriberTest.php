@@ -8,7 +8,10 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Subscriber;
 
+use Enlight_Controller_ActionEventArgs;
+use Enlight_Controller_Request_RequestTestCase;
 use Enlight_Controller_Response_ResponseTestCase;
+use Enlight_Template_Manager;
 use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
@@ -52,11 +55,11 @@ class InContextSubscriberTest extends TestCase
 
     public function testAddInContextButtonReturnWrongAction()
     {
-        $view = new ViewMock(new \Enlight_Template_Manager());
-        $request = new \Enlight_Controller_Request_RequestTestCase();
+        $view = new ViewMock(new Enlight_Template_Manager());
+        $request = new Enlight_Controller_Request_RequestTestCase();
         $request->setActionName('foo');
 
-        $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
+        $enlightEventArgs = new Enlight_Controller_ActionEventArgs([
             'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
         ]);
 
@@ -75,11 +78,11 @@ class InContextSubscriberTest extends TestCase
 
         $paymentMethodProvider->setPaymentMethodActiveFlag(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME, false);
 
-        $view = new ViewMock(new \Enlight_Template_Manager());
-        $request = new \Enlight_Controller_Request_RequestTestCase();
+        $view = new ViewMock(new Enlight_Template_Manager());
+        $request = new Enlight_Controller_Request_RequestTestCase();
         $request->setActionName('confirm');
 
-        $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
+        $enlightEventArgs = new Enlight_Controller_ActionEventArgs([
             'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
         ]);
 
@@ -95,11 +98,11 @@ class InContextSubscriberTest extends TestCase
 
     public function testAddInContextButtonReturnPaymentMethodInactive()
     {
-        $view = new ViewMock(new \Enlight_Template_Manager());
-        $request = new \Enlight_Controller_Request_RequestTestCase();
+        $view = new ViewMock(new Enlight_Template_Manager());
+        $request = new Enlight_Controller_Request_RequestTestCase();
         $request->setActionName('confirm');
 
-        $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
+        $enlightEventArgs = new Enlight_Controller_ActionEventArgs([
             'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
         ]);
 
@@ -113,11 +116,11 @@ class InContextSubscriberTest extends TestCase
 
     public function testAddInContextButtonReturnNotUseInContext()
     {
-        $view = new ViewMock(new \Enlight_Template_Manager());
-        $request = new \Enlight_Controller_Request_RequestTestCase();
+        $view = new ViewMock(new Enlight_Template_Manager());
+        $request = new Enlight_Controller_Request_RequestTestCase();
         $request->setActionName('confirm');
 
-        $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
+        $enlightEventArgs = new Enlight_Controller_ActionEventArgs([
             'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
         ]);
 
@@ -129,31 +132,13 @@ class InContextSubscriberTest extends TestCase
         static::assertNull($view->getAssign('paypalUnifiedPaymentId'));
     }
 
-    public function testAddInContextButtonReturnNoEcSettings()
-    {
-        $view = new ViewMock(new \Enlight_Template_Manager());
-        $request = new \Enlight_Controller_Request_RequestTestCase();
-        $request->setActionName('confirm');
-
-        $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
-        ]);
-
-        $this->importSettings(true, true, false, false);
-
-        $subscriber = $this->getSubscriber();
-        $subscriber->addInContextButton($enlightEventArgs);
-
-        static::assertNull($view->getAssign('paypalUnifiedPaymentId'));
-    }
-
     public function testAddInContextButtonRightTemplateAssigns()
     {
-        $view = new ViewMock(new \Enlight_Template_Manager());
-        $request = new \Enlight_Controller_Request_RequestTestCase();
+        $view = new ViewMock(new Enlight_Template_Manager());
+        $request = new Enlight_Controller_Request_RequestTestCase();
         $request->setActionName('confirm');
 
-        $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
+        $enlightEventArgs = new Enlight_Controller_ActionEventArgs([
             'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
         ]);
 
@@ -170,8 +155,8 @@ class InContextSubscriberTest extends TestCase
      */
     public function testAddInContextButtonAssignsVariablesOnConfirm()
     {
-        $view = new ViewMock(new \Enlight_Template_Manager());
-        $request = new \Enlight_Controller_Request_RequestTestCase();
+        $view = new ViewMock(new Enlight_Template_Manager());
+        $request = new Enlight_Controller_Request_RequestTestCase();
 
         $request->setActionName('confirm');
         $request->setParams([
@@ -181,7 +166,7 @@ class InContextSubscriberTest extends TestCase
             'basketId' => 'e209dd3b-90b0-4e06-bd67-850fbf23dcac',
         ]);
 
-        $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
+        $enlightEventArgs = new Enlight_Controller_ActionEventArgs([
             'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
             'request' => $request,
         ]);
@@ -202,9 +187,9 @@ class InContextSubscriberTest extends TestCase
      */
     public function testAddInContextInfoToPaymentRequestAssignsVariablesOnPayment()
     {
-        $view = new ViewMock(new \Enlight_Template_Manager());
-        $request = new \Enlight_Controller_Request_RequestTestCase();
-        $response = new \Enlight_Controller_Response_ResponseTestCase();
+        $view = new ViewMock(new Enlight_Template_Manager());
+        $request = new Enlight_Controller_Request_RequestTestCase();
+        $response = new Enlight_Controller_Response_ResponseTestCase();
 
         $request->setActionName('payment');
         $request->setParams([
@@ -218,7 +203,7 @@ class InContextSubscriberTest extends TestCase
 
         $controller = new DummyController($request, $view, $response);
 
-        $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
+        $enlightEventArgs = new Enlight_Controller_ActionEventArgs([
             'subject' => $controller,
             'request' => $request,
             'response' => $response,
@@ -231,7 +216,7 @@ class InContextSubscriberTest extends TestCase
 
         static::assertTrue($controller->Response()->isRedirect());
 
-        if (\method_exists(static::class, 'assertStringContainsString')) {
+        if (method_exists(static::class, 'assertStringContainsString')) {
             static::assertStringContainsString(
                 '/PaypalUnifiedV2/return/inContextCheckout/1/token/e6087d09-4109-49aa-93be-13f4ee0baa5d/PayerID/1880eb91-fb92-4289-9a60-985fba818429/basketId/daf8a0fd-527b-4700-896e-8a19bc71796f',
                 $response->getHeader('Location', '')
@@ -246,11 +231,11 @@ class InContextSubscriberTest extends TestCase
 
     public function testAddInContextInfoToRequestReturnsBecauseWrongAction()
     {
-        $view = new ViewMock(new \Enlight_Template_Manager());
-        $request = new \Enlight_Controller_Request_RequestTestCase();
+        $view = new ViewMock(new Enlight_Template_Manager());
+        $request = new Enlight_Controller_Request_RequestTestCase();
         $request->setActionName('fake');
 
-        $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
+        $enlightEventArgs = new Enlight_Controller_ActionEventArgs([
             'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
             'request' => $request,
         ]);
@@ -262,11 +247,11 @@ class InContextSubscriberTest extends TestCase
 
     public function testAddInContextInfoToRequestReturnsBecauseWrongParam()
     {
-        $view = new ViewMock(new \Enlight_Template_Manager());
-        $request = new \Enlight_Controller_Request_RequestTestCase();
+        $view = new ViewMock(new Enlight_Template_Manager());
+        $request = new Enlight_Controller_Request_RequestTestCase();
         $request->setActionName('payment');
 
-        $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
+        $enlightEventArgs = new Enlight_Controller_ActionEventArgs([
             'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
             'request' => $request,
         ]);
@@ -278,14 +263,14 @@ class InContextSubscriberTest extends TestCase
 
     public function testAddInContextInfoToRequestReturnsBecauseNoRedirect()
     {
-        $view = new ViewMock(new \Enlight_Template_Manager());
-        $request = new \Enlight_Controller_Request_RequestTestCase();
+        $view = new ViewMock(new Enlight_Template_Manager());
+        $request = new Enlight_Controller_Request_RequestTestCase();
         $request->setActionName('payment');
         $request->setParam('useInContext', true);
 
-        $response = new \Enlight_Controller_Response_ResponseTestCase();
+        $response = new Enlight_Controller_Response_ResponseTestCase();
 
-        $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
+        $enlightEventArgs = new Enlight_Controller_ActionEventArgs([
             'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
             'request' => $request,
             'response' => $response,
@@ -298,15 +283,15 @@ class InContextSubscriberTest extends TestCase
 
     public function testAddInContextInfoToRequestReturnsBecauseRedirect()
     {
-        $view = new ViewMock(new \Enlight_Template_Manager());
-        $request = new \Enlight_Controller_Request_RequestTestCase();
+        $view = new ViewMock(new Enlight_Template_Manager());
+        $request = new Enlight_Controller_Request_RequestTestCase();
         $request->setActionName('payment');
         $request->setParam('inContextCheckout', true);
 
-        $response = new \Enlight_Controller_Response_ResponseTestCase();
+        $response = new Enlight_Controller_Response_ResponseTestCase();
         $response->setHttpResponseCode(302);
 
-        $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
+        $enlightEventArgs = new Enlight_Controller_ActionEventArgs([
             'subject' => new DummyController($request, $view, $response),
             'request' => $request,
             'response' => $response,
@@ -316,15 +301,15 @@ class InContextSubscriberTest extends TestCase
         $subscriber->addInfoToPaymentRequest($enlightEventArgs);
 
         static::assertSame(302, $response->getHttpResponseCode());
-        if (\method_exists($this, 'assertStringContainsString')) {
+        if (method_exists($this, 'assertStringContainsString')) {
             static::assertStringContainsString(
-                '/PaypalUnifiedV2/return/inContextCheckout/1',
+                '/PaypalUnifiedV2/return/inContextCheckout/1/',
                 $response->getHeader('Location', '')
             );
 
             return;
         }
-        static::assertContains('/PaypalUnifiedV2/return/inContextCheckout/1', $response->getHeader('Location'));
+        static::assertContains('/PaypalUnifiedV2/return/inContextCheckout/1/', $response->getHeader('Location'));
     }
 
     /**

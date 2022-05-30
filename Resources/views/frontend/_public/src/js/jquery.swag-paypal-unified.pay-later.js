@@ -1,7 +1,7 @@
 ;(function($, window) {
     'use strict';
 
-    $.plugin('swagPayPalUnifiedInContextCheckout', {
+    $.plugin('swagPayPalUnifiedPayLater', {
         defaults: {
             /**
              * label of the button
@@ -68,7 +68,7 @@
             /**
              *  @type string
              */
-            layout: 'vertical',
+            layout: 'horizontal',
 
             /**
              * selector for the checkout confirm form element
@@ -128,23 +128,11 @@
             confirmUrl: '',
 
             /**
-             * @type string
-             */
-            finishUrl: '',
-
-            /**
              * Use PayPal debug mode
              *
              * @type boolean
              */
             useDebugMode: false,
-
-            /**
-             * Commit the order number to PayPal
-             *
-             * @type boolean
-             */
-            commitOrdernumber: false,
 
             /**
              * @type string
@@ -208,25 +196,10 @@
             responsiveWidthClass: 'paypal-button-width--responsive',
 
             /**
-             * For possible values see: https://developer.paypal.com/sdk/js/configuration/#disable-funding
-             *
              * @type string
              */
-            disabledFundings: 'credit,paylater,card,bancontact,blik,eps,giropay,ideal,mercadopago,mybank,p24,sepa,sofort,venmo',
-
-            /**
-             * For possible values see: https://developer.paypal.com/sdk/js/configuration/#enable-funding
-             *
-             * @type string
-             */
-            enabledFundings: ''
-
+            enabledFundings: 'paylater'
         },
-
-        /**
-         * @type { Object }
-         */
-        inContextCheckoutButton: null,
 
         init: function() {
             this.applyDataAttributes();
@@ -322,13 +295,9 @@
         renderSdkUrl: function() {
             var params = {
                 'client-id': this.opts.clientId,
-                'disable-funding': this.opts.disabledFundings,
+                'enable-funding': this.opts.enabledFundings,
                 intent: this.opts.paypalIntent.toLowerCase()
             };
-
-            if (this.opts.enabledFundings.length > 0) {
-                params['enabled-funding'] = this.opts.enabledFundings;
-            }
 
             if (this.opts.locale.length > 0) {
                 params.locale = this.opts.locale;
@@ -363,6 +332,8 @@
          */
         getButtonConfig: function() {
             var buttonConfig = {
+                fundingSource: 'paylater',
+
                 style: {
                     label: this.opts.label,
                     color: this.opts.color,
@@ -454,5 +425,5 @@
         }
     });
 
-    window.StateManager.addPlugin('*[data-paypalUnifiedNormalCheckoutButtonInContext="true"]', 'swagPayPalUnifiedInContextCheckout');
+    window.StateManager.addPlugin('*[data-paypalUnifiedPayLater="true"]', 'swagPayPalUnifiedPayLater');
 })(jQuery, window);

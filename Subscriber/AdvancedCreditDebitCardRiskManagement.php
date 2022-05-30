@@ -20,11 +20,6 @@ use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 class AdvancedCreditDebitCardRiskManagement implements SubscriberInterface
 {
     /**
-     * @var int
-     */
-    private $acdcPaymentMethodId;
-
-    /**
      * @var PaymentMethodProviderInterface
      */
     private $paymentMethodProvider;
@@ -44,7 +39,6 @@ class AdvancedCreditDebitCardRiskManagement implements SubscriberInterface
         $this->paymentMethodProvider = $paymentMethodProvider;
         $this->settingsService = $settingsService;
         $this->contextService = $contextService;
-        $this->acdcPaymentMethodId = $this->paymentMethodProvider->getPaymentId(PaymentMethodProviderInterface::PAYPAL_UNIFIED_ADVANCED_CREDIT_DEBIT_CARD_METHOD_NAME);
     }
 
     public static function getSubscribedEvents()
@@ -63,7 +57,9 @@ class AdvancedCreditDebitCardRiskManagement implements SubscriberInterface
             return true;
         }
 
-        if ((int) $args->get('paymentID') !== $this->acdcPaymentMethodId) {
+        $acdcPaymentMethodId = $this->paymentMethodProvider->getPaymentId(PaymentMethodProviderInterface::PAYPAL_UNIFIED_ADVANCED_CREDIT_DEBIT_CARD_METHOD_NAME);
+
+        if ((int) $args->get('paymentID') !== $acdcPaymentMethodId) {
             return false;
         }
 

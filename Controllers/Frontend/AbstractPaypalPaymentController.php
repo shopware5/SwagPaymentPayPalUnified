@@ -401,6 +401,10 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
             return PaymentType::PAYPAL_SMART_PAYMENT_BUTTONS_V2;
         }
 
+        if ($this->request->getParam('paypalUnifiedPayLater', false)) {
+            return PaymentType::PAYPAL_PAY_LATER;
+        }
+
         if ($this->request->getParam('inContextCheckout', false)) {
             return PaymentType::PAYPAL_CLASSIC_V2;
         }

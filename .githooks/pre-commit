@@ -15,6 +15,26 @@ class PreCommitChecks
     private $error = false;
 
     /**
+     * @var string
+     */
+    private $fileRegEx = '/^.*\.tpl$/';
+
+    /**
+     * @var string
+     */
+    private $blockRegEx = '/{block name=("|\')(.*?)("|\')}/';
+
+    /**
+     * @var string
+     */
+    private $viewDir = __DIR__ . '/../Resources/views';
+
+    /**
+     * @var string
+     */
+    private $ignoreListFile = __DIR__ . '/../.template-block-ignore-list';
+
+    /**
      * @return int
      */
     public function run()
@@ -29,6 +49,7 @@ class PreCommitChecks
             return 0;
         }
 
+        $this->runCheckForDuplicatedBlocksInTemplateFiles();
         $this->runPhpLint($this->getCommittedFileList());
         $this->runPhpCsFixer($this->getCommittedFileList());
         $this->runPHPStan($this->getCommittedFileList());
@@ -59,7 +80,7 @@ class PreCommitChecks
     {
         $spaces = $level * 3;
 
-        echo str_pad($output, strlen($output) + $spaces, ' ', STR_PAD_LEFT);
+        echo str_pad($output, \strlen($output) + $spaces, ' ', STR_PAD_LEFT);
     }
 
     /**
@@ -75,6 +96,7 @@ class PreCommitChecks
 
     /**
      * @param string $extension
+     *
      * @return string[]
      */
     private function getCommittedFileList($extension = 'php')
@@ -84,9 +106,6 @@ class PreCommitChecks
         return $fileList;
     }
 
-    /**
-     * @param array $fileList
-     */
     private function runPhpLint(array $fileList)
     {
         $this->writeln('# Checking php syntax');
@@ -103,9 +122,6 @@ class PreCommitChecks
         $this->writeln();
     }
 
-    /**
-     * @param array $fileList
-     */
     private function runPhpCsFixer(array $fileList)
     {
         $this->writeln('# Checking php code style');
@@ -166,9 +182,6 @@ class PreCommitChecks
         $this->writeln();
     }
 
-    /**
-     * @param array $fileList
-     */
     private function runEsLint(array $fileList)
     {
         $this->writeln('# Checking javascript code style');
@@ -222,9 +235,6 @@ class PreCommitChecks
         return !(bool) $return;
     }
 
-    /**
-     * @param array $fileList
-     */
     private function checkESLint(array $fileList = [])
     {
         $output = [];
@@ -257,6 +267,91 @@ class PreCommitChecks
                 3
             );
         }
+    }
+
+    private function runCheckForDuplicatedBlocksInTemplateFiles()
+    {
+        $this->writeln('# Search for duplicated template blocks.');
+        $this->writeln();
+
+        $result = [];
+        $duplicatedMatch = [];
+        $ignoreList = $this->getTemplateBlockIgnoreList();
+        $templateFiles = $this->getTemplateFiles($this->viewDir);
+        foreach ($templateFiles as $file) {
+            $matchCounter = preg_match_all($this->blockRegEx, file_get_contents($file), $matches);
+            if ($matchCounter === false) {
+                continue;
+            }
+
+            foreach ($matches[0] as $blockMatch) {
+                if (\in_array($blockMatch, $result) && !\in_array($blockMatch, $ignoreList)) {
+                    $duplicatedMatch[] = $blockMatch;
+                }
+
+                $result[] = $blockMatch;
+            }
+        }
+
+        if (\count($duplicatedMatch) > 0) {
+            $this->error = true;
+            $this->writeln('ERROR: Duplicated template block(s) found.');
+            $this->writeln();
+
+            foreach ($duplicatedMatch as $blockMatch) {
+                $this->writeln(sprintf('%s has more than 1 match. FILE: %s.', $blockMatch, realpath($file)));
+            }
+        }
+    }
+
+    /**
+     * @return string[]
+     */
+    private function getTemplateBlockIgnoreList()
+    {
+        if (!is_file($this->ignoreListFile)) {
+            $this->writeln('WARNING: Ignore list not found. Pleas create a ".template-block-ignore-list" in plugin base directory.');
+
+            return [];
+        }
+
+        $ignoreList = explode(PHP_EOL, file_get_contents($this->ignoreListFile));
+        if (!\is_array($ignoreList)) {
+            return [];
+        }
+
+        return $ignoreList;
+    }
+
+    /**
+     * @param string            $path
+     * @param array<int,string> $fileCollection
+     *
+     * @return array
+     */
+    private function getTemplateFiles($path, array $fileCollection = [])
+    {
+        $files = scandir($path);
+        foreach ($files as $file) {
+            if (\in_array($file, ['.', '..'])) {
+                continue;
+            }
+
+            $innerPath = sprintf('%s/%s', $path, $file);
+            if (is_dir($innerPath)) {
+                $fileCollection = $this->getTemplateFiles($innerPath, $fileCollection);
+
+                continue;
+            }
+
+            if (!preg_match($this->fileRegEx, $file)) {
+                continue;
+            }
+
+            $fileCollection[] = $innerPath;
+        }
+
+        return $fileCollection;
     }
 }
 

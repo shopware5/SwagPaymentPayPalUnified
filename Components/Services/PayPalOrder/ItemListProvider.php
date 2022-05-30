@@ -128,7 +128,7 @@ class ItemListProvider
 
             $item->setUnitAmount($unitAmount);
             $item->setQuantity($quantity);
-            $item->setCategory($isEsdProduct ? PayPalCategory::DIGITAL_GOODS : PayPalCategory::PHYSICAL_GOODS);
+            $item->setCategory($isEsdProduct ? Item::DIGITAL_GOODS : Item::PHYSICAL_GOODS);
 
             if ($isPayUponInvoice || !$useGrossPrices) {
                 $this->setTaxInformation($currency, $lineItem, $customer, $item);
