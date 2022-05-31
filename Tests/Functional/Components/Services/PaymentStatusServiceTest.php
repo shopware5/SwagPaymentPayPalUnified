@@ -140,19 +140,13 @@ class PaymentStatusServiceTest extends TestCase
      *
      * @return void
      */
-    public function testDeterminePaymentStausForCapturing($finalize, $amountToCapture, $maxCaptureAmount, $expectedResult = null)
+    public function testDeterminePaymentStausForCapturing($finalize, $amountToCapture, $maxCaptureAmount, $expectedResult)
     {
         $service = $this->createPaymentStatusService();
 
-        if ($expectedResult === null) {
-            $this->expectException(UnexpectedValueException::class);
-        }
-
         $result = $service->determinePaymentStausForCapturing($finalize, $amountToCapture, $maxCaptureAmount);
 
-        if ($expectedResult !== null) {
-            static::assertSame($expectedResult, $result);
-        }
+        static::assertSame($expectedResult, $result);
     }
 
     /**
@@ -185,6 +179,7 @@ class PaymentStatusServiceTest extends TestCase
             false,
             6.00,
             5.00,
+            Status::PAYMENT_STATE_COMPLETELY_PAID,
         ];
     }
 

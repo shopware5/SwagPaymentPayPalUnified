@@ -202,7 +202,7 @@ class OrderWithSendOrderNumberTest extends PaypalPaymentControllerTestCase
         $captureOrAuthorizeOrderReflectionMethod->setAccessible(true);
 
         // Execute test case and get results
-        $result = $captureOrAuthorizeOrderReflectionMethod->invokeArgs($controller, [self::TRANSACTION_ID, null, $result]);
+        $result = $captureOrAuthorizeOrderReflectionMethod->invokeArgs($controller, [self::TRANSACTION_ID, $this->createPayPalOrder(), $result]);
         $cartResult = $this->getContainer()->get('paypal_unified.cart_restore_service')->getCartData();
 
         static::assertNull($result);

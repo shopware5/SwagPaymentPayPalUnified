@@ -37,7 +37,7 @@ class CookieConsent implements SubscriberInterface
     }
 
     /**
-     * @return CookieCollection
+     * @return CookieCollection<CookieStruct>
      */
     public function addPayPalCookie()
     {

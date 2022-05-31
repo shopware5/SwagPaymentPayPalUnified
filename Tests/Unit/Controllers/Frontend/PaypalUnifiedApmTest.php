@@ -61,10 +61,11 @@ class PaypalUnifiedApmTest extends PaypalPaymentControllerTestCase
      * @param PaymentIntentV2::*      $intent
      * @param PaymentStatusV2::*      $paypalOrderState
      * @param Status::PAYMENT_STATE_* $expectedPaymentState
+     * @param bool                    $orderWillReturnOrder
      *
      * @return void
      */
-    public function testPaymentStateIsUpdatedCorrectly($intent, $paypalOrderState, $expectedPaymentState)
+    public function testPaymentStateIsUpdatedCorrectly($intent, $paypalOrderState, $expectedPaymentState, $orderWillReturnOrder = true)
     {
         $this->prepareRedirectDataBuilderFactory();
         $this->prepareShopwareOrder(self::SHOPWARE_ORDER_ID);
@@ -72,7 +73,9 @@ class PaypalUnifiedApmTest extends PaypalPaymentControllerTestCase
             'token' => self::PAYPAL_ORDER_ID,
             'basketId' => null,
         ]);
-        $this->givenThePayPalOrder(self::PAYPAL_ORDER_ID, (new Order())->assign([
+        $this->givenThePayPalOrder(
+            self::PAYPAL_ORDER_ID,
+            (new Order())->assign([
             'id' => self::PAYPAL_ORDER_ID,
             'intent' => $intent,
             'status' => $paypalOrderState,
@@ -85,7 +88,9 @@ class PaypalUnifiedApmTest extends PaypalPaymentControllerTestCase
                     ]),
                 ]),
             ],
-        ]));
+        ]),
+            $orderWillReturnOrder
+        );
         $this->givenTheCustomer(self::DEFAULT_CUSTOMER_DATA);
         $this->givenTheCart(self::DEFAULT_CART_DATA);
 
@@ -122,6 +127,7 @@ class PaypalUnifiedApmTest extends PaypalPaymentControllerTestCase
                 PaymentIntentV2::CAPTURE,
                 PaymentStatusV2::ORDER_AUTHORIZATION_DENIED,
                 Status::PAYMENT_STATE_REVIEW_NECESSARY,
+                false,
             ],
             sprintf($template, PaymentIntentV2::CAPTURE, PaymentStatusV2::ORDER_COMPLETED) => [
                 PaymentIntentV2::CAPTURE,
@@ -132,6 +138,7 @@ class PaypalUnifiedApmTest extends PaypalPaymentControllerTestCase
                 PaymentIntentV2::AUTHORIZE,
                 PaymentStatusV2::ORDER_AUTHORIZATION_DENIED,
                 Status::PAYMENT_STATE_REVIEW_NECESSARY,
+                false,
             ],
             sprintf($template, PaymentIntentV2::AUTHORIZE, PaymentStatusV2::ORDER_COMPLETED) => [
                 PaymentIntentV2::AUTHORIZE,
@@ -158,12 +165,18 @@ class PaypalUnifiedApmTest extends PaypalPaymentControllerTestCase
     /**
      * @param string     $orderId
      * @param Order|null $order
+     * @param bool       $orderWillReturnOrder
      *
      * @return void
      */
-    private function givenThePayPalOrder($orderId, $order = null)
+    private function givenThePayPalOrder($orderId, $order = null, $orderWillReturnOrder = true)
     {
         $orderResourceMock = $this->getMockedService(self::SERVICE_ORDER_RESOURCE);
+
+        if ($orderWillReturnOrder) {
+            $orderResourceMock->method('capture')->willReturn($order ?: $this->createMock(Order::class));
+            $orderResourceMock->method('authorize')->willReturn($order ?: $this->createMock(Order::class));
+        }
 
         $orderResourceMock->method('get')->willReturnMap([
             [$orderId, $order ?: $this->createMock(Order::class)],

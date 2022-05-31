@@ -17,7 +17,6 @@ use Shopware_Controllers_Frontend_Payment;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
-use SwagPaymentPayPalUnified\Components\PaymentStatus;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\PayPalOrderParameter;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\PayPalOrderParameterFacade;
 use SwagPaymentPayPalUnified\Components\Services\CartRestoreService;
@@ -294,26 +293,26 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
 
     /**
      * @param string                                    $payPalOrderId
-     * @param Order|null                                $payPalOrder
+     * @param Order                                     $payPalOrder
      * @param HandleOrderWithSendOrderNumberResult|null $orderWithSendOrderNumberResult
      *
      * @return Order|null
      */
-    protected function captureOrAuthorizeOrder($payPalOrderId, $payPalOrder = null, $orderWithSendOrderNumberResult = null)
+    protected function captureOrAuthorizeOrder($payPalOrderId, $payPalOrder, $orderWithSendOrderNumberResult = null)
     {
-        if ($payPalOrder instanceof Order && strtolower($payPalOrder->getStatus()) === PaymentStatus::PAYMENT_COMPLETED) {
+        if ($payPalOrder->getStatus() === PaymentStatusV2::ORDER_COMPLETED) {
             return $payPalOrder;
         }
 
         $capturedPayPalOrder = null;
         try {
-            if ($this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_INTENT) === PaymentIntentV2::CAPTURE) {
+            if ($payPalOrder->getIntent() === PaymentIntentV2::CAPTURE) {
                 $this->logger->debug(sprintf('%s CAPTURE PAYPAL ORDER WITH ID: %s', __METHOD__, $payPalOrderId));
 
                 $capturedPayPalOrder = $this->orderResource->capture($payPalOrderId, false);
 
                 $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFULLY CAPTURED', __METHOD__));
-            } elseif ($this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_INTENT) === PaymentIntentV2::AUTHORIZE) {
+            } elseif ($payPalOrder->getIntent() === PaymentIntentV2::AUTHORIZE) {
                 $this->logger->debug(sprintf('%s AUTHORIZE PAYPAL ORDER WITH ID: %s', __METHOD__, $payPalOrderId));
 
                 $capturedPayPalOrder = $this->orderResource->authorize($payPalOrderId, false);

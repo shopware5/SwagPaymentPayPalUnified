@@ -79,12 +79,16 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2ExpressCheckout extends Abstr
             return;
         }
 
-        $capturedPayPalOrder = $this->captureOrAuthorizeOrder($payPalOrderId, null, $result);
+        $payPalOrder = $this->getPayPalOrder($payPalOrderId);
+        if (!$payPalOrder instanceof Order) {
+            $this->setReviewNecessary($payPalOrderId, $shopwareOrderNumber);
+
+            return;
+        }
+
+        $capturedPayPalOrder = $this->captureOrAuthorizeOrder($payPalOrderId, $payPalOrder, $result);
         if (!$capturedPayPalOrder instanceof Order) {
-            if (\is_string($shopwareOrderNumber)) {
-                $this->orderDataService->removeTransactionId($shopwareOrderNumber);
-                $this->paymentStatusService->updatePaymentStatus($payPalOrderId, Status::PAYMENT_STATE_REVIEW_NECESSARY);
-            }
+            $this->setReviewNecessary($payPalOrderId, $shopwareOrderNumber);
 
             return;
         }
@@ -109,5 +113,19 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2ExpressCheckout extends Abstr
             'action' => 'finish',
             'sUniqueID' => $payPalOrderId,
         ]);
+    }
+
+    /**
+     * @param string      $payPalOrderId
+     * @param string|null $shopwareOrderNumber
+     *
+     * @return void
+     */
+    private function setReviewNecessary($payPalOrderId, $shopwareOrderNumber = null)
+    {
+        if (\is_string($shopwareOrderNumber)) {
+            $this->orderDataService->removeTransactionId($shopwareOrderNumber);
+            $this->paymentStatusService->updatePaymentStatus($payPalOrderId, Status::PAYMENT_STATE_REVIEW_NECESSARY);
+        }
     }
 }

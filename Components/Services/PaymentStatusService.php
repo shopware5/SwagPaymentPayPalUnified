@@ -21,8 +21,6 @@ use UnexpectedValueException;
 
 class PaymentStatusService
 {
-    const EPSILON = 0.00000001;
-
     /**
      * @var ModelManager
      */
@@ -171,24 +169,7 @@ class PaymentStatusService
             return Status::PAYMENT_STATE_PARTIALLY_PAID;
         }
 
-        if ($this->floatsEquals($amountToCapture, $maxCaptureAmount)) {
-            return Status::PAYMENT_STATE_COMPLETELY_PAID;
-        }
-
-        throw new UnexpectedValueException(
-            sprintf('The amount of %f is larger than the max possible amount of %f', $amountToCapture, $maxCaptureAmount)
-        );
-    }
-
-    /**
-     * @param float $valueOne
-     * @param float $valueTwo
-     *
-     * @return bool
-     */
-    private function floatsEquals($valueOne, $valueTwo)
-    {
-        return abs($valueOne - $valueTwo) < self::EPSILON;
+        return Status::PAYMENT_STATE_COMPLETELY_PAID;
     }
 
     /**
