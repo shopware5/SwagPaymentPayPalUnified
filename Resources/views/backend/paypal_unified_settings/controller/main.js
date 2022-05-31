@@ -308,6 +308,19 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
             setterName = sandbox ? 'sandboxOnboardingCompleted' : 'onboardingCompleted';
 
         if (!responseBody.success) {
+            if (responseBody.message.match('"USER_BUSINESS_ERROR\\",\\"message\\":\\"Invalid account:')) {
+                Shopware.Notification.createStickyGrowlMessage(
+                    {
+                        title: '{s name="growl/accountError/title"}Error{/s}',
+                        text: '{s name="growl/accountError/message"}Your Paypal account could not be linked. Please check your <b>PayPal Merchant ID</b>.{/s}'
+                    },
+                    this.window.title
+                );
+
+                this.window.setLoading(false);
+                return;
+            }
+
             Shopware.Notification.createGrowlMessage(
                 '{s name="growl/title"}PayPal{/s}',
                 '{s name="growl/saveSettingsError"}Could not save settings due to an error:{/s} ' + responseBody.message,

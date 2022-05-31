@@ -14,9 +14,11 @@
 
     <changelog version="REPLACE_GLOBAL_WITH_NEXT_VERSION">
         <changes lang="de">
+            PT-12634 - Verbesserte Fehlerbenachrichtigung, falls die PayPal-Händler-ID ungültig ist;
             PT-12706 - "PayPal, später bezahlen" ist nun eine eigene Zahlungsart;
         </changes>
         <changes lang="en">
+            PT-12634 - Improved error notification if PayPal merchant ID is invalid;
             PT-12706 - "PayPal, pay later" is now a separate payment method;
         </changes>
     </changelog>
