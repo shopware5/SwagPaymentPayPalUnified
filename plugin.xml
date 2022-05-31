@@ -5,14 +5,14 @@
     <label lang="de">PayPal</label>
     <label lang="en">PayPal</label>
 
-    <version>4.1.3</version>
+    <version>4.1.4</version>
     <copyright>(c) by shopware AG</copyright>
     <license>MIT</license>
     <link>http://store.shopware.com</link>
     <author>shopware AG</author>
     <compatibility minVersion="5.2.27" maxVersion="5.99.99"/>
 
-    <changelog version="REPLACE_GLOBALLY_WITH_NEXT_VERSION">
+    <changelog version="4.1.4">
         <changes lang="de">
             PT-11456 - Berücksichtigt Namen in der Lieferadresse beim Express-Checkout, wenn dieser verfügbar ist;
             PT-12718 - Behebt fehlerhaftes Verhalten beim Aktivieren / Deaktivieren der Zahlungsart Kredit- oder Debitkarte;
