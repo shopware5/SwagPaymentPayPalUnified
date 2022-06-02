@@ -33,7 +33,7 @@ class PayerInfoPatchTest extends TestCase
     {
         $value = (new PayerInfoPatch($this->getPayerInfo()))->getValue();
 
-        //Payer info
+        // Payer info
         static::assertCount(7, $value);
         static::assertSame('123456789', $value['phone']);
         static::assertSame('test@example.com', $value['email']);
@@ -41,7 +41,7 @@ class PayerInfoPatchTest extends TestCase
         static::assertSame('Lastname', $value['last_name']);
         static::assertSame('DE', $value['country_code']);
 
-        //Billing address
+        // Billing address
         static::assertSame('DE', $value['billing_address']['country_code']);
         static::assertSame('123456789', $value['billing_address']['phone']);
         static::assertSame('Schöppingen', $value['billing_address']['city']);

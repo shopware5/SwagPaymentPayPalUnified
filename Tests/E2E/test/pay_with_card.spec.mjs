@@ -3,9 +3,14 @@ import credentials from './credentials.mjs';
 import defaultPaypalSettingsSql from '../helper/paypalSqlHelper.mjs';
 import MysqlFactory from '../helper/mysqlFactory.mjs';
 import loginHelper from '../helper/loginHelper.mjs';
+import clearCacheHelper from '../helper/clearCacheHelper.mjs';
 const connection = MysqlFactory.getInstance();
 
 test.describe('Pay with credit card', () => {
+    test.beforeAll(() => {
+        clearCacheHelper.clearCache();
+    });
+
     test.beforeEach(() => {
         connection.query(defaultPaypalSettingsSql);
     });
@@ -32,6 +37,8 @@ test.describe('Pay with credit card', () => {
         await page.frameLocator('#braintree-hosted-field-number').locator('#credit-card-number').type(credentials.paypalCreditCard);
         await page.frameLocator('#braintree-hosted-field-expirationDate').locator('#expiration').type('1130');
         await page.frameLocator('#braintree-hosted-field-cvv').locator('#cvv').type('123');
+
+        await page.waitForLoadState('load');
 
         await page.click('button:has-text("Zahlungspflichtig bestellen")');
 
@@ -61,6 +68,8 @@ test.describe('Pay with credit card', () => {
         await page.frameLocator('#braintree-hosted-field-expirationDate').locator('#expiration').type('0530');
         await page.frameLocator('#braintree-hosted-field-cvv').locator('#cvv').type('123');
 
+        await page.waitForLoadState('load');
+
         await page.click('button:has-text("Zahlungspflichtig bestellen")');
 
         await expect(page.locator('.outlet')).toBeVisible();
@@ -72,7 +81,7 @@ test.describe('Pay with credit card', () => {
 
         await expect(zIndexLoadingIndicator.match('990')).toBeTruthy();
 
-        const overlay = await page.locator('.js--overlay.theme--light.is--open');
+        const overlay = await page.locator('.js--overlay.is--open');
         const zIndexOverlay = await overlay.evaluate((element) =>
             window.getComputedStyle(element).getPropertyValue('z-index')
         );

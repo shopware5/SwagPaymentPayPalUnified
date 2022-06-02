@@ -95,7 +95,7 @@ class TokenService
     {
         $dateTimeNow = new \DateTime();
         $dateTimeExpire = $token->getExpireDateTime();
-        //Decrease expire date by one hour just to make sure, we don't run into an unauthorized exception.
+        // Decrease expire date by one hour just to make sure, we don't run into an unauthorized exception.
         $dateTimeExpire = $dateTimeExpire->sub(new \DateInterval('PT1H'));
 
         if ($dateTimeExpire < $dateTimeNow) {

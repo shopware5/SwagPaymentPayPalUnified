@@ -59,8 +59,8 @@ class CaptureRefund
      */
     public function toArray()
     {
-        //If the amount object is null, we do not need to add it to the array.
-        //Note: A sale/capture will be refunded completely in that case
+        // If the amount object is null, we do not need to add it to the array.
+        // Note: A sale/capture will be refunded completely in that case
         return $this->getAmount() === null
             ? ['description' => $this->getDescription()]
             : ['description' => $this->getDescription(), 'amount' => $this->getAmount()->toArray()];

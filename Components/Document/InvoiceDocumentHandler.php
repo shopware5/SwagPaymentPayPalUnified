@@ -58,7 +58,7 @@ class InvoiceDocumentHandler
             return;
         }
 
-        //Collect all available containers in order to work with some of them later.
+        // Collect all available containers in order to work with some of them later.
         /** @var array $templateContainers */
         $templateContainers = $document->_view->getTemplateVars('Containers');
         /** @var \Smarty_Data $view */
@@ -68,7 +68,7 @@ class InvoiceDocumentHandler
         $orderData = $view->getTemplateVars('Order');
         $orderData = $this->overwritePaymentName($orderData);
 
-        //Get the new footer for the document and replace the original one
+        // Get the new footer for the document and replace the original one
         $rawFooter = $this->getInvoiceContainer($templateContainers, $orderData);
         $templateContainers['PayPal_Unified_Instructions_Content']['value'] = $rawFooter['value'];
 
@@ -80,7 +80,7 @@ class InvoiceDocumentHandler
             $document->_template->assign('PayPalUnifiedInvoiceInstruction', $instructions->toArray());
         }
 
-        //Reassign the complete template including the new variables.
+        // Reassign the complete template including the new variables.
         /** @var array $containerData */
         $containerData = $view->getTemplateVars('Containers');
         $containerData['Footer'] = $containerData['PayPal_Unified_Instructions_Footer'];

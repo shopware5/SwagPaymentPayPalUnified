@@ -27,5 +27,13 @@ function _importInitScripts(connection) {
     const buyInListingSetting = fs.readFileSync(path.join(path.resolve(''), 'setup/sql/buy_in_listing.sql'), 'utf8');
     connection.query(buyInListingSetting.trim());
 
+    console.log('Deactivate Cookie-Banner');
+    const deactivateCookieBanner = fs.readFileSync(path.join(path.resolve(''), 'setup/sql/deactivate_cookie_note.sql'), 'utf8');
+    connection.query(deactivateCookieBanner.trim());
+
+    console.log('Enable API access for demo admin');
+    const enableApiAccess = fs.readFileSync(path.join(path.resolve(''), 'setup/sql/api_access.sql'), 'utf8');
+    connection.query(enableApiAccess.trim());
+
     console.log('Finished executing init Scripts');
 }

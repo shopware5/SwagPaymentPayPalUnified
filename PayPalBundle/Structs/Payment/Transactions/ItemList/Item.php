@@ -158,7 +158,7 @@ class Item
      */
     public function toArray()
     {
-        //We don't work with taxes in this case to avoid calculation errors.
+        // We don't work with taxes in this case to avoid calculation errors.
         return [
             'name' => $this->getName(),
             'sku' => $this->getSku(),

@@ -90,7 +90,7 @@ class ItemListProvider
             // In the following part, we modify the CustomProducts positions.
             // All position prices of the Custom Products configuration are added up, so that no items with 0€ are committed to PayPal
             if (!empty($lineItem['customProductMode'])) {
-                //A value indicating if the surcharge of this position is only being added once
+                // A value indicating if the surcharge of this position is only being added once
                 $isSingleSurcharge = $lineItem['customProductIsOncePrice'];
 
                 switch ($lineItem['customProductMode']) {
@@ -105,9 +105,9 @@ class ItemListProvider
                         }
 
                         break;
-                    case 2: //Option
-                    case 3: //Value
-                        //Calculate the total price
+                    case 2: // Option
+                    case 3: // Value
+                        // Calculate the total price
                         if (!$isSingleSurcharge) {
                             $value *= $quantity;
                         }

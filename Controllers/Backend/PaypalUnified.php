@@ -78,7 +78,7 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
 
         $paymentId = $this->Request()->getParam('id');
         $paymentMethodId = $this->Request()->getParam('paymentMethodId');
-        //For legacy orders, the payment id is the transactionId and not the temporaryId
+        // For legacy orders, the payment id is the transactionId and not the temporaryId
         $transactionId = $this->Request()->getParam('transactionId');
 
         $paymentDetailService = $this->get('paypal_unified.backend.payment_details_service');
@@ -367,7 +367,7 @@ class Shopware_Controllers_Backend_PaypalUnified extends Shopware_Controllers_Ba
      */
     protected function getList($offset, $limit, $sort = [], $filter = [], array $wholeParams = [])
     {
-        //Sets the initial sort to orderTime descending
+        // Sets the initial sort to orderTime descending
         if (!$sort) {
             $defaultSort = [
                 'property' => 'orderTime',

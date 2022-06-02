@@ -94,7 +94,7 @@ class OrderDataService
     {
         $builder = $this->dbalConnection->createQueryBuilder();
 
-        //Since joins are being stripped out, we have to select the correct orderId by a sub query.
+        // Since joins are being stripped out, we have to select the correct orderId by a sub query.
         $subQuery = $this->dbalConnection->createQueryBuilder()
             ->select('o.id')
             ->from('s_order', 'o')

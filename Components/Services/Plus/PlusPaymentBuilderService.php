@@ -122,7 +122,7 @@ class PlusPaymentBuilderService extends PaymentBuilderService
             return null;
         }
 
-        //Calculate the absolute delivery date by adding the days from the product attribute
+        // Calculate the absolute delivery date by adding the days from the product attribute
         $date = new \DateTime();
         $date->add(new \DateInterval('P' . $maxDeliveryDays . 'D'));
 

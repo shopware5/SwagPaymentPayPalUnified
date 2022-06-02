@@ -60,7 +60,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedWebhook extends Enlight_Control
     {
         $this->Front()->Plugins()->ViewRenderer()->setNoRender();
 
-        //Get and decode the post data from the request
+        // Get and decode the post data from the request
         $postData = $this->request->getRawBody();
         if (!\is_string($postData)) {
             return;
@@ -76,7 +76,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedWebhook extends Enlight_Control
         try {
             $webhook = Webhook::fromArray($postData);
 
-            //Webhook handler exists?
+            // Webhook handler exists?
             if (!$this->webhookService->handlerExists($webhook->getEventType())) {
                 $this->logger->warning(
                     '[Webhook] Could not process the request, because no handler has been referenced to this type of event.',
@@ -86,7 +86,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedWebhook extends Enlight_Control
                 return;
             }
 
-            //Delegate the request to the referenced webhook-handler.
+            // Delegate the request to the referenced webhook-handler.
             $this->webhookService->getWebhookHandler($webhook->getEventType())->invoke($webhook);
         } catch (WebhookException $webhookException) {
             $this->logger->error('[Webhhok] ' . $webhookException->getMessage(), ['type' => $webhookException->getEventType()]);

@@ -12,7 +12,7 @@ npm install
     ```
    2. other
       1. Install browser and driver: chromium chromium-chromedriver
-      2. Adjust EXECUTION_PATH in the .env file
+      2. Adjust BROWSER_EXECUTABLE_PATH in the .env file
    3. docker based
       1. Spawn a playwright container e.g., with docker-compose:
       ```

@@ -1,0 +1,25 @@
+services:
+    clone-swag-cookie-consent-manager:
+        image: alpine/git:latest
+        entrypoint: [ "sh", "-c" ]
+        command: [ "if [ ! -e 'SwagCookieConsentManager/SwagCookieConsentManager.php' ] ; then git clone -b '5.2.11-5.2.27' --depth 1 'https://github.com/shopwareLabs/SwagCookieConsentManager.git' SwagCookieConsentManager; fi" ]
+        working_dir: "/"
+        volumes:
+            - "swag-cookie-consent-manager:/SwagCookieConsentManager"
+    shopware:
+        image: gitlab.shopware.com:5005/shopware/5/product/image/aio:v5.2.27
+        volumes:
+            - "${CI_PROJECT_DIR}:/var/www/html/custom/plugins/SwagPaymentPayPalUnified"
+            - "swag-cookie-consent-manager:/var/www/html/custom/plugins/SwagCookieConsentManager"
+        depends_on:
+            mysql:
+                condition: "service_started"
+            clone-swag-cookie-consent-manager:
+                condition: "service_completed_successfully"
+    playwright:
+        command: ["sh", "-c", "npm install && npx playwright test --workers=1 --grep-invert @notIn5.2"]
+    playwright-debug:
+        command: [ "sh", "-c", "npm install && npx playwright test --workers=1 --debug --grep-invert @notIn5.2" ]
+
+volumes:
+    swag-cookie-consent-manager:

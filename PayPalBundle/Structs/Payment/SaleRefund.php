@@ -59,8 +59,8 @@ class SaleRefund
      */
     public function toArray()
     {
-        //If the amount object is null, we do not need to add it to the array.
-        //Note: A sale/capture will be refunded completely in that case
+        // If the amount object is null, we do not need to add it to the array.
+        // Note: A sale/capture will be refunded completely in that case
         return $this->getAmount() === null
             ? ['invoice_number' => $this->getInvoiceNumber()]
             : ['invoice_number' => $this->getInvoiceNumber(), 'amount' => $this->getAmount()->toArray()];

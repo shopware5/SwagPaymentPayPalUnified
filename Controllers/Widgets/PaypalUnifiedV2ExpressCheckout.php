@@ -29,8 +29,8 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout extends Abstra
     {
         $this->logger->debug(sprintf('%s START', __METHOD__));
 
-        //If the PayPal express button on the detail page was clicked, the addProduct equals true.
-        //That means, that it has to be added manually to the basket.
+        // If the PayPal express button on the detail page was clicked, the addProduct equals true.
+        // That means, that it has to be added manually to the basket.
         if ($this->Request()->getParam('addProduct') !== null) {
             $this->addProductToCart();
         }

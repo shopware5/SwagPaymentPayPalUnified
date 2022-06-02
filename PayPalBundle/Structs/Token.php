@@ -102,7 +102,7 @@ class Token
         $token->setScope($data['scope']);
         $token->setTokenType($data['token_type']);
 
-        //Calculate the expiration date manually
+        // Calculate the expiration date manually
         $expirationDateTime = new DateTime();
         $interval = \DateInterval::createFromDateString($token->getExpiresIn() . ' seconds');
         $expirationDateTime = $expirationDateTime->add($interval);

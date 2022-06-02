@@ -183,7 +183,7 @@ class PaymentBuilderService implements PaymentBuilderInterface
             // In the following part, we modify the CustomProducts positions.
             // All position prices of the Custom Products configuration are added up, so that no items with 0€ are committed to PayPal
             if (!empty($basketItem['customProductMode'])) {
-                //A value indicating if the surcharge of this position is only being added once
+                // A value indicating if the surcharge of this position is only being added once
                 $isSingleSurcharge = $basketItem['customProductIsOncePrice'];
 
                 switch ($basketItem['customProductMode']) {
@@ -198,9 +198,9 @@ class PaymentBuilderService implements PaymentBuilderInterface
                         }
 
                         break;
-                    case 2: //Option
-                    case 3: //Value
-                        //Calculate the total price
+                    case 2: // Option
+                    case 3: // Value
+                        // Calculate the total price
                         if (!$isSingleSurcharge) {
                             $price *= $quantity;
                         }
@@ -243,7 +243,7 @@ class PaymentBuilderService implements PaymentBuilderInterface
             return $amountDetails;
         }
 
-        //Case 2: Show net prices in shopware and don't exclude country tax
+        // Case 2: Show net prices in shopware and don't exclude country tax
         if (!$this->customerHelper->usesGrossPrice($this->userData) && !$this->customerHelper->hasNetPriceCaluclationIndicator($this->userData)) {
             $amountDetails->setShipping($this->priceFormatter->formatPrice($this->basketData['sShippingcostsNet']));
             $amountDetails->setSubTotal($this->priceFormatter->formatPrice($this->basketData['AmountNet']));
@@ -252,7 +252,7 @@ class PaymentBuilderService implements PaymentBuilderInterface
             return $amountDetails;
         }
 
-        //Case 3: No tax handling at all, just use the net amounts.
+        // Case 3: No tax handling at all, just use the net amounts.
         $amountDetails->setShipping($this->priceFormatter->formatPrice($this->basketData['sShippingcostsNet']));
         $amountDetails->setSubTotal($this->priceFormatter->formatPrice($this->basketData['AmountNet']));
 

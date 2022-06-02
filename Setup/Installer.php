@@ -177,7 +177,7 @@ class Installer
             (1, 'PayPal_Unified_Instructions_Content', :contentStyle, :contentValue);
         ";
 
-        //Load the assets
+        // Load the assets
         $instructionsContent = \file_get_contents($this->bootstrapPath . '/Setup/Assets/Document/PayPal_Unified_Instructions_Content.html');
         $instructionsContentStyle = \file_get_contents($this->bootstrapPath . '/Setup/Assets/Document/PayPal_Unified_Instructions_Content_Style.css');
         $instructionsFooter = \file_get_contents($this->bootstrapPath . '/Setup/Assets/Document/PayPal_Unified_Instructions_Footer.html');

@@ -298,15 +298,15 @@ class Plus implements SubscriberInterface
         // Check if the user is coming from checkout step 2 (payment & shipping)
         $cameFromPaymentSelection = $session->get('paypalUnifiedCameFromPaymentSelection', false);
 
-        //This value could be set in the shippingPayment action.
-        //If so, the payment does not need to be created again.
+        // This value could be set in the shippingPayment action.
+        // If so, the payment does not need to be created again.
         $remotePaymentId = $session->get('paypalUnifiedRemotePaymentId');
 
         $view->assign('paypalUnifiedCameFromPaymentSelection', $cameFromPaymentSelection);
         $view->assign('paypalUnifiedPaymentId', $this->paymentMethodProvider->getPaymentId(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME));
 
-        //If the payment has already been created in the payment selection,
-        //we don't have to do anything else.
+        // If the payment has already been created in the payment selection,
+        // we don't have to do anything else.
         if ($cameFromPaymentSelection && $remotePaymentId) {
             $view->assign('paypalUnifiedRemotePaymentId', $remotePaymentId);
 
@@ -342,8 +342,8 @@ class Plus implements SubscriberInterface
         $view->assign('paypalUnifiedApprovalUrl', $paymentStruct->getLinks()[1]->getHref());
         $view->assign('paypalUnifiedLanguageIso', $this->getPaymentWallLanguage());
 
-        //Store the paymentID in the session to indicate that
-        //the payment has already been created and can be used on the confirm page.
+        // Store the paymentID in the session to indicate that
+        // the payment has already been created and can be used on the confirm page.
         $session->offsetSet('paypalUnifiedRemotePaymentId', $paymentStruct->getId());
 
         $restylePaymentSelection = (bool) $this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_RESTYLE, SettingsTable::PLUS);
