@@ -145,7 +145,16 @@
              *
              * @type string
              */
-            responsiveWidthClass: 'paypal-button-width--responsive'
+            responsiveWidthClass: 'paypal-button-width--responsive',
+
+            /**
+             * PayPal button label
+             *
+             * IMPORTANT: Changing this value can lead to legal issues!
+             *
+             * @type string
+             */
+            label: 'buynow'
         },
 
         /**
