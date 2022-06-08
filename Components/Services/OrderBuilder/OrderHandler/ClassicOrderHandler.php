@@ -16,6 +16,7 @@ class ClassicOrderHandler extends AbstractOrderHandler
 {
     const SUPPORTED_PAYMENT_TYPES = [
         PaymentType::PAYPAL_CLASSIC_V2,
+        PaymentType::PAYPAL_PAY_LATER,
         PaymentType::PAYPAL_EXPRESS_V2,
         PaymentType::PAYPAL_SMART_PAYMENT_BUTTONS_V2,
         PaymentType::PAYPAL_ADVANCED_CREDIT_DEBIT_CARD,

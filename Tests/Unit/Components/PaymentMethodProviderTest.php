@@ -14,6 +14,7 @@ use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
+use UnexpectedValueException;
 
 class PaymentMethodProviderTest extends TestCase
 {
@@ -100,7 +101,7 @@ class PaymentMethodProviderTest extends TestCase
      */
     public function testGetPaymentTypeByNameThrowsException()
     {
-        $this->expectException(\UnexpectedValueException::class);
+        $this->expectException(UnexpectedValueException::class);
         $this->expectExceptionMessage('Payment type for payment method "DoesNotExists" not found');
         $this->getPaymentMethodProvider()->getPaymentTypeByName('DoesNotExists');
     }
@@ -138,6 +139,7 @@ class PaymentMethodProviderTest extends TestCase
             [PaymentMethodProviderInterface::P24_METHOD_NAME, PaymentType::APM_P24],
             [PaymentMethodProviderInterface::SOFORT_METHOD_NAME, PaymentType::APM_SOFORT],
             [PaymentMethodProviderInterface::TRUSTLY_METHOD_NAME, PaymentType::APM_TRUSTLY],
+            [PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_LATER_METHOD_NAME, PaymentType::PAYPAL_PAY_LATER],
         ];
     }
 

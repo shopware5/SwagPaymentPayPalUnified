@@ -3561,11 +3561,6 @@ parameters:
 			path: Tests/Functional/Subscriber/InContextSubscriberTest.php
 
 		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\InContextSubscriberTest\\:\\:testAddInContextButtonReturnNoEcSettings\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/InContextSubscriberTest.php
-
-		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\InContextSubscriberTest\\:\\:testAddInContextButtonReturnNotUseInContext\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: Tests/Functional/Subscriber/InContextSubscriberTest.php

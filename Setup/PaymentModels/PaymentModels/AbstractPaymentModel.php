@@ -14,20 +14,21 @@ use Shopware\Models\Plugin\Plugin;
 abstract class AbstractPaymentModel
 {
     const POSITION_PAYPAL_CLASSIC = -100;
-    const POSITION_PAY_UPON_INVOICE = -99;
-    const POSITION_BANCONTACT = -98;
-    const POSITION_BLIK = -97;
-    const POSITION_EPS = -96;
-    const POSITION_GIROPAY = -95;
-    const POSITION_IDEAL = -94;
-    const POSITION_MULTIBANCO = -93;
-    const POSITION_MY_BANK = -92;
-    const POSITION_OXXO = -91;
-    const POSITION_P24 = -90;
-    const POSITION_SOFORT = -89;
-    const POSITION_TRUSTLY = -88;
-    const POSITION_ADVANCED_CEDIT_DEBIT_CARD = -87;
-    const POSITION_SEPA = -86;
+    const POSITION_PAY_LATER = -99;
+    const POSITION_PAY_UPON_INVOICE = -98;
+    const POSITION_BANCONTACT = -97;
+    const POSITION_BLIK = -96;
+    const POSITION_EPS = -95;
+    const POSITION_GIROPAY = -94;
+    const POSITION_IDEAL = -93;
+    const POSITION_MULTIBANCO = -92;
+    const POSITION_MY_BANK = -91;
+    const POSITION_OXXO = -90;
+    const POSITION_P24 = -89;
+    const POSITION_SOFORT = -88;
+    const POSITION_TRUSTLY = -87;
+    const POSITION_ADVANCED_CEDIT_DEBIT_CARD = -86;
+    const POSITION_SEPA = -85;
 
     const ACTION_PAYPAL_CLASSIC = 'PaypalUnifiedV2';
     const ACTION_PAYPAL_PAY_UPON_INVOICE = 'PaypalUnifiedV2PayUponInvoice';

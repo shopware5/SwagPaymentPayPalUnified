@@ -35,3 +35,7 @@ parameters:
             message: "#^Unreachable statement \\- code above always terminates\\.$#"
             paths:
                  - Tests/Functional/Subscriber/AdvancedCreditDebitCardSubscriberTest.php
+        - # Ignore PaymentType::* failure in PayPalOrderParameter constructor for tests
+            message: '#Parameter \#3 \$paymentType of class SwagPaymentPayPalUnified\\Components\\PayPalOrderParameter\\PayPalOrderParameter constructor expects.*given.#'
+            paths:
+                - Tests/Functional/Components/Services/OrderBuilder/OrderFactoryTest.php

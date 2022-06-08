@@ -101,12 +101,13 @@ class PaymentMethodProvider implements PaymentMethodProviderInterface
     }
 
     /**
-     * @return array{0: self::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME, 1: self::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME, 2: self::PAYPAL_UNIFIED_ADVANCED_CREDIT_DEBIT_CARD_METHOD_NAME, 3: self::PAYPAL_UNIFIED_SEPA_METHOD_NAME}
+     * @return array{0: self::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME, 1: self::PAYPAL_UNIFIED_PAY_LATER_METHOD_NAME, 2: self::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME, 3: self::PAYPAL_UNIFIED_ADVANCED_CREDIT_DEBIT_CARD_METHOD_NAME, 4: self::PAYPAL_UNIFIED_SEPA_METHOD_NAME }
      */
     public static function getPayPalMethodNames()
     {
         return [
             self::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME,
+            self::PAYPAL_UNIFIED_PAY_LATER_METHOD_NAME,
             self::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME,
             self::PAYPAL_UNIFIED_ADVANCED_CREDIT_DEBIT_CARD_METHOD_NAME,
             self::PAYPAL_UNIFIED_SEPA_METHOD_NAME,
@@ -158,6 +159,8 @@ class PaymentMethodProvider implements PaymentMethodProviderInterface
                 return PaymentType::PAYPAL_ADVANCED_CREDIT_DEBIT_CARD;
             case self::PAYPAL_UNIFIED_SEPA_METHOD_NAME:
                 return PaymentType::PAYPAL_SEPA;
+            case self::PAYPAL_UNIFIED_PAY_LATER_METHOD_NAME:
+                return PaymentType::PAYPAL_PAY_LATER;
             case self::BANCONTACT_METHOD_NAME:
                 return PaymentType::APM_BANCONTACT;
             case self::BLIK_METHOD_NAME:

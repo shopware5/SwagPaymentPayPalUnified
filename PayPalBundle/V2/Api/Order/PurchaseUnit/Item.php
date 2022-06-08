@@ -17,6 +17,9 @@ class Item extends PayPalApiStruct
     const MAX_LENGTH_NAME = 127;
     const MAX_LENGTH_SKU = 127;
 
+    const DIGITAL_GOODS = 'DIGITAL_GOODS';
+    const PHYSICAL_GOODS = 'PHYSICAL_GOODS';
+
     /**
      * @var string
      */

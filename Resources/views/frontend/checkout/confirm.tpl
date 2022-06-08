@@ -1,7 +1,7 @@
 {extends file='parent:frontend/checkout/confirm.tpl'}
 
 {block name='frontend_checkout_confirm_error_messages'}
-    {if $paypalUnifiedSpbCheckout || $paypalUnifiedInContextCheckout}
+    {if $paypalUnifiedSpbCheckout || $paypalUnifiedInContextCheckout || $paypalUnifiedPayLaterCheckout}
         {include file='frontend/_includes/messages.tpl' type='success' content="{s namespace='frontend/paypal_unified/checkout/messages' name="success/spbPaymentCreated"}Your payment has been created. Please complete it, by confirming your order.{/s}"}
     {/if}
 
@@ -82,6 +82,10 @@
             {block name='frontend_paypal_unified_confirm_sepa_payment_button'}
                 {include file="frontend/paypal_unified/sepa/sepa_payment_button.tpl"}
             {/block}
+        {elseif $showPaypalUnifiedPayLaterButton && !$paypalUnifiedExpressCheckout && !$paypalUnifiedUsePlus}
+            {block name='frontend_paypal_unified_confirm_pay_later_payment_button'}
+                {include file="frontend/paypal_unified/pay_later/button.tpl"}
+            {/block}
         {elseif $showPayUponInvoiceLegalText}
             {block name='swag_payment_paypal_unified_pay_upon_invoice_legal_text'}
                 <div class="swag-payment-paypal-unified-pay-upon-invoice-legal-text-container right">
@@ -108,6 +112,8 @@
             {include file='frontend/paypal_unified/spb/confirm_inputs.tpl'}
         {elseif $paypalUnifiedInContextCheckout}
             {include file='frontend/paypal_unified/in_context/confirm_inputs.tpl'}
+        {elseif $paypalUnifiedPayLater}
+            {include file='frontend/paypal_unified/pay_later/confirm_inputs.tpl'}
         {/if}
 
         {if $paypalUnifiedAdvancedCreditDebitCardCheckout}
