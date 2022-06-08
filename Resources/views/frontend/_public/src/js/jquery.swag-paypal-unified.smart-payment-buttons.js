@@ -83,7 +83,16 @@
              *
              * @type string
              */
-            basketId: ''
+            basketId: '',
+
+            /**
+             * PayPal button label
+             *
+             * IMPORTANT: Changing this value can lead to legal issues!
+             *
+             * @type string
+             */
+            label: 'buynow'
         },
 
         /**
@@ -185,7 +194,7 @@
         getButtonConfig: function() {
             return {
                 style: {
-                    label: 'checkout'
+                    label: this.opts.label
                 },
 
                 /**
