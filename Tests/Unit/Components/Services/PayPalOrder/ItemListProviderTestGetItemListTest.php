@@ -8,10 +8,8 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Unit\Components\Services\PayPalOrder;
 
-use Enlight_Components_Snippet_Namespace;
 use Generator;
 use PHPUnit\Framework\TestCase;
-use Shopware_Components_Snippet_Manager;
 use SwagPaymentPayPalUnified\Components\Services\Common\CustomerHelper;
 use SwagPaymentPayPalUnified\Components\Services\Common\PriceFormatter;
 use SwagPaymentPayPalUnified\Components\Services\LoggerService;
@@ -145,14 +143,8 @@ class ItemListProviderTestGetItemListTest extends TestCase
      */
     private function createItemListProvider()
     {
-        $snippetNameSpace = $this->createMock(Enlight_Components_Snippet_Namespace::class);
-
-        $snippetManager = $this->createMock(Shopware_Components_Snippet_Manager::class);
-        $snippetManager->method('getNamespace')->willReturn($snippetNameSpace);
-
         return new ItemListProvider(
             $this->createMock(LoggerService::class),
-            $snippetManager,
             new PriceFormatter(),
             new CustomerHelper()
         );

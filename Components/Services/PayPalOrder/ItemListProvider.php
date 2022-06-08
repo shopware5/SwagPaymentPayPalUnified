@@ -8,7 +8,6 @@
 
 namespace SwagPaymentPayPalUnified\Components\Services\PayPalOrder;
 
-use Shopware_Components_Snippet_Manager as SnippetManager;
 use SwagPaymentPayPalUnified\Components\Services\Common\CustomerHelper;
 use SwagPaymentPayPalUnified\Components\Services\Common\PriceFormatter;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
@@ -25,11 +24,6 @@ class ItemListProvider
     private $loggerService;
 
     /**
-     * @var SnippetManager
-     */
-    private $snippetManager;
-
-    /**
      * @var PriceFormatter
      */
     private $priceFormatter;
@@ -41,12 +35,10 @@ class ItemListProvider
 
     public function __construct(
         LoggerServiceInterface $loggerService,
-        SnippetManager $snippetManager,
         PriceFormatter $priceFormatter,
         CustomerHelper $customerHelper
     ) {
         $this->loggerService = $loggerService;
-        $this->snippetManager = $snippetManager;
         $this->priceFormatter = $priceFormatter;
         $this->customerHelper = $customerHelper;
     }
@@ -72,11 +64,7 @@ class ItemListProvider
         $useGrossPrices = $this->customerHelper->usesGrossPrice($customer);
         $isPayUponInvoice = $paymentType === PaymentType::PAYPAL_PAY_UPON_INVOICE_V2;
 
-        $customProductMainLineItemKey = 0;
-        $customProductsHint = $this->snippetManager->getNamespace('frontend/paypal_unified/checkout/item_list')
-            ->get('paymentBuilder/customProductsHint', ' incl. surcharges for Custom Products configuration');
-
-        foreach ($lineItems as $key => $lineItem) {
+        foreach ($lineItems as $lineItem) {
             $isEsdProduct = (int) $lineItem['esdarticle'] > 0;
             $label = $lineItem['articlename'];
             $number = (string) $lineItem['ordernumber'];
@@ -85,37 +73,6 @@ class ItemListProvider
 
             if (!$useGrossPrices || $isPayUponInvoice) {
                 $value = $this->priceFormatter->roundPrice($lineItem['netprice']);
-            }
-
-            // In the following part, we modify the CustomProducts positions.
-            // All position prices of the Custom Products configuration are added up, so that no items with 0€ are committed to PayPal
-            if (!empty($lineItem['customProductMode'])) {
-                // A value indicating if the surcharge of this position is only being added once
-                $isSingleSurcharge = $lineItem['customProductIsOncePrice'];
-
-                switch ($lineItem['customProductMode']) {
-                    case 1:
-                        $customProductMainLineItemKey = $key;
-                        $label .= $customProductsHint;
-
-                        if ($quantity !== 1) {
-                            $value *= $quantity;
-                            $label = $quantity . 'x ' . $label;
-                            $quantity = 1;
-                        }
-
-                        break;
-                    case 2: // Option
-                    case 3: // Value
-                        // Calculate the total price
-                        if (!$isSingleSurcharge) {
-                            $value *= $quantity;
-                        }
-
-                        $mainProduct = $items[$customProductMainLineItemKey];
-                        $mainProduct->getUnitAmount()->setValue((string) ((float) $mainProduct->getUnitAmount()->getValue() + $value));
-                        continue 2;
-                }
             }
 
             $item = new Item();
