@@ -5,7 +5,6 @@ import clearCacheHelper from '../helper/clearCacheHelper.mjs';
 import credentials from './credentials.mjs';
 import leadingZeroProductSql from '../helper/updateProductNumberAddLeadingZero.mjs';
 import tryUntilSucceed from '../helper/retryHelper.mjs';
-import csrfHelper from '../helper/csrfHelper.mjs';
 
 const connection = MysqlFactory.getInstance();
 
@@ -53,8 +52,6 @@ test.describe('Is Express Checkout button available', () => {
 
         await page.click('input[name="sAGB"]');
 
-        await csrfHelper.checkCsrfCookie(page);
-
         await page.click('button:has-text("Zahlungspflichtig bestellen")');
         await expect(page.locator('.teaser--title')).toHaveText(/Vielen Dank für Ihre Bestellung bei Shopware Demo/);
     });
@@ -98,8 +95,6 @@ test.describe('Is Express Checkout button available', () => {
 
         await page.click('input[name="sAGB"]');
 
-        await csrfHelper.checkCsrfCookie(page);
-
         await page.click('button:has-text("Zahlungspflichtig bestellen")');
         await expect(page.locator('.teaser--title')).toHaveText(/Vielen Dank für Ihre Bestellung bei Shopware Demo/);
     });
@@ -142,8 +137,6 @@ test.describe('Is Express Checkout button available', () => {
         await paypalPage.locator('button:has-text("Jetzt zahlen")').click();
 
         await page.click('input[name="sAGB"]');
-
-        await csrfHelper.checkCsrfCookie(page);
 
         await page.click('button:has-text("Zahlungspflichtig bestellen")');
         await expect(page.locator('.teaser--title')).toHaveText(/Vielen Dank für Ihre Bestellung bei Shopware Demo/);
@@ -192,8 +185,6 @@ test.describe('Is Express Checkout button available', () => {
 
         await page.click('input[name="sAGB"]');
 
-        await csrfHelper.checkCsrfCookie(page);
-
         await page.click('button:has-text("Zahlungspflichtig bestellen")');
         await expect(page.locator('.teaser--title')).toHaveText(/Vielen Dank für Ihre Bestellung bei Shopware Demo/);
     });
@@ -230,8 +221,6 @@ test.describe('Is Express Checkout button available', () => {
         await paypalPage.locator('button:has-text("Jetzt zahlen")').click();
 
         await page.click('input[name="sAGB"]');
-
-        await csrfHelper.checkCsrfCookie(page);
 
         await page.click('button:has-text("Zahlungspflichtig bestellen")');
         await expect(page.locator('.teaser--title')).toHaveText(/Vielen Dank für Ihre Bestellung bei Shopware Demo/);

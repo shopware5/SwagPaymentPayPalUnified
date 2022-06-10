@@ -150,6 +150,8 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
             return;
         }
 
+        $this->checkCaptureAuthorizationStatus($capturedPayPalOrder);
+
         if (!$sendShopwareOrderNumber) {
             $shopwareOrderNumber = $this->createShopwareOrder($payPalOrderId, $this->getPaymentType($payPalOrder));
         }

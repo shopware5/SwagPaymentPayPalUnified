@@ -17,10 +17,10 @@ variables:
     DB_PORT: 3306
 
 stages:
+    - e2e
     - code-analysis
     - phpunit
     - shopware-versions
-    - e2e
 
 default:
     tags:
@@ -234,7 +234,7 @@ shopware-v5.7-php-v8.0:
 shopware-current:
     stage: e2e
     tags:
-        - m5.large
+        - c5.xlarge
     image: docker:latest
     dependencies: []
     services:

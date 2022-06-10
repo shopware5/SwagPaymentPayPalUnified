@@ -28,8 +28,13 @@ use SwagPaymentPayPalUnified\Components\Services\OrderPropertyHelper;
 use SwagPaymentPayPalUnified\Components\Services\PaymentControllerHelper;
 use SwagPaymentPayPalUnified\Components\Services\PaymentStatusService;
 use SwagPaymentPayPalUnified\Components\Services\Validation\RedirectDataBuilderFactory;
+use SwagPaymentPayPalUnified\Components\Services\Validation\SimpleBasketValidator;
 use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentControllerResults\DeterminedStatus;
 use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentControllerResults\HandleOrderWithSendOrderNumberResult;
+use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\AuthorizationDeniedException;
+use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\CaptureDeclinedException;
+use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\CaptureFailedException;
+use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\UnexpectedStatusException;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
@@ -148,6 +153,11 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
      */
     protected $orderPropertyHelper;
 
+    /**
+     * @var SimpleBasketValidator
+     */
+    protected $simpleBasketValidator;
+
     public function preDispatch()
     {
         $this->dependencyProvider = $this->get('paypal_unified.dependency_provider');
@@ -166,6 +176,7 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
         $this->logger = $this->get('paypal_unified.logger_service');
         $this->cartRestoreService = $this->get('paypal_unified.cart_restore_service');
         $this->orderPropertyHelper = $this->get('paypal_unified.order_property_helper');
+        $this->simpleBasketValidator = $this->get('paypal_unified.simple_basket_validator');
     }
 
     /**
@@ -351,6 +362,56 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
     }
 
     /**
+     * @return void
+     */
+    protected function checkCaptureAuthorizationStatus(Order $payPalOrder)
+    {
+        $this->logger->debug(sprintf('%s PAYPAL CHECK CAPTURE OR AUTHORIZATION STATUS START', __METHOD__));
+
+        try {
+            if ($payPalOrder->getIntent() === PaymentIntentV2::CAPTURE) {
+                $capture = $this->orderPropertyHelper->getFirstCapture($payPalOrder);
+                if (!$capture instanceof Capture) {
+                    throw new UnexpectedValueException(sprintf('%s expected. Got %s', Capture::class, \gettype($capture)));
+                }
+
+                if ($capture->getStatus() === PaymentStatusV2::ORDER_CAPTURE_DECLINED) {
+                    throw new CaptureDeclinedException();
+                }
+
+                if ($capture->getStatus() === PaymentStatusV2::ORDER_CAPTURE_FAILED) {
+                    throw new CaptureFailedException();
+                }
+            }
+
+            if ($payPalOrder->getIntent() === PaymentIntentV2::AUTHORIZE) {
+                $authorization = $this->orderPropertyHelper->getAuthorization($payPalOrder);
+                if (!$authorization instanceof Authorization) {
+                    throw new UnexpectedValueException(sprintf('%s expected. Got %s', Authorization::class, \gettype($authorization)));
+                }
+
+                if ($authorization->getStatus() === PaymentStatusV2::ORDER_AUTHORIZATION_DENIED) {
+                    throw new AuthorizationDeniedException();
+                }
+            }
+        } catch (UnexpectedValueException $exception) {
+            $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
+                ->setCode(ErrorCodes::UNKNOWN)
+                ->setException($exception, 'Check capture/authorize status');
+
+            $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
+        } catch (UnexpectedStatusException $exception) {
+            $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
+                ->setCode($exception->getCode())
+                ->setException($exception, 'Check capture/authorize status');
+
+            $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
+        }
+
+        $this->logger->debug(sprintf('%s PAYPAL CHECK CAPTURE OR AUTHORIZATION STATUS END', __METHOD__));
+    }
+
+    /**
      * @param string $payPalOrderId
      *
      * @return Order|null
@@ -503,8 +564,6 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
      */
     protected function validateBasketSimple(Order $payPalOrder)
     {
-        $legacyValidator = $this->get('paypal_unified.simple_basket_validator');
-
         $cart = $this->getBasket();
         $customer = $this->getUser();
 
@@ -513,7 +572,7 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
         }
 
         foreach ($payPalOrder->getPurchaseUnits() as $purchaseUnit) {
-            if (!$legacyValidator->validate($cart, $customer, (float) $purchaseUnit->getAmount()->getValue())) {
+            if (!$this->simpleBasketValidator->validate($cart, $customer, (float) $purchaseUnit->getAmount()->getValue())) {
                 return false;
             }
         }
