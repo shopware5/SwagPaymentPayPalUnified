@@ -9,7 +9,6 @@
                  class="SwagPaymentPayPalUnified\Components\Services\PayPalOrder\ItemListProvider"
                  public="true">
             <argument type="service" id="paypal_unified.logger_service"/>
-            <argument type="service" id="snippets"/>
             <argument type="service" id="paypal_unified.common.price_formatter"/>
             <argument type="service" id="paypal_unified.common.customer_helper"/>
         </service>

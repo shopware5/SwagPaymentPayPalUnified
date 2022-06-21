@@ -98,7 +98,6 @@ class ItemListProviderTest extends TestCase
 
         $itemList = $this->getItemListProvider(
             null,
-            null,
             new PriceFormatter()
         )->getItemList(
             Fixture::CART,
@@ -138,22 +137,19 @@ class ItemListProviderTest extends TestCase
     }
 
     /**
-     * @param LoggerServiceInterface|null              $loggerService
-     * @param Shopware_Components_Snippet_Manager|null $snippetManager
-     * @param PriceFormatter|null                      $priceFormatter
-     * @param CustomerHelper|null                      $customerHelper
+     * @param LoggerServiceInterface|null $loggerService
+     * @param PriceFormatter|null         $priceFormatter
+     * @param CustomerHelper|null         $customerHelper
      *
      * @return ItemListProvider
      */
     protected function getItemListProvider(
         $loggerService = null,
-        $snippetManager = null,
         $priceFormatter = null,
         $customerHelper = null
     ) {
         return new ItemListProvider(
             $loggerService ?: $this->loggerService,
-            $snippetManager ?: $this->snippetManager,
             $priceFormatter ?: $this->priceFormatter,
             $customerHelper ?: $this->customerHelper
         );
