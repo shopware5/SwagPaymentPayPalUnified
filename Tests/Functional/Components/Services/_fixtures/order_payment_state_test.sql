@@ -1,5 +1,5 @@
 INSERT INTO `s_order` (`id`, `ordernumber`, `userID`, `invoice_amount`, `invoice_amount_net`, `invoice_shipping`, `invoice_shipping_net`, `ordertime`, `status`, `cleared`, `paymentID`, `transactionID`, `comment`, `customercomment`, `internalcomment`, `net`, `taxfree`, `partnerID`, `temporaryID`, `referer`, `cleareddate`, `trackingcode`, `language`, `dispatchID`, `currency`, `currencyFactor`, `subshopID`, `remote_addr`, `deviceType`) VALUES
-    (66,	'20006',	1,	224.99,	189.07,	75,	63.03, '2022-04-04 08:34:19',	0,	12,	7,	'2N350210JC439501D',	'',	'',	'',	0,	0,	'',	'4CA53157WG120912D',	'',	'2022-04-04 08:34:20',	'',	'1',	10,	'EUR',	1,	1,	'::',	'desktop');
+    (66,	'20006',	1,	224.99,	189.07,	75,	63.03, '2022-04-04 08:34:19',	0,	12,	7,	'2N350210JC439501D',	'',	'',	'',	0,	0,	'',	'4CA53157WG120912D',	'',	NULL,	'',	'1',	10,	'EUR',	1,	1,	'::',	'desktop');
 
 INSERT INTO `s_order_attributes` (`id`, `orderID`, `attribute1`, `attribute2`, `attribute3`, `attribute4`, `attribute5`, `attribute6`, `swag_paypal_unified_payment_type`) VALUES
     (11,	66,	NULL,	NULL,	NULL,	NULL,	NULL,	NULL,	'PayPalClassicV2');

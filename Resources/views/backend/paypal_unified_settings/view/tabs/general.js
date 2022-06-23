@@ -289,7 +289,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
             store: Ext.create('Shopware.apps.Base.store.OrderStatus').load(),
             displayField: 'description',
             valueField: 'id',
-            value: -1,
+            value: 4,
             disabled: true,
         });
 

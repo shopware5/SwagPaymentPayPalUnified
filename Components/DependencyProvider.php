@@ -9,9 +9,11 @@
 namespace SwagPaymentPayPalUnified\Components;
 
 use Enlight_Components_Session_Namespace as ShopwareSession;
+use Enlight_Controller_Front;
 use Shopware\Components\Cart\PaymentTokenService;
 use Shopware\Components\DependencyInjection\Container as DIContainer;
 use Shopware\Models\Shop\Shop;
+use Shopware_Components_Modules;
 
 class DependencyProvider
 {
@@ -44,7 +46,7 @@ class DependencyProvider
     }
 
     /**
-     * @return \Enlight_Controller_Front|null
+     * @return Enlight_Controller_Front|null
      */
     public function getFront()
     {
@@ -62,7 +64,7 @@ class DependencyProvider
      */
     public function getModule($moduleName)
     {
-        /** @var \Shopware_Components_Modules $modules */
+        /** @var Shopware_Components_Modules $modules */
         $modules = $this->container->get('modules');
 
         return $modules->getModule($moduleName);

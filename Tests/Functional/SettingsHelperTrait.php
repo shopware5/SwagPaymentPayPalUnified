@@ -52,7 +52,7 @@ trait SettingsHelperTrait
             'button_locale' => null,
             'paypal_payer_id' => null,
             'sandbox_paypal_payer_id' => null,
-            'order_status_on_failed_payment' => -1,
+            'order_status_on_failed_payment' => 4,
             'payment_status_on_failed_payment' => 35,
         ];
 

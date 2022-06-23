@@ -43,8 +43,8 @@ class VoidServiceTest extends TestCase
 
         $result = $this->createVoidService()->voidOrder('');
 
-        $order = $this->modelManager->getRepository(Order::class)->find($orderId);
-        static::assertInstanceOf(Order::class, $order);
+        $order = $this->getOrderById($orderId);
+
         static::assertSame(Status::PAYMENT_STATE_THE_PROCESS_HAS_BEEN_CANCELLED, $order->getPaymentStatus()->getId());
         static::assertTrue($result['success']);
     }
@@ -55,8 +55,8 @@ class VoidServiceTest extends TestCase
 
         $result = $this->createVoidService()->voidOrder(OrderResourceMock::THROW_EXCEPTION);
 
-        $order = $this->modelManager->getRepository(Order::class)->find($orderId);
-        static::assertInstanceOf(Order::class, $order);
+        $order = $this->getOrderById($orderId);
+
         static::assertSame(Status::PAYMENT_STATE_OPEN, $order->getPaymentStatus()->getId());
         static::assertFalse($result['success']);
     }
@@ -67,8 +67,8 @@ class VoidServiceTest extends TestCase
 
         $result = $this->createVoidService()->voidAuthorization('');
 
-        $order = $this->modelManager->getRepository(Order::class)->find($orderId);
-        static::assertInstanceOf(Order::class, $order);
+        $order = $this->getOrderById($orderId);
+
         static::assertSame(Status::PAYMENT_STATE_THE_PROCESS_HAS_BEEN_CANCELLED, $order->getPaymentStatus()->getId());
         static::assertTrue($result['success']);
     }
@@ -79,8 +79,8 @@ class VoidServiceTest extends TestCase
 
         $result = $this->createVoidService()->voidAuthorization(AuthorizationResourceMock::THROW_EXCEPTION);
 
-        $order = $this->modelManager->getRepository(Order::class)->find($orderId);
-        static::assertInstanceOf(Order::class, $order);
+        $order = $this->getOrderById($orderId);
+
         static::assertSame(Status::PAYMENT_STATE_OPEN, $order->getPaymentStatus()->getId());
         static::assertFalse($result['success']);
     }
@@ -97,8 +97,26 @@ class VoidServiceTest extends TestCase
                 $this->modelManager,
                 $this->getContainer()->get('paypal_unified.logger_service'),
                 $this->getContainer()->get('dbal_connection'),
-                $this->getContainer()->get('paypal_unified.settings_service')
+                $this->getContainer()->get('paypal_unified.settings_service'),
+                $this->getContainer()->get('paypal_unified.dependency_provider'),
+                $this->getContainer()->get('config')
             )
         );
+    }
+
+    /**
+     * @param int $orderId
+     *
+     * @return Order
+     */
+    private function getOrderById($orderId)
+    {
+        $this->modelManager->clear(Order::class);
+
+        $order = $this->modelManager->getRepository(Order::class)->find($orderId);
+
+        static::assertInstanceOf(Order::class, $order);
+
+        return $order;
     }
 }

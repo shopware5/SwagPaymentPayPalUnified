@@ -13,14 +13,12 @@ use PDO;
 use PHPUnit\Framework\TestCase;
 use Shopware\Models\Order\Order;
 use Shopware\Models\Order\Status;
-use SwagPaymentPayPalUnified\Components\Exception\OrderNotFoundException;
 use SwagPaymentPayPalUnified\Components\Services\LoggerService;
 use SwagPaymentPayPalUnified\Components\Services\PaymentStatusService;
 use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\SettingsHelperTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\ShopRegistrationTrait;
-use UnexpectedValueException;
 
 class PaymentStatusServiceTest extends TestCase
 {
@@ -54,7 +52,7 @@ class PaymentStatusServiceTest extends TestCase
         $paymentStatusService = $this->createPaymentStatusService();
 
         if ($expectsException) {
-            static::assertTrue(\is_string($exceptionClassString), 'Parameter "exceptionClassString" is requred if this test expects a exception');
+            static::assertIsString($exceptionClassString, 'Parameter "exceptionClassString" is requred if this test expects a exception');
 
             $this->expectException($exceptionClassString);
         }
@@ -65,10 +63,13 @@ class PaymentStatusServiceTest extends TestCase
             return;
         }
 
+        $modelManager = $this->getContainer()->get('models');
+        $modelManager->clear(Order::class);
         /** @var Order $order */
-        $order = $this->getContainer()->get('models')->getRepository(Order::class)->find($shopwareOrderId);
+        $order = $modelManager->getRepository(Order::class)->find($shopwareOrderId);
 
         static::assertSame($paymentStateId, $order->getPaymentStatus()->getId());
+        static::assertNotNull($order->getClearedDate());
     }
 
     /**
@@ -76,20 +77,6 @@ class PaymentStatusServiceTest extends TestCase
      */
     public function UpdatePaymentStatusV2TestDataProvider()
     {
-        yield 'Expects OrderNotFoundException because order does not exist' => [
-            self::ANY_ID,
-            self::ANY_ID,
-            self::EXPECTS_EXCEPTION,
-            OrderNotFoundException::class,
-        ];
-
-        yield 'Expects UnexpectedValueException because payment status does not exist' => [
-            self::SHOPWARE_ORDER_ID,
-            self::ANY_ID,
-            self::EXPECTS_EXCEPTION,
-            UnexpectedValueException::class,
-        ];
-
         yield 'Payment status should be updated' => [
             self::SHOPWARE_ORDER_ID,
             Status::PAYMENT_STATE_COMPLETELY_PAID,
@@ -184,6 +171,27 @@ class PaymentStatusServiceTest extends TestCase
     }
 
     /**
+     * @return void
+     */
+    public function testUpdatePaymentStatusV2IsSendMail()
+    {
+        $this->insertGeneralSettingsFromArray(['active' => 1]);
+
+        $paymentStatusService = $this->createPaymentStatusService();
+
+        $isCalled = false;
+        $callback = function () use (&$isCalled) {
+            $isCalled = true;
+        };
+
+        $this->getContainer()->get('events')->addListener('Enlight_Components_Mail_Send', $callback);
+
+        $paymentStatusService->setOrderAndPaymentStatusForFailedOrder('20001');
+
+        static::assertTrue($isCalled);
+    }
+
+    /**
      * @return PaymentStatusService
      */
     private function createPaymentStatusService()
@@ -192,7 +200,9 @@ class PaymentStatusServiceTest extends TestCase
             $this->getContainer()->get('models'),
             $this->createMock(LoggerService::class),
             $this->getContainer()->get('dbal_connection'),
-            $this->getContainer()->get('paypal_unified.settings_service')
+            $this->getContainer()->get('paypal_unified.settings_service'),
+            $this->getContainer()->get('paypal_unified.dependency_provider'),
+            $this->getContainer()->get('config')
         );
     }
 }
