@@ -17,10 +17,10 @@ variables:
     DB_PORT: 3306
 
 stages:
-    - e2e
     - code-analysis
     - phpunit
     - shopware-versions
+    - e2e
 
 default:
     tags:
@@ -177,7 +177,9 @@ code-coverage:
     artifacts:
         reports:
             junit: ${ARTIFACTS_ROOT}/*.junit.xml
-            cobertura: ${ARTIFACTS_ROOT}/*.cobertura.xml
+            coverage_report:
+                coverage_format: cobertura
+                path: cobertura.xml
         expire_in: 1 week
 
 shopware-v5.2:

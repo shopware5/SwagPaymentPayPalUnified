@@ -31,18 +31,18 @@ services:
         tmpfs:
             - "/var/lib/mysql"
     shopware:
-        image: local/aio:latest
+        image: gitlab.shopware.com:5005/shopware/5/product/image/aio:latest
         environment:
             <<: *default-environment
             SHOPWARE_CONFIG: |
                 <?php
                 return [
                     'db' => [
-                        'username' => 'app',
-                        'password' => 'app',
-                        'dbname' => 'shopware',
-                        'host' => 'mysql',
-                        'port' => '3306',
+                        'username' => getenv('DB_USER'),
+                        'password' => getenv('DB_PASSWORD'),
+                        'dbname' => getenv('DB_NAME'),
+                        'host' => getenv('DB_HOST'),
+                        'port' => getenv('DB_PORT'),
                     ],
 
                     'csrfProtection' => [
@@ -55,7 +55,6 @@ services:
                 ];
         volumes:
             - "${CI_PROJECT_DIR}:/var/www/html/custom/plugins/SwagPaymentPayPalUnified"
-            - "${CI_PROJECT_DIR}/Tests/E2E/config.php:/var/www/html/config.php"
         depends_on:
             mysql:
                 condition: "service_started"

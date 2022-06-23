@@ -1,9 +1,10 @@
-import { test, expect } from '@playwright/test';
+import { test } from '@playwright/test';
 import credentials from './credentials.mjs';
 import MysqlFactory from '../helper/mysqlFactory.mjs';
 import fs from 'fs';
 import path from 'path';
 import backendHandleSaveHelper from '../helper/backendHandleSaveHelper.mjs';
+import backendLoginHelper from '../helper/backendLoginHelper.mjs';
 const connection = MysqlFactory.getInstance();
 const truncateTables = fs.readFileSync(path.join(path.resolve(''), 'setup/sql/truncate_paypal_tables.sql'), 'utf8');
 
@@ -15,12 +16,7 @@ test.describe('Backend testing', () => {
     });
 
     test('activate the sandbox', async ({ page }) => {
-        await page.goto('/backend');
-        await expect(page).toHaveTitle(/Backend/);
-        await page.fill('input[name="username"]', credentials.defaultBackendUserUsername);
-        await page.fill('input[name="password"]', credentials.defaultBackendUserPassword);
-        await page.click('#button-1019-btnEl');
-        await page.waitForLoadState('load');
+        backendLoginHelper.login(page);
 
         await page.hover('.customers--main');
         await page.hover('.settings--payment-methods');

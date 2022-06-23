@@ -5,6 +5,7 @@ import clearCacheHelper from '../helper/clearCacheHelper.mjs';
 import credentials from './credentials.mjs';
 import leadingZeroProductSql from '../helper/updateProductNumberAddLeadingZero.mjs';
 import tryUntilSucceed from '../helper/retryHelper.mjs';
+import backendLoginHelper from '../helper/backendLoginHelper.mjs';
 
 const connection = MysqlFactory.getInstance();
 
@@ -229,15 +230,7 @@ test.describe('Is Express Checkout button available', () => {
     test('Check product cart modal @notIn5.2', async ({ page }) => {
         const offcanvasLabelLocator = page.locator('label', { hasText: 'Wenn aktiv, wird der Offcanvas Warenkorb verwendet.' });
 
-        await page.goto('/backend');
-        await expect(page).toHaveTitle(/Backend/);
-
-        await page.fill('input[name="username"]', credentials.defaultBackendUserUsername);
-        await page.fill('input[name="password"]', credentials.defaultBackendUserPassword);
-        await page.click('#button-1019-btnEl');
-
-        await page.waitForLoadState('load');
-        await page.waitForResponse('**/Index/menu*');
+        backendLoginHelper.login(page);
 
         await page.hover('.settings--main');
         await page.click('.settings--theme-manager');
