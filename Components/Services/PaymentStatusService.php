@@ -11,6 +11,7 @@ namespace SwagPaymentPayPalUnified\Components\Services;
 use DateTime;
 use Doctrine\DBAL\Connection;
 use PDO;
+use RuntimeException;
 use Shopware\Components\Model\ModelManager;
 use Shopware\Models\Order\Order;
 use Shopware\Models\Order\Status;
@@ -137,7 +138,7 @@ class PaymentStatusService
 
         $settings = $this->settingsService->getSettings();
         if (!$settings instanceof General) {
-            throw new \RuntimeException('Could not read general PayPal settings');
+            throw new RuntimeException('Could not read general PayPal settings');
         }
 
         $orderStatusId = $settings->getOrderStatusOnFailedPayment();

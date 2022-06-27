@@ -177,7 +177,9 @@ code-coverage:
     artifacts:
         reports:
             junit: ${ARTIFACTS_ROOT}/*.junit.xml
-            cobertura: ${ARTIFACTS_ROOT}/*.cobertura.xml
+            coverage_report:
+                coverage_format: cobertura
+                path: cobertura.xml
         expire_in: 1 week
 
 shopware-v5.2:
@@ -234,7 +236,7 @@ shopware-v5.7-php-v8.0:
 shopware-current:
     stage: e2e
     tags:
-        - m5.large
+        - c5.xlarge
     image: docker:latest
     dependencies: []
     services:

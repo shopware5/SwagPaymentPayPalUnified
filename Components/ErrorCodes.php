@@ -28,6 +28,10 @@ final class ErrorCodes
     // In order to provoke this error, the buyer must have the email address: payment_source_declined_by_processor@example.com
     const PAYMENT_SOURCE_DECLINED_BY_PROCESSOR = 13;
 
+    const AUTHORIZATION_DENIED = 14;
+    const CAPTURE_FAILED = 15;
+    const CAPTURE_DECLINED = 16;
+
     private function __construct()
     {
     }

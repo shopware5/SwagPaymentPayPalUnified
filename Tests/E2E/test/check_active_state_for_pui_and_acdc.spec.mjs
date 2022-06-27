@@ -4,6 +4,7 @@ import MysqlFactory from '../helper/mysqlFactory.mjs';
 import credentials from './credentials.mjs';
 import clearPaypalSettingsSql from '../helper/clearPaypalSettingsHelper.mjs';
 import backendHandleSaveHelper from '../helper/backendHandleSaveHelper.mjs';
+import backendLoginHelper from '../helper/backendLoginHelper.mjs';
 
 const connection = MysqlFactory.getInstance();
 
@@ -13,17 +14,7 @@ test.describe('Check the active state of PUI and ACDC', () => {
     test('Check active state', async ({ page }) => {
         connection.query(clearPaypalSettingsSql);
 
-        await page.goto('/backend');
-        await expect(page).toHaveTitle(/Backend/);
-
-        await page.waitForLoadState();
-
-        await page.fill('input[name="username"]', credentials.defaultBackendUserUsername);
-        await page.fill('input[name="password"]', credentials.defaultBackendUserPassword);
-        await page.click('button[data-action="login"]');
-
-        await page.waitForLoadState('load');
-        await page.waitForResponse('**/Index/menu*');
+        backendLoginHelper.login(page);
 
         await page.hover('.customers--main');
         await page.hover('.settings--payment-methods');

@@ -59,8 +59,7 @@ test.describe('Is SEPA fully functional', () => {
         await paypalPage.locator('#bankIban').fill(credentials.sepaIban);
         await paypalPage.locator('#dateOfBirth').fill(credentials.sepaBirthday);
         await paypalPage.locator('#phone').fill(credentials.sepaPhone);
-        await paypalPage.locator('label[for="onboardOptionGuest"]').click();
-        await paypalPage.locator('label[for="sepaMandate"]').click();
+        await paypalPage.locator('text=Angaben speichern und PayPal-Konto eröffnen').click();
 
         await paypalPage.locator('button[type="submit"]').click();
 

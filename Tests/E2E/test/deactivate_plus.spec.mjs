@@ -1,8 +1,9 @@
-import { expect, test } from '@playwright/test';
+import { test } from '@playwright/test';
 import defaultPaypalSettingsSql from '../helper/paypalSqlHelper.mjs';
 import updatePlusSettingsSql from '../helper/updatePlusHelper.mjs';
 import MysqlFactory from '../helper/mysqlFactory.mjs';
 import credentials from './credentials.mjs';
+import backendLoginHelper from '../helper/backendLoginHelper.mjs';
 
 const connection = MysqlFactory.getInstance();
 
@@ -16,14 +17,7 @@ test.describe('Backend testing: Check if plus popup is shown', () => {
     test('Deactivate plus on save', async ({ page }) => {
         connection.query(updatePlusSettingsSql);
 
-        await page.goto('/backend');
-        await expect(page).toHaveTitle(/Backend/);
-
-        await page.fill('input[name="username"]', credentials.defaultBackendUserUsername);
-        await page.fill('input[name="password"]', credentials.defaultBackendUserPassword);
-        await page.click('#button-1019-btnEl');
-
-        await page.waitForLoadState('load');
+        backendLoginHelper.login(page);
 
         await page.hover('.customers--main');
         await page.hover('.settings--payment-methods');

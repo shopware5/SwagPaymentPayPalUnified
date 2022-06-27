@@ -17,11 +17,13 @@
             PT-12634 - Verbesserte Fehlerbenachrichtigung, falls die PayPal-Händler-ID ungültig ist;
             PT-12706 - "PayPal, später bezahlen" ist nun eine eigene Zahlungsart;
             PT-12780 - Behebt Fehler bei der Steuerberechnung von CustomProducts während eines Rechnungskaufes.
+            PT-12785 - Verbesserte Fehlerbenachrichtigung, falls das Einziehen / Autorisieren nicht fehlschlägt;
         </changes>
         <changes lang="en">
             PT-12634 - Improved error notification if PayPal merchant ID is invalid;
             PT-12706 - "PayPal, pay later" is now a separate payment method;
             PT-12780 - Fixes error while tax calculation during an invoice purchase with CustomProducts.
+            PT-12785 - Improved error notification if capture / authorisation fails;
         </changes>
     </changelog>
 
