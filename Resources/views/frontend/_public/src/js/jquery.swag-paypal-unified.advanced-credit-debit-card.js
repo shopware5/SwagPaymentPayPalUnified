@@ -352,6 +352,16 @@
          * @param response { Response }
          */
         captureOrder: function(response) {
+            if (response.liabilityShift !== 'POSSIBLE') {
+                this.updateAutoResizer();
+
+                this.resetPreloaderPlugin(true);
+
+                $.loadingIndicator.close();
+
+                return;
+            }
+
             $.ajax({
                 type: 'POST',
                 url: this.opts.captureUrl,
