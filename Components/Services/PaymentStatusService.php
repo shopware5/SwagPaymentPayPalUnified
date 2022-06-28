@@ -15,10 +15,13 @@ use RuntimeException;
 use Shopware\Components\Model\ModelManager;
 use Shopware\Models\Order\Order;
 use Shopware\Models\Order\Status;
+use Shopware_Components_Config as ShopwareConfig;
+use sOrder;
+use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\Exception\OrderNotFoundException;
 use SwagPaymentPayPalUnified\Models\Settings\General;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
-use UnexpectedValueException;
+use Zend_Mail_Transport_Exception;
 
 class PaymentStatusService
 {
@@ -42,16 +45,30 @@ class PaymentStatusService
      */
     private $settingsService;
 
+    /**
+     * @var sOrder
+     */
+    private $sOrder;
+
+    /**
+     * @var ShopwareConfig
+     */
+    private $shopwareConfig;
+
     public function __construct(
         ModelManager $modelManager,
         LoggerServiceInterface $logger,
         Connection $connection,
-        SettingsService $settingsService
+        SettingsService $settingsService,
+        DependencyProvider $dependencyProvider,
+        ShopwareConfig $shopwareConfig
     ) {
         $this->modelManager = $modelManager;
         $this->logger = $logger;
         $this->connection = $connection;
         $this->settingsService = $settingsService;
+        $this->shopwareConfig = $shopwareConfig;
+        $this->sOrder = $dependencyProvider->getModule('sOrder');
     }
 
     /**
@@ -69,23 +86,14 @@ class PaymentStatusService
         /** @var Order|null $orderModel */
         $orderModel = $this->modelManager->getRepository(Order::class)->findOneBy(['temporaryId' => $parentPayment]);
 
-        if (!($orderModel instanceof Order)) {
+        if (!$orderModel instanceof Order) {
             $this->logger->debug(sprintf('%s ORDER WITH TMP ID: %s NOT FOUND', __METHOD__, $parentPayment));
 
             throw new OrderNotFoundException('temporaryId', $parentPayment);
         }
 
-        /** @var Status|null $orderStatusModel */
-        $orderStatusModel = $this->modelManager->getRepository(Status::class)->find($paymentStateId);
-
-        $orderModel->setPaymentStatus($orderStatusModel);
-        if ($paymentStateId === Status::PAYMENT_STATE_COMPLETELY_PAID
-            || $paymentStateId === Status::PAYMENT_STATE_PARTIALLY_PAID
-        ) {
-            $orderModel->setClearedDate(new DateTime());
-        }
-
-        $this->modelManager->flush($orderModel);
+        $this->sOrder->setPaymentStatus($orderModel->getId(), $paymentStateId, false, 'Set automatically by PayPal integration');
+        $this->updateClearedDate($orderModel->getId());
 
         $this->logger->debug(sprintf('%s UPDATE PAYMENT STATUS SUCCESSFUL', __METHOD__));
     }
@@ -102,27 +110,8 @@ class PaymentStatusService
             sprintf('%s ShopwareOrderID: %s PaymentStateID : %d', __METHOD__, $shopwareOrderId, $paymentStateId)
         );
 
-        $shopwareOrder = $this->modelManager->getRepository(Order::class)->find($shopwareOrderId);
-        if (!$shopwareOrder instanceof Order) {
-            $this->logger->debug(sprintf('%s ORDER WITH ID: %s NOT FOUND', __METHOD__, $shopwareOrderId));
-
-            throw new OrderNotFoundException('id', (string) $shopwareOrderId);
-        }
-
-        $newOrderPaymentStatus = $this->modelManager->getRepository(Status::class)->find($paymentStateId);
-        if (!$newOrderPaymentStatus instanceof Status) {
-            $this->logger->debug(sprintf('%s PAYMENT STATUS WITH ID: %d NOT FOUND', __METHOD__, $paymentStateId));
-
-            throw new UnexpectedValueException(sprintf('%s not found by given ID: %d', Status::class, $paymentStateId));
-        }
-
-        $shopwareOrder->setPaymentStatus($newOrderPaymentStatus);
-
-        if ($paymentStateId === Status::PAYMENT_STATE_COMPLETELY_PAID || $paymentStateId === Status::PAYMENT_STATE_PARTIALLY_PAID) {
-            $shopwareOrder->setClearedDate(new DateTime());
-        }
-
-        $this->modelManager->flush($shopwareOrder);
+        $this->sOrder->setPaymentStatus($shopwareOrderId, $paymentStateId, false, 'Set automatically by PayPal integration');
+        $this->updateClearedDate($shopwareOrderId);
 
         $this->logger->debug(sprintf('%s UPDATE PAYMENT STATUS SUCCESSFUL', __METHOD__));
     }
@@ -142,12 +131,24 @@ class PaymentStatusService
         }
 
         $orderStatusId = $settings->getOrderStatusOnFailedPayment();
+
         $paymentStatusId = $settings->getPaymentStatusOnFailedPayment();
         $shopwareOrderId = $this->getOrderIdByOrderNumber($shopwareOrderNumber);
 
         $this->logger->debug(sprintf('%s UPDATE ORDER WITH ID %s AND STATUS ID %s AND PAYMENT STATUS ID %s', __METHOD__, $shopwareOrderId, $orderStatusId, $paymentStatusId));
 
-        $this->updateOrder($shopwareOrderId, $orderStatusId, $paymentStatusId);
+        $this->updatePaymentStatusV2($shopwareOrderId, $paymentStatusId);
+
+        try {
+            $this->sOrder->setOrderStatus(
+                $shopwareOrderId,
+                $orderStatusId,
+                $this->shopwareConfig->get('sendOrderMail'),
+                sprintf('Failed PayPal Payment with order number: %s', $shopwareOrderNumber)
+            );
+        } catch (Zend_Mail_Transport_Exception $exception) {
+            $this->logger->error(sprintf('%s CANNOT SEND STATUS MAIL FOR ORDER: %s', __METHOD__, $shopwareOrderNumber));
+        }
     }
 
     /**
@@ -174,28 +175,6 @@ class PaymentStatusService
     }
 
     /**
-     * @param int $shopwareOrderId
-     * @param int $orderStatusId
-     * @param int $paymentStatusId
-     *
-     * @return void
-     */
-    private function updateOrder($shopwareOrderId, $orderStatusId, $paymentStatusId)
-    {
-        $this->connection->createQueryBuilder()
-            ->update('s_order')
-            ->set('status', ':orderStatusId')
-            ->set('cleared', ':paymentStatusId')
-            ->where('id = :shopwareOrderId')
-            ->setParameter('orderStatusId', $orderStatusId)
-            ->setParameter('paymentStatusId', $paymentStatusId)
-            ->setParameter('shopwareOrderId', $shopwareOrderId)
-            ->execute();
-
-        $this->logger->debug(sprintf('%s ORDER UPDATED', __METHOD__));
-    }
-
-    /**
      * @param string $shopwareOrderNumber
      *
      * @return int
@@ -209,5 +188,21 @@ class PaymentStatusService
             ->setParameter('orderNumber', $shopwareOrderNumber)
             ->execute()
             ->fetch(PDO::FETCH_COLUMN);
+    }
+
+    /**
+     * @param int $shopwareOrderId
+     *
+     * @return void
+     */
+    private function updateClearedDate($shopwareOrderId)
+    {
+        $this->connection->createQueryBuilder()
+            ->update('s_order')
+            ->set('cleareddate', ':clearedDate')
+            ->where('id = :orderId')
+            ->setParameter('clearedDate', (new DateTime('now'))->format('Y-m-d H:i:s'))
+            ->setParameter('orderId', $shopwareOrderId)
+            ->execute();
     }
 }

@@ -48,8 +48,8 @@ class CaptureServiceTest extends TestCase
             true
         );
 
-        $order = $this->modelManager->getRepository(Order::class)->find($orderId);
-        static::assertInstanceOf(Order::class, $order);
+        $order = $this->getOrderById($orderId);
+
         static::assertSame(Status::PAYMENT_STATE_COMPLETELY_PAID, $order->getPaymentStatus()->getId());
         static::assertNotNull($order->getClearedDate());
         static::assertTrue($result['success']);
@@ -65,8 +65,8 @@ class CaptureServiceTest extends TestCase
             false
         );
 
-        $order = $this->modelManager->getRepository(Order::class)->find($orderId);
-        static::assertInstanceOf(Order::class, $order);
+        $order = $this->getOrderById($orderId);
+
         static::assertSame(Status::PAYMENT_STATE_PARTIALLY_PAID, $order->getPaymentStatus()->getId());
         static::assertNotNull($order->getClearedDate());
         static::assertTrue($result['success']);
@@ -82,8 +82,8 @@ class CaptureServiceTest extends TestCase
             true
         );
 
-        $order = $this->modelManager->getRepository(Order::class)->find($orderId);
-        static::assertInstanceOf(Order::class, $order);
+        $order = $this->getOrderById($orderId);
+
         static::assertSame(Status::PAYMENT_STATE_OPEN, $order->getPaymentStatus()->getId());
         static::assertFalse($result['success']);
     }
@@ -98,8 +98,8 @@ class CaptureServiceTest extends TestCase
             true
         );
 
-        $order = $this->modelManager->getRepository(Order::class)->find($orderId);
-        static::assertInstanceOf(Order::class, $order);
+        $order = $this->getOrderById($orderId);
+
         static::assertSame(Status::PAYMENT_STATE_COMPLETELY_PAID, $order->getPaymentStatus()->getId());
         static::assertNotNull($order->getClearedDate());
         static::assertTrue($result['success']);
@@ -115,8 +115,8 @@ class CaptureServiceTest extends TestCase
             true
         );
 
-        $order = $this->modelManager->getRepository(Order::class)->find($orderId);
-        static::assertInstanceOf(Order::class, $order);
+        $order = $this->getOrderById($orderId);
+
         static::assertSame(Status::PAYMENT_STATE_OPEN, $order->getPaymentStatus()->getId());
         static::assertFalse($result['success']);
     }
@@ -131,8 +131,8 @@ class CaptureServiceTest extends TestCase
             ''
         );
 
-        $order = $this->modelManager->getRepository(Order::class)->find($orderId);
-        static::assertInstanceOf(Order::class, $order);
+        $order = $this->getOrderById($orderId);
+
         static::assertSame(Status::PAYMENT_STATE_RE_CREDITING, $order->getPaymentStatus()->getId());
         static::assertTrue($result['success']);
     }
@@ -147,8 +147,8 @@ class CaptureServiceTest extends TestCase
             ''
         );
 
-        $order = $this->modelManager->getRepository(Order::class)->find($orderId);
-        static::assertInstanceOf(Order::class, $order);
+        $order = $this->getOrderById($orderId);
+
         static::assertSame(Status::PAYMENT_STATE_OPEN, $order->getPaymentStatus()->getId());
         static::assertFalse($result['success']);
     }
@@ -166,8 +166,25 @@ class CaptureServiceTest extends TestCase
                 $this->getContainer()->get('models'),
                 $this->getContainer()->get('paypal_unified.logger_service'),
                 $this->getContainer()->get('dbal_connection'),
-                $this->getContainer()->get('paypal_unified.settings_service')
+                $this->getContainer()->get('paypal_unified.settings_service'),
+                $this->getContainer()->get('paypal_unified.dependency_provider'),
+                $this->getContainer()->get('config')
             )
         );
+    }
+
+    /**
+     * @param int $orderId
+     *
+     * @return Order
+     */
+    private function getOrderById($orderId)
+    {
+        $this->modelManager->clear(Order::class);
+        $order = $this->modelManager->getRepository(Order::class)->find($orderId);
+
+        static::assertInstanceOf(Order::class, $order);
+
+        return $order;
     }
 }

@@ -110,12 +110,6 @@ class PaypalUnifiedV2Test extends PaypalPaymentControllerTestCase
             Status::PAYMENT_STATE_COMPLETELY_PAID,
         ];
 
-        yield 'Expect a exception because the amount is larger than the maxCaptureAmount' => [
-            ['amount' => '6.00', 'maxCaptureAmount' => '5.00', 'finalize' => false, 'shopwareOrderId' => '173000', 'authorizationId' => '1', 'currency' => 'EUR', 'shopId' => 1],
-            false,
-            self::DEFAULT_PAYMENT_STATE,
-        ];
-
         yield 'Expect success false because of a error while capturing' => [
             ['amount' => '5.00', 'maxCaptureAmount' => '5.00', 'finalize' => false, 'shopwareOrderId' => '173000', 'authorizationId' => '1', 'currency' => 'EUR', 'shopId' => 1],
             true,

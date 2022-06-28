@@ -9,6 +9,7 @@
 namespace SwagPaymentPayPalUnified\Setup\Versions;
 
 use Shopware\Components\Model\ModelManager;
+use Shopware\Models\Order\Status;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentModelFactory;
 
@@ -35,9 +36,30 @@ class UpdateTo420
      */
     public function update()
     {
+        $this->installPayLater();
+        $this->migrateOrderStatus();
+    }
+
+    /**
+     * @return void
+     */
+    private function installPayLater()
+    {
         $payLater = $this->paymentModelFactory->getPaymentModel(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_LATER_METHOD_NAME)->create();
 
         $this->modelManager->persist($payLater);
         $this->modelManager->flush($payLater);
+    }
+
+    /**
+     * @return void
+     */
+    private function migrateOrderStatus()
+    {
+        $this->modelManager->getConnection()->createQueryBuilder()
+            ->update('swag_payment_paypal_unified_settings_general')
+            ->set('order_status_on_failed_payment', (string) Status::ORDER_STATE_CANCELLED_REJECTED)
+            ->where('order_status_on_failed_payment = -1')
+            ->execute();
     }
 }

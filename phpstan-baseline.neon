@@ -381,11 +381,6 @@ parameters:
 			path: Components/Services/PaymentControllerHelper.php
 
 		-
-			message: "#^Parameter \\#1 \\$paymentStatus of method Shopware\\\\Models\\\\Order\\\\Order\\:\\:setPaymentStatus\\(\\) expects Shopware\\\\Models\\\\Order\\\\Status, Shopware\\\\Models\\\\Order\\\\Status\\|null given\\.$#"
-			count: 1
-			path: Components/Services/PaymentStatusService.php
-
-		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\Plus\\\\PaymentInstructionService\\:\\:createInstructions\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: Components/Services/Plus/PaymentInstructionService.php
