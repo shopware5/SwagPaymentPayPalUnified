@@ -72,7 +72,13 @@ class AbstractPaypalPaymentControllerTestCheckCaptureAuthorizationStatusTest ext
 
         $reflectionMethod = $this->getReflectionMethod(AbstractPaypalPaymentControllerMock::class, 'checkCaptureAuthorizationStatus');
 
-        $reflectionMethod->invoke($controller, $paypalOrder);
+        $success = $reflectionMethod->invoke($controller, $paypalOrder);
+
+        if ($methodWillThrowValueException || $methodWillThrowStatusException) {
+            static::assertFalse($success);
+        } else {
+            static::assertTrue($success);
+        }
     }
 
     /**

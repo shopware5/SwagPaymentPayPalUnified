@@ -93,7 +93,9 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2ExpressCheckout extends Abstr
             return;
         }
 
-        $this->checkCaptureAuthorizationStatus($capturedPayPalOrder);
+        if (!$this->checkCaptureAuthorizationStatus($capturedPayPalOrder)) {
+            return;
+        }
 
         if (!$sendShopwareOrderNumber) {
             $shopwareOrderNumber = $this->createShopwareOrder($payPalOrderId, PaymentType::PAYPAL_EXPRESS_V2);

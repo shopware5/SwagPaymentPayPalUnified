@@ -362,7 +362,7 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
     }
 
     /**
-     * @return void
+     * @return bool Capture/Authorization was successful
      */
     protected function checkCaptureAuthorizationStatus(Order $payPalOrder)
     {
@@ -400,15 +400,21 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
                 ->setException($exception, 'Check capture/authorize status');
 
             $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
+
+            return false;
         } catch (UnexpectedStatusException $exception) {
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
                 ->setCode($exception->getCode())
                 ->setException($exception, 'Check capture/authorize status');
 
             $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
+
+            return false;
         }
 
         $this->logger->debug(sprintf('%s PAYPAL CHECK CAPTURE OR AUTHORIZATION STATUS END', __METHOD__));
+
+        return true;
     }
 
     /**
