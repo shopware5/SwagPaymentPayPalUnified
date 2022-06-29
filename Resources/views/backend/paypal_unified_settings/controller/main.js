@@ -308,16 +308,11 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
             setterName = sandbox ? 'sandboxOnboardingCompleted' : 'onboardingCompleted';
 
         if (!responseBody.success) {
-            if (responseBody.message.match('"USER_BUSINESS_ERROR\\",\\"message\\":\\"Invalid account:')) {
-                Shopware.Notification.createStickyGrowlMessage(
-                    {
-                        title: '{s name="growl/accountError/title"}Error{/s}',
-                        text: '{s name="growl/accountError/message"}Your Paypal account could not be linked. Please check your <b>PayPal Merchant ID</b>.{/s}'
-                    },
-                    this.window.title
-                );
+            this.window.setLoading(false);
 
-                this.window.setLoading(false);
+            if (responseBody.body.match('"USER_BUSINESS_ERROR\\",\\"message\\":\\"Invalid account:')) {
+                this.showMerchantIdError();
+
                 return;
             }
 
@@ -326,8 +321,6 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
                 '{s name="growl/saveSettingsError"}Could not save settings due to an error:{/s} ' + responseBody.message,
                 this.window.title
             );
-
-            this.window.setLoading(false);
 
             return;
         }
@@ -699,6 +692,12 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
         if (responseJson.success === false) {
             this.window.setLoading(false);
 
+            if (responseJson.body.match('"USER_BUSINESS_ERROR\\",\\"message\\":\\"Invalid account:')) {
+                this.showMerchantIdError();
+
+                return;
+            }
+
             Shopware.Notification.createGrowlMessage('{s name="growl/title"}PayPal{/s}', '{s name="growl/apiError"}An error occurred while check the capabilities{/s} ' + responseJson.message, this.window.title);
             return;
         }
@@ -740,6 +739,16 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
                 }
             );
         }
+    },
+
+    showMerchantIdError: function () {
+        Shopware.Notification.createStickyGrowlMessage(
+            {
+                title: '{s name="growl/accountError/title"}Error{/s}',
+                text: '{s name="growl/accountError/message"}Your Paypal account could not be linked. Please check your <b>PayPal Merchant ID</b>.{/s}'
+            },
+            this.window.title
+        );
     },
 
     promptDisablePlus: function() {

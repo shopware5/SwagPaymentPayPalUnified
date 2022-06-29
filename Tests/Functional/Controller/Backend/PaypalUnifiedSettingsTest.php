@@ -13,10 +13,10 @@ require_once __DIR__ . '/../../../../Controllers/Backend/PaypalUnifiedSettings.p
 use Enlight_Controller_Request_RequestTestCase as RequestMock;
 use Enlight_Template_Manager;
 use Enlight_View_Default;
-use Exception;
 use Generator;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
+use Shopware\Components\HttpClient\RequestException;
 use Shopware_Controllers_Backend_PaypalUnifiedSettings;
 use SwagPaymentPayPalUnified\Components\Services\Onboarding\IsCapableResult;
 use SwagPaymentPayPalUnified\Components\Services\OnboardingStatusService;
@@ -42,7 +42,7 @@ class PaypalUnifiedSettingsTest extends TestCase
         $onboardingStatusServiceMock = $this->createMock(OnboardingStatusService::class);
         $onboardingStatusServiceMockMethod = $onboardingStatusServiceMock->method('getIsCapableResult');
         if ($willThrowException) {
-            $onboardingStatusServiceMockMethod->will(static::throwException(new Exception('fooBar')));
+            $onboardingStatusServiceMockMethod->will(static::throwException(new RequestException('fooBar', 0, null, 'fooBar')));
         } else {
             $onboardingStatusServiceMockMethod->willReturn($onboardingStatusResult);
         }
@@ -108,6 +108,7 @@ class PaypalUnifiedSettingsTest extends TestCase
             [
                 'success' => false,
                 'message' => 'fooBar',
+                'body' => 'fooBar',
             ],
         ];
 

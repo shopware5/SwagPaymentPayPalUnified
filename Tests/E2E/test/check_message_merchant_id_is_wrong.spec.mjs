@@ -27,8 +27,20 @@ test.describe('Check for a readable message if the merchant Id is wrong', () => 
 
         await backendHandleSaveHelper.saveWithoutPayerId(page);
 
-        const selector = 'text=/Ihr Paypal Konto konnte nicht verknüpft werden.*|Your Paypal account could not be linked.*/i';
-        await expect(page.locator(selector).isVisible()).toBeTruthy();
-        await page.click('text=Schließen');
+        const growlMessage = page.locator('.growl-msg-sticky-notification', { hasText: 'Ihr Paypal Konto konnte nicht verknüpft werden' });
+        await expect(growlMessage.isVisible()).toBeTruthy();
+        await growlMessage.locator('text=Schließen').click();
+
+        await page.click('text=PayPal Pay Upon Invoice Integration');
+        await page.locator('text=Verfügbarkeitstest >> visible=true').click();
+
+        await expect(growlMessage.isVisible()).toBeTruthy();
+        await growlMessage.locator('text=Schließen').click();
+
+        await page.click('text=PayPal Advanced Credit Debit Card Integration');
+        await page.locator('text=Verfügbarkeitstest >> visible=true').click();
+
+        await expect(growlMessage.isVisible()).toBeTruthy();
+        await growlMessage.locator('text=Schließen').click();
     });
 });
