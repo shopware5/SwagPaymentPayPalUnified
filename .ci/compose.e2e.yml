@@ -55,6 +55,7 @@ services:
                 ];
         volumes:
             - "${CI_PROJECT_DIR}:/var/www/html/custom/plugins/SwagPaymentPayPalUnified"
+            - "${CI_PROJECT_DIR}/build/logs:/var/www/html/var/log"
         depends_on:
             mysql:
                 condition: "service_started"

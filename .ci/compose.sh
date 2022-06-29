@@ -14,6 +14,8 @@ if [ -z "${CI_PROJECT_DIR}" ]; then
     export CI_PROJECT_DIR="$(pwd)"
 fi
 
+mkdir -m 777 -p ${CI_PROJECT_DIR}/build/logs
+
 if [ -z "${CI_JOB_STAGE}" ] && [ -n "${1}" ]; then
     export CI_JOB_STAGE="${1}"
     shift 1
