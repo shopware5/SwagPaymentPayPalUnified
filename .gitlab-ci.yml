@@ -127,8 +127,6 @@ default:
     image: gitlab.shopware.com:5005/shopware/5/product/image/continuous:5.6
 
 javascript-checks:
-    tags:
-        - t3.nano
     stage: code-analysis
     image: node:alpine
     services: []

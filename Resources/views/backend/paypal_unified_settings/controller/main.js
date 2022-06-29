@@ -310,7 +310,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
         if (!responseBody.success) {
             this.window.setLoading(false);
 
-            if (responseBody.message.match('"USER_BUSINESS_ERROR\\",\\"message\\":\\"Invalid account:')) {
+            if (responseBody.body.match('"USER_BUSINESS_ERROR\\",\\"message\\":\\"Invalid account:')) {
                 this.showMerchantIdError();
 
                 return;
@@ -692,7 +692,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
         if (responseJson.success === false) {
             this.window.setLoading(false);
 
-            if (responseJson.message.match('"USER_BUSINESS_ERROR\\",\\"message\\":\\"Invalid account:')) {
+            if (responseJson.body.match('"USER_BUSINESS_ERROR\\",\\"message\\":\\"Invalid account:')) {
                 this.showMerchantIdError();
 
                 return;

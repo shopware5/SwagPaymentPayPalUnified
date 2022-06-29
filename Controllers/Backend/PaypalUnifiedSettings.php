@@ -6,6 +6,7 @@
  * file that was distributed with this source code.
  */
 
+use Shopware\Components\HttpClient\RequestException;
 use SwagPaymentPayPalUnified\Components\Backend\CredentialsService;
 use SwagPaymentPayPalUnified\Components\ExceptionHandlerServiceInterface;
 use SwagPaymentPayPalUnified\Components\Services\ExceptionHandlerService;
@@ -189,12 +190,13 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
             foreach ($productSubscriptionNames as $productSubscriptionName) {
                 $viewAssign[$productSubscriptionName] = $this->onboardingStatusService->isSubscribed($payerId, $shopId, $sandbox, $productSubscriptionName);
             }
-        } catch (\Exception $exception) {
+        } catch (RequestException $exception) {
             $this->exceptionHandler->handle($exception, 'validate capability');
 
             $this->View()->assign([
                 'success' => false,
                 'message' => $exception->getMessage(),
+                'body' => $exception->getBody(),
             ]);
 
             return;
