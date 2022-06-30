@@ -83,7 +83,6 @@ class PaymentStatusService
             sprintf('%s PaymentID: %s PaymentStateID : %d', __METHOD__, $parentPayment, $paymentStateId)
         );
 
-        /** @var Order|null $orderModel */
         $orderModel = $this->modelManager->getRepository(Order::class)->findOneBy(['temporaryId' => $parentPayment]);
 
         if (!$orderModel instanceof Order) {
@@ -92,10 +91,8 @@ class PaymentStatusService
             throw new OrderNotFoundException('temporaryId', $parentPayment);
         }
 
-        $this->sOrder->setPaymentStatus($orderModel->getId(), $paymentStateId, false, 'Set automatically by PayPal integration');
-        $this->updateClearedDate($orderModel->getId());
-
-        $this->logger->debug(sprintf('%s UPDATE PAYMENT STATUS SUCCESSFUL', __METHOD__));
+        $shopwareOrderId = $orderModel->getId();
+        $this->setPaymentStatus($shopwareOrderId, $paymentStateId);
     }
 
     /**
@@ -110,10 +107,7 @@ class PaymentStatusService
             sprintf('%s ShopwareOrderID: %s PaymentStateID : %d', __METHOD__, $shopwareOrderId, $paymentStateId)
         );
 
-        $this->sOrder->setPaymentStatus($shopwareOrderId, $paymentStateId, false, 'Set automatically by PayPal integration');
-        $this->updateClearedDate($shopwareOrderId);
-
-        $this->logger->debug(sprintf('%s UPDATE PAYMENT STATUS SUCCESSFUL', __METHOD__));
+        $this->setPaymentStatus($shopwareOrderId, $paymentStateId);
     }
 
     /**
@@ -172,6 +166,31 @@ class PaymentStatusService
         }
 
         return Status::PAYMENT_STATE_COMPLETELY_PAID;
+    }
+
+    /**
+     * @param int $shopwareOrderId
+     * @param int $paymentStateId
+     *
+     * @return void
+     */
+    private function setPaymentStatus($shopwareOrderId, $paymentStateId)
+    {
+        try {
+            $this->sOrder->setPaymentStatus(
+                $shopwareOrderId,
+                $paymentStateId,
+                true,
+                'Set automatically by PayPal integration'
+            );
+        } catch (\Zend_Mail_Transport_Exception $e) {
+            $this->logger->error(sprintf('%s CANNOT SEND STATUS MAIL FOR ORDER: %s', __METHOD__, $shopwareOrderId));
+        }
+        if ($paymentStateId === Status::PAYMENT_STATE_COMPLETELY_PAID || $paymentStateId === Status::PAYMENT_STATE_PARTIALLY_PAID) {
+            $this->updateClearedDate($shopwareOrderId);
+        }
+
+        $this->logger->debug(sprintf('%s UPDATE PAYMENT STATUS SUCCESSFUL', __METHOD__));
     }
 
     /**

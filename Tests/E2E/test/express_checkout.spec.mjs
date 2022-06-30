@@ -282,14 +282,7 @@ test.describe('Is Express Checkout button available', () => {
 
         await expect(paypalPage.locator('#headerText')).toHaveText(/PayPal/);
 
-        await page.goto('/backend');
-        await expect(page).toHaveTitle(/Backend/);
-
-        await page.fill('input[name="username"]', credentials.defaultBackendUserUsername);
-        await page.fill('input[name="password"]', credentials.defaultBackendUserPassword);
-        await page.click('#button-1019-btnEl');
-
-        await page.waitForLoadState('load');
+        backendLoginHelper.login(page);
 
         await page.hover('.settings--main');
         await page.click('.settings--theme-manager');

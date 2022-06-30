@@ -5,25 +5,25 @@
     <label lang="de">PayPal</label>
     <label lang="en">PayPal</label>
 
-    <version>4.1.4</version>
+    <version>4.2.0</version>
     <copyright>(c) by shopware AG</copyright>
     <license>MIT</license>
     <link>http://store.shopware.com</link>
     <author>shopware AG</author>
     <compatibility minVersion="5.2.27" maxVersion="5.99.99"/>
 
-    <changelog version="REPLACE_GLOBAL_WITH_NEXT_VERSION">
+    <changelog version="4.2.0">
         <changes lang="de">
             PT-12634 - Verbesserte Fehlerbenachrichtigung, falls die PayPal-Händler-ID ungültig ist;
             PT-12706 - "PayPal, später bezahlen" ist nun eine eigene Zahlungsart;
-            PT-12776 - Sendet Status-Mail nach fehlgeschlagener Zahlung;
+            PT-12776 - Sendet Status-Mails nach Änderung des Bestell- oder Zahlungsstatus;
             PT-12780 - Behebt Fehler bei der Steuerberechnung von CustomProducts während eines Rechnungskaufes.
             PT-12785 - Verbesserte Fehlerbenachrichtigung, falls das Einziehen / Autorisieren nicht fehlschlägt;
         </changes>
         <changes lang="en">
             PT-12634 - Improved error notification if PayPal merchant ID is invalid;
             PT-12706 - "PayPal, pay later" is now a separate payment method;
-            PT-12776 - Sends order status mail after failed payment;
+            PT-12776 - Sends status mails after change of order or payment status;
             PT-12780 - Fixes error while tax calculation during an invoice purchase with CustomProducts.
             PT-12785 - Improved error notification if capture / authorisation fails;
         </changes>
