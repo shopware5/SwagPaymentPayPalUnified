@@ -4,6 +4,11 @@ import defaultPaypalSettingsSql from '../helper/paypalSqlHelper.mjs';
 import MysqlFactory from '../helper/mysqlFactory.mjs';
 import loginHelper from '../helper/loginHelper.mjs';
 import clearCacheHelper from '../helper/clearCacheHelper.mjs';
+import cookieHelper from '../helper/cookieHelper.mjs';
+
+import { locators } from '../helper/scenario/pay_with_card/locatorHelper.mjs';
+import scenarioHelper from '../helper/scenario/pay_with_card/scenarioHelper.mjs';
+
 const connection = MysqlFactory.getInstance();
 
 test.describe('Pay with credit card', () => {
@@ -11,8 +16,9 @@ test.describe('Pay with credit card', () => {
         clearCacheHelper.clearCache();
     });
 
-    test.beforeEach(() => {
+    test.beforeEach(({ page }) => {
         connection.query(defaultPaypalSettingsSql);
+        locators.init(page);
     });
 
     test('Buy a product with credit card', async ({ page }) => {
@@ -45,47 +51,64 @@ test.describe('Pay with credit card', () => {
         await expect(page.locator('.teaser--title')).toHaveText(/Vielen Dank für Ihre Bestellung bei Shopware Demo/);
     });
 
-    test('Buy a product with credit card wich is secured', async ({ page }) => {
-        await loginHelper.login(page);
+    for (const testcase of ['complete', 'abort']) {
+        test(`Buy a product with a credit card wich is secured and ${testcase} the payment process`, async ({ page }) => {
+            await loginHelper.login(page);
 
-        // Buy Product
-        await page.goto('genusswelten/edelbraende/9/special-finish-lagerkorn-x.o.-32');
-        await page.click('.buybox--button');
+            // Buy Product
+            await page.goto('genusswelten/edelbraende/9/special-finish-lagerkorn-x.o.-32');
+            await page.click('.buybox--button');
 
-        // Go to checkout
-        await page.click('.button--checkout');
-        await expect(page).toHaveURL(/.*checkout\/confirm/);
+            // Go to checkout
+            await page.click('.button--checkout');
+            await expect(page).toHaveURL(/.*checkout\/confirm/);
 
-        // Change payment
-        await page.click('.btn--change-payment');
-        await page.click('text=Kredit- oder Debitkarte');
-        await page.click('text=Weiter >> nth=1');
+            if (testcase === 'abort') {
+                // Expect no capture request during this test, fail otherwise.
+                page.on('request', (request) => {
+                    expect(/.*PaypalUnifiedV2AdvancedCreditDebitCard\/capture.*/.test(request.url())).not.toBeTruthy();
+                });
+            }
 
-        await expect(page.locator('.payment--description')).toHaveText(/Kredit- oder Debitkarte/);
-        await page.click('input[name="sAGB"]');
+            // Change payment
+            await page.click('.btn--change-payment');
+            await page.click('text=Kredit- oder Debitkarte');
+            await page.click('text=Weiter >> nth=1');
 
-        await page.frameLocator('#braintree-hosted-field-number').locator('#credit-card-number').type('5192507571573295');
-        await page.frameLocator('#braintree-hosted-field-expirationDate').locator('#expiration').type('0530');
-        await page.frameLocator('#braintree-hosted-field-cvv').locator('#cvv').type('123');
+            await expect(page.locator('.payment--description')).toHaveText(/Kredit- oder Debitkarte/);
+            await page.click('input[name="sAGB"]');
 
-        await page.waitForLoadState('load');
+            await page.frameLocator('#braintree-hosted-field-number').locator('#credit-card-number').type('5192507571573295');
+            await page.frameLocator('#braintree-hosted-field-expirationDate').locator('#expiration').type('0530');
+            await page.frameLocator('#braintree-hosted-field-cvv').locator('#cvv').type('123');
 
-        await page.click('button:has-text("Zahlungspflichtig bestellen")');
+            await page.waitForLoadState('load');
 
-        await expect(page.locator('.outlet')).toBeVisible();
+            await page.click('button:has-text("Zahlungspflichtig bestellen")');
 
-        const loadingIndicator = await page.locator('.js--loading-indicator');
-        const zIndexLoadingIndicator = await loadingIndicator.evaluate((element) =>
-            window.getComputedStyle(element).getPropertyValue('z-index')
-        );
+            await cookieHelper.acceptCookies(locators.contingencyHandlerIFrame);
 
-        await expect(zIndexLoadingIndicator.match('990')).toBeTruthy();
+            if (testcase === 'complete') {
+                const infoText = await locators.cardinalStepUpIFrame.locator('p.challengeinfotext').textContent();
+                const threeDSecureToken = scenarioHelper.readThreeDSecureToken(infoText);
 
-        const overlay = await page.locator('.js--overlay.is--open');
-        const zIndexOverlay = await overlay.evaluate((element) =>
-            window.getComputedStyle(element).getPropertyValue('z-index')
-        );
+                await locators.submitTokenForm.scrollIntoViewIfNeeded();
 
-        await expect(zIndexOverlay.match('990')).toBeTruthy();
-    });
+                await locators.submitTokenInput.fill(threeDSecureToken);
+                await locators.submitButton.click();
+
+                await expect(page.locator('.teaser--title')).toHaveText(/Vielen Dank für Ihre Bestellung bei Shopware Demo/);
+            } else if (testcase === 'abort') {
+                await locators.cancelForm.scrollIntoViewIfNeeded();
+                await locators.cancelButton.click();
+
+                await locators.contingencyHandlerWrapper.waitFor({ state: 'detached' });
+                await page.waitForResponse(/.*www.sandbox.paypal.com.*\/session\/patchThreeds.*/);
+
+                await expect(page.locator('.step--confirm.is--active')).toBeVisible();
+            } else {
+                test.fail('Unknown testcase.');
+            }
+        });
+    }
 });

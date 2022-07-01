@@ -65,3 +65,27 @@ PAYPAL_SEPA_BIRTHDAY="${PAYPAL_SEPA_BIRTHDAY}"
 
 2. Execute `.ci/compose.sh e2e shopware-current run playwright` or
 `.ci/compose.sh e2e shopware-legacy run playwright`
+
+#### Debug container
+
+There's also a debug configuration which allows you to observe and control the
+test runner directly.
+Just run the `playwright-debug` container for this:
+```bash
+.ci/compose.sh e2e shopware-current run playwright-debug
+```
+
+You may control the exact command as well, for example to run only a specific
+test scenario:
+```bash
+.ci/compose.sh e2e shopware-current run playwright-debug test --debug -g 'Check active state'
+```
+
+#### X-Server access
+
+In case you don't see a browser window or the playwright debug console, you
+might need to add your account to the list of users allowed to access the
+X-Server via the network:
+```bash
+xhost +si:localuser:$(whoami)
+```

@@ -21,11 +21,17 @@ test.describe('Check the active state of PUI and ACDC', () => {
         await page.hover('.sprite--paypal-unified');
         await page.click('.settings--basic-settings');
 
+        const generalSettingsTabBody = page.locator('div[id^="paypal-unified-settings-tabs-general"][id$="body"]');
+        const apiFieldset = generalSettingsTabBody.locator('fieldset[id^="fieldset"]', { hasText: 'API-Einstellungen' });
+
+        const activateCheckbox = generalSettingsTabBody.locator('tr[id^="checkboxfield"]', { hasText: 'Für diesen Shop aktivieren' }).locator('input[id$="inputEl"]');
+        const sandboxCheckbox = apiFieldset.locator('tr[id^="checkboxfield"]', { hasText: 'Sandbox aktivieren' }).locator('input[id$="inputEl"]');
+
         // Checkbox -> Activate for this shop: Activate this option to enable PayPal for this shop.
-        await page.click('//html/body/div[6]/div[3]/div[3]/div/div[2]/div/div/fieldset[1]/div/table/tbody/tr/td[2]/input');
+        await activateCheckbox.click();
 
         // Checkbox -> Activate sandbox: Activate this option if you want to test the integration.
-        await page.click('//html/body/div[6]/div[3]/div[3]/div/div[2]/div/div/fieldset[2]/div/table/tbody/tr/td[2]/input');
+        await sandboxCheckbox.click();
 
         await page.locator('input[name="sandboxClientId"]').scrollIntoViewIfNeeded();
         await page.fill('input[name="sandboxClientId"]', credentials.paypalSandboxClientId);
@@ -34,27 +40,35 @@ test.describe('Check the active state of PUI and ACDC', () => {
 
         await backendHandleSaveHelper.save(page);
 
+        const payUponInvoiceSettingsTab = page.locator('div.x-tab[id^="tab-"]', { hasText: 'PayPal Pay Upon Invoice Integration' });
+        const payUponInvoiceSettingsTabBody = page.locator('div[id^="paypal-unified-settings-tabs-pay-upon-invoice"][id$="body"]');
+        const activationFieldset = payUponInvoiceSettingsTabBody.locator('fieldset[id^="fieldset"]', { hasText: 'Für diesen Shop aktivieren' });
+
+        const activatePayUponInvoiceCheckboxTable = activationFieldset.locator('table[id^="checkboxfield"]', { hasText: 'Für diesen Shop aktivieren' });
+        const activatePayUponInvoiceCheckbox = activatePayUponInvoiceCheckboxTable.locator('tr[id^="checkboxfield"]').locator('input[id$="inputEl"]');
+
+        await payUponInvoiceSettingsTab.click();
+
         // Check Tab -> PayPal Pay Upon Invoice Integration -> is active
-        await expect(page.locator('//html/body/div[6]/div[3]/div[3]/div/div[1]/div[1]/div[2]/div/div[5]')).toHaveClass(/x-tab-top-active/);
+        await expect(payUponInvoiceSettingsTab).toHaveClass(/x-tab-top-active/);
 
         // Checkbox -> Activate this option to use PayPal Invoice Purchase for this shop -> should be checked
-        const activeCheckboxTable = page.locator('//html/body/div[6]/div[3]/div[3]/div/div[2]/div[2]/div[2]/fieldset[1]/div/table');
-        await expect(activeCheckboxTable).toHaveClass(/x-form-cb-checked/);
+        await expect(activatePayUponInvoiceCheckboxTable).toHaveClass(/x-form-cb-checked/);
 
         await page.locator('textarea[name="customerServiceInstructions"]').type('This field is required if PayUponInvoice is onboarded');
 
         await backendHandleSaveHelper.save(page);
 
         // Deactivate Checkbox -> Activate this option to use PayPal Invoice Purchase for this shop
-        await page.click('//html/body/div[6]/div[3]/div[3]/div/div[2]/div[2]/div[2]/fieldset[1]/div/table/tbody/tr/td[2]/input');
+        await activatePayUponInvoiceCheckbox.click();
 
         // Test save twice
         await backendHandleSaveHelper.save(page);
 
-        await expect(activeCheckboxTable).not.toHaveClass(/x-form-cb-checked/);
+        await expect(activatePayUponInvoiceCheckboxTable).not.toHaveClass(/x-form-cb-checked/);
 
         await backendHandleSaveHelper.save(page);
 
-        await expect(activeCheckboxTable).not.toHaveClass(/x-form-cb-checked/);
+        await expect(activatePayUponInvoiceCheckboxTable).not.toHaveClass(/x-form-cb-checked/);
     });
 });

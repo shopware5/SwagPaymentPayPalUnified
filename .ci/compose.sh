@@ -2,9 +2,9 @@
 set -eu
 
 # TODO: Move this into the Makefile
-# TODO: Add possibility for local graphical execution
 
 DIR="${0%/*}"
+DISPLAY="${DISPLAY:-}"
 
 CI_PROJECT_DIR="${CI_PROJECT_DIR:-}"
 CI_JOB_STAGE="${CI_JOB_STAGE:-}"
