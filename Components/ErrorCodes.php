@@ -32,6 +32,8 @@ final class ErrorCodes
     const CAPTURE_FAILED = 15;
     const CAPTURE_DECLINED = 16;
 
+    const THREE_D_SECURE_CHECK_FAILED = 17;
+
     private function __construct()
     {
     }

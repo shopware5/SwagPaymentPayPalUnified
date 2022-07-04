@@ -56,6 +56,11 @@ export const locators = (function () {
         cancelButton: null,
 
         /**
+         * @var {Locator}
+         */
+        paypalUnifiedErrorMessageContainer: null,
+
+        /**
          * @param {Page} page
          */
         init: function (page) {
@@ -70,6 +75,7 @@ export const locators = (function () {
             this.submitButton = this.submitTokenForm.locator('input[type="submit"]');
             this.resendButton = this.resendTokenForm.locator('input[type="submit"]');
             this.cancelButton = this.cancelForm.locator('input[type="submit"]');
+            this.paypalUnifiedErrorMessageContainer = page.locator('.paypal-unified--error');
         },
     };
 })();

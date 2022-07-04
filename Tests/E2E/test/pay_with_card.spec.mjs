@@ -63,13 +63,6 @@ test.describe('Pay with credit card', () => {
             await page.click('.button--checkout');
             await expect(page).toHaveURL(/.*checkout\/confirm/);
 
-            if (testcase === 'abort') {
-                // Expect no capture request during this test, fail otherwise.
-                page.on('request', (request) => {
-                    expect(/.*PaypalUnifiedV2AdvancedCreditDebitCard\/capture.*/.test(request.url())).not.toBeTruthy();
-                });
-            }
-
             // Change payment
             await page.click('.btn--change-payment');
             await page.click('text=Kredit- oder Debitkarte');
@@ -106,6 +99,11 @@ test.describe('Pay with credit card', () => {
                 await page.waitForResponse(/.*www.sandbox.paypal.com.*\/session\/patchThreeds.*/);
 
                 await expect(page.locator('.step--confirm.is--active')).toBeVisible();
+
+                await locators.paypalUnifiedErrorMessageContainer.scrollIntoViewIfNeeded();
+
+                await expect(locators.paypalUnifiedErrorMessageContainer).toBeVisible();
+                await expect(locators.paypalUnifiedErrorMessageContainer).toHaveText('Die Zahlung konnte nicht verarbeitet werden. Bitte wählen Sie eine andere Zahlungsart.');
             } else {
                 test.fail('Unknown testcase.');
             }

@@ -37,8 +37,8 @@
             {* PAYMENT_SOURCE_DECLINED_BY_PROCESSOR *}
             {* @see https://developer.paypal.com/limited-release/orders-apms/pay-upon-invoice/integrate-pui-partners/#link-testyourintegrationbysimulatingsuccessfulandfailurescenarios *}
             {include file='frontend/_includes/messages.tpl' type='error' content="{s name="error/paymentSourceDeclinedByProcessor"}It is not possible to use the selected payment method. This decision is based on automated data processing.{/s} {s name="error/puiAdditional"}You can find further information in the <a href='https://www.ratepay.com/legal-payment-dataprivacy/' class='is--underline'>Ratepay Data Privacy Statement</a> or you can contact Ratepay using this <a href='https://www.ratepay.com/en/contact/' class='is--underline'>contact form</a>.{/s}"}
-        {elseif $paypalUnifiedErrorCode == 14 || $paypalUnifiedErrorCode == 15 || $paypalUnifiedErrorCode == 16}
-            {* Authorization is denied *}
+        {elseif $paypalUnifiedErrorCode == 14 || $paypalUnifiedErrorCode == 15 || $paypalUnifiedErrorCode == 16 || $paypalUnifiedErrorCode == 17}
+            {* Authorization is denied or 3D-Secure check failed *}
             {include file='frontend/_includes/messages.tpl' type='error' content="{s name="error/authorization/capture/denied"}The payment could not be processed. Please select another payment method.{/s}"}
         {else}
             {* Unknown error *}

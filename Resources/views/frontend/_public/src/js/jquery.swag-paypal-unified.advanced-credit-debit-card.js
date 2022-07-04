@@ -352,21 +352,12 @@
          * @param response { Response }
          */
         captureOrder: function(response) {
-            if (response.liabilityShift !== 'POSSIBLE') {
-                this.updateAutoResizer();
-
-                this.resetPreloaderPlugin(true);
-
-                $.loadingIndicator.close();
-
-                return;
-            }
-
             $.ajax({
                 type: 'POST',
                 url: this.opts.captureUrl,
                 data: {
-                    paypalOrderId: response.orderId
+                    paypalOrderId: response.orderId,
+                    liabilityShift: response.liabilityShift
                 },
                 success: this.submitForm.bind(this, response.orderId),
                 error: this.onError.bind(this),
