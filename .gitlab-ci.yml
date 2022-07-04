@@ -247,6 +247,7 @@ shopware-current:
     artifacts:
         paths:
             - ${CI_PROJECT_DIR}/Tests/E2E/results/*
+            - ${CI_PROJECT_DIR}/build/*
         expire_in: 1 week
         when: always
 
