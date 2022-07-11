@@ -394,7 +394,6 @@ class OrderWithSendOrderNumberTest extends PaypalPaymentControllerTestCase
         $request = new Enlight_Controller_Request_RequestTestCase();
         $request->setParam('token', '3E630337S9748511R');
         $request->setParam('paypalOrderId', 'someId');
-        $request->setParam('liabilityShift', 'POSSIBLE');
 
         return $request;
     }

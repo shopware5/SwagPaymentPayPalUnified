@@ -356,8 +356,7 @@
                 type: 'POST',
                 url: this.opts.captureUrl,
                 data: {
-                    paypalOrderId: response.orderId,
-                    liabilityShift: response.liabilityShift
+                    paypalOrderId: response.orderId
                 },
                 success: this.submitForm.bind(this, response.orderId),
                 error: this.onError.bind(this),

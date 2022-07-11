@@ -10,17 +10,14 @@ namespace SwagPaymentPayPalUnified\Tests\Functional\Controller\Frontend;
 
 use Enlight_Components_Session_Namespace;
 use Enlight_Controller_Request_RequestTestCase;
-use PHPUnit\Framework\MockObject\MockObject;
 use Shopware_Controllers_Frontend_PaypalUnifiedV2;
 use Shopware_Controllers_Frontend_PaypalUnifiedV2ExpressCheckout;
 use Shopware_Controllers_Widgets_PaypalUnifiedV2AdvancedCreditDebitCard;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
-use SwagPaymentPayPalUnified\Components\ErrorCodes;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\PayPalOrderParameter;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\PayPalOrderParameterFacade;
 use SwagPaymentPayPalUnified\Components\Services\OrderBuilder\OrderFactory;
 use SwagPaymentPayPalUnified\Components\Services\OrderPropertyHelper;
-use SwagPaymentPayPalUnified\Components\Services\Validation\RedirectDataBuilderFactory;
 use SwagPaymentPayPalUnified\Components\Services\Validation\SimpleBasketValidator;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit;
@@ -34,12 +31,6 @@ use SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\OrderResource;
 use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\ShopRegistrationTrait;
 use SwagPaymentPayPalUnified\Tests\Unit\PaypalPaymentControllerTestCase;
-
-require_once __DIR__ . '/../../../../Controllers/Frontend/PaypalUnifiedApm.php';
-require_once __DIR__ . '/../../../../Controllers/Frontend/PaypalUnifiedV2.php';
-require_once __DIR__ . '/../../../../Controllers/Frontend/PaypalUnifiedV2ExpressCheckout.php';
-require_once __DIR__ . '/../../../../Controllers/Frontend/PaypalUnifiedV2PayUponInvoice.php';
-require_once __DIR__ . '/../../../../Controllers/Widgets/PaypalUnifiedV2AdvancedCreditDebitCard.php';
 
 class CheckCaptureAuthorizationStatusCallTest extends PaypalPaymentControllerTestCase
 {
@@ -113,49 +104,25 @@ class CheckCaptureAuthorizationStatusCallTest extends PaypalPaymentControllerTes
     }
 
     /**
-     * @dataProvider liabilityShiftProvider
-     *
-     * @param ?string $liabilityShift
-     *
      * @return void
      */
-    public function testPaypalUnifiedV2AdvancedCreditDebitCardCaptureAction($liabilityShift)
+    public function testPaypalUnifiedV2AdvancedCreditDebitCardCaptureAction()
     {
         $this->prepareSession();
 
         $request = new Enlight_Controller_Request_RequestTestCase();
         $request->setParam('paypalOrderId', '123456');
-        $request->setParam('liabilityShift', $liabilityShift);
 
         $payPalOrder = $this->createPayPalOrder(PaymentIntentV2::CAPTURE, PaymentStatusV2::ORDER_CAPTURE_COMPLETED);
 
+        $orderResource = $this->createOrderResource($payPalOrder);
         $simpleBasketValidator = $this->createSimpleBasketValidator();
+        $orderPropertyHelper = $this->createOrderPropertyHelperTestCase($payPalOrder);
 
         $dependencyProvider = $this->createMock(DependencyProvider::class);
         $dependencyProvider->method('getSession')->willReturn(
             $this->createMock(Enlight_Components_Session_Namespace::class)
         );
-
-        $redirectDataBuilder = $this->getRedirectDataBuilder();
-
-        if ($liabilityShift === 'POSSIBLE') {
-            $orderResource = $this->createOrderResource($payPalOrder);
-            $orderPropertyHelper = $this->createOrderPropertyHelperTestCase($payPalOrder);
-        } else {
-            $orderResource = $this->createMock(OrderResource::class);
-            $orderPropertyHelper = $this->createMock(OrderPropertyHelper::class);
-
-            $orderResource->expects(static::never())->method('get');
-            $orderResource->expects(static::never())->method('capture');
-
-            $orderPropertyHelper->expects(static::never())->method('getFirstCapture');
-
-            $redirectDataBuilder->expects(static::once())->method('setCode')->with(ErrorCodes::THREE_D_SECURE_CHECK_FAILED);
-        }
-
-        $redirectDataBuilderFactory = $this->createConfiguredMock(RedirectDataBuilderFactory::class, [
-            'createRedirectDataBuilder' => $redirectDataBuilder,
-        ]);
 
         $controller = $this->getController(
             Shopware_Controllers_Widgets_PaypalUnifiedV2AdvancedCreditDebitCard::class,
@@ -164,24 +131,11 @@ class CheckCaptureAuthorizationStatusCallTest extends PaypalPaymentControllerTes
                 self::SERVICE_SIMPLE_BASKET_VALIDATOR => $simpleBasketValidator,
                 self::SERVICE_ORDER_PROPERTY_HELPER => $orderPropertyHelper,
                 self::SERVICE_DEPENDENCY_PROVIDER => $dependencyProvider,
-                self::SERVICE_REDIRECT_DATA_BUILDER_FACTORY => $redirectDataBuilderFactory,
             ],
             $request
         );
 
         $controller->captureAction();
-    }
-
-    /**
-     * @return array<string, array<?string>>
-     */
-    public function liabilityShiftProvider()
-    {
-        return [
-            'Liability shift possible' => ['POSSIBLE'],
-            'Liability shift empty' => [''],
-            'Liability shift null' => [null],
-        ];
     }
 
     /**
@@ -231,7 +185,7 @@ class CheckCaptureAuthorizationStatusCallTest extends PaypalPaymentControllerTes
     }
 
     /**
-     * @return OrderResource|MockObject
+     * @return OrderResource
      */
     private function createOrderResource(Order $payPalOrder)
     {
@@ -243,7 +197,7 @@ class CheckCaptureAuthorizationStatusCallTest extends PaypalPaymentControllerTes
     }
 
     /**
-     * @return SimpleBasketValidator|MockObject
+     * @return SimpleBasketValidator
      */
     private function createSimpleBasketValidator()
     {
@@ -254,7 +208,7 @@ class CheckCaptureAuthorizationStatusCallTest extends PaypalPaymentControllerTes
     }
 
     /**
-     * @return OrderPropertyHelper|MockObject
+     * @return OrderPropertyHelper
      */
     private function createOrderPropertyHelperTestCase(Order $payPalOrder)
     {
