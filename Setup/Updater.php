@@ -148,7 +148,8 @@ class Updater
         if (\version_compare($oldVersion, '4.2.0', '<=')) {
             (new UpdateTo420(
                 $this->paymentModelFactory,
-                $this->modelManager
+                $this->modelManager,
+                $this->paymentMethodProvider
             ))->update();
         }
     }
