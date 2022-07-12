@@ -5,14 +5,14 @@
     <label lang="de">PayPal</label>
     <label lang="en">PayPal</label>
 
-    <version>4.2.0</version>
+    <version>4.2.1</version>
     <copyright>(c) by shopware AG</copyright>
     <license>MIT</license>
     <link>http://store.shopware.com</link>
     <author>shopware AG</author>
     <compatibility minVersion="5.2.27" maxVersion="5.99.99"/>
 
-    <changelog version="REPLACE_GLOBALLY_WITH_NEXT_VERSION(4.2.1)">
+    <changelog version="4.2.1">
         <changes lang="de">PT-12823 - Update von Plugin-Versionen kleiner als 4.0.0 korrigiert;</changes>
         <changes lang="en">PT-12823 - Fix update from plugin versions lower than 4.0.0;</changes>
     </changelog>
