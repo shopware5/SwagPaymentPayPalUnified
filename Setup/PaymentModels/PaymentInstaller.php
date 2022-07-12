@@ -46,7 +46,7 @@ class PaymentInstaller
             $payment = $this->paymentMethodProvider->getPaymentMethodModel($paymentMethodName);
 
             if ($payment instanceof Payment) {
-                // If the payment does already exist, we don't need to add it again.
+                // If the payment method already exists, don't add it again.
                 continue;
             }
 

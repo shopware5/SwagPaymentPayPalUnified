@@ -10,6 +10,7 @@ namespace SwagPaymentPayPalUnified\Setup\Versions;
 
 use Shopware\Components\Model\ModelManager;
 use Shopware\Models\Order\Status;
+use Shopware\Models\Payment\Payment;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentModelFactory;
 
@@ -25,10 +26,19 @@ class UpdateTo420
      */
     private $modelManager;
 
-    public function __construct(PaymentModelFactory $paymentModelFactory, ModelManager $modelManager)
-    {
+    /**
+     * @var PaymentMethodProviderInterface
+     */
+    private $paymentMethodProvider;
+
+    public function __construct(
+        PaymentModelFactory $paymentModelFactory,
+        ModelManager $modelManager,
+        PaymentMethodProviderInterface $paymentMethodProvider
+    ) {
         $this->paymentModelFactory = $paymentModelFactory;
         $this->modelManager = $modelManager;
+        $this->paymentMethodProvider = $paymentMethodProvider;
     }
 
     /**
@@ -45,8 +55,13 @@ class UpdateTo420
      */
     private function installPayLater()
     {
-        $payLater = $this->paymentModelFactory->getPaymentModel(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_LATER_METHOD_NAME)->create();
+        $payment = $this->paymentMethodProvider->getPaymentMethodModel(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_LATER_METHOD_NAME);
+        if ($payment instanceof Payment) {
+            // If the payment method already exists, don't add it again.
+            return;
+        }
 
+        $payLater = $this->paymentModelFactory->getPaymentModel(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_LATER_METHOD_NAME)->create();
         $this->modelManager->persist($payLater);
         $this->modelManager->flush($payLater);
     }
