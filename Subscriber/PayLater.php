@@ -11,7 +11,7 @@ namespace SwagPaymentPayPalUnified\Subscriber;
 use Enlight\Event\SubscriberInterface;
 use Enlight_Controller_ActionEventArgs;
 use Enlight_Event_EventArgs;
-use Shopware\Bundle\StoreFrontBundle\Service\Core\ContextService;
+use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
 use Shopware_Controllers_Frontend_Checkout;
 use SwagPaymentPayPalUnified\Components\ButtonLocaleService;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
@@ -26,7 +26,7 @@ class PayLater implements SubscriberInterface
     private $settingsService;
 
     /**
-     * @var ContextService
+     * @var ContextServiceInterface
      */
     private $contextService;
 
@@ -35,7 +35,7 @@ class PayLater implements SubscriberInterface
      */
     private $buttonLocaleService;
 
-    public function __construct(SettingsServiceInterface $settingsService, ContextService $contextService, ButtonLocaleService $buttonLocaleService)
+    public function __construct(SettingsServiceInterface $settingsService, ContextServiceInterface $contextService, ButtonLocaleService $buttonLocaleService)
     {
         $this->settingsService = $settingsService;
         $this->contextService = $contextService;
