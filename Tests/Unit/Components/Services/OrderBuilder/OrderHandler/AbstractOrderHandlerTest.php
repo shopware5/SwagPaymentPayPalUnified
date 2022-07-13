@@ -102,11 +102,10 @@ class AbstractOrderHandlerTest extends TestCase
      * @dataProvider impreciseDataProvider
      *
      * @param Item[] $items
-     * @param Amount $amount
      *
      * @return void
      */
-    public function testItPassesPayPalCalculation($items, $amount)
+    public function testItPassesPayPalCalculation(array $items, Amount $amount)
     {
         $this->givenTheCart(Fixture::CART);
         $this->givenTheCustomer(Fixture::CUSTOMER);

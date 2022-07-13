@@ -6,11 +6,10 @@
  * file that was distributed with this source code.
  */
 
-namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services\OrderBuilder\OrderHandler;
+namespace SwagPaymentPayPalUnified\Tests\Unit\Components\Services\OrderBuilder\OrderHandler;
 
 use Generator;
 use PHPUnit\Framework\TestCase;
-use ReflectionClass;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
 use Shopware\Bundle\StoreFrontBundle\Service\Core\ContextService;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\PayPalOrderParameter;
@@ -21,9 +20,12 @@ use SwagPaymentPayPalUnified\Components\Services\OrderBuilder\OrderHandler\ApmOr
 use SwagPaymentPayPalUnified\Components\Services\OrderBuilder\PaymentSource\PaymentSourceFactory;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit;
+use SwagPaymentPayPalUnified\Tests\Functional\ReflectionHelperTrait;
 
 class ApmOrderHandlerTest extends TestCase
 {
+    use ReflectionHelperTrait;
+
     /**
      * @dataProvider createPurchaseUnitsTestDataProvider
      *
@@ -34,9 +36,7 @@ class ApmOrderHandlerTest extends TestCase
     public function testCreatePurchaseUnits(PayPalOrderParameter $orderParameter, $expectedAmount)
     {
         $apmOrderHandler = $this->createApmOrderHandler(null, null, new PriceFormatter(), null, new CustomerHelper());
-
-        $reflectionMethod = (new ReflectionClass(ApmOrderHandler::class))->getMethod('createPurchaseUnits');
-        $reflectionMethod->setAccessible(true);
+        $reflectionMethod = $this->getReflectionMethod(ApmOrderHandler::class, 'createPurchaseUnits');
 
         $result = $reflectionMethod->invoke($apmOrderHandler, $orderParameter);
         $purchaseUnitResult = $result[0];
@@ -55,7 +55,7 @@ class ApmOrderHandlerTest extends TestCase
             $this->createPayPalOrderParameter(
                 ['additional' => ['charge_vat' => true, 'show_net' => true]],
                 ['AmountNumeric' => '99.99', 'sCurrencyName' => 'EUR'],
-                PaymentType::PAYPAL_CLASSIC,
+                PaymentType::APM_SOFORT,
                 'AnyBasketUniqueId',
                 'AnyPaymentToke'
             ),
@@ -66,7 +66,7 @@ class ApmOrderHandlerTest extends TestCase
             $this->createPayPalOrderParameter(
                 ['additional' => ['charge_vat' => true, 'show_net' => false]],
                 ['sAmountWithTax' => '199.99', 'sCurrencyName' => 'EUR'],
-                PaymentType::PAYPAL_CLASSIC,
+                PaymentType::APM_SOFORT,
                 'AnyBasketUniqueId',
                 'AnyPaymentToke'
             ),
@@ -77,7 +77,7 @@ class ApmOrderHandlerTest extends TestCase
             $this->createPayPalOrderParameter(
                 ['additional' => ['charge_vat' => false, 'show_net' => false]],
                 ['AmountNetNumeric' => '299.99', 'sCurrencyName' => 'EUR'],
-                PaymentType::PAYPAL_CLASSIC,
+                PaymentType::APM_SOFORT,
                 'AnyBasketUniqueId',
                 'AnyPaymentToke'
             ),
