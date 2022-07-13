@@ -167,4 +167,18 @@ class Breakdown extends PayPalApiStruct
     {
         $this->discount = $discount;
     }
+
+    /**
+     * @return float
+     */
+    public function getSum()
+    {
+        return ($this->getItemTotal() ? (float) $this->getItemTotal()->getValue() : 0.0)
+            + ($this->getTaxTotal() ? (float) $this->getTaxTotal()->getValue() : 0.0)
+            + ($this->getShipping() ? (float) $this->getShipping()->getValue() : 0.0)
+            + ($this->getHandling() ? (float) $this->getHandling()->getValue() : 0.0)
+            + ($this->getInsurance() ? (float) $this->getInsurance()->getValue() : 0.0)
+            - ($this->getShippingDiscount() ? (float) $this->getShippingDiscount()->getValue() : 0.0)
+            - ($this->getDiscount() ? (float) $this->getDiscount()->getValue() : 0.0);
+    }
 }

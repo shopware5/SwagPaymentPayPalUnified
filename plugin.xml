@@ -14,9 +14,11 @@
 
     <changelog version="REPLACE_GLOBALLY_WITH_NEXT_VERSION(4.2.3)">
         <changes lang="de">
+            PT-12800 - Verbessert die Berechnung des Warenkorbs und die Übertragung zu PayPal;
             PT-12826 - Die PayPal-Zahlungsarten werden nicht länger bei jedem Update des Plugins aktiviert;
         </changes>
         <changes lang="en">
+            PT-12800 - Improves the calculation of the cart and the transfer to PayPal;
             PT-12826 - PayPal payment methods are no longer activated with every update of the plugin;
         </changes>
     </changelog>

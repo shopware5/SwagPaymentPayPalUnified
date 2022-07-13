@@ -58,11 +58,7 @@ class AbstractOrderHandlerCreatePurchaseUnitTest extends TestCase
         static::assertInstanceOf(Amount::class, $amount);
         $breakdown = $amount->getBreakdown();
         if ($breakdown instanceof Breakdown) {
-            $breakdownSum = ($breakdown->getItemTotal() ? (float) $breakdown->getItemTotal()->getValue() : 0.0)
-                + ($breakdown->getShipping() ? (float) $breakdown->getShipping()->getValue() : 0.0)
-                + ($breakdown->getTaxTotal() ? (float) $breakdown->getTaxTotal()->getValue() : 0.0)
-                - ($breakdown->getDiscount() ? (float) $breakdown->getDiscount()->getValue() : 0.0);
-            static::assertSame($purchaseUnit->getAmount()->getValue(), (string) $breakdownSum);
+            static::assertSame($purchaseUnit->getAmount()->getValue(), (string) $breakdown->getSum());
         }
 
         if ($shouldHaveAItemList) {
@@ -153,6 +149,13 @@ class AbstractOrderHandlerCreatePurchaseUnitTest extends TestCase
             true,
             true,
         ];
+
+        yield 'With PaymentType::PAYPAL_CLASSIC_V2 and submit cart and b2b customer and SW53 cart' => [
+            $this->createPayPalOrderParameter(PaymentType::PAYPAL_CLASSIC_V2, 'b2b_customer', 'b2b_basket_sw53'),
+            true,
+            true,
+            true,
+        ];
     }
 
     /**
@@ -169,7 +172,8 @@ class AbstractOrderHandlerCreatePurchaseUnitTest extends TestCase
             $this->getContainer()->get('paypal_unified.common.return_url_helper'),
             $this->getContainer()->get('shopware_storefront.context_service'),
             $this->getContainer()->get('paypal_unified.phone_number_builder'),
-            $this->getContainer()->get('paypal_unified.common.price_formatter')
+            $this->getContainer()->get('paypal_unified.common.price_formatter'),
+            $this->getContainer()->get('paypal_unified.common.customer_helper')
         );
     }
 

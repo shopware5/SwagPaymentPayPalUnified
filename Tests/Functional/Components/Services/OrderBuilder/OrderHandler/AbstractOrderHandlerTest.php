@@ -10,15 +10,9 @@ namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services\OrderBui
 
 use Generator;
 use PHPUnit\Framework\TestCase;
-use ReflectionClass;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\PayPalOrderParameter;
-use SwagPaymentPayPalUnified\Components\Services\OrderBuilder\OrderHandler\AbstractOrderHandler;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\ApplicationContext;
-use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit;
-use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Item;
-use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Item\Tax;
-use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Item\UnitAmount;
 use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\SettingsHelperTrait;
@@ -73,82 +67,6 @@ class AbstractOrderHandlerTest extends TestCase
     }
 
     /**
-     * @return void
-     */
-    public function testAddVirtualHandlingAndDiscounts()
-    {
-        $purchaseUnit = new PurchaseUnit();
-
-        $amount = new PurchaseUnit\Amount();
-        $amount->setCurrencyCode(self::CURRENCY_CODE);
-
-        $breakdown = new PurchaseUnit\Amount\Breakdown();
-
-        $itemTotal = new PurchaseUnit\Amount\Breakdown\ItemTotal();
-        $itemTotal->setCurrencyCode(self::CURRENCY_CODE);
-        $itemTotal->setValue('100.00');
-
-        $taxTotal = new PurchaseUnit\Amount\Breakdown\TaxTotal();
-        $taxTotal->setCurrencyCode(self::CURRENCY_CODE);
-        $taxTotal->setValue('19.00');
-
-        $breakdown->setItemTotal($itemTotal);
-        $breakdown->setTaxTotal($taxTotal);
-
-        $amount->setBreakdown($breakdown);
-
-        $item = new Item();
-        $item->setName('Some Product');
-        $item->setTaxRate(self::TAX_RATE);
-        $item->setQuantity(1);
-        $item->setSku('SW12345');
-        $item->setCategory('PHYSICAL_GOODS');
-
-        $itemUnitAmount = new UnitAmount();
-        $itemUnitAmount->setValue('100.00');
-        $itemUnitAmount->setCurrencyCode(self::CURRENCY_CODE);
-
-        $item->setUnitAmount($itemUnitAmount);
-        $itemTax = new Tax();
-        $itemTax->setCurrencyCode(self::CURRENCY_CODE);
-        $itemTax->setValue('19.00');
-
-        $item->setTax($itemTax);
-
-        $taxItem = new Item();
-        $taxItem->setName('DISCOUNT');
-        $taxItem->setTaxRate(self::TAX_RATE);
-        $taxItem->setQuantity(1);
-        $taxItem->setSku('DISCOUNT');
-        $taxItem->setCategory('PHYSICAL_GOODS');
-
-        $taxItemUnitAmount = new UnitAmount();
-        $taxItemUnitAmount->setValue('-20.00');
-        $taxItemUnitAmount->setCurrencyCode(self::CURRENCY_CODE);
-        $taxItem->setUnitAmount($taxItemUnitAmount);
-
-        $purchaseUnit->setItems([$item, $taxItem]);
-        $purchaseUnit->setAmount($amount);
-
-        $abstractOrderHandler = $this->createOrderHandlerMock();
-
-        $reflectionMethod = (new ReflectionClass(AbstractOrderHandler::class))->getMethod('addVirtualHandlingAndDiscounts');
-        $reflectionMethod->setAccessible(true);
-
-        $reflectionMethod->invoke($abstractOrderHandler, $purchaseUnit);
-
-        $amountResult = $purchaseUnit->getAmount();
-        static::assertInstanceOf(PurchaseUnit\Amount::class, $amountResult);
-
-        $breakdownResult = $amountResult->getBreakdown();
-        static::assertInstanceOf(PurchaseUnit\Amount\Breakdown::class, $breakdownResult);
-
-        $discountResult = $breakdownResult->getDiscount();
-        static::assertInstanceOf(PurchaseUnit\Amount\Breakdown\Discount::class, $discountResult);
-        static::assertSame('20.00', $discountResult->getValue());
-    }
-
-    /**
      * @return PayPalOrderParameter
      */
     private function createPayPalOrderParameter()
@@ -174,7 +92,8 @@ class AbstractOrderHandlerTest extends TestCase
             $this->getContainer()->get('paypal_unified.common.return_url_helper'),
             $this->getContainer()->get('shopware_storefront.context_service'),
             $this->getContainer()->get('paypal_unified.phone_number_builder'),
-            $this->getContainer()->get('paypal_unified.common.price_formatter')
+            $this->getContainer()->get('paypal_unified.common.price_formatter'),
+            $this->getContainer()->get('paypal_unified.common.customer_helper')
         );
     }
 
