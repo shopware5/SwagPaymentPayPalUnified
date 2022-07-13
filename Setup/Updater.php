@@ -73,6 +73,8 @@ class Updater
 
     /**
      * @param string $oldVersion
+     *
+     * @return void
      */
     public function update($oldVersion)
     {
@@ -152,8 +154,15 @@ class Updater
                 $this->paymentMethodProvider
             ))->update();
         }
+
+        if (\version_compare($oldVersion, '4.2.1', '<=')) {
+            $this->updateTo422();
+        }
     }
 
+    /**
+     * @return void
+     */
     private function updateTo103()
     {
         $this->attributeCrudService->update(
@@ -171,6 +180,9 @@ class Updater
         $this->modelManager->generateAttributeModels(['s_core_paymentmeans_attributes']);
     }
 
+    /**
+     * @return void
+     */
     private function updateTo110()
     {
         if (!$this->columnService->checkIfColumnExist('swag_payment_paypal_unified_settings_general', 'landing_page_type')) {
@@ -183,6 +195,9 @@ class Updater
         }
     }
 
+    /**
+     * @return void
+     */
     private function updateTo111()
     {
         if ($this->columnService->checkIfColumnExist('swag_payment_paypal_unified_settings_general', 'logo_image')) {
@@ -193,6 +208,9 @@ class Updater
         }
     }
 
+    /**
+     * @return void
+     */
     private function updateTo112()
     {
         if (!$this->columnService->checkIfColumnExist('swag_payment_paypal_unified_settings_express', 'off_canvas_active')) {
@@ -205,6 +223,9 @@ class Updater
         }
     }
 
+    /**
+     * @return void
+     */
     private function updateTo210()
     {
         if (!$this->columnService->checkIfColumnExist('swag_payment_paypal_unified_settings_express', 'listing_active')) {
@@ -217,6 +238,9 @@ class Updater
         }
     }
 
+    /**
+     * @return void
+     */
     private function updateTo220()
     {
         if (!$this->columnService->checkIfColumnExist('swag_payment_paypal_unified_settings_express', 'button_locale')) {
@@ -229,6 +253,9 @@ class Updater
         }
     }
 
+    /**
+     * @return void
+     */
     private function updateTo240()
     {
         if (!$this->columnService->checkIfColumnExist('swag_payment_paypal_unified_settings_general', 'use_smart_payment_buttons')) {
@@ -244,6 +271,9 @@ SQL;
         }
     }
 
+    /**
+     * @return void
+     */
     private function updateTo250()
     {
         if (!$this->columnService->checkIfColumnExist('swag_payment_paypal_unified_settings_general', 'submit_cart')) {
@@ -258,6 +288,9 @@ SQL;
         }
     }
 
+    /**
+     * @return void
+     */
     private function updateTo261()
     {
         if (!$this->columnService->checkIfColumnExist('swag_payment_paypal_unified_settings_general', 'advertise_installments')) {
@@ -272,6 +305,9 @@ SQL;
         }
     }
 
+    /**
+     * @return void
+     */
     private function updateTo270()
     {
         if ($this->columnService->checkIfColumnExist('swag_payment_paypal_unified_settings_general', 'advertise_returns')) {
@@ -282,6 +318,9 @@ SQL;
         }
     }
 
+    /**
+     * @return void
+     */
     private function updateTo300()
     {
         $sql = <<<SQL
@@ -355,6 +394,9 @@ SQL;
         }
     }
 
+    /**
+     * @return void
+     */
     private function updateTo303()
     {
         $orderAttributeIds = $this->connection->createQueryBuilder()
@@ -378,6 +420,9 @@ SQL;
             ->execute();
     }
 
+    /**
+     * @return void
+     */
     private function updateTo304()
     {
         $orderAttributeIds = $this->connection->createQueryBuilder()
@@ -401,5 +446,22 @@ SQL;
             ->where('sOrderAttributes.id IN (:attributeIds)')
             ->setParameter('attributeIds', $orderAttributeIds, Connection::PARAM_INT_ARRAY)
             ->execute();
+    }
+
+    /**
+     * @return void
+     */
+    private function updateTo422()
+    {
+        $this->connection->update(
+            's_core_paymentmeans',
+            [
+                'action' => 'PaypalUnifiedV2',
+            ],
+            [
+                'action' => 'PaypalUnified',
+                'name' => PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME,
+            ]
+        );
     }
 }
