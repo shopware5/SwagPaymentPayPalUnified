@@ -79,7 +79,6 @@ class CartRestoreServiceTest extends TestCase
 
         $basketDataToRestore = $basketRestoreService->getCartData();
 
-        /** @var sBasket $sBasket */
         $sBasket = $this->getContainer()->get('modules')->getModule('sBasket');
 
         $reflectionBasketSessionProperty = (new ReflectionClass(sBasket::class))->getProperty('session');

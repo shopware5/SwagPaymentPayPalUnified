@@ -8,7 +8,7 @@ INSERT INTO `s_order_details` (`id`, `orderID`, `ordernumber`, `articleID`, `art
     (214,	66,	'20006',	148,	'SW10148',	149.99,	1,	'Reisetasche Gladstone Wildleder',	0,	0,	0,	'0000-00-00',	0,	0,	1,	19,	'',	'',	'',	'');
 
 INSERT INTO `s_order_billingaddress` (`id`, `userID`, `orderID`, `company`, `department`, `salutation`, `customernumber`, `firstname`, `lastname`, `street`, `zipcode`, `city`, `phone`, `countryID`, `stateID`, `ustid`, `additional_address_line1`, `additional_address_line2`, `title`) VALUES
-    (6,	1,	66,	'Muster GmbH',	'',	'mr',	'20001',	'Max',	'Mustermann',	'Musterstr. 55',	'55555',	'Musterhausen',	'05555 / 555555',	2,	3,	NULL,	NULL,	NULL,	NULL);
+    (67,	1,	66,	'Muster GmbH',	'',	'mr',	'20001',	'Max',	'Mustermann',	'Musterstr. 55',	'55555',	'Musterhausen',	'05555 / 555555',	2,	3,	NULL,	NULL,	NULL,	NULL);
 
 INSERT INTO `s_order_shippingaddress` (`id`, `userID`, `orderID`, `company`, `department`, `salutation`, `firstname`, `lastname`, `street`, `zipcode`, `city`, `phone`, `countryID`, `stateID`, `additional_address_line1`, `additional_address_line2`, `title`) VALUES
-    (6,	1,	66,	'shopware AG',	'',	'mr',	'Max',	'Mustermann',	'Mustermannstraße 92',	'48624',	'Schöppingen',	'',	2,	NULL,	'',	'',	'');
+    (67,	1,	66,	'shopware AG',	'',	'mr',	'Max',	'Mustermann',	'Mustermannstraße 92',	'48624',	'Schöppingen',	'',	2,	NULL,	'',	'',	'');

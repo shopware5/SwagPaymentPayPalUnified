@@ -44,13 +44,6 @@ class PaymentStatusServiceTest extends TestCase
      */
     public function testUpdatePaymentStatusV2($shopwareOrderId, $paymentStateId, $expectsException, $exceptionClassString = null)
     {
-        $isCalled = false;
-        $callback = function () use (&$isCalled) {
-            $isCalled = true;
-        };
-
-        $this->getContainer()->get('events')->addListener('Shopware_Controllers_Backend_OrderState_Send_BeforeSend', $callback);
-
         $sql = file_get_contents(__DIR__ . '/_fixtures/order_payment_state_test.sql');
         static::assertTrue(\is_string($sql));
 
@@ -70,11 +63,10 @@ class PaymentStatusServiceTest extends TestCase
             return;
         }
 
-        static::assertTrue($isCalled);
         $modelManager = $this->getContainer()->get('models');
         $modelManager->clear(Order::class);
-        /** @var Order $order */
         $order = $modelManager->getRepository(Order::class)->find($shopwareOrderId);
+        static::assertInstanceOf(Order::class, $order);
 
         static::assertSame($paymentStateId, $order->getPaymentStatus()->getId());
         static::assertNotNull($order->getClearedDate());

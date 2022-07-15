@@ -176,11 +176,14 @@ class PaymentStatusService
      */
     private function setPaymentStatus($shopwareOrderId, $paymentStateId)
     {
+        $status = $this->modelManager->getRepository(Status::class)->find($paymentStateId);
+        $sendMail = $status instanceof Status && $status->getSendMail();
+
         try {
             $this->sOrder->setPaymentStatus(
                 $shopwareOrderId,
                 $paymentStateId,
-                true,
+                $sendMail,
                 'Set automatically by PayPal integration'
             );
         } catch (\Zend_Mail_Transport_Exception $e) {

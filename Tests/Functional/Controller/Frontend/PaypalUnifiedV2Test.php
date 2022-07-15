@@ -219,11 +219,11 @@ class PaypalUnifiedV2Test extends TestCase
         $request = new Enlight_Controller_Request_RequestTestCase();
         $response = new Enlight_Controller_Response_ResponseTestCase();
 
-        /** @var Shopware_Controllers_Frontend_PaypalUnifiedV2 $controller */
         $controller = Enlight_Class::Instance(
             Shopware_Controllers_Frontend_PaypalUnifiedV2::class,
             [$request, $response]
         );
+        static::assertInstanceOf(Shopware_Controllers_Frontend_PaypalUnifiedV2::class, $controller);
 
         $controller->setRequest($request);
         $controller->setResponse($response);

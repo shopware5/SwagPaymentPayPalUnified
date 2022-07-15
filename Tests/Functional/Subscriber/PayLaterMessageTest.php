@@ -50,7 +50,6 @@ class PayLaterMessageTest extends TestCase
 
         $subscriber->showPayLaterMessage($eventArgs);
 
-        /** @var Enlight_View_Default $view */
         $view = $eventArgs->get('subject')->View();
         $result = $view->getAssign('payLaterMesssage');
 

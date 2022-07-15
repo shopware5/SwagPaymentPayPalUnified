@@ -5,16 +5,22 @@
     <label lang="de">PayPal</label>
     <label lang="en">PayPal</label>
 
-    <version>4.2.1</version>
+    <version>4.2.2</version>
     <copyright>(c) by shopware AG</copyright>
     <license>MIT</license>
     <link>http://store.shopware.com</link>
     <author>shopware AG</author>
     <compatibility minVersion="5.2.27" maxVersion="5.99.99"/>
 
-    <changelog version="REPLACE_GLOBALLY_WITH_NEW_VERSION(4.2.2)">
-        <changes lang="de">PT-12820 - Kompatibilität mit Drittanbieter-Plugins verbessert;</changes>
-        <changes lang="en">PT-12820 - Improve compatibility with third party plugins;</changes>
+    <changelog version="4.2.2">
+        <changes lang="de">
+            PT-12820 - Kompatibilität mit Drittanbieter-Plugins verbessert;
+            PT-12824 - Status-E-Mail-Versand ist nun abhängig von den Einstellungen in der Datenbank;
+        </changes>
+        <changes lang="en">
+            PT-12820 - Improve compatibility with third party plugins;
+            PT-12824 - Status email sending considers the settings in the database now;
+        </changes>
     </changelog>
 
     <changelog version="4.2.1">

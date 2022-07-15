@@ -68,8 +68,8 @@ class PaypalUnifiedReturnActionTest extends TestCase
         $response = new Enlight_Controller_Response_ResponseTestCase();
         $container = $this->createContainer();
 
-        /** @var Shopware_Controllers_Frontend_PaypalUnified $controller */
         $controller = Enlight_Class::Instance(Shopware_Controllers_Frontend_PaypalUnified::class, [$request, $response]);
+        static::assertInstanceOf(Shopware_Controllers_Frontend_PaypalUnified::class, $controller);
         $controller->setRequest($request);
         $controller->setResponse($response);
         $controller->setContainer($container);
