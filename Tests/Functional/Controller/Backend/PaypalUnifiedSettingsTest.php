@@ -189,8 +189,8 @@ class PaypalUnifiedSettingsTest extends TestCase
     private function createController(RequestMock $requestMock)
     {
         $response = new \Enlight_Controller_Response_ResponseTestCase();
-        /** @var Shopware_Controllers_Backend_PaypalUnifiedSettings $controller */
         $controller = \Enlight_Class::Instance(Shopware_Controllers_Backend_PaypalUnifiedSettings::class, [$requestMock, $response]);
+        static::assertInstanceOf(Shopware_Controllers_Backend_PaypalUnifiedSettings::class, $controller);
 
         $controller->setRequest($requestMock);
         $controller->setContainer($this->getContainer());
