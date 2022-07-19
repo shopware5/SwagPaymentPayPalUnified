@@ -12,6 +12,15 @@
     <author>shopware AG</author>
     <compatibility minVersion="5.2.27" maxVersion="5.99.99"/>
 
+    <changelog version="REPLACE_GLOBALLY_WITH_NEXT_VERSION(4.2.3)">
+        <changes lang="de">
+            PT-12826 - Die PayPal-Zahlungsarten werden nicht länger bei jedem Update des Plugins aktiviert;
+        </changes>
+        <changes lang="en">
+            PT-12826 - PayPal payment methods are no longer activated with every update of the plugin;
+        </changes>
+    </changelog>
+
     <changelog version="4.2.2">
         <changes lang="de">
             PT-12820 - Kompatibilität mit Drittanbieter-Plugins verbessert;
