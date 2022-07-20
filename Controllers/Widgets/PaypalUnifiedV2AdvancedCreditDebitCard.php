@@ -18,8 +18,6 @@ use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\Card\Authen
 
 class Shopware_Controllers_Widgets_PaypalUnifiedV2AdvancedCreditDebitCard extends AbstractPaypalPaymentController
 {
-    const LIABILITY_SHIFT_POSSIBLE = 'POSSIBLE';
-
     public function preDispatch()
     {
         parent::preDispatch();
@@ -99,11 +97,10 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2AdvancedCreditDebitCard extend
         $liabilityShift = $this->getLiabilityShift($payPalOrder);
 
         if ($liabilityShift !== AuthenticationResult::LIABILITY_SHIFT_POSSIBLE) {
-            $this->logger->debug(sprintf('%s LIABILITY SHIFT IMPOSSIBLE FOR ORDER: ID: %s', __METHOD__, $payPalOrderId));
-
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
                 ->setCode(ErrorCodes::THREE_D_SECURE_CHECK_FAILED)
-                ->setException(new UnexpectedValueException(sprintf('Expected liablitiy shift to be "%s", got: %s', self::LIABILITY_SHIFT_POSSIBLE, $liabilityShift)), '');
+                ->setException(new UnexpectedValueException(sprintf('Expected liablitiy shift to be "%s", got: %s', AuthenticationResult::LIABILITY_SHIFT_POSSIBLE, $liabilityShift)), '');
+
             $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
 
             return;

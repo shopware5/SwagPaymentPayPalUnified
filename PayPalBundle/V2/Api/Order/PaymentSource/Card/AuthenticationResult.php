@@ -14,6 +14,8 @@ use SwagPaymentPayPalUnified\PayPalBundle\V2\PayPalApiStruct;
 class AuthenticationResult extends PayPalApiStruct
 {
     const LIABILITY_SHIFT_POSSIBLE = 'POSSIBLE';
+    const LIABILITY_SHIFT_NO = 'NO';
+    const LIABILITY_SHIFT_UNKNOWN = 'UNKNOWN';
 
     /**
      * @var string|null
@@ -38,6 +40,8 @@ class AuthenticationResult extends PayPalApiStruct
     /**
      * @param string|null $liabilityShift
      * @phpstan-param AuthenticationResult::LIABILITY_SHIFT_*|null $liabilityShift
+     *
+     * @return void
      */
     public function setLiabilityShift($liabilityShift)
     {
@@ -54,6 +58,8 @@ class AuthenticationResult extends PayPalApiStruct
 
     /**
      * @param ThreeDSecure $threeDSecure
+     *
+     * @return void
      */
     public function setThreeDSecure($threeDSecure)
     {

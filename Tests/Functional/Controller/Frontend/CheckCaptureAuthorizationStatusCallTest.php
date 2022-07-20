@@ -20,6 +20,9 @@ use SwagPaymentPayPalUnified\Components\Services\OrderBuilder\OrderFactory;
 use SwagPaymentPayPalUnified\Components\Services\OrderPropertyHelper;
 use SwagPaymentPayPalUnified\Components\Services\Validation\SimpleBasketValidator;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\Card;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\Card\AuthenticationResult;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Amount;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Payments;
@@ -85,6 +88,7 @@ class CheckCaptureAuthorizationStatusCallTest extends PaypalPaymentControllerTes
 
         $request = new Enlight_Controller_Request_RequestTestCase();
         $request->setParam('token', '123456');
+        $request->setParam('inContextCheckout', true);
 
         $orderResource = $this->createOrderResource($payPalOrder);
         $simpleBasketValidator = $this->createSimpleBasketValidator();
@@ -177,9 +181,19 @@ class CheckCaptureAuthorizationStatusCallTest extends PaypalPaymentControllerTes
         $purchaseUnit->setPayments($payments);
         $purchaseUnit->setAmount($amount);
 
+        $authenticationResult = new AuthenticationResult();
+        $authenticationResult->setLiabilityShift(AuthenticationResult::LIABILITY_SHIFT_POSSIBLE);
+
+        $card = new Card();
+        $card->setAuthenticationResult($authenticationResult);
+
+        $paymentSource = new PaymentSource();
+        $paymentSource->setCard($card);
+
         $order = new Order();
         $order->setIntent($intent);
         $order->setPurchaseUnits([$purchaseUnit]);
+        $order->setPaymentSource($paymentSource);
 
         return $order;
     }

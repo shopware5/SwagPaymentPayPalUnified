@@ -17,8 +17,7 @@ class Card extends PayPalApiStruct
     const TYPE_UNKNOWN = 'UNKNOWN';
 
     /**
-     * @var string
-     * @phpstan-var numeric-string
+     * @var numeric-string
      */
     private $lastDigits;
 
@@ -28,8 +27,7 @@ class Card extends PayPalApiStruct
     private $brand;
 
     /**
-     * @var string
-     * @phpstan-var Card::TYPE_*
+     * @var Card::TYPE_*
      */
     private $type;
 
@@ -47,7 +45,9 @@ class Card extends PayPalApiStruct
     }
 
     /**
-     * @param string $lastDigits
+     * @param numeric-string $lastDigits
+     *
+     * @return void
      */
     public function setLastDigits($lastDigits)
     {
@@ -64,6 +64,8 @@ class Card extends PayPalApiStruct
 
     /**
      * @param string $brand
+     *
+     * @return void
      */
     public function setBrand($brand)
     {
@@ -71,7 +73,7 @@ class Card extends PayPalApiStruct
     }
 
     /**
-     * @return string
+     * @return Card::TYPE_*
      */
     public function getType()
     {
@@ -79,7 +81,9 @@ class Card extends PayPalApiStruct
     }
 
     /**
-     * @param string $type
+     * @param Card::TYPE_* $type
+     *
+     * @return void
      */
     public function setType($type)
     {
@@ -96,6 +100,8 @@ class Card extends PayPalApiStruct
 
     /**
      * @param AuthenticationResult|null $authenticationResult
+     *
+     * @return void
      */
     public function setAuthenticationResult($authenticationResult)
     {

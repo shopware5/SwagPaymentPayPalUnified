@@ -292,6 +292,8 @@ class PaymentSource extends PayPalApiStruct
 
     /**
      * @param Card|null $card
+     *
+     * @return void
      */
     public function setCard($card)
     {

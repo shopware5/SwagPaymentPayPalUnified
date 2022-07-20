@@ -14,8 +14,17 @@ class ThreeDSecure extends PayPalApiStruct
 {
     const ENROLLMENT_STATUS_Y = 'Y';
     const ENROLLMENT_STATUS_N = 'N';
+    const ENROLLMENT_STATUS_U = 'U';
+    const ENROLLMENT_STATUS_B = 'B';
+
     const AUTHENTICATION_STATUS_Y = 'Y';
     const AUTHENTICATION_STATUS_N = 'N';
+    const AUTHENTICATION_STATUS_R = 'R';
+    const AUTHENTICATION_STATUS_A = 'A';
+    const AUTHENTICATION_STATUS_U = 'U';
+    const AUTHENTICATION_STATUS_C = 'C';
+    const AUTHENTICATION_STATUS_I = 'I';
+    const AUTHENTICATION_STATUS_D = 'D';
 
     /**
      * @var string
@@ -41,6 +50,8 @@ class ThreeDSecure extends PayPalApiStruct
     /**
      * @param string $enrollmentStatus
      * @phpstan-param ThreeDSecure::ENROLLMENT_STATUS_* $enrollmentStatus
+     *
+     * @return void
      */
     public function setEnrollmentStatus($enrollmentStatus)
     {
@@ -59,6 +70,8 @@ class ThreeDSecure extends PayPalApiStruct
     /**
      * @param string $authenticationStatus
      * @phpstan-param ThreeDSecure::AUTHENTICATION_STATUS_* $authenticationStatus
+     *
+     * @return void
      */
     public function setAuthenticationStatus($authenticationStatus)
     {
