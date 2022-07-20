@@ -1,7 +1,6 @@
 import { test, expect } from '@playwright/test';
 import MysqlFactory from '../helper/mysqlFactory.mjs';
 import defaultPaypalSettingsSql from '../helper/paypalSqlHelper.mjs';
-import setBirthdayAndPhone from '../helper/setBirthdayAndPhoneHelper.mjs';
 import loginHelper from '../helper/loginHelper.mjs';
 import clearCacheHelper from '../helper/clearCacheHelper.mjs';
 
@@ -16,7 +15,6 @@ test.describe('Pay with invoice', () => {
 
     test.beforeEach(() => {
         connection.query(defaultPaypalSettingsSql);
-        connection.query(setBirthdayAndPhone);
     });
 
     test('Buy products with "Pay Upon Invoice"', async ({ page }) => {
