@@ -12,15 +12,14 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\PayPalOrderParameter;
+use SwagPaymentPayPalUnified\Components\Services\Common\CustomerHelper;
 use SwagPaymentPayPalUnified\Components\Services\Common\PriceFormatter;
 use SwagPaymentPayPalUnified\Components\Services\Common\ReturnUrlHelper;
-use SwagPaymentPayPalUnified\Components\Services\OrderBuilder\OrderHandler\AbstractOrderHandler;
 use SwagPaymentPayPalUnified\Components\Services\PayPalOrder\AmountProvider;
 use SwagPaymentPayPalUnified\Components\Services\PayPalOrder\ItemListProvider;
 use SwagPaymentPayPalUnified\Components\Services\PhoneNumberBuilder;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
-use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Amount;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Amount\Breakdown;
@@ -34,46 +33,49 @@ use SwagPaymentPayPalUnified\Tests\Unit\Components\Services\PayPalOrder\Fixture;
 class AbstractOrderHandlerTest extends TestCase
 {
     /**
-     * @var MockObject|SettingsServiceInterface
+     * @var SettingsServiceInterface
      */
     private $settingsService;
 
     /**
-     * @var MockObject|ItemListProvider
+     * @var ItemListProvider&MockObject
      */
     private $itemListProvider;
 
     /**
-     * @var MockObject|AmountProvider
+     * @var AmountProvider&MockObject
      */
     private $amountProvider;
 
     /**
-     * @var MockObject|ReturnUrlHelper
+     * @var ReturnUrlHelper
      */
     private $returnUrlHelper;
 
     /**
-     * @var MockObject|ContextServiceInterface
+     * @var ContextServiceInterface
      */
     private $contextService;
 
     /**
-     * @var MockObject|PhoneNumberBuilder
+     * @var PhoneNumberBuilder
      */
     private $phoneNumberBuilder;
 
     /**
-     * @var MockObject|PayPalOrderParameter
+     * @var PayPalOrderParameter&MockObject
      */
     private $paypalOrderParameter;
 
     /**
-     * @var MockObject|PriceFormatter
-     *
-     * @phpstan-var PriceFormatter
+     * @var PriceFormatter
      */
     private $priceFormatter;
+
+    /**
+     * @var CustomerHelper
+     */
+    private $customerHelper;
 
     /**
      * @before
@@ -82,15 +84,16 @@ class AbstractOrderHandlerTest extends TestCase
      */
     public function init()
     {
-        $this->settingsService = static::createMock(SettingsServiceInterface::class);
-        $this->itemListProvider = static::createMock(ItemListProvider::class);
-        $this->amountProvider = static::createMock(AmountProvider::class);
-        $this->returnUrlHelper = static::createMock(ReturnUrlHelper::class);
-        $this->contextService = static::createMock(ContextServiceInterface::class);
-        $this->phoneNumberBuilder = static::createMock(PhoneNumberBuilder::class);
-        $this->priceFormatter = static::createMock(PriceFormatter::class);
+        $this->settingsService = $this->createMock(SettingsServiceInterface::class);
+        $this->itemListProvider = $this->createMock(ItemListProvider::class);
+        $this->amountProvider = $this->createMock(AmountProvider::class);
+        $this->returnUrlHelper = $this->createMock(ReturnUrlHelper::class);
+        $this->contextService = $this->createMock(ContextServiceInterface::class);
+        $this->phoneNumberBuilder = $this->createMock(PhoneNumberBuilder::class);
+        $this->priceFormatter = $this->createMock(PriceFormatter::class);
+        $this->customerHelper = $this->createMock(CustomerHelper::class);
 
-        $this->paypalOrderParameter = static::createMock(PayPalOrderParameter::class);
+        $this->paypalOrderParameter = $this->createMock(PayPalOrderParameter::class);
     }
 
     /**
@@ -102,11 +105,10 @@ class AbstractOrderHandlerTest extends TestCase
      * @dataProvider impreciseDataProvider
      *
      * @param Item[] $items
-     * @param Amount $amount
      *
      * @return void
      */
-    public function testItPassesPayPalCalculation($items, $amount)
+    public function testItPassesPayPalCalculation(array $items, Amount $amount)
     {
         $this->givenTheCart(Fixture::CART);
         $this->givenTheCustomer(Fixture::CUSTOMER);
@@ -196,6 +198,7 @@ class AbstractOrderHandlerTest extends TestCase
      * @param ContextServiceInterface|null  $contextService
      * @param PhoneNumberBuilder|null       $phoneNumberBuilder
      * @param PriceFormatter|null           $priceFormatter
+     * @param CustomerHelper|null           $customerHelper
      *
      * @return TestOrderHandler
      */
@@ -206,7 +209,8 @@ class AbstractOrderHandlerTest extends TestCase
         $returnUrlHelper = null,
         $contextService = null,
         $phoneNumberBuilder = null,
-        $priceFormatter = null
+        $priceFormatter = null,
+        $customerHelper = null
     ) {
         return new TestOrderHandler(
             $settingsService ?: $this->settingsService,
@@ -215,7 +219,8 @@ class AbstractOrderHandlerTest extends TestCase
             $returnUrlHelper ?: $this->returnUrlHelper,
             $contextService ?: $this->contextService,
             $phoneNumberBuilder ?: $this->phoneNumberBuilder,
-            $priceFormatter ?: $this->priceFormatter
+            $priceFormatter ?: $this->priceFormatter,
+            $customerHelper ?: $this->customerHelper
         );
     }
 
@@ -321,26 +326,5 @@ class AbstractOrderHandlerTest extends TestCase
     private function givenThePriceFormatter($priceFormatter)
     {
         $this->priceFormatter = $priceFormatter;
-    }
-}
-
-class TestOrderHandler extends AbstractOrderHandler
-{
-    /**
-     * {@inheritDoc}
-     */
-    public function createPurchaseUnits(PayPalOrderParameter $orderParameter)
-    {
-        return parent::createPurchaseUnits($orderParameter);
-    }
-
-    public function supports($paymentType)
-    {
-        return true;
-    }
-
-    public function createOrder(PayPalOrderParameter $orderParameter)
-    {
-        return new Order();
     }
 }

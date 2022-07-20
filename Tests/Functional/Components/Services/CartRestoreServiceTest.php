@@ -92,14 +92,14 @@ class CartRestoreServiceTest extends TestCase
 
         $basketRestoreService->restoreCart($basketDataToRestore);
 
-        $resettedBasketData = $basketRestoreService->getCartData();
+        $resetBasketData = $basketRestoreService->getCartData();
 
         $expectedOrderNumbers = self::EXPECTED_ORDER_NUMBER_RESULT;
 
-        static::assertCount(5, $resettedBasketData);
+        static::assertCount(5, $resetBasketData);
 
         foreach ($expectedOrderNumbers as $expectedOrderNumber => $found) {
-            foreach ($resettedBasketData as $basketItem) {
+            foreach ($resetBasketData as $basketItem) {
                 if ($basketItem->getOrderNumber() === $expectedOrderNumber) {
                     $expectedOrderNumbers[$expectedOrderNumber] = true;
                 }

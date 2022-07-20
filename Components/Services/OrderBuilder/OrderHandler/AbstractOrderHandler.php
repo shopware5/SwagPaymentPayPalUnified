@@ -11,6 +11,7 @@ namespace SwagPaymentPayPalUnified\Components\Services\OrderBuilder\OrderHandler
 use RuntimeException;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\PayPalOrderParameter;
+use SwagPaymentPayPalUnified\Components\Services\Common\CustomerHelper;
 use SwagPaymentPayPalUnified\Components\Services\Common\PriceFormatter;
 use SwagPaymentPayPalUnified\Components\Services\Common\ReturnUrlHelper;
 use SwagPaymentPayPalUnified\Components\Services\PayPalOrder\AmountProvider;
@@ -34,9 +35,6 @@ use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Amount;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Amount\Breakdown;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Amount\Breakdown\Discount;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Amount\Breakdown\Handling;
-use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Amount\Breakdown\ItemTotal;
-use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Amount\Breakdown\TaxTotal;
-use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Item\Tax;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Shipping;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Shipping\Address as ShippingAddress;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Shipping\Name as ShippingName;
@@ -44,6 +42,8 @@ use SwagPaymentPayPalUnified\PayPalBundle\V2\PaymentIntentV2;
 
 abstract class AbstractOrderHandler implements OrderBuilderHandlerInterface
 {
+    const FLOAT_EPSILON = 0.00000001;
+
     /**
      * @var SettingsServiceInterface
      */
@@ -79,6 +79,11 @@ abstract class AbstractOrderHandler implements OrderBuilderHandlerInterface
      */
     private $priceFormatter;
 
+    /**
+     * @var CustomerHelper
+     */
+    private $customerHelper;
+
     public function __construct(
         SettingsServiceInterface $settingsService,
         ItemListProvider $itemListProvider,
@@ -86,7 +91,8 @@ abstract class AbstractOrderHandler implements OrderBuilderHandlerInterface
         ReturnUrlHelper $returnUrlHelper,
         ContextServiceInterface $contextService,
         PhoneNumberBuilder $phoneNumberBuilder,
-        PriceFormatter $priceFormatter
+        PriceFormatter $priceFormatter,
+        CustomerHelper $customerHelper
     ) {
         $this->settings = $settingsService;
         $this->itemListProvider = $itemListProvider;
@@ -95,6 +101,7 @@ abstract class AbstractOrderHandler implements OrderBuilderHandlerInterface
         $this->contextService = $contextService;
         $this->phoneNumberBuilder = $phoneNumberBuilder;
         $this->priceFormatter = $priceFormatter;
+        $this->customerHelper = $customerHelper;
     }
 
     /**
@@ -195,9 +202,9 @@ abstract class AbstractOrderHandler implements OrderBuilderHandlerInterface
 
         $purchaseUnit->setShipping($this->createShipping($orderParameter->getCustomer()));
 
-        // Its only necessary for PayUponInvoice because it's the only paymentMethod with tax information
-        // See: SwagPaymentPayPalUnified/Components/Services/PayPalOrder/ItemListProvider.php:134
-        if ($orderParameter->getPaymentType() !== PaymentType::PAYPAL_PAY_UPON_INVOICE_V2) {
+        $useGrossPrices = $this->customerHelper->usesGrossPrice($orderParameter->getCustomer());
+        $isNotPayUponInvoice = $orderParameter->getPaymentType() !== PaymentType::PAYPAL_PAY_UPON_INVOICE_V2;
+        if ($isNotPayUponInvoice && $useGrossPrices) {
             return [$purchaseUnit];
         }
 
@@ -376,43 +383,20 @@ abstract class AbstractOrderHandler implements OrderBuilderHandlerInterface
             return;
         }
 
-        $itemTotal = $breakdown->getItemTotal();
-        $taxTotal = $breakdown->getTaxTotal();
-
-        if (!$itemTotal instanceof ItemTotal || !$taxTotal instanceof TaxTotal) {
+        $breakdownTotalAmountDifference = (float) $amount->getValue() - $breakdown->getSum();
+        $breakdownTotalAmountDifferenceAbsolut = abs($breakdownTotalAmountDifference);
+        if ($breakdownTotalAmountDifferenceAbsolut < self::FLOAT_EPSILON) {
             return;
         }
 
-        $itemAmount = (float) $itemTotal->getValue();
-        $taxAmount = (float) $taxTotal->getValue();
-
-        $calculatedItemAmount = array_reduce($purchaseUnit->getItems() ?: [], static function ($carry, $item) {
-            return $carry + (float) $item->getUnitAmount()->getValue() * $item->getQuantity();
-        }, 0.0);
-
-        $calculatedTaxAmount = array_reduce($purchaseUnit->getItems() ?: [], static function ($carry, $item) {
-            if (!$item->getTax() instanceof Tax) {
-                return $carry;
-            }
-
-            return $carry + (float) $item->getTax()->getValue() * $item->getQuantity();
-        }, 0.0);
-
-        $itemDeviation = abs($calculatedItemAmount - $itemAmount);
-        $taxDeviation = abs($calculatedTaxAmount - $taxAmount);
-
-        if ($itemDeviation + $taxDeviation < 0.01) {
-            return;
-        }
-
-        if ($calculatedItemAmount + $calculatedTaxAmount < $itemAmount + $taxAmount) {
+        if ($breakdownTotalAmountDifference < 0) {
             $breakdown->setDiscount((new Discount())->assign([
-                'value' => $this->priceFormatter->formatPrice($itemDeviation + $taxDeviation + ($breakdown->getDiscount() ? (float) $breakdown->getDiscount()->getValue() : 0.0)),
+                'value' => $this->priceFormatter->formatPrice($breakdownTotalAmountDifferenceAbsolut + ($breakdown->getDiscount() ? (float) $breakdown->getDiscount()->getValue() : 0.0)),
                 'currencyCode' => $amount->getCurrencyCode(),
             ]));
         } else {
             $breakdown->setHandling((new Handling())->assign([
-                'value' => $this->priceFormatter->formatPrice($itemDeviation + $taxDeviation + ($breakdown->getHandling() ? (float) $breakdown->getHandling()->getValue() : 0.0)),
+                'value' => $this->priceFormatter->formatPrice($breakdownTotalAmountDifferenceAbsolut + ($breakdown->getHandling() ? (float) $breakdown->getHandling()->getValue() : 0.0)),
                 'currencyCode' => $amount->getCurrencyCode(),
             ]));
         }

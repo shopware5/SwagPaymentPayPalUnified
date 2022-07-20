@@ -22,6 +22,7 @@
             <argument type="service" id="shopware_storefront.context_service"/>
             <argument type="service" id="paypal_unified.phone_number_builder"/>
             <argument type="service" id="paypal_unified.common.price_formatter"/>
+            <argument type="service" id="paypal_unified.common.customer_helper"/>
             <tag name="paypal_unified.order_factory_handler"/>
         </service>
 
@@ -35,6 +36,7 @@
             <argument type="service" id="shopware_storefront.context_service"/>
             <argument type="service" id="paypal_unified.phone_number_builder"/>
             <argument type="service" id="paypal_unified.common.price_formatter"/>
+            <argument type="service" id="paypal_unified.common.customer_helper"/>
             <tag name="paypal_unified.order_factory_handler"/>
         </service>
 

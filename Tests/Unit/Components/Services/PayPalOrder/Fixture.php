@@ -447,7 +447,7 @@ class Fixture
                 'value' => sprintf('%.2f', self::getPrice() - self::getPrice() / self::getTaxRate()),
             ]),
             'taxRate' => '19',
-            'quantity' => 10,
+            'quantity' => self::getQuantity(),
             'sku' => '2df7f76b-3e74-4062-a788-ab260aed5c78',
             'category' => 'PHYSICAL_GOODS',
         ]);
@@ -469,7 +469,7 @@ class Fixture
                 'value' => (string) (self::getPrice() - self::getPrice() / self::getTaxRate()),
             ]),
             'taxRate' => '19',
-            'quantity' => 10,
+            'quantity' => self::getQuantity(),
             'sku' => '2df7f76b-3e74-4062-a788-ab260aed5c78',
             'category' => 'PHYSICAL_GOODS',
         ]);
