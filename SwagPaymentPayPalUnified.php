@@ -107,13 +107,6 @@ class SwagPaymentPayPalUnified extends Plugin
         );
         $updater->update($context->getCurrentVersion());
 
-        if ($context->getPlugin()->getActive()) {
-            $paymentMethodProvider = $this->getPaymentMethodProvider();
-            foreach (PaymentMethodProvider::getAllUnifiedNames() as $unifiedName) {
-                $paymentMethodProvider->setPaymentMethodActiveFlag($unifiedName, true);
-            }
-        }
-
         $context->scheduleClearCache(UpdateContext::CACHE_LIST_ALL);
     }
 
