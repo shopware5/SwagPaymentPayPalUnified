@@ -12,6 +12,9 @@ use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\ShopwareOrderData;
 use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentController;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\Card;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\Card\AuthenticationResult;
 
 class Shopware_Controllers_Widgets_PaypalUnifiedV2AdvancedCreditDebitCard extends AbstractPaypalPaymentController
 {
@@ -91,6 +94,18 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2AdvancedCreditDebitCard extend
             return;
         }
 
+        $liabilityShift = $this->getLiabilityShift($payPalOrder);
+
+        if ($liabilityShift !== AuthenticationResult::LIABILITY_SHIFT_POSSIBLE) {
+            $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
+                ->setCode(ErrorCodes::THREE_D_SECURE_CHECK_FAILED)
+                ->setException(new UnexpectedValueException(sprintf('Expected liablitiy shift to be "%s", got: %s', AuthenticationResult::LIABILITY_SHIFT_POSSIBLE, $liabilityShift)), '');
+
+            $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
+
+            return;
+        }
+
         if (!$this->isCartValid($payPalOrder)) {
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
                 ->setCode(ErrorCodes::BASKET_VALIDATION_ERROR);
@@ -152,5 +167,32 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2AdvancedCreditDebitCard extend
 
         $this->View()->assign('paypalUnifiedErrorCode', $paypalUnifiedErrorCode ?: ErrorCodes::UNKNOWN);
         $this->View()->extendsTemplate($this->container->getParameter('paypal_unified.plugin_dir') . '/Resources/views/frontend/paypal_unified/checkout/error_message.tpl');
+    }
+
+    /**
+     * @return string|null
+     * @phpstan-return AuthenticationResult::LIABILITY_SHIFT_*|null
+     */
+    private function getLiabilityShift(Order $payPalOrder)
+    {
+        $paymentSource = $payPalOrder->getPaymentSource();
+
+        if (!$paymentSource instanceof PaymentSource) {
+            return null;
+        }
+
+        $card = $paymentSource->getCard();
+
+        if (!$card instanceof Card) {
+            return null;
+        }
+
+        $authenticationResult = $card->getAuthenticationResult();
+
+        if (!$authenticationResult instanceof AuthenticationResult) {
+            return null;
+        }
+
+        return $authenticationResult->getLiabilityShift();
     }
 }

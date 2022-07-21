@@ -17,9 +17,9 @@ services:
             clone-swag-cookie-consent-manager:
                 condition: "service_completed_successfully"
     playwright:
-        command: ["sh", "-c", "npm install && npx playwright test --workers=1 --grep-invert @notIn5.2"]
+        command: [ "test", "--workers=1", "--grep-invert", "@notIn5.2" ]
     playwright-debug:
-        command: [ "sh", "-c", "npm install && npx playwright test --workers=1 --debug --grep-invert @notIn5.2" ]
+        command: [ "test", "--workers=1", "--grep-invert", "@notIn5.2", "--debug"]
 
 volumes:
     swag-cookie-consent-manager:

@@ -41,6 +41,9 @@ use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\Card;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\Card\AuthenticationResult;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Amount;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\PaymentIntentV2;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\OrderResource;
@@ -394,6 +397,7 @@ class OrderWithSendOrderNumberTest extends PaypalPaymentControllerTestCase
         $request = new Enlight_Controller_Request_RequestTestCase();
         $request->setParam('token', '3E630337S9748511R');
         $request->setParam('paypalOrderId', 'someId');
+        $request->setParam('inContextCheckout', true);
 
         return $request;
     }
@@ -420,6 +424,15 @@ class OrderWithSendOrderNumberTest extends PaypalPaymentControllerTestCase
 
         $paymentSource = new Order\PaymentSource();
         $paymentSource->setGiropay($giroPay);
+
+        $authenticationResult = new AuthenticationResult();
+        $authenticationResult->setLiabilityShift(AuthenticationResult::LIABILITY_SHIFT_POSSIBLE);
+
+        $card = new Card();
+        $card->setAuthenticationResult($authenticationResult);
+
+        $paymentSource = new PaymentSource();
+        $paymentSource->setCard($card);
 
         $order = new Order();
         $order->setId(self::TRANSACTION_ID);

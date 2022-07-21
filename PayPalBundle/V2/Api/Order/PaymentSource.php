@@ -10,6 +10,7 @@ namespace SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
 
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\Bancontact;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\Blik;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\Card;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\Eps;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\Giropay;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\Ideal;
@@ -83,6 +84,11 @@ class PaymentSource extends PayPalApiStruct
      * @var Trustly|null
      */
     protected $trustly;
+
+    /**
+     * @var Card|null
+     */
+    protected $card;
 
     /**
      * @return PayUponInvoice|null
@@ -274,5 +280,23 @@ class PaymentSource extends PayPalApiStruct
     public function setTrustly($trustly)
     {
         $this->trustly = $trustly;
+    }
+
+    /**
+     * @return Card|null
+     */
+    public function getCard()
+    {
+        return $this->card;
+    }
+
+    /**
+     * @param Card|null $card
+     *
+     * @return void
+     */
+    public function setCard($card)
+    {
+        $this->card = $card;
     }
 }

@@ -20,6 +20,16 @@ x-playwright-environment: &playwright-environment
     PAYPAL_SEPA_PHONE:
     PAYPAL_SEPA_BIRTHDAY:
 
+x-playwright-test-dependencies: &playwright-test-dependencies
+    mysql:
+        condition: "service_started"
+    shopware:
+        condition: "service_started"
+    check-shop-availability:
+        condition: "service_completed_successfully"
+    install-test-dependencies:
+        condition: "service_completed_successfully"
+
 services:
     mysql:
         image: mysql:5.7
@@ -65,6 +75,14 @@ services:
         depends_on:
             shopware:
                 condition: "service_started"
+    install-test-dependencies:
+        image: mcr.microsoft.com/playwright:v1.22.0-focal
+        user: "pwuser:pwuser"
+        volumes:
+            - "${CI_PROJECT_DIR}:/project"
+        working_dir: "/project/Tests/E2E"
+        entrypoint: [ "npm" ]
+        command: [ "install" ]
     playwright:
         image: mcr.microsoft.com/playwright:v1.22.0-focal
         environment:
@@ -74,14 +92,23 @@ services:
         volumes:
             - "${CI_PROJECT_DIR}:/project"
         working_dir: "/project/Tests/E2E"
-        command: ["sh", "-c", "npm install && npm run e2e:run"]
+        entrypoint: [ "npx", "playwright" ]
+        command: [ "test", "--workers=1" ]
         depends_on:
-            mysql:
-                condition: "service_started"
-            shopware:
-                condition: "service_started"
-            check-shop-availability:
-                condition: "service_completed_successfully"
+            <<: *playwright-test-dependencies
     playwright-debug:
-        extends: playwright
-        command: ["sh", "-c", "npm install && npm run e2e:run:debug"]
+        image: mcr.microsoft.com/playwright:v1.22.0-focal
+        environment:
+            <<: *default-environment
+            <<: *playwright-environment
+            DISPLAY: "unix${DISPLAY}"
+            PWDEBUG: "console"
+        user: "pwuser:pwuser"
+        volumes:
+            - "/tmp/.X11-unix:/tmp/.X11-unix"
+            - "${CI_PROJECT_DIR}:/project"
+        working_dir: "/project/Tests/E2E"
+        entrypoint: ["npx", "playwright"]
+        command: ["test", "--workers=1", "--debug"]
+        depends_on:
+            <<: *playwright-test-dependencies
