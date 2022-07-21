@@ -27,20 +27,17 @@ class ThreeDSecure extends PayPalApiStruct
     const AUTHENTICATION_STATUS_D = 'D';
 
     /**
-     * @var string
-     * @phpstan-var ThreeDSecure::ENROLLMENT_STATUS_*
+     * @var ThreeDSecure::ENROLLMENT_STATUS_*
      */
     private $enrollmentStatus;
 
     /**
-     * @var string
-     * @phpstan-var ThreeDSecure::AUTHENTICATION_STATUS_*
+     * @var ThreeDSecure::AUTHENTICATION_STATUS_*
      */
     private $authenticationStatus;
 
     /**
-     * @return string
-     * @phpstan-return ThreeDSecure::ENROLLMENT_STATUS_*
+     * @return ThreeDSecure::ENROLLMENT_STATUS_*
      */
     public function getEnrollmentStatus()
     {
@@ -48,8 +45,7 @@ class ThreeDSecure extends PayPalApiStruct
     }
 
     /**
-     * @param string $enrollmentStatus
-     * @phpstan-param ThreeDSecure::ENROLLMENT_STATUS_* $enrollmentStatus
+     * @param ThreeDSecure::ENROLLMENT_STATUS_* $enrollmentStatus
      *
      * @return void
      */
@@ -59,8 +55,7 @@ class ThreeDSecure extends PayPalApiStruct
     }
 
     /**
-     * @return string
-     * @phpstan-return ThreeDSecure::AUTHENTICATION_STATUS_*
+     * @return ThreeDSecure::AUTHENTICATION_STATUS_*
      */
     public function getAuthenticationStatus()
     {
@@ -68,8 +63,7 @@ class ThreeDSecure extends PayPalApiStruct
     }
 
     /**
-     * @param string $authenticationStatus
-     * @phpstan-param ThreeDSecure::AUTHENTICATION_STATUS_* $authenticationStatus
+     * @param ThreeDSecure::AUTHENTICATION_STATUS_* $authenticationStatus
      *
      * @return void
      */

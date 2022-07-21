@@ -18,8 +18,7 @@ class AuthenticationResult extends PayPalApiStruct
     const LIABILITY_SHIFT_UNKNOWN = 'UNKNOWN';
 
     /**
-     * @var string|null
-     * @phpstan-var AuthenticationResult::LIABILITY_SHIFT_*|null
+     * @var AuthenticationResult::LIABILITY_SHIFT_*|null
      */
     private $liabilityShift;
 
@@ -29,8 +28,7 @@ class AuthenticationResult extends PayPalApiStruct
     private $threeDSecure;
 
     /**
-     * @return string|null
-     * @phpstan-return AuthenticationResult::LIABILITY_SHIFT_*|null
+     * @return AuthenticationResult::LIABILITY_SHIFT_*|null
      */
     public function getLiabilityShift()
     {
@@ -38,8 +36,7 @@ class AuthenticationResult extends PayPalApiStruct
     }
 
     /**
-     * @param string|null $liabilityShift
-     * @phpstan-param AuthenticationResult::LIABILITY_SHIFT_*|null $liabilityShift
+     * @param AuthenticationResult::LIABILITY_SHIFT_*|null $liabilityShift
      *
      * @return void
      */

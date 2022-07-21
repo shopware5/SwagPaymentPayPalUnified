@@ -19,8 +19,7 @@ use SwagPaymentPayPalUnified\PayPalBundle\V2\PayPalApiStruct;
 class Order extends PayPalApiStruct
 {
     /**
-     * @var string
-     * @phpstan-var PaymentIntentV2::*
+     * @var PaymentIntentV2::*
      */
     protected $intent;
 
@@ -75,8 +74,7 @@ class Order extends PayPalApiStruct
     protected $links;
 
     /**
-     * @return string
-     * @phpstan-return PaymentIntentV2::*
+     * @return PaymentIntentV2::*
      */
     public function getIntent()
     {
@@ -84,8 +82,7 @@ class Order extends PayPalApiStruct
     }
 
     /**
-     * @param string $intent
-     * @phpstan-param PaymentIntentV2::* $intent
+     * @param PaymentIntentV2::* $intent
      *
      * @return void
      */

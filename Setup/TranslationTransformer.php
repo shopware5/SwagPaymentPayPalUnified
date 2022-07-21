@@ -92,7 +92,7 @@ class TranslationTransformer
                     return [
                         'objectlanguage' => $languageId,
                         'objecttype' => $objectType,
-                        'objectkey' => $paymentMethodTranslationKeys[$paymentMethod],
+                        'objectkey' => (int) $paymentMethodTranslationKeys[$paymentMethod],
                         'objectdata' => $data,
                     ];
                 }, array_keys($translationData[$locale]), array_values($translationData[$locale]))
@@ -105,9 +105,7 @@ class TranslationTransformer
     /**
      * @throws Exception
      *
-     * @phpstan-return array<string,int>
-     *
-     * @return array<"PaymentMethodProviderInterface::*_METHOD_NAME",int>
+     * @return array<string, string>
      */
     private function getTranslationKeys()
     {

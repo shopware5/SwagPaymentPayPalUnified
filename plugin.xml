@@ -5,14 +5,14 @@
     <label lang="de">PayPal</label>
     <label lang="en">PayPal</label>
 
-    <version>4.2.2</version>
+    <version>4.2.3</version>
     <copyright>(c) by shopware AG</copyright>
     <license>MIT</license>
     <link>http://store.shopware.com</link>
     <author>shopware AG</author>
     <compatibility minVersion="5.2.27" maxVersion="5.99.99"/>
 
-    <changelog version="REPLACE_GLOBALLY_WITH_NEXT_VERSION(4.2.3)">
+    <changelog version="4.2.3">
         <changes lang="de">
             PT-12800 - Verbessert die Berechnung des Warenkorbs und die Übertragung zu PayPal;
             PT-12803 - Verbessert das Handling von Kreditkartenzahlungen;

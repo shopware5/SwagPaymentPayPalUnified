@@ -247,8 +247,7 @@ class AbstractOrderHandlerTest extends TestCase
     }
 
     /**
-     * @param string $paymentType
-     * @phpstan-param PaymentType::* $paymentType
+     * @param PaymentType::* $paymentType
      *
      * @return void
      */

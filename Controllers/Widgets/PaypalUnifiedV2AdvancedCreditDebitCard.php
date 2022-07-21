@@ -170,8 +170,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2AdvancedCreditDebitCard extend
     }
 
     /**
-     * @return string|null
-     * @phpstan-return AuthenticationResult::LIABILITY_SHIFT_*|null
+     * @return AuthenticationResult::LIABILITY_SHIFT_*|null
      */
     private function getLiabilityShift(Order $payPalOrder)
     {

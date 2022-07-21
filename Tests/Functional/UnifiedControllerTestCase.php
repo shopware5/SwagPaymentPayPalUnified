@@ -53,7 +53,7 @@ class UnifiedControllerTestCase extends TestCase
     /**
      * @template T of \Enlight_Controller_Action
      *
-     * @phpstan-param class-string<T> $controllerClass
+     * @param class-string<T> $controllerClass
      *
      * @return T
      */
