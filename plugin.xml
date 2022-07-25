@@ -12,6 +12,15 @@
     <author>shopware AG</author>
     <compatibility minVersion="5.2.27" maxVersion="5.99.99"/>
 
+    <changelog version="REPLACE_GLOBAL_WITH_NEXT_VERSION">
+        <changes lang="de">
+            PT-12824 - Eine Warnung informiert nun über das Ablaufen vom PayPal Plus Rechnungskauf;
+        </changes>
+        <changes lang="en">
+            PT-12824 - A warning now informs about the expiry of PayPal Plus pay upon invoice;
+        </changes>
+    </changelog>
+
     <changelog version="4.2.3">
         <changes lang="de">
             PT-12800 - Verbessert die Berechnung des Warenkorbs und die Übertragung zu PayPal;

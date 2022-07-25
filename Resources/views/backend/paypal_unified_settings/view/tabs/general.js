@@ -24,6 +24,16 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
     buttonValue: 'GENERAL',
 
     /**
+     * @type { Boolean }
+     */
+    hasPlusPuiNotice: false,
+
+    /**
+     * @type { Date }
+     */
+    plusPuiNoticeExpireDate: new Date(2022, 8, 30),
+
+    /**
      * @type { Ext.form.FieldSet }
      */
     restContainer: null,
@@ -139,7 +149,11 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
                 'text-shadow': '0 0 5px rgba(0, 0, 0, 0.3)'
             };
 
-        return this.createNotice(noticeText, 'info', noticeStyle);
+        this.noticeContainer = Ext.create('Ext.container.Container', {
+            items: this.createNotice(noticeText, 'info', noticeStyle)
+        });
+
+        return this.noticeContainer;
     },
 
     /**
@@ -563,6 +577,21 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
         notice.hide();
 
         return notice;
+    },
+
+    addPlusPuiNotice: function () {
+        if (this.hasPlusPuiNotice || this.plusPuiNoticeExpireDate < new Date()) {
+            return;
+        }
+
+        this.hasPlusPuiNotice = true;
+
+        var text = '{s name="plusPuiNotice"}<b>Purchase upon invoice</b> will be discontinued as part of PayPal PLUS on 2022-09-30. Switch to the new all-in-one PayPal Checkout solution to continue offering purchase upon invoice to your customers. Switch to PayPal Checkout now!{/s}',
+            notice = this.createNotice(text, 'notice');
+
+        notice.id = 'plusPuiNotice';
+
+        this.noticeContainer.add(notice);
     },
 
     /**
