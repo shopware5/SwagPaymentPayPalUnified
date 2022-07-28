@@ -57,6 +57,12 @@ class PayUponInvoice extends ModelEntity
     private $customerServiceInstructions;
 
     /**
+     * @var bool
+     * @ORM\Column(name="show_rate_pay_hint_in_mail", type="boolean", nullable=false)
+     */
+    private $showRatePayHintInMail;
+
+    /**
      * @return int
      */
     public function getId()
@@ -161,5 +167,23 @@ class PayUponInvoice extends ModelEntity
     public function setCustomerServiceInstructions($customerServiceInstructions)
     {
         $this->customerServiceInstructions = $customerServiceInstructions;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isShowRatePayHintInMail()
+    {
+        return $this->showRatePayHintInMail;
+    }
+
+    /**
+     * @param bool $showRatePayHintInMail
+     *
+     * @return void
+     */
+    public function setShowRatePayHintInMail($showRatePayHintInMail)
+    {
+        $this->showRatePayHintInMail = $showRatePayHintInMail;
     }
 }

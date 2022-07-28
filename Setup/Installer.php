@@ -174,18 +174,22 @@ class Installer
         $sql = "
             INSERT INTO `s_core_documents_box` (`documentID`, `name`, `style`, `value`) VALUES
             (1, 'PayPal_Unified_Instructions_Footer', 'width: 170mm;\r\nposition:fixed;\r\nbottom:-20mm;\r\nheight: 15mm;', :footerValue),
-            (1, 'PayPal_Unified_Instructions_Content', :contentStyle, :contentValue);
+            (1, 'PayPal_Unified_Instructions_Content', :contentStyle, :contentValue),
+            (1, 'PayPal_Unified_Ratepay_Instructions', :ratepayInstructionsContentStyle, :ratepayInstructionsContentValue);
         ";
 
         // Load the assets
         $instructionsContent = \file_get_contents($this->bootstrapPath . '/Setup/Assets/Document/PayPal_Unified_Instructions_Content.html');
         $instructionsContentStyle = \file_get_contents($this->bootstrapPath . '/Setup/Assets/Document/PayPal_Unified_Instructions_Content_Style.css');
         $instructionsFooter = \file_get_contents($this->bootstrapPath . '/Setup/Assets/Document/PayPal_Unified_Instructions_Footer.html');
+        $ratepayInstructionsContent = file_get_contents($this->bootstrapPath . '/Setup/Assets/Document/PayPal_Unified_Ratepay_Instructions_Content.html');
 
         $this->connection->executeQuery($sql, [
             'footerValue' => $instructionsFooter,
             'contentStyle' => $instructionsContentStyle,
             'contentValue' => $instructionsContent,
+            'ratepayInstructionsContentStyle' => $instructionsContentStyle,
+            'ratepayInstructionsContentValue' => $ratepayInstructionsContent,
         ]);
     }
 

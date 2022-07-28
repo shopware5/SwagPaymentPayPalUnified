@@ -19,6 +19,7 @@ use SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentModelFactory;
 use SwagPaymentPayPalUnified\Setup\Versions\UpdateTo400;
 use SwagPaymentPayPalUnified\Setup\Versions\UpdateTo411;
 use SwagPaymentPayPalUnified\Setup\Versions\UpdateTo420;
+use SwagPaymentPayPalUnified\Setup\Versions\UpdateTo430;
 
 class Updater
 {
@@ -157,6 +158,13 @@ class Updater
 
         if (\version_compare($oldVersion, '4.2.1', '<=')) {
             $this->updateTo422();
+        }
+
+        if (\version_compare($oldVersion, '4.3.0', '<')) {
+            (new UpdateTo430(
+                $this->connection,
+                $this->columnService
+            ))->update();
         }
     }
 

@@ -1,0 +1,36 @@
+<div class="unified_payment_note">
+    <br/>
+    {if $payUponInvoiceRatepayInstructions}
+        {$payUponInvoiceRatepayInstructions}
+    {/if}
+    <br/><br/>
+</div>
+
+<table class="unified_payment_instruction">
+    <tbody>
+    <tr>
+        <td>Empf&auml;nger:</td>
+        <td>{$PayPalUnifiedInvoiceInstruction.accountHolder}</td>
+    </tr>
+    <tr>
+        <td>IBAN:</td>
+        <td>{$PayPalUnifiedInvoiceInstruction.iban}</td>
+    </tr>
+    <tr>
+        <td>BIC:</td>
+        <td>{$PayPalUnifiedInvoiceInstruction.bic}</td>
+    </tr>
+    <tr>
+        <td>Bank:</td>
+        <td>{$PayPalUnifiedInvoiceInstruction.bankName}</td>
+    </tr>
+    <tr>
+        <td>Betrag:</td>
+        <td>{$PayPalUnifiedInvoiceInstruction.amount|currency}</td>
+    </tr>
+    <tr>
+        <td>Verwendungszweck:</td>
+        <td>{$PayPalUnifiedInvoiceInstruction.reference}</td>
+    </tr>
+    </tbody>
+</table>

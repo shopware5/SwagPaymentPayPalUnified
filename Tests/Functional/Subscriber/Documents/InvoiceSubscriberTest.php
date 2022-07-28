@@ -17,6 +17,7 @@ use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Instruction\Amount;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Instruction\RecipientBanking;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\PaymentInstruction;
 use SwagPaymentPayPalUnified\Subscriber\Documents\Invoice;
+use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\PayPalUnifiedPaymentIdTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\Subscriber\Documents\Mock\HookArgsWithCorrectPaymentId;
@@ -27,6 +28,7 @@ class InvoiceSubscriberTest extends TestCase
 {
     use DatabaseTestCaseTrait;
     use PayPalUnifiedPaymentIdTrait;
+    use ContainerTrait;
 
     const TEST_ORDER_NUMBER = '20001';
     const TEST_AMOUNT_VALUE = 50.5;
@@ -51,12 +53,13 @@ class InvoiceSubscriberTest extends TestCase
         }
 
         $subscriber = new Invoice(
-            Shopware()->Container()->get('paypal_unified.payment_instruction_service'),
-            Shopware()->Container()->get('dbal_connection'),
-            Shopware()->Container()->get('snippets'),
+            $this->getContainer()->get('paypal_unified.payment_instruction_service'),
+            $this->getContainer()->get('dbal_connection'),
+            $this->getContainer()->get('snippets'),
             null,
-            Shopware()->Container()->get('template'),
-            Shopware()->Container()->get('paypal_unified.payment_method_provider')
+            $this->getContainer()->get('template'),
+            $this->getContainer()->get('paypal_unified.payment_method_provider'),
+            $this->getContainer()->get('paypal_unified.settings_service')
         );
         static::assertNotNull($subscriber);
     }
@@ -92,7 +95,7 @@ class InvoiceSubscriberTest extends TestCase
         $subscriber = $this->getSubscriber();
 
         $this->updateOrderPaymentId(15, $this->getUnifiedPaymentId());
-        $hookArgs = new HookArgsWithCorrectPaymentId(Shopware()->Container()->has('shopware.benchmark_bundle.collector'));
+        $hookArgs = new HookArgsWithCorrectPaymentId($this->getContainer()->has('shopware.benchmark_bundle.collector'));
 
         static::assertNull($subscriber->onBeforeRenderDocument($hookArgs));
     }
@@ -104,7 +107,7 @@ class InvoiceSubscriberTest extends TestCase
         $this->updateOrderPaymentId(15, $this->getUnifiedPaymentId());
         $this->insertTestData();
 
-        $hookArgs = new HookArgsWithCorrectPaymentId(Shopware()->Container()->has('shopware.benchmark_bundle.collector'));
+        $hookArgs = new HookArgsWithCorrectPaymentId($this->getContainer()->has('shopware.benchmark_bundle.collector'));
 
         $subscriber->onBeforeRenderDocument($hookArgs);
 
@@ -131,7 +134,7 @@ class InvoiceSubscriberTest extends TestCase
         $result = $subscriber->onFilterMailVariables($args);
 
         static::assertStringEndsWith(
-            'custom/plugins/SwagPaymentPayPalUnified/Resources/views/frontend/_public/src/img/sidebar-paypal-generic.png',
+            'frontend/_public/src/img/sidebar-paypal-generic.png',
             $result['additional']['payment']['additionaldescription']
         );
     }
@@ -162,12 +165,13 @@ class InvoiceSubscriberTest extends TestCase
     private function getSubscriber()
     {
         return new Invoice(
-            Shopware()->Container()->get('paypal_unified.payment_instruction_service'),
-            Shopware()->Container()->get('dbal_connection'),
-            Shopware()->Container()->get('snippets'),
+            $this->getContainer()->get('paypal_unified.payment_instruction_service'),
+            $this->getContainer()->get('dbal_connection'),
+            $this->getContainer()->get('snippets'),
             $this->getTranslationService(),
-            Shopware()->Container()->get('template'),
-            Shopware()->Container()->get('paypal_unified.payment_method_provider')
+            $this->getContainer()->get('template'),
+            $this->getContainer()->get('paypal_unified.payment_method_provider'),
+            $this->getContainer()->get('paypal_unified.settings_service')
         );
     }
 
@@ -188,11 +192,11 @@ class InvoiceSubscriberTest extends TestCase
         $testBanking->setAccountHolderName(self::TEST_BANK_ACCOUNT_HOLDER);
         $instructions->setRecipientBanking($testBanking);
 
-        $instructionsService = Shopware()->Container()->get('paypal_unified.payment_instruction_service');
+        $instructionsService = $this->getContainer()->get('paypal_unified.payment_instruction_service');
         $instructionsService->createInstructions(self::TEST_ORDER_NUMBER, $instructions);
 
         $sql = "UPDATE s_order_attributes SET swag_paypal_unified_payment_type='PayPalPlusInvoice' WHERE orderID=15";
-        $db = Shopware()->Container()->get('dbal_connection');
+        $db = $this->getContainer()->get('dbal_connection');
         $db->executeUpdate($sql);
     }
 
@@ -202,7 +206,7 @@ class InvoiceSubscriberTest extends TestCase
      */
     private function updateOrderPaymentId($orderId, $paymentId)
     {
-        $db = Shopware()->Container()->get('dbal_connection');
+        $db = $this->getContainer()->get('dbal_connection');
 
         $sql = 'UPDATE s_order SET paymentID=:paymentId WHERE id=:orderId';
         $db->executeUpdate($sql, [
@@ -213,7 +217,7 @@ class InvoiceSubscriberTest extends TestCase
 
     private function getTranslationService()
     {
-        $container = Shopware()->Container();
+        $container = $this->getContainer();
 
         if ($container->initialized('translation')) {
             return $container->get('translation');

@@ -14,10 +14,12 @@
 
     <changelog version="REPLACE_GLOBAL_WITH_NEXT_VERSION">
         <changes lang="de">
+            PT-12747 - Fügt Informationsn zu Ratepay zur Bestellbestätigung und Rechnungs E-Mail hinzu;
             PT-12794 - Neuer Button mit Link um Tracking-Id zu PayPal hinzuzufügen;
             PT-12824 - Eine Warnung informiert nun über das Ablaufen vom PayPal Plus Rechnungskauf;
         </changes>
         <changes lang="en">
+            PT-12747 - Adds Ratepay information to the order confirmation and billing email;
             PT-12794 - Adds new button with link to add tracking id to PayPal;
             PT-12824 - A warning now informs about the expiry of PayPal Plus pay upon invoice;
         </changes>

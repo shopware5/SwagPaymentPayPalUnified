@@ -9,6 +9,7 @@
 use Shopware\Models\Order\Status;
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\ShopwareOrderData;
+use SwagPaymentPayPalUnified\Components\Services\PayUponInvoiceInstructionService;
 use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentController;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
@@ -16,6 +17,18 @@ use SwagPaymentPayPalUnified\PayPalBundle\V2\PaymentIntentV2;
 
 class Shopware_Controllers_Frontend_PaypalUnifiedV2PayUponInvoice extends AbstractPaypalPaymentController
 {
+    /**
+     * @var PayUponInvoiceInstructionService
+     */
+    private $paymentInstructionService;
+
+    public function preDispatch()
+    {
+        parent::preDispatch();
+
+        $this->paymentInstructionService = $this->get('paypal_unified.pay_upon_invoice_instruction_service');
+    }
+
     /**
      * @return void
      */
@@ -60,6 +73,9 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2PayUponInvoice extends Abstra
             if (!$payPalOrder instanceof Order) {
                 return;
             }
+
+            $this->paymentInstructionService->createInstructions($shopwareOrderNumber, $payPalOrder);
+
             $this->setTransactionId($shopwareOrderNumber, $payPalOrder);
 
             if ($payPalOrder->getIntent() === PaymentIntentV2::CAPTURE) {

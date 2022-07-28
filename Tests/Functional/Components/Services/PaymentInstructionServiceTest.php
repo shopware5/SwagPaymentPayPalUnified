@@ -12,11 +12,13 @@ use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Instruction\Amount;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Instruction\RecipientBanking;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\PaymentInstruction;
+use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 
 class PaymentInstructionServiceTest extends TestCase
 {
     use DatabaseTestCaseTrait;
+    use ContainerTrait;
 
     const TEST_ORDER_NUMBER = '20001';
     const TEST_AMOUNT_VALUE = 50.5;
@@ -29,12 +31,12 @@ class PaymentInstructionServiceTest extends TestCase
 
     public function testServiceIsAvailable()
     {
-        static::assertNotNull(Shopware()->Container()->get('paypal_unified.payment_instruction_service'));
+        static::assertNotNull($this->getContainer()->get('paypal_unified.payment_instruction_service'));
     }
 
     public function testGetInstruction()
     {
-        $instructionsService = Shopware()->Container()->get('paypal_unified.payment_instruction_service');
+        $instructionsService = $this->getContainer()->get('paypal_unified.payment_instruction_service');
         $instructionsService->createInstructions(self::TEST_ORDER_NUMBER, $this->getTestInstructions());
 
         $testInstructions = $instructionsService->getInstructions(self::TEST_ORDER_NUMBER);
@@ -48,7 +50,7 @@ class PaymentInstructionServiceTest extends TestCase
         static::assertSame(self::TEST_BANK_IBAN, $testInstructions->getIban());
         static::assertSame((string) self::TEST_AMOUNT_VALUE, $testInstructions->getAmount());
 
-        $query = Shopware()->Container()->get('dbal_connection')->createQueryBuilder();
+        $query = $this->getContainer()->get('dbal_connection')->createQueryBuilder();
         $statement = $query->select('internalcomment')
             ->from('s_order')
             ->where('ordernumber = :orderNumber')

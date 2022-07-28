@@ -9,8 +9,10 @@
 namespace SwagPaymentPayPalUnified\Components\Document;
 
 use Doctrine\DBAL\Connection;
+use RuntimeException;
 use Shopware_Components_Document as Document;
 use Shopware_Components_Snippet_Manager as SnippetManager;
+use Shopware_Components_Translation as Translator;
 use SwagPaymentPayPalUnified\Components\Services\Plus\PaymentInstructionService;
 
 class InvoiceDocumentHandler
@@ -31,7 +33,7 @@ class InvoiceDocumentHandler
     private $snippetManager;
 
     /**
-     * @var \Shopware_Components_Translation
+     * @var Translator
      */
     private $translation;
 
@@ -39,7 +41,7 @@ class InvoiceDocumentHandler
         PaymentInstructionService $instructionService,
         Connection $dbalConnection,
         SnippetManager $snippetManager,
-        \Shopware_Components_Translation $translation
+        Translator $translation
     ) {
         $this->instructionService = $instructionService;
         $this->dbalConnection = $dbalConnection;
@@ -61,7 +63,6 @@ class InvoiceDocumentHandler
         // Collect all available containers in order to work with some of them later.
         /** @var array $templateContainers */
         $templateContainers = $document->_view->getTemplateVars('Containers');
-        /** @var \Smarty_Data $view */
         $view = $document->_view;
 
         /** @var array $orderData */
@@ -110,7 +111,7 @@ class InvoiceDocumentHandler
 
         $rawFooter = $this->dbalConnection->fetchAssoc($query, [$footer['id']]);
         if ($rawFooter === false) {
-            throw new \RuntimeException('PayPal footer not found');
+            throw new RuntimeException('PayPal footer not found');
         }
 
         if (!empty($translation[1]['PayPal_Unified_Instructions_Content_Value'])) {

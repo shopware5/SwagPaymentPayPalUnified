@@ -2266,16 +2266,6 @@ parameters:
 			path: Subscriber/ApmRiskManagement.php
 
 		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Subscriber\\\\Documents\\\\Invoice\\:\\:onBeforeRenderDocument\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Subscriber/Documents/Invoice.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Subscriber\\\\Documents\\\\Invoice\\:\\:onFilterMailVariables\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Subscriber/Documents/Invoice.php
-
-		-
 			message: "#^Property SwagPaymentPayPalUnified\\\\Subscriber\\\\Documents\\\\Invoice\\:\\:\\$translation \\(Shopware_Components_Translation\\) does not accept Shopware_Components_Translation\\|null\\.$#"
 			count: 1
 			path: Subscriber/Documents/Invoice.php

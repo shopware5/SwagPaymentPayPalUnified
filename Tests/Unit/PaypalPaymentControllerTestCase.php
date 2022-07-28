@@ -30,6 +30,7 @@ use SwagPaymentPayPalUnified\Components\Services\OrderDataService;
 use SwagPaymentPayPalUnified\Components\Services\OrderPropertyHelper;
 use SwagPaymentPayPalUnified\Components\Services\PaymentControllerHelper;
 use SwagPaymentPayPalUnified\Components\Services\PaymentStatusService;
+use SwagPaymentPayPalUnified\Components\Services\Plus\PaymentInstructionService;
 use SwagPaymentPayPalUnified\Components\Services\Validation\BasketValidatorInterface;
 use SwagPaymentPayPalUnified\Components\Services\Validation\RedirectDataBuilder;
 use SwagPaymentPayPalUnified\Components\Services\Validation\RedirectDataBuilderFactoryInterface;
@@ -73,6 +74,7 @@ class PaypalPaymentControllerTestCase extends TestCase
     const SERVICE_SHOP_REGISTRATION_SERVICE = 'paypal_unified.backend.shop_registration_service';
     const SERVICE_AUTHORIZATION_RESOURCE = 'paypal_unified.v2.authorization_resource';
     const SERVICE_CAPTURE_RESOURCE = 'paypal_unified.v2.capture_resource';
+    const SERVICE_PAYMENT_INSTRUCTION_SERVICE = 'paypal_unified.pay_upon_invoice_instruction_service';
 
     /**
      * @var MockObject|Enlight_Controller_Request_RequestHttp
@@ -123,6 +125,7 @@ class PaypalPaymentControllerTestCase extends TestCase
         $this->injections[self::SERVICE_SHOP_REGISTRATION_SERVICE] = $this->createMock(ShopRegistrationService::class);
         $this->injections[self::SERVICE_AUTHORIZATION_RESOURCE] = $this->createMock(AuthorizationResource::class);
         $this->injections[self::SERVICE_CAPTURE_RESOURCE] = $this->createMock(CaptureResource::class);
+        $this->injections[self::SERVICE_PAYMENT_INSTRUCTION_SERVICE] = $this->createMock(PaymentInstructionService::class);
 
         if (class_exists(BasketPersister::class)) {
             $this->injections[self::SERVICE_BASKET_PERSISTER] = $this->createMock(BasketPersister::class);
@@ -260,18 +263,5 @@ class PaypalPaymentControllerTestCase extends TestCase
         $orderPaymentHelperMock->method('getPayments')->willReturn($payments);
 
         return $orderPaymentHelperMock;
-    }
-
-    /**
-     * @return RedirectDataBuilder
-     */
-    private function createRedirectDataBuilder()
-    {
-        $redirectDataBuilderMock = $this->createMock(RedirectDataBuilder::class);
-        $redirectDataBuilderMock->method('setCode')->willReturn($redirectDataBuilderMock);
-        $redirectDataBuilderMock->method('setException')->willReturn($redirectDataBuilderMock);
-        $redirectDataBuilderMock->method('setRedirectToFinishAction')->willReturn($redirectDataBuilderMock);
-
-        return $redirectDataBuilderMock;
     }
 }

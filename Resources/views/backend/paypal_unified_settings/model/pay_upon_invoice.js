@@ -16,7 +16,8 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.model.PayUponInvoice', {
         { name: 'onboardingCompleted', type: 'bool', defaultValue: false },
         { name: 'sandboxOnboardingCompleted', type: 'bool', defaultValue: false },
         { name: 'active', type: 'bool', defaultValue: false },
-        { name: 'customerServiceInstructions', type: 'string', defaultValue: '' }
+        { name: 'customerServiceInstructions', type: 'string', defaultValue: '' },
+        { name: 'showRatePayHintInMail', type: 'bool', defaultValue: true }
     ]
 });
 // {/block}
