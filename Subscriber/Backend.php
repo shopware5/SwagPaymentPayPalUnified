@@ -11,6 +11,7 @@ namespace SwagPaymentPayPalUnified\Subscriber;
 use Enlight\Event\SubscriberInterface;
 use Enlight_Controller_ActionEventArgs as ActionEventArgs;
 use Enlight_View_Default;
+use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\PayPalBundle\Services\NonceService;
 
 class Backend implements SubscriberInterface
@@ -43,12 +44,15 @@ class Backend implements SubscriberInterface
             'Enlight_Controller_Action_PostDispatchSecure_Backend_Index' => 'onLoadBackendIndex',
             'Enlight_Controller_Action_PostDispatchSecure_Backend_Config' => 'onPostDispatchConfig',
             'Enlight_Controller_Action_PostDispatchSecure_Backend_Payment' => 'onPostDispatchPayment',
+            'Enlight_Controller_Action_PostDispatchSecure_Backend_Order' => 'onPostDispatchOrder',
         ];
     }
 
     /**
      * Handles the Enlight_Controller_Action_PostDispatchSecure_Backend_Index event.
      * Extends the backend icon set by the paypal icon.
+     *
+     * @return void
      */
     public function onLoadBackendIndex(ActionEventArgs $args)
     {
@@ -67,6 +71,9 @@ class Backend implements SubscriberInterface
         }
     }
 
+    /**
+     * @return void
+     */
     public function onPostDispatchConfig(ActionEventArgs $arguments)
     {
         $view = $arguments->getSubject()->View();
@@ -77,6 +84,9 @@ class Backend implements SubscriberInterface
         }
     }
 
+    /**
+     * @return void
+     */
     public function onPostDispatchPayment(ActionEventArgs $args)
     {
         /** @var Enlight_View_Default $view */
@@ -87,5 +97,23 @@ class Backend implements SubscriberInterface
         if ($args->get('request')->getActionName() === 'load') {
             $view->extendsTemplate('backend/payment/controller/payment_paypal_unified.js');
         }
+    }
+
+    /**
+     * @return void
+     */
+    public function onPostDispatchOrder(ActionEventArgs $arguments)
+    {
+        /** @var Enlight_View_Default $view */
+        $view = $arguments->get('subject')->View();
+
+        $view->addTemplateDir($this->pluginDir . '/Resources/views/');
+        $view->assign('paypalPaymentMethodNames', json_encode(PaymentMethodProvider::getAllUnifiedNames()));
+
+        if ($arguments->getRequest()->getActionName() !== 'load') {
+            return;
+        }
+
+        $view->extendsTemplate('backend/order/detail/overview_paypal_extension.js');
     }
 }

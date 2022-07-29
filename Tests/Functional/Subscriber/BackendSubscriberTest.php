@@ -33,7 +33,8 @@ class BackendSubscriberTest extends TestCase
         static::assertSame('onLoadBackendIndex', $events['Enlight_Controller_Action_PostDispatchSecure_Backend_Index']);
         static::assertSame('onPostDispatchConfig', $events['Enlight_Controller_Action_PostDispatchSecure_Backend_Config']);
         static::assertSame('onPostDispatchPayment', $events['Enlight_Controller_Action_PostDispatchSecure_Backend_Payment']);
-        static::assertCount(3, $events);
+        static::assertSame('onPostDispatchOrder', $events['Enlight_Controller_Action_PostDispatchSecure_Backend_Order']);
+        static::assertCount(4, $events);
     }
 
     public function testOnLoadBackendIndexExtendsTemplate()

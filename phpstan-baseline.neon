@@ -2266,21 +2266,6 @@ parameters:
 			path: Subscriber/ApmRiskManagement.php
 
 		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Subscriber\\\\Backend\\:\\:onLoadBackendIndex\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Subscriber/Backend.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Subscriber\\\\Backend\\:\\:onPostDispatchConfig\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Subscriber/Backend.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Subscriber\\\\Backend\\:\\:onPostDispatchPayment\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Subscriber/Backend.php
-
-		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Subscriber\\\\Documents\\\\Invoice\\:\\:onBeforeRenderDocument\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: Subscriber/Documents/Invoice.php
