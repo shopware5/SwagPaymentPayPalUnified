@@ -22,7 +22,7 @@
              *
              * @type string
              */
-            checkoutConfirmUrl: '',
+            returnUrl: '',
 
             /**
              * This page will be opened when the payment creation fails.
@@ -37,6 +37,20 @@
              * @type string
              */
             paypalScriptLoadedSelector: 'paypal-checkout-js-loaded',
+
+            /**
+             * selector for the checkout confirm agb element
+             *
+             * @type string
+             */
+            agbCheckboxSelector: '#sAGB',
+
+            /**
+             * selector for the checkout confirm form element
+             *
+             * @type string
+             */
+            confirmFormSelector: '#confirm--form',
 
             /**
              * @type string
@@ -101,15 +115,14 @@
         paypal: {},
 
         init: function() {
-            var me = this;
+            this.applyDataAttributes();
+            this.$form = $(this.opts.confirmFormSelector);
+            this.subscribeEvents();
+            $.publish('plugin/swagPayPalUnifiedSmartPaymentButtons/init', this);
 
-            me.applyDataAttributes();
-            me.subscribeEvents();
-            $.publish('plugin/swagPayPalUnifiedSmartPaymentButtons/init', me);
+            this.createButtons();
 
-            me.createButtons();
-
-            $.publish('plugin/swagPayPalUnifiedSmartPaymentButtons/buttonsCreated', me);
+            $.publish('plugin/swagPayPalUnifiedSmartPaymentButtons/buttonsCreated', this);
         },
 
         /**
@@ -119,9 +132,7 @@
          * @method subscribeEvents
          */
         subscribeEvents: function() {
-            var me = this;
-
-            $.subscribe(me.getEventName('plugin/swShippingPayment/onInputChanged'), $.proxy(me.createButtons, me));
+            $.subscribe(this.getEventName('plugin/swShippingPayment/onInputChanged'), $.proxy(this.createButtons, this));
         },
 
         createButtons: function() {
@@ -175,20 +186,19 @@
         },
 
         renderButtons: function() {
-            var me = this,
-                buttonConfig = me.getButtonConfig(),
-                el = me.$el.get(0);
+            var buttonConfig = this.getButtonConfig(),
+                el = this.$el.get(0);
 
             // Render the marks for each element visible with the id spbMarksContainer
             $('[id=spbMarksContainer]:visible').each(function() {
-                me.paypal.Marks().render(this);
+                this.paypal.Marks().render(this);
             });
 
-            if (me.opts.marksOnly) {
+            if (this.opts.marksOnly) {
                 return;
             }
 
-            me.paypal.Buttons(buttonConfig).render(el);
+            this.paypal.Buttons(buttonConfig).render(el);
         },
 
         getButtonConfig: function() {
@@ -196,6 +206,16 @@
                 style: {
                     label: this.opts.label
                 },
+
+                /**
+                 * Will be called on int the payment button
+                 */
+                onInit: this.onInitPayPalButton.bind(this),
+
+                /**
+                 * Will be called on the payment button is clicked
+                 */
+                onClick: this.onPayPalButtonClick.bind(this),
 
                 /**
                  * Will be called if on smarty payment button is clicked
@@ -237,7 +257,7 @@
         },
 
         onApprove: function(data, actions) {
-            var confirmUrl = this.opts.checkoutConfirmUrl + '?' + $.param({
+            var returnUrl = this.opts.returnUrl + '?' + $.param({
                 paypalOrderId: data.orderID,
                 payerId: data.payerID,
                 basketId: this.opts.basketId
@@ -249,7 +269,7 @@
                 theme: 'light'
             });
 
-            actions.redirect(confirmUrl);
+            actions.redirect(returnUrl);
         },
 
         onCancel: function() {
@@ -260,9 +280,43 @@
             window.location.replace(this.opts.paypalErrorPage);
         },
 
+        /**
+         * Disables the submit function, because in some browsers the submit event is triggered,
+         * even though the form is not valid
+         */
+        disableConfirmButton: function() {
+            this._on(this.$form, 'submit', $.proxy(this.onConfirmCheckout, this));
+        },
+
+        /**
+         * @param { Event } event
+         */
+        onConfirmCheckout: function(event) {
+            event.preventDefault();
+        },
+
+        /**
+         * @param data { Object }
+         * @param actions { Object }
+         */
+        onInitPayPalButton: function(data, actions) {
+            actions.disable();
+
+            $(this.opts.agbCheckboxSelector).on('change', function(event) {
+                if (event.target.checked) {
+                    actions.enable();
+                } else {
+                    actions.disable();
+                }
+            });
+        },
+
+        onPayPalButtonClick: function() {
+            this.$form[0].checkValidity();
+        },
+
         destroy: function() {
-            var me = this;
-            me._destroy();
+            this._destroy();
         }
     });
 

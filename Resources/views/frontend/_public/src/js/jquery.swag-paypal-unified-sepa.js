@@ -56,7 +56,7 @@
              *
              * @type string
              */
-            checkoutConfirmUrl: '',
+            returnUrl: '',
 
             /**
              * The class name to identify whether or not the paypal sdk has been loaded
@@ -120,6 +120,20 @@
             responsiveHeight: 55,
 
             /**
+             * selector for the checkout confirm agb element
+             *
+             * @type string
+             */
+            agbCheckboxSelector: '#sAGB',
+
+            /**
+             * selector for the checkout confirm form element
+             *
+             * @type string
+             */
+            confirmFormSelector: '#confirm--form',
+
+            /**
              * PayPal button width small
              *
              * @type string
@@ -164,6 +178,7 @@
 
         init: function() {
             this.applyDataAttributes();
+            this.$form = $(this.opts.confirmFormSelector);
             this.createButtonSizeObject();
             this.$el.addClass(this.buttonSize[this.opts.size].widthClass);
             this.subscribeEvents();
@@ -291,7 +306,7 @@
         },
 
         onApprove: function(data, actions) {
-            var confirmUrl = this.opts.checkoutConfirmUrl + '?' + $.param({
+            var returnUrl = this.opts.returnUrl + '?' + $.param({
                 paypalOrderId: data.orderID,
                 payerId: data.payerID,
                 basketId: this.opts.basketId
@@ -303,7 +318,7 @@
                 theme: 'light'
             });
 
-            actions.redirect(confirmUrl);
+            actions.redirect(returnUrl);
         },
 
         onCancel: function() {
@@ -342,7 +357,42 @@
             }
 
             window.location.replace(errorPageUrl);
-        }
+        },
+
+        /**
+         * Disables the submit function, because in some browsers the submit event is triggered,
+         * even though the form is not valid
+         */
+        disableConfirmButton: function() {
+            this._on(this.$form, 'submit', $.proxy(this.onConfirmCheckout, this));
+        },
+
+        /**
+         * @param { Event } event
+         */
+        onConfirmCheckout: function(event) {
+            event.preventDefault();
+        },
+
+        /**
+         * @param data { Object }
+         * @param actions { Object }
+         */
+        onInitPayPalButton: function (data, actions) {
+            actions.disable();
+
+            $(this.opts.agbCheckboxSelector).on('change', function (event) {
+                if (event.target.checked) {
+                    actions.enable();
+                } else {
+                    actions.disable();
+                }
+            });
+        },
+
+        onPayPalButtonClick: function () {
+            this.$form[0].checkValidity();
+        },
     });
 
     window.StateManager.addPlugin('*[data-paypalUnifiedSepa="true"]', 'swagPayPalUnifiedSepa');

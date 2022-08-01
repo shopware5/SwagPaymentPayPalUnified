@@ -77,11 +77,21 @@
             paypalScriptLoadedSelector: 'paypal-checkout-js-loaded',
 
             /**
+             * selector for the checkout confirm agb element
+             *
+             * @type string
+             */
+            agbCheckboxSelector: '#sAGB',
+
+            /**
              * @type string
              */
             createOrderUrlFallback: '',
 
-            checkoutConfirmUrlFallback: ''
+            /**
+             * @type string
+             */
+            fallbackReturnUrl: ''
         },
 
         init: function() {
@@ -92,28 +102,15 @@
             this.disableConfirmButton();
             this.hideConfirmButton();
 
-            this.disableTosCheckbox();
-
             this.renderButton();
         },
 
         hideConfirmButton: function() {
-            var me = this;
-
-            me.$confirmButton = $(me.opts.confirmFormSubmitButtonSelector).remove();
+            this.$confirmButton = $(this.opts.confirmFormSubmitButtonSelector).remove();
         },
 
         disableConfirmButton: function() {
-            var me = this;
-
-            me._on(me.$form, 'submit', $.proxy(me.onConfirmCheckout, me));
-        },
-
-        disableTosCheckbox: function () {
-            var $panel = $('.tos--panel'),
-                $checkbox = $panel.find('input#sAGB');
-
-            $checkbox.attr('required', false);
+            this._on(this.$form, 'submit', $.proxy(this.onConfirmCheckout, this));
         },
 
         /**
@@ -149,6 +146,16 @@
                     layout: this.opts.layout,
                     tagline: this.opts.tagline
                 },
+
+                /**
+                 * Will be called on int the payment button
+                 */
+                onInit: this.onInitPayPalButton.bind(this),
+
+                /**
+                 * Will be called on the payment button is clicked
+                 */
+                onClick: this.onPayPalButtonClick.bind(this),
 
                 /**
                  * Will be called after payment button is clicked
@@ -197,15 +204,13 @@
          * @return { Promise }
          */
         onApprove: function(data, actions) {
-            var me = this;
-
             $.loadingIndicator.open({
                 openOverlay: true,
                 closeOnClick: false,
                 theme: 'light'
             });
 
-            actions.redirect(me.renderConfirmUrl(data));
+            actions.redirect(this.renderConfirmUrl(data));
         },
 
         /**
@@ -220,7 +225,7 @@
                 basketId: this.opts.basketId
             }, true);
 
-            return [this.opts.checkoutConfirmUrlFallback, '?', params].join('');
+            return [this.opts.fallbackReturnUrl, '?', params].join('');
         },
 
         onCancel: function() {
@@ -229,6 +234,26 @@
 
         onPayPalAPIError: function() {
             window.location.replace(this.opts.paypalErrorPage);
-        }
+        },
+
+        /**
+         * @param data { Object }
+         * @param actions { Object }
+         */
+        onInitPayPalButton: function (data, actions) {
+            actions.disable();
+
+            $(this.opts.agbCheckboxSelector).on('change', function (event) {
+                if (event.target.checked) {
+                    actions.enable();
+                } else {
+                    actions.disable();
+                }
+            });
+        },
+
+        onPayPalButtonClick: function () {
+            this.$form[0].checkValidity();
+        },
     });
 })(jQuery, window);

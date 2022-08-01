@@ -12,7 +12,7 @@
                  data-paypalIntent="{$paypalUnifiedPayLaterIntent}"
                  data-paypalErrorPage="{url controller='checkout' action='shippingPayment' paypal_unified_error_code=2 forceSecure}"
                  data-createOrderUrl="{url controller='PaypalUnifiedV2' action='index' paypalUnifiedPayLater=1 forceSecure}"
-                 data-confirmUrl="{url module='frontend' controller='checkout' action='confirm' paypalUnifiedPayLater=1 forceSecure}"
+                 data-returnUrl="{url module='frontend' controller='PaypalUnifiedV2' action='return' paypalUnifiedPayLater=1 forceSecure}"
                     {block name='frontend_checkout_confirm_paypal_unified_pay_later_button_data'}{/block}>
             </div>
         {/block}

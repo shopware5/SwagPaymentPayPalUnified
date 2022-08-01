@@ -108,7 +108,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
     {
         $this->logger->debug(sprintf('%s START', __METHOD__));
 
-        $payPalOrderId = $this->Request()->getParam('token');
+        $payPalOrderId = $this->Request()->getParam('paypalOrderId');
 
         $payPalOrder = $this->getPayPalOrder($payPalOrderId);
         if (!$payPalOrder instanceof Order) {
