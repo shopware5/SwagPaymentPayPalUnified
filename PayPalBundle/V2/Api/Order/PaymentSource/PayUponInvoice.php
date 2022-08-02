@@ -11,6 +11,7 @@ namespace SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\Payer\Address;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\Payer\Name;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\Payer\Phone\PhoneNumber;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\PayUponInvoice\DepositBankDetails;
 
 class PayUponInvoice extends AbstractPaymentSource
 {
@@ -43,6 +44,11 @@ class PayUponInvoice extends AbstractPaymentSource
      * @var ExperienceContext
      */
     protected $experienceContext;
+
+    /**
+     * @var DepositBankDetails
+     */
+    protected $depositBankDetails;
 
     /**
      * @return Name
@@ -138,5 +144,23 @@ class PayUponInvoice extends AbstractPaymentSource
     public function setExperienceContext($experienceContext)
     {
         $this->experienceContext = $experienceContext;
+    }
+
+    /**
+     * @return DepositBankDetails
+     */
+    public function getDepositBankDetails()
+    {
+        return $this->depositBankDetails;
+    }
+
+    /**
+     * @param DepositBankDetails $depositBankDetails
+     *
+     * @return void
+     */
+    public function setDepositBankDetails($depositBankDetails)
+    {
+        $this->depositBankDetails = $depositBankDetails;
     }
 }

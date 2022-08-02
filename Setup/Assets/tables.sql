@@ -105,6 +105,7 @@ CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_settings_pay_upon_invoice
     `sandbox_onboarding_completed`  TINYINT(1) NOT NULL,
     `active`                        TINYINT(1) NOT NULL,
     `customer_service_instructions` TEXT       NULL,
+    `show_rate_pay_hint_in_mail`    TINYINT(1) NOT NULL default 1,
     CONSTRAINT unique_shop_id UNIQUE (`shop_id`)
 )
     ENGINE = InnoDB

@@ -10,12 +10,18 @@ namespace SwagPaymentPayPalUnified\Subscriber\Documents;
 
 use Doctrine\DBAL\Connection;
 use Enlight\Event\SubscriberInterface;
+use Enlight_Event_EventArgs as EventArgs;
+use Enlight_Hook_HookArgs as HookArgs;
 use Enlight_Template_Manager as Template;
+use Shopware_Components_Document as Document;
 use Shopware_Components_Snippet_Manager as SnippetManager;
 use Shopware_Components_Translation;
 use SwagPaymentPayPalUnified\Components\Document\InvoiceDocumentHandler;
+use SwagPaymentPayPalUnified\Components\Document\PuiInvoiceDocumentHandler;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Components\Services\Plus\PaymentInstructionService;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 
 class Invoice implements SubscriberInterface
@@ -50,24 +56,31 @@ class Invoice implements SubscriberInterface
      */
     private $paymentMethodProvider;
 
+    /**
+     * @var SettingsServiceInterface
+     */
+    private $settingsService;
+
     public function __construct(
         PaymentInstructionService $paymentInstructionService,
         Connection $dbalConnection,
         SnippetManager $snippetManager,
         Shopware_Components_Translation $translation = null,
         Template $templateManager,
-        PaymentMethodProviderInterface $paymentMethodProvider
+        PaymentMethodProviderInterface $paymentMethodProvider,
+        SettingsServiceInterface $settingsService
     ) {
         $this->paymentInstructionsService = $paymentInstructionService;
         $this->dbalConnection = $dbalConnection;
         $this->snippetManager = $snippetManager;
         $this->translation = $translation;
         $this->templateManager = $templateManager;
+        $this->paymentMethodProvider = $paymentMethodProvider;
+        $this->settingsService = $settingsService;
 
         if ($this->translation === null) {
             $this->translation = new Shopware_Components_Translation();
         }
-        $this->paymentMethodProvider = $paymentMethodProvider;
     }
 
     /**
@@ -81,9 +94,12 @@ class Invoice implements SubscriberInterface
         ];
     }
 
-    public function onBeforeRenderDocument(\Enlight_Hook_HookArgs $args)
+    /**
+     * @return void
+     */
+    public function onBeforeRenderDocument(HookArgs $args)
     {
-        /** @var \Shopware_Components_Document|null $document */
+        /** @var Document|null $document */
         $document = $args->getSubject();
 
         if (!$document) {
@@ -91,9 +107,20 @@ class Invoice implements SubscriberInterface
         }
 
         $unifiedPaymentId = $this->paymentMethodProvider->getPaymentId(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
-
+        $payUponInvoiceId = $this->paymentMethodProvider->getPaymentId(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME);
+        $orderNumber = $document->_order->order['ordernumber'];
         $orderPaymentMethodId = (int) $document->_order->payment['id'];
 
+        if ($orderPaymentMethodId === $payUponInvoiceId) {
+            (new PuiInvoiceDocumentHandler(
+                $this->snippetManager,
+                $this->dbalConnection,
+                $this->paymentInstructionsService,
+                $this->translation
+            ))->handleDocument($orderNumber, $document);
+
+            return;
+        }
         // This order has not been payed with paypal unified.
         if ($orderPaymentMethodId !== $unifiedPaymentId) {
             return;
@@ -105,8 +132,6 @@ class Invoice implements SubscriberInterface
             return;
         }
 
-        $orderNumber = $document->_order->order['ordernumber'];
-
         $documentHandler = new InvoiceDocumentHandler(
             $this->paymentInstructionsService,
             $this->dbalConnection,
@@ -116,11 +141,20 @@ class Invoice implements SubscriberInterface
         $documentHandler->handleDocument($orderNumber, $document);
     }
 
-    public function onFilterMailVariables(\Enlight_Event_EventArgs $eventArgs)
+    /**
+     * @return array<string,mixed>
+     */
+    public function onFilterMailVariables(EventArgs $eventArgs)
     {
         $vars = $eventArgs->getReturn();
 
-        if ($vars['additional']['payment']['name'] !== PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME) {
+        $paymentMethodName = $vars['additional']['payment']['name'];
+
+        if ($paymentMethodName === PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME) {
+            return $this->addRatePayLegalText($vars);
+        }
+
+        if ($paymentMethodName !== PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME) {
             return $vars;
         }
 
@@ -129,5 +163,29 @@ class Invoice implements SubscriberInterface
         );
 
         return $vars;
+    }
+
+    /**
+     * @param array<string,mixed> $variables
+     *
+     * @return array<string,mixed>
+     */
+    private function addRatePayLegalText(array $variables)
+    {
+        $showRatePayHint = (bool) $this->settingsService->get(SettingsServiceInterface::SETTING_PUI_SHOW_RATEPAY_HINT, SettingsTable::PAY_UPON_INVOICE);
+
+        $ratePayLegalText = $this->templateManager->fetch(
+            \sprintf('string:%s', $this->snippetManager->getNamespace('document/rate_pay')->get('hint'))
+        );
+
+        $variables['additional']['paypalUnifiedRatePayHint'] = $ratePayLegalText;
+
+        if (!$showRatePayHint) {
+            return $variables;
+        }
+
+        $variables['additional']['payment']['additionaldescription'] = $ratePayLegalText;
+
+        return $variables;
     }
 }

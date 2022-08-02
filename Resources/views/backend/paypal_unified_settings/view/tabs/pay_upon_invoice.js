@@ -24,6 +24,10 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.PayUponInvoice', {
         onboardingPendingMessage: '{s name="onboardingPendingMessage"}Your account is currently not eligible for accepting payments using Pay Upon Invoice.{/s}',
         capabilityTestButtonText: '{s name="button/capability/test"}Capability test{/s}',
         hasLimitsMessage: '{s name="capability/hasLimits/message/pui"}Please go to your <a href="https://www.paypal.com/businessmanage/limits/liftlimits" target="_blank">PayPal Account</a> and clarify which company documents still need to be submitted in order to use Pay Upon Invoice permanent.{/s}',
+        showRatePayHintInMailField: {
+            fieldLabel: '{s name="showRatePayHintInMailField/fieldLabel"}Show hint to RatePay invoice under payment method{/s}',
+            boxLabel: '{s name="showRatePayHintInMailField/boxLabel"}This field should stay active. Alternatively, customise your EmailFooter under "Basic Settings - Email Settings" with the code below.{/s}',
+        }
     },
 
     activationFieldUseSupportText: true,
@@ -41,7 +45,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.PayUponInvoice', {
         this.registerEvents()
     },
 
-    registerEvents: function () {
+    registerEvents: function() {
         this.activationField.on('change', Ext.bind(this.onActivationChange, this), this);
     },
 
@@ -68,6 +72,22 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.PayUponInvoice', {
     },
 
     createSettingsFieldsetItems: function() {
+        this.showRatePayHintInMailField = Ext.create('Ext.form.field.Checkbox', {
+            name: 'showRatePayHintInMail',
+            fieldLabel: this.snippets.showRatePayHintInMailField.fieldLabel,
+            boxLabel: this.snippets.showRatePayHintInMailField.boxLabel,
+            supportText: [
+                '{literal}',
+                '{if $additional.paypalUnifiedRatePayHint}',
+                '&nbsp;&nbsp;&nbsp;&nbsp;{$additional.paypalUnifiedRatePayHint}',
+                '{/if}',
+                '{/literal}',
+            ].join('<br>'),
+            inputValue: true,
+            uncheckedValue: false,
+            labelWidth: 180,
+        });
+
         this.customerServiceInstructionsField = Ext.create('Ext.form.field.TextArea', {
             name: 'customerServiceInstructions',
             allowBlank: false,
@@ -81,7 +101,8 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.PayUponInvoice', {
         });
 
         return [
-            this.customerServiceInstructionsField
+            this.customerServiceInstructionsField,
+            this.showRatePayHintInMailField
         ];
     },
 

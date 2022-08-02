@@ -37,6 +37,7 @@ interface SettingsServiceInterface
     const SETTING_GENERAL_OFF_CANVAS_ACTIVE = 'off_canvas_active';
 
     const SETTING_PUI_CUSTOMER_SERVICE_INSTRUCTIONS = 'customer_service_instructions';
+    const SETTING_PUI_SHOW_RATEPAY_HINT = 'show_rate_pay_hint_in_mail';
 
     /**
      * Returns the whole settings model

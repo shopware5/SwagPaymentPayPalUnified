@@ -12,6 +12,9 @@ use Generator;
 use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\Components\Services\OrderPropertyHelper;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\PayUponInvoice;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\PayUponInvoice\DepositBankDetails;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Payments;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Payments\Authorization;
@@ -138,6 +141,100 @@ class OrderPropertyHelperTest extends TestCase
             $this->getOrderWithCapture(),
             true,
         ];
+    }
+
+    /**
+     * @dataProvider getBankDetailsTestDataProvider
+     *
+     * @return void
+     */
+    public function testGetBankDetails(Order $paypalOrder, DepositBankDetails $expectedResult = null)
+    {
+        $service = new OrderPropertyHelper();
+
+        $result = $service->getBankDetails($paypalOrder);
+
+        if ($expectedResult === null) {
+            static::assertNull($result);
+        } else {
+            static::assertInstanceOf(DepositBankDetails::class, $result);
+        }
+    }
+
+    /**
+     * @return Generator<array<int,mixed>>
+     */
+    public function getBankDetailsTestDataProvider()
+    {
+        yield 'Order without PaymentSource' => [
+            new Order(),
+        ];
+
+        yield 'Order without PayUponInvoice' => [
+            $this->createOrderWithPaymentSource(),
+        ];
+
+        yield 'Order without DepositBankDetails' => [
+            $this->createOrderWithPayUponInvoice(),
+        ];
+
+        yield 'Order with DepositBankDetails' => [
+            $this->createOrderWithDepositBankDetails(),
+            $this->createDepositBankDetails(),
+        ];
+    }
+
+    /**
+     * @return Order
+     */
+    private function createOrderWithDepositBankDetails()
+    {
+        $order = new Order();
+        $paymentSource = new PaymentSource();
+        $payUponInvoice = new PayUponInvoice();
+        $payUponInvoice->setDepositBankDetails($this->createDepositBankDetails());
+        $paymentSource->setPayUponInvoice($payUponInvoice);
+        $order->setPaymentSource($paymentSource);
+
+        return $order;
+    }
+
+    /**
+     * @return DepositBankDetails
+     */
+    private function createDepositBankDetails()
+    {
+        $depositBankDetails = new DepositBankDetails();
+        $depositBankDetails->setAccountHolderName('Max Mustermann');
+        $depositBankDetails->setBankName('Muster Bank');
+        $depositBankDetails->setBic('any BIC');
+        $depositBankDetails->setIban('any IBAN');
+
+        return $depositBankDetails;
+    }
+
+    /**
+     * @return Order
+     */
+    private function createOrderWithPayUponInvoice()
+    {
+        $order = new Order();
+        $paymentSource = new PaymentSource();
+        $paymentSource->setPayUponInvoice(new PayUponInvoice());
+        $order->setPaymentSource($paymentSource);
+
+        return $order;
+    }
+
+    /**
+     * @return Order
+     */
+    private function createOrderWithPaymentSource()
+    {
+        $order = new Order();
+        $order->setPaymentSource(new PaymentSource());
+
+        return $order;
     }
 
     /**

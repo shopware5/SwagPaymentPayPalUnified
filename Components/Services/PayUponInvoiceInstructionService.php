@@ -6,16 +6,19 @@
  * file that was distributed with this source code.
  */
 
-namespace SwagPaymentPayPalUnified\Components\Services\Plus;
+namespace SwagPaymentPayPalUnified\Components\Services;
 
 use Enlight_Event_EventManager as EventManager;
 use Shopware\Components\Model\ModelManager;
 use SwagPaymentPayPalUnified\Models\PaymentInstruction as PaymentInstructionModel;
-use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\PaymentInstruction;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\PayUponInvoice\DepositBankDetails;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Payments\Capture;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Payments\Capture\Amount;
 
-class PaymentInstructionService
+class PayUponInvoiceInstructionService
 {
-    const INVOICE_INSTRUCTION_DESCRIPTION = 'Pay Upon Invoice Payment Instructions';
+    const INSTRUCTION_DESCRIPTION = 'Pay Upon Invoice Payment Instructions';
 
     /**
      * @var ModelManager
@@ -27,37 +30,48 @@ class PaymentInstructionService
      */
     private $eventManager;
 
-    public function __construct(ModelManager $modelManager, EventManager $eventManager)
+    /**
+     * @var OrderPropertyHelper
+     */
+    private $orderPropertyHelper;
+
+    public function __construct(ModelManager $modelManager, EventManager $eventManager, OrderPropertyHelper $orderPropertyHelper)
     {
         $this->modelManager = $modelManager;
         $this->eventManager = $eventManager;
+        $this->orderPropertyHelper = $orderPropertyHelper;
     }
 
     /**
      * @param string $orderNumber
      *
-     * @return PaymentInstructionModel|null
+     * @return void
      */
-    public function getInstructions($orderNumber)
+    public function createInstructions($orderNumber, Order $order)
     {
-        return $this->modelManager->getRepository(PaymentInstructionModel::class)
-            ->findOneBy(['orderNumber' => $orderNumber]);
-    }
+        $bankDetails = $this->orderPropertyHelper->getBankDetails($order);
+        if (!$bankDetails instanceof DepositBankDetails) {
+            return;
+        }
 
-    /**
-     * @param string $orderNumber
-     */
-    public function createInstructions($orderNumber, PaymentInstruction $paymentInstruction)
-    {
+        $capture = $this->orderPropertyHelper->getFirstCapture($order);
+        if (!$capture instanceof Capture) {
+            return;
+        }
+
+        $amount = $capture->getAmount();
+        if (!$amount instanceof Amount) {
+            return;
+        }
+
         $model = new PaymentInstructionModel();
         $model->setOrderNumber($orderNumber);
-        $model->setAccountHolder($paymentInstruction->getRecipientBanking()->getAccountHolderName());
-        $model->setBankName($paymentInstruction->getRecipientBanking()->getBankName());
-        $model->setBic($paymentInstruction->getRecipientBanking()->getBic());
-        $model->setIban($paymentInstruction->getRecipientBanking()->getIban());
-        $model->setAmount((string) $paymentInstruction->getAmount()->getValue());
-        $model->setDueDate($paymentInstruction->getDueDate());
-        $model->setReference($paymentInstruction->getReferenceNumber());
+        $model->setAccountHolder($bankDetails->getAccountHolderName());
+        $model->setBankName($bankDetails->getBankName());
+        $model->setBic($bankDetails->getBic());
+        $model->setIban($bankDetails->getIban());
+        $model->setAmount($amount->getValue());
+        $model->setReference($order->getId());
 
         $this->modelManager->persist($model);
         $this->modelManager->flush();
@@ -65,16 +79,18 @@ class PaymentInstructionService
         $this->setInstructionToInternalComment($orderNumber, $model);
 
         $this->eventManager->notify(
-            'SwagPaymentPayPalUnified_CreatePaymentInstructions',
+            'SwagPaymentPayPalUnified_PayUponInvoice_CreatePaymentInstructions',
             [
                 'ordernumber' => $orderNumber,
-                'paymentInstruction' => $paymentInstruction,
+                'paymentInstruction' => $model,
             ]
         );
     }
 
     /**
      * @param string $orderNumber
+     *
+     * @return void
      */
     private function setInstructionToInternalComment($orderNumber, PaymentInstructionModel $model)
     {
@@ -99,7 +115,7 @@ class PaymentInstructionService
     {
         $modelArray = $model->toArray();
         unset($modelArray['id'], $modelArray['order']);
-        $modelArray = ['jsonDescription' => self::INVOICE_INSTRUCTION_DESCRIPTION] + $modelArray;
+        $modelArray = ['jsonDescription' => self::INSTRUCTION_DESCRIPTION] + $modelArray;
         $instructionsJson = \json_encode($modelArray);
 
         return "\n" . $instructionsJson . "\n";

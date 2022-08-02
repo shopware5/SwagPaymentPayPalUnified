@@ -154,6 +154,7 @@ trait SettingsHelperTrait
             'sandbox_onboarding_completed' => 0,
             'active' => 0,
             'customer_service_instructions' => null,
+            'show_rate_pay_hint_in_mail' => 1,
         ];
 
         $this->addOrUpdateSettings('swag_payment_paypal_unified_settings_pay_upon_invoice', $default, $data);

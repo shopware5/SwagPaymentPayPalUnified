@@ -156,5 +156,13 @@
         <service id="paypal_unified.order_property_helper"
                  class="SwagPaymentPayPalUnified\Components\Services\OrderPropertyHelper"
                  public="true"/>
+
+        <service id="paypal_unified.pay_upon_invoice_instruction_service"
+                 class="SwagPaymentPayPalUnified\Components\Services\PayUponInvoiceInstructionService"
+                 public="true">
+            <argument type="service" id="models"/>
+            <argument type="service" id="events"/>
+            <argument type="service" id="paypal_unified.order_property_helper"/>
+        </service>
     </services>
 </container>
