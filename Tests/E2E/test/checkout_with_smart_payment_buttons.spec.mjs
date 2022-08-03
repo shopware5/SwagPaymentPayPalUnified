@@ -4,21 +4,24 @@ import MysqlFactory from '../helper/mysqlFactory.mjs';
 import defaultPaypalSettingsSql from '../helper/paypalSqlHelper.mjs';
 import clearCacheHelper from '../helper/clearCacheHelper.mjs';
 import tryUntilSucceed from '../helper/retryHelper.mjs';
+import useSmartPaymentButtonsSql from '../helper/useSmartPaymentButtons.mjs';
+import getPaypalPaymentMethodSelector from '../helper/getPayPalPaymentMethodSelector.mjs';
 
 const connection = MysqlFactory.getInstance();
 
 test.use({ locale: 'de-DE' });
 
-test.describe('Is SEPA fully functional', () => {
+test.describe('Is SPB fully functional', () => {
     test.beforeAll(() => {
         clearCacheHelper.clearCache();
     });
 
     test.beforeEach(() => {
         connection.query(defaultPaypalSettingsSql);
+        connection.query(useSmartPaymentButtonsSql);
     });
 
-    test('Buy a product with SEPA', async ({ page }) => {
+    test('Buy a product with PayPal using Smart Payment Buttons', async ({ page }) => {
         // Add product to cart
         await page.goto('/sommerwelten/beachwear/178/strandtuch-ibiza');
         await page.click('.buybox--button');
@@ -32,13 +35,17 @@ test.describe('Is SEPA fully functional', () => {
         await page.click('.register--login-btn');
         await expect(page).toHaveURL(/.*checkout\/confirm/);
 
-        // Change payment to SEPA
+        // Change payment to Pay later
         await page.click('.btn--change-payment');
-        await page.click('text=Lastschrift');
+
+        const selector = await getPaypalPaymentMethodSelector.getSelector();
+
+        await page.locator(selector).check();
+
         await page.click('text=Weiter >> nth=1');
 
-        // buy the product with SEPA
-        const locator = await page.frameLocator('.component-frame').locator('div[data-funding-source="sepa"]');
+        // buy the product with PayPal
+        const locator = await page.frameLocator('.component-frame').locator('div[data-funding-source="paypal"]');
         await page.waitForLoadState('load');
 
         // check: can not check out without accept AGBs
@@ -54,20 +61,13 @@ test.describe('Is SEPA fully functional', () => {
             ]);
         });
 
-        await paypalPage.route(/.*fundingSource=sepa.*/, route => {
-            let url = route.request().url();
-            url = url.replace(/buyerCountry=[A-Z]*/, '');
-            url += '&buyerCountry=DE';
+        await paypalPage.locator('#email').fill(credentials.paypalCustomerEmail);
 
-            route.continue({ url: url });
-        });
+        await paypalPage.locator('#password').fill(credentials.paypalCustomerPassword);
 
-        await paypalPage.locator('#bankIban').fill(credentials.sepaIban);
-        await paypalPage.locator('#dateOfBirth').fill(credentials.sepaBirthday);
-        await paypalPage.locator('#phone').fill(credentials.sepaPhone);
-        await paypalPage.locator('text=Angaben speichern und PayPal-Konto eröffnen').click();
+        await paypalPage.locator('#btnLogin').click();
 
-        await paypalPage.locator('button[type="submit"]').click();
+        await paypalPage.locator('button:has-text("Jetzt zahlen")').click();
 
         await expect(page.locator('.teaser--title')).toHaveText(/Vielen Dank für Ihre Bestellung bei Shopware Demo/);
     });

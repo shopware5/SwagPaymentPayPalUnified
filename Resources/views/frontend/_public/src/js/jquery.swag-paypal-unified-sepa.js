@@ -120,7 +120,7 @@
             responsiveHeight: 55,
 
             /**
-             * selector for the checkout confirm agb element
+             * selector for the checkout confirm TOS element
              *
              * @type string
              */
@@ -178,7 +178,10 @@
 
         init: function() {
             this.applyDataAttributes();
+
             this.$form = $(this.opts.confirmFormSelector);
+            this.$agbCheckbox = $(this.opts.agbCheckboxSelector);
+
             this.createButtonSizeObject();
             this.$el.addClass(this.buttonSize[this.opts.size].widthClass);
             this.subscribeEvents();
@@ -265,6 +268,16 @@
                     label: this.opts.label,
                     height: this.buttonSize[this.opts.size].height
                 },
+
+                /**
+                 * Will be called on initialisation of the payment button
+                 */
+                onInit: this.onInitPayPalButton.bind(this),
+
+                /**
+                 * Will be called if the payment button is clicked
+                 */
+                onClick: this.onPayPalButtonClick.bind(this),
 
                 /**
                  * listener for the button
@@ -378,10 +391,10 @@
          * @param data { Object }
          * @param actions { Object }
          */
-        onInitPayPalButton: function (data, actions) {
+        onInitPayPalButton: function(data, actions) {
             actions.disable();
 
-            $(this.opts.agbCheckboxSelector).on('change', function (event) {
+            this.$agbCheckbox.on('change', function (event) {
                 if (event.target.checked) {
                     actions.enable();
                 } else {
@@ -390,8 +403,16 @@
             });
         },
 
-        onPayPalButtonClick: function () {
-            this.$form[0].checkValidity();
+        onPayPalButtonClick: function() {
+            if (Object.prototype.hasOwnProperty.call(this.$form[0], 'checkValidity')) {
+                this.$form[0].checkValidity();
+
+                return;
+            }
+
+            if (!this.$agbCheckbox.prop('checked')) {
+                $('label[for="sAGB"]').addClass('has--error');
+            }
         }
     });
 

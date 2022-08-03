@@ -108,12 +108,6 @@
     {block name='frontend_checkout_confirm_tos_panel_paypal_unified_express_checkout'}
         {if $paypalUnifiedExpressCheckout}
             {include file='frontend/paypal_unified/express_checkout/confirm_inputs.tpl'}
-        {elseif $paypalUnifiedSpbCheckout}
-            {include file='frontend/paypal_unified/spb/confirm_inputs.tpl'}
-        {elseif $paypalUnifiedInContextCheckout}
-            {include file='frontend/paypal_unified/in_context/confirm_inputs.tpl'}
-        {elseif $paypalUnifiedPayLater}
-            {include file='frontend/paypal_unified/pay_later/confirm_inputs.tpl'}
         {/if}
 
         {if $paypalUnifiedAdvancedCreditDebitCardCheckout}

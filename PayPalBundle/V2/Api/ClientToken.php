@@ -125,7 +125,7 @@ class ClientToken extends PayPalApiStruct
 
         $intervalString = sprintf(
             self::INTERVAL_TEMPLATE,
-            ($arrayDataWithSnakeCaseKeys[self::EXPIRES_IN_KEY] - self::COMPENSATION_BUFFER)
+            $arrayDataWithSnakeCaseKeys[self::EXPIRES_IN_KEY] - self::COMPENSATION_BUFFER
         );
 
         $this->expires = (new DateTime())->add(new DateInterval($intervalString));

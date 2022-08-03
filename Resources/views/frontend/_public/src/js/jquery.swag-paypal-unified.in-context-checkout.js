@@ -80,7 +80,7 @@
             confirmFormSelector: '#confirm--form',
 
             /**
-             * selector for the checkout confirm agb element
+             * selector for the checkout confirm TOS element
              *
              * @type string
              */
@@ -236,6 +236,8 @@
             this.applyDataAttributes();
 
             this.$form = $(this.opts.confirmFormSelector);
+            this.$agbCheckbox = $(this.opts.agbCheckboxSelector);
+
             this.hideConfirmButton();
             this.disableConfirmButton();
 
@@ -372,12 +374,12 @@
                 },
 
                 /**
-                 * Will be called on int the payment button
+                 * Will be called on initialisation of the payment button
                  */
                 onInit: this.onInitPayPalButton.bind(this),
 
                 /**
-                 * Will be called on the payment button is clicked
+                 * Will be called if the payment button is clicked
                  */
                 onClick: this.onPayPalButtonClick.bind(this),
 
@@ -467,7 +469,7 @@
         onInitPayPalButton: function (data, actions) {
             actions.disable();
 
-            $(this.opts.agbCheckboxSelector).on('change', function (event) {
+            this.$agbCheckbox.on('change', function (event) {
                 if (event.target.checked) {
                     actions.enable();
                 } else {
@@ -476,8 +478,16 @@
             });
         },
 
-        onPayPalButtonClick: function () {
-            this.$form[0].checkValidity();
+        onPayPalButtonClick: function() {
+            if (Object.prototype.hasOwnProperty.call(this.$form[0], 'checkValidity')) {
+                this.$form[0].checkValidity();
+
+                return;
+            }
+
+            if (!this.$agbCheckbox.prop('checked')) {
+                $('label[for="sAGB"]').addClass('has--error');
+            }
         }
     });
 

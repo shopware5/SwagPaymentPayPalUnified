@@ -34,10 +34,15 @@ test.describe('Frontend', () => {
         await page.click('.btn--change-payment');
         await page.click('label:has-text("PayPal")');
         await page.click('text=Weiter >> nth=1');
-        await page.click('input[name="sAGB"]');
 
         const locator = await page.frameLocator('.component-frame').locator('.paypal-button:has-text("Jetzt kaufen")');
         await page.waitForLoadState('load');
+
+        // check: can not check out without accept AGBs
+        await locator.dispatchEvent('click');
+        await expect(page.locator('label[for="sAGB"]')).toHaveClass('has--error');
+
+        await page.click('input[name="sAGB"]');
 
         const [paypalPage] = await Promise.all([
             page.waitForEvent('popup'),
@@ -52,11 +57,6 @@ test.describe('Frontend', () => {
 
         // Click [data-testid="submit-button-initial"]
         await paypalPage.locator('button:has-text("Jetzt zahlen")').click();
-
-        await expect(page.locator('.alert.is--success')).toHaveText(/Ihre Zahlung wurde erstellt\. Bitte schließen Sie sie ab, indem Sie Ihre Bestellung bestätigen\./);
-
-        await page.click('input[name="sAGB"]');
-        await page.click('button[form="confirm--form"].is--primary');
 
         await expect(page.locator('.teaser--title')).toHaveText(/Vielen Dank für Ihre Bestellung bei Shopware Demo/);
     });

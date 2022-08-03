@@ -9,7 +9,7 @@ const connection = MysqlFactory.getInstance();
 
 test.use({ locale: 'de-DE' });
 
-test.describe('Is SEPA fully functional', () => {
+test.describe('Is Pay Later fully functional', () => {
     test.beforeAll(() => {
         clearCacheHelper.clearCache();
     });
@@ -18,7 +18,7 @@ test.describe('Is SEPA fully functional', () => {
         connection.query(defaultPaypalSettingsSql);
     });
 
-    test('Buy a product with SEPA', async ({ page }) => {
+    test('Buy a product with Pay Later', async ({ page }) => {
         // Add product to cart
         await page.goto('/sommerwelten/beachwear/178/strandtuch-ibiza');
         await page.click('.buybox--button');
@@ -32,13 +32,14 @@ test.describe('Is SEPA fully functional', () => {
         await page.click('.register--login-btn');
         await expect(page).toHaveURL(/.*checkout\/confirm/);
 
-        // Change payment to SEPA
+        // Change payment to Pay later
         await page.click('.btn--change-payment');
-        await page.click('text=Lastschrift');
+        const textSelector = 'text=/^(PayPal, Später bezahlen|PayPal, Pay later)$/';
+        await page.click(textSelector);
         await page.click('text=Weiter >> nth=1');
 
-        // buy the product with SEPA
-        const locator = await page.frameLocator('.component-frame').locator('div[data-funding-source="sepa"]');
+        // buy the product with Pay later
+        const locator = await page.frameLocator('.component-frame').locator('div[data-funding-source="paylater"]');
         await page.waitForLoadState('load');
 
         // check: can not check out without accept AGBs
@@ -54,20 +55,23 @@ test.describe('Is SEPA fully functional', () => {
             ]);
         });
 
-        await paypalPage.route(/.*fundingSource=sepa.*/, route => {
-            let url = route.request().url();
-            url = url.replace(/buyerCountry=[A-Z]*/, '');
-            url += '&buyerCountry=DE';
+        await paypalPage.locator('#email').fill(credentials.paypalCustomerEmail);
 
-            route.continue({ url: url });
-        });
+        await paypalPage.locator('#password').fill(credentials.paypalCustomerPassword);
 
-        await paypalPage.locator('#bankIban').fill(credentials.sepaIban);
-        await paypalPage.locator('#dateOfBirth').fill(credentials.sepaBirthday);
-        await paypalPage.locator('#phone').fill(credentials.sepaPhone);
-        await paypalPage.locator('text=Angaben speichern und PayPal-Konto eröffnen').click();
+        await paypalPage.locator('#btnLogin').click();
 
-        await paypalPage.locator('button[type="submit"]').click();
+        await paypalPage.locator('label[for="credit-offer-1"]').click();
+
+        await paypalPage.locator('text=/.*Kreditwürdigkeitsprüfung.*/').click();
+
+        await paypalPage.locator('#payment-submit-btn').click();
+
+        await paypalPage.frameLocator('[data-testid="cap-iframe"]').locator('[data-testid="phoneNumberInput"]').fill('0588761213');
+
+        await paypalPage.frameLocator('[data-testid="cap-iframe"]').locator('#submitButton').click();
+
+        await paypalPage.locator('#payment-submit-btn').click();
 
         await expect(page.locator('.teaser--title')).toHaveText(/Vielen Dank für Ihre Bestellung bei Shopware Demo/);
     });

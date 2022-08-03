@@ -111,40 +111,6 @@ class PayLaterTest extends TestCase
     }
 
     /**
-     * @return Generator<array<int,mixed>>
-     */
-    public function addInfoToPaymentRequestTestDataProvider()
-    {
-        yield 'Action name does not match' => [
-            'anyActionName',
-            ['paypalUnifiedPayLater' => true],
-            true,
-            'http://127.0.0.1',
-        ];
-
-        yield 'Request param paypalUnifiedPayLater is false' => [
-            'payment',
-            ['paypalUnifiedPayLater' => false],
-            true,
-            'http://127.0.0.1',
-        ];
-
-        yield 'Is not redirected' => [
-            'payment',
-            ['paypalUnifiedPayLater' => true],
-            false,
-            '',
-        ];
-
-        yield 'All params does not match' => [
-            'payment',
-            ['paypalUnifiedPayLater' => true, 'paypalOrderId' => 'foo', 'payerId' => 'bar', 'basketId' => '42'],
-            true,
-            '/PaypalUnifiedV2/return/paypalUnifiedPayLater/1/token/foo/PayerID/bar/basketId/42',
-        ];
-    }
-
-    /**
      * @param string              $actionName
      * @param array<string,mixed> $requestParams
      * @param array<string,mixed> $viewAssign
