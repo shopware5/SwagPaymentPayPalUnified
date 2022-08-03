@@ -392,7 +392,7 @@
 
         onPayPalButtonClick: function () {
             this.$form[0].checkValidity();
-        },
+        }
     });
 
     window.StateManager.addPlugin('*[data-paypalUnifiedSepa="true"]', 'swagPayPalUnifiedSepa');

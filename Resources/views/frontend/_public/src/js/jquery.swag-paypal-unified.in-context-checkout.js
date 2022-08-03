@@ -452,7 +452,6 @@
             return [this.opts.returnUrl, '?', params].join('');
         },
 
-
         onCancel: function() {
             $.loadingIndicator.close();
         },

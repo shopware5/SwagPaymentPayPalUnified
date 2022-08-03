@@ -2301,11 +2301,6 @@ parameters:
 			path: Subscriber/InContext.php
 
 		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Subscriber\\\\InContext\\:\\:addInContextInfoToRequest\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Subscriber/InContext.php
-
-		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Subscriber\\\\InstallmentsBanner\\:\\:onPostDispatchSecure\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: Subscriber/InstallmentsBanner.php
@@ -2369,26 +2364,6 @@ parameters:
 			message: "#^Method SwagPaymentPayPalUnified\\\\Subscriber\\\\RiskManagement\\:\\:getAcceptedControllerActions\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: Subscriber/RiskManagement.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Subscriber\\\\SmartPaymentButtons\\:\\:addInfoToPaymentRequest\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Subscriber/SmartPaymentButtons.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Subscriber\\\\SmartPaymentButtons\\:\\:addSmartPaymentButtonMarks\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Subscriber/SmartPaymentButtons.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Subscriber\\\\SmartPaymentButtons\\:\\:addSmartPaymentButtons\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Subscriber/SmartPaymentButtons.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Subscriber\\\\SmartPaymentButtons\\:\\:addSpbInfoOnConfirm\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Subscriber/SmartPaymentButtons.php
 
 		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Subscriber\\\\SmartPaymentButtons\\:\\:changePaymentDescription\\(\\) has no return type specified\\.$#"
@@ -3486,26 +3461,6 @@ parameters:
 			path: Tests/Functional/Subscriber/InContextSubscriberTest.php
 
 		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\InContextSubscriberTest\\:\\:testAddInContextInfoToRequestReturnsBecauseNoRedirect\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/InContextSubscriberTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\InContextSubscriberTest\\:\\:testAddInContextInfoToRequestReturnsBecauseRedirect\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/InContextSubscriberTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\InContextSubscriberTest\\:\\:testAddInContextInfoToRequestReturnsBecauseWrongAction\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/InContextSubscriberTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\InContextSubscriberTest\\:\\:testAddInContextInfoToRequestReturnsBecauseWrongParam\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/InContextSubscriberTest.php
-
-		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\InContextSubscriberTest\\:\\:testConstruct\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: Tests/Functional/Subscriber/InContextSubscriberTest.php
@@ -3851,26 +3806,6 @@ parameters:
 			path: Tests/Functional/Subscriber/RiskManagementTest.php
 
 		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\SmartPaymentButtonsSubscriberTest\\:\\:testAddInfoToPaymentRequest\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/SmartPaymentButtonsSubscriberTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\SmartPaymentButtonsSubscriberTest\\:\\:testAddInfoToPaymentRequestNotRedirectedToAction\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/SmartPaymentButtonsSubscriberTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\SmartPaymentButtonsSubscriberTest\\:\\:testAddInfoToPaymentRequestWithoutRequestParameter\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/SmartPaymentButtonsSubscriberTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\SmartPaymentButtonsSubscriberTest\\:\\:testAddInfoToPaymentRequestWrongAction\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/SmartPaymentButtonsSubscriberTest.php
-
-		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\SmartPaymentButtonsSubscriberTest\\:\\:testAddSmartPaymentButtons\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: Tests/Functional/Subscriber/SmartPaymentButtonsSubscriberTest.php
@@ -3886,42 +3821,12 @@ parameters:
 			path: Tests/Functional/Subscriber/SmartPaymentButtonsSubscriberTest.php
 
 		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\SmartPaymentButtonsSubscriberTest\\:\\:testAddSpbInfoOnConfirm\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/SmartPaymentButtonsSubscriberTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\SmartPaymentButtonsSubscriberTest\\:\\:testAddSpbInfoOnConfirmWithoutRequestParameter\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/SmartPaymentButtonsSubscriberTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\SmartPaymentButtonsSubscriberTest\\:\\:testAddSpbInfoOnConfirmWrongAction\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/SmartPaymentButtonsSubscriberTest.php
-
-		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\SmartPaymentButtonsSubscriberTest\\:\\:testCanBeCreated\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: Tests/Functional/Subscriber/SmartPaymentButtonsSubscriberTest.php
 
 		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\SmartPaymentButtonsSubscriberTest\\:\\:testGetSubscribedEventsHasCorrectEvents\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/SmartPaymentButtonsSubscriberTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\SmartPaymentButtonsSubscriberTest\\:\\:testaddSmartPaymentButtonMarks\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/SmartPaymentButtonsSubscriberTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\SmartPaymentButtonsSubscriberTest\\:\\:testaddSmartPaymentButtonMarksSpbDisabled\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/SmartPaymentButtonsSubscriberTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\SmartPaymentButtonsSubscriberTest\\:\\:testaddSmartPaymentButtonMarksWrongAction\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: Tests/Functional/Subscriber/SmartPaymentButtonsSubscriberTest.php
 

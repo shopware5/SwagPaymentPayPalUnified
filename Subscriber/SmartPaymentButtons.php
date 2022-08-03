@@ -54,15 +54,14 @@ class SmartPaymentButtons implements SubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            'Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout' => [
-                ['addSpbInfoOnConfirm'],
-                ['addInfoToPaymentRequest'],
-                ['addSmartPaymentButtons', 101],
-            ],
+            'Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout' => 'addSmartPaymentButtons',
             'Enlight_Controller_Action_PostDispatchSecure_Frontend_Account' => 'addSmartPaymentButtonMarks',
         ];
     }
 
+    /**
+     * @return void
+     */
     public function addSmartPaymentButtons(ActionEventArgs $args)
     {
         $request = $args->getRequest();
@@ -93,6 +92,9 @@ class SmartPaymentButtons implements SubscriberInterface
         $view->assign('paypalUnifiedButtonLocale', $this->buttonLocaleService->getButtonLocale($generalSettings->getButtonLocale()));
     }
 
+    /**
+     * @return void
+     */
     public function addSmartPaymentButtonMarks(ActionEventArgs $args)
     {
         $request = $args->getRequest();
@@ -117,46 +119,6 @@ class SmartPaymentButtons implements SubscriberInterface
         $view->assign('paypalUnifiedUseSmartPaymentButtonMarks', true);
         $view->assign('paypalUnifiedSpbClientId', $generalSettings->getSandbox() ? $generalSettings->getSandboxClientId() : $generalSettings->getClientId());
         $view->assign('paypalUnifiedPaymentId', $this->paymentMethodProvider->getPaymentId(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME));
-    }
-
-    public function addSpbInfoOnConfirm(ActionEventArgs $args)
-    {
-        $request = $args->getRequest();
-        $view = $args->getSubject()->View();
-
-        if (\strtolower($request->getActionName()) !== 'confirm' || !$request->getParam('spbCheckout', false)) {
-            return;
-        }
-
-        $view->assign('paypalUnifiedSpbCheckout', true);
-        $view->assign('paypalUnifiedAdvancedCreditDebitCardCheckout', (bool) $request->getParam('acdcCheckout', false));
-        $view->assign('paypalUnifiedAdvancedSepaCheckout', (bool) $request->getParam('sepaCheckout', false));
-        $view->assign('paypalUnifiedSpbOrderId', $request->getParam('paypalOrderId'));
-        $view->assign('paypalUnifiedSpbPayerId', $request->getParam('payerId'));
-        $view->assign('paypalUnifiedSpbBasketId', $request->getParam('basketId'));
-    }
-
-    public function addInfoToPaymentRequest(ActionEventArgs $args)
-    {
-        $request = $args->getRequest();
-
-        if (\strtolower($request->getActionName()) !== 'payment'
-            || !$request->getParam('spbCheckout', false)
-            || !$args->getResponse()->isRedirect()
-        ) {
-            return;
-        }
-
-        $args->getSubject()->redirect([
-            'controller' => 'PaypalUnifiedV2',
-            'action' => 'return',
-            'spbCheckout' => true,
-            'acdcCheckout' => (bool) $request->getParam('acdcCheckout', false),
-            'sepaCheckout' => (bool) $request->getParam('sepaCheckout', false),
-            'token' => $request->getParam('paypalOrderId'),
-            'PayerID' => $request->getParam('payerId'),
-            'basketId' => $request->getParam('basketId'),
-        ]);
     }
 
     /**

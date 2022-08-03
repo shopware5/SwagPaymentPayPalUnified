@@ -8,7 +8,6 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Subscriber;
 
-use Enlight_Controller_ActionEventArgs;
 use Enlight_Controller_Request_RequestTestCase;
 use Enlight_Controller_Response_ResponseTestCase;
 use Enlight_Event_EventArgs;
@@ -23,7 +22,6 @@ use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\SettingsHelperTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\ShopRegistrationTrait;
 use SwagPaymentPayPalUnified\Tests\Mocks\DummyController;
-use SwagPaymentPayPalUnified\Tests\Mocks\ViewMock;
 
 class PayLaterTest extends TestCase
 {
@@ -113,42 +111,6 @@ class PayLaterTest extends TestCase
     }
 
     /**
-     * @dataProvider addInfoToPaymentRequestTestDataProvider
-     *
-     * @param string              $actionName
-     * @param array<string,mixed> $requestParams
-     * @param bool                $isAlreadyRedirected
-     * @param string              $expectedLocation
-     *
-     * @return void
-     */
-    public function testAddInfoToPaymentRequest($actionName, array $requestParams, $isAlreadyRedirected, $expectedLocation)
-    {
-        $request = new Enlight_Controller_Request_RequestTestCase();
-        $request->setActionName($actionName);
-        $request->setParams($requestParams);
-
-        $response = new Enlight_Controller_Response_ResponseTestCase();
-        if ($isAlreadyRedirected) {
-            $response->setRedirect('http://127.0.0.1');
-        }
-
-        $controller = new DummyController($request, new ViewMock(new Enlight_Template_Manager()), $response);
-
-        $controllerEventArgs = new Enlight_Controller_ActionEventArgs([
-            'request' => $request,
-            'response' => $response,
-            'subject' => $controller,
-        ]);
-
-        $subscriber = $this->createPayLaterSubscriber();
-
-        $subscriber->addInfoToPaymentRequest($controllerEventArgs);
-
-        $this->compareHeader($expectedLocation, $response);
-    }
-
-    /**
      * @return Generator<array<int,mixed>>
      */
     public function addInfoToPaymentRequestTestDataProvider()
@@ -179,95 +141,6 @@ class PayLaterTest extends TestCase
             ['paypalUnifiedPayLater' => true, 'paypalOrderId' => 'foo', 'payerId' => 'bar', 'basketId' => '42'],
             true,
             '/PaypalUnifiedV2/return/paypalUnifiedPayLater/1/token/foo/PayerID/bar/basketId/42',
-        ];
-    }
-
-    /**
-     * @dataProvider addPayLaterInfoToRequestTest
-     *
-     * @param string              $actionName
-     * @param array<string,mixed> $requestParams
-     * @param bool                $isAlreadyRedirected
-     * @param array<string,mixed> $expectedViewAssign
-     *
-     * @return void
-     */
-    public function testAddPayLaterInfoToRequest($actionName, array $requestParams, $isAlreadyRedirected, $expectedViewAssign = [])
-    {
-        $request = new Enlight_Controller_Request_RequestTestCase();
-        $request->setActionName($actionName);
-        $request->setParams($requestParams);
-
-        $response = new Enlight_Controller_Response_ResponseTestCase();
-        if ($isAlreadyRedirected) {
-            $response->setRedirect('http://127.0.0.1');
-        }
-
-        $view = new ViewMock(new Enlight_Template_Manager());
-
-        $controller = new DummyController($request, $view, $response);
-
-        $controllerEventArgs = new Enlight_Controller_ActionEventArgs([
-            'request' => $request,
-            'response' => $response,
-            'subject' => $controller,
-        ]);
-
-        $subscriber = $this->createPayLaterSubscriber();
-
-        $subscriber->addPayLaterInfoToRequest($controllerEventArgs);
-
-        if (empty($expectedViewAssign)) {
-            static::assertTrue(empty($view->getAssign()));
-
-            return;
-        }
-
-        static::assertTrue($view->getAssign('paypalUnifiedPayLater'));
-        static::assertTrue($view->getAssign('paypalUnifiedPayLaterCheckout'));
-        static::assertSame($expectedViewAssign['paypalUnifiedPayLaterOrderId'], $view->getAssign('paypalUnifiedPayLaterOrderId'));
-        static::assertSame($expectedViewAssign['paypalUnifiedPayLaterPayerId'], $view->getAssign('paypalUnifiedPayLaterPayerId'));
-        static::assertSame($expectedViewAssign['paypalUnifiedPayLaterBasketId'], $view->getAssign('paypalUnifiedPayLaterBasketId'));
-    }
-
-    /**
-     * @return Generator<array<int,mixed>>
-     */
-    public function addPayLaterInfoToRequestTest()
-    {
-        yield 'ActionName is payment' => [
-            'payment',
-            [],
-            false,
-        ];
-
-        yield 'Parameter paypalUnifiedPayLater is set' => [
-            'anyActionName',
-            ['paypalUnifiedPayLater' => true],
-            false,
-        ];
-
-        yield 'Is already redirected' => [
-            'anyActionName',
-            [],
-            true,
-        ];
-
-        yield 'All early return params match' => [
-            'payment',
-            ['paypalUnifiedPayLater' => true],
-            true,
-        ];
-
-        yield 'ActionName is confirm and paypalUnifiedPayLater is set' => [
-            'confirm',
-            ['paypalUnifiedPayLater' => true, 'paypalOrderId' => 'foo', 'payerId' => 'bar', 'basketId' => '42'],
-            false,
-            [
-                'paypalUnifiedPayLaterOrderId' => 'foo',
-                'paypalUnifiedPayLaterPayerId' => 'bar',
-                'paypalUnifiedPayLaterBasketId' => '42',
-            ],
         ];
     }
 
@@ -305,31 +178,5 @@ class PayLaterTest extends TestCase
             $this->getContainer()->get('shopware_storefront.context_service'),
             $this->getContainer()->get('paypal_unified.button_locale_service')
         );
-    }
-
-    /**
-     * @param string $expectedLocation
-     *
-     * @return void
-     */
-    private function compareHeader($expectedLocation, Enlight_Controller_Response_ResponseTestCase $response)
-    {
-        if (empty($expectedLocation)) {
-            static::assertTrue(empty($response->getHeader('Location', '')));
-
-            return;
-        }
-
-        if (method_exists(static::class, 'assertStringContainsString')) {
-            static::assertStringContainsString(
-                $expectedLocation,
-                $response->getHeader('Location', '')
-            );
-        } else {
-            static::assertContains(
-                $expectedLocation,
-                $response->getHeader('Location', '')
-            );
-        }
     }
 }

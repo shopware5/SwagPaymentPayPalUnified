@@ -186,12 +186,13 @@
         },
 
         renderButtons: function() {
-            var buttonConfig = this.getButtonConfig(),
+            var me = this,
+                buttonConfig = this.getButtonConfig(),
                 el = this.$el.get(0);
 
             // Render the marks for each element visible with the id spbMarksContainer
             $('[id=spbMarksContainer]:visible').each(function() {
-                this.paypal.Marks().render(this);
+                me.paypal.Marks().render(this);
             });
 
             if (this.opts.marksOnly) {

@@ -254,6 +254,6 @@
 
         onPayPalButtonClick: function () {
             this.$form[0].checkValidity();
-        },
+        }
     });
 })(jQuery, window);
