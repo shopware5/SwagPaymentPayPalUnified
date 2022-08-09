@@ -57,11 +57,7 @@ class InContext implements SubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            'Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout' => [
-                ['addInContextButton'],
-                ['addInfoToPaymentRequest'],
-                ['addInContextInfoToRequest', 100],
-            ],
+            'Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout' => 'addInContextButton',
         ];
     }
 
@@ -102,55 +98,6 @@ class InContext implements SubscriberInterface
             'paypalUnifiedClientId' => $settings->getSandbox() ? $settings->getSandboxClientId() : $settings->getClientId(),
             'paypalUnifiedCurrency' => $this->contextService->getContext()->getCurrency()->getCurrency(),
             'paypalUnifiedIntent' => $this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_INTENT),
-        ]);
-    }
-
-    public function addInContextInfoToRequest(Enlight_Controller_ActionEventArgs $args)
-    {
-        $request = $args->getRequest();
-        $view = $args->getSubject()->View();
-
-        if ($request->getActionName() === 'payment'
-            && $request->getParam('useInContext')
-            && $args->getResponse()->isRedirect()
-        ) {
-            $args->getSubject()->redirect([
-                'controller' => 'PaypalUnifiedV2',
-                'action' => 'return',
-                'useInContext' => true,
-            ]);
-        } elseif (strtolower($request->getActionName()) === 'confirm' && $request->getParam('inContextCheckout', false)) {
-            // This determines, whether the paypal-Buttons need to be rendered
-            $view->assign([
-                'paypalUnifiedInContextCheckout' => true,
-                'paypalUnifiedInContextOrderId' => $request->getParam('paypalOrderId'),
-                'paypalUnifiedInContextPayerId' => $request->getParam('payerId'),
-                'paypalUnifiedInContextBasketId' => $request->getParam('basketId'),
-            ]);
-        }
-    }
-
-    /**
-     * @return void
-     */
-    public function addInfoToPaymentRequest(Enlight_Controller_ActionEventArgs $args)
-    {
-        $request = $args->getRequest();
-
-        if (strtolower($request->getActionName()) !== 'payment'
-            || !$request->getParam('inContextCheckout', false)
-            || !$args->getResponse()->isRedirect()
-        ) {
-            return;
-        }
-
-        $args->getSubject()->redirect([
-            'controller' => 'PaypalUnifiedV2',
-            'action' => 'return',
-            'inContextCheckout' => true,
-            'token' => $request->getParam('paypalOrderId'),
-            'PayerID' => $request->getParam('payerId'),
-            'basketId' => $request->getParam('basketId'),
         ]);
     }
 }

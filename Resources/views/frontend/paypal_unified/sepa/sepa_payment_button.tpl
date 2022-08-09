@@ -11,7 +11,7 @@
                      data-locale="{$paypalUnifiedSpbButtonLocale}"
                      data-createOrderUrl="{url module=widgets controller=PaypalUnifiedV2SmartPaymentButtons action=createOrder forceSecure}"
                      data-paypalErrorPageUrl="{url controller=checkout action=shippingPayment paypal_unified_error_code=2}"
-                     data-checkoutConfirmUrl="{url module=frontend controller=checkout action=confirm spbCheckout=1 sepaCheckout=1 forceSecure}">
+                     data-returnUrl="{url module='frontend' controller='PaypalUnifiedV2' action='return' spbCheckout=1 sepaCheckout=1 forceSecure}">
                 </div>
         {/block}
     </div>

@@ -20,7 +20,6 @@ use SwagPaymentPayPalUnified\Tests\Functional\SettingsHelperTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\ShopRegistrationTrait;
 use SwagPaymentPayPalUnified\Tests\Mocks\DummyController;
 use SwagPaymentPayPalUnified\Tests\Mocks\ViewMock;
-use Symfony\Component\HttpFoundation\Response;
 
 class SmartPaymentButtonsSubscriberTest extends TestCase
 {
@@ -39,11 +38,7 @@ class SmartPaymentButtonsSubscriberTest extends TestCase
     {
         $actualEvents = SmartPaymentButtons::getSubscribedEvents();
         $expectedEvents = [
-            'Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout' => [
-                ['addSpbInfoOnConfirm'],
-                ['addInfoToPaymentRequest'],
-                ['addSmartPaymentButtons', 101],
-            ],
+            'Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout' => 'addSmartPaymentButtons',
             'Enlight_Controller_Action_PostDispatchSecure_Frontend_Account' => 'addSmartPaymentButtonMarks',
         ];
 
@@ -104,137 +99,19 @@ class SmartPaymentButtonsSubscriberTest extends TestCase
         static::assertTrue($view->getAssign('paypalUnifiedUseSmartPaymentButtons'));
     }
 
-    public function testAddSpbInfoOnConfirmWrongAction()
-    {
-        $view = new ViewMock(new Enlight_Template_Manager());
-        $request = new Enlight_Controller_Request_RequestTestCase();
-        $request->setActionName('checkout');
-
-        $enlightEventArgs = new Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
-            'request' => $request,
-        ]);
-
-        $this->getSubscriber()->addSpbInfoOnConfirm($enlightEventArgs);
-        static::assertNull($view->getAssign('paypalUnifiedSpbCheckout'));
-    }
-
-    public function testAddSpbInfoOnConfirmWithoutRequestParameter()
-    {
-        $view = new ViewMock(new Enlight_Template_Manager());
-        $request = new Enlight_Controller_Request_RequestTestCase();
-        $request->setActionName('confirm');
-
-        $enlightEventArgs = new Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
-            'request' => $request,
-        ]);
-
-        $this->getSubscriber()->addSpbInfoOnConfirm($enlightEventArgs);
-        static::assertNull($view->getAssign('paypalUnifiedSpbCheckout'));
-    }
-
-    public function testAddSpbInfoOnConfirm()
-    {
-        $view = new ViewMock(new Enlight_Template_Manager());
-        $request = new Enlight_Controller_Request_RequestTestCase();
-        $request->setActionName('confirm');
-        $request->setParam('spbCheckout', true);
-
-        $enlightEventArgs = new Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
-            'request' => $request,
-        ]);
-
-        $this->getSubscriber()->addSpbInfoOnConfirm($enlightEventArgs);
-        static::assertTrue($view->getAssign('paypalUnifiedSpbCheckout'));
-    }
-
-    public function testAddInfoToPaymentRequestWrongAction()
-    {
-        $view = new ViewMock(new Enlight_Template_Manager());
-        $request = new Enlight_Controller_Request_RequestTestCase();
-        $request->setActionName('checkout');
-        $request->setParam('spbCheckout', true);
-        $response = new \Enlight_Controller_Response_ResponseTestCase();
-        $response->setHttpResponseCode(Response::HTTP_FOUND);
-        $enlightEventArgs = $this->getEnlightEventArgs($request, $view, $response);
-
-        $this->getSubscriber()->addInfoToPaymentRequest($enlightEventArgs);
-
-        static::assertNull($response->getHeader('Location'));
-    }
-
-    public function testAddInfoToPaymentRequestWithoutRequestParameter()
-    {
-        $view = new ViewMock(new Enlight_Template_Manager());
-        $request = new Enlight_Controller_Request_RequestTestCase();
-        $request->setActionName('payment');
-        $response = new \Enlight_Controller_Response_ResponseTestCase();
-        $response->setHttpResponseCode(Response::HTTP_FOUND);
-        $enlightEventArgs = $this->getEnlightEventArgs($request, $view, $response);
-
-        $this->getSubscriber()->addInfoToPaymentRequest($enlightEventArgs);
-
-        static::assertNull($response->getHeader('Location'));
-    }
-
-    public function testAddInfoToPaymentRequestNotRedirectedToAction()
-    {
-        $view = new ViewMock(new Enlight_Template_Manager());
-        $request = new Enlight_Controller_Request_RequestTestCase();
-        $request->setActionName('payment');
-        $request->setParam('spbCheckout', true);
-        $response = new \Enlight_Controller_Response_ResponseTestCase();
-        $response->setHttpResponseCode(Response::HTTP_OK);
-        $enlightEventArgs = $this->getEnlightEventArgs($request, $view, $response);
-
-        $this->getSubscriber()->addInfoToPaymentRequest($enlightEventArgs);
-
-        static::assertNull($response->getHeader('Location'));
-    }
-
-    public function testAddInfoToPaymentRequest()
-    {
-        $view = new ViewMock(new Enlight_Template_Manager());
-        $request = new Enlight_Controller_Request_RequestTestCase();
-        $request->setActionName('payment');
-        $request->setParam('spbCheckout', true);
-        $response = new Enlight_Controller_Response_ResponseTestCase();
-        $response->setHttpResponseCode(Response::HTTP_FOUND);
-        $enlightEventArgs = $this->getEnlightEventArgs($request, $view, $response);
-
-        $this->getSubscriber()->addInfoToPaymentRequest($enlightEventArgs);
-
-        $expected = [
-            'PaypalUnifiedV2/return/spbCheckout/1/acdcCheckout/',
-            '/token//PayerID//basketId/',
-        ];
-
-        static::assertSame(302, $response->getHttpResponseCode());
-        if (\method_exists($this, 'assertStringContainsString')) {
-            foreach ($expected as $expectedStringPart) {
-                static::assertStringContainsString($expectedStringPart, $response->getHeader('Location'));
-            }
-
-            return;
-        }
-
-        foreach ($expected as $expectedStringPart) {
-            static::assertContains($expectedStringPart, $response->getHeader('Location'));
-        }
-    }
-
     public function validActions()
     {
         return [['index'], ['payment']];
     }
 
     /**
-     * @param string $action
      * @dataProvider validActions
+     *
+     * @param string $action
+     *
+     * @return void
      */
-    public function testaddSmartPaymentButtonMarks($action)
+    public function testAddSmartPaymentButtonMarks($action)
     {
         $this->insertGeneralSettingsFromArray([
             'shopId' => 1,
@@ -254,7 +131,10 @@ class SmartPaymentButtonsSubscriberTest extends TestCase
         static::assertTrue($view->getAssign('paypalUnifiedUseSmartPaymentButtonMarks'));
     }
 
-    public function testaddSmartPaymentButtonMarksWrongAction()
+    /**
+     * @return void
+     */
+    public function testAddSmartPaymentButtonMarksWrongAction()
     {
         $this->insertGeneralSettingsFromArray([
             'shopId' => 1,
@@ -274,10 +154,13 @@ class SmartPaymentButtonsSubscriberTest extends TestCase
     }
 
     /**
-     * @param string $action
      * @dataProvider validActions
+     *
+     * @param string $action
+     *
+     * @return void
      */
-    public function testaddSmartPaymentButtonMarksSpbDisabled($action)
+    public function testAddSmartPaymentButtonMarksSpbDisabled($action)
     {
         $this->insertGeneralSettingsFromArray([
             'shopId' => 1,
@@ -295,21 +178,6 @@ class SmartPaymentButtonsSubscriberTest extends TestCase
 
         $this->getSubscriber()->addSmartPaymentButtonMarks($enlightEventArgs);
         static::assertNull($view->getAssign('paypalUnifiedUseSmartPaymentButtonMarks'));
-    }
-
-    /**
-     * @return Enlight_Controller_ActionEventArgs
-     */
-    private function getEnlightEventArgs(
-        Enlight_Controller_Request_RequestTestCase $request,
-        ViewMock $view,
-        Enlight_Controller_Response_ResponseTestCase $response
-    ) {
-        return new Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view, $response),
-            'request' => $request,
-            'response' => $response,
-        ]);
     }
 
     /**

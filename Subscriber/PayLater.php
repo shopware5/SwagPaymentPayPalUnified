@@ -9,7 +9,6 @@
 namespace SwagPaymentPayPalUnified\Subscriber;
 
 use Enlight\Event\SubscriberInterface;
-use Enlight_Controller_ActionEventArgs;
 use Enlight_Event_EventArgs;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
 use Shopware_Controllers_Frontend_Checkout;
@@ -45,11 +44,7 @@ class PayLater implements SubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            'Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout' => [
-                ['addPayLaterButtonButton'],
-                ['addInfoToPaymentRequest'],
-                ['addPayLaterInfoToRequest', 100],
-            ],
+            'Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout' => 'addPayLaterButtonButton',
         ];
     }
 
@@ -89,58 +84,5 @@ class PayLater implements SubscriberInterface
             'paypalUnifiedPayLaterStyleSize' => $generalSettings->getButtonStyleSize(),
             'paypalUnifiedPayLaterButtonLocale' => $this->buttonLocaleService->getButtonLocale($generalSettings->getButtonLocale()),
         ]);
-    }
-
-    /**
-     * @return void
-     */
-    public function addInfoToPaymentRequest(Enlight_Controller_ActionEventArgs $args)
-    {
-        $request = $args->getRequest();
-
-        if ($request->getActionName() !== 'payment'
-            || !$request->getParam('paypalUnifiedPayLater', false)
-            || !$args->getResponse()->isRedirect()
-        ) {
-            return;
-        }
-
-        $args->getSubject()->redirect([
-            'controller' => 'PaypalUnifiedV2',
-            'action' => 'return',
-            'paypalUnifiedPayLater' => true,
-            'token' => $request->getParam('paypalOrderId'),
-            'PayerID' => $request->getParam('payerId'),
-            'basketId' => $request->getParam('basketId'),
-        ]);
-    }
-
-    /**
-     * @return void
-     */
-    public function addPayLaterInfoToRequest(Enlight_Controller_ActionEventArgs $args)
-    {
-        $request = $args->getRequest();
-        $actionName = $request->getActionName();
-        $isPayPalUnifiedPayLater = $request->getParam('paypalUnifiedPayLater', false);
-
-        if ($actionName === 'payment'
-            && $isPayPalUnifiedPayLater
-            && $args->getResponse()->isRedirect()
-        ) {
-            return;
-        }
-
-        if ($actionName === 'confirm' && $isPayPalUnifiedPayLater) {
-            $view = $args->getSubject()->View();
-
-            $view->assign([
-                'paypalUnifiedPayLater' => true,
-                'paypalUnifiedPayLaterCheckout' => true,
-                'paypalUnifiedPayLaterOrderId' => $request->getParam('paypalOrderId'),
-                'paypalUnifiedPayLaterPayerId' => $request->getParam('payerId'),
-                'paypalUnifiedPayLaterBasketId' => $request->getParam('basketId'),
-            ]);
-        }
     }
 }

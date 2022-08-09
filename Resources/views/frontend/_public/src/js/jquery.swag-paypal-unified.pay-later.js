@@ -94,6 +94,13 @@
             paypalScriptLoadedSelector: 'paypal-checkout-js-loaded',
 
             /**
+             * selector for the checkout confirm TOS element
+             *
+             * @type string
+             */
+            agbCheckboxSelector: '#sAGB',
+
+            /**
              * This page will be opened when the payment creation fails.
              *
              * @type string
@@ -127,7 +134,7 @@
             /**
              * @type string
              */
-            confirmUrl: '',
+            returnUrl: '',
 
             /**
              * Use PayPal debug mode
@@ -207,6 +214,8 @@
             this.applyDataAttributes();
 
             this.$form = $(this.opts.confirmFormSelector);
+            this.$agbCheckbox = $(this.opts.agbCheckboxSelector);
+
             this.hideConfirmButton();
             this.disableConfirmButton();
 
@@ -245,12 +254,10 @@
          * It should not be removed completely from the DOM, because is used to trigger HTML5 form validation
          */
         hideConfirmButton: function() {
-            var me = this;
+            this.$confirmButton = $(this.opts.confirmFormSubmitButtonSelector);
+            this.$confirmButton.addClass('is--hidden');
 
-            me.$confirmButton = $(me.opts.confirmFormSubmitButtonSelector);
-            me.$confirmButton.addClass('is--hidden');
-
-            $.publish('plugin/swagPayPalUnifiedInContextCheckout/hideConfirmButton', [me, me.$confirmButton]);
+            $.publish('plugin/swagPayPalUnifiedInContextCheckout/hideConfirmButton', [this, this.$confirmButton]);
         },
 
         /**
@@ -258,9 +265,7 @@
          * even though the form is not valid
          */
         disableConfirmButton: function() {
-            var me = this;
-
-            me._on(me.$form, 'submit', $.proxy(me.onConfirmCheckout, me));
+            this._on(this.$form, 'submit', $.proxy(this.onConfirmCheckout, this));
         },
 
         /**
@@ -320,11 +325,10 @@
          * Renders the ECS button
          */
         renderButton: function() {
-            var me = this,
-                buttonConfig = me.getButtonConfig(),
-                el = me.$el.get(0);
+            var buttonConfig = this.getButtonConfig(),
+                el = this.$el.get(0);
 
-            me.paypal.Buttons(buttonConfig).render(el);
+            this.paypal.Buttons(buttonConfig).render(el);
         },
 
         /**
@@ -344,6 +348,16 @@
                     tagline: this.opts.tagline,
                     height: this.buttonSize[this.opts.size].height
                 },
+
+                /**
+                 * Will be called on initialisation of the payment button
+                 */
+                onInit: this.onInitPayPalButton.bind(this),
+
+                /**
+                 * Will be called if the payment button is clicked
+                 */
+                onClick: this.onPayPalButtonClick.bind(this),
 
                 /**
                  * Will be called after payment button is clicked
@@ -392,15 +406,13 @@
          * @return { Promise }
          */
         onApprove: function(data, actions) {
-            var me = this;
-
             $.loadingIndicator.open({
                 openOverlay: true,
                 closeOnClick: false,
                 theme: 'light'
             });
 
-            return actions.redirect(me.renderConfirmUrl(data));
+            return actions.redirect(this.renderConfirmUrl(data));
         },
 
         /**
@@ -415,7 +427,7 @@
                 basketId: this.opts.basketId
             }, true);
 
-            return [this.opts.confirmUrl, '?', params].join('');
+            return [this.opts.returnUrl, '?', params].join('');
         },
 
         onCancel: function() {
@@ -424,6 +436,34 @@
 
         onPayPalAPIError: function() {
             window.location.replace(this.opts.paypalErrorPage);
+        },
+
+        /**
+         * @param data { Object }
+         * @param actions { Object }
+         */
+        onInitPayPalButton: function (data, actions) {
+            actions.disable();
+
+            this.$agbCheckbox.on('change', function (event) {
+                if (event.target.checked) {
+                    actions.enable();
+                } else {
+                    actions.disable();
+                }
+            });
+        },
+
+        onPayPalButtonClick: function() {
+            if (Object.prototype.hasOwnProperty.call(this.$form[0], 'checkValidity')) {
+                this.$form[0].checkValidity();
+
+                return;
+            }
+
+            if (!this.$agbCheckbox.prop('checked')) {
+                $('label[for="sAGB"]').addClass('has--error');
+            }
         }
     });
 
