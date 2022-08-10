@@ -8,6 +8,7 @@ parameters:
         - vendor
         - .githooks
         - Tests/E2E
+        - templates_c
     scanDirectories:
         - ../../../var/cache/production____REVISION___/doctrine
     symfony:

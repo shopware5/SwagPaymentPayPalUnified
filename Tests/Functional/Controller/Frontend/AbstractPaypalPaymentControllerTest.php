@@ -192,6 +192,12 @@ class AbstractPaypalPaymentControllerTest extends UnifiedControllerTestCase
             PaymentType::PAYPAL_CLASSIC_V2,
         ];
 
+        yield 'Expect PAYPAL_CLASSIC_V2 without incontext' => [
+            new Order(),
+            $this->createRequest(['token' => '08154711']),
+            PaymentType::PAYPAL_CLASSIC_V2,
+        ];
+
         yield 'Expect also PAYPAL_CLASSIC_V2 because the PaymentSource is not set to the order' => [
             new Order(),
             $this->createRequest([]),

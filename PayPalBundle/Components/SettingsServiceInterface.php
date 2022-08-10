@@ -35,6 +35,7 @@ interface SettingsServiceInterface
     const SETTING_GENERAL_DETAIL_ACTIVE = 'detail_active';
     const SETTING_GENERAL_LOGIN_ACTIVE = 'login_active';
     const SETTING_GENERAL_OFF_CANVAS_ACTIVE = 'off_canvas_active';
+    const SETTING_GENERAL_USE_IN_CONTEXT = 'use_in_context';
 
     const SETTING_PUI_CUSTOMER_SERVICE_INSTRUCTIONS = 'customer_service_instructions';
     const SETTING_PUI_SHOW_RATEPAY_HINT = 'show_rate_pay_hint_in_mail';
