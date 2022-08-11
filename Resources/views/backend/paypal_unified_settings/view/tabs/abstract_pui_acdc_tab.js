@@ -50,18 +50,6 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.AbstractPuiAcdcTab', {
      */
     onboardingButton: null,
 
-    /**
-     * Support Text for the activation box
-     *
-     * @type { Boolean }
-     */
-    activationFieldUseSupportText: true,
-
-    /**
-     * @type { String }
-     */
-    activationFieldSupportText: null,
-
     initComponent: function() {
         this.addEvents(this.getAuthCodeReceivedEventName());
 
@@ -146,10 +134,6 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.AbstractPuiAcdcTab', {
                 inputValue: true,
                 uncheckedValue: false
             };
-
-        if (this.activationFieldUseSupportText) {
-            fieldConfig.supportText = this.activationFieldSupportText;
-        }
 
         this.activationField = Ext.create('Ext.form.field.Checkbox', fieldConfig);
 
