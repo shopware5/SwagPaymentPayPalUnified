@@ -47,42 +47,42 @@ abstract class AbstractOrderHandler implements OrderBuilderHandlerInterface
     /**
      * @var SettingsServiceInterface
      */
-    private $settings;
+    protected $settings;
 
     /**
      * @var ItemListProvider
      */
-    private $itemListProvider;
+    protected $itemListProvider;
 
     /**
      * @var AmountProvider
      */
-    private $amountProvider;
+    protected $amountProvider;
 
     /**
      * @var ReturnUrlHelper
      */
-    private $returnUrlHelper;
+    protected $returnUrlHelper;
 
     /**
      * @var ContextServiceInterface
      */
-    private $contextService;
+    protected $contextService;
 
     /**
      * @var PhoneNumberBuilder
      */
-    private $phoneNumberBuilder;
+    protected $phoneNumberBuilder;
 
     /**
      * @var PriceFormatter
      */
-    private $priceFormatter;
+    protected $priceFormatter;
 
     /**
      * @var CustomerHelper
      */
-    private $customerHelper;
+    protected $customerHelper;
 
     public function __construct(
         SettingsServiceInterface $settingsService,
@@ -296,16 +296,18 @@ abstract class AbstractOrderHandler implements OrderBuilderHandlerInterface
     }
 
     /**
+     * @param array<string,string> $extraParams
+     *
      * @return ApplicationContext
      */
-    protected function createApplicationContext(PayPalOrderParameter $orderParameter)
+    protected function createApplicationContext(PayPalOrderParameter $orderParameter, array $extraParams = [])
     {
         $applicationContext = new ApplicationContext();
         $applicationContext->setBrandName((string) $this->settings->get(SettingsServiceInterface::SETTING_GENERAL_BRAND_NAME));
         $applicationContext->setLandingPage($this->settings->get(SettingsServiceInterface::SETTING_GENERAL_LANDING_PAGE_TYPE));
 
-        $applicationContext->setReturnUrl($this->returnUrlHelper->getReturnUrl($orderParameter->getBasketUniqueId(), $orderParameter->getPaymentToken()));
-        $applicationContext->setCancelUrl($this->returnUrlHelper->getCancelUrl($orderParameter->getBasketUniqueId(), $orderParameter->getPaymentToken()));
+        $applicationContext->setCancelUrl($this->returnUrlHelper->getCancelUrl($orderParameter->getBasketUniqueId(), $orderParameter->getPaymentToken(), $extraParams));
+        $applicationContext->setReturnUrl($this->returnUrlHelper->getReturnUrl($orderParameter->getBasketUniqueId(), $orderParameter->getPaymentToken(), $extraParams));
 
         if ($orderParameter->getPaymentType() === PaymentType::PAYPAL_EXPRESS_V2) {
             $applicationContext->setShippingPreference(ApplicationContext::SHIPPING_PREFERENCE_GET_FROM_FILE);
