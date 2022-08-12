@@ -30,10 +30,6 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.PayUponInvoice', {
         }
     },
 
-    activationFieldUseSupportText: true,
-
-    activationFieldSupportText: '{s name="registrationSettingsMessage"}For your customers to be able to pay using this payment method, they will need to provide a phone number as well as their date of birth. Please make sure to activate the corresponding input fields for the registration. (Basic settings - Storefront - Login / Registration){/s}',
-
     initComponent: function() {
         this.callParent(arguments);
 
