@@ -467,7 +467,9 @@
          * @param actions { Object }
          */
         onInitPayPalButton: function (data, actions) {
-            actions.disable();
+            if (!this.$agbCheckbox.prop('checked')) {
+                actions.disable();
+            }
 
             this.$agbCheckbox.on('change', function (event) {
                 if (event.target.checked) {
