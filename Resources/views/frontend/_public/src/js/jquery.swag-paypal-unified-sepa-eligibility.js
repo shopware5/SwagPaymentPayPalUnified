@@ -130,7 +130,7 @@
                 params.currency = this.opts.currency;
             }
 
-            return [this.opts.sdkUrl, '?', $.param(params, true)].join('');
+            return $.swagPayPalRenderUrl(this.opts.sdkUrl, params);
         }
     });
 

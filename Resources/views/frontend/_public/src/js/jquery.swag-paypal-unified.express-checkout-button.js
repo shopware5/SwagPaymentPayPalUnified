@@ -352,7 +352,7 @@
                 params.currency = currency;
             }
 
-            return [this.opts.sdkUrl, '?', $.param(params, true)].join('');
+            return $.swagPayPalRenderUrl(this.opts.sdkUrl, params);
         },
 
         /**
@@ -475,12 +475,12 @@
                 url: me.opts.onApproveUrl,
                 data: data
             }).then(function(response) {
-                var url = me.opts.confirmUrl + '?' + $.param({
+                var params = {
                     expressCheckout: response.expressCheckout,
                     paypalOrderId: response.paypalOrderId
-                });
+                };
 
-                actions.redirect(url);
+                actions.redirect($.swagPayPalRenderUrl(me.opts.confirmUrl, params));
             }, function() {
                 me.onPayPalAPIError();
             }).promise();

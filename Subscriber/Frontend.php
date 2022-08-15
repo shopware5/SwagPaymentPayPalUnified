@@ -71,6 +71,7 @@ class Frontend implements SubscriberInterface
     public function onCollectJavascript()
     {
         $jsPath = [
+            $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.create-url-function.js',
             $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.form_validity_functions.js',
             $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.payment-wall-confirm.js',
             $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.payment-wall-shipping-payment.js',
