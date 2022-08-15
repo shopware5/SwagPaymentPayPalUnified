@@ -12,7 +12,7 @@
              data-createOrderUrl="{url module='widgets' controller='PaypalUnifiedV2AdvancedCreditDebitCard' action='createOrder' forceSecure}"
              data-captureUrl="{url module='widgets' controller='PaypalUnifiedV2AdvancedCreditDebitCard' action='capture' forceSecure}"
              data-createOrderUrlFallback="{url module='widgets' controller='PaypalUnifiedV2SmartPaymentButtons' action='createOrder' forceSecure}"
-             data-fallbackReturnUrl="{url module='frontend' controller='PaypalUnifiedV2' action='return' spbCheckout=1 acdcCheckout=1 forceSecure}">
+             data-fallbackReturnUrl="{url module='frontend' controller='PaypalUnifiedV2' action='return' spbCheckout=1 acdcCheckout=1 forceSecure}"
              data-paypalErrorPage="{url module="frontend" controller="checkout" action="shippingPayment" paypal_unified_error_code=2 forceSecure}"
              data-placeholderCardNumber="{s namespace="frontend/paypal_unified/checkout/confirm" name="fields/cardNumber"}Card number{/s}"
              data-placeholderExpiryDate="{s namespace="frontend/paypal_unified/checkout/confirm" name="fields/expiryDate"}Expiry date (MM/YY){/s}"
