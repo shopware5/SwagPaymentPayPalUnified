@@ -5,31 +5,31 @@
     <label lang="de">PayPal</label>
     <label lang="en">PayPal</label>
 
-    <version>4.2.3</version>
+    <version>4.3.0</version>
     <copyright>(c) by shopware AG</copyright>
     <license>MIT</license>
     <link>http://store.shopware.com</link>
     <author>shopware AG</author>
     <compatibility minVersion="5.2.27" maxVersion="5.99.99"/>
 
-    <changelog version="REPLACE_GLOBAL_WITH_NEXT_VERSION">
+    <changelog version="4.3.0">
         <changes lang="de">
-            PT-12747 - Fügt Informationen zu Ratepay zur Bestellbestätigung und Rechnungs E-Mail hinzu;
-            PT-12750 - Verbessert das Risiko Management von Kauf auf Rechnung;
+            PT-12747 - Informationen zur Überweisung für den Rechnungskauf in der Bestellbestätigung-Mail und im Rechnungsdokument hinzugefügt;
+            PT-12750 - Verbessert das Risikomanagement für den Rechnungskauf;
             PT-12760 - Zusätzlichen Bestellung-Bestätigen-Schritt entfernt;
-            PT-12794 - Neuer Button mit Link um Tracking-Id zu PayPal hinzuzufügen;
-            PT-12824 - Eine Warnung informiert nun über das Ablaufen vom PayPal Plus Rechnungskauf;
-            PT-12863 - Behebt Probleme mit dem PayPal checkout;
-            PT-12866 - Entfernt Hinweis zum Geburtstag und Telefonnummer vom Rechnungskauf im Backend;
+            PT-12794 - Neuer Button in den Bestellungsdetails hinzugefügt, um Tracking-ID bei PayPal einzutragen;
+            PT-12827 - Eine Warnung informiert nun über das Ablaufen vom PayPal Plus Rechnungskauf;
+            PT-12863 - Behebt Problem mit der Weiterleitung zu PayPal, wenn der In-Context-Modus nicht genutzt wird;
+            PT-12866 - Entfernt nicht länger benötigten Hinweis in den Einstellungen zu Geburtstag und Telefonnummer beim Rechnungskauf;
         </changes>
         <changes lang="en">
-            PT-12747 - Adds Ratepay information to the order confirmation and billing email;
-            PT-12750 - Improves the risk management of pay upon invoice;
+            PT-12747 - Added information about bank transfer for pay upon invoice in the order confirmation email and invoice document;
+            PT-12750 - Improved the risk management for pay upon invoice;
             PT-12760 - Removed additional order confirm step;
-            PT-12794 - Adds new button with link to add tracking id to PayPal;
-            PT-12824 - A warning now informs about the expiry of PayPal Plus pay upon invoice;
-            PT-12863 - Fixes issues with PayPal Checkout;
-            PT-12866 - Removes note in the backend of birthday and phone number for pay upon Invoce;
+            PT-12794 - Added new button in order details to enter tracking ID at PayPal;
+            PT-12827 - A warning now informs about the expiry of PayPal Plus pay upon invoice;
+            PT-12863 - Fixes problem with redirect to PayPal when in-context mode is not used;
+            PT-12866 - Removes no longer needed notice in settings for birthday and phone number for pay upon invoice;
         </changes>
     </changelog>
 
