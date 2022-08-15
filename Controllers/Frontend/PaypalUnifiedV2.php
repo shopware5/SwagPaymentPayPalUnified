@@ -10,6 +10,7 @@ use Shopware\Models\Order\Status;
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\ShopwareOrderData;
 use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentController;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Common\Link;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
@@ -108,7 +109,14 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
     {
         $this->logger->debug(sprintf('%s START', __METHOD__));
 
-        $payPalOrderId = $this->Request()->getParam('paypalOrderId');
+        $useInContext = (bool) $this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_USE_IN_CONTEXT);
+        if (!$useInContext) {
+            // The "token" is the same as the "paypalOrderId". In this case the request comes directly form the
+            // PayPalCheckout page, so we cant influence the wording.
+            $payPalOrderId = $this->Request()->getParam('token');
+        } else {
+            $payPalOrderId = $this->Request()->getParam('paypalOrderId');
+        }
 
         $payPalOrder = $this->getPayPalOrder($payPalOrderId);
         if (!$payPalOrder instanceof Order) {

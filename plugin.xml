@@ -19,6 +19,7 @@
             PT-12760 - Zusätzlichen Bestellung-Bestätigen-Schritt entfernt;
             PT-12794 - Neuer Button mit Link um Tracking-Id zu PayPal hinzuzufügen;
             PT-12824 - Eine Warnung informiert nun über das Ablaufen vom PayPal Plus Rechnungskauf;
+            PT-12863 - Behebt Probleme mit dem PayPal checkout;
             PT-12866 - Entfernt Hinweis zum Geburtstag und Telefonnummer vom Rechnungskauf im Backend;
         </changes>
         <changes lang="en">
@@ -27,6 +28,7 @@
             PT-12760 - Removed additional order confirm step;
             PT-12794 - Adds new button with link to add tracking id to PayPal;
             PT-12824 - A warning now informs about the expiry of PayPal Plus pay upon invoice;
+            PT-12863 - Fixes issues with PayPal Checkout;
             PT-12866 - Removes note in the backend of birthday and phone number for pay upon Invoce;
         </changes>
     </changelog>

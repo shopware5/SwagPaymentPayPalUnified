@@ -472,7 +472,7 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
             return PaymentType::PAYPAL_PAY_LATER;
         }
 
-        if ($this->request->getParam('inContextCheckout', false)) {
+        if ($this->request->getParam('inContextCheckout', false) || $this->request->getParam('token', false)) {
             return PaymentType::PAYPAL_CLASSIC_V2;
         }
 
