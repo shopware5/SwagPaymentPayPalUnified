@@ -9,13 +9,9 @@
 namespace SwagPaymentPayPalUnified\Subscriber;
 
 use Enlight\Event\SubscriberInterface;
-use Enlight_Controller_ActionEventArgs;
-use Enlight_Controller_Front;
-use Enlight_Controller_Request_Request;
 use Enlight_Event_EventArgs;
 use Enlight_Hook_HookArgs;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
-use Shopware_Controllers_Frontend_Checkout;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Models\Settings\General;
@@ -27,7 +23,6 @@ use Symfony\Component\Validator\Constraints\EqualTo;
 use Symfony\Component\Validator\Constraints\Range;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-use UnexpectedValueException;
 
 class PayUponInvoiceRiskManagement implements SubscriberInterface
 {
@@ -81,8 +76,6 @@ class PayUponInvoiceRiskManagement implements SubscriberInterface
         return [
             'sAdmin::sManageRisks::after' => 'afterManageRisks',
             'Shopware_Modules_Admin_Execute_Risk_Rule_PayPalUnifiedInvoiceRiskManagementRule' => 'onExecuteRule',
-            'Shopware_Modules_Admin_Payment_Fallback' => 'setPaymentMethodBlockedFlag',
-            'Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout' => 'onPostDispatchCheckout',
         ];
     }
 
@@ -131,131 +124,9 @@ class PayUponInvoiceRiskManagement implements SubscriberInterface
             return true;
         }
 
-        if ($this->useSimpleValidation()) {
-            $violationList = $this->validateSimple($user['additional']['country']['countryiso']);
+        $violationList = $this->validate($user, (float) $basket['AmountNumeric']);
 
-            return $violationList->count() > 0;
-        }
-
-        $violationList = $this->validateExtended($user, (float) $basket['AmountNumeric']);
-
-        return $this->handleViolationList($violationList);
-    }
-
-    /**
-     * @return void
-     */
-    public function onPostDispatchCheckout(Enlight_Controller_ActionEventArgs $args)
-    {
-        /** @var Shopware_Controllers_Frontend_Checkout $controller */
-        $controller = $args->get('subject');
-        $view = $controller->View();
-
-        if ($view->getAssign('paymentBlocked') !== true) {
-            return;
-        }
-
-        if ($this->dependencyProvider->getSession()->offsetGet(self::PAY_PAL_UNIFIED_PAY_UPON_INVOICE_BLOCKED)) {
-            $view->assign([
-                self::PAY_PAL_UNIFIED_PAY_UPON_INVOICE_BLOCKED => true,
-                self::PAY_PAL_UNIFIED_PAY_UPON_INVOICE_ERROR_LIST_KEY => $this->dependencyProvider->getSession()->offsetGet(self::PAY_PAL_UNIFIED_PAY_UPON_INVOICE_ERROR_LIST_KEY),
-            ]);
-
-            $this->dependencyProvider->getSession()->offsetUnset(self::PAY_PAL_UNIFIED_PAY_UPON_INVOICE_BLOCKED);
-        }
-    }
-
-    /**
-     * @return void
-     */
-    public function setPaymentMethodBlockedFlag(Enlight_Event_EventArgs $args)
-    {
-        // Only show the message if the customer actually chose pay upon invoice
-        if ($args->get('name') !== PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME) {
-            return;
-        }
-
-        $this->dependencyProvider->getSession()->offsetSet(self::PAY_PAL_UNIFIED_PAY_UPON_INVOICE_BLOCKED, true);
-    }
-
-    /**
-     * @return bool
-     */
-    private function useSimpleValidation()
-    {
-        $front = $this->dependencyProvider->getFront();
-
-        if (!$front instanceof Enlight_Controller_Front) {
-            throw new UnexpectedValueException(sprintf('Expected instance of %s, got %s.', Enlight_Controller_Front::class, 'null'));
-        }
-
-        $request = $front->Request();
-
-        if (!$request instanceof Enlight_Controller_Request_Request) {
-            throw new UnexpectedValueException(sprintf('Expected instance of %s, got %s.', Enlight_Controller_Request_Request::class, 'null'));
-        }
-
-        $controller = $request->getControllerName();
-        $action = $request->getActionName();
-
-        $allowList = [
-            'checkout' => [
-                'shippingPayment',
-                'saveShippingPayment',
-            ],
-            'account' => [
-                'payment',
-            ],
-        ];
-
-        foreach ($allowList as $allowedController => $allowedActions) {
-            if ($controller === $allowedController) {
-                return \in_array($action, $allowedActions, true);
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * @return bool
-     */
-    private function handleViolationList(ConstraintViolationListInterface $violationList)
-    {
-        $hasError = $violationList->count() > 0;
-        if (!$hasError) {
-            return false;
-        }
-
-        $errorList = [];
-        foreach ($violationList as $violation) {
-            $errorList[] = $violation->getPropertyPath();
-        }
-
-        $this->dependencyProvider->getSession()->offsetSet(self::PAY_PAL_UNIFIED_PAY_UPON_INVOICE_ERROR_LIST_KEY, $errorList);
-
-        return true;
-    }
-
-    /**
-     * @param string $countryiso
-     *
-     * @return ConstraintViolationListInterface
-     */
-    private function validateSimple($countryiso)
-    {
-        $values = [
-            'country' => $countryiso,
-            'currency' => $this->contextService->getShopContext()->getCurrency()->getCurrency(),
-        ];
-
-        return $this->validator->validate(
-            $values,
-            new Collection([
-                'country' => new EqualTo('DE'),
-                'currency' => new EqualTo('EUR'),
-            ])
-        );
+        return $violationList->count() > 0;
     }
 
     /**
@@ -264,7 +135,7 @@ class PayUponInvoiceRiskManagement implements SubscriberInterface
      *
      * @return ConstraintViolationListInterface
      */
-    private function validateExtended(array $user, $amountNumeric)
+    private function validate(array $user, $amountNumeric)
     {
         $values = [
             'country' => $user['additional']['country']['countryiso'],
