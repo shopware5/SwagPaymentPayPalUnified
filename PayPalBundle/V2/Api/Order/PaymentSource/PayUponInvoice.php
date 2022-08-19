@@ -46,6 +46,11 @@ class PayUponInvoice extends AbstractPaymentSource
     protected $experienceContext;
 
     /**
+     * @var string
+     */
+    protected $paymentReference;
+
+    /**
      * @var DepositBankDetails
      */
     protected $depositBankDetails;
@@ -144,6 +149,24 @@ class PayUponInvoice extends AbstractPaymentSource
     public function setExperienceContext($experienceContext)
     {
         $this->experienceContext = $experienceContext;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPaymentReference()
+    {
+        return $this->paymentReference;
+    }
+
+    /**
+     * @param string $paymentReference
+     *
+     * @return void
+     */
+    public function setPaymentReference($paymentReference)
+    {
+        $this->paymentReference = $paymentReference;
     }
 
     /**

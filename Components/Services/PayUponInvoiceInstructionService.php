@@ -12,6 +12,7 @@ use Enlight_Event_EventManager as EventManager;
 use Shopware\Components\Model\ModelManager;
 use SwagPaymentPayPalUnified\Models\PaymentInstruction as PaymentInstructionModel;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\PayUponInvoice;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\PayUponInvoice\DepositBankDetails;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Payments\Capture;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Payments\Capture\Amount;
@@ -49,7 +50,12 @@ class PayUponInvoiceInstructionService
      */
     public function createInstructions($orderNumber, Order $order)
     {
-        $bankDetails = $this->orderPropertyHelper->getBankDetails($order);
+        $payUponInvoice = $this->orderPropertyHelper->getPayUponInvoice($order);
+        if (!$payUponInvoice instanceof PayUponInvoice) {
+            return;
+        }
+
+        $bankDetails = $payUponInvoice->getDepositBankDetails();
         if (!$bankDetails instanceof DepositBankDetails) {
             return;
         }
@@ -71,7 +77,7 @@ class PayUponInvoiceInstructionService
         $model->setBic($bankDetails->getBic());
         $model->setIban($bankDetails->getIban());
         $model->setAmount($amount->getValue());
-        $model->setReference($order->getId());
+        $model->setReference($payUponInvoice->getPaymentReference());
 
         $this->modelManager->persist($model);
         $this->modelManager->flush();

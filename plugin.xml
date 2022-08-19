@@ -5,19 +5,21 @@
     <label lang="de">PayPal</label>
     <label lang="en">PayPal</label>
 
-    <version>4.3.0</version>
+    <version>4.3.1</version>
     <copyright>(c) by shopware AG</copyright>
     <license>MIT</license>
     <link>http://store.shopware.com</link>
     <author>shopware AG</author>
     <compatibility minVersion="5.2.27" maxVersion="5.99.99"/>
 
-    <changelog version="REPLACE_GLOBAL_WITH_NEXT_VERSION">
+    <changelog version="4.3.1">
         <changes lang="de">
             PT-12746 - Den alternativen Zahlungsarten, wie Sofort und GiroPay, stehen nun mehr Kundendaten zur Verfügung;
+            PT-12877 - Korrigiert Speichern der Zahlungsreferenz beim Rechnungskauf;
         </changes>
         <changes lang="en">
             PT-12746 - More customer data is now available to the alternative payment methods, such as Sofort and GiroPay;
+            PT-12877 - Fixed saving of payment reference of pay upon invoice;
         </changes>
     </changelog>
 

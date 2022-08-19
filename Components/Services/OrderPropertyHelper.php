@@ -11,12 +11,14 @@ namespace SwagPaymentPayPalUnified\Components\Services;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\PayUponInvoice;
-use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\PayUponInvoice\DepositBankDetails;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Payments;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Payments\Authorization;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Payments\Capture;
 
+/**
+ * @internal
+ */
 class OrderPropertyHelper
 {
     /**
@@ -89,9 +91,9 @@ class OrderPropertyHelper
     }
 
     /**
-     * @return DepositBankDetails|null
+     * @return PayUponInvoice|null
      */
-    public function getBankDetails(Order $paypalOrder)
+    public function getPayUponInvoice(Order $paypalOrder)
     {
         $paymentSource = $paypalOrder->getPaymentSource();
         if (!$paymentSource instanceof PaymentSource) {
@@ -103,11 +105,6 @@ class OrderPropertyHelper
             return null;
         }
 
-        $depositBankDetails = $payUponInvoice->getDepositBankDetails();
-        if (!$depositBankDetails instanceof DepositBankDetails) {
-            return null;
-        }
-
-        return $depositBankDetails;
+        return $payUponInvoice;
     }
 }
