@@ -12,6 +12,15 @@
     <author>shopware AG</author>
     <compatibility minVersion="5.2.27" maxVersion="5.99.99"/>
 
+    <changelog version="REPLACE_GLOBAL_WITH_NEXT_VERSION">
+        <changes lang="de">
+            PT-12746 - Den alternativen Zahlungsarten, wie Sofort und GiroPay, stehen nun mehr Kundendaten zur Verfügung;
+        </changes>
+        <changes lang="en">
+            PT-12746 - More customer data is now available to the alternative payment methods, such as Sofort and GiroPay;
+        </changes>
+    </changelog>
+
     <changelog version="4.3.0">
         <changes lang="de">
             PT-12747 - Informationen zur Überweisung für den Rechnungskauf in der Bestellbestätigung-Mail und im Rechnungsdokument hinzugefügt;
