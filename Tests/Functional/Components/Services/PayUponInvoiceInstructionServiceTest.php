@@ -52,7 +52,7 @@ class PayUponInvoiceInstructionServiceTest extends TestCase
         static::assertSame('any IBAN', $result['iban']);
         static::assertSame('any BIC', $result['bic']);
         static::assertSame('99,99', $result['amount']);
-        static::assertSame('anyId', $result['reference']);
+        static::assertSame('ABC123', $result['reference']);
     }
 
     /**
@@ -84,6 +84,7 @@ class PayUponInvoiceInstructionServiceTest extends TestCase
         $depositBankDetails->setIban('any IBAN');
 
         $payUponInvoice = new PayUponInvoice();
+        $payUponInvoice->setPaymentReference('ABC123');
         $payUponInvoice->setDepositBankDetails($depositBankDetails);
 
         $paymentSource = new PaymentSource();
