@@ -12,6 +12,15 @@
     <author>shopware AG</author>
     <compatibility minVersion="5.2.27" maxVersion="5.99.99"/>
 
+    <changelog version="REPLACE_GLOBAL_WITH_NEXT_VERSION">
+        <changes lang="de">
+            PT-12871 - Ermöglicht den checkout mit deaktivierter AGB checkbox;
+        </changes>
+        <changes lang="en">
+            PT-12871 - Allows the checkout with deactivated TOS checkbox;
+        </changes>
+    </changelog>
+
     <changelog version="4.3.1">
         <changes lang="de">
             PT-12746 - Den alternativen Zahlungsarten, wie Sofort und GiroPay, stehen nun mehr Kundendaten zur Verfügung;

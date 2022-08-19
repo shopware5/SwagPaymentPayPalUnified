@@ -73,18 +73,16 @@
             layout: 'vertical',
 
             /**
+             *  @type string
+             */
+            hiddenClass: 'is--hidden',
+
+            /**
              * selector for the checkout confirm form element
              *
              * @type string
              */
             confirmFormSelector: '#confirm--form',
-
-            /**
-             * selector for the checkout confirm TOS element
-             *
-             * @type string
-             */
-            agbCheckboxSelector: '#sAGB',
 
             /**
              * selector for the submit button of the checkout confirm form
@@ -227,30 +225,31 @@
 
         },
 
-        /**
-         * @type { Object }
-         */
-        inContextCheckoutButton: null,
-
         init: function() {
             this.applyDataAttributes();
 
-            this.$form = $(this.opts.confirmFormSelector);
-            this.$agbCheckbox = $(this.opts.agbCheckboxSelector);
+            this.formValidityFunctions = $.createSwagPaymentPaypalFormValidityFunctions(
+                this.opts.confirmFormSelector,
+                this.opts.confirmFormSubmitButtonSelector,
+                this.opts.hiddenClass,
+                'swagPayPalUnifiedInContextCheckout'
+            );
 
-            this.hideConfirmButton();
-            this.disableConfirmButton();
+            this.formValidityFunctions.hideConfirmButton();
+            this.formValidityFunctions.disableConfirmButton();
 
             this.createButtonSizeObject();
 
             this.$el.addClass(this.buttonSize[this.opts.size].widthClass);
 
+            $.publish('plugin/swagPayPalUnifiedInContextCheckout/init', this);
+
             this.createButton();
 
-            $.publish('plugin/swagPayPalUnifiedInContextCheckout/init', this);
+            $.publish('plugin/swagPayPalUnifiedInContextCheckout/buttonsCreated', this);
         },
 
-        createButtonSizeObject: function () {
+        createButtonSizeObject: function() {
             this.buttonSize = {
                 small: {
                     height: this.opts.smallHeight,
@@ -269,32 +268,6 @@
                     widthClass: this.opts.responsiveWidthClass
                 }
             };
-        },
-
-        /**
-         * Hides the confirm button
-         * It should not be removed completely from the DOM, because is used to trigger HTML5 form validation
-         */
-        hideConfirmButton: function() {
-            this.$confirmButton = $(this.opts.confirmFormSubmitButtonSelector);
-            this.$confirmButton.addClass('is--hidden');
-
-            $.publish('plugin/swagPayPalUnifiedInContextCheckout/hideConfirmButton', [this, this.$confirmButton]);
-        },
-
-        /**
-         * Disables the submit function, because in some browsers the submit event is triggered,
-         * even though the form is not valid
-         */
-        disableConfirmButton: function() {
-            this._on(this.$form, 'submit', $.proxy(this.onConfirmCheckout, this));
-        },
-
-        /**
-         * @param { Event } event
-         */
-        onConfirmCheckout: function(event) {
-            event.preventDefault();
         },
 
         /**
@@ -376,12 +349,12 @@
                 /**
                  * Will be called on initialisation of the payment button
                  */
-                onInit: this.onInitPayPalButton.bind(this),
+                onInit: this.formValidityFunctions.onInitPayPalButton.bind(this.formValidityFunctions),
 
                 /**
                  * Will be called if the payment button is clicked
                  */
-                onClick: this.onPayPalButtonClick.bind(this),
+                onClick: this.formValidityFunctions.onPayPalButtonClick.bind(this.formValidityFunctions),
 
                 /**
                  * Will be called after payment button is clicked
@@ -460,36 +433,6 @@
 
         onPayPalAPIError: function() {
             window.location.replace(this.opts.paypalErrorPage);
-        },
-
-        /**
-         * @param data { Object }
-         * @param actions { Object }
-         */
-        onInitPayPalButton: function (data, actions) {
-            if (!this.$agbCheckbox.prop('checked')) {
-                actions.disable();
-            }
-
-            this.$agbCheckbox.on('change', function (event) {
-                if (event.target.checked) {
-                    actions.enable();
-                } else {
-                    actions.disable();
-                }
-            });
-        },
-
-        onPayPalButtonClick: function() {
-            if (Object.prototype.hasOwnProperty.call(this.$form[0], 'checkValidity')) {
-                this.$form[0].checkValidity();
-
-                return;
-            }
-
-            if (!this.$agbCheckbox.prop('checked')) {
-                $('label[for="sAGB"]').addClass('has--error');
-            }
         }
     });
 
