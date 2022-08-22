@@ -192,13 +192,13 @@
          * @return { string }
          */
         renderConfirmUrl: function(data) {
-            var params = $.param({
+            var params = {
                 paypalOrderId: data.orderID,
                 payerId: data.payerID,
                 basketId: this.opts.basketId
-            }, true);
+            };
 
-            return [this.opts.fallbackReturnUrl, '?', params].join('');
+            return $.swagPayPalRenderUrl(this.opts.fallbackReturnUrl, params);
         },
 
         onCancel: function() {

@@ -219,7 +219,7 @@
                 params.debug = true;
             }
 
-            return [this.opts.sdkUrl, '?', $.param(params, true)].join('');
+            return $.swagPayPalRenderUrl(this.opts.sdkUrl, params);
         },
 
         renderHostedFields: function() {

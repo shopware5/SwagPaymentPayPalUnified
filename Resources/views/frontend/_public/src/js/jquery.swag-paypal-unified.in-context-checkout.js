@@ -317,7 +317,7 @@
                 params.currency = this.opts.currency;
             }
 
-            return [this.opts.sdkUrl, '?', $.param(params, true)].join('');
+            return $.swagPayPalRenderUrl(this.opts.sdkUrl, params);
         },
 
         /**
@@ -418,13 +418,13 @@
          * @return { string }
          */
         renderConfirmUrl: function(data) {
-            var params = $.param({
+            var params = {
                 paypalOrderId: data.orderID,
                 payerId: data.payerID,
                 basketId: this.opts.basketId
-            }, true);
+            };
 
-            return [this.opts.returnUrl, '?', params].join('');
+            return $.swagPayPalRenderUrl(this.opts.returnUrl, params);
         },
 
         onCancel: function() {

@@ -255,7 +255,7 @@
                 params.currency = this.opts.currency;
             }
 
-            return [this.opts.sdkUrl, '?', $.param(params, true)].join('');
+            return $.swagPayPalRenderUrl(this.opts.sdkUrl, params);
         },
 
         renderButton: function() {
@@ -263,7 +263,7 @@
                 el = this.$el.get(0);
 
             if (!this.paypal.isFundingEligible(this.paypal.FUNDING.SEPA)) {
-                this.onPayPalAPIError($.param({ sepaIsNotEligible: true }));
+                this.onPayPalAPIError({ sepaIsNotEligible: true });
                 return;
             }
 
@@ -331,11 +331,11 @@
         },
 
         onApprove: function(data, actions) {
-            var returnUrl = this.opts.returnUrl + '?' + $.param({
+            var params = {
                 paypalOrderId: data.orderID,
                 payerId: data.payerID,
                 basketId: this.opts.basketId
-            }, true);
+            };
 
             $.loadingIndicator.open({
                 openOverlay: true,
@@ -343,7 +343,7 @@
                 theme: 'light'
             });
 
-            actions.redirect(returnUrl);
+            actions.redirect($.swagPayPalRenderUrl(this.opts.returnUrl, params));
         },
 
         onCancel: function() {
@@ -372,16 +372,14 @@
         },
 
         /**
-         * @param { string|null } extraParams
+         * @param { object|null } extraParams
          */
         onPayPalAPIError: function(extraParams) {
-            var errorPageUrl = this.opts.paypalErrorPageUrl;
-
-            if (extraParams !== null) {
-                errorPageUrl += '?' + extraParams;
+            if (extraParams === null) {
+                extraParams = {};
             }
 
-            window.location.replace(errorPageUrl);
+            window.location.replace($.swagPayPalRenderUrl(this.opts.paypalErrorPageUrl, extraParams));
         }
     });
 

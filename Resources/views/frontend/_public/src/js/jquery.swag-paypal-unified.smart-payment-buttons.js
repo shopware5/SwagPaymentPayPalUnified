@@ -197,7 +197,7 @@
                 params.debug = true;
             }
 
-            return [this.opts.sdkUrl, '?', $.param(params, true)].join('');
+            return $.swagPayPalRenderUrl(this.opts.sdkUrl, params);
         },
 
         renderButtons: function() {
@@ -273,11 +273,11 @@
         },
 
         onApprove: function(data, actions) {
-            var returnUrl = this.opts.returnUrl + '?' + $.param({
+            var params = {
                 paypalOrderId: data.orderID,
                 payerId: data.payerID,
                 basketId: this.opts.basketId
-            }, true);
+            };
 
             $.loadingIndicator.open({
                 openOverlay: true,
@@ -285,7 +285,7 @@
                 theme: 'light'
             });
 
-            actions.redirect(returnUrl);
+            actions.redirect($.swagPayPalRenderUrl(this.opts.returnUrl, params));
         },
 
         onCancel: function() {
