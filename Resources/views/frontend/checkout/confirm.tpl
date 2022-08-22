@@ -75,14 +75,17 @@
                 {include file='frontend/paypal_unified/in_context/button.tpl'}
             {/block}
         {elseif $paypalUnifiedUseSmartPaymentButtons && !$paypalUnifiedExpressCheckout && !$paypalUnifiedUsePlus && !$paypalUnifiedUseInContext && $sUserData.additional.payment.id == $paypalUnifiedPaymentId}
+            {$smarty.block.parent}
             {block name='frontend_paypal_unified_confirm_smart_payment_buttons'}
                 {include file="frontend/paypal_unified/spb/smart_payment_buttons.tpl"}
             {/block}
         {elseif $paypalUnifiedSepaPayment && !$paypalUnifiedExpressCheckout && !$paypalUnifiedUsePlus}
+            {$smarty.block.parent}
             {block name='frontend_paypal_unified_confirm_sepa_payment_button'}
                 {include file="frontend/paypal_unified/sepa/sepa_payment_button.tpl"}
             {/block}
         {elseif $showPaypalUnifiedPayLaterButton && !$paypalUnifiedExpressCheckout && !$paypalUnifiedUsePlus}
+            {$smarty.block.parent}
             {block name='frontend_paypal_unified_confirm_pay_later_payment_button'}
                 {include file="frontend/paypal_unified/pay_later/button.tpl"}
             {/block}

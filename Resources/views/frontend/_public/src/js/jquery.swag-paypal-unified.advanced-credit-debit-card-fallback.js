@@ -49,16 +49,6 @@
             /**
              * @type string
              */
-            paypalIntent: 'capture',
-
-            /**
-             * @type string
-             */
-            sdkUrl: 'https://www.paypal.com/sdk/js',
-
-            /**
-             * @type string
-             */
             paypalErrorPage: '',
 
             /**
@@ -74,14 +64,7 @@
             /**
              * @type string
              */
-            paypalScriptLoadedSelector: 'paypal-checkout-js-loaded',
-
-            /**
-             * selector for the checkout confirm TOS element
-             *
-             * @type string
-             */
-            agbCheckboxSelector: '#sAGB',
+            hiddenClass: 'is--hidden',
 
             /**
              * @type string
@@ -97,28 +80,17 @@
         init: function() {
             this.applyDataAttributes();
 
-            this.$form = $(this.opts.confirmFormSelector);
-            this.$agbCheckbox = $(this.opts.agbCheckboxSelector);
+            this.formValidityFunctions = $.createSwagPaymentPaypalFormValidityFunctions(
+                this.opts.confirmFormSelector,
+                this.opts.confirmFormSubmitButtonSelector,
+                this.opts.hiddenClass,
+                'swagPayPalUnifiedAdvancedCreditDebitCardFallback'
+            );
 
-            this.disableConfirmButton();
-            this.hideConfirmButton();
+            this.formValidityFunctions.hideConfirmButton();
+            this.formValidityFunctions.disableConfirmButton();
 
             this.renderButton();
-        },
-
-        hideConfirmButton: function() {
-            this.$confirmButton = $(this.opts.confirmFormSubmitButtonSelector).remove();
-        },
-
-        disableConfirmButton: function() {
-            this._on(this.$form, 'submit', $.proxy(this.onConfirmCheckout, this));
-        },
-
-        /**
-         * @param { Event } event
-         */
-        onConfirmCheckout: function(event) {
-            event.preventDefault();
         },
 
         renderButton: function() {
@@ -151,12 +123,12 @@
                 /**
                  * Will be called on initialisation of the payment button
                  */
-                onInit: this.onInitPayPalButton.bind(this),
+                onInit: this.formValidityFunctions.onInitPayPalButton.bind(this.formValidityFunctions),
 
                 /**
                  * Will be called if the payment button is clicked
                  */
-                onClick: this.onPayPalButtonClick.bind(this),
+                onClick: this.formValidityFunctions.onPayPalButtonClick.bind(this.formValidityFunctions),
 
                 /**
                  * Will be called after payment button is clicked
@@ -179,7 +151,7 @@
                 onError: this.onPayPalAPIError.bind(this)
             };
 
-            $.publish('plugin/swagPayPalUnifiedInContextCheckout/createConfig', [this, buttonConfig]);
+            $.publish('plugin/swagPayPalUnifiedAdvancedCreditDebitCardFallback/createConfig', [this, buttonConfig]);
 
             return buttonConfig;
         },
@@ -235,36 +207,6 @@
 
         onPayPalAPIError: function() {
             window.location.replace(this.opts.paypalErrorPage);
-        },
-
-        /**
-         * @param data { Object }
-         * @param actions { Object }
-         */
-        onInitPayPalButton: function (data, actions) {
-            if (!this.$agbCheckbox.prop('checked')) {
-                actions.disable();
-            }
-
-            this.$agbCheckbox.on('change', function (event) {
-                if (event.target.checked) {
-                    actions.enable();
-                } else {
-                    actions.disable();
-                }
-            });
-        },
-
-        onPayPalButtonClick: function() {
-            if (Object.prototype.hasOwnProperty.call(this.$form[0], 'checkValidity')) {
-                this.$form[0].checkValidity();
-
-                return;
-            }
-
-            if (!this.$agbCheckbox.prop('checked')) {
-                $('label[for="sAGB"]').addClass('has--error');
-            }
         }
     });
 })(jQuery, window);
