@@ -5,23 +5,23 @@
     <label lang="de">PayPal</label>
     <label lang="en">PayPal</label>
 
-    <version>4.3.1</version>
+    <version>4.3.2</version>
     <copyright>(c) by shopware AG</copyright>
     <license>MIT</license>
     <link>http://store.shopware.com</link>
     <author>shopware AG</author>
     <compatibility minVersion="5.2.27" maxVersion="5.99.99"/>
 
-    <changelog version="REPLACE_GLOBAL_WITH_NEXT_VERSION">
+    <changelog version="4.3.2">
         <changes lang="de">
             PT-12852 - Stabilität des Storefront-Javascripts verbessert;
-            PT-12870 - Behebt Probleme mit alten Bestellungen;
-            PT-12871 - Ermöglicht den checkout mit deaktivierter AGB checkbox;
+            PT-12870 - Verbessert das Handling von APIv1 Zahlungen im PayPal Bestellmodul;
+            PT-12871 - Behebt Problem, wenn die AGB-Checkbox deaktiviert ist;
         </changes>
         <changes lang="en">
             PT-12800 - Improved stability of storefront javascript;
-            PT-12870 - Fixed problems with old orders;
-            PT-12871 - Allows the checkout with deactivated TOS checkbox;
+            PT-12870 - Improves the handling of APIv1 payments in the PayPal order module;
+            PT-12871 - Fixes problem when TOS checkbox is disabled;
         </changes>
     </changelog>
 
