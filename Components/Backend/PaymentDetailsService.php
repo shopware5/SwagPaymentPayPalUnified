@@ -18,6 +18,10 @@ use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\RelatedResources\Sale;
 
 class PaymentDetailsService
 {
+    const TRANSACTION_ORDER = 'order';
+    const TRANSACTION_AUTHORIZATION = 'authorization';
+    const TRANSACTION_SALE = 'sale';
+
     /**
      * @var ExceptionHandlerServiceInterface
      */
@@ -100,7 +104,7 @@ class PaymentDetailsService
         ];
 
         $details = $this->saleResource->get($transactionId);
-        $details['intent'] = 'sale';
+        $details['intent'] = PaymentIntent::SALE;
 
         $viewParameter['history'] = $this->transactionHistoryBuilder->getLegacyHistory(Sale::fromArray($details));
         $viewParameter['payment'] = $details;
@@ -123,13 +127,20 @@ class PaymentDetailsService
         $viewParameter['payment'] = $paymentDetails;
         $viewParameter['history'] = $this->transactionHistoryBuilder->getTransactionHistory($paymentDetails);
 
-        if ($paymentDetails['intent'] === PaymentIntent::AUTHORIZE) {
-            // Separately assign the data, to provide an easier usage
-            $viewParameter['authorization'] = $paymentDetails['transactions'][0]['related_resources'][0]['authorization'];
-        } elseif ($paymentDetails['intent'] === PaymentIntent::ORDER) {
-            $viewParameter['order'] = $paymentDetails['transactions'][0]['related_resources'][0]['order'];
-        } elseif ($paymentDetails['intent'] === PaymentIntent::SALE) {
-            $viewParameter['sale'] = $paymentDetails['transactions'][0]['related_resources'][0]['sale'];
+        foreach ($paymentDetails['transactions'][0]['related_resources'] as $transaction) {
+            if (\array_key_exists(self::TRANSACTION_ORDER, $transaction)) {
+                $viewParameter[self::TRANSACTION_ORDER] = $transaction[self::TRANSACTION_ORDER];
+                continue;
+            }
+
+            if (\array_key_exists(self::TRANSACTION_AUTHORIZATION, $transaction)) {
+                $viewParameter[self::TRANSACTION_AUTHORIZATION] = $transaction[self::TRANSACTION_AUTHORIZATION];
+                continue;
+            }
+
+            if (\array_key_exists(self::TRANSACTION_SALE, $transaction)) {
+                $viewParameter[self::TRANSACTION_SALE] = $transaction[self::TRANSACTION_SALE];
+            }
         }
 
         return $viewParameter;

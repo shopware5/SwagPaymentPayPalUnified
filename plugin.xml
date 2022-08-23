@@ -15,10 +15,12 @@
     <changelog version="REPLACE_GLOBAL_WITH_NEXT_VERSION">
         <changes lang="de">
             PT-12852 - Stabilität des Storefront-Javascripts verbessert;
+            PT-12870 - Behebt Probleme mit alten Bestellungen;
             PT-12871 - Ermöglicht den checkout mit deaktivierter AGB checkbox;
         </changes>
         <changes lang="en">
             PT-12800 - Improved stability of storefront javascript;
+            PT-12870 - Fixed problems with old orders;
             PT-12871 - Allows the checkout with deactivated TOS checkbox;
         </changes>
     </changelog>
