@@ -67,6 +67,31 @@ class InvoiceSubscriberPuiTest extends TestCase
     /**
      * @return void
      */
+    public function testOnBeforeRenderDocumentWithoutAssignInvoiceInstruction()
+    {
+        $this->installOrder();
+        $this->deletePaymentInstructions();
+
+        $orderId = 60999;
+        $documentId = 1;
+        $document = Shopware_Components_Document::initDocument($orderId, $documentId);
+
+        $hookArgs = $this->createShopwareVersionRelatedHookArgs($document);
+
+        $subscriber = $this->getSubscriber();
+
+        $subscriber->onBeforeRenderDocument($hookArgs);
+
+        $result = $document->_template->tpl_vars;
+
+        static::assertArrayNotHasKey('PayPalUnifiedInvoiceInstruction', $result);
+
+        static::assertArrayHasKey('payUponInvoiceRatepayInstructions', $result);
+    }
+
+    /**
+     * @return void
+     */
     public function testOnFilterMailVariables()
     {
         $eventArgs = $this->createEventArgs();
@@ -124,6 +149,16 @@ class InvoiceSubscriberPuiTest extends TestCase
     {
         $sql = file_get_contents(__DIR__ . '/_fixtures/pui_order.sql');
         static::assertTrue(\is_string($sql));
+
+        $this->getContainer()->get('dbal_connection')->exec($sql);
+    }
+
+    /**
+     * @return void
+     */
+    private function deletePaymentInstructions()
+    {
+        $sql = 'DELETE FROM swag_payment_paypal_unified_payment_instruction WHERE order_number LIKE "21003";';
 
         $this->getContainer()->get('dbal_connection')->exec($sql);
     }
