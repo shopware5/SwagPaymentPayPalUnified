@@ -120,6 +120,10 @@ class PayUponInvoiceRiskManagement implements SubscriberInterface
             return false;
         }
 
+        if (!\is_array($user)) {
+            return false;
+        }
+
         if ($this->checkForMissingTechnicalRequirements()) {
             return true;
         }

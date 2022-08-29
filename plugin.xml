@@ -15,9 +15,11 @@
     <changelog version="REPLACE_GLOBAL_WITH_NEXT_VERSION">
         <changes lang="de">
             PT-12872 - Informationen zur Überweisung für den Rechnungskauf werden für frühere Bestellungen nicht angezeigt;
+            PT-12885 - Behebt Probleme mit dem RiskManagement;
         </changes>
         <changes lang="en">
             PT-12872 - Bank transfer information for pay upon invoice are not displayed for previous orders;
+            PT-12885 - Fixes problems with the risk management;
         </changes>
     </changelog>
 
