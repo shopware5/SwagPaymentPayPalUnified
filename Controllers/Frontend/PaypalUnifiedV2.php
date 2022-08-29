@@ -41,8 +41,8 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
         $this->logger->debug(sprintf('%s START', __METHOD__));
 
         $session = $this->dependencyProvider->getSession();
-
         $shopwareSessionOrderData = $session->get('sOrderVariables');
+        $this->handleComment();
 
         if ($shopwareSessionOrderData === null) {
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()

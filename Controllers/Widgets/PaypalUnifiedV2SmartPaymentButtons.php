@@ -32,6 +32,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2SmartPaymentButtons extends Ab
 
         $session = $this->dependencyProvider->getSession();
         $shopwareSessionOrderData = $session->get('sOrderVariables');
+        $this->handleComment();
 
         if ($shopwareSessionOrderData === null) {
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
