@@ -119,10 +119,10 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.Window', {
             items: [
                 me.generalTab,
                 me.paypalEcTab,
-                me.paypalPlusTab,
                 me.paypalInstallmentsTab,
                 me.paypalPayUponInvoiceTab,
                 me.paypalAdvancedCreditDebitCard,
+                me.paypalPlusTab,
             ]
         });
 
