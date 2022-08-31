@@ -6,7 +6,7 @@ export default (function () {
         login: async function (page) {
             await page.goto('/backend');
             await expect(page).toHaveTitle(/Backend/);
-            await page.waitForResponse(/.*Login\/load.*/);
+            await page.waitForLoadState('load');
             await expect(page.locator('#button-1019-btnEl')).toHaveText(/Login/);
 
             // Wait for the focus change of the shopware login

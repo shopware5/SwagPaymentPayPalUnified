@@ -1,4 +1,5 @@
 import http from 'http';
+import backendLoginHelper from './backendLoginHelper.mjs';
 
 export default (function () {
     return {
@@ -22,6 +23,26 @@ export default (function () {
 
             req.write('');
             req.end();
+        },
+
+        clearShopwareCacheByUsingBackend: async function (page) {
+            await backendLoginHelper.login(page);
+
+            // open the performance module
+            await page.locator('text=Einstellungen').click();
+            await page.locator('text=Caches / Performance').click();
+
+            await page.waitForLoadState('load');
+
+            // select the cache tab
+            await page.locator('.x-tab-inner:has-text("Cache")').click();
+
+            // clear the cache
+            await page.locator('button[role="button"]:has-text("Alle auswählen")').click();
+            await page.locator('button[role="button"]:has-text("Leeren") >> visible=true').click();
+            await page.locator('button[role="button"]:has-text("Themes kompilieren")').click();
+
+            await page.waitForLoadState('load');
         }
     };
 }());

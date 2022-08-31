@@ -7,6 +7,7 @@ import cookieHelper from '../helper/cookieHelper.mjs';
 
 import { locators } from '../helper/scenario/pay_with_card/locatorHelper.mjs';
 import scenarioHelper from '../helper/scenario/pay_with_card/scenarioHelper.mjs';
+import getPaypalPaymentMethodSelector from '../helper/getPayPalPaymentMethodSelector.mjs';
 
 const connection = MysqlFactory.getInstance();
 
@@ -34,7 +35,13 @@ test.describe('Pay with credit card', () => {
 
             // Change payment
             await page.click('.btn--change-payment');
-            await page.click('text=Kredit- oder Debitkarte');
+
+            const selector = await getPaypalPaymentMethodSelector.getSelector(
+                getPaypalPaymentMethodSelector.paymentMethodNames.SwagPaymentPayPalUnifiedAdvancedCreditDebitCard
+            );
+            await page.locator(selector).check();
+
+            await page.waitForLoadState('networkidle');
             await page.click('text=Weiter >> nth=1');
 
             await expect(page.locator('.payment--description')).toHaveText(/Kredit- oder Debitkarte/);

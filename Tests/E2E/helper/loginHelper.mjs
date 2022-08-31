@@ -6,9 +6,7 @@ export default (function () {
         login: async function (page) {
             // login
             await page.goto('/account', { waitUntil: 'commit' });
-            await page.waitForResponse((response) => {
-                return response.url().match(/.*\/csrftoken.*/) && response.status() === 200;
-            });
+
             await page.waitForLoadState('load');
 
             await page.fill('#email', credentials.defaultShopCustomerEmail);

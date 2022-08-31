@@ -23,6 +23,7 @@ use Shopware\Components\DependencyInjection\Container;
 use Shopware\Components\HttpClient\RequestException;
 use Shopware_Components_Config;
 use Shopware_Controllers_Frontend_PaypalUnifiedV2;
+use stdClass;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\PayPalOrderParameter;
@@ -75,6 +76,8 @@ class PaypalUnifiedV2Test extends TestCase
         $dependencyProvider = $this->createConfiguredMock(DependencyProvider::class, [
             'getSession' => $session,
         ]);
+
+        $dependencyProvider->expects(static::once())->method('getModule')->willReturn(new stdClass());
 
         $redirectDataBuilder = $this->createMock(RedirectDataBuilder::class);
         $redirectDataBuilder->expects(static::atLeastOnce())

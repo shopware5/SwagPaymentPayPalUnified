@@ -80,6 +80,7 @@
         init: function() {
             this.applyDataAttributes();
 
+            this.createOrderFunction = $.createSwagPaymentPaypalCreateOrderFunction(this.opts.createOrderUrlFallback, this);
             this.formValidityFunctions = $.createSwagPaymentPaypalFormValidityFunctions(
                 this.opts.confirmFormSelector,
                 this.opts.confirmFormSubmitButtonSelector,
@@ -133,7 +134,7 @@
                 /**
                  * Will be called after payment button is clicked
                  */
-                createOrder: this.createOrder.bind(this),
+                createOrder: this.createOrderFunction.createOrder.bind(this.createOrderFunction),
 
                 /**
                  * Will be called if the payment process is approved by PayPal
@@ -154,23 +155,6 @@
             $.publish('plugin/swagPayPalUnifiedAdvancedCreditDebitCardFallback/createConfig', [this, buttonConfig]);
 
             return buttonConfig;
-        },
-
-        /**
-         * @return { Promise }
-         */
-        createOrder: function() {
-            var me = this;
-
-            return $.ajax({
-                method: 'get',
-                url: me.opts.createOrderUrlFallback
-            }).then(function(response) {
-                me.opts.basketId = response.basketId;
-
-                return response.paypalOrderId;
-            }, function() {
-            }).promise();
         },
 
         /**

@@ -4,6 +4,8 @@ import defaultPaypalSettingsSql from '../helper/paypalSqlHelper.mjs';
 import MysqlFactory from '../helper/mysqlFactory.mjs';
 import loginHelper from '../helper/loginHelper.mjs';
 import clearCacheHelper from '../helper/clearCacheHelper.mjs';
+import customerCommentHelper from '../helper/customerCommentHelper.mjs';
+
 const connection = MysqlFactory.getInstance();
 
 test.describe('Frontend', () => {
@@ -16,7 +18,13 @@ test.describe('Frontend', () => {
     });
 
     test('Buy a product with paypal', async ({ page }) => {
-        page.on('frameattached', await function (frame) {
+        // activate customer comments
+        await customerCommentHelper.updateCommentSetting();
+
+        // clear the shopware cache
+        await clearCacheHelper.clearShopwareCacheByUsingBackend(page);
+
+        page.on('frameattached', await function(frame) {
             frame.waitForLoadState('load');
         });
 
@@ -37,6 +45,9 @@ test.describe('Frontend', () => {
 
         const locator = await page.frameLocator('.component-frame').locator('.paypal-button:has-text("Jetzt kaufen")');
         await page.waitForLoadState('load');
+
+        // add a customer comment for a later check
+        await page.fill('.user-comment--field', 'This is a customer comment');
 
         // check: can not check out without accept AGBs
         await locator.dispatchEvent('click');
@@ -59,5 +70,9 @@ test.describe('Frontend', () => {
         await paypalPage.locator('button:has-text("Jetzt zahlen")').click();
 
         await expect(page.locator('.teaser--title')).toHaveText(/Vielen Dank für Ihre Bestellung bei Shopware Demo/);
+
+        // check if customer comment is written in the s_order table
+        const comment = await customerCommentHelper.getCustomerComment();
+        await expect(comment === 'This is a customer comment').toBeTruthy();
     });
 });

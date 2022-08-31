@@ -73,6 +73,8 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
     const PAYMENT_SOURCE_INFO_CANNOT_BE_VERIFIED = 'PAYMENT_SOURCE_INFO_CANNOT_BE_VERIFIED';
     const PAYMENT_SOURCE_DECLINED_BY_PROCESSOR = 'PAYMENT_SOURCE_DECLINED_BY_PROCESSOR';
 
+    const COMMENT_KEY = 'sComment';
+
     /**
      * @var DependencyProvider
      */
@@ -734,6 +736,18 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
         }
 
         $this->orderDataService->applyTransactionId($shopwareOrderNumber, $paymentId);
+    }
+
+    /**
+     * @return void
+     */
+    protected function handleComment()
+    {
+        $session = $this->dependencyProvider->getSession();
+        $sComment = $this->request->get(self::COMMENT_KEY, '');
+
+        $session->offsetSet(self::COMMENT_KEY, $sComment);
+        $this->dependencyProvider->getModule('order')->sComment = $sComment;
     }
 
     /**
