@@ -346,14 +346,22 @@ class PayUponInvoiceRiskManagementTest extends TestCase
      */
     public function testCheckForMissingTechnicalRequirements($config, $settings)
     {
+        $paymentMethodProvider = $this->getPaymentMethodProvider();
+        $paymentMethodProvider->method('getPaymentId')->willReturn(1);
+
         $subject = $this->getPayUponInvoiceRiskManagement(
-            null,
+            $paymentMethodProvider,
             null,
             null,
             null,
             $settings
         );
         $argsMock = $this->createMock(Enlight_Event_EventArgs::class);
+        $argsMock->method('get')->willReturnMap([
+            ['user', ['additional' => ['country' => ['countryiso' => 'DE']]]],
+            ['basket', ['AmountNumeric' => 1.00]],
+            ['paymentID', 1],
+        ]);
 
         static::assertTrue($subject->onExecuteRule($argsMock));
     }
@@ -445,6 +453,28 @@ class PayUponInvoiceRiskManagementTest extends TestCase
             null,
             $settingsServiceMock,
         ];
+    }
+
+    /**
+     * @return void
+     */
+    public function testCheckUserIsNotSet()
+    {
+        $paymentMethodProvider = $this->getPaymentMethodProvider();
+        $paymentMethodProvider->method('getPaymentId')->willReturn(1);
+
+        $riskManagementSubscriber = $this->getPayUponInvoiceRiskManagement(
+            $paymentMethodProvider
+        );
+
+        $argsMock = $this->createMock(Enlight_Event_EventArgs::class);
+        $argsMock->method('get')->willReturnMap([
+            ['user', null],
+            ['basket', ['AmountNumeric' => 1.00]],
+            ['paymentID', 1],
+        ]);
+
+        static::assertFalse($riskManagementSubscriber->onExecuteRule($argsMock));
     }
 
     /**
