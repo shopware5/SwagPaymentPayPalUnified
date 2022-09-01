@@ -5,7 +5,7 @@
     <label lang="de">PayPal</label>
     <label lang="en">PayPal</label>
 
-    <version>4.3.2</version>
+    <version>4.3.3</version>
     <copyright>(c) by shopware AG</copyright>
     <license>MIT</license>
     <link>http://store.shopware.com</link>
@@ -14,14 +14,16 @@
 
     <changelog version="REPLACE_GLOBAL_WITH_NEXT_VERSION">
         <changes lang="de">
-            PT-12872 - Informationen zur Überweisung für den Rechnungskauf werden für frühere Bestellungen nicht angezeigt;
-            PT-12874 - Korregiert fehlerhaftes Verhalten bei aktivierter Kommentar Funktion;
-            PT-12885 - Behebt Probleme mit dem RiskManagement;
+            PT-12853 - Stabilität von Bestellungen mit Express Checkout verbessert;
+            PT-12872 - Informationen zur Überweisung für den Rechnungskauf werden nur angezeigt, wenn sie auch verfügbar sind;
+            PT-12874 - Bestellkommentare von Kunden werden nun korrekt gespeichert;
+            PT-12885 - Risk-Management von Rechnungskauf verbessert;
         </changes>
         <changes lang="en">
-            PT-12872 - Bank transfer information for pay upon invoice are not displayed for previous orders;
-            PT-12874 - Fixes wrong behaviour when the comment function is activated;
-            PT-12885 - Fixes problems with the risk management;
+            PT-12853 - Improve stability of orders with Express Checkout;
+            PT-12872 - Bank transfer information for pay upon invoice is only displayed if it is available;
+            PT-12874 - Customer order comments are now saved correctly;
+            PT-12885 - Improves risk management of pay upon invoice;
         </changes>
     </changelog>
 
