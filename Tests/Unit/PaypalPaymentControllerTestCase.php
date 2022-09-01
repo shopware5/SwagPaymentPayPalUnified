@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Unit;
 
+use Doctrine\DBAL\Connection;
 use Enlight_Class;
 use Enlight_Controller_Request_RequestHttp;
 use Enlight_Controller_Response_ResponseHttp;
@@ -16,8 +17,11 @@ use Enlight_View_Default;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shopware\Components\BasketSignature\BasketPersister;
+use Shopware\Components\Cart\BasketHelperInterface;
+use Shopware\Components\Cart\ProportionalTaxCalculatorInterface;
 use Shopware\Components\DependencyInjection\Bridge\Config;
 use Shopware\Components\DependencyInjection\Container;
+use Shopware\Models\Shop\Shop;
 use SwagPaymentPayPalUnified\Components\Backend\ShopRegistrationService;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\ExceptionHandlerServiceInterface;
@@ -75,6 +79,10 @@ class PaypalPaymentControllerTestCase extends TestCase
     const SERVICE_AUTHORIZATION_RESOURCE = 'paypal_unified.v2.authorization_resource';
     const SERVICE_CAPTURE_RESOURCE = 'paypal_unified.v2.capture_resource';
     const SERVICE_PAYMENT_INSTRUCTION_SERVICE = 'paypal_unified.pay_upon_invoice_instruction_service';
+    const SERVICE_SHOP = 'shop';
+    const SERVICE_BASKET_HELPER = BasketHelperInterface::class;
+    const SERVICE_PROPPORTIONAL_TAX_CALCULATOR = 'shopware.cart.proportional_tax_calculator';
+    const SERVICE_DBAL_CONNECTION = 'dbal_connection';
 
     /**
      * @var MockObject|Enlight_Controller_Request_RequestHttp
@@ -126,9 +134,19 @@ class PaypalPaymentControllerTestCase extends TestCase
         $this->injections[self::SERVICE_AUTHORIZATION_RESOURCE] = $this->createMock(AuthorizationResource::class);
         $this->injections[self::SERVICE_CAPTURE_RESOURCE] = $this->createMock(CaptureResource::class);
         $this->injections[self::SERVICE_PAYMENT_INSTRUCTION_SERVICE] = $this->createMock(PaymentInstructionService::class);
+        $this->injections[self::SERVICE_SHOP] = $this->createMock(Shop::class);
+        $this->injections[self::SERVICE_DBAL_CONNECTION] = $this->createMock(Connection::class);
 
         if (class_exists(BasketPersister::class)) {
             $this->injections[self::SERVICE_BASKET_PERSISTER] = $this->createMock(BasketPersister::class);
+        }
+
+        if (interface_exists(BasketHelperInterface::class)) {
+            $this->injections[self::SERVICE_BASKET_HELPER] = $this->createMock(BasketHelperInterface::class);
+        }
+
+        if (interface_exists(ProportionalTaxCalculatorInterface::class)) {
+            $this->injections[self::SERVICE_PROPPORTIONAL_TAX_CALCULATOR] = $this->createMock(ProportionalTaxCalculatorInterface::class);
         }
 
         $this->request = $this->createMock(Enlight_Controller_Request_RequestHttp::class);

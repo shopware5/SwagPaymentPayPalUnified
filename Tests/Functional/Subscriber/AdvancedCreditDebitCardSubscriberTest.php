@@ -17,6 +17,7 @@ use SwagPaymentPayPalUnified\Subscriber\AdvancedCreditDebitCard;
 use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\SettingsHelperTrait;
+use SwagPaymentPayPalUnified\Tests\Functional\ShopRegistrationTrait;
 use SwagPaymentPayPalUnified\Tests\Mocks\DummyController;
 use SwagPaymentPayPalUnified\Tests\Mocks\ViewMock;
 
@@ -25,13 +26,13 @@ class AdvancedCreditDebitCardSubscriberTest extends TestCase
     use ContainerTrait;
     use DatabaseTestCaseTrait;
     use SettingsHelperTrait;
+    use ShopRegistrationTrait;
 
     /**
      * @return void
      */
     public function testAddAcdcCorrectTemplateAssigns()
     {
-        static::markTestSkipped('Causes other test to fail. Fix with PT-12548');
         $view = new ViewMock(new \Enlight_Template_Manager());
         $view->assign('sPayment', ['name' => PaymentMethodProviderInterface::PAYPAL_UNIFIED_ADVANCED_CREDIT_DEBIT_CARD_METHOD_NAME]);
 

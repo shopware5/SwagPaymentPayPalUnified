@@ -36,10 +36,6 @@ parameters:
         - '#Cannot call method fetch.*\(\) on Doctrine\\DBAL\\.*\|int#'
         # The method TestCase::expectException() expects a class-string<Throwabel>. Throwable only avaiable since PHP 7.0
         - '#Parameter \#1 \$exception of method PHPUnit\\Framework\\TestCase::expectException\(\) expects class-string<Throwable>#'
-        - # Skipped tests which need a fix
-            message: "#^Unreachable statement \\- code above always terminates\\.$#"
-            paths:
-                 - Tests/Functional/Subscriber/AdvancedCreditDebitCardSubscriberTest.php
         - # Ignore PaymentType::* failure in PayPalOrderParameter constructor for tests
             message: '#Parameter \#3 \$paymentType of class SwagPaymentPayPalUnified\\Components\\PayPalOrderParameter\\PayPalOrderParameter constructor expects.*given.#'
             paths:

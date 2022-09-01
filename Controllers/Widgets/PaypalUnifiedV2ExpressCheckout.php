@@ -29,13 +29,18 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout extends Abstra
     {
         $this->logger->debug(sprintf('%s START', __METHOD__));
 
+        $checkoutController = $this->prepareCheckoutController();
+
         // If the PayPal express button on the detail page was clicked, the addProduct equals true.
         // That means, that it has to be added manually to the basket.
         if ($this->Request()->getParam('addProduct') !== null) {
             $this->addProductToCart();
+            // Make sure, that country and shipping method are set in the session before getting the cart,
+            // to ensure that the shipping costs are sent to PayPal
+            $checkoutController->getSelectedCountry();
+            $checkoutController->getSelectedDispatch();
         }
 
-        $checkoutController = $this->prepareCheckoutController();
         $basketData = $checkoutController->getBasket();
         $userData = $checkoutController->getUserData() ?: [];
 
@@ -86,7 +91,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout extends Abstra
         $basketModule = $this->dependencyProvider->getModule('basket');
         $request = $this->Request();
         $productNumber = $request->getParam('productNumber');
-        $quantity = (int) $request->getParam('productQuantity');
+        $quantity = (int) $request->getParam('productQuantity', 1);
 
         $this->logger->debug(sprintf('%s DELETE BASKET', __METHOD__));
 

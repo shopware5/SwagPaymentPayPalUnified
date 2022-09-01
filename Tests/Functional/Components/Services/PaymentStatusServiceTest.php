@@ -28,7 +28,7 @@ class PaymentStatusServiceTest extends TestCase
     use ShopRegistrationTrait;
 
     const ANY_ID = 9999;
-    const SHOPWARE_ORDER_ID = 66;
+    const SHOPWARE_ORDER_ID = 6655;
     const EXPECTS_EXCEPTION = true;
     const EXPECTS_NO_EXCEPTION = false;
 
@@ -47,7 +47,7 @@ class PaymentStatusServiceTest extends TestCase
         $sql = file_get_contents(__DIR__ . '/_fixtures/order_payment_state_test.sql');
         static::assertTrue(\is_string($sql));
 
-        $this->getContainer()->get('dbal_connection')->exec($sql);
+        $this->getContainer()->get('dbal_connection')->executeUpdate($sql, ['orderId' => self::SHOPWARE_ORDER_ID]);
 
         $paymentStatusService = $this->createPaymentStatusService();
 

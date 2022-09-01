@@ -6,7 +6,7 @@ INSERT INTO `s_order_basket` (`id`, `sessionID`, `userID`, `articlename`, `artic
     (691000,	'restoreBasketSessionId',	1,	'Warenkorbrabatt',	0,	'SHIPPINGDISCOUNT',	0,	1,	-2,	-1.68,	19,	'2022-04-22 10:50:15',	4,	0,	'',	'checkout',	'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36',	'',	1);
 
 INSERT INTO `s_order_basket_attributes` (`id`, `basketID`, `attribute1`, `attribute2`, `attribute3`, `attribute4`, `attribute5`, `attribute6`) VALUES
-    (37,	678000,	'Attr1',	'Attr2',	'Attr3',	'Attr4',	'Attr5',	'Attr6'),
-    (38,	680000,	'Attr1',	'Attr2',	'Attr3',	'Attr4',	'Attr5',	'Attr6'),
-    (39,	682000,	'Attr1',	'Attr2',	'Attr3',	'Attr4',	'Attr5',	'Attr6'),
-    (40,	685000,	'Attr1',	'Attr2',	'Attr3',	'Attr4',	'Attr5',	'Attr6');
+    (3700,	678000,	'Attr1',	'Attr2',	'Attr3',	'Attr4',	'Attr5',	'Attr6'),
+    (3800,	680000,	'Attr1',	'Attr2',	'Attr3',	'Attr4',	'Attr5',	'Attr6'),
+    (3900,	682000,	'Attr1',	'Attr2',	'Attr3',	'Attr4',	'Attr5',	'Attr6'),
+    (4000,	685000,	'Attr1',	'Attr2',	'Attr3',	'Attr4',	'Attr5',	'Attr6');
