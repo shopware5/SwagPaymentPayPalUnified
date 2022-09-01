@@ -10,7 +10,7 @@ namespace SwagPaymentPayPalUnified\Setup\Versions;
 
 use Doctrine\DBAL\Connection;
 
-class UpdateToREPLACE_GLOBAL_WITH_NEXT_VERSION
+class UpdateTo433
 {
     /**
      * @var Connection

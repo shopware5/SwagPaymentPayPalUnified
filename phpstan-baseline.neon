@@ -3151,11 +3151,6 @@ parameters:
 			path: Tests/Functional/Subscriber/AccountTest.php
 
 		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\AdvancedCreditDebitCardSubscriberTest\\:\\:getSubscriber\\(\\) is unused\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/AdvancedCreditDebitCardSubscriberTest.php
-
-		-
 			message: "#^Class Enlight_Hook_HookArgs constructor invoked with 1 parameter, 2\\-3 required\\.$#"
 			count: 1
 			path: Tests/Functional/Subscriber/AdvancedCreditDebitCartRiskManagementTest.php
@@ -3469,71 +3464,6 @@ parameters:
 			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\InContextSubscriberTest\\:\\:testGetSubscribedEvents\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: Tests/Functional/Subscriber/InContextSubscriberTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\InstallmentsBannerSubscriberTest\\:\\:createTestSettings\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/InstallmentsBannerSubscriberTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\InstallmentsBannerSubscriberTest\\:\\:getPaymentMethodProvider\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/InstallmentsBannerSubscriberTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\InstallmentsBannerSubscriberTest\\:\\:testCanBeCreated\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/InstallmentsBannerSubscriberTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\InstallmentsBannerSubscriberTest\\:\\:testGetSubscribedEventsHasCorrectEvents\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/InstallmentsBannerSubscriberTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\InstallmentsBannerSubscriberTest\\:\\:testOnPostDispatchSecureAssignsBuyerCountryDEToView\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/InstallmentsBannerSubscriberTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\InstallmentsBannerSubscriberTest\\:\\:testOnPostDispatchSecureAssignsBuyerCountryGBToView\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/InstallmentsBannerSubscriberTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\InstallmentsBannerSubscriberTest\\:\\:testOnPostDispatchSecureAssignsVariablesToView\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/InstallmentsBannerSubscriberTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\InstallmentsBannerSubscriberTest\\:\\:testOnPostDispatchSecureAssignsVariablesToViewCartPage\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/InstallmentsBannerSubscriberTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\InstallmentsBannerSubscriberTest\\:\\:testOnPostDispatchSecureAssignsVariablesToViewProductDetailPage\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/InstallmentsBannerSubscriberTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\InstallmentsBannerSubscriberTest\\:\\:testOnPostDispatchSecureInstallmentsBannerInactive\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/InstallmentsBannerSubscriberTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\InstallmentsBannerSubscriberTest\\:\\:testOnPostDispatchSecurePaymentMethodInactive\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/InstallmentsBannerSubscriberTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\InstallmentsBannerSubscriberTest\\:\\:testOnPostDispatchSecureReturnSettingInactive\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/InstallmentsBannerSubscriberTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\InstallmentsBannerSubscriberTest\\:\\:testOnPostDistpatchSecureWithoutAnySetttings\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/InstallmentsBannerSubscriberTest.php
 
 		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\LessSubscriberTest\\:\\:testCanBeCreated\\(\\) has no return type specified\\.$#"

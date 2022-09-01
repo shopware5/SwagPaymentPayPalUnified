@@ -15,6 +15,7 @@ use Shopware\Bundle\StoreFrontBundle\Service\Core\ContextService;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Subscriber\InstallmentsBanner;
+use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\SettingsHelperTrait;
 use SwagPaymentPayPalUnified\Tests\Mocks\DummyController;
@@ -22,17 +23,24 @@ use SwagPaymentPayPalUnified\Tests\Mocks\ViewMock;
 
 class InstallmentsBannerSubscriberTest extends TestCase
 {
+    use ContainerTrait;
     use DatabaseTestCaseTrait;
     use SettingsHelperTrait;
 
     const CLIENT_ID = 'testClientId';
 
+    /**
+     * @return void
+     */
     public function testCanBeCreated()
     {
         $subscriber = $this->getSubscriber();
         static::assertNotNull($subscriber);
     }
 
+    /**
+     * @return void
+     */
     public function testGetSubscribedEventsHasCorrectEvents()
     {
         $events = InstallmentsBanner::getSubscribedEvents();
@@ -41,7 +49,10 @@ class InstallmentsBannerSubscriberTest extends TestCase
         static::assertSame('onPostDispatchSecure', $events['Enlight_Controller_Action_PostDispatchSecure_Widgets']);
     }
 
-    public function testOnPostDistpatchSecureWithoutAnySetttings()
+    /**
+     * @return void
+     */
+    public function testOnPostDispatchSecureWithoutAnySettings()
     {
         $subscriber = $this->getSubscriber();
 
@@ -57,6 +68,9 @@ class InstallmentsBannerSubscriberTest extends TestCase
         static::assertNull($view->getAssign('paypalUnifiedInstallmentsBanner'));
     }
 
+    /**
+     * @return void
+     */
     public function testOnPostDispatchSecureReturnSettingInactive()
     {
         $subscriber = $this->getSubscriber();
@@ -73,6 +87,9 @@ class InstallmentsBannerSubscriberTest extends TestCase
         static::assertNull($view->getAssign('paypalUnifiedInstallmentsBanner'));
     }
 
+    /**
+     * @return void
+     */
     public function testOnPostDispatchSecurePaymentMethodInactive()
     {
         $paymentMethodProvider = $this->getPaymentMethodProvider();
@@ -91,6 +108,9 @@ class InstallmentsBannerSubscriberTest extends TestCase
         static::assertNull($view->getAssign('paypalUnifiedInstallmentsBanner'));
     }
 
+    /**
+     * @return void
+     */
     public function testOnPostDispatchSecureInstallmentsBannerInactive()
     {
         $paymentMethodProvider = $this->getPaymentMethodProvider();
@@ -109,6 +129,9 @@ class InstallmentsBannerSubscriberTest extends TestCase
         static::assertNull($view->getAssign('paypalUnifiedInstallmentsBanner'));
     }
 
+    /**
+     * @return void
+     */
     public function testOnPostDispatchSecureAssignsVariablesToView()
     {
         $subscriber = $this->getSubscriber();
@@ -131,6 +154,9 @@ class InstallmentsBannerSubscriberTest extends TestCase
         static::assertSame('EUR', $view->getAssign('paypalUnifiedInstallmentsBannerCurrency'));
     }
 
+    /**
+     * @return void
+     */
     public function testOnPostDispatchSecureAssignsVariablesToViewProductDetailPage()
     {
         $subscriber = $this->getSubscriber();
@@ -155,6 +181,9 @@ class InstallmentsBannerSubscriberTest extends TestCase
         static::assertSame('EUR', $view->getAssign('paypalUnifiedInstallmentsBannerCurrency'));
     }
 
+    /**
+     * @return void
+     */
     public function testOnPostDispatchSecureAssignsVariablesToViewCartPage()
     {
         $subscriber = $this->getSubscriber();
@@ -179,6 +208,9 @@ class InstallmentsBannerSubscriberTest extends TestCase
         static::assertSame('EUR', $view->getAssign('paypalUnifiedInstallmentsBannerCurrency'));
     }
 
+    /**
+     * @return void
+     */
     public function testOnPostDispatchSecureAssignsBuyerCountryDEToView()
     {
         $subscriber = $this->getSubscriber();
@@ -198,6 +230,9 @@ class InstallmentsBannerSubscriberTest extends TestCase
         static::assertSame('DE', $view->getAssign('paypalUnifiedInstallmentsBannerBuyerCountry'));
     }
 
+    /**
+     * @return void
+     */
     public function testOnPostDispatchSecureAssignsBuyerCountryGBToView()
     {
         $subscriber = $this->getSubscriber();
@@ -205,11 +240,12 @@ class InstallmentsBannerSubscriberTest extends TestCase
 
         $sql = \file_get_contents(__DIR__ . '/_fixtures/install_great_britan_pounds.sql');
         static::assertTrue(\is_string($sql));
-        Shopware()->Container()->get('dbal_connection')->exec($sql);
+        $currencyId = 123;
+        $this->getContainer()->get('dbal_connection')->executeUpdate($sql, ['currencyId' => $currencyId]);
 
-        $contextService = Shopware()->Container()->get('shopware_storefront.context_service');
+        $contextService = $this->getContainer()->get('shopware_storefront.context_service');
         $tmpShopContext = $contextService->getShopContext();
-        $shopContext = $contextService->createShopContext(2, 3, 'EK');
+        $shopContext = $contextService->createShopContext(2, $currencyId, 'EK');
 
         $reflectionProperty = (new \ReflectionClass(ContextService::class))->getProperty('context');
         $reflectionProperty->setAccessible(true);
@@ -237,15 +273,17 @@ class InstallmentsBannerSubscriberTest extends TestCase
     private function getSubscriber()
     {
         return new InstallmentsBanner(
-            Shopware()->Container()->get('paypal_unified.settings_service'),
-            Shopware()->Container()->get('shopware_storefront.context_service'),
-            Shopware()->Container()->get('paypal_unified.payment_method_provider')
+            $this->getContainer()->get('paypal_unified.settings_service'),
+            $this->getContainer()->get('shopware_storefront.context_service'),
+            $this->getContainer()->get('paypal_unified.payment_method_provider')
         );
     }
 
     /**
      * @param bool $active
      * @param bool $advertiseInstallments
+     *
+     * @return void
      */
     private function createTestSettings($active = true, $advertiseInstallments = true)
     {
@@ -261,11 +299,14 @@ class InstallmentsBannerSubscriberTest extends TestCase
         ]);
     }
 
+    /**
+     * @return PaymentMethodProvider
+     */
     private function getPaymentMethodProvider()
     {
         return new PaymentMethodProvider(
-            Shopware()->Container()->get('dbal_connection'),
-            Shopware()->Container()->get('models')
+            $this->getContainer()->get('dbal_connection'),
+            $this->getContainer()->get('models')
         );
     }
 }

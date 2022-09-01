@@ -9,10 +9,10 @@
 namespace SwagPaymentPayPalUnified\Tests\Functional\Setup;
 
 use PHPUnit\Framework\TestCase;
-use SwagPaymentPayPalUnified\Setup\Versions\UpdateToREPLACE_GLOBAL_WITH_NEXT_VERSION;
+use SwagPaymentPayPalUnified\Setup\Versions\UpdateTo433;
 use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 
-class UpdateToREPLACE_GLOBAL_WITH_NEXT_VERSION_Test extends TestCase
+class UpdateTo433Test extends TestCase
 {
     use ContainerTrait;
 
@@ -66,11 +66,11 @@ class UpdateToREPLACE_GLOBAL_WITH_NEXT_VERSION_Test extends TestCase
     }
 
     /**
-     * @return UpdateToREPLACE_GLOBAL_WITH_NEXT_VERSION
+     * @return UpdateTo433
      */
     private function getUpdater()
     {
-        return new UpdateToREPLACE_GLOBAL_WITH_NEXT_VERSION(
+        return new UpdateTo433(
             $this->getContainer()->get('dbal_connection')
         );
     }
