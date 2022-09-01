@@ -12,7 +12,7 @@
     <author>shopware AG</author>
     <compatibility minVersion="5.2.27" maxVersion="5.99.99"/>
 
-    <changelog version="REPLACE_GLOBAL_WITH_NEXT_VERSION">
+    <changelog version="4.3.3">
         <changes lang="de">
             PT-12853 - Stabilität von Bestellungen mit Express Checkout verbessert;
             PT-12872 - Informationen zur Überweisung für den Rechnungskauf werden nur angezeigt, wenn sie auch verfügbar sind;
