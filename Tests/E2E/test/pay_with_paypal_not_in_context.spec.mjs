@@ -5,6 +5,7 @@ import MysqlFactory from '../helper/mysqlFactory.mjs';
 import loginHelper from '../helper/loginHelper.mjs';
 import clearCacheHelper from '../helper/clearCacheHelper.mjs';
 import disableInContextMode from '../helper/disableInContextMode.mjs';
+import getPaypalPaymentMethodSelector from '../helper/getPayPalPaymentMethodSelector.mjs';
 const connection = MysqlFactory.getInstance();
 
 test.describe('Disabled inContext mode', () => {
@@ -37,7 +38,11 @@ test.describe('Disabled inContext mode', () => {
 
         // Change payment
         await page.click('.btn--change-payment');
-        await page.click('label:has-text("PayPal")');
+        const selector = await getPaypalPaymentMethodSelector.getSelector(
+            getPaypalPaymentMethodSelector.paymentMethodNames.SwagPaymentPayPalUnified
+        );
+        await page.locator(selector).check();
+        await page.waitForLoadState('networkidle');
         await page.click('text=Weiter >> nth=1');
 
         await page.waitForLoadState('load');

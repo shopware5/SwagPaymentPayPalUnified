@@ -3,6 +3,7 @@ import MysqlFactory from '../helper/mysqlFactory.mjs';
 import defaultPaypalSettingsSql from '../helper/paypalSqlHelper.mjs';
 import loginHelper from '../helper/loginHelper.mjs';
 import clearCacheHelper from '../helper/clearCacheHelper.mjs';
+import getPaypalPaymentMethodSelector from '../helper/getPayPalPaymentMethodSelector.mjs';
 const connection = MysqlFactory.getInstance();
 const sweden = '25';
 const sek = '5';
@@ -43,8 +44,13 @@ test.describe('Pay with trustly', () => {
 
         // Change payment
         await page.click('.btn--change-payment');
-        await page.click('text=Trustly');
+        const selector = await getPaypalPaymentMethodSelector.getSelector(
+            getPaypalPaymentMethodSelector.paymentMethodNames.SwagPaymentPayPalUnifiedTrustly
+        );
+        await page.locator(selector).check();
+        await page.waitForLoadState('networkidle');
         await page.click('text=Weiter >> nth=1');
+
         await page.click('input[name="sAGB"]');
 
         await page.waitForLoadState('load');

@@ -5,6 +5,7 @@ import MysqlFactory from '../helper/mysqlFactory.mjs';
 import loginHelper from '../helper/loginHelper.mjs';
 import clearCacheHelper from '../helper/clearCacheHelper.mjs';
 import customerCommentHelper from '../helper/customerCommentHelper.mjs';
+import getPaypalPaymentMethodSelector from '../helper/getPayPalPaymentMethodSelector.mjs';
 
 const connection = MysqlFactory.getInstance();
 
@@ -40,7 +41,11 @@ test.describe('Frontend', () => {
 
         // Change payment
         await page.click('.btn--change-payment');
-        await page.click('label:has-text("PayPal")');
+        const selector = await getPaypalPaymentMethodSelector.getSelector(
+            getPaypalPaymentMethodSelector.paymentMethodNames.SwagPaymentPayPalUnified
+        );
+        await page.locator(selector).check();
+        await page.waitForLoadState('networkidle');
         await page.click('text=Weiter >> nth=1');
 
         const locator = await page.frameLocator('.component-frame').locator('.paypal-button:has-text("Jetzt kaufen")');
