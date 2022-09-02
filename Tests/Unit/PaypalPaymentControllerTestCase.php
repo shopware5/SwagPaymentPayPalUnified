@@ -80,8 +80,9 @@ class PaypalPaymentControllerTestCase extends TestCase
     const SERVICE_CAPTURE_RESOURCE = 'paypal_unified.v2.capture_resource';
     const SERVICE_PAYMENT_INSTRUCTION_SERVICE = 'paypal_unified.pay_upon_invoice_instruction_service';
     const SERVICE_SHOP = 'shop';
-    const SERVICE_BASKET_HELPER = BasketHelperInterface::class;
-    const SERVICE_PROPPORTIONAL_TAX_CALCULATOR = 'shopware.cart.proportional_tax_calculator';
+    const SERVICE_BASKET_HELPER_CLASS = BasketHelperInterface::class;
+    const SERVICE_BASKET_HELPER_ID = 'shopware.cart.basket_helper';
+    const SERVICE_PROPORTIONAL_TAX_CALCULATOR = 'shopware.cart.proportional_tax_calculator';
     const SERVICE_DBAL_CONNECTION = 'dbal_connection';
 
     /**
@@ -142,11 +143,13 @@ class PaypalPaymentControllerTestCase extends TestCase
         }
 
         if (interface_exists(BasketHelperInterface::class)) {
-            $this->injections[self::SERVICE_BASKET_HELPER] = $this->createMock(BasketHelperInterface::class);
+            $basketHelper = $this->createMock(BasketHelperInterface::class);
+            $this->injections[self::SERVICE_BASKET_HELPER_CLASS] = $basketHelper;
+            $this->injections[self::SERVICE_BASKET_HELPER_ID] = $basketHelper;
         }
 
         if (interface_exists(ProportionalTaxCalculatorInterface::class)) {
-            $this->injections[self::SERVICE_PROPPORTIONAL_TAX_CALCULATOR] = $this->createMock(ProportionalTaxCalculatorInterface::class);
+            $this->injections[self::SERVICE_PROPORTIONAL_TAX_CALCULATOR] = $this->createMock(ProportionalTaxCalculatorInterface::class);
         }
 
         $this->request = $this->createMock(Enlight_Controller_Request_RequestHttp::class);
