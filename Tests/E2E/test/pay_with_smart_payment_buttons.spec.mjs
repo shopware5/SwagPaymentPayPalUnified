@@ -35,13 +35,11 @@ test.describe('Is SPB fully functional', () => {
         await page.click('.register--login-btn');
         await expect(page).toHaveURL(/.*checkout\/confirm/);
 
-        // Change payment to Pay later
+        // Change payment
         await page.click('.btn--change-payment');
-
         const selector = await getPaypalPaymentMethodSelector.getSelector(
             getPaypalPaymentMethodSelector.paymentMethodNames.SwagPaymentPayPalUnified
         );
-
         await page.locator(selector).check();
         await page.waitForLoadState('networkidle');
 

@@ -3,6 +3,7 @@ import MysqlFactory from '../helper/mysqlFactory.mjs';
 import defaultPaypalSettingsSql from '../helper/paypalSqlHelper.mjs';
 import loginHelper from '../helper/loginHelper.mjs';
 import clearCacheHelper from '../helper/clearCacheHelper.mjs';
+import getPaypalPaymentMethodSelector from '../helper/getPayPalPaymentMethodSelector.mjs';
 const connection = MysqlFactory.getInstance();
 
 test.describe('Pay with Giropay', () => {
@@ -27,8 +28,13 @@ test.describe('Pay with Giropay', () => {
 
         // Change payment
         await page.click('.btn--change-payment');
-        await page.click('text=Giropay');
+        const selector = await getPaypalPaymentMethodSelector.getSelector(
+            getPaypalPaymentMethodSelector.paymentMethodNames.SwagPaymentPayPalUnifiedGiropay
+        );
+        await page.locator(selector).check();
+        await page.waitForLoadState('networkidle');
         await page.click('text=Weiter >> nth=1');
+
         await page.click('input[name="sAGB"]');
 
         await page.waitForLoadState('load');

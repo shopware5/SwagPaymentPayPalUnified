@@ -4,6 +4,7 @@ import MysqlFactory from '../helper/mysqlFactory.mjs';
 import defaultPaypalSettingsSql from '../helper/paypalSqlHelper.mjs';
 import clearCacheHelper from '../helper/clearCacheHelper.mjs';
 import tryUntilSucceed from '../helper/retryHelper.mjs';
+import getPaypalPaymentMethodSelector from '../helper/getPayPalPaymentMethodSelector.mjs';
 
 const connection = MysqlFactory.getInstance();
 
@@ -32,10 +33,13 @@ test.describe('Is Pay Later fully functional', () => {
         await page.click('.register--login-btn');
         await expect(page).toHaveURL(/.*checkout\/confirm/);
 
-        // Change payment to Pay later
+        // Change payment
         await page.click('.btn--change-payment');
-        const textSelector = 'text=/^(PayPal, Später bezahlen|PayPal, Pay later)$/';
-        await page.click(textSelector);
+        const selector = await getPaypalPaymentMethodSelector.getSelector(
+            getPaypalPaymentMethodSelector.paymentMethodNames.SwagPaymentPayPalUnifiedPayLater
+        );
+        await page.locator(selector).check();
+        await page.waitForLoadState('networkidle');
         await page.click('text=Weiter >> nth=1');
 
         // buy the product with Pay later

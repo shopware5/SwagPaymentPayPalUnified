@@ -3,6 +3,7 @@ import MysqlFactory from '../helper/mysqlFactory.mjs';
 import defaultPaypalSettingsSql from '../helper/paypalSqlHelper.mjs';
 import loginHelper from '../helper/loginHelper.mjs';
 import clearCacheHelper from '../helper/clearCacheHelper.mjs';
+import getPaypalPaymentMethodSelector from '../helper/getPayPalPaymentMethodSelector.mjs';
 
 const connection = MysqlFactory.getInstance();
 
@@ -30,7 +31,11 @@ test.describe('Pay with invoice', () => {
 
         // Change payment
         await page.click('.btn--change-payment');
-        await page.click('text=Rechnungskauf');
+        const paymentMethodSelector = await getPaypalPaymentMethodSelector.getSelector(
+            getPaypalPaymentMethodSelector.paymentMethodNames.SwagPaymentPayPalUnifiedPayUponInvoice
+        );
+        await page.locator(paymentMethodSelector).check();
+        await page.waitForLoadState('networkidle');
         await page.click('text=Weiter >> nth=1');
 
         // Check for the legalText
@@ -53,7 +58,11 @@ test.describe('Pay with invoice', () => {
 
         // Change payment
         await page.click('.btn--change-payment');
-        await page.click('text=Rechnungskauf');
+        const selector = await getPaypalPaymentMethodSelector.getSelector(
+            getPaypalPaymentMethodSelector.paymentMethodNames.SwagPaymentPayPalUnifiedPayUponInvoice
+        );
+        await page.locator(selector).check();
+        await page.waitForLoadState('networkidle');
         await page.click('text=Weiter >> nth=1');
 
         await page.click('input[name="sAGB"]');

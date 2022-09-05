@@ -39,13 +39,15 @@ class PaypalUnifiedV2ExpressCheckoutTest extends PaypalPaymentControllerTestCase
         $request->setParam('productQuantity', 1);
 
         $order = $this->createPayPalOrder();
+        $basketHelper = $this->getContainer()->get('shopware.cart.basket_helper', ContainerInterface::NULL_ON_INVALID_REFERENCE);
 
         $controller = $this->getController(
             Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout::class,
             [
                 self::SERVICE_DEPENDENCY_PROVIDER => $this->getContainer()->get('paypal_unified.dependency_provider'),
                 self::SERVICE_SHOP => $this->getContainer()->get('shop'),
-                self::SERVICE_BASKET_HELPER => $this->getContainer()->get('shopware.cart.basket_helper', ContainerInterface::NULL_ON_INVALID_REFERENCE),
+                self::SERVICE_BASKET_HELPER_CLASS => $basketHelper,
+                self::SERVICE_BASKET_HELPER_ID => $basketHelper,
                 self::SERVICE_ORDER_PARAMETER_FACADE => $this->createOrderParameterFacade(),
                 self::SERVICE_ORDER_FACTORY => $this->createOrderFactory($order),
                 self::SERVICE_ORDER_RESOURCE => $this->createOrderResource($order),

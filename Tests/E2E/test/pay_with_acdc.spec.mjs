@@ -35,12 +35,10 @@ test.describe('Pay with credit card', () => {
 
             // Change payment
             await page.click('.btn--change-payment');
-
             const selector = await getPaypalPaymentMethodSelector.getSelector(
                 getPaypalPaymentMethodSelector.paymentMethodNames.SwagPaymentPayPalUnifiedAdvancedCreditDebitCard
             );
             await page.locator(selector).check();
-
             await page.waitForLoadState('networkidle');
             await page.click('text=Weiter >> nth=1');
 
