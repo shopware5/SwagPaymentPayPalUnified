@@ -12,6 +12,15 @@
     <author>shopware AG</author>
     <compatibility minVersion="5.2.27" maxVersion="5.99.99"/>
 
+    <changelog version="REPLACE_WITH_NEXT_VERSION">
+        <changes lang="de">
+            PT-12903 - API-URL aktualisiert;
+        </changes>
+        <changes lang="en">
+            PT-12903 - Update API-URL;
+        </changes>
+    </changelog>
+
     <changelog version="4.3.3">
         <changes lang="de">
             PT-12853 - Stabilität von Bestellungen mit Express Checkout verbessert;
