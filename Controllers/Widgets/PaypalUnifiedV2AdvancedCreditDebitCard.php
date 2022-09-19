@@ -37,6 +37,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2AdvancedCreditDebitCard extend
         $session = $this->dependencyProvider->getSession();
         $shopwareSessionOrderData = $session->get('sOrderVariables');
         $this->handleComment();
+        $this->handleNewsletter();
 
         if ($shopwareSessionOrderData === null) {
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
@@ -116,45 +117,45 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2AdvancedCreditDebitCard extend
             return;
         }
 
-        $result = null;
-        $shopwareOrderNumber = null;
-        $sendShopwareOrderNumber = $this->getSendOrdernumber();
-        if ($sendShopwareOrderNumber) {
-            $result = $this->handleOrderWithSendOrderNumber($payPalOrder, PaymentType::PAYPAL_ADVANCED_CREDIT_DEBIT_CARD);
-            $shopwareOrderNumber = $result->getShopwareOrderNumber();
-            if (!$result->getSuccess()) {
-                $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
-                    ->setCode(ErrorCodes::COMMUNICATION_FAILURE);
+        $result = $this->handleOrderWithSendOrderNumber($payPalOrder);
+        if (!$result->getSuccess()) {
+            $this->orderNumberService->restoreOrdernumberToPool($result->getShopwareOrderNumber());
 
-                $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
+            $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
+                ->setCode(ErrorCodes::COMMUNICATION_FAILURE);
+
+            $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
+
+            return;
+        }
+
+        $captureAuthorizeResult = $this->captureOrAuthorizeOrder($payPalOrder);
+        if (!$captureAuthorizeResult->getOrder() instanceof Order) {
+            if ($captureAuthorizeResult->getRequireRestart()) {
+                $this->orderNumberService->releaseOrderNumber();
+                $this->restartAction(false, $payPalOrderId, 'frontend', 'PaypalUnifiedV2AdvancedCreditDebitCard', 'capture');
 
                 return;
             }
-        }
 
-        $capturedPayPalOrder = $this->captureOrAuthorizeOrder($payPalOrderId, $payPalOrder, $result);
-        if (!$capturedPayPalOrder instanceof Order) {
-            if (\is_string($shopwareOrderNumber)) {
-                $this->orderDataService->removeTransactionId($shopwareOrderNumber);
+            if (\is_string($result->getShopwareOrderNumber())) {
+                $this->orderDataService->removeTransactionId($result->getShopwareOrderNumber());
                 $this->paymentStatusService->updatePaymentStatus($payPalOrderId, Status::PAYMENT_STATE_REVIEW_NECESSARY);
             }
 
             return;
         }
 
-        if (!$this->checkCaptureAuthorizationStatus($capturedPayPalOrder)) {
+        if (!$this->checkCaptureAuthorizationStatus($captureAuthorizeResult->getOrder())) {
+            $this->orderNumberService->restoreOrdernumberToPool($result->getShopwareOrderNumber());
+
             return;
         }
-
-        if (!$sendShopwareOrderNumber) {
-            $shopwareOrderNumber = $this->createShopwareOrder($payPalOrderId, PaymentType::PAYPAL_ADVANCED_CREDIT_DEBIT_CARD);
-        }
-
-        $this->setTransactionId($shopwareOrderNumber, $capturedPayPalOrder);
 
         $this->logger->debug(sprintf('%s SET PAYPAL ORDER ID TO SESSION: ID: %s', __METHOD__, $payPalOrderId));
 
         $this->dependencyProvider->getSession()->offsetSet('paypalOrderId', $payPalOrderId);
+        $this->dependencyProvider->getSession()->offsetSet('advancedCreditDebitCartShopwareOrderId', $result->getShopwareOrderNumber());
     }
 
     /**
@@ -164,7 +165,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2AdvancedCreditDebitCard extend
     {
         $paypalUnifiedErrorCode = $this->request->getParam('code');
 
-        $this->logger->debug(sprintf('%s ERROR WITH CODE: %d', __METHOD__, $paypalUnifiedErrorCode ?: ErrorCodes::UNKNOWN));
+        $this->logger->error(sprintf('%s ERROR WITH CODE: %d', __METHOD__, $paypalUnifiedErrorCode ?: ErrorCodes::UNKNOWN));
 
         $this->View()->assign('paypalUnifiedErrorCode', $paypalUnifiedErrorCode ?: ErrorCodes::UNKNOWN);
         $this->View()->extendsTemplate($this->container->getParameter('paypal_unified.plugin_dir') . '/Resources/views/frontend/paypal_unified/checkout/error_message.tpl');

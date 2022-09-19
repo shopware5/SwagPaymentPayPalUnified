@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Subscriber;
 
+use Enlight_Components_Session_Namespace;
 use Enlight_Controller_ActionEventArgs;
 use Enlight_Controller_Request_RequestHttp;
 use Enlight_Controller_Request_RequestTestCase;
@@ -163,6 +164,14 @@ class ExpressCheckoutSubscriberTest extends TestCase
      */
     public function testAddExpressCheckoutButtonCartReturnWrongAction()
     {
+        /** @var Enlight_Components_Session_Namespace $session */
+        $session = $this->getContainer()->get('session');
+        if (method_exists($session, 'clear')) {
+            $session->clear();
+        } else {
+            $session->unsetAll();
+        }
+
         $view = new ViewMock(new Enlight_Template_Manager());
         $request = new Enlight_Controller_Request_RequestTestCase();
         $request->setControllerName('checkout');

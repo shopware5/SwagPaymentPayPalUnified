@@ -10,18 +10,13 @@ namespace SwagPaymentPayPalUnified\Components\Services;
 
 use DateTime;
 use Doctrine\DBAL\Connection;
-use PDO;
-use RuntimeException;
 use Shopware\Components\Model\ModelManager;
 use Shopware\Models\Order\Order;
 use Shopware\Models\Order\Status;
-use Shopware_Components_Config as ShopwareConfig;
 use sOrder;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\Exception\OrderNotFoundException;
-use SwagPaymentPayPalUnified\Models\Settings\General;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
-use Zend_Mail_Transport_Exception;
 
 class PaymentStatusService
 {
@@ -41,33 +36,19 @@ class PaymentStatusService
     private $connection;
 
     /**
-     * @var SettingsService
-     */
-    private $settingsService;
-
-    /**
      * @var sOrder
      */
     private $sOrder;
-
-    /**
-     * @var ShopwareConfig
-     */
-    private $shopwareConfig;
 
     public function __construct(
         ModelManager $modelManager,
         LoggerServiceInterface $logger,
         Connection $connection,
-        SettingsService $settingsService,
-        DependencyProvider $dependencyProvider,
-        ShopwareConfig $shopwareConfig
+        DependencyProvider $dependencyProvider
     ) {
         $this->modelManager = $modelManager;
         $this->logger = $logger;
         $this->connection = $connection;
-        $this->settingsService = $settingsService;
-        $this->shopwareConfig = $shopwareConfig;
         $this->sOrder = $dependencyProvider->getModule('sOrder');
     }
 
@@ -108,41 +89,6 @@ class PaymentStatusService
         );
 
         $this->setPaymentStatus($shopwareOrderId, $paymentStateId);
-    }
-
-    /**
-     * @param string $shopwareOrderNumber
-     *
-     * @return void
-     */
-    public function setOrderAndPaymentStatusForFailedOrder($shopwareOrderNumber)
-    {
-        $this->logger->debug(sprintf('%s shopwareOrderNumber: %s', __METHOD__, $shopwareOrderNumber));
-
-        $settings = $this->settingsService->getSettings();
-        if (!$settings instanceof General) {
-            throw new RuntimeException('Could not read general PayPal settings');
-        }
-
-        $orderStatusId = $settings->getOrderStatusOnFailedPayment();
-
-        $paymentStatusId = $settings->getPaymentStatusOnFailedPayment();
-        $shopwareOrderId = $this->getOrderIdByOrderNumber($shopwareOrderNumber);
-
-        $this->logger->debug(sprintf('%s UPDATE ORDER WITH ID %s AND STATUS ID %s AND PAYMENT STATUS ID %s', __METHOD__, $shopwareOrderId, $orderStatusId, $paymentStatusId));
-
-        $this->updatePaymentStatusV2($shopwareOrderId, $paymentStatusId);
-
-        try {
-            $this->sOrder->setOrderStatus(
-                $shopwareOrderId,
-                $orderStatusId,
-                $this->shopwareConfig->get('sendOrderMail'),
-                sprintf('Failed PayPal Payment with order number: %s', $shopwareOrderNumber)
-            );
-        } catch (Zend_Mail_Transport_Exception $exception) {
-            $this->logger->error(sprintf('%s CANNOT SEND STATUS MAIL FOR ORDER: %s', __METHOD__, $shopwareOrderNumber));
-        }
     }
 
     /**
@@ -194,22 +140,6 @@ class PaymentStatusService
         }
 
         $this->logger->debug(sprintf('%s UPDATE PAYMENT STATUS SUCCESSFUL', __METHOD__));
-    }
-
-    /**
-     * @param string $shopwareOrderNumber
-     *
-     * @return int
-     */
-    private function getOrderIdByOrderNumber($shopwareOrderNumber)
-    {
-        return (int) $this->connection->createQueryBuilder()
-            ->select(['id'])
-            ->from('s_order')
-            ->where('ordernumber = :orderNumber')
-            ->setParameter('orderNumber', $shopwareOrderNumber)
-            ->execute()
-            ->fetch(PDO::FETCH_COLUMN);
     }
 
     /**

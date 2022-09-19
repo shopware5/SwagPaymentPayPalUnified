@@ -39,7 +39,7 @@ class ExceptionHandlerService implements ExceptionHandlerServiceInterface
     {
         $exceptionMessage = $e->getMessage();
 
-        if (!($e instanceof RequestException)) {
+        if (!$e instanceof RequestException) {
             $this->loggerService->error(\sprintf(self::LOG_MESSAGE, $currentAction), [
                 'message' => $exceptionMessage,
             ]);

@@ -20,7 +20,8 @@ stages:
     - code-analysis
     - phpunit
     - shopware-versions
-    - e2e
+    - e2e-current
+    - e2e-legacy
 
 default:
     tags:
@@ -233,11 +234,15 @@ shopware-v5.7-php-v8.0:
     image: gitlab.shopware.com:5005/shopware/5/product/image/continuous:8.0
 
 shopware-current:
-    stage: e2e
+    stage: e2e-current
     tags:
         - c5.xlarge
     image: docker:latest
     dependencies: []
+    variables:
+        PAYPAL_SANDBOX_CLIENT_ID: $PAYPAL_SANDBOX_CLIENT_ID_2
+        PAYPAL_SANDBOX_CLIENT_SECRET: $PAYPAL_SANDBOX_CLIENT_SECRET_2
+        PAYPAL_SANDBOX_MERCHANT_ID: $PAYPAL_SANDBOX_MERCHANT_ID_2
     services:
         - docker:dind
     before_script:
@@ -254,3 +259,4 @@ shopware-current:
 
 shopware-legacy:
     extends: shopware-current
+    stage: e2e-legacy

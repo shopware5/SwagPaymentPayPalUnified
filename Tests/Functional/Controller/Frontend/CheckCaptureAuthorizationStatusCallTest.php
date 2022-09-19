@@ -13,6 +13,7 @@ use Enlight_Controller_Request_RequestTestCase;
 use Shopware_Controllers_Frontend_PaypalUnifiedV2;
 use Shopware_Controllers_Frontend_PaypalUnifiedV2ExpressCheckout;
 use Shopware_Controllers_Widgets_PaypalUnifiedV2AdvancedCreditDebitCard;
+use stdClass;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\PayPalOrderParameter;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\PayPalOrderParameterFacade;
@@ -33,6 +34,7 @@ use SwagPaymentPayPalUnified\PayPalBundle\V2\PaymentStatusV2;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\OrderResource;
 use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\ShopRegistrationTrait;
+use SwagPaymentPayPalUnified\Tests\Mocks\ConnectionMock;
 use SwagPaymentPayPalUnified\Tests\Unit\PaypalPaymentControllerTestCase;
 
 class CheckCaptureAuthorizationStatusCallTest extends PaypalPaymentControllerTestCase
@@ -63,6 +65,8 @@ class CheckCaptureAuthorizationStatusCallTest extends PaypalPaymentControllerTes
 
         $orderPropertyHelper = $this->createOrderPropertyHelperTestCase($payPalOrder);
 
+        $connectionMock = (new ConnectionMock())->createConnectionMock(1, ConnectionMock::METHOD_FETCH);
+
         $controller = $this->getController(
             Shopware_Controllers_Frontend_PaypalUnifiedV2ExpressCheckout::class,
             [
@@ -70,6 +74,7 @@ class CheckCaptureAuthorizationStatusCallTest extends PaypalPaymentControllerTes
                 self::SERVICE_ORDER_FACTORY => $orderFactory,
                 self::SERVICE_ORDER_RESOURCE => $orderResource,
                 self::SERVICE_ORDER_PROPERTY_HELPER => $orderPropertyHelper,
+                self::SERVICE_DBAL_CONNECTION => $connectionMock,
             ],
             $request
         );
@@ -94,12 +99,24 @@ class CheckCaptureAuthorizationStatusCallTest extends PaypalPaymentControllerTes
         $simpleBasketValidator = $this->createSimpleBasketValidator();
         $orderPropertyHelper = $this->createOrderPropertyHelperTestCase($payPalOrder);
 
+        $connectionMock = (new ConnectionMock())->createConnectionMock(1, ConnectionMock::METHOD_FETCH);
+
+        $sessionMock = $this->createMock(Enlight_Components_Session_Namespace::class);
+        $sessionMock->method('offsetExists')->willReturn(true);
+        $sessionMock->method('offsetGet')->willReturn('123456');
+
+        $dependencyProviderMock = $this->createMock(DependencyProvider::class);
+        $dependencyProviderMock->method('getSession')->willReturn($sessionMock);
+        $dependencyProviderMock->method('getModule')->willReturn(new stdClass());
+
         $controller = $this->getController(
             Shopware_Controllers_Frontend_PaypalUnifiedV2::class,
             [
                 self::SERVICE_ORDER_RESOURCE => $orderResource,
                 self::SERVICE_SIMPLE_BASKET_VALIDATOR => $simpleBasketValidator,
                 self::SERVICE_ORDER_PROPERTY_HELPER => $orderPropertyHelper,
+                self::SERVICE_DBAL_CONNECTION => $connectionMock,
+                self::SERVICE_DEPENDENCY_PROVIDER => $dependencyProviderMock,
             ],
             $request
         );

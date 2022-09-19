@@ -574,7 +574,6 @@ class PlusSubscriberTest extends TestCase
             'active' => 1,
             'showSidebarLogo' => 0,
             'useInContext' => 0,
-            'sendOrderNumber' => 0,
             'displayErrors' => 0,
             'brandName' => 'PlusTestBrandName',
         ];

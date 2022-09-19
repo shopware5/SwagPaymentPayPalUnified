@@ -21,66 +21,110 @@ test.describe('Pay with credit card', () => {
         locators.init(page);
     });
 
-    for (const testcase of ['complete', 'abort']) {
-        test(`Buy a product with a credit card wich is secured and ${testcase} the payment process`, async ({ page }) => {
-            await loginHelper.login(page);
+    test('Buy a product with a credit card wich is secured and complete the payment process', async ({ page }) => {
+        await loginHelper.login(page);
 
-            // Buy Product
-            await page.goto('genusswelten/edelbraende/9/special-finish-lagerkorn-x.o.-32');
-            await page.click('.buybox--button');
+        // Buy Product
+        await page.goto('genusswelten/edelbraende/9/special-finish-lagerkorn-x.o.-32', { waitUntil: 'load' });
+        await page.click('.buybox--button');
 
-            // Go to checkout
-            await page.click('.button--checkout');
-            await expect(page).toHaveURL(/.*checkout\/confirm/);
+        // Go to checkout
+        await page.click('.button--checkout');
+        await expect(page).toHaveURL(/.*checkout\/confirm/);
 
-            // Change payment
-            await page.click('.btn--change-payment');
-            const selector = await getPaypalPaymentMethodSelector.getSelector(
-                getPaypalPaymentMethodSelector.paymentMethodNames.SwagPaymentPayPalUnifiedAdvancedCreditDebitCard
-            );
+        // Change payment
+        await page.click('.btn--change-payment');
+        const selector = await getPaypalPaymentMethodSelector.getSelector(
+            getPaypalPaymentMethodSelector.paymentMethodNames.SwagPaymentPayPalUnifiedAdvancedCreditDebitCard
+        );
+
+        if (!await page.locator(selector).isChecked()) {
             await page.locator(selector).check();
-            await page.waitForLoadState('networkidle');
-            await page.click('text=Weiter >> nth=1');
-
-            await expect(page.locator('.payment--description')).toHaveText(/Kredit- oder Debitkarte/);
-            await page.click('input[name="sAGB"]');
-
-            await page.frameLocator('#braintree-hosted-field-number').locator('#credit-card-number').type('5192507571573295');
-            await page.frameLocator('#braintree-hosted-field-expirationDate').locator('#expiration').type('0530');
-            await page.frameLocator('#braintree-hosted-field-cvv').locator('#cvv').type('123');
-
             await page.waitForLoadState('load');
+        }
 
-            await page.click('button:has-text("Zahlungspflichtig bestellen")');
+        await page.click('text=Weiter >> nth=1');
+        await page.waitForLoadState('load');
 
-            await cookieHelper.acceptCookies(locators.contingencyHandlerIFrame);
+        await expect(page.locator('.payment--description')).toHaveText('Kredit- oder Debitkarte');
+        await page.click('input[name="sAGB"]');
 
-            if (testcase === 'complete') {
-                const infoText = await locators.cardinalStepUpIFrame.locator('p.challengeinfotext').textContent();
-                const threeDSecureToken = scenarioHelper.readThreeDSecureToken(infoText);
+        await page.frameLocator('#braintree-hosted-field-number').locator('#credit-card-number').type('5192507571573295');
+        await page.frameLocator('#braintree-hosted-field-expirationDate').locator('#expiration').type('0530');
+        await page.frameLocator('#braintree-hosted-field-cvv').locator('#cvv').type('123');
 
-                await locators.submitTokenForm.scrollIntoViewIfNeeded();
+        await page.waitForLoadState('load');
 
-                await locators.submitTokenInput.fill(threeDSecureToken);
-                await locators.submitButton.click();
+        await page.waitForTimeout(5000);
 
-                await expect(page.locator('.teaser--title')).toHaveText(/Vielen Dank für Ihre Bestellung bei Shopware Demo/);
-            } else if (testcase === 'abort') {
-                await locators.cancelForm.scrollIntoViewIfNeeded();
-                await locators.cancelButton.click();
+        await page.click('button:has-text("Zahlungspflichtig bestellen")');
+        await page.waitForLoadState('load');
 
-                await locators.contingencyHandlerWrapper.waitFor({ state: 'detached' });
-                await page.waitForResponse(/.*www.sandbox.paypal.com.*\/session\/patchThreeds.*/);
+        await cookieHelper.acceptCookies(locators.contingencyHandlerIFrame);
 
-                await expect(page.locator('.step--confirm.is--active')).toBeVisible();
+        const infoText = await locators.cardinalStepUpIFrame.locator('p.challengeinfotext').textContent();
+        const threeDSecureToken = scenarioHelper.readThreeDSecureToken(infoText);
 
-                await locators.paypalUnifiedErrorMessageContainer.scrollIntoViewIfNeeded();
+        await locators.submitTokenForm.scrollIntoViewIfNeeded();
 
-                await expect(locators.paypalUnifiedErrorMessageContainer).toBeVisible();
-                await expect(locators.paypalUnifiedErrorMessageContainer).toHaveText('Die Zahlung konnte nicht verarbeitet werden. Bitte wählen Sie eine andere Zahlungsart.');
-            } else {
-                test.fail('Unknown testcase.');
-            }
-        });
-    }
+        await locators.submitTokenInput.fill(threeDSecureToken);
+        await locators.submitButton.click();
+
+        await expect(page.locator('.teaser--title')).toHaveText(/Vielen Dank für Ihre Bestellung bei Shopware Demo/);
+    });
+
+    test('Buy a product with a credit card wich is secured and abort the payment process', async ({ page }) => {
+        await loginHelper.login(page);
+
+        // Buy Product
+        await page.goto('genusswelten/edelbraende/9/special-finish-lagerkorn-x.o.-32', { waitUntil: 'load' });
+        await page.click('.buybox--button');
+
+        // Go to checkout
+        await page.click('.button--checkout');
+        await expect(page).toHaveURL(/.*checkout\/confirm/);
+
+        // Change payment
+        await page.click('.btn--change-payment');
+        const selector = await getPaypalPaymentMethodSelector.getSelector(
+            getPaypalPaymentMethodSelector.paymentMethodNames.SwagPaymentPayPalUnifiedAdvancedCreditDebitCard
+        );
+
+        if (!await page.locator(selector).isChecked()) {
+            await page.locator(selector).check();
+            await page.waitForLoadState('load');
+        }
+
+        await page.click('text=Weiter >> nth=1');
+        await page.waitForLoadState('load');
+
+        await expect(page.locator('.payment--description')).toHaveText('Kredit- oder Debitkarte');
+        await page.click('input[name="sAGB"]');
+
+        await page.frameLocator('#braintree-hosted-field-number').locator('#credit-card-number').type('5192507571573295');
+        await page.frameLocator('#braintree-hosted-field-expirationDate').locator('#expiration').type('0530');
+        await page.frameLocator('#braintree-hosted-field-cvv').locator('#cvv').type('123');
+
+        await page.waitForLoadState('load');
+
+        await page.waitForTimeout(5000);
+
+        await page.click('button:has-text("Zahlungspflichtig bestellen")');
+        await page.waitForLoadState('load');
+
+        await cookieHelper.acceptCookies(locators.contingencyHandlerIFrame);
+
+        await locators.cancelForm.scrollIntoViewIfNeeded();
+        await locators.cancelButton.click();
+
+        await locators.contingencyHandlerWrapper.waitFor({ state: 'detached' });
+        await page.waitForResponse(/.*www.sandbox.paypal.com.*\/session\/patchThreeds.*/);
+
+        await expect(page.locator('.step--confirm.is--active')).toBeVisible();
+
+        await locators.paypalUnifiedErrorMessageContainer.scrollIntoViewIfNeeded();
+
+        await expect(locators.paypalUnifiedErrorMessageContainer).toBeVisible();
+        await expect(locators.paypalUnifiedErrorMessageContainer).toHaveText('Die Zahlung konnte nicht verarbeitet werden. Bitte wählen Sie eine andere Zahlungsart.');
+    });
 });

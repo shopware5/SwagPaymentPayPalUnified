@@ -28,36 +28,42 @@ class PayUponInvoice extends ModelEntity
 
     /**
      * @var int
+     *
      * @ORM\Column(name="shop_id", type="integer", nullable=false)
      */
     private $shopId;
 
     /**
      * @var bool
+     *
      * @ORM\Column(name="onboarding_completed", type="boolean", nullable=false)
      */
     private $onboardingCompleted;
 
     /**
      * @var bool
+     *
      * @ORM\Column(name="sandbox_onboarding_completed", type="boolean", nullable=false)
      */
     private $sandboxOnboardingCompleted;
 
     /**
      * @var bool
+     *
      * @ORM\Column(name="active", type="boolean", nullable=false)
      */
     private $active;
 
     /**
      * @var string|null
+     *
      * @ORM\Column(name="customer_service_instructions", type="text", length=65535, nullable=true)
      */
     private $customerServiceInstructions;
 
     /**
      * @var bool
+     *
      * @ORM\Column(name="show_rate_pay_hint_in_mail", type="boolean", nullable=false)
      */
     private $showRatePayHintInMail;

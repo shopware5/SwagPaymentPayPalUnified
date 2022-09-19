@@ -28,48 +28,56 @@ class Plus extends ModelEntity
 
     /**
      * @var int
+     *
      * @ORM\Column(name="shop_id", type="integer", nullable=false)
      */
     private $shopId;
 
     /**
      * @var bool
+     *
      * @ORM\Column(name="active", type="boolean", nullable=false)
      */
     private $active;
 
     /**
      * @var bool
+     *
      * @ORM\Column(name="restyle", type="boolean", nullable=false)
      */
     private $restyle;
 
     /**
      * @var bool
+     *
      * @ORM\Column(name="integrate_third_party_methods", type="boolean", nullable=false)
      */
     private $integrateThirdPartyMethods;
 
     /**
      * @var string|null
+     *
      * @ORM\Column(name="payment_name", type="string", nullable=true)
      */
     private $paymentName;
 
     /**
      * @var string
+     *
      * @ORM\Column(name="payment_description", type="string")
      */
     private $paymentDescription;
 
     /**
      * @var bool
+     *
      * @ORM\Column(name="ppcp_active", type="boolean")
      */
     private $ppcpActive;
 
     /**
      * @var bool
+     *
      * @ORM\Column(name="sandbox_ppcp_active", type="boolean")
      */
     private $sandboxPpcpActive;

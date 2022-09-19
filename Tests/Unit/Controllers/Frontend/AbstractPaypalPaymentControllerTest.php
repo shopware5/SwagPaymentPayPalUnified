@@ -10,7 +10,6 @@ namespace SwagPaymentPayPalUnified\Tests\Unit\Controllers\Frontend;
 
 use ReflectionClass;
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
-use SwagPaymentPayPalUnified\Components\Services\Validation\RedirectDataBuilder;
 use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentController;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
@@ -28,10 +27,6 @@ class AbstractPaypalPaymentControllerTest extends PaypalPaymentControllerTestCas
      */
     public function testCancelActionUsesExpectedErrorCodes($paypalErrorCode, $shopwareErrorCode)
     {
-        $redirectDataBuilder = $this->getMockedService(self::SERVICE_REDIRECT_DATA_BUILDER);
-        static::assertInstanceOf(RedirectDataBuilder::class, $redirectDataBuilder);
-        $this->prepareRedirectDataBuilderFactory($redirectDataBuilder);
-
         $this->givenThePaypalErrorCodeEquals($paypalErrorCode);
         $this->expectTheShopwareErrorCodeToBe($shopwareErrorCode);
 

@@ -28,66 +28,77 @@ class ExpressCheckout extends ModelEntity
 
     /**
      * @var string
+     *
      * @ORM\Column(name="shop_id", type="string", nullable=false)
      */
     private $shopId;
 
     /**
      * @var bool
+     *
      * @ORM\Column(name="detail_active", type="boolean", nullable=false)
      */
     private $detailActive;
 
     /**
      * @var bool
+     *
      * @ORM\Column(name="cart_active", type="boolean", nullable=false)
      */
     private $cartActive;
 
     /**
      * @var bool
+     *
      * @ORM\Column(name="off_canvas_active", type="boolean", nullable=false)
      */
     private $offCanvasActive;
 
     /**
      * @var bool
+     *
      * @ORM\Column(name="login_active", type="boolean", nullable=false)
      */
     private $loginActive;
 
     /**
      * @var bool
+     *
      * @ORM\Column(name="listing_active", type="boolean", nullable=false)
      */
     private $listingActive;
 
     /**
      * @var string
+     *
      * @ORM\Column(name="button_style_color", type="string")
      */
     private $buttonStyleColor;
 
     /**
      * @var string
+     *
      * @ORM\Column(name="button_style_shape", type="string")
      */
     private $buttonStyleShape;
 
     /**
      * @var string
+     *
      * @ORM\Column(name="button_style_size", type="string")
      */
     private $buttonStyleSize;
 
     /**
      * @var string
+     *
      * @ORM\Column(name="button_locale", type="string", length=5)
      */
     private $buttonLocale = '';
 
     /**
      * @var bool
+     *
      * @ORM\Column(name="submit_cart", type="boolean", nullable=false)
      */
     private $submitCart;

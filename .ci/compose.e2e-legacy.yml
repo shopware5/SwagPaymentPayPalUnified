@@ -1,0 +1,135 @@
+x-default-environment: &default-environment
+    SW_HOST:
+    SW_BASE_PATH:
+    DB_HOST:
+    DB_PORT:
+    DB_USER:
+    DB_PASSWORD:
+    DB_NAME:
+    ELASTICSEARCH_HOST:
+    PLUGIN_NAME:
+
+x-playwright-environment: &playwright-environment
+    PAYPAL_CUSTOMER_EMAIL:
+    PAYPAL_CUSTOMER_PASSWORD:
+    PAYPAL_CREDIT_CARD:
+    PAYPAL_SANDBOX_CLIENT_ID:
+    PAYPAL_SANDBOX_CLIENT_SECRET:
+    PAYPAL_SANDBOX_MERCHANT_ID:
+    PAYPAL_SEPA_IBAN:
+    PAYPAL_SEPA_PHONE:
+    PAYPAL_SEPA_BIRTHDAY:
+
+x-playwright-test-dependencies: &playwright-test-dependencies
+    mysql:
+        condition: "service_started"
+    shopware:
+        condition: "service_started"
+    check-shop-availability:
+        condition: "service_completed_successfully"
+    install-test-dependencies:
+        condition: "service_completed_successfully"
+
+services:
+    mysql:
+        image: mysql:5.7
+        environment:
+            MYSQL_RANDOM_ROOT_PASSWORD: "true"
+            MYSQL_USER: "${DB_USER}"
+            MYSQL_PASSWORD: "${DB_PASSWORD}"
+            MYSQL_DATABASE: "${DB_NAME}"
+        tmpfs:
+            - "/var/lib/mysql"
+    shopware:
+        image: gitlab.shopware.com:5005/shopware/5/product/image/aio:latest
+        environment:
+            <<: *default-environment
+            SHOPWARE_CONFIG: |
+                <?php
+                return [
+                    'db' => [
+                        'username' => getenv('DB_USER'),
+                        'password' => getenv('DB_PASSWORD'),
+                        'dbname' => getenv('DB_NAME'),
+                        'host' => getenv('DB_HOST'),
+                        'port' => getenv('DB_PORT'),
+                    ],
+
+                    'csrfProtection' => [
+                        'frontend' => false,
+                        'backend' => false,
+                    ],
+
+                    'logger' => [
+                        'level' => \Shopware\Components\Logger::DEBUG,
+                    ],
+
+                    'front' => [
+                        'noErrorHandler' => true,
+                        'throwExceptions' => true,
+                        'disableOutputBuffering' => true,
+                        'showException' => true,
+                    ],
+
+                    'phpsettings' => [
+                        'display_errors' => 1,
+                    ],
+
+                    'errorHandler' => [
+                        'throwOnRecoverableError' => true,
+                        'ignoredExceptionClasses' => [],
+                    ],
+
+                    'cache' => [
+                        'backend' => 'file',
+                    ],
+                ];
+        volumes:
+            - "${CI_PROJECT_DIR}:/var/www/html/custom/plugins/SwagPaymentPayPalUnified"
+            - "${CI_PROJECT_DIR}/build/logs:/var/www/html/var/log"
+        depends_on:
+            mysql:
+                condition: "service_started"
+    check-shop-availability:
+        image: curlimages/curl:latest
+        command: [ "-f", "-s", "-I", "-4", "--retry", "10", "--retry-connrefused", "--retry-max-time", "128", "--retry-delay", "5", "http://${SW_HOST}" ]
+        depends_on:
+            shopware:
+                condition: "service_started"
+    install-test-dependencies:
+        image: mcr.microsoft.com/playwright:v1.22.0-focal
+        user: "pwuser:pwuser"
+        volumes:
+            - "${CI_PROJECT_DIR}:/project"
+        working_dir: "/project/Tests/E2E"
+        entrypoint: [ "npm" ]
+        command: [ "install" ]
+    playwright:
+        image: mcr.microsoft.com/playwright:v1.22.0-focal
+        environment:
+            <<: *default-environment
+            <<: *playwright-environment
+        user: "pwuser:pwuser"
+        volumes:
+            - "${CI_PROJECT_DIR}:/project"
+        working_dir: "/project/Tests/E2E"
+        entrypoint: [ "npx", "playwright" ]
+        command: [ "test", "--workers=1" ]
+        depends_on:
+            <<: *playwright-test-dependencies
+    playwright-debug:
+        image: mcr.microsoft.com/playwright:v1.22.0-focal
+        environment:
+            <<: *default-environment
+            <<: *playwright-environment
+            DISPLAY: "unix${DISPLAY}"
+            PWDEBUG: "console"
+        user: "pwuser:pwuser"
+        volumes:
+            - "/tmp/.X11-unix:/tmp/.X11-unix"
+            - "${CI_PROJECT_DIR}:/project"
+        working_dir: "/project/Tests/E2E"
+        entrypoint: ["npx", "playwright"]
+        command: ["test", "--workers=1", "--debug"]
+        depends_on:
+            <<: *playwright-test-dependencies

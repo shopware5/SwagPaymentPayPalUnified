@@ -12,20 +12,22 @@ use Enlight_Class;
 use Enlight_Components_Session_Namespace;
 use Enlight_Controller_Request_RequestHttp;
 use Enlight_Controller_Response_ResponseTestCase;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use Shopware\Components\DependencyInjection\Container;
 use Shopware_Controllers_Frontend_PaypalUnified;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
+use SwagPaymentPayPalUnified\Components\OrderNumberService;
 use SwagPaymentPayPalUnified\Components\Services\OrderDataService;
 use SwagPaymentPayPalUnified\Components\Services\SettingsService;
 use SwagPaymentPayPalUnified\Components\Services\Validation\SimpleBasketValidator;
-use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\PaymentResource;
 use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
+use SwagPaymentPayPalUnified\Tests\Functional\ShopRegistrationTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 require_once __DIR__ . '/../../../../Controllers/Frontend/PaypalUnified.php';
@@ -34,6 +36,7 @@ class PaypalUnifiedReturnActionTest extends TestCase
 {
     use ContainerTrait;
     use DatabaseTestCaseTrait;
+    use ShopRegistrationTrait;
 
     /**
      * @after
@@ -73,6 +76,8 @@ class PaypalUnifiedReturnActionTest extends TestCase
         $controller->setRequest($request);
         $controller->setResponse($response);
         $controller->setContainer($container);
+
+        $controller->preDispatch();
 
         $reflectionClassController = new ReflectionClass(Shopware_Controllers_Frontend_PaypalUnified::class);
 
@@ -134,12 +139,14 @@ class PaypalUnifiedReturnActionTest extends TestCase
     {
         $simpleBasketValidator = $this->createSimpleBasketValidator();
         $orderDataService = $this->createOrderDataService();
+        $orderNumberService = $this->createOrderNumberServiceMock();
 
         $container = $this->createMock(Container::class);
         $container->expects(static::once())->method('initialized')->willReturn(false);
         $container->method('get')->willReturnMap([
             ['paypal_unified.simple_basket_validator', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $simpleBasketValidator],
             ['paypal_unified.order_data_service', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $orderDataService],
+            ['paypal_unified.order_number_service', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $orderNumberService],
         ]);
 
         return $container;
@@ -163,7 +170,6 @@ class PaypalUnifiedReturnActionTest extends TestCase
     {
         $settingsService = $this->createMock(SettingsService::class);
         $settingsService->method('get')->willReturnMap([
-            [SettingsServiceInterface::SETTING_GENERAL_SEND_ORDER_NUMBER, SettingsTable::GENERAL, false],
             ['active', SettingsTable::PLUS, true],
         ]);
 
@@ -193,5 +199,16 @@ class PaypalUnifiedReturnActionTest extends TestCase
         $dependencyProvider->expects(static::once())->method('getSession')->willReturn($session);
 
         return $dependencyProvider;
+    }
+
+    /**
+     * @return OrderNumberService&MockObject
+     */
+    private function createOrderNumberServiceMock()
+    {
+        $orderNumberService = $this->createMock(OrderNumberService::class);
+        $orderNumberService->method('getOrderNumber')->willReturn('');
+
+        return $orderNumberService;
     }
 }

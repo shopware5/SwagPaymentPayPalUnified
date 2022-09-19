@@ -28,24 +28,28 @@ class AdvancedCreditDebitCard extends ModelEntity
 
     /**
      * @var int
+     *
      * @ORM\Column(name="shop_id", type="integer", nullable=false)
      */
     private $shopId;
 
     /**
      * @var bool
+     *
      * @ORM\Column(name="onboarding_completed", type="boolean", nullable=false)
      */
     private $onboardingCompleted;
 
     /**
      * @var bool
+     *
      * @ORM\Column(name="sandbox_onboarding_completed", type="boolean", nullable=false)
      */
     private $sandboxOnboardingCompleted;
 
     /**
      * @var bool
+     *
      * @ORM\Column(name="active", type="boolean", nullable=false)
      */
     private $active;

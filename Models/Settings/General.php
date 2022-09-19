@@ -28,153 +28,157 @@ class General extends ModelEntity
 
     /**
      * @var string
+     *
      * @ORM\Column(name="shop_id", type="string", nullable=false)
      */
     private $shopId;
 
     /**
      * @var bool
+     *
      * @ORM\Column(name="active", type="boolean", nullable=false)
      */
     private $active;
 
     /**
      * @var string
+     *
      * @ORM\Column(name="client_id", type="string")
      */
     private $clientId;
 
     /**
      * @var string
+     *
      * @ORM\Column(name="client_secret", type="string")
      */
     private $clientSecret;
 
     /**
      * @var string
+     *
      * @ORM\Column(name="paypal_payer_id", type="string")
      */
     private $paypalPayerId;
 
     /**
      * @var string
+     *
      * @ORM\Column(name="sandbox_client_id", type="string")
      */
     private $sandboxClientId;
 
     /**
      * @var string
+     *
      * @ORM\Column(name="sandbox_client_secret", type="string")
      */
     private $sandboxClientSecret;
 
     /**
      * @var string
+     *
      * @ORM\Column(name="sandbox_paypal_payer_id", type="string")
      */
     private $sandboxPaypalPayerId;
 
     /**
      * @var bool
+     *
      * @ORM\Column(name="sandbox", type="boolean")
      */
     private $sandbox;
 
     /**
      * @var bool
+     *
      * @ORM\Column(name="show_sidebar_logo", type="boolean", nullable=false)
      */
     private $showSidebarLogo;
 
     /**
      * @var string
+     *
      * @ORM\Column(name="brand_name", type="string", length=127)
      */
     private $brandName;
 
     /**
-     * @var bool
-     * @ORM\Column(name="send_order_number", type="boolean", nullable=false)
-     */
-    private $sendOrderNumber;
-
-    /**
      * @var string
+     *
      * @ORM\Column(name="order_number_prefix", type="string")
      */
     private $orderNumberPrefix;
 
     /**
      * @var bool
+     *
      * @ORM\Column(name="use_in_context", type="boolean", nullable=false)
      */
     private $useInContext;
 
     /**
      * @var string
+     *
      * @ORM\Column(name="landing_page_type", type="string")
      */
     private $landingPageType;
 
     /**
      * @var bool
+     *
      * @ORM\Column(name="display_errors", type="boolean", nullable=false)
      */
     private $displayErrors;
 
     /**
      * @var bool
+     *
      * @ORM\Column(name="use_smart_payment_buttons", type="boolean", nullable=false)
      */
     private $useSmartPaymentButtons;
 
     /**
      * @var bool
+     *
      * @ORM\Column(name="submit_cart", type="boolean", nullable=false)
      */
     private $submitCart;
 
     /**
      * @var string
+     *
      * @ORM\Column(name="intent", type="string", nullable=false)
      */
     private $intent;
 
     /**
      * @var string
+     *
      * @ORM\Column(name="button_style_color", type="string")
      */
     private $buttonStyleColor;
 
     /**
      * @var string
+     *
      * @ORM\Column(name="button_style_shape", type="string")
      */
     private $buttonStyleShape;
 
     /**
      * @var string
+     *
      * @ORM\Column(name="button_style_size", type="string")
      */
     private $buttonStyleSize;
 
     /**
      * @var string
+     *
      * @ORM\Column(name="button_locale", type="string", length=5)
      */
     private $buttonLocale = '';
-
-    /**
-     * @var int
-     * @ORM\Column(name="order_status_on_failed_payment", type="integer")
-     */
-    private $orderStatusOnFailedPayment;
-
-    /**
-     * @var int
-     * @ORM\Column(name="payment_status_on_failed_payment", type="integer")
-     */
-    private $paymentStatusOnFailedPayment;
 
     /**
      * @return int
@@ -373,22 +377,6 @@ class General extends ModelEntity
     }
 
     /**
-     * @return bool
-     */
-    public function getSendOrderNumber()
-    {
-        return $this->sendOrderNumber;
-    }
-
-    /**
-     * @param bool $sendOrderNumber
-     */
-    public function setSendOrderNumber($sendOrderNumber)
-    {
-        $this->sendOrderNumber = $sendOrderNumber;
-    }
-
-    /**
      * @return string
      */
     public function getOrderNumberPrefix()
@@ -572,41 +560,5 @@ class General extends ModelEntity
     public function toArray()
     {
         return \get_object_vars($this);
-    }
-
-    /**
-     * @return int
-     */
-    public function getOrderStatusOnFailedPayment()
-    {
-        return $this->orderStatusOnFailedPayment;
-    }
-
-    /**
-     * @param int $orderStatusOnFailedPayment
-     *
-     * @return void
-     */
-    public function setOrderStatusOnFailedPayment($orderStatusOnFailedPayment)
-    {
-        $this->orderStatusOnFailedPayment = $orderStatusOnFailedPayment;
-    }
-
-    /**
-     * @return int
-     */
-    public function getPaymentStatusOnFailedPayment()
-    {
-        return $this->paymentStatusOnFailedPayment;
-    }
-
-    /**
-     * @param int $paymentStatusOnFailedPayment
-     *
-     * @return void
-     */
-    public function setPaymentStatusOnFailedPayment($paymentStatusOnFailedPayment)
-    {
-        $this->paymentStatusOnFailedPayment = $paymentStatusOnFailedPayment;
     }
 }

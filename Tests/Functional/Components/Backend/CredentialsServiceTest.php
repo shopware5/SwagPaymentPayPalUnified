@@ -110,7 +110,6 @@ class CredentialsServiceTest extends TestCase
         $generalSettings->setShopId((string) $shopId);
         $generalSettings->setActive(true);
         $generalSettings->setShowSidebarLogo(false);
-        $generalSettings->setSendOrderNumber(false);
         $generalSettings->setUseInContext(false);
         $generalSettings->setDisplayErrors(false);
         $generalSettings->setUseSmartPaymentButtons(false);

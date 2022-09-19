@@ -8,8 +8,6 @@
 
 namespace SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentControllerResults;
 
-use Shopware\Models\Order\Basket;
-
 class HandleOrderWithSendOrderNumberResult
 {
     /**
@@ -23,20 +21,13 @@ class HandleOrderWithSendOrderNumberResult
     private $shopwareOrderNumber;
 
     /**
-     * @var array<int,Basket>
+     * @param bool   $success
+     * @param string $shopwareOrderNumber
      */
-    private $cartData;
-
-    /**
-     * @param bool              $success
-     * @param string            $shopwareOrderNumber
-     * @param array<int,Basket> $cartData
-     */
-    public function __construct($success, $shopwareOrderNumber, array $cartData = [])
+    public function __construct($success, $shopwareOrderNumber)
     {
         $this->success = $success;
         $this->shopwareOrderNumber = $shopwareOrderNumber;
-        $this->cartData = $cartData;
     }
 
     /**
@@ -53,13 +44,5 @@ class HandleOrderWithSendOrderNumberResult
     public function getShopwareOrderNumber()
     {
         return $this->shopwareOrderNumber;
-    }
-
-    /**
-     * @return array<int,Basket>
-     */
-    public function getCartData()
-    {
-        return $this->cartData;
     }
 }

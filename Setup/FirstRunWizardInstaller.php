@@ -23,7 +23,6 @@ class FirstRunWizardInstaller
             'sandbox_client_secret' => $configuration['sandbox'] ? $configuration['clientSecret'] : '',
             'sandbox' => $configuration['sandbox'],
             'show_sidebar_logo' => 0,
-            'send_order_number' => 0,
             'use_in_context' => 0,
             'display_errors' => 0,
             'advertise_returns' => 0,

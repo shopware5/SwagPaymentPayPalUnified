@@ -4,9 +4,9 @@ import { expect } from '@playwright/test';
 export default (function () {
     return {
         login: async function (page) {
-            await page.goto('/backend');
+            await page.goto('/backend', { waitUntil: 'load' });
+
             await expect(page).toHaveTitle(/Backend/);
-            await page.waitForLoadState('load');
             await expect(page.locator('#button-1019-btnEl')).toHaveText(/Login/);
 
             // Wait for the focus change of the shopware login

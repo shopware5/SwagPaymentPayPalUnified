@@ -6,13 +6,11 @@
  * file that was distributed with this source code.
  */
 
-use Shopware\Models\Order\Status;
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\ShopwareOrderData;
 use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentController;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Common\Link;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
-use SwagPaymentPayPalUnified\PayPalBundle\V2\PaymentIntentV2;
 
 class Shopware_Controllers_Frontend_PaypalUnifiedApm extends AbstractPaypalPaymentController
 {
@@ -93,35 +91,32 @@ class Shopware_Controllers_Frontend_PaypalUnifiedApm extends AbstractPaypalPayme
             return;
         }
 
-        $shopwareOrderNumber = null;
-        $result = null;
-        $sendShopwareOrderNumber = $this->getSendOrdernumber();
+        $paymentType = $this->getPaymentType($payPalOrder);
+        $orderNumberResult = $this->handleOrderWithSendOrderNumber($payPalOrder);
+        if (!$orderNumberResult->getSuccess()) {
+            $this->orderNumberService->restoreOrdernumberToPool($orderNumberResult->getShopwareOrderNumber());
 
-        if ($sendShopwareOrderNumber) {
-            $result = $this->handleOrderWithSendOrderNumber($payPalOrder, $this->getPaymentType($payPalOrder));
-            $shopwareOrderNumber = $result->getShopwareOrderNumber();
-            if (!$result->getSuccess()) {
-                $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
-                    ->setCode(ErrorCodes::COMMUNICATION_FAILURE);
+            $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
+                ->setCode(ErrorCodes::COMMUNICATION_FAILURE);
 
-                $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
-
-                return;
-            }
-        }
-
-        $capturedPayPalOrder = $this->captureOrAuthorizeOrder($payPalOrder->getId(), $payPalOrder, $result);
-        if (!$capturedPayPalOrder instanceof Order) {
-            if (\is_string($shopwareOrderNumber)) {
-                $this->orderDataService->removeTransactionId($shopwareOrderNumber);
-                $this->paymentStatusService->updatePaymentStatus($payPalOrderId, Status::PAYMENT_STATE_REVIEW_NECESSARY);
-            }
+            $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
 
             return;
         }
 
-        if (!$sendShopwareOrderNumber) {
-            $shopwareOrderNumber = $this->createShopwareOrder($payPalOrderId, $this->getPaymentType($payPalOrder));
+        $captureAuthorizeResult = $this->captureOrAuthorizeOrder($payPalOrder);
+        $capturedPayPalOrder = $captureAuthorizeResult->getOrder();
+        if (!$capturedPayPalOrder instanceof Order) {
+            if ($captureAuthorizeResult->getRequireRestart()) {
+                $this->orderNumberService->releaseOrderNumber();
+                $this->restartAction(false, $payPalOrderId, 'frontend', 'PaypalUnifiedV2ExpressCheckout', 'expressCheckoutFinish');
+
+                return;
+            }
+
+            $this->orderNumberService->restoreOrdernumberToPool($orderNumberResult->getShopwareOrderNumber());
+
+            return;
         }
 
         if ($this->Request()->isXmlHttpRequest()) {
@@ -137,13 +132,12 @@ class Shopware_Controllers_Frontend_PaypalUnifiedApm extends AbstractPaypalPayme
             if (!$payPalOrder instanceof Order) {
                 return;
             }
-            $this->setTransactionId($shopwareOrderNumber, $payPalOrder);
 
-            if ($payPalOrder->getIntent() === PaymentIntentV2::CAPTURE) {
-                $this->paymentStatusService->updatePaymentStatus($payPalOrderId, Status::PAYMENT_STATE_COMPLETELY_PAID);
-            } else {
-                $this->paymentStatusService->updatePaymentStatus($payPalOrderId, Status::PAYMENT_STATE_RESERVED);
-            }
+            $this->createShopwareOrder($payPalOrderId, $paymentType);
+
+            $this->setTransactionId($orderNumberResult->getShopwareOrderNumber(), $payPalOrder);
+
+            $this->updatePaymentStatus($payPalOrder->getIntent(), $this->getOrderId($orderNumberResult->getShopwareOrderNumber()));
 
             $this->logger->debug(sprintf('%s REDIRECT TO checkout/finish', __METHOD__));
 

@@ -59,8 +59,29 @@ services:
                         'frontend' => false,
                         'backend' => false,
                     ],
+
                     'logger' => [
                         'level' => \Shopware\Components\Logger::DEBUG,
+                    ],
+
+                    'front' => [
+                        'noErrorHandler' => true,
+                        'throwExceptions' => true,
+                        'disableOutputBuffering' => true,
+                        'showException' => true,
+                    ],
+
+                    'phpsettings' => [
+                        'display_errors' => 1,
+                    ],
+
+                    'errorHandler' => [
+                        'throwOnRecoverableError' => true,
+                        'ignoredExceptionClasses' => [],
+                    ],
+
+                    'cache' => [
+                        'backend' => 'file',
                     ],
                 ];
         volumes:

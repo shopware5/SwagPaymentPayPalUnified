@@ -86,9 +86,7 @@ class SaleCompleteTest extends TestCase
                 new EntityManagerMock(),
                 $this->getContainer()->get('paypal_unified.logger_service'),
                 $this->getContainer()->get('dbal_connection'),
-                $this->getContainer()->get('paypal_unified.settings_service'),
-                $this->getContainer()->get('paypal_unified.dependency_provider'),
-                $this->getContainer()->get('config')
+                $this->getContainer()->get('paypal_unified.dependency_provider')
             )
         );
 

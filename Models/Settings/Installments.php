@@ -28,12 +28,14 @@ class Installments extends ModelEntity
 
     /**
      * @var string
+     *
      * @ORM\Column(name="shop_id", type="string", nullable=false)
      */
     private $shopId;
 
     /**
      * @var bool
+     *
      * @ORM\Column(name="advertise_installments", type="boolean", nullable=false)
      */
     private $advertiseInstallments;

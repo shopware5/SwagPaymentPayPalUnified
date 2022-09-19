@@ -286,7 +286,6 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
             name: 'orderNumberPrefix',
             fieldLabel: '{s name="fieldset/behaviour/orderNumberPrefix"}Order number prefix{/s}',
             helpText: '{s name="fieldset/behaviour/orderNumberPrefix/help"}The text you enter here will be placed before the actual order number (e.g MyShop_%orderNumber%). This helps to identify the shop in which this order has been taken in.{/s}',
-            disabled: true
         });
 
         me.smartPaymentButtonsCheckbox = Ext.create('Ext.form.field.Checkbox', {
@@ -295,26 +294,6 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
             uncheckedValue: false,
             fieldLabel: '{s name="fieldset/behaviour/useSmartPaymentButtons"}Use Smart Payment Buttons{/s}',
             helpText: '{s name="fieldset/behaviour/useSmartPaymentButtons/helpText"}Enable this option to use the PayPal Smart Payment Buttons. The Smart Payment Buttons always use the in-context mode.{/s}'
-        });
-
-        me.orderStatusSelect = Ext.create('Ext.form.field.ComboBox', {
-            name: 'orderStatusOnFailedPayment',
-            fieldLabel: '{s name="fieldset/behaviour/orderStatusOnFailedPayment"}Order status for failed transactions{/s}',
-            store: Ext.create('Shopware.apps.Base.store.OrderStatus').load(),
-            displayField: 'description',
-            valueField: 'id',
-            value: 4,
-            disabled: true,
-        });
-
-        me.paymentStatusSelect = Ext.create('Ext.form.field.ComboBox', {
-            name: 'paymentStatusOnFailedPayment',
-            fieldLabel: '{s name="fieldset/behaviour/paymentStatusOnFailedPayment"}Payment status for failed transactions{/s}',
-            store: Ext.create('Shopware.apps.Base.store.PaymentStatus').load(),
-            displayField: 'description',
-            valueField: 'id',
-            value: 35,
-            disabled: true,
         });
 
         me.landingPageTypeSelect = Ext.create('Shopware.apps.PaypalUnifiedSettings.view.LandingPageSelect');
@@ -367,15 +346,6 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
                     uncheckedValue: false,
                     fieldLabel: '{s name="fieldset/behaviour/showSidebarLogo"}Show logo in sidebar{/s}',
                     boxLabel: '{s name="fieldset/behaviour/showSidebarLogo/help"}Enable this option to show the PayPal logo in the storefront sidebar.{/s}'
-                },
-                {
-                    xtype: 'checkbox',
-                    name: 'sendOrderNumber',
-                    inputValue: true,
-                    uncheckedValue: false,
-                    fieldLabel: '{s name="fieldset/behaviour/sendOrderNumber"}Send order number to PayPal{/s}',
-                    boxLabel: '{s name="fieldset/behaviour/sendOrderNumber/help"}Enable this option to send the order number to PayPal after an order has been completed.{/s}',
-                    handler: Ext.bind(me.onSendOrderNumberChecked, me)
                 },
                 me.orderStatusSelect,
                 me.paymentStatusSelect,
@@ -541,16 +511,6 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
         this.onboardingButton = this.createOnboardingButtonStandalone(this.buttonValue);
 
         this.toolbarContainer.add(this.onboardingButton);
-    },
-
-    /**
-     * @param { Shopware.apps.Base.view.element.Boolean } element
-     * @param { Boolean } checked
-     */
-    onSendOrderNumberChecked: function(element, checked) {
-        this.orderNumberPrefix.setDisabled(!checked);
-        this.orderStatusSelect.setDisabled(!checked);
-        this.paymentStatusSelect.setDisabled(!checked);
     },
 
     onValidateAPIButtonClick: function() {

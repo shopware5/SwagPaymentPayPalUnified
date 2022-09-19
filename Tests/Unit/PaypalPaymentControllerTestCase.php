@@ -25,9 +25,9 @@ use Shopware\Models\Shop\Shop;
 use SwagPaymentPayPalUnified\Components\Backend\ShopRegistrationService;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\ExceptionHandlerServiceInterface;
+use SwagPaymentPayPalUnified\Components\OrderNumberService;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\PayPalOrderParameterFacadeInterface;
-use SwagPaymentPayPalUnified\Components\Services\CartRestoreService;
 use SwagPaymentPayPalUnified\Components\Services\DispatchValidation;
 use SwagPaymentPayPalUnified\Components\Services\OrderBuilder\OrderFactory;
 use SwagPaymentPayPalUnified\Components\Services\OrderDataService;
@@ -72,7 +72,6 @@ class PaypalPaymentControllerTestCase extends TestCase
     const SERVICE_PAYMENT_STATUS_SERVICE = 'paypal_unified.payment_status_service';
     const SERVICE_LOGGER_SERVICE = 'paypal_unified.logger_service';
     const SERVICE_SIMPLE_BASKET_VALIDATOR = 'paypal_unified.simple_basket_validator';
-    const SERVICE_CART_RESTORE_SERVICE = 'paypal_unified.cart_restore_service';
     const SERVICE_BASKET_PERSISTER = 'basket_persister';
     const SERVICE_ORDER_PROPERTY_HELPER = 'paypal_unified.order_property_helper';
     const SERVICE_SHOP_REGISTRATION_SERVICE = 'paypal_unified.backend.shop_registration_service';
@@ -84,6 +83,7 @@ class PaypalPaymentControllerTestCase extends TestCase
     const SERVICE_BASKET_HELPER_ID = 'shopware.cart.basket_helper';
     const SERVICE_PROPORTIONAL_TAX_CALCULATOR = 'shopware.cart.proportional_tax_calculator';
     const SERVICE_DBAL_CONNECTION = 'dbal_connection';
+    const SERVICE_ORDER_NUMBER_SERVICE = 'paypal_unified.order_number_service';
 
     /**
      * @var MockObject|Enlight_Controller_Request_RequestHttp
@@ -115,7 +115,7 @@ class PaypalPaymentControllerTestCase extends TestCase
 
         $this->injections[self::SERVICE_DEPENDENCY_PROVIDER] = $this->createMock(DependencyProvider::class);
         $this->injections[self::SERVICE_REDIRECT_DATA_BUILDER] = $this->getRedirectDataBuilder();
-        $this->injections[self::SERVICE_REDIRECT_DATA_BUILDER_FACTORY] = $this->createMock(RedirectDataBuilderFactoryInterface::class);
+        $this->injections[self::SERVICE_REDIRECT_DATA_BUILDER_FACTORY] = $this->createRedirectDataBuilderFactoryMock();
         $this->injections[self::SERVICE_PAYMENT_CONTROLLER_HELPER] = $this->createMock(PaymentControllerHelper::class);
         $this->injections[self::SERVICE_DISPATCH_VALIDATION] = $this->createMock(DispatchValidation::class);
         $this->injections[self::SERVICE_ORDER_PARAMETER_FACADE] = $this->createMock(PayPalOrderParameterFacadeInterface::class);
@@ -129,7 +129,6 @@ class PaypalPaymentControllerTestCase extends TestCase
         $this->injections[self::SERVICE_PAYMENT_STATUS_SERVICE] = $this->createMock(PaymentStatusService::class);
         $this->injections[self::SERVICE_LOGGER_SERVICE] = $this->createMock(LoggerServiceInterface::class);
         $this->injections[self::SERVICE_SIMPLE_BASKET_VALIDATOR] = $this->createMock(BasketValidatorInterface::class);
-        $this->injections[self::SERVICE_CART_RESTORE_SERVICE] = $this->createMock(CartRestoreService::class);
         $this->injections[self::SERVICE_ORDER_PROPERTY_HELPER] = $this->createOrderPropertyHelper();
         $this->injections[self::SERVICE_SHOP_REGISTRATION_SERVICE] = $this->createMock(ShopRegistrationService::class);
         $this->injections[self::SERVICE_AUTHORIZATION_RESOURCE] = $this->createMock(AuthorizationResource::class);
@@ -137,6 +136,7 @@ class PaypalPaymentControllerTestCase extends TestCase
         $this->injections[self::SERVICE_PAYMENT_INSTRUCTION_SERVICE] = $this->createMock(PaymentInstructionService::class);
         $this->injections[self::SERVICE_SHOP] = $this->createMock(Shop::class);
         $this->injections[self::SERVICE_DBAL_CONNECTION] = $this->createMock(Connection::class);
+        $this->injections[self::SERVICE_ORDER_NUMBER_SERVICE] = $this->createMock(OrderNumberService::class);
 
         if (class_exists(BasketPersister::class)) {
             $this->injections[self::SERVICE_BASKET_PERSISTER] = $this->createMock(BasketPersister::class);
@@ -166,6 +166,18 @@ class PaypalPaymentControllerTestCase extends TestCase
     protected function getMockedService($serviceKey)
     {
         return $this->injections[$serviceKey];
+    }
+
+    /**
+     * @return RedirectDataBuilderFactoryInterface&MockObject
+     */
+    protected function createRedirectDataBuilderFactoryMock()
+    {
+        $redirectDataBuilderFactoryMock = $this->createMock(RedirectDataBuilderFactoryInterface::class);
+        $redirectDataBuilderFactoryMock->method('createRedirectDataBuilder')
+            ->willReturn($this->getMockedService(self::SERVICE_REDIRECT_DATA_BUILDER));
+
+        return $redirectDataBuilderFactoryMock;
     }
 
     /**

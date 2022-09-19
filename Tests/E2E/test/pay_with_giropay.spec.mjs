@@ -19,7 +19,7 @@ test.describe('Pay with Giropay', () => {
         await loginHelper.login(page);
 
         // Buy Product
-        await page.goto('genusswelten/edelbraende/9/special-finish-lagerkorn-x.o.-32');
+        await page.goto('genusswelten/edelbraende/9/special-finish-lagerkorn-x.o.-32', { waitUntil: 'load' });
         await page.click('.buybox--button');
 
         // Go to checkout
@@ -32,7 +32,7 @@ test.describe('Pay with Giropay', () => {
             getPaypalPaymentMethodSelector.paymentMethodNames.SwagPaymentPayPalUnifiedGiropay
         );
         await page.locator(selector).check();
-        await page.waitForLoadState('networkidle');
+        await page.waitForLoadState('load');
         await page.click('text=Weiter >> nth=1');
 
         await page.click('input[name="sAGB"]');

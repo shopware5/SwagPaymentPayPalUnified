@@ -127,7 +127,7 @@ class ClientService
      * @param array<mixed>|null $data
      * @param bool              $jsonPayload true if the given data should be JSON-encoded
      *
-     * @throws RequestException
+     * @throws Exception
      *
      * @return array<mixed>
      */
@@ -142,39 +142,57 @@ class ClientService
                 $data = null;
             }
             $this->setHeader('content-type', 'application/json');
+            $headersOnlyForLogging = json_encode($this->headers);
         } else {
             unset($this->headers['content-type']);
+            $headersOnlyForLogging = $this->headers;
         }
 
-        $this->logger->notify('Sending request [' . $type . '] to ' . $resourceUri, ['payload' => $data]);
+        $this->logger->notify('Sending request [' . $type . '] to ' . $resourceUri, ['payload' => $data, 'headers' => $headersOnlyForLogging]);
 
-        switch ($type) {
-            case RequestType::POST:
-                $response = $httpClient->post($resourceUri, $this->headers, $data);
-                break;
+        try {
+            switch ($type) {
+                case RequestType::POST:
+                    $response = $httpClient->post($resourceUri, $this->headers, $data);
+                    break;
 
-            case RequestType::GET:
-                $response = $httpClient->get($resourceUri, $this->headers);
-                break;
+                case RequestType::GET:
+                    $response = $httpClient->get($resourceUri, $this->headers);
+                    break;
 
-            case RequestType::PATCH:
-                $response = $httpClient->patch($resourceUri, $this->headers, $data);
-                break;
+                case RequestType::PATCH:
+                    $response = $httpClient->patch($resourceUri, $this->headers, $data);
+                    break;
 
-            case RequestType::PUT:
-                $response = $httpClient->put($resourceUri, $this->headers, $data);
-                break;
+                case RequestType::PUT:
+                    $response = $httpClient->put($resourceUri, $this->headers, $data);
+                    break;
 
-            case RequestType::HEAD:
-                $response = $httpClient->head($resourceUri, $this->headers);
-                break;
+                case RequestType::HEAD:
+                    $response = $httpClient->head($resourceUri, $this->headers);
+                    break;
 
-            case RequestType::DELETE:
-                $response = $httpClient->delete($resourceUri, $this->headers);
-                break;
+                case RequestType::DELETE:
+                    $response = $httpClient->delete($resourceUri, $this->headers);
+                    break;
 
-            default:
-                throw new RuntimeException('An unsupported request type was provided. The type was: ' . $type);
+                default:
+                    throw new RuntimeException('An unsupported request type was provided. The type was: ' . $type);
+            }
+        } catch (Exception $exception) {
+            $this->logger->error('GOT ERROR WHILE REQUEST OF TYPE [' . $type . '] TO URL: ' . $resourceUri, [
+                'payload' => $data,
+                'headers' => $headersOnlyForLogging,
+                'exception' => [
+                    'message' => $exception->getMessage(),
+                    'trace' => $exception->getTraceAsString(),
+                    'code' => $exception->getCode(),
+                    'file' => $exception->getFile(),
+                    'line' => $exception->getLine(),
+                ],
+            ]);
+
+            throw $exception;
         }
 
         $this->logger->notify(

@@ -13,7 +13,6 @@ require_once __DIR__ . '/../../../../Controllers/Frontend/PaypalUnifiedApm.php';
 use Enlight_Components_Db_Adapter_Pdo_Mysql;
 use Shopware\Models\Order\Status;
 use Shopware_Controllers_Frontend_PaypalUnifiedApm;
-use SwagPaymentPayPalUnified\Components\Services\CartRestoreService;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
@@ -26,6 +25,7 @@ use SwagPaymentPayPalUnified\PayPalBundle\V2\PaymentIntentV2;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\PaymentStatusV2;
 use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\ShopRegistrationTrait;
+use SwagPaymentPayPalUnified\Tests\Mocks\ConnectionMock;
 use SwagPaymentPayPalUnified\Tests\Unit\PaypalPaymentControllerTestCase;
 
 class PaypalUnifiedApmTest extends PaypalPaymentControllerTestCase
@@ -102,14 +102,15 @@ class PaypalUnifiedApmTest extends PaypalPaymentControllerTestCase
         $settingsServiceMock = $this->getMockedService(self::SERVICE_SETTINGS_SERVICE);
 
         $settingsServiceMock->method('get')->willReturnMap([
-            [SettingsServiceInterface::SETTING_GENERAL_SEND_ORDER_NUMBER, SettingsTable::GENERAL, true],
             [SettingsServiceInterface::SETTING_GENERAL_ORDER_NUMBER_PREFIX, SettingsTable::GENERAL, ''],
         ]);
+
+        $connectionMock = (new ConnectionMock())->createConnectionMock(1, ConnectionMock::METHOD_FETCH);
 
         $this->getController(
             Shopware_Controllers_Frontend_PaypalUnifiedApm::class,
             [
-                self::SERVICE_CART_RESTORE_SERVICE => $this->createCartRestoreService(),
+                self::SERVICE_DBAL_CONNECTION => $connectionMock,
             ]
         )
             ->returnAction();
@@ -123,22 +124,10 @@ class PaypalUnifiedApmTest extends PaypalPaymentControllerTestCase
         $template = 'Intent: %s, PayPal Order Status: %s';
 
         return [
-            sprintf($template, PaymentIntentV2::CAPTURE, PaymentStatusV2::ORDER_AUTHORIZATION_DENIED) => [
-                PaymentIntentV2::CAPTURE,
-                PaymentStatusV2::ORDER_AUTHORIZATION_DENIED,
-                Status::PAYMENT_STATE_REVIEW_NECESSARY,
-                false,
-            ],
             sprintf($template, PaymentIntentV2::CAPTURE, PaymentStatusV2::ORDER_COMPLETED) => [
                 PaymentIntentV2::CAPTURE,
                 PaymentStatusV2::ORDER_COMPLETED,
                 Status::PAYMENT_STATE_COMPLETELY_PAID,
-            ],
-            sprintf($template, PaymentIntentV2::AUTHORIZE, PaymentStatusV2::ORDER_AUTHORIZATION_DENIED) => [
-                PaymentIntentV2::AUTHORIZE,
-                PaymentStatusV2::ORDER_AUTHORIZATION_DENIED,
-                Status::PAYMENT_STATE_REVIEW_NECESSARY,
-                false,
             ],
             sprintf($template, PaymentIntentV2::AUTHORIZE, PaymentStatusV2::ORDER_COMPLETED) => [
                 PaymentIntentV2::AUTHORIZE,
@@ -237,19 +226,18 @@ class PaypalUnifiedApmTest extends PaypalPaymentControllerTestCase
     }
 
     /**
-     * @param int         $status
-     * @param string|null $paypalOrderId
+     * @param int $status
      *
      * @return void
      */
-    private function expectPaymentStatusToBeSetTo($status, $paypalOrderId = null)
+    private function expectPaymentStatusToBeSetTo($status)
     {
         $paymentStatusServiceMock = $this->getMockedService(self::SERVICE_PAYMENT_STATUS_SERVICE);
 
         $paymentStatusServiceMock->expects(static::once())
-            ->method('updatePaymentStatus')
+            ->method('updatePaymentStatusV2')
             ->with(
-                $paypalOrderId ?: self::PAYPAL_ORDER_ID,
+                1,
                 $status
             );
     }
@@ -262,16 +250,5 @@ class PaypalUnifiedApmTest extends PaypalPaymentControllerTestCase
         $basketValidatorMock = $this->getMockedService(self::SERVICE_SIMPLE_BASKET_VALIDATOR);
 
         $basketValidatorMock->method('validate')->willReturn(true);
-    }
-
-    /**
-     * @return CartRestoreService
-     */
-    private function createCartRestoreService()
-    {
-        $basketRestoreServiceMock = $this->createMock(CartRestoreService::class);
-        $basketRestoreServiceMock->method('getCartData')->willReturn([]);
-
-        return $basketRestoreServiceMock;
     }
 }

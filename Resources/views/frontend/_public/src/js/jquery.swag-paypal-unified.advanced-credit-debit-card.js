@@ -154,8 +154,10 @@
         },
 
         init: function() {
-            // TODO: (PT-12652) Disable the buy-button upon initialisation. Enable it again, when the paypal-SDK has finished loading.
             this.applyDataAttributes();
+
+            this.$submitBtn = $(this.opts.submitButtonSelector);
+            this.$submitBtn.prop('disabled', true);
 
             this.insertScript();
             this.registerEventListeners();
@@ -164,16 +166,22 @@
         },
 
         insertScript: function() {
-            // TODO: (PT-12652) This inserts the script on every call. It should be checked, whether the script is already there, before insertion.
-            var payPalScript = document.createElement('script');
+            var $head = $('head');
 
-            payPalScript.id = this.opts.paypalScriptId;
-            payPalScript.src = this.renderSdkUrl();
-            payPalScript.dataset.clientToken = this.opts.clientToken;
-            payPalScript.async = true;
-            payPalScript.addEventListener('load', this.renderHostedFields.bind(this), false);
+            if (!$head.hasClass(this.opts.paypalScriptLoadedSelector)) {
+                var payPalScript = document.createElement('script');
 
-            document.head.appendChild(payPalScript);
+                payPalScript.id = this.opts.paypalScriptId;
+                payPalScript.src = this.renderSdkUrl();
+                payPalScript.dataset.clientToken = this.opts.clientToken;
+                payPalScript.async = true;
+                payPalScript.addEventListener('load', this.renderHostedFields.bind(this), false);
+
+                document.head.appendChild(payPalScript);
+                $head.addClass(this.opts.paypalScriptLoadedSelector);
+            } else {
+                this.renderHostedFields();
+            }
         },
 
         registerEventListeners: function() {
@@ -245,6 +253,7 @@
         showHostedFields: function() {
             this.$el.removeClass(this.opts.isHiddenClass);
             this.updateAutoResizer();
+            this.$submitBtn.prop('disabled', false);
         },
 
         /**
