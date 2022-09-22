@@ -40,6 +40,9 @@ parameters:
             message: '#Parameter \#3 \$paymentType of class SwagPaymentPayPalUnified\\Components\\PayPalOrderParameter\\PayPalOrderParameter constructor expects.*given.#'
             paths:
                 - Tests/Functional/Components/Services/OrderBuilder/OrderFactoryTest.php
+        - # Ignore PaymentType::* failure in Order::setIntent()
+            message: '#Parameter \#1 \$intent of method SwagPaymentPayPalUnified\\PayPalBundle\\V2\\Api\\Order::setIntent\(\) expects.*given.#'
+            path: Tests
         - # Ignore Class Enlight_Hook_HookArgs constructor because the Enlight_Hook_HookArgs has changed between SW 5.2 and 5.7 and we need to be compatible in the test suite
             message: '#Class Enlight_Hook_HookArgs constructor invoked with 1 parameter, 2-3 required.#'
             paths:

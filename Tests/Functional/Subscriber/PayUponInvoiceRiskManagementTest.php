@@ -60,7 +60,6 @@ class PayUponInvoiceRiskManagementTest extends TestCase
      * The paymentMethodProvider provides testcases to assert the check
      * succeeds for all payment methods besides
      * PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME.
-     *
      * @dataProvider paymentMethodProvider
      *
      * @param bool $expectedReturnValue
@@ -160,7 +159,7 @@ class PayUponInvoiceRiskManagementTest extends TestCase
     }
 
     /**
-     * @return Generator<array{0: PayUponInvoiceRiskManagement, 1: \Enlight_Hook_HookArgs, 2: true}>
+     * @return Generator<array{0: PayUponInvoiceRiskManagement, 1: Enlight_Hook_HookArgs, 2: true}>
      */
     public function returnValueProvider()
     {
@@ -181,7 +180,7 @@ class PayUponInvoiceRiskManagementTest extends TestCase
     }
 
     /**
-     * @return Generator<array{0: PayUponInvoiceRiskManagement, 1: \Enlight_Hook_HookArgs, 2: bool}>
+     * @return Generator<array{0: PayUponInvoiceRiskManagement, 1: Enlight_Hook_HookArgs, 2: bool}>
      */
     public function paymentMethodProvider()
     {

@@ -32,7 +32,7 @@ test.describe('Frontend', () => {
         await loginHelper.login(page);
 
         // Buy Product
-        await page.goto('genusswelten/edelbraende/9/special-finish-lagerkorn-x.o.-32');
+        await page.goto('genusswelten/edelbraende/9/special-finish-lagerkorn-x.o.-32', { waitUntil: 'load' });
         await page.click('.buybox--button');
 
         // Go to checkout
@@ -45,7 +45,7 @@ test.describe('Frontend', () => {
             getPaypalPaymentMethodSelector.paymentMethodNames.SwagPaymentPayPalUnified
         );
         await page.locator(selector).check();
-        await page.waitForLoadState('networkidle');
+        await page.waitForLoadState('load');
         await page.click('text=Weiter >> nth=1');
 
         const locator = await page.frameLocator('.component-frame').locator('.paypal-button:has-text("Jetzt kaufen")');

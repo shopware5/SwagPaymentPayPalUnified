@@ -6,11 +6,10 @@
  * file that was distributed with this source code.
  */
 
-use Shopware\Models\Order\Status;
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
 use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentController;
+use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
-use SwagPaymentPayPalUnified\PayPalBundle\V2\PaymentIntentV2;
 
 class Shopware_Controllers_Frontend_PaypalUnifiedV2AdvancedCreditDebitCard extends AbstractPaypalPaymentController
 {
@@ -21,10 +20,15 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2AdvancedCreditDebitCard exten
     {
         $this->logger->debug(sprintf('%s START', __METHOD__));
 
-        $session = $this->container->get('session');
+        $session = $this->dependencyProvider->getSession();
 
         $payPalOrderId = $session->offsetGet('paypalOrderId');
+        $shopwareOrderNumber = $session->offsetGet('advancedCreditDebitCartShopwareOrderId');
+        $session->offsetUnset('advancedCreditDebitCartShopwareOrderId');
+
         if (!\is_string($payPalOrderId)) {
+            $this->orderNumberService->restoreOrdernumberToPool($shopwareOrderNumber);
+
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
                 ->setCode(ErrorCodes::UNKNOWN)
                 ->setException(new UnexpectedValueException("Required session parameter 'paypalOrderId' is missing"), '');
@@ -41,11 +45,11 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2AdvancedCreditDebitCard exten
                 return;
             }
 
-            if ($payPalOrder->getIntent() === PaymentIntentV2::CAPTURE) {
-                $this->paymentStatusService->updatePaymentStatus($payPalOrderId, Status::PAYMENT_STATE_COMPLETELY_PAID);
-            } else {
-                $this->paymentStatusService->updatePaymentStatus($payPalOrderId, Status::PAYMENT_STATE_RESERVED);
-            }
+            $this->createShopwareOrder($payPalOrderId, PaymentType::PAYPAL_ADVANCED_CREDIT_DEBIT_CARD);
+
+            $this->setTransactionId($shopwareOrderNumber, $payPalOrder);
+
+            $this->updatePaymentStatus($payPalOrder->getIntent(), $this->getOrderId($shopwareOrderNumber));
 
             $this->logger->debug(sprintf('%s REDIRECT TO checkout/finish', __METHOD__));
 

@@ -23,7 +23,7 @@ test.describe('Is SPB fully functional', () => {
 
     test('Buy a product with PayPal using Smart Payment Buttons', async ({ page }) => {
         // Add product to cart
-        await page.goto('/sommerwelten/beachwear/178/strandtuch-ibiza');
+        await page.goto('/sommerwelten/beachwear/178/strandtuch-ibiza', { waitUntil: 'load' });
         await page.click('.buybox--button');
 
         // Go to Checkout expect login the user
@@ -41,7 +41,7 @@ test.describe('Is SPB fully functional', () => {
             getPaypalPaymentMethodSelector.paymentMethodNames.SwagPaymentPayPalUnified
         );
         await page.locator(selector).check();
-        await page.waitForLoadState('networkidle');
+        await page.waitForLoadState('load');
 
         await page.click('text=Weiter >> nth=1');
 

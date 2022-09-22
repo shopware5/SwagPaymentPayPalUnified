@@ -21,7 +21,7 @@ test.describe('Is Pay Later fully functional', () => {
 
     test('Buy a product with Pay Later', async ({ page }) => {
         // Add product to cart
-        await page.goto('/sommerwelten/beachwear/178/strandtuch-ibiza');
+        await page.goto('/sommerwelten/beachwear/178/strandtuch-ibiza', { waitUntil: 'load' });
         await page.click('.buybox--button');
 
         // Go to Checkout expect login the user
@@ -39,7 +39,7 @@ test.describe('Is Pay Later fully functional', () => {
             getPaypalPaymentMethodSelector.paymentMethodNames.SwagPaymentPayPalUnifiedPayLater
         );
         await page.locator(selector).check();
-        await page.waitForLoadState('networkidle');
+        await page.waitForLoadState('load');
         await page.click('text=Weiter >> nth=1');
 
         // buy the product with Pay later

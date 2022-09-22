@@ -6,7 +6,6 @@
  * file that was distributed with this source code.
  */
 
-use Shopware\Models\Order\Status;
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\ShopwareOrderData;
 use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentController;
@@ -14,7 +13,6 @@ use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Common\Link;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
-use SwagPaymentPayPalUnified\PayPalBundle\V2\PaymentIntentV2;
 
 class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymentController
 {
@@ -42,7 +40,9 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
 
         $session = $this->dependencyProvider->getSession();
         $shopwareSessionOrderData = $session->get('sOrderVariables');
+
         $this->handleComment();
+        $this->handleNewsletter();
 
         if ($shopwareSessionOrderData === null) {
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
@@ -109,17 +109,18 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
     {
         $this->logger->debug(sprintf('%s START', __METHOD__));
 
+        $this->handleComment();
+
         $useInContext = (bool) $this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_USE_IN_CONTEXT);
-        if (!$useInContext) {
-            // The "token" is the same as the "paypalOrderId". In this case the request comes directly form the
-            // PayPalCheckout page, so we cant influence the wording.
-            $payPalOrderId = $this->Request()->getParam('token');
-        } else {
-            $payPalOrderId = $this->Request()->getParam('paypalOrderId');
-        }
+        $payPalOrderId = $this->getPayPalOrderIdFromRequest($useInContext);
 
         $payPalOrder = $this->getPayPalOrder($payPalOrderId);
         if (!$payPalOrder instanceof Order) {
+            $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
+                ->setCode(ErrorCodes::NO_ORDER_TO_PROCESS);
+
+            $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
+
             return;
         }
 
@@ -132,47 +133,45 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
             return;
         }
 
-        $result = null;
-        $shopwareOrderNumber = null;
-        $sendShopwareOrderNumber = $this->getSendOrdernumber();
-        if ($sendShopwareOrderNumber) {
-            $result = $this->handleOrderWithSendOrderNumber($payPalOrder, $this->getPaymentType($payPalOrder));
-            $shopwareOrderNumber = $result->getShopwareOrderNumber();
-            if (!$result->getSuccess()) {
-                $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
-                    ->setCode(ErrorCodes::COMMUNICATION_FAILURE);
+        $paymentType = $this->getPaymentType($payPalOrder);
+        $result = $this->handleOrderWithSendOrderNumber($payPalOrder);
+        if (!$result->getSuccess()) {
+            $this->orderNumberService->restoreOrdernumberToPool($result->getShopwareOrderNumber());
 
-                $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
+            $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
+                ->setCode(ErrorCodes::COMMUNICATION_FAILURE);
+
+            $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
+
+            return;
+        }
+
+        $captureAuthorizeResult = $this->captureOrAuthorizeOrder($payPalOrder);
+        $capturedPayPalOrder = $captureAuthorizeResult->getOrder();
+        if (!$capturedPayPalOrder instanceof Order) {
+            if ($captureAuthorizeResult->getRequireRestart()) {
+                $this->orderNumberService->releaseOrderNumber();
+                $this->restartAction($useInContext, $payPalOrderId, 'frontend', 'PaypalUnifiedV2', 'return');
 
                 return;
             }
-        }
 
-        $capturedPayPalOrder = $this->captureOrAuthorizeOrder($payPalOrder->getId(), $payPalOrder, $result);
-        if (!$capturedPayPalOrder instanceof Order) {
-            if (\is_string($shopwareOrderNumber)) {
-                $this->orderDataService->removeTransactionId($shopwareOrderNumber);
-                $this->paymentStatusService->updatePaymentStatus($payPalOrderId, Status::PAYMENT_STATE_REVIEW_NECESSARY);
-            }
+            $this->orderNumberService->restoreOrdernumberToPool($result->getShopwareOrderNumber());
 
             return;
         }
 
         if (!$this->checkCaptureAuthorizationStatus($capturedPayPalOrder)) {
+            $this->orderNumberService->restoreOrdernumberToPool($result->getShopwareOrderNumber());
+
             return;
         }
 
-        if (!$sendShopwareOrderNumber) {
-            $shopwareOrderNumber = $this->createShopwareOrder($payPalOrderId, $this->getPaymentType($payPalOrder));
-        }
+        $this->createShopwareOrder($payPalOrder->getId(), $paymentType);
 
-        $this->setTransactionId($shopwareOrderNumber, $capturedPayPalOrder);
+        $this->setTransactionId($result->getShopwareOrderNumber(), $capturedPayPalOrder);
 
-        if ($payPalOrder->getIntent() === PaymentIntentV2::CAPTURE) {
-            $this->paymentStatusService->updatePaymentStatus($payPalOrderId, Status::PAYMENT_STATE_COMPLETELY_PAID);
-        } else {
-            $this->paymentStatusService->updatePaymentStatus($payPalOrderId, Status::PAYMENT_STATE_RESERVED);
-        }
+        $this->updatePaymentStatus($payPalOrder->getIntent(), $this->getOrderId($result->getShopwareOrderNumber()));
 
         if ($this->Request()->isXmlHttpRequest()) {
             $this->view->assign('paypalOrderId', $payPalOrderId);
@@ -190,5 +189,21 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
             'action' => 'finish',
             'sUniqueID' => $payPalOrderId,
         ]);
+    }
+
+    /**
+     * @param bool $useInContext
+     *
+     * @return string
+     */
+    private function getPayPalOrderIdFromRequest($useInContext)
+    {
+        if (!$useInContext) {
+            // The "token" is the same as the "paypalOrderId". In this case the request comes directly form the
+            // PayPalCheckout page, so we cant influence the wording.
+            return (string) $this->Request()->getParam('token');
+        }
+
+        return (string) $this->Request()->getParam('paypalOrderId');
     }
 }

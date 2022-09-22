@@ -24,13 +24,13 @@ test.describe('Tracking url testing', () => {
         const orders = await page.$$('.sprite-pencil');
 
         orders.at(0).click();
-        await page.waitForLoadState('networkidle');
+        await page.waitForLoadState('load');
 
         await expect(page.locator('.paypalTrackingButton')).toHaveText(/Tracking Code zu Paypal hinzufügen/);
         await page.locator('.x-order-detail-window >> .x-tool-close').click();
 
         orders.at(-1).click();
-        await page.waitForLoadState('networkidle');
+        await page.waitForLoadState('load');
 
         await expect(await page.$$('.paypalTrackingButton')).toHaveLength(0);
 

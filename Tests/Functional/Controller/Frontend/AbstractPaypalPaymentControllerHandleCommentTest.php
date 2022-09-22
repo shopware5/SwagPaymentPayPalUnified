@@ -27,33 +27,33 @@ use SwagPaymentPayPalUnified\Tests\Unit\PaypalPaymentControllerTestCase;
 
 // This is a workaround, because the controller will otherwise not found in this test
 require __DIR__ . '/../../../../Controllers/Widgets/PaypalUnifiedV2SmartPaymentButtons.php';
+require __DIR__ . '/../../../../Controllers/Widgets/PaypalUnifiedV2AdvancedCreditDebitCard.php';
 
 class AbstractPaypalPaymentControllerHandleCommentTest extends PaypalPaymentControllerTestCase
 {
     use ReflectionHelperTrait;
     use ContainerTrait;
 
-    const COMMENT = 'This is a customer comment';
+    const REQUEST_COMMENT = 'This is a customer comment from request';
+    const SESSION_COMMENT = 'This is a customer comment from session';
+    const EMPTY_COMMENT = '';
 
     /**
      * @dataProvider handleCommentTestDataProvider
      *
-     * @param bool $setComment
+     * @param string      $expectedComment
+     * @param string|null $requestComment
+     * @param string|null $sessionComment
      *
      * @return void
      */
-    public function testHandleComment($setComment)
+    public function testHandleComment($expectedComment, $requestComment = null, $sessionComment = null)
     {
-        $comment = '';
-        if ($setComment) {
-            $comment = self::COMMENT;
-        }
-
-        $request = $this->createRequest($comment);
+        $request = $this->createRequest($requestComment);
 
         $orderModule = $this->getOrderModule();
 
-        $dependencyProvider = $this->createDependencyProvider($setComment, $orderModule);
+        $dependencyProvider = $this->createDependencyProvider($orderModule, $requestComment, $sessionComment);
 
         $controller = $this->getController(
             Shopware_Controllers_Frontend_PaypalUnifiedV2::class,
@@ -65,20 +65,33 @@ class AbstractPaypalPaymentControllerHandleCommentTest extends PaypalPaymentCont
 
         $reflectionMethod->invoke($controller);
 
-        static::assertSame($comment, $orderModule->sComment);
+        static::assertSame($expectedComment, (string) $orderModule->sComment);
     }
 
     /**
-     * @return Generator<array<int,bool>>
+     * @return Generator<array<int,string|null>>
      */
     public function handleCommentTestDataProvider()
     {
         yield 'Without comment' => [
-            false,
+            self::EMPTY_COMMENT,
         ];
 
         yield 'With comment' => [
-            true,
+            self::REQUEST_COMMENT,
+            self::REQUEST_COMMENT,
+        ];
+
+        yield 'With comment in Session' => [
+            self::SESSION_COMMENT,
+            null,
+            self::SESSION_COMMENT,
+        ];
+
+        yield 'With comment in Session and Request' => [
+            self::REQUEST_COMMENT,
+            self::REQUEST_COMMENT,
+            self::SESSION_COMMENT,
         ];
     }
 
@@ -92,11 +105,11 @@ class AbstractPaypalPaymentControllerHandleCommentTest extends PaypalPaymentCont
      */
     public function testControllersCallHandleComment($controllerClass, $actionName)
     {
-        $request = $this->createRequest(self::COMMENT);
+        $request = $this->createRequest(self::REQUEST_COMMENT);
 
         $orderModule = $this->getOrderModule();
 
-        $dependencyProvider = $this->createDependencyProvider(true, $orderModule);
+        $dependencyProvider = $this->createDependencyProvider($orderModule, self::REQUEST_COMMENT);
 
         $controller = $this->getController(
             $controllerClass,
@@ -109,7 +122,7 @@ class AbstractPaypalPaymentControllerHandleCommentTest extends PaypalPaymentCont
 
         $controller->$actionName();
 
-        static::assertSame(self::COMMENT, $orderModule->sComment);
+        static::assertSame(self::REQUEST_COMMENT, $orderModule->sComment);
     }
 
     /**
@@ -117,9 +130,14 @@ class AbstractPaypalPaymentControllerHandleCommentTest extends PaypalPaymentCont
      */
     public function controllersCallHandleCommentTestDataProvider()
     {
-        yield 'Shopware_Controllers_Frontend_PaypalUnifiedV2' => [
+        yield 'Shopware_Controllers_Frontend_PaypalUnifiedV2::indexAction' => [
             Shopware_Controllers_Frontend_PaypalUnifiedV2::class,
             'indexAction',
+        ];
+
+        yield 'Shopware_Controllers_Frontend_PaypalUnifiedV2::returnAction' => [
+            Shopware_Controllers_Frontend_PaypalUnifiedV2::class,
+            'returnAction',
         ];
 
         yield 'Shopware_Controllers_Widgets_PaypalUnifiedV2AdvancedCreditDebitCard' => [
@@ -134,15 +152,16 @@ class AbstractPaypalPaymentControllerHandleCommentTest extends PaypalPaymentCont
     }
 
     /**
-     * @param bool $setComment
+     * @param string|null $requestComment
+     * @param string|null $sessionComment
      *
      * @return DependencyProvider&MockObject
      */
-    private function createDependencyProvider($setComment, sOrder $orderModule)
+    private function createDependencyProvider(sOrder $orderModule, $requestComment = null, $sessionComment = null)
     {
         $dependencyProvider = $this->createMock(DependencyProvider::class);
         $dependencyProvider->method('getSession')->willReturn(
-            $this->createSession($setComment)
+            $this->createSession($requestComment, $sessionComment)
         );
 
         $dependencyProvider->expects(static::once())->method('getModule')->with('order')
@@ -152,17 +171,33 @@ class AbstractPaypalPaymentControllerHandleCommentTest extends PaypalPaymentCont
     }
 
     /**
-     * @param bool $setComment
+     * @param string|null $requestComment
+     * @param string|null $sessionComment
      *
      * @return Enlight_Components_Session_Namespace&MockObject
      */
-    private function createSession($setComment)
+    private function createSession($requestComment = null, $sessionComment = null)
     {
+        $expected = '';
+
+        if ($sessionComment !== null) {
+            $expected = $sessionComment;
+        }
+
+        if ($requestComment !== null) {
+            $expected = $requestComment;
+        }
+
         $session = $this->createMock(Enlight_Components_Session_Namespace::class);
         $session->expects(static::once())->method('offsetSet')->with(
             AbstractPaypalPaymentController::COMMENT_KEY,
-            $setComment ? self::COMMENT : ''
+            $expected
         );
+
+        if ($sessionComment !== null && $requestComment === null) {
+            $session->expects(static::once())->method('offsetExists')->willReturn(true);
+            $session->expects(static::once())->method('offsetGet')->willReturn($sessionComment);
+        }
 
         return $session;
     }
@@ -202,11 +237,11 @@ class AbstractPaypalPaymentControllerHandleCommentTest extends PaypalPaymentCont
     }
 
     /**
-     * @param string $comment
+     * @param string|null $comment
      *
      * @return Enlight_Controller_Request_RequestTestCase
      */
-    private function createRequest($comment)
+    private function createRequest($comment = null)
     {
         $request = new Enlight_Controller_Request_RequestTestCase();
         $request->setParam(AbstractPaypalPaymentController::COMMENT_KEY, $comment);

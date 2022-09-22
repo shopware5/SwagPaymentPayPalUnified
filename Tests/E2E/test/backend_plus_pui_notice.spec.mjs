@@ -27,7 +27,7 @@ test.describe('Check pui plus notice', () => {
         await page.hover('.sprite--paypal-unified');
         await page.click('.settings--basic-settings');
 
-        await page.waitForLoadState('networkidle');
+        await page.waitForLoadState('load');
 
         await expect(page.locator('#plusPuiNotice > .block-message-inner > p')).toHaveText(/Kauf auf Rechnung wird als Teil von PayPal PLUS am 30.09.2022 eingestellt./);
 
@@ -42,7 +42,7 @@ test.describe('Check pui plus notice', () => {
             page.click('text=Speichern')
         ]);
 
-        await page.waitForLoadState('networkidle');
+        await page.waitForLoadState('load');
 
         await expect(await page.$$('#plusPuiNotice')).toHaveLength(1);
     });
@@ -55,7 +55,7 @@ test.describe('Check pui plus notice', () => {
         await page.hover('.sprite--paypal-unified');
         await page.click('.settings--basic-settings');
 
-        await page.waitForLoadState('networkidle');
+        await page.waitForLoadState('load');
 
         await expect(await page.$$('#plusPuiNotice')).toHaveLength(0);
     });

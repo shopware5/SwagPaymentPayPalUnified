@@ -11,7 +11,6 @@ CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_settings_general
     `show_sidebar_logo`                TINYINT(1)   NOT NULL,
     `brand_name`                       VARCHAR(255),
     `landing_page_type`                VARCHAR(255),
-    `send_order_number`                TINYINT(1)   NOT NULL,
     `order_number_prefix`              VARCHAR(255),
     `use_in_context`                   TINYINT(1)   NOT NULL,
     `display_errors`                   TINYINT(1)   NOT NULL,
@@ -25,8 +24,6 @@ CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_settings_general
     `button_locale`                    VARCHAR(5),
     `paypal_payer_id`                  VARCHAR(255) NULL,
     `sandbox_paypal_payer_id`          VARCHAR(255) NULL,
-    `order_status_on_failed_payment`   INT(11)               DEFAULT -1,
-    `payment_status_on_failed_payment` INT(11)               DEFAULT 35,
     CONSTRAINT unique_shop_id UNIQUE (`shop_id`)
 )
     ENGINE = InnoDB
@@ -124,3 +121,11 @@ CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_settings_advanced_credit_
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COLLATE = utf8_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS `swag_payment_paypal_unified_order_number_pool`
+(
+    `id`           INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `order_number` VARCHAR(255) NOT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8
+  COLLATE = utf8_unicode_ci;

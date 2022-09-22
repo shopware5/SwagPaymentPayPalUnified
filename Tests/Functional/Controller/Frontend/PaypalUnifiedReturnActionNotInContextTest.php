@@ -8,26 +8,25 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Controller\Frontend;
 
+use Enlight_Components_Session_Namespace;
 use Enlight_Controller_Request_RequestTestCase;
 use Enlight_Controller_Response_ResponseHttp;
 use Generator;
 use PHPUnit\Framework\MockObject\MockObject;
 use Shopware_Controllers_Frontend_PaypalUnifiedV2;
+use stdClass;
+use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\Services\SettingsService;
 use SwagPaymentPayPalUnified\Components\Services\Validation\SimpleBasketValidator;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
-use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit;
-use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Amount;
-use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Payments;
-use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Payments\Capture;
-use SwagPaymentPayPalUnified\PayPalBundle\V2\PaymentIntentV2;
-use SwagPaymentPayPalUnified\PayPalBundle\V2\PaymentStatusV2;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\OrderResource;
 use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
+use SwagPaymentPayPalUnified\Tests\Functional\Controller\Frontend\_fixtures\SimplePayPalOrderCreator;
 use SwagPaymentPayPalUnified\Tests\Functional\SettingsHelperTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\ShopRegistrationTrait;
+use SwagPaymentPayPalUnified\Tests\Mocks\ConnectionMock;
 use SwagPaymentPayPalUnified\Tests\Unit\PaypalPaymentControllerTestCase;
 
 class PaypalUnifiedReturnActionNotInContextTest extends PaypalPaymentControllerTestCase
@@ -63,12 +62,24 @@ class PaypalUnifiedReturnActionNotInContextTest extends PaypalPaymentControllerT
 
         $this->getContainer()->get('session')->offsetSet('sOrderVariables', ['sBasket' => $sBasket, 'sUserData' => $sUserData]);
 
+        $connectionMock = (new ConnectionMock())->createConnectionMock(1, ConnectionMock::METHOD_FETCH);
+
+        $sessionMock = $this->createMock(Enlight_Components_Session_Namespace::class);
+        $sessionMock->method('offsetExists')->willReturn(true);
+        $sessionMock->method('offsetGet')->willReturn('123456');
+
+        $dependencyProviderMock = $this->createMock(DependencyProvider::class);
+        $dependencyProviderMock->method('getSession')->willReturn($sessionMock);
+        $dependencyProviderMock->method('getModule')->willReturn(new stdClass());
+
         $controller = $this->getController(
             Shopware_Controllers_Frontend_PaypalUnifiedV2::class,
             [
                 self::SERVICE_ORDER_RESOURCE => $this->createOrderResource(),
                 self::SERVICE_SIMPLE_BASKET_VALIDATOR => $this->createSimpleBasketValidator(),
                 self::SERVICE_SETTINGS_SERVICE => $this->createSettingService($useInContext),
+                self::SERVICE_DBAL_CONNECTION => $connectionMock,
+                self::SERVICE_DEPENDENCY_PROVIDER => $dependencyProviderMock,
             ],
             $this->createRequest($requestParameter),
             new Enlight_Controller_Response_ResponseHttp()
@@ -111,10 +122,19 @@ class PaypalUnifiedReturnActionNotInContextTest extends PaypalPaymentControllerT
         $orderResource = $this->createMock(OrderResource::class);
         $orderResource->expects(static::once())->method('get')->willReturn(null);
 
+        $sessionMock = $this->createMock(Enlight_Components_Session_Namespace::class);
+        $sessionMock->method('offsetExists')->willReturn(true);
+        $sessionMock->method('offsetGet')->willReturn('123456');
+
+        $dependencyProviderMock = $this->createMock(DependencyProvider::class);
+        $dependencyProviderMock->method('getSession')->willReturn($sessionMock);
+        $dependencyProviderMock->method('getModule')->willReturn(new stdClass());
+
         $controller = $this->getController(
             Shopware_Controllers_Frontend_PaypalUnifiedV2::class,
             [
                 self::SERVICE_ORDER_RESOURCE => $orderResource,
+                self::SERVICE_DEPENDENCY_PROVIDER => $dependencyProviderMock,
             ],
             new Enlight_Controller_Request_RequestTestCase(),
             new Enlight_Controller_Response_ResponseHttp()
@@ -174,7 +194,6 @@ class PaypalUnifiedReturnActionNotInContextTest extends PaypalPaymentControllerT
         $settingsService = $this->createMock(SettingsService::class);
         $settingsService->method('get')->willReturnMap([
             [SettingsServiceInterface::SETTING_GENERAL_USE_IN_CONTEXT, SettingsTable::GENERAL, $returnValue],
-            [SettingsServiceInterface::SETTING_GENERAL_SEND_ORDER_NUMBER, SettingsTable::GENERAL, 0],
         ]);
 
         return $settingsService;
@@ -185,25 +204,7 @@ class PaypalUnifiedReturnActionNotInContextTest extends PaypalPaymentControllerT
      */
     private function createPayPalOrder()
     {
-        $capture = new Capture();
-        $capture->setStatus(PaymentStatusV2::ORDER_CAPTURE_COMPLETED);
-
-        $payments = new Payments();
-        $payments->setCaptures([$capture]);
-
-        $amount = new Amount();
-        $amount->setValue('100');
-
-        $purchaseUnit = new PurchaseUnit();
-        $purchaseUnit->setPayments($payments);
-        $purchaseUnit->setAmount($amount);
-
-        $order = new Order();
-        $order->setId('anyId');
-        $order->setIntent(PaymentIntentV2::CAPTURE);
-        $order->setPurchaseUnits([$purchaseUnit]);
-
-        return $order;
+        return (new SimplePayPalOrderCreator())->createSimplePayPalOrder();
     }
 
     /**

@@ -13,7 +13,6 @@ use SwagPaymentPayPalUnified\Components\Services\PayUponInvoiceInstructionServic
 use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentController;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
-use SwagPaymentPayPalUnified\PayPalBundle\V2\PaymentIntentV2;
 
 class Shopware_Controllers_Frontend_PaypalUnifiedV2PayUponInvoice extends AbstractPaypalPaymentController
 {
@@ -37,7 +36,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2PayUponInvoice extends Abstra
         $this->logger->debug(sprintf('%s START', __METHOD__));
 
         $session = $this->dependencyProvider->getSession();
-        $shopwareSessionOrderData = $session->get('sOrderVariables');
+        $shopwareSessionOrderData = $session->offsetGet('sOrderVariables');
 
         $shopwareOrderData = new ShopwareOrderData($shopwareSessionOrderData['sUserData'], $shopwareSessionOrderData['sBasket']);
 
@@ -50,39 +49,27 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2PayUponInvoice extends Abstra
 
         $payPalOrderId = $payPalOrder->getId();
 
-        // Save basket before create the order
-        $basketData = $this->cartRestoreService->getCartData();
+        $shopwareOrderNumber = $this->orderNumberService->getOrderNumber();
+        $invoiceIdPatch = $this->createInvoiceIdPatch($shopwareOrderNumber);
+        if (!$this->updatePayPalOrder($payPalOrderId, [$invoiceIdPatch])) {
+            $this->orderNumberService->restoreOrdernumberToPool($shopwareOrderNumber);
 
-        $shopwareOrderNumber = $this->createShopwareOrder($payPalOrderId, PaymentType::PAYPAL_PAY_UPON_INVOICE_V2, Status::PAYMENT_STATE_RESERVED);
-
-        if ($this->getSendOrdernumber()) {
-            $invoiceIdPatch = $this->createInvoiceIdPatch($shopwareOrderNumber);
-            if (!$this->updatePayPalOrder($payPalOrderId, [$invoiceIdPatch])) {
-                // If an error occurred while updating the PayPalOrder
-                // - Set the order and payment state to the order
-                $this->paymentStatusService->setOrderAndPaymentStatusForFailedOrder($shopwareOrderNumber);
-                // - Restore the basket
-                $this->cartRestoreService->restoreCart($basketData);
-
-                return;
-            }
+            return;
         }
 
         if ($this->isPaymentCompleted($payPalOrderId)) {
             $payPalOrder = $this->getPayPalOrder($payPalOrderId);
             if (!$payPalOrder instanceof Order) {
+                $this->orderNumberService->restoreOrdernumberToPool($shopwareOrderNumber);
+
                 return;
             }
+
+            $this->createShopwareOrder($payPalOrderId, PaymentType::PAYPAL_PAY_UPON_INVOICE_V2, Status::PAYMENT_STATE_COMPLETELY_PAID);
 
             $this->paymentInstructionService->createInstructions($shopwareOrderNumber, $payPalOrder);
 
             $this->setTransactionId($shopwareOrderNumber, $payPalOrder);
-
-            if ($payPalOrder->getIntent() === PaymentIntentV2::CAPTURE) {
-                $this->paymentStatusService->updatePaymentStatus($payPalOrderId, Status::PAYMENT_STATE_COMPLETELY_PAID);
-            } else {
-                $this->paymentStatusService->updatePaymentStatus($payPalOrderId, Status::PAYMENT_STATE_RESERVED);
-            }
 
             $this->logger->debug(sprintf('%s REDIRECT TO checkout/finish', __METHOD__));
 
@@ -96,11 +83,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2PayUponInvoice extends Abstra
             return;
         }
 
-        $this->orderDataService->removeTransactionId($shopwareOrderNumber);
-
-        $this->logger->debug(sprintf('%s SET PAYMENT STATE TO: PAYMENT_STATE_REVIEW_NECESSARY::21', __METHOD__));
-
-        $this->paymentStatusService->updatePaymentStatus($payPalOrderId, Status::PAYMENT_STATE_REVIEW_NECESSARY);
+        $this->orderNumberService->restoreOrdernumberToPool($shopwareOrderNumber);
 
         $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
             ->setCode(ErrorCodes::COMMUNICATION_FAILURE);

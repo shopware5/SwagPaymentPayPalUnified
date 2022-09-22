@@ -21,7 +21,11 @@ const config = {
         browserName: 'chromium',
         actionTimeout: 30000,
         baseURL: 'http://' + process.env.SW_HOST + process.env.SW_BASE_PATH ?? '',
-        trace: 'on'
+        trace: 'on',
+        video: 'retain-on-failure',
+        launchOptions: {
+            slowMo: 100
+        }
     },
     projects: [
         {

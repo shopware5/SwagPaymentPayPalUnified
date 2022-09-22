@@ -9,7 +9,6 @@
 namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services;
 
 use Generator;
-use PDO;
 use PHPUnit\Framework\TestCase;
 use Shopware\Models\Order\Order;
 use Shopware\Models\Order\Status;
@@ -52,7 +51,7 @@ class PaymentStatusServiceTest extends TestCase
         $paymentStatusService = $this->createPaymentStatusService();
 
         if ($expectsException) {
-            static::assertIsString($exceptionClassString, 'Parameter "exceptionClassString" is requred if this test expects a exception');
+            static::assertTrue(\is_string($exceptionClassString), 'Parameter "exceptionClassString" is requred if this test expects a exception');
 
             $this->expectException($exceptionClassString);
         }
@@ -82,39 +81,6 @@ class PaymentStatusServiceTest extends TestCase
             Status::PAYMENT_STATE_COMPLETELY_PAID,
             self::EXPECTS_NO_EXCEPTION,
         ];
-    }
-
-    /**
-     * @return void
-     */
-    public function testSetOrderAndPaymentStatusForFailedOrder()
-    {
-        $orderNumber = '29008';
-
-        $sql = file_get_contents(__DIR__ . '/_fixtures/update_order_payment_status.sql');
-        static::assertTrue(\is_string($sql));
-        $this->getContainer()->get('dbal_connection')->exec($sql);
-
-        $this->insertGeneralSettingsFromArray([
-            'active' => 1,
-            'order_status_on_failed_payment' => 1000,
-            'payment_status_on_failed_payment' => 1000,
-        ]);
-
-        $paymentStatusService = $this->createPaymentStatusService();
-
-        $paymentStatusService->setOrderAndPaymentStatusForFailedOrder($orderNumber);
-
-        $result = $this->getContainer()->get('dbal_connection')->createQueryBuilder()
-            ->select(['status', 'cleared'])
-            ->from('s_order')
-            ->where('ordernumber = :orderNumber')
-            ->setParameter('orderNumber', $orderNumber)
-            ->execute()
-            ->fetch(PDO::FETCH_ASSOC);
-
-        static::assertSame('1000', $result['status']);
-        static::assertSame('1000', $result['cleared']);
     }
 
     /**
@@ -171,27 +137,6 @@ class PaymentStatusServiceTest extends TestCase
     }
 
     /**
-     * @return void
-     */
-    public function testUpdatePaymentStatusV2IsSendMail()
-    {
-        $this->insertGeneralSettingsFromArray(['active' => 1]);
-
-        $paymentStatusService = $this->createPaymentStatusService();
-
-        $isCalled = false;
-        $callback = function () use (&$isCalled) {
-            $isCalled = true;
-        };
-
-        $this->getContainer()->get('events')->addListener('Enlight_Components_Mail_Send', $callback);
-
-        $paymentStatusService->setOrderAndPaymentStatusForFailedOrder('20001');
-
-        static::assertTrue($isCalled);
-    }
-
-    /**
      * @return PaymentStatusService
      */
     private function createPaymentStatusService()
@@ -200,9 +145,7 @@ class PaymentStatusServiceTest extends TestCase
             $this->getContainer()->get('models'),
             $this->createMock(LoggerService::class),
             $this->getContainer()->get('dbal_connection'),
-            $this->getContainer()->get('paypal_unified.settings_service'),
-            $this->getContainer()->get('paypal_unified.dependency_provider'),
-            $this->getContainer()->get('config')
+            $this->getContainer()->get('paypal_unified.dependency_provider')
         );
     }
 }

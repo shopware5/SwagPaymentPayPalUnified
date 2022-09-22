@@ -10,6 +10,7 @@ namespace SwagPaymentPayPalUnified\PayPalBundle\V2\Resource;
 
 use DateTime;
 use Shopware\Components\CacheManager;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\RequestType;
 use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\ClientToken;
@@ -29,10 +30,16 @@ class ClientTokenResource
      */
     private $cacheManager;
 
-    public function __construct(ClientService $clientService, CacheManager $cacheManager)
+    /**
+     * @var LoggerServiceInterface
+     */
+    private $logger;
+
+    public function __construct(ClientService $clientService, CacheManager $cacheManager, LoggerServiceInterface $logger)
     {
         $this->clientService = $clientService;
         $this->cacheManager = $cacheManager;
+        $this->logger = $logger;
     }
 
     /**
@@ -42,6 +49,7 @@ class ClientTokenResource
      */
     public function generateToken($shopId)
     {
+        $this->logger->debug(\sprintf('%s GENERATE CLIENT TOKEN START', __METHOD__));
         $clientToken = $this->loadFromCache($shopId);
 
         if ($clientToken !== false && !$this->isClientTokenExpired($clientToken)) {
@@ -70,8 +78,18 @@ class ClientTokenResource
         $dateTimeExpire = $token->getExpires();
 
         if ($dateTimeNow < $dateTimeExpire) {
+            $this->logger->debug(sprintf('%s CLIENT TOKEN IS VALID', __METHOD__), [
+                'expire_date' => $dateTimeExpire->format('Y-m-d H:i:s'),
+                'now_date' => $dateTimeNow->format('Y-m-d H:i:s'),
+            ]);
+
             return false;
         }
+
+        $this->logger->debug(sprintf('%s CLIENT TOKEN IS NO LONGER VALID', __METHOD__), [
+            'expire_date' => $dateTimeExpire->format('Y-m-d H:i:s'),
+            'now_date' => $dateTimeNow->format('Y-m-d H:i:s'),
+        ]);
 
         return true;
     }
@@ -83,8 +101,14 @@ class ClientTokenResource
      */
     private function saveToCache(ClientToken $clientToken, $shopId)
     {
+        $serializedToken = serialize($clientToken);
+
+        $this->logger->debug(sprintf('%s SAVE CLIENT TOKEN TO CACHE', __METHOD__), [
+            'client_token' => $serializedToken,
+        ]);
+
         $this->cacheManager->getCoreCache()->save(
-            serialize($clientToken),
+            $serializedToken,
             sprintf(self::CACHE_KEY_TEMPLATE, $shopId)
         );
     }
@@ -96,10 +120,18 @@ class ClientTokenResource
      */
     private function loadFromCache($shopId)
     {
-        return unserialize(
+        $this->logger->debug(\sprintf('%s READ CLIENT TOKEN FROM CACHE START', __METHOD__));
+
+        $clientToken = unserialize(
             $this->cacheManager->getCoreCache()->load(
                 sprintf(self::CACHE_KEY_TEMPLATE, $shopId)
             )
         );
+
+        if (!$clientToken instanceof ClientToken) {
+            $this->logger->debug(\sprintf('%s CLIENT TOKEN FROM CACHE IS EMPTY', __METHOD__));
+        }
+
+        return $clientToken;
     }
 }

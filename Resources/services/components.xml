@@ -66,9 +66,7 @@
             <argument type="service" id="models"/>
             <argument type="service" id="paypal_unified.logger_service"/>
             <argument type="service" id="dbal_connection"/>
-            <argument type="service" id="paypal_unified.settings_service"/>
             <argument type="service" id="paypal_unified.dependency_provider"/>
-            <argument type="service" id="config"/>
         </service>
 
         <service id="paypal_unified.settings_service"
@@ -145,14 +143,6 @@
             <argument type="service" id="paypal_unified.dependency_provider"/>
         </service>
 
-        <service id="paypal_unified.cart_restore_service"
-                 class="SwagPaymentPayPalUnified\Components\Services\CartRestoreService"
-                 public="true">
-            <argument type="service" id="paypal_unified.dependency_provider"/>
-            <argument type="service" id="models"/>
-            <argument type="service" id="paypal_unified.logger_service"/>
-        </service>
-
         <service id="paypal_unified.order_property_helper"
                  class="SwagPaymentPayPalUnified\Components\Services\OrderPropertyHelper"
                  public="true"/>
@@ -163,6 +153,24 @@
             <argument type="service" id="models"/>
             <argument type="service" id="events"/>
             <argument type="service" id="paypal_unified.order_property_helper"/>
+        </service>
+
+        <service id="paypal_unified.order_number_service"
+                 class="SwagPaymentPayPalUnified\Components\OrderNumberService"
+                 public="true">
+            <argument type="service" id="shopware.number_range_incrementer"/>
+            <argument type="service" id="dbal_connection"/>
+            <argument type="service" id="paypal_unified.dependency_provider"/>
+        </service>
+
+        <service id="paypal_unified.number_range_incrementer_decorator"
+                 class="SwagPaymentPayPalUnified\Components\NumberRangeIncrementerDecorator"
+                 decorates="shopware.number_range_incrementer"
+                 decoration-priority="-999"
+                 public="false">
+            <argument type="service" id="paypal_unified.number_range_incrementer_decorator.inner"/>
+            <argument type="service" id="dbal_connection"/>
+            <argument type="service" id="paypal_unified.dependency_provider"/>
         </service>
     </services>
 </container>

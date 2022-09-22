@@ -25,7 +25,7 @@ test.describe('Pay with OXXO', () => {
         await page.locator('nav[role="menubar"] select[name="__currency"]').selectOption(mxn);
 
         // Buy Product
-        await page.goto('genusswelten/edelbraende/9/special-finish-lagerkorn-x.o.-32');
+        await page.goto('genusswelten/edelbraende/9/special-finish-lagerkorn-x.o.-32', { waitUntil: 'load' });
         await page.click('.buybox--button');
 
         // Go to checkout

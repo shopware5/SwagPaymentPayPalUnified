@@ -24,7 +24,7 @@ test.describe('Pay with trustly', () => {
         await page.locator('nav[role="menubar"] select[name="__currency"]').selectOption(sek);
 
         // Buy Product
-        await page.goto('genusswelten/edelbraende/9/special-finish-lagerkorn-x.o.-32');
+        await page.goto('genusswelten/edelbraende/9/special-finish-lagerkorn-x.o.-32', { waitUntil: 'load' });
         await page.click('.buybox--button');
 
         // Go to checkout
@@ -48,7 +48,7 @@ test.describe('Pay with trustly', () => {
             getPaypalPaymentMethodSelector.paymentMethodNames.SwagPaymentPayPalUnifiedTrustly
         );
         await page.locator(selector).check();
-        await page.waitForLoadState('networkidle');
+        await page.waitForLoadState('load');
         await page.click('text=Weiter >> nth=1');
 
         await page.click('input[name="sAGB"]');

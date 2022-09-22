@@ -23,7 +23,6 @@ class FraudNet implements SubscriberInterface
 
     const PAYMENT_METHODS_REQUIRED_FRAUD_NET = [
         PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME,
-        PaymentMethodProviderInterface::PAYPAL_UNIFIED_ADVANCED_CREDIT_DEBIT_CARD_METHOD_NAME,
     ];
 
     /**

@@ -821,11 +821,6 @@ parameters:
 			path: Models/Settings/General.php
 
 		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Models\\\\Settings\\\\General\\:\\:setSendOrderNumber\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Models/Settings/General.php
-
-		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Models\\\\Settings\\\\General\\:\\:setShopId\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: Models/Settings/General.php

@@ -11,6 +11,7 @@ use Shopware\Models\Order\Status;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
 use SwagPaymentPayPalUnified\Components\ExceptionHandlerServiceInterface;
+use SwagPaymentPayPalUnified\Components\OrderNumberService;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderInterface;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
 use SwagPaymentPayPalUnified\Components\PaymentStatus;
@@ -62,6 +63,11 @@ class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_F
      */
     private $shopwareConfig;
 
+    /**
+     * @var OrderNumberService
+     */
+    private $orderNumberService;
+
     public function preDispatch()
     {
         $this->dependencyProvider = $this->get('paypal_unified.dependency_provider');
@@ -69,6 +75,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_F
         $this->client = $this->get('paypal_unified.client_service');
         $this->settingsService = $this->get('paypal_unified.settings_service');
         $this->shopwareConfig = $this->get('config');
+        $this->orderNumberService = $this->get('paypal_unified.order_number_service');
     }
 
     /**
@@ -218,24 +225,18 @@ class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_F
             $this->client->setPartnerAttributionId(PartnerAttributionId::PAYPAL_SMART_PAYMENT_BUTTONS);
         }
 
-        $sendOrderNumber = (bool) $this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_SEND_ORDER_NUMBER);
-        $orderNumber = '';
+        $shopwareOrderNumber = $this->orderNumberService->getOrderNumber();
+        $patchOrderNumber = $this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_ORDER_NUMBER_PREFIX) . $shopwareOrderNumber;
 
-        // if the order number should be send to PayPal do it before the execute
-        if ($sendOrderNumber) {
-            $orderNumber = (string) $this->saveOrder($paymentId, $paymentId, Status::PAYMENT_STATE_OPEN);
-            $patchOrderNumber = $this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_ORDER_NUMBER_PREFIX) . $orderNumber;
+        $paymentPatch = new PaymentOrderNumberPatch($patchOrderNumber);
 
-            /** @var PaymentOrderNumberPatch $paymentPatch */
-            $paymentPatch = new PaymentOrderNumberPatch($patchOrderNumber);
+        try {
+            $this->paymentResource->patch($paymentId, [$paymentPatch]);
+        } catch (RequestException $exception) {
+            $this->orderNumberService->restoreOrdernumberToPool($shopwareOrderNumber);
+            $this->handleError(ErrorCodes::COMMUNICATION_FAILURE, $exception);
 
-            try {
-                $this->paymentResource->patch($paymentId, [$paymentPatch]);
-            } catch (RequestException $exception) {
-                $this->handleError(ErrorCodes::COMMUNICATION_FAILURE, $exception);
-
-                return;
-            }
+            return;
         }
 
         $payerId = $request->getParam('PayerID');
@@ -246,18 +247,24 @@ class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_F
             // execute the payment to the PayPal API
             $executionResponse = $this->paymentResource->execute($payerId, $paymentId);
             if ($executionResponse === null) {
+                $this->orderNumberService->restoreOrdernumberToPool($shopwareOrderNumber);
                 $this->handleError(ErrorCodes::COMMUNICATION_FAILURE);
 
                 return;
             }
         } catch (RequestException $exception) {
-            $errorCode = ErrorCodes::COMMUNICATION_FAILURE;
-            if ($sendOrderNumber) {
-                $orderDataService->setOrderState($orderNumber, Status::ORDER_STATE_CLARIFICATION_REQUIRED);
-                $orderDataService->removeTransactionId($orderNumber);
-                $errorCode = ErrorCodes::COMMUNICATION_FAILURE_FINISH;
+            $exceptionBody = json_decode($exception->getBody(), true);
+            if ($exceptionBody['name'] === 'DUPLICATE_TRANSACTION') {
+                $this->orderNumberService->releaseOrderNumber();
+
+                $this->redirect($this->getResetActionParameter($request));
+
+                return;
             }
-            $this->handleError($errorCode, $exception, $sendOrderNumber);
+
+            $errorCode = ErrorCodes::COMMUNICATION_FAILURE;
+            $this->orderNumberService->restoreOrdernumberToPool($shopwareOrderNumber);
+            $this->handleError($errorCode, $exception);
 
             return;
         }
@@ -266,17 +273,15 @@ class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_F
         $response = Payment::fromArray($executionResponse);
         $request->setParam('invoiceCheckout', $response->getPaymentInstruction() !== null);
 
-        // if the order number is not sent to PayPal, save the order here
-        if (!$sendOrderNumber) {
-            $orderNumber = (string) $this->saveOrder($paymentId, $paymentId, Status::PAYMENT_STATE_OPEN);
-        }
+        $this->saveOrder($paymentId, $paymentId, Status::PAYMENT_STATE_OPEN);
 
         /** @var RelatedResource $relatedResource */
         $relatedResource = $response->getTransactions()->getRelatedResources()->getResources()[0];
 
         // Use TXN-ID instead of the PaymentId
         $relatedResourceId = $relatedResource->getId();
-        if (!$orderDataService->applyTransactionId($orderNumber, $relatedResourceId)) {
+        if (!$orderDataService->applyTransactionId($shopwareOrderNumber, $relatedResourceId)) {
+            $this->orderNumberService->restoreOrdernumberToPool($shopwareOrderNumber);
             $this->handleError(ErrorCodes::NO_ORDER_TO_PROCESS);
 
             return;
@@ -286,7 +291,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_F
         $paymentState = $relatedResource->getState();
         if ($paymentState === PaymentStatus::PAYMENT_COMPLETED) {
             $this->savePaymentStatus($relatedResourceId, $paymentId, Status::PAYMENT_STATE_COMPLETELY_PAID);
-            $orderDataService->setClearedDate($orderNumber);
+            $orderDataService->setClearedDate($shopwareOrderNumber);
         }
 
         // Save payment instructions from PayPal to database.
@@ -296,12 +301,12 @@ class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_F
         if ($instructions && $instructions->getType() === PaymentInstructionType::INVOICE) {
             /** @var PaymentInstructionService $instructionService */
             $instructionService = $this->get('paypal_unified.payment_instruction_service');
-            $instructionService->createInstructions($orderNumber, $instructions);
+            $instructionService->createInstructions($shopwareOrderNumber, $instructions);
         }
 
         $paymentType = $this->determinePaymentType($isExpressCheckout, $isSpbCheckout, $response);
 
-        $orderDataService->applyPaymentTypeAttribute($orderNumber, $paymentType);
+        $orderDataService->applyPaymentTypeAttribute($shopwareOrderNumber, $paymentType);
 
         $redirectParameter = [
             'module' => 'frontend',
@@ -403,10 +408,10 @@ class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_F
      * This method handles the redirection to the shippingPayment action if an error has occurred during the payment process.
      * If the order number was sent before, the method will redirect to the finish page.
      *
-     * @see ErrorCodes
-     *
      * @param int  $code
      * @param bool $redirectToFinishAction
+     *
+     * @see ErrorCodes
      */
     private function handleError($code, Exception $exception = null, $redirectToFinishAction = false)
     {
@@ -530,5 +535,26 @@ class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_F
         }
 
         return $paymentType;
+    }
+
+    /**
+     * @param Enlight_Controller_Request_RequestHttp $request
+     *
+     * @return array<string,mixed>
+     */
+    private function getResetActionParameter($request)
+    {
+        return [
+            'module' => 'frontend',
+            'controller' => 'PaypalUnified',
+            'action' => 'return',
+            'paymentId' => $request->getParam('paymentId'),
+            'basketId' => $request->getParam('basketId'),
+            'PayerID' => $request->getParam('PayerID'),
+            'plus' => (bool) $request->getParam('plus', false),
+            'expressCheckout' => (bool) $request->getParam('expressCheckout', false),
+            'spbCheckout' => (bool) $request->getParam('spbCheckout', false),
+            'customerComment' => (string) $request->getParam('customerComment', ''),
+        ];
     }
 }

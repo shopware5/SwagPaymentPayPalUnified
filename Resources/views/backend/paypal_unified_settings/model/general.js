@@ -22,7 +22,6 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.model.General', {
         { name: 'sandbox', type: 'bool' },
         { name: 'showSidebarLogo', type: 'bool' },
         { name: 'brandName', type: 'string' },
-        { name: 'sendOrderNumber', type: 'bool' },
         { name: 'orderNumberPrefix', type: 'string' },
         { name: 'useInContext', type: 'bool', defaultValue: true },
         { name: 'landingPageType', type: 'string', defaultValue: 'NO_PREFERENCE' },
@@ -33,9 +32,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.model.General', {
         { name: 'buttonStyleColor', type: 'string', defaultValue: 'gold' },
         { name: 'buttonStyleShape', type: 'string', defaultValue: 'rect' },
         { name: 'buttonStyleSize', type: 'string', defaultValue: 'large' },
-        { name: 'buttonLocale', type: 'string', defaultValue: '' },
-        { name: 'orderStatusOnFailedPayment', type: 'int', defaultValue: -1 },
-        { name: 'paymentStatusOnFailedPayment', type: 'int', defaultValue: 35 }
+        { name: 'buttonLocale', type: 'string', defaultValue: '' }
     ]
 });
 // {/block}

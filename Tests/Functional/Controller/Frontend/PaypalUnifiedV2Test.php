@@ -75,9 +75,8 @@ class PaypalUnifiedV2Test extends TestCase
 
         $dependencyProvider = $this->createConfiguredMock(DependencyProvider::class, [
             'getSession' => $session,
+            'getModule' => new stdClass(),
         ]);
-
-        $dependencyProvider->expects(static::once())->method('getModule')->willReturn(new stdClass());
 
         $redirectDataBuilder = $this->createMock(RedirectDataBuilder::class);
         $redirectDataBuilder->expects(static::atLeastOnce())

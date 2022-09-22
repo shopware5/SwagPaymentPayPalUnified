@@ -6,8 +6,12 @@
 
     SwagPaymentPaypalCreateOrderFunction.prototype.storageFieldPluginCssSelector = '*[data-storage-field="true"]';
     SwagPaymentPaypalCreateOrderFunction.prototype.storageFieldPluginSelector = 'plugin_swStorageField';
+
     SwagPaymentPaypalCreateOrderFunction.prototype.customerCommentFieldSelector = '.user-comment--field';
     SwagPaymentPaypalCreateOrderFunction.prototype.fallbackParamerterName = 'sComment';
+
+    SwagPaymentPaypalCreateOrderFunction.prototype.registerNewsletterFieldSelector = '#sNewsletter';
+    SwagPaymentPaypalCreateOrderFunction.prototype.registerNewsletterParamerterName = 'sNewsletter';
 
     SwagPaymentPaypalCreateOrderFunction.prototype.createOrder = function() {
         var me = this;
@@ -26,7 +30,7 @@
 
     SwagPaymentPaypalCreateOrderFunction.prototype.createExtraData = function() {
         var $extraDataPlugin = $(this.storageFieldPluginCssSelector).data(this.storageFieldPluginSelector),
-            result = {},
+            result = this.checkNewsletterCheckbox(),
             $customerCommentField;
 
         if ($extraDataPlugin && $extraDataPlugin.$el.length && $extraDataPlugin.storage.getItem($extraDataPlugin.getStorageKey())) {
@@ -41,6 +45,17 @@
         $customerCommentField = $(this.customerCommentFieldSelector);
         if ($customerCommentField.length) {
             result[this.fallbackParamerterName] = $customerCommentField.val();
+        }
+
+        return result;
+    };
+
+    SwagPaymentPaypalCreateOrderFunction.prototype.checkNewsletterCheckbox = function() {
+        var $registerNewsletterField = $(this.registerNewsletterFieldSelector),
+            result = {};
+
+        if ($registerNewsletterField.length) {
+            result[this.registerNewsletterParamerterName] = $registerNewsletterField.is(':checked');
         }
 
         return result;

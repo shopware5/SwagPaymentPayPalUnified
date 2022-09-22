@@ -17,7 +17,7 @@ test.describe('Disabled inContext mode', () => {
         connection.query(defaultPaypalSettingsSql);
     });
 
-    test('Buy a product with paypal and disabled inContext mode', async ({ page }) => {
+    test('Disabled inContext mode and buy a product with paypal', async ({ page }) => {
         page.on('frameattached', await function (frame) {
             frame.waitForLoadState('load');
         });
@@ -29,7 +29,7 @@ test.describe('Disabled inContext mode', () => {
         await loginHelper.login(page);
 
         // Buy Product
-        await page.goto('genusswelten/edelbraende/9/special-finish-lagerkorn-x.o.-32');
+        await page.goto('genusswelten/edelbraende/9/special-finish-lagerkorn-x.o.-32', { waitUntil: 'load' });
         await page.click('.buybox--button');
 
         // Go to checkout
@@ -42,7 +42,7 @@ test.describe('Disabled inContext mode', () => {
             getPaypalPaymentMethodSelector.paymentMethodNames.SwagPaymentPayPalUnified
         );
         await page.locator(selector).check();
-        await page.waitForLoadState('networkidle');
+        await page.waitForLoadState('load');
         await page.click('text=Weiter >> nth=1');
 
         await page.waitForLoadState('load');
