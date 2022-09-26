@@ -8,7 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentControllerResults;
 
-class HandleOrderWithSendOrderNumberResult
+class PatchOrderNumberResult
 {
     /**
      * @var bool

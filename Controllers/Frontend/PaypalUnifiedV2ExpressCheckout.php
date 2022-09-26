@@ -6,7 +6,6 @@
  * file that was distributed with this source code.
  */
 
-use Shopware\Models\Order\Status;
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\ShopwareOrderData;
 use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentController;
@@ -55,7 +54,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2ExpressCheckout extends Abstr
 
         $patchSet = [$purchaseUnitPatch];
 
-        $result = $this->handleOrderWithSendOrderNumber($payPalOrderData, $patchSet);
+        $result = $this->patchOrderNumber($payPalOrderData, $patchSet);
         if (!$result->getSuccess()) {
             $this->orderNumberService->restoreOrdernumberToPool($result->getShopwareOrderNumber());
 
@@ -82,8 +81,6 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2ExpressCheckout extends Abstr
         if (!$payPalOrder instanceof Order) {
             $this->orderNumberService->restoreOrdernumberToPool($result->getShopwareOrderNumber());
 
-            $this->setReviewNecessary($payPalOrderId, $result->getShopwareOrderNumber());
-
             return;
         }
 
@@ -97,8 +94,20 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2ExpressCheckout extends Abstr
                 return;
             }
 
+            if ($captureAuthorizeResult->getPayerActionRequired()) {
+                $this->logger->debug(sprintf('%s PAYER_ACTION_REQUIRED', __METHOD__));
+
+                $this->redirect([
+                    'module' => 'frontend',
+                    'controller' => 'checkout',
+                    'action' => 'confirm',
+                    'payerActionRequired' => true,
+                ]);
+
+                return;
+            }
+
             $this->orderNumberService->restoreOrdernumberToPool($result->getShopwareOrderNumber());
-            $this->setReviewNecessary($payPalOrderId, $result->getShopwareOrderNumber());
 
             return;
         }
@@ -123,19 +132,5 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2ExpressCheckout extends Abstr
             'action' => 'finish',
             'sUniqueID' => $payPalOrderId,
         ]);
-    }
-
-    /**
-     * @param string      $payPalOrderId
-     * @param string|null $shopwareOrderNumber
-     *
-     * @return void
-     */
-    private function setReviewNecessary($payPalOrderId, $shopwareOrderNumber = null)
-    {
-        if (\is_string($shopwareOrderNumber)) {
-            $this->orderDataService->removeTransactionId($shopwareOrderNumber);
-            $this->paymentStatusService->updatePaymentStatus($payPalOrderId, Status::PAYMENT_STATE_REVIEW_NECESSARY);
-        }
     }
 }

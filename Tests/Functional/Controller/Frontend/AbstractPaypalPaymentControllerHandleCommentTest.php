@@ -65,7 +65,7 @@ class AbstractPaypalPaymentControllerHandleCommentTest extends PaypalPaymentCont
 
         $reflectionMethod->invoke($controller);
 
-        static::assertSame($expectedComment, (string) $orderModule->sComment);
+        static::assertSame($expectedComment, $orderModule->sComment);
     }
 
     /**
@@ -77,12 +77,12 @@ class AbstractPaypalPaymentControllerHandleCommentTest extends PaypalPaymentCont
             self::EMPTY_COMMENT,
         ];
 
-        yield 'With comment' => [
+        yield 'With comment only in Request' => [
             self::REQUEST_COMMENT,
             self::REQUEST_COMMENT,
         ];
 
-        yield 'With comment in Session' => [
+        yield 'With comment only in Session' => [
             self::SESSION_COMMENT,
             null,
             self::SESSION_COMMENT,
@@ -196,7 +196,7 @@ class AbstractPaypalPaymentControllerHandleCommentTest extends PaypalPaymentCont
 
         if ($sessionComment !== null && $requestComment === null) {
             $session->expects(static::once())->method('offsetExists')->willReturn(true);
-            $session->expects(static::once())->method('offsetGet')->willReturn($sessionComment);
+            $session->method('offsetGet')->willReturn($sessionComment);
         }
 
         return $session;

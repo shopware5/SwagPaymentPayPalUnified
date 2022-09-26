@@ -6,7 +6,6 @@
  * file that was distributed with this source code.
  */
 
-use Shopware\Models\Order\Status;
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\ShopwareOrderData;
 use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentController;
@@ -117,7 +116,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2AdvancedCreditDebitCard extend
             return;
         }
 
-        $result = $this->handleOrderWithSendOrderNumber($payPalOrder);
+        $result = $this->patchOrderNumber($payPalOrder);
         if (!$result->getSuccess()) {
             $this->orderNumberService->restoreOrdernumberToPool($result->getShopwareOrderNumber());
 
@@ -138,11 +137,6 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2AdvancedCreditDebitCard extend
                 return;
             }
 
-            if (\is_string($result->getShopwareOrderNumber())) {
-                $this->orderDataService->removeTransactionId($result->getShopwareOrderNumber());
-                $this->paymentStatusService->updatePaymentStatus($payPalOrderId, Status::PAYMENT_STATE_REVIEW_NECESSARY);
-            }
-
             return;
         }
 
@@ -155,7 +149,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2AdvancedCreditDebitCard extend
         $this->logger->debug(sprintf('%s SET PAYPAL ORDER ID TO SESSION: ID: %s', __METHOD__, $payPalOrderId));
 
         $this->dependencyProvider->getSession()->offsetSet('paypalOrderId', $payPalOrderId);
-        $this->dependencyProvider->getSession()->offsetSet('advancedCreditDebitCartShopwareOrderId', $result->getShopwareOrderNumber());
+        $this->dependencyProvider->getSession()->offsetSet(self::ACDC_SHOPWARE_ORDER_ID_SESSION_KEY, $result->getShopwareOrderNumber());
     }
 
     /**

@@ -171,6 +171,7 @@
             <argument type="service" id="paypal_unified.number_range_incrementer_decorator.inner"/>
             <argument type="service" id="dbal_connection"/>
             <argument type="service" id="paypal_unified.dependency_provider"/>
+            <argument type="service" id="paypal_unified.logger_service"/>
         </service>
     </services>
 </container>

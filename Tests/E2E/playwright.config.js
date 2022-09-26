@@ -24,7 +24,7 @@ const config = {
         trace: 'on',
         video: 'retain-on-failure',
         launchOptions: {
-            slowMo: 100
+            slowMo: 300
         }
     },
     projects: [

@@ -131,9 +131,6 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
             'paypal-unified-settings-tabs-advanced-credit-debit-card': {
                 authCodeReceived: this.onAuthCodeReceived,
                 onTestCapability: this.onTestCapability
-            },
-            'paypal-unified-settings-tabs-paypal-plus': {
-                requirePlusPuiHint: this.onRequirePlusPuiHint
             }
         });
     },
@@ -206,10 +203,6 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
         this.getAdvancedCreditDebitCardTab().loadRecord(this.advancedCreditDebitCardRecord);
 
         this.isTabFormValid(this.getPayUponInvoiceTab());
-    },
-
-    onRequirePlusPuiHint: function () {
-        this.getGeneralTab().addPlusPuiNotice();
     },
 
     /**

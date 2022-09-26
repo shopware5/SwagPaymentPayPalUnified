@@ -23,8 +23,8 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2AdvancedCreditDebitCard exten
         $session = $this->dependencyProvider->getSession();
 
         $payPalOrderId = $session->offsetGet('paypalOrderId');
-        $shopwareOrderNumber = $session->offsetGet('advancedCreditDebitCartShopwareOrderId');
-        $session->offsetUnset('advancedCreditDebitCartShopwareOrderId');
+        $shopwareOrderNumber = $session->offsetGet(self::ACDC_SHOPWARE_ORDER_ID_SESSION_KEY);
+        $session->offsetUnset(self::ACDC_SHOPWARE_ORDER_ID_SESSION_KEY);
 
         if (!\is_string($payPalOrderId)) {
             $this->orderNumberService->restoreOrdernumberToPool($shopwareOrderNumber);

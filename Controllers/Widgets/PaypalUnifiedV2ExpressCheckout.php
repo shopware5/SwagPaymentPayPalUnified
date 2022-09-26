@@ -6,6 +6,7 @@
  * file that was distributed with this source code.
  */
 
+use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\ShopwareOrderData;
 use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentController;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
@@ -30,6 +31,12 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout extends Abstra
         $this->logger->debug(sprintf('%s START', __METHOD__));
 
         $checkoutController = $this->prepareCheckoutController();
+
+        // Set PayPal as paymentMethod
+        $this->dependencyProvider->getSession()->offsetSet(
+            'sPaymentID',
+            $this->paymentMethodProvider->getPaymentId(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME)
+        );
 
         // If the PayPal express button on the detail page was clicked, the addProduct equals true.
         // That means, that it has to be added manually to the basket.
@@ -111,7 +118,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout extends Abstra
 
         $this->logger->debug(sprintf('%s REFRESH BASKET', __METHOD__));
 
-        $basketModule->sRefreshBasket();
+        $basketModule->sGetBasket();
 
         $this->logger->debug(sprintf('%s PRODUCT SUCCESSFUL ADDED', __METHOD__));
     }

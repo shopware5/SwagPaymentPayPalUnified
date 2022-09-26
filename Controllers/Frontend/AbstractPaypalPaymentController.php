@@ -34,7 +34,7 @@ use SwagPaymentPayPalUnified\Components\Services\Validation\RedirectDataBuilderF
 use SwagPaymentPayPalUnified\Components\Services\Validation\SimpleBasketValidator;
 use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentControllerResults\CaptureAuthorizeResult;
 use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentControllerResults\DeterminedStatus;
-use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentControllerResults\HandleOrderWithSendOrderNumberResult;
+use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentControllerResults\PatchOrderNumberResult;
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\AuthorizationDeniedException;
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\CaptureDeclinedException;
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\CaptureFailedException;
@@ -79,6 +79,8 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
 
     const COMMENT_KEY = 'sComment';
     const NEWSLETTER_KEY = 'sNewsletter';
+
+    const ACDC_SHOPWARE_ORDER_ID_SESSION_KEY = 'advancedCreditDebitCartShopwareOrderId';
 
     /**
      * @var DependencyProvider
@@ -209,9 +211,9 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
     /**
      * @param array<int,Patch> $patches
      *
-     * @return HandleOrderWithSendOrderNumberResult
+     * @return PatchOrderNumberResult
      */
-    protected function handleOrderWithSendOrderNumber(Order $paypalOrder, array $patches = [])
+    protected function patchOrderNumber(Order $paypalOrder, array $patches = [])
     {
         $this->logger->debug(sprintf('%s START', __METHOD__));
 
@@ -221,12 +223,12 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
         if (!$this->updatePayPalOrder($paypalOrder->getId(), $patches)) {
             $this->logger->debug(sprintf('%s FAILS', __METHOD__));
 
-            return new HandleOrderWithSendOrderNumberResult(false, $shopwareOrderNumber);
+            return new PatchOrderNumberResult(false, $shopwareOrderNumber);
         }
 
         $this->logger->debug(sprintf('%s SUCCESS', __METHOD__));
 
-        return new HandleOrderWithSendOrderNumberResult(true, $shopwareOrderNumber);
+        return new PatchOrderNumberResult(true, $shopwareOrderNumber);
     }
 
     /**
@@ -335,6 +337,12 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
                     $this->orderNumberService->releaseOrderNumber();
 
                     return new CaptureAuthorizeResult(true);
+                }
+
+                if ($exceptionDetail['issue'] === 'PAYER_ACTION_REQUIRED') {
+                    $this->orderNumberService->releaseOrderNumber();
+
+                    return new CaptureAuthorizeResult(false, null, true);
                 }
             }
 
@@ -744,8 +752,12 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
         $session = $this->dependencyProvider->getSession();
         $sComment = $this->request->get(self::COMMENT_KEY, '');
 
-        if (empty($sComment) && $session->offsetExists(self::COMMENT_KEY)) {
+        if (empty($sComment) && $session->offsetExists(self::COMMENT_KEY) && \is_string($session->offsetGet(self::COMMENT_KEY))) {
             $sComment = $session->offsetGet(self::COMMENT_KEY);
+        }
+
+        if ($sComment === null) {
+            $sComment = '';
         }
 
         $session->offsetSet(self::COMMENT_KEY, $sComment);
