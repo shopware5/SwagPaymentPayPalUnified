@@ -96,7 +96,7 @@ class PayUponInvoice implements SubscriberInterface
 
         $customerData = $this->session->offsetGet('sOrderVariables')['sUserData'];
 
-        if (!isset($customerData['billingaddress']['phone'])) {
+        if (!isset($customerData['billingaddress']['phone']) || empty($customerData['billingaddress']['phone'])) {
             $viewAssignVariables['showPayUponInvoicePhoneField'] = true;
         }
 
