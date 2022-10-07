@@ -15,6 +15,7 @@ use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\NumberRangeIncrementerDecorator;
 use SwagPaymentPayPalUnified\Components\OrderNumberService;
 use SwagPaymentPayPalUnified\Components\Services\Validation\SimpleBasketValidator;
+use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentController;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\Card;
@@ -82,7 +83,7 @@ class PaypalUnifiedV2AdvancedCreditDebitCardCaptureActionTest extends PaypalPaym
         $paypalUnifiedV2AdvancedCreditDebitCardController->captureAction();
 
         $paypalOrderIdResult = $session->offsetGet('paypalOrderId');
-        $advancedCreditDebitCartShopwareOrderIdResult = $session->offsetGet('advancedCreditDebitCartShopwareOrderId');
+        $advancedCreditDebitCartShopwareOrderIdResult = $session->offsetGet(AbstractPaypalPaymentController::ACDC_SHOPWARE_ORDER_ID_SESSION_KEY);
 
         static::assertSame('123456789', $paypalOrderIdResult);
         static::assertSame('44444444444', $advancedCreditDebitCartShopwareOrderIdResult);

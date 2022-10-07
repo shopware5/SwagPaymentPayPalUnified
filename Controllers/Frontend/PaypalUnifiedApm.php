@@ -92,7 +92,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedApm extends AbstractPaypalPayme
         }
 
         $paymentType = $this->getPaymentType($payPalOrder);
-        $orderNumberResult = $this->handleOrderWithSendOrderNumber($payPalOrder);
+        $orderNumberResult = $this->patchOrderNumber($payPalOrder);
         if (!$orderNumberResult->getSuccess()) {
             $this->orderNumberService->restoreOrdernumberToPool($orderNumberResult->getShopwareOrderNumber());
 
@@ -109,7 +109,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedApm extends AbstractPaypalPayme
         if (!$capturedPayPalOrder instanceof Order) {
             if ($captureAuthorizeResult->getRequireRestart()) {
                 $this->orderNumberService->releaseOrderNumber();
-                $this->restartAction(false, $payPalOrderId, 'frontend', 'PaypalUnifiedV2ExpressCheckout', 'expressCheckoutFinish');
+                $this->restartAction(false, $payPalOrderId, 'frontend', 'PaypalUnifiedApm', 'return');
 
                 return;
             }

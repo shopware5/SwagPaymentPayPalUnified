@@ -134,7 +134,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
         }
 
         $paymentType = $this->getPaymentType($payPalOrder);
-        $result = $this->handleOrderWithSendOrderNumber($payPalOrder);
+        $result = $this->patchOrderNumber($payPalOrder);
         if (!$result->getSuccess()) {
             $this->orderNumberService->restoreOrdernumberToPool($result->getShopwareOrderNumber());
 

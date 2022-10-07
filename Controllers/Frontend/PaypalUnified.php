@@ -12,9 +12,9 @@ use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
 use SwagPaymentPayPalUnified\Components\ExceptionHandlerServiceInterface;
 use SwagPaymentPayPalUnified\Components\OrderNumberService;
-use SwagPaymentPayPalUnified\Components\PaymentBuilderInterface;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
 use SwagPaymentPayPalUnified\Components\PaymentStatus;
+use SwagPaymentPayPalUnified\Components\Services\Common\CustomerHelper;
 use SwagPaymentPayPalUnified\Components\Services\OrderDataService;
 use SwagPaymentPayPalUnified\Components\Services\PaymentAddressService;
 use SwagPaymentPayPalUnified\Components\Services\Plus\PaymentInstructionService;
@@ -107,7 +107,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_F
         }
 
         $userData = $orderData['sUserData'];
-        $userData[PaymentBuilderInterface::CUSTOMER_GROUP_USE_GROSS_PRICES] = (bool) $session->get('sUserGroupData', ['tax' => 1])['tax'];
+        $userData[CustomerHelper::CUSTOMER_GROUP_USE_GROSS_PRICES] = (bool) $session->get('sUserGroupData', ['tax' => 1])['tax'];
 
         try {
             // Query all information
@@ -349,7 +349,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_F
         $orderData = $session->get('sOrderVariables');
         $userData = $orderData['sUserData'];
         $basketData = $orderData['sBasket'];
-        $userData[PaymentBuilderInterface::CUSTOMER_GROUP_USE_GROSS_PRICES] = (bool) $session->get('sUserGroupData', ['tax' => 1])['tax'];
+        $userData[CustomerHelper::CUSTOMER_GROUP_USE_GROSS_PRICES] = (bool) $session->get('sUserGroupData', ['tax' => 1])['tax'];
 
         $customerComment = (string) $request->getParam('customerComment', '');
         if ($customerComment !== '') {

@@ -29,14 +29,14 @@ class CommentSubscriber implements SubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            'Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout' => 'onCheckoutFinish',
+            'Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout' => 'onCheckoutFinishRemoveCustomerCommentFromSession',
         ];
     }
 
     /**
      * @return void
      */
-    public function onCheckoutFinish(Enlight_Event_EventArgs $args)
+    public function onCheckoutFinishRemoveCustomerCommentFromSession(Enlight_Event_EventArgs $args)
     {
         /** @var Shopware_Controllers_Frontend_Checkout $subject */
         $subject = $args->get('subject');

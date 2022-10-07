@@ -21,6 +21,7 @@ use SwagPaymentPayPalUnified\Models\Settings\ExpressCheckout as ExpressSettingsM
 use SwagPaymentPayPalUnified\Models\Settings\General as GeneralSettingsModel;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
+use UnexpectedValueException;
 
 class ExpressCheckout implements SubscriberInterface
 {
@@ -120,6 +121,7 @@ class ExpressCheckout implements SubscriberInterface
         if ($cartProductIds === []) {
             return;
         }
+
         if ($this->esdProductChecker->checkForEsdProducts($cartProductIds) === true) {
             return;
         }
@@ -162,6 +164,27 @@ class ExpressCheckout implements SubscriberInterface
             return;
         }
         if ($this->esdProductChecker->checkForEsdProducts($cartProductIds) === true) {
+            return;
+        }
+
+        $isPayerActionRequired = (bool) $request->getParam('payerActionRequired', false);
+        if ($isPayerActionRequired) {
+            /** @var GeneralSettingsModel|null $generalSettings */
+            $generalSettings = $this->settingsService->getSettings();
+            if (!$generalSettings || !$generalSettings->getActive()) {
+                return;
+            }
+
+            /** @var ExpressSettingsModel|null $expressSettings */
+            $expressSettings = $this->settingsService->getSettings(null, SettingsTable::EXPRESS_CHECKOUT);
+            if (!$expressSettings) {
+                return;
+            }
+
+            $view->assign('payerActionRequired', true);
+            $this->addEcButtonBehaviour($view, $generalSettings);
+            $this->addEcButtonStyleInfo($view, $expressSettings, $generalSettings);
+
             return;
         }
 
@@ -304,7 +327,7 @@ class ExpressCheckout implements SubscriberInterface
         $shop = $this->dependencyProvider->getShop();
 
         if (!$shop instanceof Shop) {
-            throw new \UnexpectedValueException(sprintf('Expected instance of %s, got null.', Shop::class));
+            throw new UnexpectedValueException(sprintf('Expected instance of %s, got null.', Shop::class));
         }
 
         $view->assign('paypalUnifiedCurrency', $shop->getCurrency()->getCurrency());

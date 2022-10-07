@@ -10,6 +10,9 @@ namespace SwagPaymentPayPalUnified\Tests\Functional;
 
 trait ResetSessionTrait
 {
+    /**
+     * @return void
+     */
     private function resetSession()
     {
         if (\method_exists(\Enlight_Components_Session_Namespace::class, 'reset')) {

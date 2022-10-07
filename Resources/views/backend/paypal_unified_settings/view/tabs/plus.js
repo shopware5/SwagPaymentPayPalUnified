@@ -196,14 +196,6 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Plus', {
         if (!checked) {
             me.integrateThirdPartyMethodsCheckbox.setValue(false);
         }
-    },
-
-    loadRecord: function (record) {
-        if (record.get('active')) {
-            this.fireEvent('requirePlusPuiHint');
-        }
-
-        this.callParent(arguments);
-    },
+    }
 });
 // {/block}

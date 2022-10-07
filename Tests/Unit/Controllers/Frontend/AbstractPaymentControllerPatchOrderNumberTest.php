@@ -12,19 +12,19 @@ use PHPUnit\Framework\MockObject\MockObject;
 use RuntimeException;
 use SwagPaymentPayPalUnified\Components\OrderNumberService;
 use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentController;
-use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentControllerResults\HandleOrderWithSendOrderNumberResult;
+use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentControllerResults\PatchOrderNumberResult;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\OrderResource;
 use SwagPaymentPayPalUnified\Tests\Functional\ReflectionHelperTrait;
 use SwagPaymentPayPalUnified\Tests\Unit\PaypalPaymentControllerTestCase;
 
-class AbstractPaymentControllerHandleOrderWithSendOrderNumberTest extends PaypalPaymentControllerTestCase
+class AbstractPaymentControllerPatchOrderNumberTest extends PaypalPaymentControllerTestCase
 {
     use ReflectionHelperTrait;
 
     const TRANSACTION_ID = '3E630337S9748511R';
     const ORDER_NUMBER = '2001';
-    const METHOD_NAME = 'handleOrderWithSendOrderNumber';
+    const METHOD_NAME = 'patchOrderNumber';
 
     /**
      * @return void
@@ -39,7 +39,7 @@ class AbstractPaymentControllerHandleOrderWithSendOrderNumberTest extends Paypal
 
         $reflectionMethod = $this->getReflectionMethod(AbstractPaypalPaymentController::class, self::METHOD_NAME);
 
-        /** @var HandleOrderWithSendOrderNumberResult $result */
+        /** @var PatchOrderNumberResult $result */
         $result = $reflectionMethod->invoke($abstractController, $this->createPayPalOrder());
 
         static::assertTrue($result->getSuccess());
@@ -62,7 +62,7 @@ class AbstractPaymentControllerHandleOrderWithSendOrderNumberTest extends Paypal
 
         $reflectionMethod = $this->getReflectionMethod(AbstractPaypalPaymentController::class, self::METHOD_NAME);
 
-        /** @var HandleOrderWithSendOrderNumberResult $result */
+        /** @var PatchOrderNumberResult $result */
         $result = $reflectionMethod->invoke($abstractController, $this->createPayPalOrder());
 
         static::assertFalse($result->getSuccess());
