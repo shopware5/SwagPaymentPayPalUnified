@@ -17,11 +17,13 @@
             PT-12890 - Senden der Bestellnummern zu PayPal verbessert, um doppelte Bestellungen zu verhindern;
             PT-12893 - Schnellbesteller werden, wenn erforderlich, zurück zu PayPal geleitet;
             PT-12903 - API-URL aktualisiert;
+            PT-12935 - Entfernt Italien als akzeptiertes Land für die Zahlungsmethode Sofort;
         </changes>
         <changes lang="en">
             PT-12890 - Improved sending of order numbers to PayPal to prevent duplicate orders;
             PT-12893 - Express Orderers will be redirected back to PayPal if necessary;
             PT-12903 - Update API-URL;
+            PT-12935 - Italy is no longer accepted country for the Sofort payment method;
         </changes>
     </changelog>
 

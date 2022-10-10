@@ -32,7 +32,7 @@ class SofortValidatorHandler implements ValidatorHandlerInterface
         return new ValidatorConstraintsCollection([
             'country' => [
                 new Choice([
-                    'choices' => ['AT', 'BE', 'DE', 'ES', 'IT', 'NL'],
+                    'choices' => ['AT', 'BE', 'DE', 'ES', 'NL'],
                     'groups' => ['euro'],
                 ]),
                 new Choice([
