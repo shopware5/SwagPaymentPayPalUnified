@@ -11,7 +11,7 @@ namespace SwagPaymentPayPalUnified\Setup\Versions;
 use Doctrine\DBAL\Connection;
 use SwagPaymentPayPalUnified\Setup\ColumnService;
 
-class UpdateToREPLACE_GLOBAL_WITH_NEXT_VERSION
+class UpdateTo500
 {
     /**
      * @var Connection

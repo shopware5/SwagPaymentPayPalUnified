@@ -11,11 +11,11 @@ namespace SwagPaymentPayPalUnified\Tests\Functional\Setup;
 use Doctrine\DBAL\Connection;
 use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\Setup\ColumnService;
-use SwagPaymentPayPalUnified\Setup\Versions\UpdateToREPLACE_GLOBAL_WITH_NEXT_VERSION;
+use SwagPaymentPayPalUnified\Setup\Versions\UpdateTo500;
 use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseHelperTrait;
 
-class UpdateToREPLACE_GLOBAL_WITH_NEXT_VERSIONTest extends TestCase
+class UpdateTo500Test extends TestCase
 {
     use ContainerTrait;
     use DatabaseHelperTrait;
@@ -49,10 +49,10 @@ class UpdateToREPLACE_GLOBAL_WITH_NEXT_VERSIONTest extends TestCase
     }
 
     /**
-     * @return UpdateToREPLACE_GLOBAL_WITH_NEXT_VERSION
+     * @return UpdateTo500
      */
     private function getUpdater(Connection $connection)
     {
-        return new UpdateToREPLACE_GLOBAL_WITH_NEXT_VERSION($connection, new ColumnService($connection));
+        return new UpdateTo500($connection, new ColumnService($connection));
     }
 }

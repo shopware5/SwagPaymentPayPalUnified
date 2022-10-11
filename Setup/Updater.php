@@ -21,7 +21,7 @@ use SwagPaymentPayPalUnified\Setup\Versions\UpdateTo411;
 use SwagPaymentPayPalUnified\Setup\Versions\UpdateTo420;
 use SwagPaymentPayPalUnified\Setup\Versions\UpdateTo430;
 use SwagPaymentPayPalUnified\Setup\Versions\UpdateTo433;
-use SwagPaymentPayPalUnified\Setup\Versions\UpdateToREPLACE_GLOBAL_WITH_NEXT_VERSION;
+use SwagPaymentPayPalUnified\Setup\Versions\UpdateTo500;
 
 class Updater
 {
@@ -175,8 +175,8 @@ class Updater
             ))->update();
         }
 
-        if (\version_compare($oldVersion, 'REPLACE_GLOBAL_WITH_NEXT_VERSION', '<')) {
-            (new UpdateToREPLACE_GLOBAL_WITH_NEXT_VERSION(
+        if (\version_compare($oldVersion, '5.0.0', '<')) {
+            (new UpdateTo500(
                 $this->connection,
                 $this->columnService
             ))->update();

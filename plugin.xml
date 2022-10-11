@@ -5,14 +5,14 @@
     <label lang="de">PayPal</label>
     <label lang="en">PayPal</label>
 
-    <version>4.3.3</version>
+    <version>5.0.0</version>
     <copyright>(c) by shopware AG</copyright>
     <license>MIT</license>
     <link>http://store.shopware.com</link>
     <author>shopware AG</author>
     <compatibility minVersion="5.2.27" maxVersion="5.99.99"/>
 
-    <changelog version="REPLACE_WITH_NEXT_VERSION">
+    <changelog version="5.0.0">
         <changes lang="de">
             PT-12890 - Senden der Bestellnummern zu PayPal verbessert, um doppelte Bestellungen zu verhindern;
             PT-12893 - Schnellbesteller werden, wenn erforderlich, zurück zu PayPal geleitet;
