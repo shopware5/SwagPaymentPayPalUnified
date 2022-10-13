@@ -2516,31 +2516,6 @@ parameters:
 			path: Tests/Functional/Components/Backend/VoidServiceTest.php
 
 		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Components\\\\DependencyProviderTest\\:\\:testCanBeConstructed\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Components/DependencyProviderTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Components\\\\DependencyProviderTest\\:\\:testGetModuleHasModule\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Components/DependencyProviderTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Components\\\\DependencyProviderTest\\:\\:testGetShopReturnNull\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Components/DependencyProviderTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Components\\\\DependencyProviderTest\\:\\:testGetShopReturnShop\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Components/DependencyProviderTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Components\\\\DependencyProviderTest\\:\\:testServiceAvailable\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Components/DependencyProviderTest.php
-
-		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Components\\\\Services\\\\Legacy\\\\LegacyServiceTest\\:\\:insertClassicPayment\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: Tests/Functional/Components/Services/Legacy/LegacyServiceTest.php

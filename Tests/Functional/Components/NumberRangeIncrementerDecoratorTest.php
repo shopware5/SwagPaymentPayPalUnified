@@ -10,7 +10,11 @@ namespace SwagPaymentPayPalUnified\Tests\Unit\Components;
 
 use Doctrine\DBAL\Connection;
 use PHPUnit\Framework\TestCase;
+use Shopware\Components\DependencyInjection\Container;
+use Shopware\Components\NumberRangeIncrementerInterface;
+use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\NumberRangeIncrementerDecorator;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\ShopRegistrationTrait;
@@ -76,6 +80,32 @@ class NumberRangeIncrementerDecoratorTest extends TestCase
         $result = $this->getNumberRangeIncrementerDecorator()->increment(NumberRangeIncrementerDecorator::NAME_INVOICE);
 
         static::assertSame(1001, $result);
+    }
+
+    /**
+     * @return void
+     */
+    public function testIncrementWithoutASession()
+    {
+        $expectedValue = 2001256;
+
+        $numberRangeIncrementerInterfaceMock = $this->createMock(NumberRangeIncrementerInterface::class);
+        $numberRangeIncrementerInterfaceMock->expects(static::exactly(2))->method('increment')->willReturn($expectedValue);
+
+        $containerMock = $this->createMock(Container::class);
+        $containerMock->expects(static::once())->method('initialized')->willReturn(false);
+
+        $dependencyProvider = new DependencyProvider($containerMock);
+
+        $numberRangeIncrementerDecorator = new NumberRangeIncrementerDecorator(
+            $numberRangeIncrementerInterfaceMock,
+            $this->createMock(Connection::class),
+            $dependencyProvider,
+            $this->createMock(LoggerServiceInterface::class)
+        );
+
+        static::assertSame($expectedValue, $numberRangeIncrementerDecorator->increment(NumberRangeIncrementerDecorator::NAME_INVOICE));
+        static::assertSame($expectedValue, $numberRangeIncrementerDecorator->increment('otherName'));
     }
 
     /**

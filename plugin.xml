@@ -5,12 +5,21 @@
     <label lang="de">PayPal</label>
     <label lang="en">PayPal</label>
 
-    <version>5.0.0</version>
+    <version>5.0.1</version>
     <copyright>(c) by shopware AG</copyright>
     <license>MIT</license>
     <link>http://store.shopware.com</link>
     <author>shopware AG</author>
     <compatibility minVersion="5.2.27" maxVersion="5.99.99"/>
+
+    <changelog version="5.0.1">
+        <changes lang="de">
+            PT-12946 - Behebt Probleme beim Erstellen der Bestellnummer falls keine Storefront-Session verfügbar ist;
+        </changes>
+        <changes lang="en">
+            PT-12946 - Fixes problem while creating the order number if no storefront session is available;
+        </changes>
+    </changelog>
 
     <changelog version="5.0.0">
         <changes lang="de">

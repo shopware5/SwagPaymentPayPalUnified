@@ -59,7 +59,7 @@ class NumberRangeIncrementerDecorator implements NumberRangeIncrementerInterface
      */
     public function increment($name)
     {
-        if ($name !== self::NAME_INVOICE) {
+        if ($name !== self::NAME_INVOICE || !$this->dependencyProvider->isInitialized('session')) {
             return $this->numberRangeIncrementer->increment($name);
         }
 
