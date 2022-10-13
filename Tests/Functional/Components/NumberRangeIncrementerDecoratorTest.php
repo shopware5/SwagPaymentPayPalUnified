@@ -11,10 +11,13 @@ namespace SwagPaymentPayPalUnified\Tests\Unit\Components;
 use Doctrine\DBAL\Connection;
 use PHPUnit\Framework\TestCase;
 use Shopware\Components\DependencyInjection\Container;
+use Shopware\Components\NumberRangeIncrementer;
 use Shopware\Components\NumberRangeIncrementerInterface;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\NumberRangeIncrementerDecorator;
+use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
+use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\ShopRegistrationTrait;
@@ -101,7 +104,8 @@ class NumberRangeIncrementerDecoratorTest extends TestCase
             $numberRangeIncrementerInterfaceMock,
             $this->createMock(Connection::class),
             $dependencyProvider,
-            $this->createMock(LoggerServiceInterface::class)
+            $this->createMock(LoggerServiceInterface::class),
+            $this->createMock(PaymentMethodProviderInterface::class)
         );
 
         static::assertSame($expectedValue, $numberRangeIncrementerDecorator->increment(NumberRangeIncrementerDecorator::NAME_INVOICE));
@@ -109,13 +113,48 @@ class NumberRangeIncrementerDecoratorTest extends TestCase
     }
 
     /**
+     * @return void
+     */
+    public function testIncrementWithANotPayPalPaymentMethod()
+    {
+        $numberRangeIncrementerDecorator = $this->getContainer()->get('shopware.number_range_incrementer');
+
+        $this->getContainer()->get('session')->offsetSet('sOrderVariables', [
+            'sPayment' => ['name' => 'prepayment'],
+        ]);
+
+        $resultOne = $numberRangeIncrementerDecorator->increment(NumberRangeIncrementerDecorator::NAME_INVOICE);
+        $resultTwo = $numberRangeIncrementerDecorator->increment(NumberRangeIncrementerDecorator::NAME_INVOICE);
+        $resultThree = $numberRangeIncrementerDecorator->increment(NumberRangeIncrementerDecorator::NAME_INVOICE);
+        $resultFour = $numberRangeIncrementerDecorator->increment(NumberRangeIncrementerDecorator::NAME_INVOICE);
+
+        static::assertNotEquals($resultOne, $resultTwo, 'One => Two');
+        static::assertNotEquals($resultOne, $resultThree, 'One => Three');
+        static::assertNotEquals($resultOne, $resultFour, 'One => Four');
+
+        static::assertNotEquals($resultTwo, $resultOne, 'Two => One');
+        static::assertNotEquals($resultTwo, $resultThree, 'Two => Three');
+        static::assertNotEquals($resultTwo, $resultFour, 'Two => Four');
+
+        static::assertNotEquals($resultThree, $resultOne, 'Three => One');
+        static::assertNotEquals($resultThree, $resultTwo, 'Three => Two');
+        static::assertNotEquals($resultThree, $resultFour, 'Three => Four');
+    }
+
+    /**
      * @return NumberRangeIncrementerDecorator
      */
     private function getNumberRangeIncrementerDecorator()
     {
-        $numberRangeIncrementerDecorator = $this->getContainer()->get('shopware.number_range_incrementer');
-        static::assertInstanceOf(NumberRangeIncrementerDecorator::class, $numberRangeIncrementerDecorator);
+        $paymentMethodProviderInterfaceMock = $this->createMock(PaymentMethodProviderInterface::class);
+        $paymentMethodProviderInterfaceMock->method('getPaymentTypeByName')->willReturn(PaymentType::PAYPAL_CLASSIC_V2);
 
-        return $numberRangeIncrementerDecorator;
+        return new NumberRangeIncrementerDecorator(
+            new NumberRangeIncrementer($this->getContainer()->get('dbal_connection')),
+            $this->getContainer()->get('dbal_connection'),
+            $this->getContainer()->get('paypal_unified.dependency_provider'),
+            $this->createMock(LoggerServiceInterface::class),
+            $this->createMock(PaymentMethodProviderInterface::class)
+        );
     }
 }

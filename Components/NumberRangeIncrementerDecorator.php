@@ -42,16 +42,23 @@ class NumberRangeIncrementerDecorator implements NumberRangeIncrementerInterface
      */
     private $logger;
 
+    /**
+     * @var PaymentMethodProviderInterface
+     */
+    private $paymentMethodProvider;
+
     public function __construct(
         NumberRangeIncrementerInterface $numberRangeIncrementer,
         Connection $connection,
         DependencyProvider $dependencyProvider,
-        LoggerServiceInterface $logger
+        LoggerServiceInterface $logger,
+        PaymentMethodProviderInterface $paymentMethodProvider
     ) {
         $this->numberRangeIncrementer = $numberRangeIncrementer;
         $this->connection = $connection;
         $this->dependencyProvider = $dependencyProvider;
         $this->logger = $logger;
+        $this->paymentMethodProvider = $paymentMethodProvider;
     }
 
     /**
@@ -60,6 +67,14 @@ class NumberRangeIncrementerDecorator implements NumberRangeIncrementerInterface
     public function increment($name)
     {
         if ($name !== self::NAME_INVOICE || !$this->dependencyProvider->isInitialized('session')) {
+            return $this->numberRangeIncrementer->increment($name);
+        }
+
+        try {
+            $paymentName = $this->dependencyProvider->getSession()->offsetGet('sOrderVariables')['sPayment']['name'];
+
+            $this->paymentMethodProvider->getPaymentTypeByName($paymentName);
+        } catch (Exception $exception) {
             return $this->numberRangeIncrementer->increment($name);
         }
 

@@ -10,8 +10,11 @@ namespace SwagPaymentPayPalUnified\Tests\Unit\Components;
 
 use Doctrine\DBAL\Connection;
 use PHPUnit\Framework\TestCase;
+use Shopware\Components\NumberRangeIncrementer;
 use SwagPaymentPayPalUnified\Components\NumberRangeIncrementerDecorator;
 use SwagPaymentPayPalUnified\Components\OrderNumberService;
+use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\ShopRegistrationTrait;
@@ -119,9 +122,18 @@ class OrderNumberServiceTest extends TestCase
      */
     private function getOrderNumberService()
     {
-        $orderNumberService = $this->getContainer()->get('paypal_unified.order_number_service');
-        static::assertInstanceOf(OrderNumberService::class, $orderNumberService);
+        $numberRangeIncrementerDecorator = new NumberRangeIncrementerDecorator(
+            new NumberRangeIncrementer($this->getContainer()->get('dbal_connection')),
+            $this->getContainer()->get('dbal_connection'),
+            $this->getContainer()->get('paypal_unified.dependency_provider'),
+            $this->createMock(LoggerServiceInterface::class),
+            $this->createMock(PaymentMethodProviderInterface::class)
+        );
 
-        return $orderNumberService;
+        return new OrderNumberService(
+            $numberRangeIncrementerDecorator,
+            $this->getContainer()->get('dbal_connection'),
+            $this->getContainer()->get('paypal_unified.dependency_provider')
+        );
     }
 }
