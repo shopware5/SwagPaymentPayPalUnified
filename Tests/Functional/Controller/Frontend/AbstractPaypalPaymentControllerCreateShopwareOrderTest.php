@@ -28,16 +28,18 @@ class AbstractPaypalPaymentControllerCreateShopwareOrderTest extends PaypalPayme
      */
     public function testCreateShopwareOrder()
     {
-        $orderNumberService = $this->getContainer()->get('paypal_unified.order_number_service');
-        $orderNumber = $orderNumberService->getOrderNumber();
-
         $session = $this->getContainer()->get('session');
-        $session->offsetSet(NumberRangeIncrementerDecorator::ORDERNUMBER_SESSION_KEY, $orderNumber);
         $session->offsetSet('sUserId', 1);
         $session->offsetSet('sOrderVariables', [
             'sBasket' => require __DIR__ . '/_fixtures/getBasket_result.php',
             'sUserData' => require __DIR__ . '/_fixtures/getUser_result.php',
+            'sPayment' => ['name' => 'SwagPaymentPayPalUnified'],
         ]);
+
+        $orderNumberService = $this->getContainer()->get('paypal_unified.order_number_service');
+        $orderNumber = $orderNumberService->getOrderNumber();
+
+        $session->offsetSet(NumberRangeIncrementerDecorator::ORDERNUMBER_SESSION_KEY, $orderNumber);
 
         $orderDataServiceMock = $this->createMock(OrderDataService::class);
         $orderDataServiceMock->expects(static::once())->method('applyPaymentTypeAttribute');
