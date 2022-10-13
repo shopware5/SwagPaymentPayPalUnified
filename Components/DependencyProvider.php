@@ -95,6 +95,16 @@ class DependencyProvider
     }
 
     /**
+     * @param string $name
+     *
+     * @return bool
+     */
+    public function isInitialized($name)
+    {
+        return $this->container->initialized($name);
+    }
+
+    /**
      * In older Shopware 5.6.x versions the PaymentTokenSubscriber::onPreDispatchFrontend method
      * sets the session cookie to another path than the original Session::createSession method.
      * This was fixed with Shopware 5.6.3, so these three versions are blacklisted for this feature.

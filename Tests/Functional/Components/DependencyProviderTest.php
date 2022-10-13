@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Components;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shopware\Components\DependencyInjection\Container;
 use Shopware\Models\Shop\DetachedShop;
@@ -20,11 +21,20 @@ class DependencyProviderTest extends TestCase
     use ContainerTrait;
     use ShopRegistrationTrait;
 
+    /**
+     * @return void
+     */
     public function testServiceAvailable()
     {
-        static::assertSame(DependencyProvider::class, \get_class($this->getContainer()->get('paypal_unified.dependency_provider')));
+        static::assertInstanceOf(
+            DependencyProvider::class,
+            $this->getContainer()->get('paypal_unified.dependency_provider')
+        );
     }
 
+    /**
+     * @return void
+     */
     public function testCanBeConstructed()
     {
         $dp = new DependencyProvider($this->getContainer());
@@ -32,6 +42,9 @@ class DependencyProviderTest extends TestCase
         static::assertNotNull($dp);
     }
 
+    /**
+     * @return void
+     */
     public function testGetShopReturnShop()
     {
         $dp = new DependencyProvider($this->getContainer());
@@ -39,6 +52,9 @@ class DependencyProviderTest extends TestCase
         static::assertInstanceOf(DetachedShop::class, $dp->getShop());
     }
 
+    /**
+     * @return void
+     */
     public function testGetShopReturnNull()
     {
         $dp = new DependencyProvider(new ContainerMockWithNoShop());
@@ -47,11 +63,41 @@ class DependencyProviderTest extends TestCase
         static::assertNull($shop);
     }
 
+    /**
+     * @return void
+     */
     public function testGetModuleHasModule()
     {
         $dp = new DependencyProvider($this->getContainer());
 
         static::assertNotNull($dp->getModule('basket'));
+    }
+
+    /**
+     * @return void
+     */
+    public function testIsInitialized()
+    {
+        $dependencyProvider = new DependencyProvider($this->createContainerMock(true));
+        static::assertTrue($dependencyProvider->isInitialized('anyService'));
+
+        $dependencyProvider = new DependencyProvider($this->createContainerMock(false));
+        static::assertFalse($dependencyProvider->isInitialized('anyService'));
+    }
+
+    /**
+     * @param bool $initializedReturnValue
+     *
+     * @return Container&MockObject
+     */
+    private function createContainerMock($initializedReturnValue)
+    {
+        $containerMock = $this->createMock(Container::class);
+        $containerMock->expects(static::once())
+            ->method('initialized')
+            ->willReturn($initializedReturnValue);
+
+        return $containerMock;
     }
 }
 
