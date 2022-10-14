@@ -14,10 +14,10 @@
 
     <changelog version="5.0.2">
         <changes lang="de">
-            PT-12946 - Korrigiert doppelte Nutzung von Bestellnummern, wenn Nicht-PayPal-Zahlungsarten genutzt werden;
+            PT-12947 - Korrigiert doppelte Nutzung von Bestellnummern, wenn Nicht-PayPal-Zahlungsarten genutzt werden;
         </changes>
         <changes lang="en">
-            PT-12946 - Fixes duplicate use of order numbers if non-PayPal payment methods are used;
+            PT-12947 - Fixes duplicate use of order numbers if non-PayPal payment methods are used;
         </changes>
     </changelog>
 
