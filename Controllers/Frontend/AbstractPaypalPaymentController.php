@@ -344,6 +344,12 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
 
                     return new CaptureAuthorizeResult(false, null, true);
                 }
+
+                if ($exceptionDetail['issue'] === 'INSTRUMENT_DECLINED') {
+                    $this->orderNumberService->releaseOrderNumber();
+
+                    return new CaptureAuthorizeResult(false, null, false, true);
+                }
             }
 
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
@@ -857,6 +863,36 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
         }
 
         $this->redirect($redirectData);
+    }
+
+    /**
+     * @return bool
+     */
+    protected function checkForKnownResponsesWhichRequiresReset(CaptureAuthorizeResult $captureAuthorizeResult)
+    {
+        $payerActionRequiredMessageTemplate = '%s PAYER_ACTION_REQUIRED';
+        $instrumentDeclinedMessageTemplate = '%s INSTRUMENT_DECLINED';
+
+        if ($captureAuthorizeResult->getPayerActionRequired() || $captureAuthorizeResult->getInstrumentDeclined()) {
+            $this->logger->debug(
+                sprintf(
+                    $captureAuthorizeResult->getPayerActionRequired() ? $payerActionRequiredMessageTemplate : $instrumentDeclinedMessageTemplate,
+                    __METHOD__
+                )
+            );
+
+            $this->redirect([
+                'module' => 'frontend',
+                'controller' => 'checkout',
+                'action' => 'confirm',
+                'payerActionRequired' => (int) $captureAuthorizeResult->getPayerActionRequired(),
+                'payerInstrumentDeclined' => (int) $captureAuthorizeResult->getInstrumentDeclined(),
+            ]);
+
+            return true;
+        }
+
+        return false;
     }
 
     /**

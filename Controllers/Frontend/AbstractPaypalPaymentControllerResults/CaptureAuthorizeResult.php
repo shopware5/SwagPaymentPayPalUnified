@@ -28,15 +28,22 @@ class CaptureAuthorizeResult
     private $payerActionRequired;
 
     /**
+     * @var bool
+     */
+    private $instrumentDeclined;
+
+    /**
      * @param bool       $requireRestart
      * @param Order|null $order
      * @param bool       $payerActionRequired
+     * @param bool       $instrumentDeclined
      */
-    public function __construct($requireRestart, $order = null, $payerActionRequired = false)
+    public function __construct($requireRestart, $order = null, $payerActionRequired = false, $instrumentDeclined = false)
     {
         $this->requireRestart = $requireRestart;
         $this->order = $order;
         $this->payerActionRequired = $payerActionRequired;
+        $this->instrumentDeclined = $instrumentDeclined;
     }
 
     /**
@@ -61,5 +68,13 @@ class CaptureAuthorizeResult
     public function getPayerActionRequired()
     {
         return $this->payerActionRequired;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getInstrumentDeclined()
+    {
+        return $this->instrumentDeclined;
     }
 }

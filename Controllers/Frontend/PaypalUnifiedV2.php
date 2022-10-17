@@ -149,10 +149,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
         $captureAuthorizeResult = $this->captureOrAuthorizeOrder($payPalOrder);
         $capturedPayPalOrder = $captureAuthorizeResult->getOrder();
         if (!$capturedPayPalOrder instanceof Order) {
-            if ($captureAuthorizeResult->getRequireRestart()) {
-                $this->orderNumberService->releaseOrderNumber();
-                $this->restartAction($useInContext, $payPalOrderId, 'frontend', 'PaypalUnifiedV2', 'return');
-
+            if ($this->checkForKnownResponsesWhichRequiresReset($captureAuthorizeResult)) {
                 return;
             }
 

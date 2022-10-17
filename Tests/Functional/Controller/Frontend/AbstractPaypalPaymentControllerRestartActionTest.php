@@ -11,12 +11,14 @@ namespace SwagPaymentPayPalUnified\Tests\Functional\Controller\Frontend;
 use Enlight_Controller_Request_RequestTestCase;
 use Enlight_Controller_Response_ResponseTestCase;
 use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentController;
+use SwagPaymentPayPalUnified\Tests\Functional\AssertLocationTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\ReflectionHelperTrait;
 use SwagPaymentPayPalUnified\Tests\Unit\PaypalPaymentControllerTestCase;
 
 class AbstractPaypalPaymentControllerRestartActionTest extends PaypalPaymentControllerTestCase
 {
     use ReflectionHelperTrait;
+    use AssertLocationTrait;
 
     /**
      * @return void
@@ -42,20 +44,7 @@ class AbstractPaypalPaymentControllerRestartActionTest extends PaypalPaymentCont
         );
 
         static::assertSame(302, $response->getHttpResponseCode());
-
-        $counter = 0;
-        foreach ($response->getHeaders() as $header) {
-            if (\strtolower($header['name']) === 'location') {
-                static::assertStringEndsWith(
-                    '/PaypalUnifiedV2/return/paypalOrderId/123456789/inContextCheckout/1',
-                    $header['value']
-                );
-
-                ++$counter;
-            }
-        }
-
-        static::assertGreaterThan(0, $counter);
+        static::assertLocationEndsWith($response, '/PaypalUnifiedV2/return/paypalOrderId/123456789/inContextCheckout/1');
     }
 
     /**
@@ -82,19 +71,6 @@ class AbstractPaypalPaymentControllerRestartActionTest extends PaypalPaymentCont
         );
 
         static::assertSame(302, $response->getHttpResponseCode());
-
-        $counter = 0;
-        foreach ($response->getHeaders() as $header) {
-            if (\strtolower($header['name']) === 'location') {
-                static::assertStringEndsWith(
-                    '/PaypalUnifiedV2/return/token/123456789',
-                    $header['value']
-                );
-
-                ++$counter;
-            }
-        }
-
-        static::assertGreaterThan(0, $counter);
+        static::assertLocationEndsWith($response, '/PaypalUnifiedV2/return/token/123456789');
     }
 }

@@ -6,4 +6,8 @@
     {if $payerActionRequired}
         {include file="frontend/_includes/messages.tpl" type="warning" content="{s name="error/basket" namespace="frontend/paypal_unified/checkout/messages"}The basket has been changed during payment process. Please proceed the payment again.{/s}"}
     {/if}
+
+    {if $payerInstrumentDeclined}
+        {include file="frontend/_includes/messages.tpl" type="warning" content="{s name="error/instrumentDeclined " namespace="frontend/paypal_unified/checkout/messages"}The basket has been changed during payment process. Please proceed the payment again.{/s}"}
+    {/if}
 {/block}

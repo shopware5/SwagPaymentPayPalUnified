@@ -464,47 +464,6 @@ class ExpressCheckoutSubscriberTest extends TestCase
     /**
      * @return void
      */
-    public function testPayActionRequiredShouldAddDataToView()
-    {
-        $this->insertGeneralSettingsFromArray(['active' => true]);
-        $this->insertExpressCheckoutSettingsFromArray(['detail_active' => true]);
-
-        $view = new ViewMock(new Enlight_Template_Manager());
-        $view->assign('sBasket', ['content' => [['articleID' => 2]]]);
-
-        $request = new Enlight_Controller_Request_RequestTestCase();
-        $request->setParam('payerActionRequired', true);
-
-        $response = new Enlight_Controller_Response_ResponseTestCase();
-
-        $enlightEventArgs = new Enlight_Controller_ActionEventArgs([
-            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
-            'request' => $request,
-            'response' => $response,
-        ]);
-
-        $this->getSubscriber()->addExpressOrderInfoOnConfirm($enlightEventArgs);
-
-        $expectedResult = [
-            'payerActionRequired' => true,
-            'paypalUnifiedCurrency' => 'EUR',
-            'paypalUnifiedEcButtonStyleColor' => '0',
-            'paypalUnifiedEcButtonStyleShape' => '0',
-            'paypalUnifiedEcButtonStyleSize' => '0',
-            'paypalUnifiedButtonLocale' => 'en_US',
-            'paypalUnifiedIntent' => 'CAPTURE',
-        ];
-
-        $result = $view->getAssign();
-
-        foreach ($expectedResult as $key => $value) {
-            static::assertSame($value, $result[$key], \sprintf('Array key "%s" does not match', $key));
-        }
-    }
-
-    /**
-     * @return void
-     */
     public function testAddExpressCheckoutButtonDetailReturnPaymentMethodInactive()
     {
         $paymentMethodProvider = $this->getPaymentMethodProvider();

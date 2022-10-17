@@ -94,16 +94,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2ExpressCheckout extends Abstr
                 return;
             }
 
-            if ($captureAuthorizeResult->getPayerActionRequired()) {
-                $this->logger->debug(sprintf('%s PAYER_ACTION_REQUIRED', __METHOD__));
-
-                $this->redirect([
-                    'module' => 'frontend',
-                    'controller' => 'checkout',
-                    'action' => 'confirm',
-                    'payerActionRequired' => true,
-                ]);
-
+            if ($this->checkForKnownResponsesWhichRequiresReset($captureAuthorizeResult)) {
                 return;
             }
 

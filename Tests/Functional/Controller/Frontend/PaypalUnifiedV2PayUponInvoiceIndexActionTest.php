@@ -16,6 +16,7 @@ use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\Services\PayUponInvoiceInstructionService;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\OrderResource;
+use SwagPaymentPayPalUnified\Tests\Functional\AssertLocationTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\Controller\Frontend\_fixtures\SimplePayPalOrderCreator;
 use SwagPaymentPayPalUnified\Tests\Functional\ShopRegistrationTrait;
 use SwagPaymentPayPalUnified\Tests\Mocks\ConnectionMock;
@@ -26,6 +27,7 @@ require __DIR__ . '/../../../../Controllers/Frontend/PaypalUnifiedV2PayUponInvoi
 class PaypalUnifiedV2PayUponInvoiceIndexActionTest extends PaypalPaymentControllerTestCase
 {
     use ShopRegistrationTrait;
+    use AssertLocationTrait;
 
     /**
      * @return void
@@ -75,19 +77,7 @@ class PaypalUnifiedV2PayUponInvoiceIndexActionTest extends PaypalPaymentControll
 
         $paypalUnifiedV2Controller->indexAction();
 
-        $counter = 0;
-        foreach ($response->getHeaders() as $header) {
-            if (\strtolower($header['name']) === 'location') {
-                static::assertStringEndsWith(
-                    '/checkout/finish/sUniqueID/123456789',
-                    $header['value']
-                );
-
-                ++$counter;
-            }
-        }
-
-        static::assertGreaterThan(0, $counter);
+        static::assertLocationEndsWith($response, '/checkout/finish/sUniqueID/123456789');
         static::assertSame(302, $response->getHttpResponseCode());
     }
 
