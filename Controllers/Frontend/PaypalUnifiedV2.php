@@ -116,9 +116,9 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
                 ->setCode(ErrorCodes::NO_ORDER_TO_PROCESS)
                 ->setException(
                     new UnexpectedValueException(
-                    'Cannot get PayPalOrderId from request',
-                    ErrorCodes::NO_ORDER_TO_PROCESS
-                ),
+                        'Cannot get PayPalOrderId from request',
+                        ErrorCodes::NO_ORDER_TO_PROCESS
+                    ),
                     sprintf('%s try to get PayPalOrderId from request', __METHOD__)
                 );
 

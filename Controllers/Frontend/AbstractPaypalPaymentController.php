@@ -308,7 +308,7 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
     protected function captureOrAuthorizeOrder($payPalOrder)
     {
         if ($payPalOrder->getStatus() === PaymentStatusV2::ORDER_COMPLETED) {
-            return new CaptureAuthorizeResult(false, $payPalOrder);
+            return new CaptureAuthorizeResult(CaptureAuthorizeResult::ORDER, $payPalOrder);
         }
 
         try {
@@ -319,7 +319,7 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
 
                 $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFULLY CAPTURED', __METHOD__));
 
-                return new CaptureAuthorizeResult(false, $capturedPayPalOrder);
+                return new CaptureAuthorizeResult(CaptureAuthorizeResult::ORDER, $capturedPayPalOrder);
             } elseif ($payPalOrder->getIntent() === PaymentIntentV2::AUTHORIZE) {
                 $this->logger->debug(sprintf('%s AUTHORIZE PAYPAL ORDER WITH ID: %s', __METHOD__, $payPalOrder->getId()));
 
@@ -327,7 +327,7 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
 
                 $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFULLY AUTHORIZED', __METHOD__));
 
-                return new CaptureAuthorizeResult(false, $authorizedPayPalOrder);
+                return new CaptureAuthorizeResult(CaptureAuthorizeResult::ORDER, $authorizedPayPalOrder);
             }
         } catch (RequestException $exception) {
             $exceptionBody = json_decode($exception->getBody(), true);
@@ -336,19 +336,19 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
                 if ($exceptionDetail['issue'] === 'DUPLICATE_INVOICE_ID') {
                     $this->orderNumberService->releaseOrderNumber();
 
-                    return new CaptureAuthorizeResult(true);
+                    return new CaptureAuthorizeResult(CaptureAuthorizeResult::REQUIRE_RESTART, true);
                 }
 
                 if ($exceptionDetail['issue'] === 'PAYER_ACTION_REQUIRED') {
                     $this->orderNumberService->releaseOrderNumber();
 
-                    return new CaptureAuthorizeResult(false, null, true);
+                    return new CaptureAuthorizeResult(CaptureAuthorizeResult::PAYER_ACTION_REQUIRED, true);
                 }
 
                 if ($exceptionDetail['issue'] === 'INSTRUMENT_DECLINED') {
                     $this->orderNumberService->releaseOrderNumber();
 
-                    return new CaptureAuthorizeResult(false, null, false, true);
+                    return new CaptureAuthorizeResult(CaptureAuthorizeResult::INSTRUMENT_DECLINED, true);
                 }
             }
 
@@ -358,7 +358,7 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
 
             $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
 
-            return new CaptureAuthorizeResult(false);
+            return new CaptureAuthorizeResult();
         } catch (Exception $exception) {
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
                 ->setCode(ErrorCodes::UNKNOWN)
@@ -366,10 +366,10 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
 
             $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
 
-            return new CaptureAuthorizeResult(false);
+            return new CaptureAuthorizeResult();
         }
 
-        return new CaptureAuthorizeResult(false);
+        return new CaptureAuthorizeResult();
     }
 
     /**

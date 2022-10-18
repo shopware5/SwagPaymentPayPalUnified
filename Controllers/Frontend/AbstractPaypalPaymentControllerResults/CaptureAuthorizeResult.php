@@ -1,4 +1,5 @@
 <?php
+
 /**
  * (c) shopware AG <info@shopware.com>
  *
@@ -12,38 +13,42 @@ use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
 
 class CaptureAuthorizeResult
 {
-    /**
-     * @var bool
-     */
-    private $requireRestart;
+    const ORDER = 'order';
+    const REQUIRE_RESTART = 'requireRestart';
+    const PAYER_ACTION_REQUIRED = 'payerActionRequired';
+    const INSTRUMENT_DECLINED = 'instrumentDeclined';
 
     /**
      * @var Order|null
      */
-    private $order;
+    private $order = null;
 
     /**
      * @var bool
      */
-    private $payerActionRequired;
+    private $requireRestart = false;
 
     /**
      * @var bool
      */
-    private $instrumentDeclined;
+    private $payerActionRequired = false;
 
     /**
-     * @param bool       $requireRestart
-     * @param Order|null $order
-     * @param bool       $payerActionRequired
-     * @param bool       $instrumentDeclined
+     * @var bool
      */
-    public function __construct($requireRestart, $order = null, $payerActionRequired = false, $instrumentDeclined = false)
+    private $instrumentDeclined = false;
+
+    /**
+     * @param string|null     $key
+     * @param bool|Order|null $value
+     */
+    public function __construct($key = null, $value = null)
     {
-        $this->requireRestart = $requireRestart;
-        $this->order = $order;
-        $this->payerActionRequired = $payerActionRequired;
-        $this->instrumentDeclined = $instrumentDeclined;
+        if ($key === null) {
+            return;
+        }
+
+        $this->$key = $value;
     }
 
     /**

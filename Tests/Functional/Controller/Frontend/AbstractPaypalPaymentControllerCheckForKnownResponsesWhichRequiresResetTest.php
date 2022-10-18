@@ -29,7 +29,7 @@ class AbstractPaypalPaymentControllerCheckForKnownResponsesWhichRequiresResetTes
     {
         $controller = $this->getAbstractController();
 
-        $captureAuthorizationResult = new CaptureAuthorizeResult(false, null, true);
+        $captureAuthorizationResult = new CaptureAuthorizeResult(CaptureAuthorizeResult::PAYER_ACTION_REQUIRED, true);
 
         $checkForKnownResponsesWhichRequiresResetMethod = $this->getReflectionMethod(
             AbstractPaypalPaymentController::class,
@@ -51,7 +51,7 @@ class AbstractPaypalPaymentControllerCheckForKnownResponsesWhichRequiresResetTes
     {
         $controller = $this->getAbstractController();
 
-        $captureAuthorizationResult = new CaptureAuthorizeResult(false, null, false, true);
+        $captureAuthorizationResult = new CaptureAuthorizeResult(CaptureAuthorizeResult::INSTRUMENT_DECLINED, true);
 
         $checkForKnownResponsesWhichRequiresResetMethod = $this->getReflectionMethod(
             AbstractPaypalPaymentController::class,
@@ -73,7 +73,7 @@ class AbstractPaypalPaymentControllerCheckForKnownResponsesWhichRequiresResetTes
     {
         $controller = $this->getAbstractController();
 
-        $captureAuthorizationResult = new CaptureAuthorizeResult(false, new Order());
+        $captureAuthorizationResult = new CaptureAuthorizeResult(CaptureAuthorizeResult::ORDER, new Order());
 
         $checkForKnownResponsesWhichRequiresResetMethod = $this->getReflectionMethod(
             AbstractPaypalPaymentController::class,
