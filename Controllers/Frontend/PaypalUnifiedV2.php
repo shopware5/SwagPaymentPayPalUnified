@@ -9,7 +9,6 @@
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\ShopwareOrderData;
 use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentController;
-use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Common\Link;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
@@ -111,8 +110,22 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
 
         $this->handleComment();
 
-        $useInContext = (bool) $this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_USE_IN_CONTEXT);
-        $payPalOrderId = $this->getPayPalOrderIdFromRequest($useInContext);
+        $payPalOrderId = $this->getPayPalOrderIdFromRequest();
+        if ($payPalOrderId === null) {
+            $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
+                ->setCode(ErrorCodes::NO_ORDER_TO_PROCESS)
+                ->setException(
+                    new UnexpectedValueException(
+                    'Cannot get PayPalOrderId from request',
+                    ErrorCodes::NO_ORDER_TO_PROCESS
+                ),
+                    sprintf('%s try to get PayPalOrderId from request', __METHOD__)
+                );
+
+            $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
+
+            return;
+        }
 
         $payPalOrder = $this->getPayPalOrder($payPalOrderId);
         if (!$payPalOrder instanceof Order) {
@@ -189,18 +202,20 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
     }
 
     /**
-     * @param bool $useInContext
-     *
-     * @return string
+     * @return string|null
      */
-    private function getPayPalOrderIdFromRequest($useInContext)
+    private function getPayPalOrderIdFromRequest()
     {
-        if (!$useInContext) {
-            // The "token" is the same as the "paypalOrderId". In this case the request comes directly form the
-            // PayPalCheckout page, so we cant influence the wording.
-            return (string) $this->Request()->getParam('token');
+        $payPalOrderID = $this->Request()->getParam('paypalOrderId');
+        if ($payPalOrderID !== null) {
+            return (string) $payPalOrderID;
         }
 
-        return (string) $this->Request()->getParam('paypalOrderId');
+        $payPalOrderID = $this->Request()->getParam('token');
+        if ($payPalOrderID !== null) {
+            return (string) $payPalOrderID;
+        }
+
+        return null;
     }
 }

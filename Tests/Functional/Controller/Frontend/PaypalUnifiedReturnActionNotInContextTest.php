@@ -130,13 +130,16 @@ class PaypalUnifiedReturnActionNotInContextTest extends PaypalPaymentControllerT
         $dependencyProviderMock->method('getSession')->willReturn($sessionMock);
         $dependencyProviderMock->method('getModule')->willReturn(new stdClass());
 
+        $request = new Enlight_Controller_Request_RequestTestCase();
+        $request->setParam('paypalOrderId', 'xxxxxxxxxxxxxxx');
+
         $controller = $this->getController(
             Shopware_Controllers_Frontend_PaypalUnifiedV2::class,
             [
                 self::SERVICE_ORDER_RESOURCE => $orderResource,
                 self::SERVICE_DEPENDENCY_PROVIDER => $dependencyProviderMock,
             ],
-            new Enlight_Controller_Request_RequestTestCase(),
+            $request,
             new Enlight_Controller_Response_ResponseHttp()
         );
 

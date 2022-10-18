@@ -106,6 +106,7 @@ class AbstractPaypalPaymentControllerHandleCommentTest extends PaypalPaymentCont
     public function testControllersCallHandleComment($controllerClass, $actionName)
     {
         $request = $this->createRequest(self::REQUEST_COMMENT);
+        $request->setParam('paypalOrderId', 'xxxxxxxxxxxxxxx');
 
         $orderModule = $this->getOrderModule();
 
