@@ -9,6 +9,11 @@
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\ShopwareOrderData;
 use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentController;
+use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\InstrumentDeclinedException;
+use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\NoOrderToProceedException;
+use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\PayerActionRequiredException;
+use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\RequireRestartException;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Common\Link;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
@@ -159,19 +164,51 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
             return;
         }
 
-        $captureAuthorizeResult = $this->captureOrAuthorizeOrder($payPalOrder);
-        $capturedPayPalOrder = $captureAuthorizeResult->getOrder();
-        if (!$capturedPayPalOrder instanceof Order) {
-            if ($this->checkForKnownResponsesWhichRequiresReset($captureAuthorizeResult)) {
-                return;
-            }
+        try {
+            $payPalOrder = $this->captureOrAuthorizeOrder($payPalOrder);
+        } catch (RequireRestartException $requireRestartException) {
+            $this->logger->debug(sprintf('%s REQUIRES A RESTART', __METHOD__));
 
+            $this->orderNumberService->releaseOrderNumber();
+
+            $this->redirect([
+                'module' => 'frontend',
+                'controller' => 'PaypalUnifiedV2',
+                'action' => 'return',
+                'paypalOrderId' => $payPalOrderId,
+                'inContextCheckout' => (int) $this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_USE_IN_CONTEXT),
+            ]);
+
+            return;
+        } catch (PayerActionRequiredException $payerActionRequiredException) {
+            $this->logger->debug(sprintf('%s PAYER_ACTION_REQUIRED', __METHOD__));
+
+            $this->redirect([
+                'module' => 'frontend',
+                'controller' => 'checkout',
+                'action' => 'confirm',
+                'payerActionRequired' => true,
+            ]);
+
+            return;
+        } catch (InstrumentDeclinedException $instrumentDeclinedException) {
+            $this->logger->debug(sprintf('%s INSTRUMENT_DECLINED', __METHOD__));
+
+            $this->redirect([
+                'module' => 'frontend',
+                'controller' => 'checkout',
+                'action' => 'confirm',
+                'payerInstrumentDeclined' => true,
+            ]);
+
+            return;
+        } catch (NoOrderToProceedException $noOrderToProceedException) {
             $this->orderNumberService->restoreOrdernumberToPool($result->getShopwareOrderNumber());
 
             return;
         }
 
-        if (!$this->checkCaptureAuthorizationStatus($capturedPayPalOrder)) {
+        if (!$this->checkCaptureAuthorizationStatus($payPalOrder)) {
             $this->orderNumberService->restoreOrdernumberToPool($result->getShopwareOrderNumber());
 
             return;
@@ -179,7 +216,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
 
         $this->createShopwareOrder($payPalOrder->getId(), $paymentType);
 
-        $this->setTransactionId($result->getShopwareOrderNumber(), $capturedPayPalOrder);
+        $this->setTransactionId($result->getShopwareOrderNumber(), $payPalOrder);
 
         $this->updatePaymentStatus($payPalOrder->getIntent(), $this->getOrderId($result->getShopwareOrderNumber()));
 

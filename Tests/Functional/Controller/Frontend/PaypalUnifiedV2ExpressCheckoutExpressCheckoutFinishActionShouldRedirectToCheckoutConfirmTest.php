@@ -77,7 +77,7 @@ class PaypalUnifiedV2ExpressCheckoutExpressCheckoutFinishActionShouldRedirectToC
 
         $paypalUnifiedV2ExpressCheckoutController->expressCheckoutFinishAction();
 
-        static::assertLocationEndsWith($response, 'checkout/confirm/payerActionRequired/1/payerInstrumentDeclined/0');
+        static::assertLocationEndsWith($response, 'checkout/confirm/payerActionRequired/1');
         static::assertSame(302, $response->getHttpResponseCode());
     }
 
@@ -130,7 +130,7 @@ class PaypalUnifiedV2ExpressCheckoutExpressCheckoutFinishActionShouldRedirectToC
 
         $paypalUnifiedV2ExpressCheckoutController->expressCheckoutFinishAction();
 
-        static::assertLocationEndsWith($response, 'checkout/confirm/payerActionRequired/0/payerInstrumentDeclined/1');
+        static::assertLocationEndsWith($response, 'checkout/confirm/payerInstrumentDeclined/1');
         static::assertSame(302, $response->getHttpResponseCode());
     }
 }

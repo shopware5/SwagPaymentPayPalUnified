@@ -32,12 +32,15 @@ use SwagPaymentPayPalUnified\Components\Services\PaymentControllerHelper;
 use SwagPaymentPayPalUnified\Components\Services\PaymentStatusService;
 use SwagPaymentPayPalUnified\Components\Services\Validation\RedirectDataBuilderFactory;
 use SwagPaymentPayPalUnified\Components\Services\Validation\SimpleBasketValidator;
-use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentControllerResults\CaptureAuthorizeResult;
 use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentControllerResults\DeterminedStatus;
 use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentControllerResults\PatchOrderNumberResult;
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\AuthorizationDeniedException;
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\CaptureDeclinedException;
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\CaptureFailedException;
+use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\InstrumentDeclinedException;
+use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\NoOrderToProceedException;
+use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\PayerActionRequiredException;
+use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\RequireRestartException;
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\UnexpectedStatusException;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
@@ -303,12 +306,12 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
     /**
      * @param Order $payPalOrder
      *
-     * @return CaptureAuthorizeResult
+     * @return Order
      */
     protected function captureOrAuthorizeOrder($payPalOrder)
     {
         if ($payPalOrder->getStatus() === PaymentStatusV2::ORDER_COMPLETED) {
-            return new CaptureAuthorizeResult(CaptureAuthorizeResult::ORDER, $payPalOrder);
+            return $payPalOrder;
         }
 
         try {
@@ -319,7 +322,7 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
 
                 $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFULLY CAPTURED', __METHOD__));
 
-                return new CaptureAuthorizeResult(CaptureAuthorizeResult::ORDER, $capturedPayPalOrder);
+                return $capturedPayPalOrder;
             } elseif ($payPalOrder->getIntent() === PaymentIntentV2::AUTHORIZE) {
                 $this->logger->debug(sprintf('%s AUTHORIZE PAYPAL ORDER WITH ID: %s', __METHOD__, $payPalOrder->getId()));
 
@@ -327,7 +330,7 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
 
                 $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFULLY AUTHORIZED', __METHOD__));
 
-                return new CaptureAuthorizeResult(CaptureAuthorizeResult::ORDER, $authorizedPayPalOrder);
+                return $authorizedPayPalOrder;
             }
         } catch (RequestException $exception) {
             $exceptionBody = json_decode($exception->getBody(), true);
@@ -336,19 +339,19 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
                 if ($exceptionDetail['issue'] === 'DUPLICATE_INVOICE_ID') {
                     $this->orderNumberService->releaseOrderNumber();
 
-                    return new CaptureAuthorizeResult(CaptureAuthorizeResult::REQUIRE_RESTART, true);
+                    throw new RequireRestartException();
                 }
 
                 if ($exceptionDetail['issue'] === 'PAYER_ACTION_REQUIRED') {
                     $this->orderNumberService->releaseOrderNumber();
 
-                    return new CaptureAuthorizeResult(CaptureAuthorizeResult::PAYER_ACTION_REQUIRED, true);
+                    throw new PayerActionRequiredException();
                 }
 
                 if ($exceptionDetail['issue'] === 'INSTRUMENT_DECLINED') {
                     $this->orderNumberService->releaseOrderNumber();
 
-                    return new CaptureAuthorizeResult(CaptureAuthorizeResult::INSTRUMENT_DECLINED, true);
+                    throw new InstrumentDeclinedException();
                 }
             }
 
@@ -358,7 +361,7 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
 
             $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
 
-            return new CaptureAuthorizeResult();
+            throw new NoOrderToProceedException();
         } catch (Exception $exception) {
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
                 ->setCode(ErrorCodes::UNKNOWN)
@@ -366,10 +369,10 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
 
             $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
 
-            return new CaptureAuthorizeResult();
+            throw new NoOrderToProceedException();
         }
 
-        return new CaptureAuthorizeResult();
+        throw new NoOrderToProceedException();
     }
 
     /**
@@ -833,66 +836,6 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
         }
 
         return (int) $shopwareOrderId;
-    }
-
-    /**
-     * @param bool                $useInContext
-     * @param string              $payPalOrderId
-     * @param string              $module
-     * @param string              $controller
-     * @param string              $action
-     * @param array<string,mixed> $extraParameter
-     *
-     * @return void
-     */
-    protected function restartAction($useInContext, $payPalOrderId, $module, $controller, $action, $extraParameter = [])
-    {
-        $this->logger->debug(sprintf('%s REQUIRES A RESTART', __METHOD__));
-
-        $redirectData = array_merge([
-            'module' => $module,
-            'controller' => $controller,
-            'action' => $action,
-        ], $extraParameter);
-
-        if (!$useInContext) {
-            $redirectData['token'] = $payPalOrderId;
-        } else {
-            $redirectData['paypalOrderId'] = $payPalOrderId;
-            $redirectData['inContextCheckout'] = true;
-        }
-
-        $this->redirect($redirectData);
-    }
-
-    /**
-     * @return bool
-     */
-    protected function checkForKnownResponsesWhichRequiresReset(CaptureAuthorizeResult $captureAuthorizeResult)
-    {
-        $payerActionRequiredMessageTemplate = '%s PAYER_ACTION_REQUIRED';
-        $instrumentDeclinedMessageTemplate = '%s INSTRUMENT_DECLINED';
-
-        if ($captureAuthorizeResult->getPayerActionRequired() || $captureAuthorizeResult->getInstrumentDeclined()) {
-            $this->logger->debug(
-                sprintf(
-                    $captureAuthorizeResult->getPayerActionRequired() ? $payerActionRequiredMessageTemplate : $instrumentDeclinedMessageTemplate,
-                    __METHOD__
-                )
-            );
-
-            $this->redirect([
-                'module' => 'frontend',
-                'controller' => 'checkout',
-                'action' => 'confirm',
-                'payerActionRequired' => (int) $captureAuthorizeResult->getPayerActionRequired(),
-                'payerInstrumentDeclined' => (int) $captureAuthorizeResult->getInstrumentDeclined(),
-            ]);
-
-            return true;
-        }
-
-        return false;
     }
 
     /**

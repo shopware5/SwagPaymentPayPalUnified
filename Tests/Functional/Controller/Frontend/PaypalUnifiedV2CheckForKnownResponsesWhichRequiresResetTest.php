@@ -48,7 +48,7 @@ class PaypalUnifiedV2CheckForKnownResponsesWhichRequiresResetTest extends Paypal
 
         $controller->returnAction();
 
-        static::assertLocationEndsWith($controller->Response(), 'checkout/confirm/payerActionRequired/1/payerInstrumentDeclined/0');
+        static::assertLocationEndsWith($controller->Response(), 'checkout/confirm/payerActionRequired/1');
         static::assertSame(302, $controller->Response()->getHttpResponseCode());
     }
 
@@ -69,7 +69,7 @@ class PaypalUnifiedV2CheckForKnownResponsesWhichRequiresResetTest extends Paypal
 
         $controller->returnAction();
 
-        static::assertLocationEndsWith($controller->Response(), 'checkout/confirm/payerActionRequired/0/payerInstrumentDeclined/1');
+        static::assertLocationEndsWith($controller->Response(), 'checkout/confirm/payerInstrumentDeclined/1');
         static::assertSame(302, $controller->Response()->getHttpResponseCode());
     }
 
