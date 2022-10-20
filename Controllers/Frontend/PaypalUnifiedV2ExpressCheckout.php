@@ -9,6 +9,10 @@
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\ShopwareOrderData;
 use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentController;
+use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\InstrumentDeclinedException;
+use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\NoOrderToProceedException;
+use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\PayerActionRequiredException;
+use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\RequireRestartException;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Patch;
@@ -84,35 +88,50 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2ExpressCheckout extends Abstr
             return;
         }
 
-        $captureAuthorizeResult = $this->captureOrAuthorizeOrder($payPalOrder);
-        $capturedPayPalOrder = $captureAuthorizeResult->getOrder();
-        if (!$capturedPayPalOrder instanceof Order) {
-            if ($captureAuthorizeResult->getRequireRestart()) {
-                $this->orderNumberService->releaseOrderNumber();
-                $this->restartAction(false, $payPalOrderId, 'frontend', 'PaypalUnifiedV2ExpressCheckout', 'expressCheckoutFinish');
+        try {
+            $payPalOrder = $this->captureOrAuthorizeOrder($payPalOrder);
+        } catch (RequireRestartException $requireRestartException) {
+            $this->logger->debug(sprintf('%s REQUIRES A RESTART', __METHOD__));
 
-                return;
-            }
+            $this->orderNumberService->releaseOrderNumber();
 
-            if ($captureAuthorizeResult->getPayerActionRequired()) {
-                $this->logger->debug(sprintf('%s PAYER_ACTION_REQUIRED', __METHOD__));
+            $this->redirect([
+                'module' => 'frontend',
+                'controller' => 'PaypalUnifiedV2ExpressCheckout',
+                'action' => 'expressCheckoutFinish',
+                'paypalOrderId' => $payPalOrderId,
+            ]);
 
-                $this->redirect([
-                    'module' => 'frontend',
-                    'controller' => 'checkout',
-                    'action' => 'confirm',
-                    'payerActionRequired' => true,
-                ]);
+            return;
+        } catch (PayerActionRequiredException $payerActionRequiredException) {
+            $this->logger->debug(sprintf('%s PAYER_ACTION_REQUIRED', __METHOD__));
 
-                return;
-            }
+            $this->redirect([
+                'module' => 'frontend',
+                'controller' => 'checkout',
+                'action' => 'confirm',
+                'payerActionRequired' => true,
+            ]);
 
+            return;
+        } catch (InstrumentDeclinedException $instrumentDeclinedException) {
+            $this->logger->debug(sprintf('%s INSTRUMENT_DECLINED', __METHOD__));
+
+            $this->redirect([
+                'module' => 'frontend',
+                'controller' => 'checkout',
+                'action' => 'confirm',
+                'payerInstrumentDeclined' => true,
+            ]);
+
+            return;
+        } catch (NoOrderToProceedException $noOrderToProceedException) {
             $this->orderNumberService->restoreOrdernumberToPool($result->getShopwareOrderNumber());
 
             return;
         }
 
-        if (!$this->checkCaptureAuthorizationStatus($capturedPayPalOrder)) {
+        if (!$this->checkCaptureAuthorizationStatus($payPalOrder)) {
             $this->orderNumberService->restoreOrdernumberToPool($result->getShopwareOrderNumber());
 
             return;
@@ -120,9 +139,9 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2ExpressCheckout extends Abstr
 
         $this->createShopwareOrder($payPalOrderId, PaymentType::PAYPAL_EXPRESS_V2);
 
-        $this->setTransactionId($result->getShopwareOrderNumber(), $capturedPayPalOrder);
+        $this->setTransactionId($result->getShopwareOrderNumber(), $payPalOrder);
 
-        $this->updatePaymentStatus($capturedPayPalOrder->getIntent(), $this->getOrderId($result->getShopwareOrderNumber()));
+        $this->updatePaymentStatus($payPalOrder->getIntent(), $this->getOrderId($result->getShopwareOrderNumber()));
 
         $this->logger->debug(sprintf('%s REDIRECT TO checkout/finish', __METHOD__));
 

@@ -272,5 +272,11 @@
             <argument type="service" id="paypal_unified.dependency_provider"/>
             <tag name="shopware.event_subscriber"/>
         </service>
+
+        <service id="paypal_unified.subscriber.checkout"
+                    class="SwagPaymentPayPalUnified\Subscriber\Checkout"
+                 public="true">
+            <tag name="shopware.event_subscriber"/>
+        </service>
     </services>
 </container>

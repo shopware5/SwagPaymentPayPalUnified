@@ -11,6 +11,7 @@ namespace SwagPaymentPayPalUnified\Tests\Functional\Controller\Frontend;
 use Enlight_Controller_Request_RequestTestCase;
 use Generator;
 use Shopware_Controllers_Frontend_PaypalUnifiedV2;
+use stdClass;
 use SwagPaymentPayPalUnified\Tests\Functional\ReflectionHelperTrait;
 use SwagPaymentPayPalUnified\Tests\Unit\PaypalPaymentControllerTestCase;
 
@@ -21,19 +22,15 @@ class PayPalUnifiedV2GetPayPalOrderIdFromRequestTest extends PaypalPaymentContro
     /**
      * @dataProvider getPayPalOrderIdFromRequestTestDataProvider
      *
-     * @param bool   $useInContext
-     * @param string $expectedResult
+     * @param stdClass    $keyValuePair
+     * @param string|null $expectedResult
      *
      * @return void
      */
-    public function testGetPayPalOrderIdFromRequest($useInContext, $expectedResult)
+    public function testGetPayPalOrderIdFromRequest($keyValuePair, $expectedResult)
     {
         $request = new Enlight_Controller_Request_RequestTestCase();
-        if ($useInContext) {
-            $request->setParam('paypalOrderId', $expectedResult);
-        } else {
-            $request->setParam('token', $expectedResult);
-        }
+        $request->setParam($keyValuePair->key, $keyValuePair->value);
 
         $paypalUnifiedV2Controller = $this->getController(
             Shopware_Controllers_Frontend_PaypalUnifiedV2::class,
@@ -43,7 +40,7 @@ class PayPalUnifiedV2GetPayPalOrderIdFromRequestTest extends PaypalPaymentContro
 
         $reflectionMethod = $this->getReflectionMethod(Shopware_Controllers_Frontend_PaypalUnifiedV2::class, 'getPayPalOrderIdFromRequest');
 
-        $result = $reflectionMethod->invoke($paypalUnifiedV2Controller, $useInContext);
+        $result = $reflectionMethod->invoke($paypalUnifiedV2Controller);
 
         static::assertSame($expectedResult, $result);
     }
@@ -54,13 +51,33 @@ class PayPalUnifiedV2GetPayPalOrderIdFromRequestTest extends PaypalPaymentContro
     public function getPayPalOrderIdFromRequestTestDataProvider()
     {
         yield 'Use inContext' => [
-            true,
+            $this->createKeyValuePairForRequest('paypalOrderId', 'thisIsAPayPalOrderId'),
             'thisIsAPayPalOrderId',
         ];
 
         yield 'Use not inContext' => [
-            false,
+            $this->createKeyValuePairForRequest('token', 'thisIsAPayPalToken'),
             'thisIsAPayPalToken',
         ];
+
+        yield 'Set nonsense' => [
+            $this->createKeyValuePairForRequest('nonsense', 'thisIsAPayPalToken'),
+            null,
+        ];
+    }
+
+    /**
+     * @param string $key
+     * @param string $value
+     *
+     * @return stdClass
+     */
+    private function createKeyValuePairForRequest($key, $value)
+    {
+        $keyValuePair = new stdClass();
+        $keyValuePair->key = $key;
+        $keyValuePair->value = $value;
+
+        return $keyValuePair;
     }
 }

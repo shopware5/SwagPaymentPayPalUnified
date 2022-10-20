@@ -167,27 +167,6 @@ class ExpressCheckout implements SubscriberInterface
             return;
         }
 
-        $isPayerActionRequired = (bool) $request->getParam('payerActionRequired', false);
-        if ($isPayerActionRequired) {
-            /** @var GeneralSettingsModel|null $generalSettings */
-            $generalSettings = $this->settingsService->getSettings();
-            if (!$generalSettings || !$generalSettings->getActive()) {
-                return;
-            }
-
-            /** @var ExpressSettingsModel|null $expressSettings */
-            $expressSettings = $this->settingsService->getSettings(null, SettingsTable::EXPRESS_CHECKOUT);
-            if (!$expressSettings) {
-                return;
-            }
-
-            $view->assign('payerActionRequired', true);
-            $this->addEcButtonBehaviour($view, $generalSettings);
-            $this->addEcButtonStyleInfo($view, $expressSettings, $generalSettings);
-
-            return;
-        }
-
         if (\strtolower($request->getActionName()) === 'confirm' && $request->getParam('expressCheckout', false)) {
             $view->assign('paypalUnifiedExpressCheckout', true);
             $view->assign('paypalUnifiedExpressOrderId', $request->getParam('paypalOrderId'));

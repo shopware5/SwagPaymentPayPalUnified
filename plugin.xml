@@ -12,6 +12,15 @@
     <author>shopware AG</author>
     <compatibility minVersion="5.2.27" maxVersion="5.99.99"/>
 
+    <changelog version="REPLACE_GLOBAL_WITH_NEXT_VERSION">
+        <changes lang="de">
+            PT-12922 - Fügt eine Benachrichtigung für den Kunden hinzu, wenn die bei PayPal ausgewählte Zahlart abgelehnt wird;
+        </changes>
+        <changes lang="en">
+            PT-12922 - Adds a notification for the customer when the payment method selected at PayPal is rejected;
+        </changes>
+    </changelog>
+
     <changelog version="5.0.2">
         <changes lang="de">
             PT-12947 - Korrigiert doppelte Nutzung von Bestellnummern, wenn Nicht-PayPal-Zahlungsarten genutzt werden;

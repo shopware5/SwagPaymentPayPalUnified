@@ -13,7 +13,10 @@ use Generator;
 use PHPUnit\Framework\MockObject\MockObject;
 use Shopware\Components\HttpClient\RequestException;
 use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentController;
-use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentControllerResults\CaptureAuthorizeResult;
+use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\InstrumentDeclinedException;
+use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\NoOrderToProceedException;
+use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\PayerActionRequiredException;
+use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\RequireRestartException;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\Giropay;
@@ -44,11 +47,9 @@ class AbstractPaymentControllerCaptureOrAuthorizeOrderTest extends PaypalPayment
 
         $reflectionMethod = $this->getReflectionMethod(AbstractPaypalPaymentController::class, 'captureOrAuthorizeOrder');
 
-        /** @var CaptureAuthorizeResult $result */
-        $result = $reflectionMethod->invoke($abstractController, $payPalOrder);
+        $resultOrder = $reflectionMethod->invoke($abstractController, $payPalOrder);
 
-        static::assertFalse($result->getRequireRestart());
-        static::assertInstanceOf(Order::class, $result->getOrder());
+        static::assertInstanceOf(Order::class, $resultOrder);
     }
 
     /**
@@ -72,12 +73,10 @@ class AbstractPaymentControllerCaptureOrAuthorizeOrderTest extends PaypalPayment
 
         $reflectionMethod = $this->getReflectionMethod(AbstractPaypalPaymentController::class, 'captureOrAuthorizeOrder');
 
-        /** @var CaptureAuthorizeResult $result */
-        $result = $reflectionMethod->invoke($abstractController, $payPalOrder);
+        $resultOrder = $reflectionMethod->invoke($abstractController, $payPalOrder);
 
-        static::assertFalse($result->getRequireRestart());
-        static::assertInstanceOf(Order::class, $result->getOrder());
-        static::assertSame($status, $result->getOrder()->getStatus());
+        static::assertInstanceOf(Order::class, $resultOrder);
+        static::assertSame($status, $resultOrder->getStatus());
     }
 
     /**
@@ -103,11 +102,11 @@ class AbstractPaymentControllerCaptureOrAuthorizeOrderTest extends PaypalPayment
      *
      * @param string $method
      * @param string $intent
-     * @param bool   $requireRestart
+     * @param string $expectedException
      *
      * @return void
      */
-    public function testCaptureOrAuthorizeOrderShouldThrowException($method, $intent, Exception $exception, $requireRestart = false)
+    public function testCaptureOrAuthorizeOrderShouldThrowException($method, $intent, Exception $exception, $expectedException)
     {
         $payPalOrder = $this->createPayPalOrder($intent, PaymentStatusV2::ORDER_CREATED);
 
@@ -120,15 +119,11 @@ class AbstractPaymentControllerCaptureOrAuthorizeOrderTest extends PaypalPayment
 
         $reflectionMethod = $this->getReflectionMethod(AbstractPaypalPaymentController::class, 'captureOrAuthorizeOrder');
 
-        /** @var CaptureAuthorizeResult $result */
+        static::expectException($expectedException);
+
         $result = $reflectionMethod->invoke($abstractController, $payPalOrder);
 
-        static::assertNull($result->getOrder());
-        if ($requireRestart) {
-            static::assertTrue($result->getRequireRestart());
-        } else {
-            static::assertFalse($result->getRequireRestart());
-        }
+        static::assertNull($result);
     }
 
     /**
@@ -136,42 +131,60 @@ class AbstractPaymentControllerCaptureOrAuthorizeOrderTest extends PaypalPayment
      */
     public function captureOrAuthorizeOrderShouldThrowExceptionTestDataProvider()
     {
-        yield 'CAPTURE CaptureAuthorizeResult requires a restart' => [
+        yield 'CAPTURE expects Exception RequireRestartException' => [
             self::RESOURCE_METHOD_CAPTURE,
             PaymentIntentV2::CAPTURE,
             new RequestException('Error', 0, null, (string) json_encode(['details' => [['issue' => 'DUPLICATE_INVOICE_ID']]])),
-            true,
+            RequireRestartException::class,
         ];
 
-        yield 'CAPTURE CaptureAuthorizeResult requires no restart' => [
+        yield 'CAPTURE expects Exception PayerActionRequiredException' => [
             self::RESOURCE_METHOD_CAPTURE,
             PaymentIntentV2::CAPTURE,
-            new RequestException('Error'),
+            new RequestException('Error', 0, null, (string) json_encode(['details' => [['issue' => 'PAYER_ACTION_REQUIRED']]])),
+            PayerActionRequiredException::class,
         ];
 
-        yield 'CAPTURE CaptureAuthorizeResult requires no restart with other exception type' => [
+        yield 'CAPTURE expects Exception InstrumentDeclinedException' => [
+            self::RESOURCE_METHOD_CAPTURE,
+            PaymentIntentV2::CAPTURE,
+            new RequestException('Error', 0, null, (string) json_encode(['details' => [['issue' => 'INSTRUMENT_DECLINED']]])),
+            InstrumentDeclinedException::class,
+        ];
+
+        yield 'CAPTURE expects Exception NoOrderToProceedException' => [
             self::RESOURCE_METHOD_CAPTURE,
             PaymentIntentV2::CAPTURE,
             new Exception('Error'),
+            NoOrderToProceedException::class,
         ];
 
-        yield 'AUTHORIZE CaptureAuthorizeResult requires a restart' => [
+        yield 'AUTHORIZE expects Exception RequireRestartException' => [
             self::RESOURCE_METHOD_AUTHORIZE,
             PaymentIntentV2::AUTHORIZE,
             new RequestException('Error', 0, null, (string) json_encode(['details' => [['issue' => 'DUPLICATE_INVOICE_ID']]])),
-            true,
+            RequireRestartException::class,
         ];
 
-        yield 'AUTHORIZE CaptureAuthorizeResult requires no restart' => [
+        yield 'AUTHORIZE expects Exception PayerActionRequiredException' => [
             self::RESOURCE_METHOD_AUTHORIZE,
             PaymentIntentV2::AUTHORIZE,
-            new RequestException('Error'),
+            new RequestException('Error', 0, null, (string) json_encode(['details' => [['issue' => 'PAYER_ACTION_REQUIRED']]])),
+            PayerActionRequiredException::class,
         ];
 
-        yield 'AUTHORIZE CaptureAuthorizeResult requires no restart with other exception type' => [
+        yield 'AUTHORIZE expects Exception InstrumentDeclinedException' => [
+            self::RESOURCE_METHOD_AUTHORIZE,
+            PaymentIntentV2::AUTHORIZE,
+            new RequestException('Error', 0, null, (string) json_encode(['details' => [['issue' => 'INSTRUMENT_DECLINED']]])),
+            InstrumentDeclinedException::class,
+        ];
+
+        yield 'AUTHORIZE expects Exception NoOrderToProceedException' => [
             self::RESOURCE_METHOD_AUTHORIZE,
             PaymentIntentV2::AUTHORIZE,
             new Exception('Error'),
+            NoOrderToProceedException::class,
         ];
     }
 
@@ -186,11 +199,11 @@ class AbstractPaymentControllerCaptureOrAuthorizeOrderTest extends PaypalPayment
 
         $reflectionMethod = $this->getReflectionMethod(AbstractPaypalPaymentController::class, 'captureOrAuthorizeOrder');
 
-        /** @var CaptureAuthorizeResult $result */
-        $result = $reflectionMethod->invoke($abstractController, $payPalOrder);
+        static::expectException(NoOrderToProceedException::class);
 
-        static::assertFalse($result->getRequireRestart());
-        static::assertNull($result->getOrder());
+        $resultOrder = $reflectionMethod->invoke($abstractController, $payPalOrder);
+
+        static::assertNull($resultOrder);
     }
 
     /**

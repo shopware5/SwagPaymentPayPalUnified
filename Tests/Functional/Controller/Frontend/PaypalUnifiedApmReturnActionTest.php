@@ -18,6 +18,7 @@ use SwagPaymentPayPalUnified\Components\Services\PaymentStatusService;
 use SwagPaymentPayPalUnified\Components\Services\Validation\SimpleBasketValidator;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\OrderResource;
+use SwagPaymentPayPalUnified\Tests\Functional\AssertLocationTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\Controller\Frontend\_fixtures\SimplePayPalOrderCreator;
 use SwagPaymentPayPalUnified\Tests\Functional\ShopRegistrationTrait;
@@ -28,6 +29,7 @@ class PaypalUnifiedApmReturnActionTest extends PaypalPaymentControllerTestCase
 {
     use ContainerTrait;
     use ShopRegistrationTrait;
+    use AssertLocationTrait;
 
     /**
      * @return void
@@ -80,19 +82,7 @@ class PaypalUnifiedApmReturnActionTest extends PaypalPaymentControllerTestCase
 
         $controller->returnAction();
 
-        $counter = 0;
-        foreach ($response->getHeaders() as $header) {
-            if (\strtolower($header['name']) === 'location') {
-                static::assertStringEndsWith(
-                    '/checkout/finish/sUniqueID/123456789',
-                    $header['value']
-                );
-
-                ++$counter;
-            }
-        }
-
-        static::assertGreaterThan(0, $counter);
+        static::assertLocationEndsWith($response, '/checkout/finish/sUniqueID/123456789');
         static::assertSame(302, $response->getHttpResponseCode());
     }
 
