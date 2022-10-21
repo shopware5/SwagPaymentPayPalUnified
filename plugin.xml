@@ -5,18 +5,20 @@
     <label lang="de">PayPal</label>
     <label lang="en">PayPal</label>
 
-    <version>5.0.2</version>
+    <version>5.0.3</version>
     <copyright>(c) by shopware AG</copyright>
     <license>MIT</license>
     <link>http://store.shopware.com</link>
     <author>shopware AG</author>
     <compatibility minVersion="5.2.27" maxVersion="5.99.99"/>
 
-    <changelog version="REPLACE_GLOBAL_WITH_NEXT_VERSION">
+    <changelog version="5.0.3">
         <changes lang="de">
-            PT-12922 - Fügt eine Benachrichtigung für den Kunden hinzu, wenn die bei PayPal ausgewählte Zahlart abgelehnt wird;
+            PT-12922 - 404-Fehler beim Zahlungsvorgang behoben;
+            PT-12922 - Fügt eine Benachrichtigung für den Kunden hinzu, wenn die bei PayPal ausgewählte Zahlungsart abgelehnt wird;
         </changes>
         <changes lang="en">
+            PT-12922 - Fix 404 error during payment process;
             PT-12922 - Adds a notification for the customer when the payment method selected at PayPal is rejected;
         </changes>
     </changelog>
