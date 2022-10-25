@@ -54,8 +54,8 @@
         var $registerNewsletterField = $(this.registerNewsletterFieldSelector),
             result = {};
 
-        if ($registerNewsletterField.length) {
-            result[this.registerNewsletterParamerterName] = $registerNewsletterField.is(':checked');
+        if ($registerNewsletterField.length && $registerNewsletterField.is(':checked')) {
+            result[this.registerNewsletterParamerterName] = true;
         }
 
         return result;

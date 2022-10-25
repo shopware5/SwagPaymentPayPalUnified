@@ -14,9 +14,11 @@
 
     <changelog version="REPLACE_GLOBALLY_WITH_NEXT_VERSION">
         <changes lang="de">
+            PT-12859 - Kunden können beim Express Checkout wieder die Adresse wechseln;
             PT-12936 - Verbessert die Überprüfung der Kundentelefonnummer beim Rechnungskauf;
         </changes>
         <changes lang="en">
+            PT-12859 - Customers can change the address again during Express Checkout;
             PT-12936 - Improves the verification of the customer phone number for pay upon invoice;
         </changes>
     </changelog>
