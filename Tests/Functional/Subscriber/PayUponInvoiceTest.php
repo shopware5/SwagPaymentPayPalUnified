@@ -108,15 +108,27 @@ class PayUponInvoiceTest extends TestCase
             ['expectLegalText' => true, 'expectPhoneField' => true, 'expectBirthdayField' => null],
         ];
 
-        yield 'Should assign showPayUponInvoiceLegalText => true, showPayUponInvoiceBirthdayField => true' => [
+        yield 'Should assign showPayUponInvoiceLegalText => true, showPayUponInvoiceBirthdayField => true because birthday is null' => [
             $this->createEnlightEventArgs('confirm', PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME),
             ['sUserData' => ['billingaddress' => ['phone' => self::PHONE_NUMBER], 'additional' => ['user' => ['birthday' => null]]]],
             ['expectLegalText' => true, 'expectPhoneField' => null, 'expectBirthdayField' => true],
         ];
 
-        yield 'Should assign showPayUponInvoiceLegalText => true, showPayUponInvoicePhoneField => true, showPayUponInvoiceBirthdayField => true' => [
+        yield 'Should assign showPayUponInvoiceLegalText => true, showPayUponInvoiceBirthdayField => true because birthday is 0000-00-00' => [
+            $this->createEnlightEventArgs('confirm', PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME),
+            ['sUserData' => ['billingaddress' => ['phone' => self::PHONE_NUMBER], 'additional' => ['user' => ['birthday' => '0000-00-00']]]],
+            ['expectLegalText' => true, 'expectPhoneField' => null, 'expectBirthdayField' => true],
+        ];
+
+        yield 'Should assign showPayUponInvoiceLegalText => true, showPayUponInvoicePhoneField => true, showPayUponInvoiceBirthdayField => true because phone and birthday are null' => [
             $this->createEnlightEventArgs('confirm', PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME),
             ['sUserData' => ['billingaddress' => ['phone' => null], 'additional' => ['user' => ['birthday' => null]]]],
+            ['expectLegalText' => true, 'expectPhoneField' => true, 'expectBirthdayField' => true],
+        ];
+
+        yield 'Should assign showPayUponInvoiceLegalText => true, showPayUponInvoicePhoneField => true, showPayUponInvoiceBirthdayField => true because phone and birthday are empty strings' => [
+            $this->createEnlightEventArgs('confirm', PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME),
+            ['sUserData' => ['billingaddress' => ['phone' => ''], 'additional' => ['user' => ['birthday' => '']]]],
             ['expectLegalText' => true, 'expectPhoneField' => true, 'expectBirthdayField' => true],
         ];
     }
@@ -154,16 +166,16 @@ class PayUponInvoiceTest extends TestCase
             static::assertSame(self::DATE_OF_BIRTH, $userDataResult['additional']['user']['birthday'], 'sOrderVariables -> birthday is not updated');
             static::assertSame(self::DATE_OF_BIRTH, $saveExtraFieldsResult['dateOfBirth'], 'puiExtraFields -> birthday is not set');
         } else {
-            static::assertNull($userDataResult['additional']['user']['birthday']);
-            static::assertNull($saveExtraFieldsResult['dateOfBirth']);
+            static::assertEmpty($userDataResult['additional']['user']['birthday']);
+            static::assertEmpty($saveExtraFieldsResult['dateOfBirth']);
         }
 
         if ($expectsPhoneNUmber) {
             static::assertSame(self::PHONE_NUMBER, $userDataResult['billingaddress']['phone'], 'sOrderVariables -> phone is not updated');
             static::assertSame(self::PHONE_NUMBER, $saveExtraFieldsResult['phoneNumber'], 'puiExtraFields -> phoneNumber is not set');
         } else {
-            static::assertNull($userDataResult['billingaddress']['phone']);
-            static::assertNull($saveExtraFieldsResult['phoneNumber']);
+            static::assertEmpty($userDataResult['billingaddress']['phone']);
+            static::assertEmpty($saveExtraFieldsResult['phoneNumber']);
         }
     }
 
@@ -172,13 +184,24 @@ class PayUponInvoiceTest extends TestCase
      */
     public function handleExtraDataOnCheckoutTestDataProvider()
     {
-        yield 'Should set session vars -- birthday and phone number is null' => [
+        yield 'Should set session vars -- birthday and phone number are null' => [
             $this->createEnlightEventArgs(
                 'payment',
                 PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME,
                 $this->createRequest()
             ),
             ['sUserData' => ['billingaddress' => ['id' => self::ANY_ID, 'phone' => null], 'additional' => ['user' => ['id' => self::ANY_ID, 'birthday' => null]]]],
+            false,
+            false,
+        ];
+
+        yield 'Should set session vars -- birthday and phone number are empty strings' => [
+            $this->createEnlightEventArgs(
+                'payment',
+                PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME,
+                $this->createRequest()
+            ),
+            ['sUserData' => ['billingaddress' => ['id' => self::ANY_ID, 'phone' => ''], 'additional' => ['user' => ['id' => self::ANY_ID, 'birthday' => '']]]],
             false,
             false,
         ];

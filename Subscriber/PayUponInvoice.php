@@ -96,11 +96,11 @@ class PayUponInvoice implements SubscriberInterface
 
         $customerData = $this->session->offsetGet('sOrderVariables')['sUserData'];
 
-        if (!isset($customerData['billingaddress']['phone'])) {
+        if (empty($customerData['billingaddress']['phone'])) {
             $viewAssignVariables['showPayUponInvoicePhoneField'] = true;
         }
 
-        if (!isset($customerData['additional']['user']['birthday'])) {
+        if (empty($customerData['additional']['user']['birthday']) || $customerData['additional']['user']['birthday'] === '0000-00-00') {
             $viewAssignVariables['showPayUponInvoiceBirthdayField'] = true;
         }
 

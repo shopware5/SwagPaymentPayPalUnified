@@ -12,6 +12,15 @@
     <author>shopware AG</author>
     <compatibility minVersion="5.2.27" maxVersion="5.99.99"/>
 
+    <changelog version="REPLACE_GLOBALLY_WITH_NEXT_VERSION">
+        <changes lang="de">
+            PT-12936 - Verbessert die Überprüfung der Kundentelefonnummer beim Rechnungskauf;
+        </changes>
+        <changes lang="en">
+            PT-12936 - Improves the verification of the customer phone number for pay upon invoice;
+        </changes>
+    </changelog>
+
     <changelog version="5.0.3">
         <changes lang="de">
             PT-12922 - 404-Fehler beim Zahlungsvorgang behoben;
