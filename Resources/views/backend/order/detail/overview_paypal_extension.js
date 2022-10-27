@@ -16,6 +16,10 @@ Ext.define('Shopware.apps.Order.view.detail.PaypalExtensionOverview', {
 
         this.paypalPaymentMethodNames = Ext.JSON.decode(this.paypalPaymentMethodNames);
 
+        if (this.record.raw.payment === null) {
+            return items;
+        }
+
         if (this.paypalPaymentMethodNames.indexOf(this.record.raw.payment.name) >= 0) {
             items.push(this.createExtendedTrackingItem());
         }
@@ -26,7 +30,7 @@ Ext.define('Shopware.apps.Order.view.detail.PaypalExtensionOverview', {
     /**
      * @returns { Ext.container.Container }
      */
-    createExtendedTrackingItem: function() {
+    createExtendedTrackingItem: function () {
         return Ext.create('Ext.container.Container', {
             style: {
                 marginTop: '10px'
@@ -40,8 +44,8 @@ Ext.define('Shopware.apps.Order.view.detail.PaypalExtensionOverview', {
     /**
      * @returns { Ext.button.Button }
      */
-    createPayPalDeepLink: function() {
-        var url = this.trackingUrlTemplate.replace('%s',  this.record.raw.transactionId);
+    createPayPalDeepLink: function () {
+        var url = this.trackingUrlTemplate.replace('%s', this.record.raw.transactionId);
 
         return Ext.create('Ext.button.Button', {
             flex: 1,
