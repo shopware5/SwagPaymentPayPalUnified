@@ -21,6 +21,8 @@
                  data-esdProducts='{$paypalUnifiedEsdProducts}'
                  data-communicationErrorMessage="{s name='error/communication' namespace='frontend/paypal_unified/checkout/messages'}{/s}"
                  data-communicationErrorTitle="{s name='error/communication/title' namespace='frontend/paypal_unified/checkout/messages'}{/s}"
+                 data-riskManagementErrorTitle="{s name='errorMessagePrefix' namespace='frontend/paypal_unified/checkout/messages'}{/s}"
+                 data-riskManagementErrorMessage="{s name='error/RiskManagementMatched' namespace='frontend/paypal_unified/checkout/messages'}{/s}"
                     {block name='paypal_unified_ec_button_container_cart_data'}{/block}>
             </div>
         {/block}

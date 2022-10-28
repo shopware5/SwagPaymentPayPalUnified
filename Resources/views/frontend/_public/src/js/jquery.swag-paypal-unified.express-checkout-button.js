@@ -166,6 +166,16 @@
             communicationErrorTitle: '',
 
             /**
+             * @type string
+             */
+            riskManagementErrorTitle: '',
+
+            /**
+             * @type string
+             */
+            riskManagementErrorMessage: '',
+
+            /**
              * PayPal button height small
              *
              * @type number
@@ -459,6 +469,11 @@
                 url: me.opts.createOrderUrl,
                 data: data
             }).then(function(response) {
+                if (response.riskManagementFailed === true) {
+                    me.isRiskManagementError = true;
+                    return;
+                }
+
                 return response.paypalOrderId;
             }, function() {
             }).promise();
@@ -491,16 +506,29 @@
         },
 
         onPayPalAPIError: function() {
-            $.loadingIndicator.close();
+            var content,
+                config;
 
-            var content = $('<div>').html(this.opts.communicationErrorMessage),
+            if (this.isRiskManagementError) {
+                this.isRiskManagementError = false;
+                content = $('<div>').html(this.opts.riskManagementErrorMessage);
+                config = {
+                    title: this.opts.riskManagementErrorTitle,
+                    width: 400,
+                    height: 200
+                };
+            } else {
+                content = $('<div>').html(this.opts.communicationErrorMessage);
                 config = {
                     title: this.opts.communicationErrorTitle,
                     width: 320,
                     height: 200
                 };
+            }
 
             content.css('padding', '10px');
+
+            $.loadingIndicator.close();
 
             $.modal.open(content, config);
         },
