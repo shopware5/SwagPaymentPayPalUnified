@@ -97,7 +97,7 @@ services:
             shopware:
                 condition: "service_started"
     install-test-dependencies:
-        image: mcr.microsoft.com/playwright:v1.22.0-focal
+        image: mcr.microsoft.com/playwright:v1.27.1-focal
         user: "pwuser:pwuser"
         volumes:
             - "${CI_PROJECT_DIR}:/project"
@@ -105,7 +105,7 @@ services:
         entrypoint: [ "npm" ]
         command: [ "install" ]
     playwright:
-        image: mcr.microsoft.com/playwright:v1.22.0-focal
+        image: mcr.microsoft.com/playwright:v1.27.1-focal
         environment:
             <<: *default-environment
             <<: *playwright-environment
@@ -118,7 +118,7 @@ services:
         depends_on:
             <<: *playwright-test-dependencies
     playwright-debug:
-        image: mcr.microsoft.com/playwright:v1.22.0-focal
+        image: mcr.microsoft.com/playwright:v1.27.1-focal
         environment:
             <<: *default-environment
             <<: *playwright-environment

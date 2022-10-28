@@ -176,19 +176,19 @@ class CustomerService
     private function registerCustomer(array $customerData)
     {
         $customer = new Customer();
-        $form = $this->formFactory->create(PersonalFormType::class, $customer);
-        $form->submit($customerData);
+        $personalForm = $this->formFactory->create(PersonalFormType::class, $customer);
+        $personalForm->submit($customerData);
 
         $customer->setPaymentId($this->paymentMethodProvider->getPaymentId(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME));
 
         $address = new Address();
-        $form = $this->formFactory->create(AddressFormType::class, $address);
-        $form->submit($customerData);
+        $addressForm = $this->formFactory->create(AddressFormType::class, $address);
+        $addressForm->submit($customerData);
 
         $context = $this->contextService->getShopContext();
         $shop = $context->getShop();
 
-        $this->registerService->register($shop, $customer, $address, $address);
+        $this->registerService->register($shop, $customer, $address);
 
         return $customer;
     }
