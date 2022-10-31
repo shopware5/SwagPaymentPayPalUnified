@@ -63,7 +63,7 @@ Ext.define('Shopware.apps.Config.view.form.DocumentPaypalUnified', {
             xtype: 'tinymce',
             fieldLabel: '{s namespace="backend/document/paypal_config" name="document/detail/pui_content_content_info_label"}Content info content Pay upon Invoice{/s}',
             labelWidth: 100,
-            name: 'PayPal_Unified_Ratepay_Instructions',
+            name: 'PayPal_Unified_Ratepay_Instructions_Value',
             hidden: true,
             translatable: true
         }, {
