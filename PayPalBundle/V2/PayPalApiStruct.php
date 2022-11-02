@@ -83,6 +83,7 @@ abstract class PayPalApiStruct implements \JsonSerializable
     /**
      * @return mixed[]
      */
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         $data = [];

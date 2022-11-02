@@ -78,7 +78,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedWebhook extends Enlight_Control
 
             // Webhook handler exists?
             if (!$this->webhookService->handlerExists($webhook->getEventType())) {
-                $this->logger->warning(
+                $this->logger->notify(
                     '[Webhook] Could not process the request, because no handler has been referenced to this type of event.',
                     [$postData]
                 );
