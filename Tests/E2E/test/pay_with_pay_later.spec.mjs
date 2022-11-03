@@ -67,8 +67,6 @@ test.describe('Is Pay Later fully functional', () => {
 
         await paypalPage.locator('label[for="credit-offer-1"]').click();
 
-        await paypalPage.locator('text=/.*Kreditwürdigkeitsprüfung.*/').click();
-
         await paypalPage.locator('#payment-submit-btn').click();
 
         await paypalPage.locator('#payment-submit-btn').click();

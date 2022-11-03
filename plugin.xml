@@ -17,6 +17,7 @@
             PT-12725 - Verbessert das Risikomanagement bei Express Checkout und ausgeschlossenen Produkten;
             PT-12859 - Kunden können beim Express Checkout wieder die Adresse wechseln;
             PT-12880 - Öffnen von Bestellungen mit gelöschter Zahlungsart wieder möglich;
+            PT-12909 - Verbessert das Verhalten der Pflichtfelder in den Einstellungen;
             PT-12931 - Fügt das Zahlungsziel zum Rechnungstemplate hinzu;
             PT-12936 - Verbessert die Überprüfung der Kundentelefonnummer beim Rechnungskauf;
             PT-12953 - Verbessert die 3D-Secure Überprüfung bei Kreditkartenzahlungen;
@@ -25,6 +26,7 @@
             PT-12725 - Improves risk management for Express Checkout and excluded products;
             PT-12859 - Customers can change the address again during Express Checkout;
             PT-12880 - Opening orders with deleted payment method is possible again;
+            PT-12909 - Improves the behavior of mandatory fields in the settings;
             PT-12931 - Adds the payment term to the invoice template;
             PT-12936 - Improves the verification of the customer phone number for pay upon invoice;
             PT-12953 - Improves 3D-Secure verification for credit card payments;

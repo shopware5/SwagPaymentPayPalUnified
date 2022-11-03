@@ -201,14 +201,12 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
                     name: 'clientId',
                     fieldLabel: '{s name="fieldset/rest/clientId"}Client-ID{/s}',
                     helpText: '{s name="fieldset/rest/clientId/help"}The REST-API Client-ID that is being used to authenticate this plugin to the PayPal API.{/s}',
-                    allowBlank: false
                 },
                 {
                     xtype: 'textfield',
                     name: 'clientSecret',
                     fieldLabel: '{s name="fieldset/rest/clientSecret"}Client-Secret{/s}',
                     helpText: '{s name="fieldset/rest/clientSecret/help"}The REST-API Client-Secret that is being used to authenticate this plugin to the PayPal API.{/s}',
-                    allowBlank: false
                 },
                 {
                     xtype: 'textfield',
@@ -232,14 +230,12 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
                     name: 'sandboxClientId',
                     fieldLabel: '{s name="fieldset/rest/sandboxClientId"}Client-ID{/s}',
                     helpText: '{s name="fieldset/rest/sandboxClientId/help"}The REST-API Client-ID that is being used to authenticate this plugin to the PayPal API.{/s}',
-                    allowBlank: false
                 },
                 {
                     xtype: 'textfield',
                     name: 'sandboxClientSecret',
                     fieldLabel: '{s name="fieldset/rest/sandboxClientSecret"}Client-Secret{/s}',
                     helpText: '{s name="fieldset/rest/sandboxClientSecret/help"}The REST-API Client-Secret that is being used to authenticate this plugin to the PayPal API.{/s}',
-                    allowBlank: false
                 },
                 {
                     xtype: 'textfield',

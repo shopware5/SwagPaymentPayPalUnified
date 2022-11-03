@@ -103,6 +103,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2AdvancedCreditDebitCard extend
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
                 ->setCode(ErrorCodes::UNKNOWN)
                 ->setException(new UnexpectedValueException("Required request parameter 'paypalOrderId' is missing"), '');
+
             $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
 
             return;

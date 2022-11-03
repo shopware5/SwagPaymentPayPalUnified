@@ -95,7 +95,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
         },
     ],
 
-    init: function() {
+    init: function () {
         this.settingsLoader = Ext.create('Shopware.apps.PaypalUnifiedSettings.view.SettingsLoader', {
             dataPartialLoadedCallback: Ext.bind(this.partialDataLoaded, this),
             allDataLoadedCallback: Ext.bind(this.allDataLoaded, this),
@@ -108,7 +108,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
         this.callParent(arguments);
     },
 
-    createComponentControl: function() {
+    createComponentControl: function () {
         this.control({
             'paypal-unified-settings-top-toolbar': {
                 changeShop: this.onChangeShop
@@ -135,17 +135,17 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
         });
     },
 
-    createMainWindow: function() {
+    createMainWindow: function () {
         this.window = this.getView('Window').create().show();
     },
 
-    loadDetails: function() {
+    loadDetails: function () {
         this.applyActivationState(false);
 
         this.settingsLoader.loadSettings(this.shopId);
     },
 
-    saveRecords: function() {
+    saveRecords: function () {
         var options = {
             callback: Ext.bind(this.afterSaveRecord, this)
         };
@@ -160,7 +160,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
         this.advancedCreditDebitCardRecord.save(options);
     },
 
-    afterSaveRecord: function() {
+    afterSaveRecord: function () {
         this.saveCounter++;
 
         if (this.saveCounter < 6) {
@@ -176,7 +176,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
         this.onRegisterWebhook();
     },
 
-    prepareRecords: function() {
+    prepareRecords: function () {
         this.generalRecord = Ext.create('Shopware.apps.PaypalUnifiedSettings.model.General');
         this.expressCheckoutRecord = Ext.create('Shopware.apps.PaypalUnifiedSettings.model.ExpressCheckout');
         this.installmentsRecord = Ext.create('Shopware.apps.PaypalUnifiedSettings.model.Installments');
@@ -194,7 +194,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
         this.loadFormRecords();
     },
 
-    loadFormRecords: function() {
+    loadFormRecords: function () {
         this.getGeneralTab().loadRecord(this.generalRecord);
         this.getInstallmentsTab().loadRecord(this.installmentsRecord);
         this.getPlusTab().loadRecord(this.plusRecord);
@@ -208,13 +208,13 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
     /**
      * @param { Shopware.data.Model } record
      */
-    onChangeShop: function(record) {
+    onChangeShop: function (record) {
         this.shopId = record.get('id');
         this.prepareRecords();
         this.loadDetails(this.shopId);
     },
 
-    onSaveSettings: function() {
+    onSaveSettings: function () {
         var generalTabForm = this.getGeneralTab().getForm(),
             ecTabForm = this.getEcTab().getForm(),
             payUponInvoiceForm = this.getPayUponInvoiceTab().getForm(),
@@ -246,7 +246,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
     /**
      * @param tab { Ext.form.Panel }
      */
-    isTabFormValid: function(tab) {
+    isTabFormValid: function (tab) {
         var form = tab.getForm(),
             isValid = form.isValid();
 
@@ -262,7 +262,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
      * @param sandbox { Boolean }
      * @param payerId { String }
      */
-    checkBothCapabilities: function(sandbox, payerId) {
+    checkBothCapabilities: function (sandbox, payerId) {
         var paymentMethodCapabilityNames = [
             this.PAYMENT_METHOD_CAPABILITY_NAME.PAY_UPON_INVOICE,
             this.PAYMENT_METHOD_CAPABILITY_NAME.ADVANCED_CREDIT_DEBIT_CARD
@@ -283,7 +283,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
      * @param callback { Function }
      * @param scope { Object }
      */
-    checkIsCapable: function(sandbox, payerId, paymentMethodCapabilityNames, productSubscriptionNames, callback, scope) {
+    checkIsCapable: function (sandbox, payerId, paymentMethodCapabilityNames, productSubscriptionNames, callback, scope) {
         Ext.Ajax.request({
             url: this.isCapableUrl,
             jsonData: {
@@ -302,7 +302,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
      * @param success { Boolean }
      * @param response { Object }
      */
-    onBeforeSaveSettings: function(request, success, response) {
+    onBeforeSaveSettings: function (request, success, response) {
         var responseBody = Ext.JSON.decode(response.responseText),
             sandbox = this.generalRecord.get('sandbox'),
             setterName = sandbox ? 'sandboxOnboardingCompleted' : 'onboardingCompleted';
@@ -356,7 +356,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
         this.saveRecords();
     },
 
-    onRegisterWebhook: function() {
+    onRegisterWebhook: function () {
         var generalSettings = this.getGeneralTab().getForm().getValues();
 
         this.window.setLoading('{s name="loading/registeringWebhook"}Registering webhook...{/s}');
@@ -375,7 +375,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
         });
     },
 
-    onValidateAPISettings: function() {
+    onValidateAPISettings: function () {
         var generalSettings = this.getGeneralTab().getForm().getValues();
 
         this.window.setLoading('{s name="loading/validatingAPI"}Validating API settings...{/s}');
@@ -399,7 +399,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
      * @param { Boolean } success
      * @param { Object } response
      */
-    onRegisterWebhookAjaxCallback: function(options, success, response) {
+    onRegisterWebhookAjaxCallback: function (options, success, response) {
         var responseObject = Ext.JSON.decode(response.responseText),
             message = '';
 
@@ -428,7 +428,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
      * @param { Boolean } success
      * @param { Object } response
      */
-    onValidateAPIAjaxCallback: function(options, success, response) {
+    onValidateAPIAjaxCallback: function (options, success, response) {
         var responseObject = Ext.JSON.decode(response.responseText),
             message = '';
 
@@ -459,7 +459,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
      * @param { Boolean } success
      * @param { Object } response
      */
-    partialDataLoaded: function(request, success, response) {
+    partialDataLoaded: function (request, success, response) {
         if (!success) {
             Shopware.Notification.createGrowlMessage('{s name="growl/title"}PayPal{/s}', '{s name="growl/loadSettingsError"}Could not load settings due to an unknown error{/s}', this.window.title);
         }
@@ -495,7 +495,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
         }
     },
 
-    allDataLoaded: function() {
+    allDataLoaded: function () {
         var generalTab = this.getGeneralTab(),
             plusTab = this.getPlusTab(),
             payUponInvoiceTab = this.getPayUponInvoiceTab(),
@@ -539,7 +539,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
      *
      * @param { Boolean } active
      */
-    applyActivationState: function(active) {
+    applyActivationState: function (active) {
         var generalTab = this.getGeneralTab();
 
         generalTab.restContainer.setDisabled(!active);
@@ -553,6 +553,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
         this.getAdvancedCreditDebitCardTab().setDisabled(!active);
 
         this.generalRecord.set('active', active);
+        this.applySandboxActivationState(this.generalRecord.get('sandbox'));
 
         this.allDataLoaded();
     },
@@ -562,10 +563,12 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
      *
      * @param { Boolean } active
      */
-    applySandboxActivationState: function(active) {
+    applySandboxActivationState: function (active) {
         var generalTab = this.getGeneralTab(),
             payUponInvoiceTab = this.getPayUponInvoiceTab(),
             advancedCreditDebitCardTab = this.getAdvancedCreditDebitCardTab();
+
+        this._applyAllowBlankToCredentialFields(this.generalRecord.get('active'), active);
 
         generalTab.restLiveCredentialsContainer.setDisabled(active);
         generalTab.restSandboxCredentialsContainer.setDisabled(!active);
@@ -587,7 +590,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
      * @param checkbox { Ext.form.field.Checkbox }
      * @param styleFieldSet { Ext.form.FieldSet }
      */
-    onInContextChange: function(checkbox, styleFieldSet) {
+    onInContextChange: function (checkbox, styleFieldSet) {
         styleFieldSet.setDisabled(!checkbox.getValue());
     },
 
@@ -597,7 +600,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
      * @param { String } nonce
      * @param { String } partnerId
      */
-    onAuthCodeReceivedGeneral: function(authCode, sharedId, nonce, partnerId) {
+    onAuthCodeReceivedGeneral: function (authCode, sharedId, nonce, partnerId) {
         var generalTab = this.getGeneralTab();
 
         this._onAuthCodeReceived({
@@ -620,7 +623,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
      * @param { String } nonce
      * @param { String } partnerId
      */
-    onAuthCodeReceived: function(authCode, sharedId, nonce, partnerId, buttonValue) {
+    onAuthCodeReceived: function (authCode, sharedId, nonce, partnerId, buttonValue) {
         var tab, record;
 
         if (buttonValue === this.PAYMENT_METHOD_CAPABILITY_NAME.PAY_UPON_INVOICE) {
@@ -654,7 +657,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
     /**
      * @param button { Ext.button.Button }
      */
-    onTestCapability: function(button) {
+    onTestCapability: function (button) {
         var sandbox = this.generalRecord.get('sandbox'),
             payerId = this.generalRecord.get(sandbox ? 'sandboxPaypalPayerId' : 'paypalPayerId');
 
@@ -680,7 +683,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
      * @param { Boolean } success
      * @param { Object } response
      */
-    afterCallCapability: function(request, success, response) {
+    afterCallCapability: function (request, success, response) {
         var me = this,
             responseJson = Ext.JSON.decode(response.responseText),
             sandbox = this.generalRecord.get('sandbox'),
@@ -707,7 +710,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
             payUponInvoiceTab.setHasLimits(responseJson[this.PAYMENT_METHOD_CAPABILITY_NAME.PAY_UPON_INVOICE_HAS_LIMITS])
             this.payUponInvoiceRecord.set(property, newValue);
             this.payUponInvoiceRecord.save({
-                callback: function(record) {
+                callback: function (record) {
                     payUponInvoiceTab.loadRecord(record);
                     me.window.setLoading(false);
 
@@ -726,7 +729,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
             this.advancedCreditDebitCardRecord.set(property, responseJson[this.PAYMENT_METHOD_CAPABILITY_NAME.ADVANCED_CREDIT_DEBIT_CARD]);
             this.advancedCreditDebitCardRecord.save(
                 {
-                    callback: function(record) {
+                    callback: function (record) {
                         advancedCreditDebitCardTab.loadRecord(record);
                         me.window.setLoading(false);
 
@@ -751,7 +754,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
         );
     },
 
-    promptDisablePlus: function() {
+    promptDisablePlus: function () {
         var sandbox = this.generalRecord.get('sandbox'),
             isPlusActive = this.plusRecord.get('active'),
             isSubscribedAlready = this.plusRecord.get(sandbox ? 'sandboxPpcpActive' : 'ppcpActive'),
@@ -782,7 +785,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
         }
     },
 
-    promptDisablePlusHandler: function(buttonId) {
+    promptDisablePlusHandler: function (buttonId) {
         var sandbox = this.generalRecord.get('sandbox');
 
         this.plusRecord.set(sandbox ? 'sandboxPpcpActive' : 'ppcpActive', true);
@@ -797,11 +800,55 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
     },
 
     /**
+     * @param { Boolean } payPalActive
+     * @param { Boolean } sandboxActive
+     *
+     * @private
+     */
+    _applyAllowBlankToCredentialFields: function (payPalActive, sandboxActive) {
+        var generalTab = this.getGeneralTab(),
+            sandboxClientIdField = generalTab.restSandboxCredentialsContainer.down('[name="sandboxClientId"]'),
+            sandboxClientSecretField = generalTab.restSandboxCredentialsContainer.down('[name="sandboxClientSecret"]'),
+            clientIdField = generalTab.restLiveCredentialsContainer.down('[name="clientId"]'),
+            clientSecretField = generalTab.restLiveCredentialsContainer.down('[name="clientSecret"]');
+
+        if (payPalActive) {
+            if (sandboxActive) {
+                this._applyAllowBlankValue([sandboxClientIdField, sandboxClientSecretField], false);
+                this._applyAllowBlankValue([clientIdField, clientSecretField], true);
+            } else {
+                this._applyAllowBlankValue([sandboxClientIdField, sandboxClientSecretField], true);
+                this._applyAllowBlankValue([clientIdField, clientSecretField], false);
+            }
+        } else {
+            this._applyAllowBlankValue([sandboxClientIdField, sandboxClientSecretField, clientIdField, clientSecretField], true);
+        }
+    },
+
+    /**
+     * @param { Array<Ext.Component> } fields
+     * @param { Boolean } newValue
+     *
+     * @private
+     */
+    _applyAllowBlankValue: function (fields, newValue) {
+        var newSetting = {
+            allowBlank: newValue,
+        };
+
+        Ext.each(fields, function (field) {
+            Ext.apply(field, newSetting, {});
+        });
+    },
+
+    /**
      * @param { Object } config
      * @param { string } config.url
      * @param { Object } config.jsonData
+     *
+     * @private
      */
-    _onAuthCodeReceived: function(config) {
+    _onAuthCodeReceived: function (config) {
         if (this.updateCredentialsRequest !== null) {
             return;
         }
@@ -828,7 +875,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
      *
      * @private
      */
-    _onUpdateCredentialsSuccess: function(response, options) {
+    _onUpdateCredentialsSuccess: function (response, options) {
         this.loadDetails();
 
         PAYPAL.apps.Signup.MiniBrowser.win.close();
@@ -840,7 +887,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
      *
      * @private
      */
-    _onUpdateCredentialsFailure: function(response, options) {
+    _onUpdateCredentialsFailure: function (response, options) {
         Shopware.Notification.createStickyGrowlMessage(
             {
                 title: '{s name="growl/title"}PayPal{/s}',
@@ -860,11 +907,11 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
      *
      * @private
      */
-    _onUpdateCredentialsResponse: function(options, success, response) {
+    _onUpdateCredentialsResponse: function (options, success, response) {
         this.updateCredentialsRequest = null;
     },
 
-    _shouldPlusTabBeDisabled: function() {
+    _shouldPlusTabBeDisabled: function () {
         return !this.plusRecord.get('active') &&
             (this.generalRecord.get('sandbox') ? this.plusRecord.get('sandboxPpcpActive') : this.plusRecord.get('ppcpActive'));
     }

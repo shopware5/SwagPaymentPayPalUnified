@@ -42,10 +42,6 @@ test.describe('Frontend', () => {
 
         await page.waitForLoadState('load');
 
-        page.on('frameattached', await function(frame) {
-            frame.waitForLoadState('load');
-        });
-
         await loginHelper.login(page);
 
         // Buy Product
@@ -89,7 +85,7 @@ test.describe('Frontend', () => {
         await paypalPage.locator('#btnLogin').click();
 
         // Click [data-testid="submit-button-initial"]
-        await paypalPage.locator('button:has-text("Jetzt zahlen")').click();
+        await paypalPage.locator('button:has-text("Kauf abschließen")').click();
 
         await expect(page.locator('.teaser--title')).toHaveText(/Vielen Dank für Ihre Bestellung bei Shopware Demo/);
 
