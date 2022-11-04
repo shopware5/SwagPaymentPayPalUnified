@@ -56,13 +56,13 @@ class OrderNumberService
             return;
         }
 
+        $this->releaseOrderNumber();
+
         $this->connection->createQueryBuilder()
             ->insert(NumberRangeIncrementerDecorator::POOL_DATABASE_TABLE_NAME)
             ->setValue('order_number', ':orderNumber')
             ->setParameter('orderNumber', $ordernumber)
             ->execute();
-
-        $this->releaseOrderNumber();
     }
 
     /**
@@ -70,6 +70,14 @@ class OrderNumberService
      */
     public function releaseOrderNumber()
     {
+        $orderNumber = $this->dependencyProvider->getSession()->offsetGet(NumberRangeIncrementerDecorator::ORDERNUMBER_SESSION_KEY);
+
+        $this->connection->createQueryBuilder()
+            ->delete(NumberRangeIncrementerDecorator::POOL_DATABASE_TABLE_NAME)
+            ->where('order_number = :orderNumber')
+            ->setParameter('orderNumber', $orderNumber)
+            ->execute();
+
         $this->dependencyProvider->getSession()->offsetUnset(NumberRangeIncrementerDecorator::ORDERNUMBER_SESSION_KEY);
     }
 }

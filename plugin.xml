@@ -21,6 +21,7 @@
             PT-12931 - Fügt das Zahlungsziel zum Rechnungstemplate hinzu;
             PT-12936 - Verbessert die Überprüfung der Kundentelefonnummer beim Rechnungskauf;
             PT-12953 - Verbessert die 3D-Secure Überprüfung bei Kreditkartenzahlungen;
+            PT-12975 - Verbessert Verhalten bei doppelten Bestellnummern;
         </changes>
         <changes lang="en">
             PT-12725 - Improves risk management for Express Checkout and excluded products;
@@ -30,6 +31,7 @@
             PT-12931 - Adds the payment term to the invoice template;
             PT-12936 - Improves the verification of the customer phone number for pay upon invoice;
             PT-12953 - Improves 3D-Secure verification for credit card payments;
+            PT-12975 - Improves behavior in case of duplicate order numbers;
         </changes>
     </changelog>
 

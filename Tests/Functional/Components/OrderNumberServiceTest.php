@@ -118,6 +118,38 @@ class OrderNumberServiceTest extends TestCase
     }
 
     /**
+     * @return void
+     */
+    public function testReleaseOrderNumberShouldAlsoDeleteTheEntryFromPoolDatabase()
+    {
+        $sessionValue = 'anyOtherOrderNumber';
+
+        $selectSql = 'SELECT id, order_number FROM swag_payment_paypal_unified_order_number_pool WHERE order_number = "anyOtherOrderNumber"';
+        $insertSql = 'INSERT INTO swag_payment_paypal_unified_order_number_pool (order_number) VALUES ("anyOtherOrderNumber")';
+
+        $connection = $this->getContainer()->get('dbal_connection');
+        $connection->exec($insertSql);
+
+        $ensurance = $connection->fetchAssoc($selectSql);
+        static::assertIsArray($ensurance);
+        static::assertSame($sessionValue, $ensurance['order_number']);
+
+        $session = $this->getContainer()->get('session');
+        static::assertFalse($session->offsetExists(NumberRangeIncrementerDecorator::ORDERNUMBER_SESSION_KEY));
+
+        $session->offsetSet(NumberRangeIncrementerDecorator::ORDERNUMBER_SESSION_KEY, $sessionValue);
+        static::assertTrue($session->offsetExists(NumberRangeIncrementerDecorator::ORDERNUMBER_SESSION_KEY));
+        static::assertSame($sessionValue, $session->offsetGet(NumberRangeIncrementerDecorator::ORDERNUMBER_SESSION_KEY));
+
+        $this->getOrderNumberService()->releaseOrderNumber();
+        static::assertFalse($session->offsetExists(NumberRangeIncrementerDecorator::ORDERNUMBER_SESSION_KEY));
+        static::assertNull($session->offsetGet(NumberRangeIncrementerDecorator::ORDERNUMBER_SESSION_KEY));
+
+        $result = $connection->fetchAssoc($selectSql);
+        static::assertFalse($result);
+    }
+
+    /**
      * @return OrderNumberService
      */
     private function getOrderNumberService()
