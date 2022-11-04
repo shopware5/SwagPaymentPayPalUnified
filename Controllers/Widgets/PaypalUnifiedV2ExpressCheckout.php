@@ -36,11 +36,12 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout extends Abstra
 
         $basketData = $checkoutController->getBasket();
         $userData = $checkoutController->getUserData() ?: [];
+        if (!empty($basketData['content'])) {
+            if ($this->dependencyProvider->getModule('admin')->sManageRisks($paymentId, $basketData, $userData)) {
+                $this->View()->assign('riskManagementFailed', true);
 
-        if ($this->dependencyProvider->getModule('admin')->sManageRisks($paymentId, $basketData, $userData)) {
-            $this->View()->assign('riskManagementFailed', true);
-
-            return;
+                return;
+            }
         }
 
         // Set PayPal as paymentMethod
@@ -58,6 +59,9 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout extends Abstra
             $checkoutController->getSelectedCountry();
             $checkoutController->getSelectedDispatch();
         }
+
+        $basketData = $checkoutController->getBasket();
+        $userData = $checkoutController->getUserData() ?: [];
 
         $shopwareOrderData = new ShopwareOrderData($userData, $basketData);
         $orderParams = $this->payPalOrderParameterFacade->createPayPalOrderParameter(PaymentType::PAYPAL_EXPRESS_V2, $shopwareOrderData);

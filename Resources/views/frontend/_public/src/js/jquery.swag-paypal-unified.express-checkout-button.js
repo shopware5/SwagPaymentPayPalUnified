@@ -471,6 +471,7 @@
             }).then(function(response) {
                 if (response.riskManagementFailed === true) {
                     me.isRiskManagementError = true;
+
                     return;
                 }
 
