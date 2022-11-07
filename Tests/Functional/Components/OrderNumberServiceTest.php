@@ -131,7 +131,12 @@ class OrderNumberServiceTest extends TestCase
         $connection->exec($insertSql);
 
         $ensurance = $connection->fetchAssoc($selectSql);
-        static::assertIsArray($ensurance);
+        if (\method_exists(self::class, 'assertIsArray')) {
+            static::assertIsArray($ensurance);
+        } else {
+            static::assertTrue(\is_array($ensurance));
+        }
+
         static::assertSame($sessionValue, $ensurance['order_number']);
 
         $session = $this->getContainer()->get('session');

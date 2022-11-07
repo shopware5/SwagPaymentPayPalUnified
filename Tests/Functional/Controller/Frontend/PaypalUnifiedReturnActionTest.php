@@ -38,6 +38,8 @@ class PaypalUnifiedReturnActionTest extends TestCase
     use DatabaseTestCaseTrait;
     use ShopRegistrationTrait;
 
+    const ORDERNUMBER = '1234567';
+
     /**
      * @after
      *
@@ -183,7 +185,7 @@ class PaypalUnifiedReturnActionTest extends TestCase
     {
         $orderDataService = $this->createMock(OrderDataService::class);
         $orderDataService->method('applyTransactionId')->willReturn(true);
-        $orderDataService->expects(static::once())->method('applyPaymentTypeAttribute')->with('', PaymentType::PAYPAL_PLUS);
+        $orderDataService->expects(static::once())->method('applyPaymentTypeAttribute')->with(self::ORDERNUMBER, PaymentType::PAYPAL_PLUS);
 
         return $orderDataService;
     }
@@ -207,7 +209,8 @@ class PaypalUnifiedReturnActionTest extends TestCase
     private function createOrderNumberServiceMock()
     {
         $orderNumberService = $this->createMock(OrderNumberService::class);
-        $orderNumberService->method('getOrderNumber')->willReturn('');
+        $orderNumberService->method('getOrderNumber')->willReturn(self::ORDERNUMBER);
+        $orderNumberService->expects(static::once())->method('releaseOrderNumber');
 
         return $orderNumberService;
     }
