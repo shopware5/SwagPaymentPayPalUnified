@@ -30,7 +30,19 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout extends Abstra
     {
         $this->logger->debug(sprintf('%s START', __METHOD__));
 
+        $paymentId = $this->paymentMethodProvider->getPaymentId(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
+
         $checkoutController = $this->prepareCheckoutController();
+
+        $basketData = $checkoutController->getBasket();
+        $userData = $checkoutController->getUserData() ?: [];
+        if (!empty($basketData['content'])) {
+            if ($this->dependencyProvider->getModule('admin')->sManageRisks($paymentId, $basketData, $userData)) {
+                $this->View()->assign('riskManagementFailed', true);
+
+                return;
+            }
+        }
 
         // Set PayPal as paymentMethod
         $this->dependencyProvider->getSession()->offsetSet(

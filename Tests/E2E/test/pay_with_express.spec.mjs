@@ -30,6 +30,8 @@ test.describe('Is Express Checkout button available', () => {
         const locator = await page.frameLocator('.js--modal .component-frame').locator('.paypal-button');
         await expect(locator).toHaveText(/Direkt zu/);
 
+        await page.waitForTimeout(1000);
+
         const [paypalPage] = await tryUntilSucceed(() => {
             return Promise.all([
                 page.waitForEvent('popup'),
@@ -49,6 +51,8 @@ test.describe('Is Express Checkout button available', () => {
         const locator = await page.frameLocator('.component-frame').locator('.paypal-button');
         await expect(locator).toHaveText(/Direkt zu/);
 
+        await page.waitForTimeout(1000);
+
         const [paypalPage] = await tryUntilSucceed(() => {
             return Promise.all([
                 page.waitForEvent('popup'),
@@ -63,8 +67,6 @@ test.describe('Is Express Checkout button available', () => {
 
             route.continue({ url: url });
         });
-
-        await expect(paypalPage.locator('#headerText')).toHaveText(/PayPal/);
 
         await paypalPage.locator('#email').fill(credentials.paypalCustomerEmail);
         await paypalPage.locator('button:has-text("Weiter")').click();
@@ -90,6 +92,8 @@ test.describe('Is Express Checkout button available', () => {
         const locator = await page.frameLocator('.ajax--cart >> .component-frame').locator('.paypal-button');
         await expect(locator).toHaveText(/Direkt zu/);
 
+        await page.waitForTimeout(1000);
+
         const [paypalPage] = await tryUntilSucceed(() => {
             return Promise.all([
                 page.waitForEvent('popup'),
@@ -104,8 +108,6 @@ test.describe('Is Express Checkout button available', () => {
 
             route.continue({ url: url });
         });
-
-        await expect(paypalPage.locator('#headerText')).toHaveText(/PayPal/);
 
         await paypalPage.locator('#email').fill(credentials.paypalCustomerEmail);
         await paypalPage.locator('button:has-text("Weiter")').click();
@@ -137,6 +139,8 @@ test.describe('Is Express Checkout button available', () => {
         const locator = await page.frameLocator('.component-frame').locator('.paypal-button');
         await expect(locator).toHaveText(/Direkt zu/);
 
+        await page.waitForTimeout(1000);
+
         const [paypalPage] = await tryUntilSucceed(() => {
             return Promise.all([
                 page.waitForEvent('popup'),
@@ -151,8 +155,6 @@ test.describe('Is Express Checkout button available', () => {
 
             route.continue({ url: url });
         });
-
-        await expect(paypalPage.locator('#headerText')).toHaveText(/PayPal/);
 
         await paypalPage.locator('#email').fill(credentials.paypalCustomerEmail);
         await paypalPage.locator('button:has-text("Weiter")').click();
@@ -187,6 +189,8 @@ test.describe('Is Express Checkout button available', () => {
         const locator = await page.frameLocator('.component-frame').locator('.paypal-button');
         await expect(locator).toHaveText(/Direkt zu/);
 
+        await page.waitForTimeout(1000);
+
         const [paypalPage] = await tryUntilSucceed(() => {
             return Promise.all([
                 page.waitForEvent('popup'),
@@ -201,8 +205,6 @@ test.describe('Is Express Checkout button available', () => {
 
             route.continue({ url: url });
         });
-
-        await expect(paypalPage.locator('#headerText')).toHaveText(/PayPal/);
 
         await paypalPage.locator('#email').fill(credentials.paypalCustomerEmail);
         await paypalPage.locator('button:has-text("Weiter")').click();
@@ -224,6 +226,8 @@ test.describe('Is Express Checkout button available', () => {
         const locator = await page.frameLocator('.component-frame >> nth=1').locator('.paypal-button');
         await expect(locator).toHaveText(/Direkt zu/);
 
+        await page.waitForTimeout(1000);
+
         const [paypalPage] = await tryUntilSucceed(() => {
             return Promise.all([
                 page.waitForEvent('popup'),
@@ -238,8 +242,6 @@ test.describe('Is Express Checkout button available', () => {
 
             route.continue({ url: url });
         });
-
-        await expect(paypalPage.locator('#headerText')).toHaveText(/PayPal/);
 
         await paypalPage.locator('#email').fill(credentials.paypalCustomerEmail);
         await paypalPage.locator('button:has-text("Weiter")').click();
@@ -263,7 +265,7 @@ test.describe('Is Express Checkout button available', () => {
         const locator = await page.frameLocator('.component-frame').locator('.paypal-button');
         await expect(locator).toHaveText(/Direkt zu/);
 
-        await page.waitForTimeout(7000);
+        await page.waitForTimeout(1000);
 
         const [paypalPage] = await tryUntilSucceed(() => {
             return Promise.all([

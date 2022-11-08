@@ -71,10 +71,6 @@ test.describe('Is Pay Later fully functional', () => {
 
         await paypalPage.locator('#payment-submit-btn').click();
 
-        await paypalPage.frameLocator('[data-testid="cap-iframe"]').locator('[data-testid="phoneNumberInput"]').fill('0588761213');
-
-        await paypalPage.frameLocator('[data-testid="cap-iframe"]').locator('#submitButton').click();
-
         await paypalPage.locator('#payment-submit-btn').click();
 
         await expect(page.locator('.teaser--title')).toHaveText(/Vielen Dank für Ihre Bestellung bei Shopware Demo/);

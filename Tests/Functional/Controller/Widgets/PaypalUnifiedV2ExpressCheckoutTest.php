@@ -8,7 +8,9 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Controller\Widgets;
 
+use Enlight_Class;
 use Enlight_Controller_Request_RequestTestCase;
+use Enlight_Controller_Response_ResponseTestCase;
 use Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\PayPalOrderParameter;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\PayPalOrderParameterFacadeInterface;
@@ -16,6 +18,7 @@ use SwagPaymentPayPalUnified\Components\Services\OrderBuilder\OrderFactory;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\OrderResource;
+use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\ShopRegistrationTrait;
 use SwagPaymentPayPalUnified\Tests\Unit\PaypalPaymentControllerTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -25,6 +28,7 @@ require_once __DIR__ . '/../../../../Controllers/Widgets/PaypalUnifiedV2ExpressC
 class PaypalUnifiedV2ExpressCheckoutTest extends PaypalPaymentControllerTestCase
 {
     use ShopRegistrationTrait;
+    use DatabaseTestCaseTrait;
 
     const DEFAULT_SHIPPING_METHOD_ID = 9;
 
@@ -62,6 +66,47 @@ class PaypalUnifiedV2ExpressCheckoutTest extends PaypalPaymentControllerTestCase
         static::assertSame(self::DEFAULT_SHIPPING_METHOD_ID, $this->getContainer()->get('session')->get('sDispatch'));
 
         $this->getContainer()->get('modules')->getModule('basket')->sDeleteBasket();
+    }
+
+    /**
+     * @return void
+     */
+    public function testCreateOrderActionRiskManagementShouldFail()
+    {
+        $sql = 'INSERT INTO `s_core_rulesets` (`id`, `paymentID`, `rule1`, `value1`, `rule2`, `value2`) VALUES
+                (5,	7,	"ARTICLESFROM",	"9",	"",	"");';
+
+        $session = $this->getContainer()->get('session');
+        $session->offsetSet('sessionId', 'testSessionId');
+
+        $this->getContainer()->get('dbal_connection')->exec($sql);
+        $basket = $this->getContainer()->get('modules')->Basket();
+
+        $basket->sAddArticle('SW10239'); // Spachtelmasse
+        $basket->sAddArticle('SW10142'); // Herrenhandschuh aus Peccary Leder
+
+        $request = new Enlight_Controller_Request_RequestTestCase();
+        $response = new Enlight_Controller_Response_ResponseTestCase();
+
+        $controller = Enlight_Class::Instance(
+            Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout::class,
+            [$request, $response]
+        );
+
+        static::assertInstanceOf(Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout::class, $controller);
+
+        $controller->setContainer($this->getContainer());
+        $controller->setFront($this->getContainer()->get('front'));
+        $controller->setRequest($request);
+        $controller->setResponse($response);
+        $controller->setView(new \Enlight_View_Default(new \Enlight_Template_Manager()));
+        $controller->preDispatch();
+
+        $controller->createOrderAction();
+
+        $session->offsetUnset('sessionId');
+
+        static::assertTrue($controller->View()->getAssign('riskManagementFailed'));
     }
 
     /**

@@ -14,12 +14,14 @@
 
     <changelog version="REPLACE_GLOBALLY_WITH_NEXT_VERSION">
         <changes lang="de">
+            PT-12725 - Verbessert das Risikomanagement bei Express Checkout und ausgeschlossenen Produkten;
             PT-12859 - Kunden können beim Express Checkout wieder die Adresse wechseln;
             PT-12880 - Öffnen von Bestellungen mit gelöschter Zahlungsart wieder möglich;
             PT-12931 - Fügt das Zahlungsziel zum Rechnungstemplate hinzu;
             PT-12936 - Verbessert die Überprüfung der Kundentelefonnummer beim Rechnungskauf;
         </changes>
         <changes lang="en">
+            PT-12725 - Improves risk management for Express Checkout and excluded products;
             PT-12859 - Customers can change the address again during Express Checkout;
             PT-12880 - Opening orders with deleted payment method is possible again;
             PT-12931 - Adds the payment term to the invoice template;
