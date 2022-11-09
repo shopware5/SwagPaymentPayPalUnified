@@ -9,9 +9,14 @@
 namespace SwagPaymentPayPalUnified\Tests\Unit\Components\Document;
 
 use Doctrine\DBAL\Connection;
+use Enlight_Components_Snippet_Namespace;
+use Enlight_Template_Manager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Shopware_Components_Document;
 use Shopware_Components_Snippet_Manager as SnippetManager;
+use Shopware_Components_Translation;
+use Smarty_Data;
 use SwagPaymentPayPalUnified\Components\Document\InvoiceDocumentHandler;
 use SwagPaymentPayPalUnified\Components\Services\Plus\PaymentInstructionService;
 use SwagPaymentPayPalUnified\Models\PaymentInstruction;
@@ -37,22 +42,22 @@ class InvoiceDocumentHandlerTest extends TestCase
     private $snippetManager;
 
     /**
-     * @var MockObject|\Shopware_Components_Translation
+     * @var MockObject|Shopware_Components_Translation
      */
     private $translation;
 
     /**
-     * @var MockObject|\Shopware_Components_Document
+     * @var MockObject|Shopware_Components_Document
      */
     private $document;
 
     /**
-     * @var MockObject|\Smarty_Data
+     * @var MockObject|Smarty_Data
      */
     private $view;
 
     /**
-     * @var \Enlight_Template_Manager|MockObject
+     * @var Enlight_Template_Manager|MockObject
      */
     private $template;
 
@@ -66,10 +71,10 @@ class InvoiceDocumentHandlerTest extends TestCase
         $this->paymentInstructionService = static::createMock(PaymentInstructionService::class);
         $this->connection = static::createMock(Connection::class);
         $this->snippetManager = static::createMock(SnippetManager::class);
-        $this->translation = static::createMock(\Shopware_Components_Translation::class);
-        $this->document = static::createMock(\Shopware_Components_Document::class);
-        $this->view = static::createMock(\Smarty_Data::class);
-        $this->template = static::createMock(\Enlight_Template_Manager::class);
+        $this->translation = static::createMock(Shopware_Components_Translation::class);
+        $this->document = static::createMock(Shopware_Components_Document::class);
+        $this->view = static::createMock(Smarty_Data::class);
+        $this->template = static::createMock(Enlight_Template_Manager::class);
     }
 
     /**
@@ -137,7 +142,7 @@ class InvoiceDocumentHandlerTest extends TestCase
         PaymentInstructionService $paymentInstructionService = null,
         Connection $connection = null,
         SnippetManager $snippetManager = null,
-        \Shopware_Components_Translation $translation = null
+        Shopware_Components_Translation $translation = null
     ) {
         return new InvoiceDocumentHandler(
             $paymentInstructionService ?: $this->paymentInstructionService,
@@ -171,7 +176,7 @@ class InvoiceDocumentHandlerTest extends TestCase
     /**
      * @return void
      */
-    private function givenDocumentHasAView(\Smarty_Data $view = null)
+    private function givenDocumentHasAView(Smarty_Data $view = null)
     {
         $this->document->_view = $view ?: $this->view;
     }
@@ -179,7 +184,7 @@ class InvoiceDocumentHandlerTest extends TestCase
     /**
      * @return void
      */
-    private function givenDocumentHasATemplate(\Enlight_Template_Manager $template = null)
+    private function givenDocumentHasATemplate(Enlight_Template_Manager $template = null)
     {
         $this->document->_template = $template ?: $this->template;
     }
@@ -211,7 +216,7 @@ class InvoiceDocumentHandlerTest extends TestCase
      */
     private function givenSnippetManagerReturnsStaticValue($value)
     {
-        $namespace = static::createMock(\Enlight_Components_Snippet_Namespace::class);
+        $namespace = static::createMock(Enlight_Components_Snippet_Namespace::class);
 
         $namespace->method('get')
             ->willReturn($value);

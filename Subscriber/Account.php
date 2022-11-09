@@ -11,11 +11,13 @@ namespace SwagPaymentPayPalUnified\Subscriber;
 use Enlight\Event\SubscriberInterface;
 use Enlight_Controller_ActionEventArgs as ActionEventArgs;
 use Shopware\Models\Shop\Shop;
+use Shopware_Controllers_Frontend_Account;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Models\Settings\Plus;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
+use UnexpectedValueException;
 
 class Account implements SubscriberInterface
 {
@@ -56,7 +58,7 @@ class Account implements SubscriberInterface
 
     public function onPostDispatchAccount(ActionEventArgs $args)
     {
-        /** @var \Shopware_Controllers_Frontend_Account $controller */
+        /** @var Shopware_Controllers_Frontend_Account $controller */
         $controller = $args->getSubject();
         $allowedActions = ['index', 'payment'];
         $action = $controller->Request()->getActionName();
@@ -73,7 +75,7 @@ class Account implements SubscriberInterface
         $shop = $this->dependencyProvider->getShop();
 
         if (!$shop instanceof Shop) {
-            throw new \UnexpectedValueException(sprintf('Tried to access %s, but it\'s not set in the DIC.', Shop::class));
+            throw new UnexpectedValueException(sprintf('Tried to access %s, but it\'s not set in the DIC.', Shop::class));
         }
 
         $shopId = $shop->getId();

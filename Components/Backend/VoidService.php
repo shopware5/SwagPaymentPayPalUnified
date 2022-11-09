@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\Components\Backend;
 
+use Exception;
 use Shopware\Models\Order\Status;
 use SwagPaymentPayPalUnified\Components\ExceptionHandlerServiceInterface;
 use SwagPaymentPayPalUnified\Components\PaymentStatus;
@@ -68,7 +69,7 @@ class VoidService
                 'void' => $voidData,
                 'success' => true,
             ];
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $error = $this->exceptionHandler->handle($e, 'void authorization');
 
             $viewParameter = [
@@ -99,7 +100,7 @@ class VoidService
                 'void' => $voidData,
                 'success' => true,
             ];
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $error = $this->exceptionHandler->handle($e, 'void order');
 
             $viewParameter = [

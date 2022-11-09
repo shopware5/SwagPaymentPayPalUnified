@@ -8,12 +8,7 @@
 
 namespace SwagPaymentPayPalUnified;
 
-if (file_exists(__DIR__ . '/vendor/autoload.php')) {
-    require_once __DIR__ . '/vendor/autoload.php';
-} else {
-    throw new \Exception('Vendor is missing');
-}
-
+use Exception;
 use Shopware\Components\Plugin;
 use Shopware\Components\Plugin\Context\ActivateContext;
 use Shopware\Components\Plugin\Context\DeactivateContext;
@@ -34,6 +29,12 @@ use SwagPaymentPayPalUnified\Setup\TranslationTransformer;
 use SwagPaymentPayPalUnified\Setup\Uninstaller;
 use SwagPaymentPayPalUnified\Setup\Updater;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+
+if (file_exists(__DIR__ . '/vendor/autoload.php')) {
+    require_once __DIR__ . '/vendor/autoload.php';
+} else {
+    throw new Exception('Vendor is missing');
+}
 
 class SwagPaymentPayPalUnified extends Plugin
 {

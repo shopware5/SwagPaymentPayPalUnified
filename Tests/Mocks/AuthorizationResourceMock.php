@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Mocks;
 
+use RuntimeException;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\AuthorizationResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Capture;
 use SwagPaymentPayPalUnified\Tests\Mocks\ResultSet\CaptureAuthorization;
@@ -25,7 +26,7 @@ class AuthorizationResourceMock extends AuthorizationResource
     public function capture($id, Capture $capture)
     {
         if ($id === self::THROW_EXCEPTION) {
-            throw new \RuntimeException('test exception');
+            throw new RuntimeException('test exception');
         }
 
         return CaptureAuthorization::get();
@@ -34,7 +35,7 @@ class AuthorizationResourceMock extends AuthorizationResource
     public function void($id)
     {
         if ($id === self::THROW_EXCEPTION) {
-            throw new \RuntimeException('test exception');
+            throw new RuntimeException('test exception');
         }
 
         return VoidAuthorization::get();

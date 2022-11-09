@@ -9,6 +9,7 @@
 namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services;
 
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 
 class TransactionsHistoryBuilderServiceTest extends TestCase
 {
@@ -73,7 +74,7 @@ class TransactionsHistoryBuilderServiceTest extends TestCase
         $testPaymentData = $this->getTestSalePaymentDetails();
         $testPaymentData['intent'] = 'ERROR';
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Could not parse history from an unknown payment type');
         $historyBuilderService->getTransactionHistory($testPaymentData);
     }

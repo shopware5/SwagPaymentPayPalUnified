@@ -122,9 +122,8 @@ test.describe('Pay with credit card', () => {
 
         await expect(page.locator('.step--confirm.is--active')).toBeVisible();
 
-        await locators.paypalUnifiedErrorMessageContainer.scrollIntoViewIfNeeded();
-
         await expect(locators.paypalUnifiedErrorMessageContainer).toBeVisible();
-        await expect(locators.paypalUnifiedErrorMessageContainer).toHaveText('Die Zahlung konnte nicht verarbeitet werden. Bitte wählen Sie eine andere Zahlungsart.');
+
+        await expect(page.locator('.paypal-unified--error >> .alert--content')).toHaveText(/.*Während der Sicherheitsüberprüfung Ihrer Kreditkarte ist etwas schief gelaufen. Bitte versuchen Sie es erneut.*/);
     });
 });

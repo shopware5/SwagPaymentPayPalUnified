@@ -8,6 +8,8 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Subscriber;
 
+use Enlight_Controller_Request_RequestHttp;
+use Enlight_Event_EventArgs;
 use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
@@ -18,9 +20,9 @@ class OrderTest extends TestCase
 {
     public function testOnFilterOrderAttributesShouldAddNoPaymentType()
     {
-        $eventArgs = new \Enlight_Event_EventArgs(['orderParams' => ['paymentID' => 1]]);
+        $eventArgs = new Enlight_Event_EventArgs(['orderParams' => ['paymentID' => 1]]);
 
-        $request = new \Enlight_Controller_Request_RequestHttp();
+        $request = new Enlight_Controller_Request_RequestHttp();
 
         Shopware()->Front()->setRequest($request);
 
@@ -35,7 +37,7 @@ class OrderTest extends TestCase
     {
         $eventArgs = $this->getEventArgs();
 
-        $request = new \Enlight_Controller_Request_RequestHttp();
+        $request = new Enlight_Controller_Request_RequestHttp();
 
         Shopware()->Front()->setRequest($request);
 
@@ -50,7 +52,7 @@ class OrderTest extends TestCase
     {
         $eventArgs = $this->getEventArgs();
 
-        $request = new \Enlight_Controller_Request_RequestHttp();
+        $request = new Enlight_Controller_Request_RequestHttp();
         $request->setParam('plus', true);
 
         Shopware()->Front()->setRequest($request);
@@ -66,7 +68,7 @@ class OrderTest extends TestCase
     {
         $eventArgs = $this->getEventArgs();
 
-        $request = new \Enlight_Controller_Request_RequestHttp();
+        $request = new Enlight_Controller_Request_RequestHttp();
         $request->setParam('expressCheckout', true);
 
         Shopware()->Front()->setRequest($request);
@@ -82,7 +84,7 @@ class OrderTest extends TestCase
     {
         $eventArgs = $this->getEventArgs();
 
-        $request = new \Enlight_Controller_Request_RequestHttp();
+        $request = new Enlight_Controller_Request_RequestHttp();
         $request->setParam('spbCheckout', true);
 
         Shopware()->Front()->setRequest($request);
@@ -98,7 +100,7 @@ class OrderTest extends TestCase
     {
         $eventArgs = $this->getEventArgs();
 
-        $request = new \Enlight_Controller_Request_RequestHttp();
+        $request = new Enlight_Controller_Request_RequestHttp();
         $request->setParam('invoiceCheckout', true);
         $request->setParam('plus', true);
 
@@ -134,10 +136,10 @@ class OrderTest extends TestCase
     }
 
     /**
-     * @return \Enlight_Event_EventArgs
+     * @return Enlight_Event_EventArgs
      */
     private function getEventArgs()
     {
-        return new \Enlight_Event_EventArgs(['orderParams' => ['paymentID' => $this->getPaymentId()]]);
+        return new Enlight_Event_EventArgs(['orderParams' => ['paymentID' => $this->getPaymentId()]]);
     }
 }

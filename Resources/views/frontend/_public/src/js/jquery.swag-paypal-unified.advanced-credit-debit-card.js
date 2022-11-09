@@ -400,6 +400,13 @@
 
             if (response.responseText !== '') {
                 jsonResponse = JSON.parse(response.responseText);
+
+                if (jsonResponse.redirectTo) {
+                    window.location.replace(jsonResponse.redirectTo);
+
+                    return;
+                }
+
                 content = jsonResponse.errorTemplate;
                 this.$el.prepend(content);
             }

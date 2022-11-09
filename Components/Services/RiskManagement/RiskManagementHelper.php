@@ -9,6 +9,7 @@
 namespace SwagPaymentPayPalUnified\Components\Services\RiskManagement;
 
 use Doctrine\DBAL\Connection;
+use PDO;
 use Shopware\Bundle\AttributeBundle\Service\CrudService;
 use Shopware\Bundle\AttributeBundle\Service\CrudServiceInterface;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
@@ -154,7 +155,7 @@ class RiskManagementHelper implements RiskManagementHelperInterface
             ->setParameter('productIds', $result, Connection::PARAM_INT_ARRAY)
             ->setParameter('attributeValue', $context->getAttribute()->getAttributeValue())
             ->execute()
-            ->fetchAll(\PDO::FETCH_COLUMN);
+            ->fetchAll(PDO::FETCH_COLUMN);
     }
 
     /**
@@ -177,7 +178,7 @@ class RiskManagementHelper implements RiskManagementHelperInterface
             ->setParameter('productIds', $result, Connection::PARAM_INT_ARRAY)
             ->setParameter('attributeValue', $context->getAttribute()->getAttributeValue())
             ->execute()
-            ->fetchAll(\PDO::FETCH_COLUMN);
+            ->fetchAll(PDO::FETCH_COLUMN);
     }
 
     /**
@@ -192,7 +193,7 @@ class RiskManagementHelper implements RiskManagementHelperInterface
             ->where('categoryRelation.categoryID = :categoryId')
             ->setParameter('categoryId', $context->getEventCategoryId())
             ->execute()
-            ->fetchAll(\PDO::FETCH_COLUMN);
+            ->fetchAll(PDO::FETCH_COLUMN);
     }
 
     /**
@@ -216,7 +217,7 @@ class RiskManagementHelper implements RiskManagementHelperInterface
             ->setParameter('categoryId', $context->getSessionCategoryId())
             ->setParameter('subQuery', $subQuery)
             ->execute()
-            ->fetchAll(\PDO::FETCH_COLUMN);
+            ->fetchAll(PDO::FETCH_COLUMN);
     }
 
     /**

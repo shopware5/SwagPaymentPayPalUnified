@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\Components\Services\Validation;
 
+use Exception;
 use SwagPaymentPayPalUnified\Components\ExceptionHandlerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 
@@ -59,7 +60,7 @@ class RedirectDataBuilder
      *
      * @return RedirectDataBuilder
      */
-    public function setException(\Exception $exception, $currentAction)
+    public function setException(Exception $exception, $currentAction)
     {
         $error = $this->exceptionHandlerService->handle($exception, $currentAction);
 

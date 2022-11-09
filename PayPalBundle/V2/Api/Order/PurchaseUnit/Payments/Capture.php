@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Payments;
 
+use LengthException;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Payments\Capture\SellerProtection;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Payments\Capture\SellerReceivableBreakdown;
 
@@ -54,14 +55,14 @@ class Capture extends Payment
     /**
      * @param string|null $invoiceId
      *
-     * @throws \LengthException if given parameter is too long
+     * @throws LengthException if given parameter is too long
      *
      * @return void
      */
     public function setInvoiceId($invoiceId)
     {
         if ($invoiceId !== null && \mb_strlen($invoiceId) > self::MAX_LENGTH_INVOICE_ID) {
-            throw new \LengthException(
+            throw new LengthException(
                 \sprintf('%s::$invoiceId must not be longer than %s characters', self::class, self::MAX_LENGTH_INVOICE_ID)
             );
         }
@@ -80,14 +81,14 @@ class Capture extends Payment
     /**
      * @param string|null $noteToPayer
      *
-     * @throws \LengthException if given parameter is too long
+     * @throws LengthException if given parameter is too long
      *
      * @return void
      */
     public function setNoteToPayer($noteToPayer)
     {
         if ($noteToPayer !== null && \mb_strlen($noteToPayer) > self::MAX_LENGTH_NOTE_TO_PAYER) {
-            throw new \LengthException(
+            throw new LengthException(
                 \sprintf('%s::$invoiceId must not be longer than %s characters', self::class, self::MAX_LENGTH_NOTE_TO_PAYER)
             );
         }

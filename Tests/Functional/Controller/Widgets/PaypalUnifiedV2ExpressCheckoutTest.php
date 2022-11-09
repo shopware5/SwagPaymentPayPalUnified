@@ -11,6 +11,8 @@ namespace SwagPaymentPayPalUnified\Tests\Functional\Controller\Widgets;
 use Enlight_Class;
 use Enlight_Controller_Request_RequestTestCase;
 use Enlight_Controller_Response_ResponseTestCase;
+use Enlight_Template_Manager;
+use Enlight_View_Default;
 use Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\PayPalOrderParameter;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\PayPalOrderParameterFacadeInterface;
@@ -99,7 +101,7 @@ class PaypalUnifiedV2ExpressCheckoutTest extends PaypalPaymentControllerTestCase
         $controller->setFront($this->getContainer()->get('front'));
         $controller->setRequest($request);
         $controller->setResponse($response);
-        $controller->setView(new \Enlight_View_Default(new \Enlight_Template_Manager()));
+        $controller->setView(new Enlight_View_Default(new Enlight_Template_Manager()));
         $controller->preDispatch();
 
         $controller->createOrderAction();

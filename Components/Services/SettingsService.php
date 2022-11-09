@@ -112,7 +112,7 @@ class SettingsService implements SettingsServiceInterface
     public function get($column, $settingsTable = SettingsTable::GENERAL)
     {
         if ($this->shop === null) {
-            throw new \RuntimeException('Could not retrieve a single setting without a shop instance.');
+            throw new RuntimeException('Could not retrieve a single setting without a shop instance.');
         }
 
         $table = $this->getTableByType($settingsTable);
@@ -128,7 +128,7 @@ class SettingsService implements SettingsServiceInterface
     /**
      * {@inheritdoc}
      *
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     public function hasSettings($settingsType = SettingsTable::GENERAL)
     {
@@ -151,7 +151,7 @@ class SettingsService implements SettingsServiceInterface
      *
      * @param string $settingsType
      *
-     * @throws \RuntimeException
+     * @throws RuntimeException
      *
      * @return string
      *
@@ -163,6 +163,6 @@ class SettingsService implements SettingsServiceInterface
             return SettingsTable::FULL[$settingsType];
         }
 
-        throw new \RuntimeException('The provided table ' . $settingsType . ' is not supported');
+        throw new RuntimeException('The provided table ' . $settingsType . ' is not supported');
     }
 }

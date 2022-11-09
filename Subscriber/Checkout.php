@@ -39,8 +39,10 @@ class Checkout implements SubscriberInterface
 
         $payerActionRequired = $request->get('payerActionRequired', 0);
         $payerInstrumentDeclined = $request->get('payerInstrumentDeclined', 0);
+        $threeDSecureExceptionCode = $request->get('threeDSecureExceptionCode', 0);
 
         $subject->View()->assign('payerActionRequired', $payerActionRequired);
         $subject->View()->assign('payerInstrumentDeclined', $payerInstrumentDeclined);
+        $subject->View()->assign('threeDSecureExceptionCode', $threeDSecureExceptionCode);
     }
 }

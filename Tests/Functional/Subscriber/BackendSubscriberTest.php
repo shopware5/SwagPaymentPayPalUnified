@@ -8,6 +8,8 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Subscriber;
 
+use Enlight_Controller_ActionEventArgs;
+use Enlight_Controller_Request_RequestTestCase;
 use Enlight_Controller_Response_ResponseTestCase;
 use Enlight_Template_Manager;
 use PHPUnit\Framework\TestCase;
@@ -48,10 +50,10 @@ class BackendSubscriberTest extends TestCase
             new Enlight_Template_Manager()
         );
 
-        $request = new \Enlight_Controller_Request_RequestTestCase();
+        $request = new Enlight_Controller_Request_RequestTestCase();
         $request->setActionName('index');
 
-        $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
+        $enlightEventArgs = new Enlight_Controller_ActionEventArgs([
             'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
             'request' => $request,
         ]);
@@ -72,10 +74,10 @@ class BackendSubscriberTest extends TestCase
             new Enlight_Template_Manager()
         );
 
-        $request = new \Enlight_Controller_Request_RequestTestCase();
+        $request = new Enlight_Controller_Request_RequestTestCase();
         $request->setActionName('load');
 
-        $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
+        $enlightEventArgs = new Enlight_Controller_ActionEventArgs([
             'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
             'request' => $request,
         ]);

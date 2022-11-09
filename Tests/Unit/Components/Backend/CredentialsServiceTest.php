@@ -9,6 +9,7 @@
 namespace SwagPaymentPayPalUnified\Tests\Unit\Components\Backend;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\Components\Backend\CredentialsService;
@@ -19,6 +20,7 @@ use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\CredentialsResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService;
 use SwagPaymentPayPalUnified\PayPalBundle\Services\TokenService;
+use UnexpectedValueException;
 
 class CredentialsServiceTest extends TestCase
 {
@@ -104,7 +106,7 @@ class CredentialsServiceTest extends TestCase
     {
         $this->givenTheresAnErrorWhenRetrievingAnAccessToken();
 
-        static::expectException(\Exception::class);
+        static::expectException(Exception::class);
         static::expectExceptionMessage(self::ACCESS_TOKEN_RETRIEVAL_EXCEPTION);
 
         $this->getCredentialsService()->getAccessToken(
@@ -133,7 +135,7 @@ class CredentialsServiceTest extends TestCase
     {
         $this->givenTheresAnErrorWhenRetrievingCredentials();
 
-        static::expectException(\Exception::class);
+        static::expectException(Exception::class);
         static::expectExceptionMessage(self::CREDENTIALS_RETRIEVAL_EXCEPTION);
 
         $this->getCredentialsService()->getCredentials(
@@ -150,7 +152,7 @@ class CredentialsServiceTest extends TestCase
      */
     public function testUpdateCredentialsThrowsExceptionWhenSettingsAreNotPresent($sandbox)
     {
-        static::expectException(\UnexpectedValueException::class);
+        static::expectException(UnexpectedValueException::class);
 
         if (\is_callable([TestCase::class, 'expectExceptionMessageMatches'])) {
             static::expectExceptionMessageMatches(self::UNEXPECTED_VALUE_EXCEPTION_MESSAGE);
@@ -218,7 +220,7 @@ class CredentialsServiceTest extends TestCase
     private function givenTheresAnErrorWhenRetrievingAnAccessToken()
     {
         $this->credentialsResource->method('getAccessToken')
-            ->willThrowException(new \Exception(self::ACCESS_TOKEN_RETRIEVAL_EXCEPTION));
+            ->willThrowException(new Exception(self::ACCESS_TOKEN_RETRIEVAL_EXCEPTION));
     }
 
     private function givenThereAreCredentials()
@@ -230,7 +232,7 @@ class CredentialsServiceTest extends TestCase
     private function givenTheresAnErrorWhenRetrievingCredentials()
     {
         $this->credentialsResource->method('getCredentials')
-            ->willThrowException(new \Exception(self::CREDENTIALS_RETRIEVAL_EXCEPTION));
+            ->willThrowException(new Exception(self::CREDENTIALS_RETRIEVAL_EXCEPTION));
     }
 
     private function givenThereAreGeneralSettings()

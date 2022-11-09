@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Mocks;
 
+use RuntimeException;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\CaptureResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\CaptureRefund;
 use SwagPaymentPayPalUnified\Tests\Mocks\ResultSet\RefundCapture;
@@ -24,7 +25,7 @@ class CaptureResourceMock extends CaptureResource
     public function refund($id, CaptureRefund $refund)
     {
         if ($id === self::THROW_EXCEPTION) {
-            throw new \RuntimeException('test exception');
+            throw new RuntimeException('test exception');
         }
 
         return RefundCapture::get();

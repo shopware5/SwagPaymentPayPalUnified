@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Unit\Components\PayPalOrderParameter;
 
+use Enlight_Components_Session_Namespace;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
@@ -109,7 +110,7 @@ class PayPalOrderParameterFacadeTest extends TestCase
     {
         $dependencyProvider = $this->createMock(DependencyProvider::class);
 
-        $session = $this->createMock(\Enlight_Components_Session_Namespace::class);
+        $session = $this->createMock(Enlight_Components_Session_Namespace::class);
         $session->method('get')
             ->willReturnMap([
                 ['sUserId', null, self::USER_ID],

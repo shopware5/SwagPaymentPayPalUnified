@@ -10,6 +10,7 @@ namespace SwagPaymentPayPalUnified\Components\Services\ExpressCheckout;
 
 use Doctrine\DBAL\Connection;
 use Enlight_Controller_Front;
+use Enlight_Controller_Request_Request;
 use Shopware\Bundle\AccountBundle\Form\Account\AddressFormType;
 use Shopware\Bundle\AccountBundle\Form\Account\PersonalFormType;
 use Shopware\Bundle\AccountBundle\Service\RegisterServiceInterface;
@@ -23,6 +24,7 @@ use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Shipping;
 use Symfony\Component\Form\FormFactoryInterface;
+use UnexpectedValueException;
 
 class CustomerService
 {
@@ -211,9 +213,9 @@ class CustomerService
 
         $request = $this->front->Request();
 
-        if (!$request instanceof \Enlight_Controller_Request_Request) {
+        if (!$request instanceof Enlight_Controller_Request_Request) {
             $this->logger->debug(sprintf('%s NO REQUEST GIVEN', __METHOD__));
-            throw new \UnexpectedValueException(sprintf('Expected instance of %s, got null', \Enlight_Controller_Request_Request::class));
+            throw new UnexpectedValueException(sprintf('Expected instance of %s, got null', Enlight_Controller_Request_Request::class));
         }
 
         $request->setPost('email', $customerModel->getEmail());

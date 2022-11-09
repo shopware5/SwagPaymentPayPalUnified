@@ -9,6 +9,7 @@
 namespace SwagPaymentPayPalUnified\Subscriber;
 
 use Enlight\Event\SubscriberInterface;
+use Enlight_Event_EventArgs;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
@@ -46,7 +47,7 @@ class PaymentMeans implements SubscriberInterface
     /**
      * @return void
      */
-    public function onFilterPaymentMeans(\Enlight_Event_EventArgs $args)
+    public function onFilterPaymentMeans(Enlight_Event_EventArgs $args)
     {
         $availableMethods = $args->getReturn();
 

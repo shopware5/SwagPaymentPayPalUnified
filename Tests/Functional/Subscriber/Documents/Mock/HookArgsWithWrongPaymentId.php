@@ -8,7 +8,13 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Subscriber\Documents\Mock;
 
-class HookArgsWithWrongPaymentId extends \Enlight_Hook_HookArgs
+use Enlight_Class;
+use Enlight_Hook_HookArgs;
+use Shopware_Components_Document;
+use Shopware_Models_Document_Order;
+use stdClass;
+
+class HookArgsWithWrongPaymentId extends Enlight_Hook_HookArgs
 {
     /**
      * @param bool $isShopware55
@@ -16,19 +22,19 @@ class HookArgsWithWrongPaymentId extends \Enlight_Hook_HookArgs
     public function __construct($isShopware55 = false)
     {
         if ($isShopware55) {
-            parent::__construct(new \stdClass(), '');
+            parent::__construct(new stdClass(), '');
         }
     }
 
     /**
-     * @return \Shopware_Components_Document
+     * @return Shopware_Components_Document
      */
     public function getSubject()
     {
-        $subject = \Enlight_Class::Instance(\Shopware_Components_Document::class);
-        \assert($subject instanceof \Shopware_Components_Document);
+        $subject = Enlight_Class::Instance(Shopware_Components_Document::class);
+        \assert($subject instanceof Shopware_Components_Document);
 
-        $subject->_order = new \Shopware_Models_Document_Order(15);
+        $subject->_order = new Shopware_Models_Document_Order(15);
 
         return $subject;
     }

@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services\Validation;
 
+use Exception;
 use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\Components\Exception\PayPalApiException;
 use SwagPaymentPayPalUnified\Components\Services\ExceptionHandlerService;
@@ -45,7 +46,7 @@ class RedirectDataBuilderTest extends TestCase
 
         static::assertFalse($redirectDataBuilder->hasException());
 
-        $setExceptionResult = $redirectDataBuilder->setException(new \Exception('FooBar'), 'test');
+        $setExceptionResult = $redirectDataBuilder->setException(new Exception('FooBar'), 'test');
         static::assertInstanceOf(RedirectDataBuilder::class, $setExceptionResult);
 
         static::assertTrue($redirectDataBuilder->hasException());
@@ -85,7 +86,7 @@ class RedirectDataBuilderTest extends TestCase
         static::assertFalse($redirectDataBuilder->hasException());
 
         $redirectDataBuilder->setCode($code)
-            ->setException(new \Exception('TestException'), 'test')
+            ->setException(new Exception('TestException'), 'test')
             ->setRedirectToFinishAction();
 
         static::assertSame($code, $redirectDataBuilder->getCode());

@@ -8,6 +8,10 @@
 
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\ShopwareOrderData;
+use SwagPaymentPayPalUnified\Components\Services\ThreeDSecureResultChecker\Exception\ThreeDSecureAuthorizationCanceledException;
+use SwagPaymentPayPalUnified\Components\Services\ThreeDSecureResultChecker\Exception\ThreeDSecureAuthorizationFailedException;
+use SwagPaymentPayPalUnified\Components\Services\ThreeDSecureResultChecker\Exception\ThreeDSecureAuthorizationRejectedException;
+use SwagPaymentPayPalUnified\Components\Services\ThreeDSecureResultChecker\ThreeDSecureResultChecker;
 use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentController;
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\InstrumentDeclinedException;
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\NoOrderToProceedException;
@@ -15,15 +19,24 @@ use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\PayerActionRequired
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\RequireRestartException;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
-use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource;
-use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\Card;
-use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\Card\AuthenticationResult;
+use Symfony\Component\HttpFoundation\Response;
 
 class Shopware_Controllers_Widgets_PaypalUnifiedV2AdvancedCreditDebitCard extends AbstractPaypalPaymentController
 {
+    const MAX_THREE_D_SECURE_RETRIES = 3;
+
+    const THREE_D_SECURE_RETRY_WAITING_TIME = 2;
+
+    /**
+     * @var ThreeDSecureResultChecker
+     */
+    protected $threeDSecureResultChecker;
+
     public function preDispatch()
     {
         parent::preDispatch();
+
+        $this->threeDSecureResultChecker = $this->get('paypal_unified.three_d_secure_result_checker');
 
         $this->Front()->Plugins()->ViewRenderer()->setNoRender();
         $this->Front()->Plugins()->Json()->setRenderer();
@@ -65,6 +78,11 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2AdvancedCreditDebitCard extend
 
         $payPalOrder = $this->createPayPalOrder($orderParams);
         if (!$payPalOrder instanceof Order) {
+            $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
+                ->setCode(ErrorCodes::NO_ORDER_TO_PROCESS);
+
+            $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
+
             return;
         }
 
@@ -79,6 +97,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2AdvancedCreditDebitCard extend
         $this->logger->debug(sprintf('%s START', __METHOD__));
 
         $payPalOrderId = $this->request->getParam('paypalOrderId');
+        $threeDSecureRetry = (int) $this->request->getParam('threeDSecureRetry', 0);
 
         if (!\is_string($payPalOrderId)) {
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
@@ -99,12 +118,50 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2AdvancedCreditDebitCard extend
             return;
         }
 
-        $liabilityShift = $this->getLiabilityShift($payPalOrder);
-
-        if ($liabilityShift !== AuthenticationResult::LIABILITY_SHIFT_POSSIBLE) {
+        try {
+            $this->threeDSecureResultChecker->checkStaus($payPalOrder);
+        } catch (ThreeDSecureAuthorizationFailedException $threeDSecureAuthorizationFailedException) {
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
-                ->setCode(ErrorCodes::THREE_D_SECURE_CHECK_FAILED)
-                ->setException(new UnexpectedValueException(sprintf('Expected liablitiy shift to be "%s", got: %s', AuthenticationResult::LIABILITY_SHIFT_POSSIBLE, $liabilityShift)), '');
+                ->setCode($threeDSecureAuthorizationFailedException->getCode())
+                ->setException($threeDSecureAuthorizationFailedException, 'captureAction: ThreeDSecure authorization aborted or failed');
+
+            $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
+
+            return;
+        } catch (ThreeDSecureAuthorizationRejectedException $threeDSecureAuthorizationRejectedException) {
+            if ($threeDSecureRetry < self::MAX_THREE_D_SECURE_RETRIES) {
+                sleep(self::THREE_D_SECURE_RETRY_WAITING_TIME);
+
+                $this->redirect([
+                    'module' => 'widgets',
+                    'controller' => 'PaypalUnifiedV2AdvancedCreditDebitCard',
+                    'action' => 'capture',
+                    'paypalOrderId' => $payPalOrderId,
+                    'threeDSecureRetry' => ++$threeDSecureRetry,
+                ]);
+
+                return;
+            }
+
+            $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
+                ->setCode($threeDSecureAuthorizationRejectedException->getCode())
+                ->setException($threeDSecureAuthorizationRejectedException, 'captureAction: ThreeDSecure authorization rejected');
+
+            $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
+
+            return;
+        } catch (ThreeDSecureAuthorizationCanceledException $authorizationCanceledException) {
+            $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
+                ->setCode($authorizationCanceledException->getCode())
+                ->setException($authorizationCanceledException, 'captureAction: ThreeDSecure authorization canceled');
+
+            $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
+
+            return;
+        } catch (Exception $exception) {
+            $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
+                ->setCode($exception->getCode())
+                ->setException($exception, 'captureAction: ThreeDSecure unknown authorization failure');
 
             $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
 
@@ -140,7 +197,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2AdvancedCreditDebitCard extend
             $this->orderNumberService->releaseOrderNumber();
 
             $this->redirect([
-                'module' => 'frontend',
+                'module' => 'widgets',
                 'controller' => 'PaypalUnifiedV2AdvancedCreditDebitCard',
                 'action' => 'capture',
                 'paypalOrderId' => $payPalOrderId,
@@ -150,23 +207,29 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2AdvancedCreditDebitCard extend
         } catch (PayerActionRequiredException $payerActionRequiredException) {
             $this->logger->debug(sprintf('%s PAYER_ACTION_REQUIRED', __METHOD__));
 
-            $this->redirect([
+            $this->Response()->setHttpResponseCode(Response::HTTP_BAD_REQUEST);
+            $redirectUrl = $this->front->Router()->assemble([
                 'module' => 'frontend',
                 'controller' => 'checkout',
                 'action' => 'confirm',
                 'payerActionRequired' => true,
             ]);
 
+            $this->view->assign('redirectTo', $redirectUrl);
+
             return;
         } catch (InstrumentDeclinedException $instrumentDeclinedException) {
             $this->logger->debug(sprintf('%s INSTRUMENT_DECLINED', __METHOD__));
 
-            $this->redirect([
+            $this->Response()->setHttpResponseCode(Response::HTTP_BAD_REQUEST);
+            $redirectUrl = $this->front->Router()->assemble([
                 'module' => 'frontend',
                 'controller' => 'checkout',
                 'action' => 'confirm',
                 'payerInstrumentDeclined' => true,
             ]);
+
+            $this->view->assign('redirectTo', $redirectUrl);
 
             return;
         } catch (NoOrderToProceedException $noOrderToProceedException) {
@@ -198,31 +261,5 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2AdvancedCreditDebitCard extend
 
         $this->View()->assign('paypalUnifiedErrorCode', $paypalUnifiedErrorCode ?: ErrorCodes::UNKNOWN);
         $this->View()->extendsTemplate($this->container->getParameter('paypal_unified.plugin_dir') . '/Resources/views/frontend/paypal_unified/checkout/error_message.tpl');
-    }
-
-    /**
-     * @return AuthenticationResult::LIABILITY_SHIFT_*|null
-     */
-    private function getLiabilityShift(Order $payPalOrder)
-    {
-        $paymentSource = $payPalOrder->getPaymentSource();
-
-        if (!$paymentSource instanceof PaymentSource) {
-            return null;
-        }
-
-        $card = $paymentSource->getCard();
-
-        if (!$card instanceof Card) {
-            return null;
-        }
-
-        $authenticationResult = $card->getAuthenticationResult();
-
-        if (!$authenticationResult instanceof AuthenticationResult) {
-            return null;
-        }
-
-        return $authenticationResult->getLiabilityShift();
     }
 }

@@ -8,6 +8,8 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Subscriber;
 
+use Enlight_Controller_Request_RequestHttp;
+use Enlight_Event_EventArgs;
 use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Components\Services\RiskManagement\RiskManagementInterface;
@@ -258,11 +260,11 @@ class RiskManagementTest extends TestCase
     }
 
     /**
-     * @return \Enlight_Event_EventArgs
+     * @return Enlight_Event_EventArgs
      */
     private function getEventArgs()
     {
-        $eventArgs = new \Enlight_Event_EventArgs();
+        $eventArgs = new Enlight_Event_EventArgs();
         $paymentMethodProvider = Shopware()->Container()->get('paypal_unified.payment_method_provider');
         $eventArgs->set('paymentID', $paymentMethodProvider->getPaymentId(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME));
 
@@ -276,7 +278,7 @@ class RiskManagementTest extends TestCase
      */
     private function setRequestParameterToFront($module = 'frontend', $controller = 'listing', $action = 'index')
     {
-        $request = new \Enlight_Controller_Request_RequestHttp();
+        $request = new Enlight_Controller_Request_RequestHttp();
         $request->setActionName($action);
         $request->setControllerName($controller);
         $request->setModuleName($module);

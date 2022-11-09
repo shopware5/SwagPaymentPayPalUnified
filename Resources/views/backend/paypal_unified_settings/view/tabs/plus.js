@@ -87,6 +87,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Plus', {
     createPaymentIntentSelection: function() {
         return Ext.create('Ext.form.field.ComboBox', {
             name: 'intent',
+            editable: false,
             fieldLabel: '{s name="intent/field" namespace="backend/paypal_unified_settings/tabs/payment_intent"}{/s}',
             helpText: '',
 

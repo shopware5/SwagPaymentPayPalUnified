@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\WebhookHandlers;
 
+use Exception;
 use Shopware\Models\Order\Status;
 use SwagPaymentPayPalUnified\Components\Exception\OrderNotFoundException;
 use SwagPaymentPayPalUnified\Components\Services\PaymentStatusService;
@@ -62,7 +63,7 @@ class SaleRefunded implements WebhookHandler
             );
 
             return false;
-        } catch (\Exception $ex) {
+        } catch (Exception $ex) {
             $this->logger->error(
                 '[SaleRefunded-Webhook] Could not update entity',
                 ['message' => $ex->getMessage(), 'stacktrace' => $ex->getTrace()]

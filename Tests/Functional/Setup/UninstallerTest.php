@@ -9,6 +9,7 @@
 namespace SwagPaymentPayPalUnified\Tests\Functional\Setup;
 
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 use SwagPaymentPayPalUnified\Setup\Uninstaller;
 use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 
@@ -32,7 +33,7 @@ class UninstallerTest extends TestCase
     {
         $uninstaller = $this->createUninstaller();
 
-        $reflectionMethod = (new \ReflectionClass(Uninstaller::class))->getMethod('removeSettingsTables');
+        $reflectionMethod = (new ReflectionClass(Uninstaller::class))->getMethod('removeSettingsTables');
         $reflectionMethod->setAccessible(true);
 
         $reflectionMethod->invoke($uninstaller);

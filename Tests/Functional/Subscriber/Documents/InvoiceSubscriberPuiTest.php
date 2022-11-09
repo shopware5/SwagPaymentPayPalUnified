@@ -11,6 +11,7 @@ namespace SwagPaymentPayPalUnified\Tests\Functional\Subscriber\Documents;
 use Enlight_Event_EventArgs;
 use Enlight_Hook_HookArgs;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 use ReflectionMethod;
 use Shopware_Components_Document;
 use Shopware_Components_Translation;
@@ -185,7 +186,7 @@ class InvoiceSubscriberPuiTest extends TestCase
      */
     private function createShopwareVersionRelatedHookArgs(Shopware_Components_Document $document)
     {
-        $reflectionConstructor = (new \ReflectionClass(Enlight_Hook_HookArgs::class))->getConstructor();
+        $reflectionConstructor = (new ReflectionClass(Enlight_Hook_HookArgs::class))->getConstructor();
         static::assertInstanceOf(ReflectionMethod::class, $reflectionConstructor);
         $numberOfParameters = $reflectionConstructor->getNumberOfParameters();
 

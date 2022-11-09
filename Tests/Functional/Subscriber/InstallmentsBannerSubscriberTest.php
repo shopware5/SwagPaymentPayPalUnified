@@ -8,9 +8,12 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Subscriber;
 
+use Enlight_Controller_ActionEventArgs;
+use Enlight_Controller_Request_RequestTestCase;
 use Enlight_Controller_Response_ResponseTestCase;
 use Enlight_Template_Manager;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 use Shopware\Bundle\StoreFrontBundle\Service\Core\ContextService;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
@@ -57,8 +60,8 @@ class InstallmentsBannerSubscriberTest extends TestCase
         $subscriber = $this->getSubscriber();
 
         $view = new ViewMock(new Enlight_Template_Manager());
-        $request = new \Enlight_Controller_Request_RequestTestCase();
-        $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
+        $request = new Enlight_Controller_Request_RequestTestCase();
+        $enlightEventArgs = new Enlight_Controller_ActionEventArgs([
             'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
         ]);
 
@@ -77,8 +80,8 @@ class InstallmentsBannerSubscriberTest extends TestCase
         $this->createTestSettings(false);
 
         $view = new ViewMock(new Enlight_Template_Manager());
-        $request = new \Enlight_Controller_Request_RequestTestCase();
-        $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
+        $request = new Enlight_Controller_Request_RequestTestCase();
+        $enlightEventArgs = new Enlight_Controller_ActionEventArgs([
             'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
         ]);
 
@@ -98,8 +101,8 @@ class InstallmentsBannerSubscriberTest extends TestCase
         $this->createTestSettings();
 
         $view = new ViewMock(new Enlight_Template_Manager());
-        $request = new \Enlight_Controller_Request_RequestTestCase();
-        $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
+        $request = new Enlight_Controller_Request_RequestTestCase();
+        $enlightEventArgs = new Enlight_Controller_ActionEventArgs([
             'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
         ]);
 
@@ -119,8 +122,8 @@ class InstallmentsBannerSubscriberTest extends TestCase
         $this->createTestSettings(true, false);
 
         $view = new ViewMock(new Enlight_Template_Manager());
-        $request = new \Enlight_Controller_Request_RequestTestCase();
-        $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
+        $request = new Enlight_Controller_Request_RequestTestCase();
+        $enlightEventArgs = new Enlight_Controller_ActionEventArgs([
             'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
         ]);
 
@@ -138,10 +141,10 @@ class InstallmentsBannerSubscriberTest extends TestCase
         $this->createTestSettings();
 
         $view = new ViewMock(new Enlight_Template_Manager());
-        $request = new \Enlight_Controller_Request_RequestTestCase();
+        $request = new Enlight_Controller_Request_RequestTestCase();
         $request->setControllerName('foo');
         $request->setActionName('bar');
-        $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
+        $enlightEventArgs = new Enlight_Controller_ActionEventArgs([
             'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
             'request' => $request,
         ]);
@@ -165,10 +168,10 @@ class InstallmentsBannerSubscriberTest extends TestCase
 
         $view = new ViewMock(new Enlight_Template_Manager());
         $view->assign('sArticle', ['price_numeric' => $productAmount]);
-        $request = new \Enlight_Controller_Request_RequestTestCase();
+        $request = new Enlight_Controller_Request_RequestTestCase();
         $request->setControllerName('detail');
         $request->setActionName('index');
-        $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
+        $enlightEventArgs = new Enlight_Controller_ActionEventArgs([
             'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
             'request' => $request,
         ]);
@@ -192,10 +195,10 @@ class InstallmentsBannerSubscriberTest extends TestCase
 
         $view = new ViewMock(new Enlight_Template_Manager());
         $view->assign('sBasket', ['AmountNumeric' => $cartAmount]);
-        $request = new \Enlight_Controller_Request_RequestTestCase();
+        $request = new Enlight_Controller_Request_RequestTestCase();
         $request->setControllerName('checkout');
         $request->setActionName('cart');
-        $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
+        $enlightEventArgs = new Enlight_Controller_ActionEventArgs([
             'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
             'request' => $request,
         ]);
@@ -217,10 +220,10 @@ class InstallmentsBannerSubscriberTest extends TestCase
         $this->createTestSettings();
 
         $view = new ViewMock(new Enlight_Template_Manager());
-        $request = new \Enlight_Controller_Request_RequestTestCase();
+        $request = new Enlight_Controller_Request_RequestTestCase();
         $request->setControllerName('detail');
         $request->setActionName('index');
-        $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
+        $enlightEventArgs = new Enlight_Controller_ActionEventArgs([
             'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
             'request' => $request,
         ]);
@@ -247,15 +250,15 @@ class InstallmentsBannerSubscriberTest extends TestCase
         $tmpShopContext = $contextService->getShopContext();
         $shopContext = $contextService->createShopContext(2, $currencyId, 'EK');
 
-        $reflectionProperty = (new \ReflectionClass(ContextService::class))->getProperty('context');
+        $reflectionProperty = (new ReflectionClass(ContextService::class))->getProperty('context');
         $reflectionProperty->setAccessible(true);
         $reflectionProperty->setValue($contextService, $shopContext);
 
         $view = new ViewMock(new Enlight_Template_Manager());
-        $request = new \Enlight_Controller_Request_RequestTestCase();
+        $request = new Enlight_Controller_Request_RequestTestCase();
         $request->setControllerName('detail');
         $request->setActionName('index');
-        $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
+        $enlightEventArgs = new Enlight_Controller_ActionEventArgs([
             'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
             'request' => $request,
         ]);

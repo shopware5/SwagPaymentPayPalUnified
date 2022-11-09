@@ -10,6 +10,8 @@ namespace SwagPaymentPayPalUnified\Subscriber;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Enlight\Event\SubscriberInterface;
+use Enlight_Controller_ActionEventArgs;
+use Enlight_Event_EventArgs;
 use Enlight_View_Default;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Components\Services\RiskManagement\RiskManagementInterface;
@@ -93,7 +95,7 @@ class Frontend implements SubscriberInterface
         return new ArrayCollection($jsPath);
     }
 
-    public function onLoadAjaxListing(\Enlight_Controller_ActionEventArgs $args)
+    public function onLoadAjaxListing(Enlight_Controller_ActionEventArgs $args)
     {
         $controller = $args->getSubject();
         if ($controller->Request()->getActionName() !== 'listingCount') {
@@ -105,7 +107,7 @@ class Frontend implements SubscriberInterface
         $controller->View()->assign('paypalIsNotAllowed', $this->riskManagement->isPayPalNotAllowed(null, $category));
     }
 
-    public function onPostDispatchSecure(\Enlight_Controller_ActionEventArgs $args)
+    public function onPostDispatchSecure(Enlight_Controller_ActionEventArgs $args)
     {
         if (!$this->settingsService->hasSettings()) {
             return;
@@ -138,7 +140,7 @@ class Frontend implements SubscriberInterface
     /**
      * Adds the template directory to the TemplateManager
      */
-    public function onCollectTemplateDir(\Enlight_Event_EventArgs $args)
+    public function onCollectTemplateDir(Enlight_Event_EventArgs $args)
     {
         $dirs = $args->getReturn();
         $dirs[] = $this->pluginDir . '/Resources/views/';
@@ -149,7 +151,7 @@ class Frontend implements SubscriberInterface
     /**
      * @return bool
      */
-    private function shouldCheckRiskManagement(\Enlight_Controller_ActionEventArgs $args)
+    private function shouldCheckRiskManagement(Enlight_Controller_ActionEventArgs $args)
     {
         $controllerName = $args->getSubject()->Request()->getControllerName();
         $actionName = $args->getSubject()->Request()->getActionName();

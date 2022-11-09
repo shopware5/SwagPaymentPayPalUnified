@@ -8,6 +8,8 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services\RiskManagement;
 
+use Enlight_Controller_Request_RequestHttp;
+use Enlight_Controller_Response_ResponseHttp;
 use PHPUnit\Framework\TestCase;
 use Shopware\Bundle\AttributeBundle\Repository\CustomerRepository;
 use SwagPaymentPayPalUnified\Components\Services\RiskManagement\RiskManagement;
@@ -30,8 +32,8 @@ class RiskManagementServiceTest extends TestCase
     {
         $this->getContainer()->get('session')->offsetSet('sUserId', null);
 
-        $this->getContainer()->get('front')->setRequest(new \Enlight_Controller_Request_RequestHttp());
-        $this->getContainer()->get('front')->setResponse(new \Enlight_Controller_Response_ResponseHttp());
+        $this->getContainer()->get('front')->setRequest(new Enlight_Controller_Request_RequestHttp());
+        $this->getContainer()->get('front')->setResponse(new Enlight_Controller_Response_ResponseHttp());
 
         static::assertFalse($this->getRiskManagement()->isPayPalNotAllowed());
     }
@@ -45,10 +47,10 @@ class RiskManagementServiceTest extends TestCase
         static::assertTrue(\is_string($sql));
         $this->getContainer()->get('dbal_connection')->exec($sql);
 
-        $request = new \Enlight_Controller_Request_RequestHttp();
+        $request = new Enlight_Controller_Request_RequestHttp();
         $this->setRequestParameterToFront($request);
 
-        $this->getContainer()->get('front')->setResponse(new \Enlight_Controller_Response_ResponseHttp());
+        $this->getContainer()->get('front')->setResponse(new Enlight_Controller_Response_ResponseHttp());
 
         static::assertFalse($this->getRiskManagement()->isPayPalNotAllowed(178));
         static::assertTrue($this->getRiskManagement()->isPayPalNotAllowed(37));
@@ -63,10 +65,10 @@ class RiskManagementServiceTest extends TestCase
         static::assertTrue(\is_string($sql));
         $this->getContainer()->get('dbal_connection')->exec($sql);
 
-        $request = new \Enlight_Controller_Request_RequestHttp();
+        $request = new Enlight_Controller_Request_RequestHttp();
         $this->setRequestParameterToFront($request, 'frontend', 'detail');
 
-        $this->getContainer()->get('front')->setResponse(new \Enlight_Controller_Response_ResponseHttp());
+        $this->getContainer()->get('front')->setResponse(new Enlight_Controller_Response_ResponseHttp());
 
         static::assertFalse($this->getRiskManagement()->isPayPalNotAllowed(null, 6));
 
@@ -87,10 +89,10 @@ class RiskManagementServiceTest extends TestCase
         static::assertTrue(\is_string($sql));
         $this->getContainer()->get('dbal_connection')->exec($sql);
 
-        $request = new \Enlight_Controller_Request_RequestHttp();
+        $request = new Enlight_Controller_Request_RequestHttp();
         $this->setRequestParameterToFront($request, 'frontend', 'detail');
 
-        $this->getContainer()->get('front')->setResponse(new \Enlight_Controller_Response_ResponseHttp());
+        $this->getContainer()->get('front')->setResponse(new Enlight_Controller_Response_ResponseHttp());
 
         static::assertTrue($this->getRiskManagement()->isPayPalNotAllowed(178));
         static::assertFalse($this->getRiskManagement()->isPayPalNotAllowed(37));
@@ -105,10 +107,10 @@ class RiskManagementServiceTest extends TestCase
         static::assertTrue(\is_string($sql));
         $this->getContainer()->get('dbal_connection')->exec($sql);
 
-        $request = new \Enlight_Controller_Request_RequestHttp();
+        $request = new Enlight_Controller_Request_RequestHttp();
         $this->setRequestParameterToFront($request, 'frontend', 'detail');
 
-        $this->getContainer()->get('front')->setResponse(new \Enlight_Controller_Response_ResponseHttp());
+        $this->getContainer()->get('front')->setResponse(new Enlight_Controller_Response_ResponseHttp());
 
         static::assertFalse($this->getRiskManagement()->isPayPalNotAllowed(null, 6));
 
@@ -169,7 +171,7 @@ class RiskManagementServiceTest extends TestCase
      * @return void
      */
     private function setRequestParameterToFront(
-        \Enlight_Controller_Request_RequestHttp $request,
+        Enlight_Controller_Request_RequestHttp $request,
         $module = 'frontend',
         $controller = 'listing',
         $action = 'index'

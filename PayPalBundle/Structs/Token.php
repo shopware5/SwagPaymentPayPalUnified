@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\PayPalBundle\Structs;
 
+use DateInterval;
 use DateTime;
 
 class Token
@@ -104,7 +105,7 @@ class Token
 
         // Calculate the expiration date manually
         $expirationDateTime = new DateTime();
-        $interval = \DateInterval::createFromDateString($token->getExpiresIn() . ' seconds');
+        $interval = DateInterval::createFromDateString($token->getExpiresIn() . ' seconds');
         $expirationDateTime = $expirationDateTime->add($interval);
 
         $token->setExpireDateTime($expirationDateTime);

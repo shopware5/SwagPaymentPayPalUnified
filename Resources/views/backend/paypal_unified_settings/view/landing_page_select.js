@@ -4,6 +4,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.LandingPageSelect', {
     extend: 'Ext.form.field.ComboBox',
 
     name: 'landingPageType',
+    editable: false,
     fieldLabel: '{s name="fieldLabel"}PayPal landing page{/s}',
     helpText: '{s name="helpText"}<u>Login</u><br>The PayPal site displays a login screen as landing page.<br><br><u>Registration</u><br>The PayPal site displays a registration form as landing page.{/s}',
     queryMode: 'local',

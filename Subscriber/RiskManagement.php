@@ -9,6 +9,8 @@
 namespace SwagPaymentPayPalUnified\Subscriber;
 
 use Enlight\Event\SubscriberInterface;
+use Enlight_Event_EventArgs;
+use Enlight_Template_Manager;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Components\Services\RiskManagement\RiskManagementHelperInterface;
@@ -21,7 +23,7 @@ class RiskManagement implements SubscriberInterface
     private $riskManagementHelper;
 
     /**
-     * @var \Enlight_Template_Manager
+     * @var Enlight_Template_Manager
      */
     private $template;
 
@@ -37,7 +39,7 @@ class RiskManagement implements SubscriberInterface
 
     public function __construct(
         RiskManagementHelperInterface $riskManagementHelper,
-        \Enlight_Template_Manager $template,
+        Enlight_Template_Manager $template,
         DependencyProvider $dependencyProvider,
         PaymentMethodProviderInterface $paymentMethodProvider
     ) {
@@ -59,7 +61,7 @@ class RiskManagement implements SubscriberInterface
     /**
      * @return bool|null
      */
-    public function onCheckProductCategoryFrom(\Enlight_Event_EventArgs $args)
+    public function onCheckProductCategoryFrom(Enlight_Event_EventArgs $args)
     {
         if (!$this->shouldContinueCheck($args->get('paymentID'))) {
             return null;
@@ -99,7 +101,7 @@ class RiskManagement implements SubscriberInterface
     /**
      * @return bool|null
      */
-    public function onCheckRiskAttribIsNot(\Enlight_Event_EventArgs $args)
+    public function onCheckRiskAttribIsNot(Enlight_Event_EventArgs $args)
     {
         if (!$this->shouldContinueCheck($args->get('paymentID'))) {
             return null;
@@ -135,7 +137,7 @@ class RiskManagement implements SubscriberInterface
     /**
      * @return bool|null
      */
-    public function onCheckRiskAttribIs(\Enlight_Event_EventArgs $args)
+    public function onCheckRiskAttribIs(Enlight_Event_EventArgs $args)
     {
         if (!$this->shouldContinueCheck($args->get('paymentID'))) {
             return null;

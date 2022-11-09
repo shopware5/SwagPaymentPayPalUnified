@@ -8,9 +8,12 @@
 
 namespace SwagPaymentPayPalUnified\PayPalBundle\V2;
 
+use JsonSerializable;
+use ReturnTypeWillChange;
+use RuntimeException;
 use Symfony\Component\Serializer\NameConverter\CamelCaseToSnakeCaseNameConverter;
 
-abstract class PayPalApiStruct implements \JsonSerializable
+abstract class PayPalApiStruct implements JsonSerializable
 {
     final public function __construct()
     {
@@ -83,7 +86,7 @@ abstract class PayPalApiStruct implements \JsonSerializable
     /**
      * @return mixed[]
      */
-    #[\ReturnTypeWillChange]
+    #[ReturnTypeWillChange]
     public function jsonSerialize()
     {
         $data = [];
@@ -105,7 +108,7 @@ abstract class PayPalApiStruct implements \JsonSerializable
     {
         $encoded = json_encode($this);
         if (!\is_string($encoded)) {
-            throw new \RuntimeException('Could not encode PayPal data');
+            throw new RuntimeException('Could not encode PayPal data');
         }
 
         return json_decode($encoded, true);

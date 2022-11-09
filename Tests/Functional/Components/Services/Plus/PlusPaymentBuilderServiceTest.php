@@ -8,6 +8,8 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services\Plus;
 
+use DateInterval;
+use DateTime;
 use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
 use SwagPaymentPayPalUnified\Components\Services\Plus\PlusPaymentBuilderService;
@@ -63,8 +65,8 @@ class PlusPaymentBuilderServiceTest extends TestCase
     {
         $this->createEddAttribute();
         $eddDays = 21;
-        $date = new \DateTime();
-        $date->add(new \DateInterval('P' . $eddDays . 'D'));
+        $date = new DateTime();
+        $date->add(new DateInterval('P' . $eddDays . 'D'));
         $expectedDate = $date->format('Y-m-d');
 
         $request = $this->getRequestData($eddDays);

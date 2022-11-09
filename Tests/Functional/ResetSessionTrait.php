@@ -8,6 +8,8 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional;
 
+use Enlight_Components_Session_Namespace;
+
 trait ResetSessionTrait
 {
     /**
@@ -15,10 +17,10 @@ trait ResetSessionTrait
      */
     private function resetSession()
     {
-        if (\method_exists(\Enlight_Components_Session_Namespace::class, 'reset')) {
+        if (\method_exists(Enlight_Components_Session_Namespace::class, 'reset')) {
             Shopware()->Container()->get('session')->reset();
         }
-        if (\method_exists(\Enlight_Components_Session_Namespace::class, 'unsetAll')) {
+        if (\method_exists(Enlight_Components_Session_Namespace::class, 'unsetAll')) {
             Shopware()->Container()->get('session')->unsetAll();
         }
     }

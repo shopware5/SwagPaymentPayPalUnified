@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\Components\Backend;
 
+use InvalidArgumentException;
 use Shopware\Components\Model\ModelManager;
 use Shopware\Components\ShopRegistrationServiceInterface;
 use Shopware\Models\Shop\Repository as ShopRepository;
@@ -45,7 +46,7 @@ class ShopRegistrationService
     public function registerShopById($shopId)
     {
         if (!\is_int($shopId)) {
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 sprintf(
                     'The parameter "shopId" does not match. Expected int, got: %s, of type %s.',
                     $shopId,

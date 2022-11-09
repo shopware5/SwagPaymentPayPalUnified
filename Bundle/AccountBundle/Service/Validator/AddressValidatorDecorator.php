@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\Bundle\AccountBundle\Service\Validator;
 
+use Enlight_Controller_Front;
 use Shopware\Bundle\AccountBundle\Service\Validator\AddressValidatorInterface;
 use Shopware\Components\Api\Exception\ValidationException;
 use Shopware\Models\Customer\Address;
@@ -22,11 +23,11 @@ class AddressValidatorDecorator implements AddressValidatorInterface
     private $innerValidator;
 
     /**
-     * @var \Enlight_Controller_Front
+     * @var Enlight_Controller_Front
      */
     private $front;
 
-    public function __construct(AddressValidatorInterface $innerValidator, \Enlight_Controller_Front $front)
+    public function __construct(AddressValidatorInterface $innerValidator, Enlight_Controller_Front $front)
     {
         $this->innerValidator = $innerValidator;
         $this->front = $front;

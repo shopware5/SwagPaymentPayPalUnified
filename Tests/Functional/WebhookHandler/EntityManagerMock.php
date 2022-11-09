@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\WebhookHandler;
 
+use RuntimeException;
 use Shopware\Components\Model\ModelManager;
 
 class EntityManagerMock extends ModelManager
@@ -18,6 +19,6 @@ class EntityManagerMock extends ModelManager
 
     public function getRepository($entityName)
     {
-        throw new \RuntimeException('Test exception');
+        throw new RuntimeException('Test exception');
     }
 }

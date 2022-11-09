@@ -8,7 +8,9 @@
 
 namespace SwagPaymentPayPalUnified\PayPalBundle\Components\Webhook;
 
-class WebhookException extends \Exception
+use Exception;
+
+class WebhookException extends Exception
 {
     /**
      * The name of the webhook event that triggered this exception

@@ -33,7 +33,7 @@ return (new Config())
     ->setRules([
         '@PSR12' => true,
         '@Symfony' => true,
-
+        'global_namespace_import' => true,
         'array_syntax' => ['syntax' => 'short'],
         'blank_line_after_opening_tag' => false,
         'class_attributes_separation' => ['elements' => ['method' => 'one', 'property' => 'one']],

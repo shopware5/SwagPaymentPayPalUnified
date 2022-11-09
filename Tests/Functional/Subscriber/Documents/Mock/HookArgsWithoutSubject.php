@@ -8,7 +8,10 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Subscriber\Documents\Mock;
 
-class HookArgsWithoutSubject extends \Enlight_Hook_HookArgs
+use Enlight_Hook_HookArgs;
+use stdClass;
+
+class HookArgsWithoutSubject extends Enlight_Hook_HookArgs
 {
     /**
      * @param bool $isShopware55
@@ -16,7 +19,7 @@ class HookArgsWithoutSubject extends \Enlight_Hook_HookArgs
     public function __construct($isShopware55 = false)
     {
         if ($isShopware55) {
-            parent::__construct(new \stdClass(), '');
+            parent::__construct(new stdClass(), '');
         }
     }
 
