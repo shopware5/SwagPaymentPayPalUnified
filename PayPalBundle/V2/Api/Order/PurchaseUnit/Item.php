@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit;
 
+use LengthException;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Item\Tax;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Item\UnitAmount;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\PayPalApiStruct;
@@ -68,14 +69,14 @@ class Item extends PayPalApiStruct
     /**
      * @param string $name
      *
-     * @throws \LengthException if given parameter is too long
+     * @throws LengthException if given parameter is too long
      *
      * @return void
      */
     public function setName($name)
     {
         if (\mb_strlen($name) > self::MAX_LENGTH_NAME) {
-            throw new \LengthException(
+            throw new LengthException(
                 \sprintf('%s::$name must not be longer than %s characters', self::class, self::MAX_LENGTH_NAME)
             );
         }
@@ -144,14 +145,14 @@ class Item extends PayPalApiStruct
     /**
      * @param string|null $sku
      *
-     * @throws \LengthException if given parameter is too long
+     * @throws LengthException if given parameter is too long
      *
      * @return void
      */
     public function setSku($sku)
     {
         if ($sku !== null && \mb_strlen($sku) > self::MAX_LENGTH_SKU) {
-            throw new \LengthException(
+            throw new LengthException(
                 \sprintf('%s::$sku must not be longer than %s characters', self::class, self::MAX_LENGTH_SKU)
             );
         }

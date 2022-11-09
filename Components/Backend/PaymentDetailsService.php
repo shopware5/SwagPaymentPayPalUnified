@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\Components\Backend;
 
+use Exception;
 use SwagPaymentPayPalUnified\Components\ExceptionHandlerServiceInterface;
 use SwagPaymentPayPalUnified\Components\Services\Legacy\LegacyService;
 use SwagPaymentPayPalUnified\Components\Services\TransactionHistoryBuilderService;
@@ -79,7 +80,7 @@ class PaymentDetailsService
             } else {
                 $viewParameter = $this->prepareUnifiedDetails($paymentId);
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $error = $this->exceptionHandler->handle($e, 'obtain payment details');
 
             $viewParameter = [

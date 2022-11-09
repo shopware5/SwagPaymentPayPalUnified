@@ -11,6 +11,7 @@ namespace SwagPaymentPayPalUnified\Tests\Functional\Subscriber;
 use Enlight_Hook_HookArgs;
 use Generator;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 use ReflectionMethod;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Subscriber\AdvancedCreditDebitCardRiskManagement;
@@ -123,7 +124,7 @@ class AdvancedCreditDebitCartRiskManagementTest extends TestCase
             $paymentMethodId = $this->getContainer()->get('paypal_unified.payment_method_provider')->getPaymentId(PaymentMethodProviderInterface::PAYPAL_UNIFIED_ADVANCED_CREDIT_DEBIT_CARD_METHOD_NAME);
         }
 
-        $reflectionMethod = (new \ReflectionClass(Enlight_Hook_HookArgs::class))->getConstructor();
+        $reflectionMethod = (new ReflectionClass(Enlight_Hook_HookArgs::class))->getConstructor();
         static::assertInstanceOf(ReflectionMethod::class, $reflectionMethod);
         $numberOfParameters = $reflectionMethod->getNumberOfParameters();
 

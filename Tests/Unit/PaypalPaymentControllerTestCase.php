@@ -35,6 +35,7 @@ use SwagPaymentPayPalUnified\Components\Services\OrderPropertyHelper;
 use SwagPaymentPayPalUnified\Components\Services\PaymentControllerHelper;
 use SwagPaymentPayPalUnified\Components\Services\PaymentStatusService;
 use SwagPaymentPayPalUnified\Components\Services\Plus\PaymentInstructionService;
+use SwagPaymentPayPalUnified\Components\Services\ThreeDSecureResultChecker\ThreeDSecureResultChecker;
 use SwagPaymentPayPalUnified\Components\Services\Validation\BasketValidatorInterface;
 use SwagPaymentPayPalUnified\Components\Services\Validation\RedirectDataBuilder;
 use SwagPaymentPayPalUnified\Components\Services\Validation\RedirectDataBuilderFactoryInterface;
@@ -84,6 +85,7 @@ class PaypalPaymentControllerTestCase extends TestCase
     const SERVICE_PROPORTIONAL_TAX_CALCULATOR = 'shopware.cart.proportional_tax_calculator';
     const SERVICE_DBAL_CONNECTION = 'dbal_connection';
     const SERVICE_ORDER_NUMBER_SERVICE = 'paypal_unified.order_number_service';
+    const SERVICE_THREE_D_SECURE_RESULT_CHECKER = 'paypal_unified.three_d_secure_result_checker';
 
     /**
      * @var MockObject|Enlight_Controller_Request_RequestHttp
@@ -137,6 +139,7 @@ class PaypalPaymentControllerTestCase extends TestCase
         $this->injections[self::SERVICE_SHOP] = $this->createMock(Shop::class);
         $this->injections[self::SERVICE_DBAL_CONNECTION] = $this->createMock(Connection::class);
         $this->injections[self::SERVICE_ORDER_NUMBER_SERVICE] = $this->createMock(OrderNumberService::class);
+        $this->injections[self::SERVICE_THREE_D_SECURE_RESULT_CHECKER] = $this->createMock(ThreeDSecureResultChecker::class);
 
         if (class_exists(BasketPersister::class)) {
             $this->injections[self::SERVICE_BASKET_PERSISTER] = $this->createMock(BasketPersister::class);

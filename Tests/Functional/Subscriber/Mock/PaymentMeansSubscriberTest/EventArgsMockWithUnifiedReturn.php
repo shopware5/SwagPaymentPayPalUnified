@@ -8,9 +8,10 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Subscriber\Mock\PaymentMeansSubscriberTest;
 
+use Enlight_Event_EventArgs;
 use SwagPaymentPayPalUnified\Tests\Functional\PayPalUnifiedPaymentIdTrait;
 
-class EventArgsMockWithUnifiedReturn extends \Enlight_Event_EventArgs
+class EventArgsMockWithUnifiedReturn extends Enlight_Event_EventArgs
 {
     use PayPalUnifiedPaymentIdTrait;
 

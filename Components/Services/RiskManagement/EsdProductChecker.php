@@ -9,6 +9,7 @@
 namespace SwagPaymentPayPalUnified\Components\Services\RiskManagement;
 
 use Doctrine\DBAL\Connection;
+use PDO;
 
 class EsdProductChecker implements EsdProductCheckerInterface
 {
@@ -45,6 +46,6 @@ class EsdProductChecker implements EsdProductCheckerInterface
             ->where('categoryRelation.categoryID = :categoryId')
             ->setParameter('categoryId', $categoryId)
             ->execute()
-            ->fetchAll(\PDO::FETCH_COLUMN);
+            ->fetchAll(PDO::FETCH_COLUMN);
     }
 }

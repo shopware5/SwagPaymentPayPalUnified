@@ -9,6 +9,7 @@
 namespace SwagPaymentPayPalUnified\Components\Services\Legacy;
 
 use Doctrine\DBAL\Connection;
+use PDO;
 
 class LegacyService
 {
@@ -33,6 +34,6 @@ class LegacyService
             ->where("pm.name = 'paypal'")
             ->orWhere("pm.name = 'payment_paypal_installments'")
             ->execute()
-            ->fetchAll(\PDO::FETCH_COLUMN);
+            ->fetchAll(PDO::FETCH_COLUMN);
     }
 }

@@ -8,7 +8,10 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Subscriber;
 
+use Enlight_Controller_ActionEventArgs;
+use Enlight_Controller_Request_RequestTestCase;
 use Enlight_Controller_Response_ResponseTestCase;
+use Enlight_Template_Manager;
 use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\ClientToken;
@@ -33,13 +36,13 @@ class AdvancedCreditDebitCardSubscriberTest extends TestCase
      */
     public function testAddAcdcCorrectTemplateAssigns()
     {
-        $view = new ViewMock(new \Enlight_Template_Manager());
+        $view = new ViewMock(new Enlight_Template_Manager());
         $view->assign('sPayment', ['name' => PaymentMethodProviderInterface::PAYPAL_UNIFIED_ADVANCED_CREDIT_DEBIT_CARD_METHOD_NAME]);
 
-        $request = new \Enlight_Controller_Request_RequestTestCase();
+        $request = new Enlight_Controller_Request_RequestTestCase();
         $request->setActionName('confirm');
 
-        $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
+        $enlightEventArgs = new Enlight_Controller_ActionEventArgs([
             'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
             'request' => $request,
         ]);

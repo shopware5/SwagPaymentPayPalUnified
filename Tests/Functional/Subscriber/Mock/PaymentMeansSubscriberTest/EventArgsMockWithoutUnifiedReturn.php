@@ -8,7 +8,9 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Subscriber\Mock\PaymentMeansSubscriberTest;
 
-class EventArgsMockWithoutUnifiedReturn extends \Enlight_Event_EventArgs
+use Enlight_Event_EventArgs;
+
+class EventArgsMockWithoutUnifiedReturn extends Enlight_Event_EventArgs
 {
     /**
      * @var array<array{id: int}>

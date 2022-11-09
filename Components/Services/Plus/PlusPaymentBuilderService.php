@@ -8,6 +8,8 @@
 
 namespace SwagPaymentPayPalUnified\Components\Services\Plus;
 
+use DateInterval;
+use DateTime;
 use Shopware\Bundle\AttributeBundle\Service\CrudService;
 use Shopware\Bundle\AttributeBundle\Service\CrudServiceInterface;
 use Shopware_Components_Snippet_Manager as SnippetManager;
@@ -123,8 +125,8 @@ class PlusPaymentBuilderService extends PaymentBuilderService
         }
 
         // Calculate the absolute delivery date by adding the days from the product attribute
-        $date = new \DateTime();
-        $date->add(new \DateInterval('P' . $maxDeliveryDays . 'D'));
+        $date = new DateTime();
+        $date->add(new DateInterval('P' . $maxDeliveryDays . 'D'));
 
         return $date->format('Y-m-d');
     }

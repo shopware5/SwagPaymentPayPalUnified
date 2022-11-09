@@ -304,6 +304,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
                 {
                     xtype: 'combobox',
                     name: 'intent',
+                    editable: false,
                     fieldLabel: '{s name="intent/behaviour/label"}Payment acquisition{/s}',
                     valueField: 'id',
                     value: 'CAPTURE',
@@ -458,6 +459,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
     createButtonStyleColor: function() {
         return Ext.create('Ext.form.field.ComboBox', {
             name: 'buttonStyleColor',
+            editable: false,
             fieldLabel: '{s namespace="backend/paypal_unified_settings/tabs/express_checkout" name="field/ecButtonStyleColor"}Button color{/s}',
             store: Ext.create('Shopware.apps.PaypalUnifiedSettings.store.EcButtonStyleColor'),
             valueField: 'id'
@@ -470,6 +472,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
     createButtonStyleShape: function() {
         return Ext.create('Ext.form.field.ComboBox', {
             name: 'buttonStyleShape',
+            editable: false,
             fieldLabel: '{s namespace="backend/paypal_unified_settings/tabs/express_checkout" name="field/ecButtonStyleShape"}Button shape{/s}',
             store: Ext.create('Shopware.apps.PaypalUnifiedSettings.store.EcButtonStyleShape'),
             valueField: 'id'
@@ -482,6 +485,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
     createButtonStyleSize: function() {
         return Ext.create('Ext.form.field.ComboBox', {
             name: 'buttonStyleSize',
+            editable: false,
             fieldLabel: '{s namespace="backend/paypal_unified_settings/tabs/express_checkout" name="field/ecButtonStyleSize"}Button size{/s}',
             store: Ext.create('Shopware.apps.PaypalUnifiedSettings.store.EcButtonStyleSize'),
             valueField: 'id'

@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\Components\Backend;
 
+use Exception;
 use Shopware\Models\Order\Status;
 use SwagPaymentPayPalUnified\Components\ExceptionHandlerServiceInterface;
 use SwagPaymentPayPalUnified\Components\PaymentStatus;
@@ -77,7 +78,7 @@ class CaptureService
             $this->updateCapturePaymentStatus($captureData, $isFinal);
 
             $viewParameter = ['success' => true];
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $error = $this->exceptionHandler->handle($e, 'capture order');
 
             $viewParameter = [
@@ -106,7 +107,7 @@ class CaptureService
             $this->updateCapturePaymentStatus($captureData, $isFinal);
 
             $viewParameter = ['success' => true];
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $error = $this->exceptionHandler->handle($e, 'capture authorization');
 
             $viewParameter = [
@@ -150,7 +151,7 @@ class CaptureService
                 'refund' => $refundData,
                 'success' => true,
             ];
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $error = $this->exceptionHandler->handle($e, 'refund capture');
 
             $viewParameter = [

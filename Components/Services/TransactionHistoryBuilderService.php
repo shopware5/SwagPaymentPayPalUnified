@@ -8,6 +8,8 @@
 
 namespace SwagPaymentPayPalUnified\Components\Services;
 
+use Exception;
+use RuntimeException;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentIntent;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\RelatedResources\RelatedResource;
@@ -20,7 +22,7 @@ class TransactionHistoryBuilderService
      * A helper method that parses a payment into a sales history, that can be directly used
      * in an custom model.
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @return array
      */
@@ -37,7 +39,7 @@ class TransactionHistoryBuilderService
                 return $this->getAuthorizationHistory($payment);
 
             default:
-                throw new \RuntimeException('Could not parse history from an unknown payment type');
+                throw new RuntimeException('Could not parse history from an unknown payment type');
         }
     }
 

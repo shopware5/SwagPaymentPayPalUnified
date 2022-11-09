@@ -9,6 +9,7 @@
 namespace SwagPaymentPayPalUnified\Setup;
 
 use Doctrine\DBAL\Connection;
+use PDO;
 use Shopware\Bundle\AttributeBundle\Service\CrudService;
 use Shopware\Bundle\AttributeBundle\Service\CrudServiceInterface;
 use Shopware\Components\Model\ModelManager;
@@ -440,7 +441,7 @@ SQL;
             ->setParameter('paymentType', PaymentType::PAYPAL_CLASSIC)
             ->setParameter('orderTime', '2021-01-13 00:00:00') // Day of 3.0.2 release, which broke the applying of the payment type attribute
             ->execute()
-            ->fetchAll(\PDO::FETCH_COLUMN);
+            ->fetchAll(PDO::FETCH_COLUMN);
 
         $this->connection->createQueryBuilder()
             ->update('s_order_attributes', 'sOrderAttributes')
@@ -468,7 +469,7 @@ SQL;
             ->setParameter('description', \sprintf('%%%s%%', PaymentInstructionService::INVOICE_INSTRUCTION_DESCRIPTION))
             ->setParameter('orderTime', '2021-01-15 00:00:00') // Day of 3.0.3 release, which broke the applying of the payment type attribute for invoice
             ->execute()
-            ->fetchAll(\PDO::FETCH_COLUMN);
+            ->fetchAll(PDO::FETCH_COLUMN);
 
         $this->connection->createQueryBuilder()
             ->update('s_order_attributes', 'sOrderAttributes')

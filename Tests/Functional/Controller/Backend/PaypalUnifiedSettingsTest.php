@@ -10,7 +10,9 @@ namespace SwagPaymentPayPalUnified\Tests\Functional\Controller\Backend;
 
 require_once __DIR__ . '/../../../../Controllers/Backend/PaypalUnifiedSettings.php';
 
+use Enlight_Class;
 use Enlight_Controller_Request_RequestTestCase as RequestMock;
+use Enlight_Controller_Response_ResponseTestCase;
 use Enlight_Template_Manager;
 use Enlight_View_Default;
 use Generator;
@@ -188,8 +190,8 @@ class PaypalUnifiedSettingsTest extends TestCase
      */
     private function createController(RequestMock $requestMock)
     {
-        $response = new \Enlight_Controller_Response_ResponseTestCase();
-        $controller = \Enlight_Class::Instance(Shopware_Controllers_Backend_PaypalUnifiedSettings::class, [$requestMock, $response]);
+        $response = new Enlight_Controller_Response_ResponseTestCase();
+        $controller = Enlight_Class::Instance(Shopware_Controllers_Backend_PaypalUnifiedSettings::class, [$requestMock, $response]);
         static::assertInstanceOf(Shopware_Controllers_Backend_PaypalUnifiedSettings::class, $controller);
 
         $controller->setRequest($requestMock);

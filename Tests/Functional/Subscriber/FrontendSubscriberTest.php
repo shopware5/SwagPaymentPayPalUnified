@@ -8,8 +8,12 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Subscriber;
 
+use Enlight_Controller_ActionEventArgs;
+use Enlight_Controller_Request_RequestHttp;
+use Enlight_Controller_Request_RequestTestCase;
 use Enlight_Controller_Response_ResponseTestCase;
 use Enlight_Template_Manager;
+use Enlight_View_Default;
 use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
@@ -58,8 +62,8 @@ class FrontendSubscriberTest extends TestCase
         $subscriber = $this->getSubscriber();
 
         $view = new ViewMock(new Enlight_Template_Manager());
-        $request = new \Enlight_Controller_Request_RequestTestCase();
-        $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
+        $request = new Enlight_Controller_Request_RequestTestCase();
+        $enlightEventArgs = new Enlight_Controller_ActionEventArgs([
             'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
         ]);
 
@@ -74,8 +78,8 @@ class FrontendSubscriberTest extends TestCase
         $this->createTestSettings(false);
 
         $view = new ViewMock(new Enlight_Template_Manager());
-        $request = new \Enlight_Controller_Request_RequestTestCase();
-        $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
+        $request = new Enlight_Controller_Request_RequestTestCase();
+        $enlightEventArgs = new Enlight_Controller_ActionEventArgs([
             'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
         ]);
 
@@ -96,8 +100,8 @@ class FrontendSubscriberTest extends TestCase
         $this->createTestSettings();
 
         $view = new ViewMock(new Enlight_Template_Manager());
-        $request = new \Enlight_Controller_Request_RequestTestCase();
-        $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
+        $request = new Enlight_Controller_Request_RequestTestCase();
+        $enlightEventArgs = new Enlight_Controller_ActionEventArgs([
             'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
         ]);
         $this->getContainer()->get('front')->setRequest($request);
@@ -115,8 +119,8 @@ class FrontendSubscriberTest extends TestCase
         $this->createTestSettings();
 
         $view = new ViewMock(new Enlight_Template_Manager());
-        $request = new \Enlight_Controller_Request_RequestTestCase();
-        $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([
+        $request = new Enlight_Controller_Request_RequestTestCase();
+        $enlightEventArgs = new Enlight_Controller_ActionEventArgs([
             'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
         ]);
 
@@ -130,7 +134,7 @@ class FrontendSubscriberTest extends TestCase
         $subscriber = $this->getSubscriber();
         $returnValue = [];
 
-        $enlightEventArgs = new \Enlight_Controller_ActionEventArgs([]);
+        $enlightEventArgs = new Enlight_Controller_ActionEventArgs([]);
 
         $enlightEventArgs->setReturn($returnValue);
 
@@ -144,7 +148,7 @@ class FrontendSubscriberTest extends TestCase
     {
         $this->resetSession();
 
-        Shopware()->Front()->setRequest(new \Enlight_Controller_Request_RequestHttp());
+        Shopware()->Front()->setRequest(new Enlight_Controller_Request_RequestHttp());
 
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_product_in_category.sql');
         static::assertTrue(\is_string($sql));
@@ -153,7 +157,7 @@ class FrontendSubscriberTest extends TestCase
         $controller = $this->createController();
         $controller->Request()->setParam('sArticle', 248);
 
-        $eventArgs = new \Enlight_Controller_ActionEventArgs();
+        $eventArgs = new Enlight_Controller_ActionEventArgs();
         $eventArgs->set('subject', $controller);
 
         $this->getSubscriber()->onPostDispatchSecure($eventArgs);
@@ -165,7 +169,7 @@ class FrontendSubscriberTest extends TestCase
 
     public function testOnPostDispatchSecureShouldAssignDataToViewShouldBeTrue()
     {
-        Shopware()->Front()->setRequest(new \Enlight_Controller_Request_RequestHttp());
+        Shopware()->Front()->setRequest(new Enlight_Controller_Request_RequestHttp());
 
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_product_in_category.sql');
         static::assertTrue(\is_string($sql));
@@ -180,7 +184,7 @@ class FrontendSubscriberTest extends TestCase
         $controller->Request()->setActionName('index');
         Shopware()->Front()->setRequest($controller->Request());
 
-        $eventArgs = new \Enlight_Controller_ActionEventArgs();
+        $eventArgs = new Enlight_Controller_ActionEventArgs();
         $eventArgs->set('subject', $controller);
 
         $this->getSubscriber()->onPostDispatchSecure($eventArgs);
@@ -192,7 +196,7 @@ class FrontendSubscriberTest extends TestCase
 
     public function testOnPostDispatchSecureShouldAssignDataToViewShouldBeFalse()
     {
-        Shopware()->Front()->setRequest(new \Enlight_Controller_Request_RequestHttp());
+        Shopware()->Front()->setRequest(new Enlight_Controller_Request_RequestHttp());
 
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_product_in_category.sql');
         static::assertTrue(\is_string($sql));
@@ -203,7 +207,7 @@ class FrontendSubscriberTest extends TestCase
 
         $this->setRequestParameterToFront($controller->Request(), 'frontend', 'detail');
 
-        $eventArgs = new \Enlight_Controller_ActionEventArgs();
+        $eventArgs = new Enlight_Controller_ActionEventArgs();
         $eventArgs->set('subject', $controller);
 
         $this->getSubscriber()->onPostDispatchSecure($eventArgs);
@@ -215,7 +219,7 @@ class FrontendSubscriberTest extends TestCase
 
     public function testOnPostDispatchSecureShouldAssignDataToViewAttrShouldBeFalse()
     {
-        Shopware()->Front()->setRequest(new \Enlight_Controller_Request_RequestHttp());
+        Shopware()->Front()->setRequest(new Enlight_Controller_Request_RequestHttp());
 
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_product_attr_is.sql');
         static::assertTrue(\is_string($sql));
@@ -226,7 +230,7 @@ class FrontendSubscriberTest extends TestCase
 
         $this->setRequestParameterToFront($controller->Request());
 
-        $eventArgs = new \Enlight_Controller_ActionEventArgs();
+        $eventArgs = new Enlight_Controller_ActionEventArgs();
         $eventArgs->set('subject', $controller);
 
         $this->getSubscriber()->onPostDispatchSecure($eventArgs);
@@ -238,7 +242,7 @@ class FrontendSubscriberTest extends TestCase
 
     public function testOnPostDispatchSecureShouldAssignDataToViewAttrShouldAddProductData()
     {
-        Shopware()->Front()->setRequest(new \Enlight_Controller_Request_RequestHttp());
+        Shopware()->Front()->setRequest(new Enlight_Controller_Request_RequestHttp());
 
         $sql = \file_get_contents(__DIR__ . '/_fixtures/risk_management_rules_product_attr_is.sql');
         static::assertTrue(\is_string($sql));
@@ -249,7 +253,7 @@ class FrontendSubscriberTest extends TestCase
 
         $this->setRequestParameterToFront($controller->Request());
 
-        $eventArgs = new \Enlight_Controller_ActionEventArgs();
+        $eventArgs = new Enlight_Controller_ActionEventArgs();
         $eventArgs->set('subject', $controller);
 
         $this->getSubscriber()->onPostDispatchSecure($eventArgs);
@@ -272,7 +276,7 @@ class FrontendSubscriberTest extends TestCase
 
         $this->setRequestParameterToFront($controller->Request(), 'widget', 'listing', 'NotListingCount');
 
-        $eventArgs = new \Enlight_Controller_ActionEventArgs();
+        $eventArgs = new Enlight_Controller_ActionEventArgs();
         $eventArgs->set('subject', $controller);
 
         $this->getSubscriber()->onLoadAjaxListing($eventArgs);
@@ -291,7 +295,7 @@ class FrontendSubscriberTest extends TestCase
 
         $this->setRequestParameterToFront($controller->Request(), 'widget', 'listing', 'listingCount');
 
-        $eventArgs = new \Enlight_Controller_ActionEventArgs();
+        $eventArgs = new Enlight_Controller_ActionEventArgs();
         $eventArgs->set('subject', $controller);
 
         $this->getSubscriber()->onLoadAjaxListing($eventArgs);
@@ -315,7 +319,7 @@ class FrontendSubscriberTest extends TestCase
 
         $this->setRequestParameterToFront($controller->Request(), 'frontend', 'address', $actionName);
 
-        $eventArgs = new \Enlight_Controller_ActionEventArgs();
+        $eventArgs = new Enlight_Controller_ActionEventArgs();
         $eventArgs->set('subject', $controller);
 
         $this->getSubscriber()->onPostDispatchSecure($eventArgs);
@@ -369,9 +373,9 @@ class FrontendSubscriberTest extends TestCase
      */
     private function createController()
     {
-        $request = new \Enlight_Controller_Request_RequestTestCase();
-        $response = new \Enlight_Controller_Response_ResponseTestCase();
-        $view = new \Enlight_View_Default(new \Enlight_Template_Manager());
+        $request = new Enlight_Controller_Request_RequestTestCase();
+        $response = new Enlight_Controller_Response_ResponseTestCase();
+        $view = new Enlight_View_Default(new Enlight_Template_Manager());
 
         $controller = new DummyController($request, $view, $response);
         $controller->setContainer($this->getContainer());
@@ -388,7 +392,7 @@ class FrontendSubscriberTest extends TestCase
      * @return void
      */
     private function setRequestParameterToFront(
-        \Enlight_Controller_Request_RequestHttp $request,
+        Enlight_Controller_Request_RequestHttp $request,
         $module = 'frontend',
         $controller = 'listing',
         $action = 'index'

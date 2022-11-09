@@ -8,6 +8,8 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services\ExpressCheckout;
 
+use Enlight_Controller_Request_RequestTestCase;
+use Generator;
 use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\Components\Services\ExpressCheckout\CustomerService;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
@@ -80,7 +82,7 @@ class CustomerServiceTest extends TestCase
     }
 
     /**
-     * @return \Generator<string, array<bool|string>>
+     * @return Generator<string, array<bool|string>>
      */
     public function createNewCustomerCases()
     {
@@ -116,7 +118,7 @@ class CustomerServiceTest extends TestCase
      */
     private function setFrontRequest()
     {
-        $this->getContainer()->get('front')->setRequest(new \Enlight_Controller_Request_RequestTestCase());
+        $this->getContainer()->get('front')->setRequest(new Enlight_Controller_Request_RequestTestCase());
     }
 
     /**

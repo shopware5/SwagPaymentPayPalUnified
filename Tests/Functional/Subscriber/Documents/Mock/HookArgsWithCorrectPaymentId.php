@@ -8,15 +8,23 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Subscriber\Documents\Mock;
 
-class HookArgsWithCorrectPaymentId extends \Enlight_Hook_HookArgs
+use Enlight_Class;
+use Enlight_Hook_HookArgs;
+use Enlight_Template_Manager;
+use Shopware_Components_Document;
+use Shopware_Models_Document_Order;
+use Smarty_Data;
+use stdClass;
+
+class HookArgsWithCorrectPaymentId extends Enlight_Hook_HookArgs
 {
     /**
-     * @var \Smarty_Data
+     * @var Smarty_Data
      */
     private $_view;
 
     /**
-     * @var \Enlight_Template_Manager
+     * @var Enlight_Template_Manager
      */
     private $_template;
 
@@ -26,27 +34,27 @@ class HookArgsWithCorrectPaymentId extends \Enlight_Hook_HookArgs
     public function __construct($isShopware55 = false)
     {
         if ($isShopware55) {
-            parent::__construct(new \stdClass(), '');
+            parent::__construct(new stdClass(), '');
         }
     }
 
     /**
-     * @return \Shopware_Components_Document
+     * @return Shopware_Components_Document
      */
     public function getSubject()
     {
-        $subject = \Enlight_Class::Instance(\Shopware_Components_Document::class);
-        \assert($subject instanceof \Shopware_Components_Document);
+        $subject = Enlight_Class::Instance(Shopware_Components_Document::class);
+        \assert($subject instanceof Shopware_Components_Document);
 
-        $subject->_order = new \Shopware_Models_Document_Order(15);
-        $view = new \Smarty_Data();
+        $subject->_order = new Shopware_Models_Document_Order(15);
+        $view = new Smarty_Data();
         $view->assign('Order', [
             '_payment' => [
                 'description' => 'PayPal',
             ],
         ]);
         $subject->_view = $view;
-        $subject->_template = new \Enlight_Template_Manager();
+        $subject->_template = new Enlight_Template_Manager();
 
         $this->_view = $subject->_view;
         $this->_template = $subject->_template;
@@ -55,7 +63,7 @@ class HookArgsWithCorrectPaymentId extends \Enlight_Hook_HookArgs
     }
 
     /**
-     * @return \Smarty_Data
+     * @return Smarty_Data
      */
     public function getView()
     {
@@ -63,7 +71,7 @@ class HookArgsWithCorrectPaymentId extends \Enlight_Hook_HookArgs
     }
 
     /**
-     * @return \Enlight_Template_Manager
+     * @return Enlight_Template_Manager
      */
     public function getTemplate()
     {

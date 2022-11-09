@@ -8,6 +8,8 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Bundle\AccountBundle\Service\Validator;
 
+use Enlight_Controller_Front;
+use Enlight_Controller_Request_RequestTestCase;
 use PHPUnit\Framework\TestCase;
 use Shopware\Bundle\AccountBundle\Service\Validator\AddressValidatorInterface as AddressValInterface;
 use Shopware\Components\Api\Exception\ValidationException;
@@ -40,7 +42,7 @@ class AddressValidatorDecoratorTest extends TestCase
 
     public function testValidateReturnWithWrongControllerName()
     {
-        $request = new \Enlight_Controller_Request_RequestTestCase();
+        $request = new Enlight_Controller_Request_RequestTestCase();
         $request->setControllerName('fake');
         $front = new FrontMock();
         $front->setRequest($request);
@@ -51,7 +53,7 @@ class AddressValidatorDecoratorTest extends TestCase
 
     public function testValidateThrowValidationExceptionCountry()
     {
-        $request = new \Enlight_Controller_Request_RequestTestCase();
+        $request = new Enlight_Controller_Request_RequestTestCase();
         $request->setControllerName('PaypalUnifiedV2ExpressCheckout');
         $front = new FrontMock();
         $front->setRequest($request);
@@ -64,7 +66,7 @@ class AddressValidatorDecoratorTest extends TestCase
 
     public function testValidateThrowNoValidationException()
     {
-        $request = new \Enlight_Controller_Request_RequestTestCase();
+        $request = new Enlight_Controller_Request_RequestTestCase();
         $request->setControllerName('PaypalUnifiedV2ExpressCheckout');
         $front = new FrontMock();
         $front->setRequest($request);
@@ -112,10 +114,10 @@ class AddressValidatorWithStateException implements AddressValInterface
     }
 }
 
-class FrontMock extends \Enlight_Controller_Front
+class FrontMock extends Enlight_Controller_Front
 {
     /**
-     * @var \Enlight_Controller_Request_RequestTestCase
+     * @var Enlight_Controller_Request_RequestTestCase
      */
     protected $request;
 
@@ -124,7 +126,7 @@ class FrontMock extends \Enlight_Controller_Front
     }
 
     /**
-     * @param \Enlight_Controller_Request_RequestTestCase $request
+     * @param Enlight_Controller_Request_RequestTestCase $request
      */
     public function setRequest($request)
     {

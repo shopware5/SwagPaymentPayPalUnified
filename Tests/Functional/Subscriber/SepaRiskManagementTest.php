@@ -8,10 +8,12 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Subscriber;
 
+use Enlight_Components_Session_Namespace;
 use Enlight_Event_EventArgs;
 use Enlight_Hook_HookArgs;
 use Generator;
 use PHPUnit\Framework\TestCase;
+use sAdmin;
 use Shopware\Bundle\StoreFrontBundle\Service\Core\ContextService;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
@@ -166,7 +168,7 @@ class SepaRiskManagementTest extends TestCase
         }
 
         $hookArgsMock = $this->createMock(Enlight_Hook_HookArgs::class);
-        $adminModuleMock = $this->createMock(\sAdmin::class);
+        $adminModuleMock = $this->createMock(sAdmin::class);
         $adminModuleMock->method('executeRiskRule')->willReturn(false);
         $hookArgsMock->method('getSubject')->willReturn($adminModuleMock);
         $hookArgsMock->method('getReturn')->willReturn($return);
@@ -201,7 +203,7 @@ class SepaRiskManagementTest extends TestCase
     private function createDependencyProviderMock()
     {
         $dependencyProvider = $this->createMock(DependencyProvider::class);
-        $session = $this->createMock(\Enlight_Components_Session_Namespace::class);
+        $session = $this->createMock(Enlight_Components_Session_Namespace::class);
         $dependencyProvider->method('getSession')->willReturn($session);
 
         return $dependencyProvider;

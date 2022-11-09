@@ -18,6 +18,7 @@ use SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentModelFactory;
 use SwagPaymentPayPalUnified\Setup\Versions\UpdateTo400;
 use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\SettingsHelperTrait;
+use UnexpectedValueException;
 
 class UpdateTo400Test extends TestCase
 {
@@ -214,7 +215,7 @@ class UpdateTo400Test extends TestCase
             ->findOneBy(['name' => 'SwagPaymentPayPalUnified']);
 
         if (!$plugin instanceof Plugin) {
-            throw new \UnexpectedValueException('Plugin SwagPaymentPayPalUnified not found');
+            throw new UnexpectedValueException('Plugin SwagPaymentPayPalUnified not found');
         }
 
         return new PaymentModelFactory($plugin);

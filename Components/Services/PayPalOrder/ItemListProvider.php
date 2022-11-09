@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\Components\Services\PayPalOrder;
 
+use LengthException;
 use SwagPaymentPayPalUnified\Components\Services\Common\CustomerHelper;
 use SwagPaymentPayPalUnified\Components\Services\Common\PriceFormatter;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
@@ -107,7 +108,7 @@ class ItemListProvider
         $label = (string) $label;
         try {
             $item->setName($label);
-        } catch (\LengthException $e) {
+        } catch (LengthException $e) {
             $this->loggerService->warning($e->getMessage(), ['lineItem' => $lineItem]);
             $item->setName(\mb_substr($label, 0, Item::MAX_LENGTH_NAME));
         }
@@ -126,7 +127,7 @@ class ItemListProvider
 
         try {
             $item->setSku($number);
-        } catch (\LengthException $e) {
+        } catch (LengthException $e) {
             $this->loggerService->warning($e->getMessage(), ['lineItem' => $lineItem]);
             $item->setSku(\mb_substr($number, 0, Item::MAX_LENGTH_SKU));
         }

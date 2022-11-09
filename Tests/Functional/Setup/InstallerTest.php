@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Setup;
 
+use PDO;
 use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 
@@ -23,7 +24,7 @@ class InstallerTest extends TestCase
                     AND COLUMN_NAME = 'swag_paypal_unified_payment_type'";
 
         $connection = Shopware()->Container()->get('dbal_connection');
-        $columnAvailable = (bool) $connection->executeQuery($query)->fetch(\PDO::FETCH_COLUMN);
+        $columnAvailable = (bool) $connection->executeQuery($query)->fetch(PDO::FETCH_COLUMN);
 
         static::assertTrue($columnAvailable);
     }

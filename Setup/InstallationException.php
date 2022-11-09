@@ -8,6 +8,8 @@
 
 namespace SwagPaymentPayPalUnified\Setup;
 
-class InstallationException extends \Exception
+use Exception;
+
+class InstallationException extends Exception
 {
 }

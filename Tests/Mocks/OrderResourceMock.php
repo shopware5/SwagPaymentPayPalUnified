@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Mocks;
 
+use RuntimeException;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\OrderResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Capture;
 use SwagPaymentPayPalUnified\Tests\Mocks\ResultSet\CaptureOrder;
@@ -25,7 +26,7 @@ class OrderResourceMock extends OrderResource
     public function capture($id, Capture $capture)
     {
         if ($id === self::THROW_EXCEPTION) {
-            throw new \RuntimeException('test exception');
+            throw new RuntimeException('test exception');
         }
 
         return CaptureOrder::get();
@@ -34,7 +35,7 @@ class OrderResourceMock extends OrderResource
     public function void($id)
     {
         if ($id === self::THROW_EXCEPTION) {
-            throw new \RuntimeException('test exception');
+            throw new RuntimeException('test exception');
         }
 
         return VoidOrder::get();

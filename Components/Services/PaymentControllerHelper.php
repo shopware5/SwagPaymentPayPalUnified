@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\Components\Services;
 
+use Enlight_Controller_Action;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\Services\Common\CustomerHelper;
 use SwagPaymentPayPalUnified\Components\Services\Validation\RedirectDataBuilder;
@@ -33,7 +34,7 @@ class PaymentControllerHelper
         return $userData;
     }
 
-    public function handleError(\Enlight_Controller_Action $controller, RedirectDataBuilder $redirectDataBuilder)
+    public function handleError(Enlight_Controller_Action $controller, RedirectDataBuilder $redirectDataBuilder)
     {
         if ($controller->Request()->isXmlHttpRequest()) {
             $this->renderJson($controller, $redirectDataBuilder);
@@ -44,7 +45,7 @@ class PaymentControllerHelper
         $controller->redirect($redirectDataBuilder->getRedirectData());
     }
 
-    private function renderJson(\Enlight_Controller_Action $controller, RedirectDataBuilder $redirectDataBuilder)
+    private function renderJson(Enlight_Controller_Action $controller, RedirectDataBuilder $redirectDataBuilder)
     {
         $controller->Front()->Plugins()->Json()->setRenderer();
 

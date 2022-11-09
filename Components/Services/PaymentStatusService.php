@@ -17,6 +17,7 @@ use sOrder;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\Exception\OrderNotFoundException;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
+use Zend_Mail_Transport_Exception;
 
 class PaymentStatusService
 {
@@ -132,7 +133,7 @@ class PaymentStatusService
                 $sendMail,
                 'Set automatically by PayPal integration'
             );
-        } catch (\Zend_Mail_Transport_Exception $e) {
+        } catch (Zend_Mail_Transport_Exception $e) {
             $this->logger->error(sprintf('%s CANNOT SEND STATUS MAIL FOR ORDER: %s', __METHOD__, $shopwareOrderId));
         }
         if ($paymentStateId === Status::PAYMENT_STATE_COMPLETELY_PAID || $paymentStateId === Status::PAYMENT_STATE_PARTIALLY_PAID) {

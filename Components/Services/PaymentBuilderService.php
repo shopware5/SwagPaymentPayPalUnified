@@ -31,6 +31,7 @@ use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Transactions\Amount\De
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Transactions\ItemList;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Transactions\ItemList\Item;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\ApplicationContext as ApplicationContextV2;
+use UnexpectedValueException;
 
 class PaymentBuilderService implements PaymentBuilderInterface
 {
@@ -270,7 +271,7 @@ class PaymentBuilderService implements PaymentBuilderInterface
         $shop = $this->dependencyProvider->getShop();
 
         if (!$shop instanceof Shop) {
-            throw new \UnexpectedValueException(sprintf('Tried to access %s, but it\'s not set in the DIC.', Shop::class));
+            throw new UnexpectedValueException(sprintf('Tried to access %s, but it\'s not set in the DIC.', Shop::class));
         }
 
         $applicationContext->setBrandName($this->getBrandName());

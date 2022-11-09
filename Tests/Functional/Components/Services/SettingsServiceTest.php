@@ -9,6 +9,7 @@
 namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services;
 
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 use Shopware\Models\Shop\Shop;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\Services\SettingsService;
@@ -66,7 +67,7 @@ class SettingsServiceTest extends TestCase
         $this->createTestSettings();
         $settingsService = new SettingsService(Shopware()->Container()->get('models'), new DependencyMock());
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Could not retrieve a single setting without a shop instance.');
         $settingsService->get(SettingsServiceInterface::SETTING_GENERAL_INTENT);
     }
@@ -169,7 +170,7 @@ class SettingsServiceTest extends TestCase
     {
         $settingsService = Shopware()->Container()->get('paypal_unified.settings_service');
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $settingsService->get(SettingsServiceInterface::SETTING_GENERAL_INTENT, 'THIS_TABLE_DOES_NOT_EXIST');
     }
 

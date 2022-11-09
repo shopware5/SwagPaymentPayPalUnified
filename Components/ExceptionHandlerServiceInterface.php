@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\Components;
 
+use Exception;
 use SwagPaymentPayPalUnified\Components\Exception\PayPalApiException;
 
 interface ExceptionHandlerServiceInterface
@@ -17,5 +18,5 @@ interface ExceptionHandlerServiceInterface
      *
      * @return PayPalApiException The error message and name extracted from the exception
      */
-    public function handle(\Exception $e, $currentAction);
+    public function handle(Exception $e, $currentAction);
 }

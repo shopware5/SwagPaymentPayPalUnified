@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\Components\Services\Common;
 
+use RuntimeException;
 use Shopware\Components\Cart\PaymentTokenService;
 use Shopware\Components\Routing\RouterInterface;
 
@@ -74,7 +75,7 @@ class ReturnUrlHelper
 
         $url = $this->router->assemble($routingParameters);
         if (!\is_string($url)) {
-            throw new \RuntimeException('Could not assemble URL');
+            throw new RuntimeException('Could not assemble URL');
         }
 
         return $url;

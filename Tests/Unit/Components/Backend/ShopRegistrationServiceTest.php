@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Unit\Components\Backend;
 
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Shopware\Components\Model\ModelManager;
 use Shopware\Components\ShopRegistrationServiceInterface;
@@ -45,7 +46,7 @@ class ShopRegistrationServiceTest extends TestCase
      */
     public function testThrowsInvalidArgumentException()
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         /* @phpstan-ignore-next-line */
         $this->getShopRegistrationService()->registerShopById('9d253e94-457c-4943-aa3c-03304d1a8347');

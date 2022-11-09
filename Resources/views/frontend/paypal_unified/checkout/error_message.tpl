@@ -39,16 +39,30 @@
             {include file='frontend/_includes/messages.tpl' type='error' content="{s name="error/paymentSourceDeclinedByProcessor"}It is not possible to use the selected payment method. This decision is based on automated data processing.{/s} {s name="error/puiAdditional"}You can find further information in the <a href='https://www.ratepay.com/legal-payment-dataprivacy/' class='is--underline'>Ratepay Data Privacy Statement</a> or you can contact Ratepay using this <a href='https://www.ratepay.com/en/contact/' class='is--underline'>contact form</a>.{/s}"}
         {elseif $paypalUnifiedErrorCode == 14 || $paypalUnifiedErrorCode == 15 || $paypalUnifiedErrorCode == 16 || $paypalUnifiedErrorCode == 17}
             {* Authorization is denied or 3D-Secure check failed *}
-            {include file='frontend/_includes/messages.tpl' type='error' content="{s name="error/authorization/capture/denied"}The payment could not be processed. Please select another payment method.{/s}"}
+            {include file='frontend/_includes/messages.tpl' type='error' content="{s name="error/authorization/capture/denied"}{/s}"}
+        {elseif $paypalUnifiedErrorCode === 1001}
+            {include file='frontend/_includes/messages.tpl' type='error' content="{s name="error/threeDSecure/1000" namespace="frontend/paypal_unified/checkout/messages"}{/s}"}
+        {elseif $paypalUnifiedErrorCode === 1001}
+            {include file='frontend/_includes/messages.tpl' type='error' content="{s name="error/threeDSecure/1001" namespace="frontend/paypal_unified/checkout/messages"}{/s}"}
+        {elseif $paypalUnifiedErrorCode === 1002}
+            {include file='frontend/_includes/messages.tpl' type='error' content="{s name="error/threeDSecure/1002" namespace="frontend/paypal_unified/checkout/messages"}{/s}"}
+        {elseif $paypalUnifiedErrorCode === 1006}
+            {include file='frontend/_includes/messages.tpl' type='error' content="{s name="error/threeDSecure/1006" namespace="frontend/paypal_unified/checkout/messages"}{/s}"}
+        {elseif $paypalUnifiedErrorCode === 1003
+            || $paypalUnifiedErrorCode === 1004
+            || $paypalUnifiedErrorCode === 1005
+            || $paypalUnifiedErrorCode === 1007
+            || $paypalUnifiedErrorCode === 1008}
+            {include file='frontend/_includes/messages.tpl' type='error' content="{s name="error/threeDSecure/1003" namespace="frontend/paypal_unified/checkout/messages"}{/s}"}
         {else}
             {* Unknown error *}
             {include file='frontend/_includes/messages.tpl' type='error' content="{s name="error/unknown"}An unknown error occurred while processing the payment.{/s}"}
         {/if}
 
-		{if $paypalUnifiedErrorMessage}
+        {if $paypalUnifiedErrorMessage}
             <div class="paypal-unified--error-message">
                 <b>{s name="errorMessagePrefix"}Error message:{/s}</b> {$paypalUnifiedErrorMessage} [{$paypalUnifiedErrorName}]
             </div>
-		{/if}
+        {/if}
     </div>
 {/block}

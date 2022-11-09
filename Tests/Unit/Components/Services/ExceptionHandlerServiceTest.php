@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Unit\Components\Services;
 
+use Exception;
 use PHPUnit\Framework\TestCase;
 use Shopware\Components\HttpClient\RequestException;
 use SwagPaymentPayPalUnified\Components\Services\ExceptionHandlerService;
@@ -27,7 +28,7 @@ class ExceptionHandlerServiceTest extends TestCase
     {
         $loggerMock = new LoggerMock();
         $handler = $this->getHandler($loggerMock);
-        $e = new \Exception('test message', 123);
+        $e = new Exception('test message', 123);
 
         $error = $handler->handle($e, 'testing');
 

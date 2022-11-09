@@ -47,3 +47,12 @@ parameters:
             message: '#Class Enlight_Hook_HookArgs constructor invoked with 1 parameter, 2-3 required.#'
             paths:
                 - Tests/Functional/Subscriber/Documents/InvoiceSubscriberPuiTest.php
+        - # Ignore ThreeDSecure::setEnrollmentStatus() expects 'B'|'N'|'U'|'Y'
+            message: '#Parameter \#1 \$enrollmentStatus of method SwagPaymentPayPalUnified\\PayPalBundle\\V2\\Api\\Order\\PaymentSource\\Card\\AuthenticationResult\\ThreeDSecure::setEnrollmentStatus\(\) expects.*given.#'
+            path: Tests
+        - # Ignore ThreeDSecure::setAuthenticationStatus() expects 'A'|'C'|'D'|'I'|'N'|'R'|'U'|'Y'
+            message: '#Parameter \#1 \$authenticationStatus of method SwagPaymentPayPalUnified\\PayPalBundle\\V2\\Api\\Order\\PaymentSource\\Card\\AuthenticationResult\\ThreeDSecure::setAuthenticationStatus\(\) expects.*given.#'
+            path: Tests
+        - # Ignore AuthenticationResult::setLiabilityShift() expects 'NO'|'POSSIBLE'|'UNKNOWN'|null
+            message: '#Parameter \#1 \$liabilityShift of method SwagPaymentPayPalUnified\\PayPalBundle\\V2\\Api\\Order\\PaymentSource\\Card\\AuthenticationResult::setLiabilityShift\(\) expects.*given.#'
+            path: Tests

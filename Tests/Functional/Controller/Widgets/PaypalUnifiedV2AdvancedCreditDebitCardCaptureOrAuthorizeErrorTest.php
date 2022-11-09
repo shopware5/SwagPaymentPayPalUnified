@@ -76,8 +76,8 @@ class PaypalUnifiedV2AdvancedCreditDebitCardCaptureOrAuthorizeErrorTest extends 
 
         $controller->captureAction();
 
-        static::assertLocationEndsWith($controller->Response(), 'checkout/confirm/payerActionRequired/1');
-        static::assertSame(302, $controller->Response()->getHttpResponseCode());
+        static::assertStringEndsWith('checkout/confirm/payerActionRequired/1', $controller->View()->getAssign()['redirectTo']);
+        static::assertSame(400, $controller->Response()->getHttpResponseCode());
     }
 
     /**
@@ -89,8 +89,8 @@ class PaypalUnifiedV2AdvancedCreditDebitCardCaptureOrAuthorizeErrorTest extends 
 
         $controller->captureAction();
 
-        static::assertLocationEndsWith($controller->Response(), 'checkout/confirm/payerInstrumentDeclined/1');
-        static::assertSame(302, $controller->Response()->getHttpResponseCode());
+        static::assertStringEndsWith('checkout/confirm/payerInstrumentDeclined/1', $controller->View()->getAssign()['redirectTo']);
+        static::assertSame(400, $controller->Response()->getHttpResponseCode());
     }
 
     /**

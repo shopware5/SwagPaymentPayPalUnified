@@ -8,6 +8,8 @@
 
 namespace SwagPaymentPayPalUnified\Components\Services\RiskManagement;
 
+use sAdmin;
+use sBasket;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 
@@ -42,9 +44,9 @@ class RiskManagement implements RiskManagementInterface
         $this->dependencyProvider->getSession()->offsetSet(self::PRODUCT_ID_SESSION_NAME, $productId);
         $this->dependencyProvider->getSession()->offsetSet(self::CATEGORY_ID_SESSION_NAME, $categoryId);
 
-        /** @var \sAdmin $sAdmin */
+        /** @var sAdmin $sAdmin */
         $sAdmin = $this->dependencyProvider->getModule('Admin');
-        /** @var \sBasket $sBasket */
+        /** @var sBasket $sBasket */
         $sBasket = $this->dependencyProvider->getModule('Basket');
 
         $paymentId = $this->paymentMethodProvider->getPaymentId(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
