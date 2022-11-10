@@ -8,6 +8,8 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services;
 
+use DateInterval;
+use DateTime;
 use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource;
@@ -53,6 +55,7 @@ class PayUponInvoiceInstructionServiceTest extends TestCase
         static::assertSame('any BIC', $result['bic']);
         static::assertSame('99,99', $result['amount']);
         static::assertSame('ABC123', $result['reference']);
+        static::assertSame((new DateTime())->add(new DateInterval('P30D'))->format('Y-m-d') . ' 00:00:00', $result['due_date']);
     }
 
     /**

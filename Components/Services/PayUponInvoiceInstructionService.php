@@ -8,6 +8,8 @@
 
 namespace SwagPaymentPayPalUnified\Components\Services;
 
+use DateInterval;
+use DateTime;
 use Enlight_Event_EventManager as EventManager;
 use Shopware\Components\Model\ModelManager;
 use SwagPaymentPayPalUnified\Models\PaymentInstruction as PaymentInstructionModel;
@@ -78,6 +80,7 @@ class PayUponInvoiceInstructionService
         $model->setIban($bankDetails->getIban());
         $model->setAmount($amount->getValue());
         $model->setReference($payUponInvoice->getPaymentReference());
+        $model->setDueDate($this->getDueDate());
 
         $this->modelManager->persist($model);
         $this->modelManager->flush();
@@ -126,5 +129,16 @@ class PayUponInvoiceInstructionService
         $instructionsJson = \json_encode($modelArray);
 
         return "\n" . $instructionsJson . "\n";
+    }
+
+    /**
+     * @return string
+     */
+    private function getDueDate()
+    {
+        $date = new DateTime();
+        $date->add(new DateInterval('P30D'));
+
+        return $date->format('Y-m-d');
     }
 }

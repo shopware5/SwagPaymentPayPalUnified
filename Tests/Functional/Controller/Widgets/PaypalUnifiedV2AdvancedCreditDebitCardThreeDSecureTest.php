@@ -21,6 +21,7 @@ use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\Card\Authen
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\Card\AuthenticationResult\ThreeDSecure;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\OrderResource;
 use SwagPaymentPayPalUnified\Tests\Unit\PaypalPaymentControllerTestCase;
+use Symfony\Component\HttpFoundation\HeaderBag;
 
 class PaypalUnifiedV2AdvancedCreditDebitCardThreeDSecureTest extends PaypalPaymentControllerTestCase
 {
@@ -52,6 +53,11 @@ class PaypalUnifiedV2AdvancedCreditDebitCardThreeDSecureTest extends PaypalPayme
         $controller->Request()->setParam('paypalOrderId', 'any');
         $controller->Request()->setParam('threeDSecureRetry', 3);
         $controller->Request()->setHeader('X-Requested-With', 'XMLHttpRequest');
+
+        // this is just for Shopware 5.6 tests
+        if ($controller->Request()->headers instanceof HeaderBag) {
+            $controller->Request()->headers->set('X-Requested-With', 'XMLHttpRequest');
+        }
 
         $controller->View()->addTemplateDir(__DIR__ . '/../../../../Resources/views/');
         $controller->View()->addTemplateDir($this->getContainer()->getParameter('kernel.root_dir') . '/themes/Frontend/Bare/');

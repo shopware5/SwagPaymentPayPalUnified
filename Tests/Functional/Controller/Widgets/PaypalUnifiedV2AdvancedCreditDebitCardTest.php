@@ -21,6 +21,7 @@ use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\Card;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\Card\AuthenticationResult;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\OrderResource;
 use SwagPaymentPayPalUnified\Tests\Unit\PaypalPaymentControllerTestCase;
+use Symfony\Component\HttpFoundation\HeaderBag;
 
 class PaypalUnifiedV2AdvancedCreditDebitCardTest extends PaypalPaymentControllerTestCase
 {
@@ -32,6 +33,11 @@ class PaypalUnifiedV2AdvancedCreditDebitCardTest extends PaypalPaymentController
         $request = new Enlight_Controller_Request_RequestHttp();
         $request->setHeader('X-Requested-With', 'XMLHttpRequest');
         $request->setParam('paypalOrderId', '123456789');
+
+        // this is just for Shopware 5.6 tests
+        if ($request->headers instanceof HeaderBag) {
+            $request->headers->set('X-Requested-With', 'XMLHttpRequest');
+        }
 
         $payPalOrder = $this->createPaypalOrder();
 
