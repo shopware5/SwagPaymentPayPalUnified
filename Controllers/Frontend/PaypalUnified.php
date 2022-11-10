@@ -274,6 +274,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_F
         $request->setParam('invoiceCheckout', $response->getPaymentInstruction() !== null);
 
         $this->saveOrder($paymentId, $paymentId, Status::PAYMENT_STATE_OPEN);
+        $this->orderNumberService->releaseOrderNumber();
 
         /** @var RelatedResource $relatedResource */
         $relatedResource = $response->getTransactions()->getRelatedResources()->getResources()[0];
