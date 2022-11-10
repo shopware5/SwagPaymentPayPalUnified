@@ -68,7 +68,7 @@ test.describe('Is SPB fully functional', () => {
 
         await paypalPage.locator('#btnLogin').click();
 
-        await paypalPage.locator('button:has-text("Jetzt zahlen")').click();
+        await paypalPage.locator('button:has-text("Kauf abschließen")').click();
 
         await expect(page.locator('.teaser--title')).toHaveText(/Vielen Dank für Ihre Bestellung bei Shopware Demo/);
     });

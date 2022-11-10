@@ -111,6 +111,7 @@ class PayUponInvoiceInstructionService
                 'instructionsString' => $instructionsString,
                 'orderNumber' => $orderNumber,
             ]);
+
         $query->execute();
     }
 
