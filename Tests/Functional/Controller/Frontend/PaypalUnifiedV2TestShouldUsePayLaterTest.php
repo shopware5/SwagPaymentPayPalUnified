@@ -60,7 +60,8 @@ class PaypalUnifiedV2TestShouldUsePayLaterTest extends PaypalPaymentControllerTe
                     $sOrderVariables['sBasket'],
                     $paymentType,
                     'anyUniqueId',
-                    'anyToken'
+                    'anyToken',
+                    'anyOrderNumber'
                 )
             );
 

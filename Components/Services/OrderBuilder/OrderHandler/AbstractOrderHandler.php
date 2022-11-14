@@ -179,6 +179,8 @@ abstract class AbstractOrderHandler implements OrderBuilderHandlerInterface
         $purchaseUnit = new PurchaseUnit();
         $submitCart = $this->settings->get(SettingsServiceInterface::SETTING_GENERAL_SUBMIT_CART) || $orderParameter->getPaymentType() === PaymentType::PAYPAL_PAY_UPON_INVOICE_V2;
 
+        $purchaseUnit->setInvoiceId($orderParameter->getShopwareOrderNumber());
+
         if ($submitCart) {
             $purchaseUnit->setItems($this->itemListProvider->getItemList(
                 $orderParameter->getCart(),

@@ -12,6 +12,15 @@
     <author>shopware AG</author>
     <compatibility minVersion="5.2.27" maxVersion="5.99.99"/>
 
+    <changelog version="REPLACE_GLOBALLY_WITH_NEXT_VERSION(6.0.0)">
+        <changes lang="de">
+            PT-12982 - Shopware-Bestellnummer wird direkt beim Erstellen der PayPal-Zahlung mitgesendet, dadurch reduziert sich die Anzahl der PayPal-API-Aufrufe;
+        </changes>
+        <changes lang="en">
+            PT-12982 - Shopware order number is sent directly when creating the PayPal payment, reducing the number of PayPal API calls;
+        </changes>
+    </changelog>
+
     <changelog version="5.0.4">
         <changes lang="de">
             PT-12725 - Verbessert das Risikomanagement bei Express Checkout und ausgeschlossenen Produkten;

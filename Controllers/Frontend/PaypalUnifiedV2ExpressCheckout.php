@@ -58,20 +58,8 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2ExpressCheckout extends Abstr
 
         $patchSet = [$purchaseUnitPatch];
 
-        $result = $this->patchOrderNumber($payPalOrderData, $patchSet);
-        if (!$result->getSuccess()) {
-            $this->orderNumberService->restoreOrdernumberToPool($result->getShopwareOrderNumber());
-
-            $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
-                ->setCode(ErrorCodes::COMMUNICATION_FAILURE);
-
-            $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
-
-            return;
-        }
-
         if (!$this->updatePayPalOrder($payPalOrderId, $patchSet)) {
-            $this->orderNumberService->restoreOrdernumberToPool($result->getShopwareOrderNumber());
+            $this->orderNumberService->restoreOrdernumberToPool();
 
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
                 ->setCode(ErrorCodes::COMMUNICATION_FAILURE);
@@ -83,7 +71,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2ExpressCheckout extends Abstr
 
         $payPalOrder = $this->getPayPalOrder($payPalOrderId);
         if (!$payPalOrder instanceof Order) {
-            $this->orderNumberService->restoreOrdernumberToPool($result->getShopwareOrderNumber());
+            $this->orderNumberService->restoreOrdernumberToPool();
 
             return;
         }
@@ -126,22 +114,22 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2ExpressCheckout extends Abstr
 
             return;
         } catch (NoOrderToProceedException $noOrderToProceedException) {
-            $this->orderNumberService->restoreOrdernumberToPool($result->getShopwareOrderNumber());
+            $this->orderNumberService->restoreOrdernumberToPool();
 
             return;
         }
 
         if (!$this->checkCaptureAuthorizationStatus($payPalOrder)) {
-            $this->orderNumberService->restoreOrdernumberToPool($result->getShopwareOrderNumber());
+            $this->orderNumberService->restoreOrdernumberToPool();
 
             return;
         }
 
-        $this->createShopwareOrder($payPalOrderId, PaymentType::PAYPAL_EXPRESS_V2);
+        $shopwareOrderNumber = $this->createShopwareOrder($payPalOrderId, PaymentType::PAYPAL_EXPRESS_V2);
 
-        $this->setTransactionId($result->getShopwareOrderNumber(), $payPalOrder);
+        $this->setTransactionId($shopwareOrderNumber, $payPalOrder);
 
-        $this->updatePaymentStatus($payPalOrder->getIntent(), $this->getOrderId($result->getShopwareOrderNumber()));
+        $this->updatePaymentStatus($payPalOrder->getIntent(), $this->getOrderId($shopwareOrderNumber));
 
         $this->logger->debug(sprintf('%s REDIRECT TO checkout/finish', __METHOD__));
 

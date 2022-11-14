@@ -6,14 +6,13 @@
  * file that was distributed with this source code.
  */
 
-namespace SwagPaymentPayPalUnified\Tests\Unit\Components;
+namespace SwagPaymentPayPalUnified\Tests\Functional\Components;
 
 use Doctrine\DBAL\Connection;
 use PHPUnit\Framework\TestCase;
 use Shopware\Components\NumberRangeIncrementer;
 use SwagPaymentPayPalUnified\Components\NumberRangeIncrementerDecorator;
 use SwagPaymentPayPalUnified\Components\OrderNumberService;
-use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
@@ -33,6 +32,7 @@ class OrderNumberServiceTest extends TestCase
     public function unsetSessionValue()
     {
         $this->getContainer()->get('session')->offsetUnset(NumberRangeIncrementerDecorator::ORDERNUMBER_SESSION_KEY);
+        $this->getContainer()->get('session')->offsetUnset('sPaymentID');
     }
 
     /**
@@ -42,6 +42,7 @@ class OrderNumberServiceTest extends TestCase
     {
         $expectedResult = 'orderNumberFromSession';
         $this->getContainer()->get('session')->offsetSet(NumberRangeIncrementerDecorator::ORDERNUMBER_SESSION_KEY, $expectedResult);
+        $this->getContainer()->get('session')->offsetSet('sPaymentID', 7);
 
         $result = $this->getOrderNumberService()->getOrderNumber();
 
@@ -58,6 +59,8 @@ class OrderNumberServiceTest extends TestCase
         /** @var Connection $connection */
         $connection = $this->getContainer()->get('dbal_connection');
         $connection->exec($sql);
+
+        $this->getContainer()->get('session')->offsetSet('sPaymentID', 7);
 
         $result = $this->getOrderNumberService()->getOrderNumber();
 
@@ -85,10 +88,13 @@ class OrderNumberServiceTest extends TestCase
     /**
      * @return void
      */
-    public function testPutBackOrdernumberToPool()
+    public function testPutBackRestoreOrderNumberToPool()
     {
         $expectedResult = '999';
-        $this->getOrderNumberService()->restoreOrdernumberToPool($expectedResult);
+        $this->getContainer()->get('session')->offsetSet(NumberRangeIncrementerDecorator::ORDERNUMBER_SESSION_KEY, $expectedResult);
+        $this->getContainer()->get('session')->offsetSet('sPaymentID', 7);
+
+        $this->getOrderNumberService()->restoreOrdernumberToPool();
 
         $session = $this->getContainer()->get('session');
         static::assertFalse($session->offsetExists(NumberRangeIncrementerDecorator::ORDERNUMBER_SESSION_KEY));
@@ -164,7 +170,7 @@ class OrderNumberServiceTest extends TestCase
             $this->getContainer()->get('dbal_connection'),
             $this->getContainer()->get('paypal_unified.dependency_provider'),
             $this->createMock(LoggerServiceInterface::class),
-            $this->createMock(PaymentMethodProviderInterface::class)
+            $this->getContainer()->get('paypal_unified.payment_method_provider')
         );
 
         return new OrderNumberService(

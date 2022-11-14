@@ -38,24 +38,32 @@ class PayPalOrderParameter
     private $paymentToken;
 
     /**
+     * @var string
+     */
+    private $shopwareOrderNumber;
+
+    /**
      * @param array<string,mixed> $customer
      * @param array<string,mixed> $cart
      * @param PaymentType::*      $paymentType
      * @param string|null         $basketUniqueId
      * @param string|null         $paymentToken
+     * @param string              $shopwareOrderNumber
      */
     public function __construct(
         array $customer,
         array $cart,
         $paymentType,
         $basketUniqueId,
-        $paymentToken
+        $paymentToken,
+        $shopwareOrderNumber
     ) {
         $this->customer = $customer;
         $this->cart = $cart;
         $this->paymentType = $paymentType;
         $this->basketUniqueId = $basketUniqueId;
         $this->paymentToken = $paymentToken;
+        $this->shopwareOrderNumber = $shopwareOrderNumber;
     }
 
     /**
@@ -96,5 +104,13 @@ class PayPalOrderParameter
     public function getPaymentToken()
     {
         return $this->paymentToken;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getShopwareOrderNumber()
+    {
+        return $this->shopwareOrderNumber;
     }
 }

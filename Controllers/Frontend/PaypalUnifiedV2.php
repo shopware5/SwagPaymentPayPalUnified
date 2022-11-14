@@ -152,17 +152,6 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
         }
 
         $paymentType = $this->getPaymentType($payPalOrder);
-        $result = $this->patchOrderNumber($payPalOrder);
-        if (!$result->getSuccess()) {
-            $this->orderNumberService->restoreOrdernumberToPool($result->getShopwareOrderNumber());
-
-            $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
-                ->setCode(ErrorCodes::COMMUNICATION_FAILURE);
-
-            $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
-
-            return;
-        }
 
         try {
             $payPalOrder = $this->captureOrAuthorizeOrder($payPalOrder);
@@ -203,22 +192,22 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
 
             return;
         } catch (NoOrderToProceedException $noOrderToProceedException) {
-            $this->orderNumberService->restoreOrdernumberToPool($result->getShopwareOrderNumber());
+            $this->orderNumberService->restoreOrdernumberToPool();
 
             return;
         }
 
         if (!$this->checkCaptureAuthorizationStatus($payPalOrder)) {
-            $this->orderNumberService->restoreOrdernumberToPool($result->getShopwareOrderNumber());
+            $this->orderNumberService->restoreOrdernumberToPool();
 
             return;
         }
 
-        $this->createShopwareOrder($payPalOrder->getId(), $paymentType);
+        $shopwareOrderNumber = $this->createShopwareOrder($payPalOrder->getId(), $paymentType);
 
-        $this->setTransactionId($result->getShopwareOrderNumber(), $payPalOrder);
+        $this->setTransactionId($shopwareOrderNumber, $payPalOrder);
 
-        $this->updatePaymentStatus($payPalOrder->getIntent(), $this->getOrderId($result->getShopwareOrderNumber()));
+        $this->updatePaymentStatus($payPalOrder->getIntent(), $this->getOrderId($shopwareOrderNumber));
 
         if ($this->Request()->isXmlHttpRequest()) {
             $this->view->assign('paypalOrderId', $payPalOrderId);

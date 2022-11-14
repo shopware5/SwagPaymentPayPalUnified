@@ -99,4 +99,11 @@ interface PaymentMethodProviderInterface
      * @return PaymentType::*
      */
     public function getPaymentTypeByName($paymentMethodName);
+
+    /**
+     * @param int $paymentMethodId
+     *
+     * @return string|null
+     */
+    public function getPaymentNameById($paymentMethodId);
 }

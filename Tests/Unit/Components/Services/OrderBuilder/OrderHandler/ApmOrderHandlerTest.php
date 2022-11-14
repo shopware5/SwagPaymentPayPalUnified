@@ -134,7 +134,8 @@ class ApmOrderHandlerTest extends TestCase
             $basket,
             PaymentType::APM_GIROPAY,
             null,
-            null
+            null,
+            'anyOrderId'
         );
 
         $reflectionMethod = $this->getReflectionMethod(ApmOrderHandler::class, 'createPurchaseUnits');
@@ -169,7 +170,8 @@ class ApmOrderHandlerTest extends TestCase
             $cart,
             $paymentType,
             $basketUniqueId,
-            $paymentToken
+            $paymentToken,
+            'anyOrderId'
         );
     }
 

@@ -14,7 +14,6 @@ use Enlight_Controller_Response_ResponseTestCase;
 use Shopware_Controllers_Frontend_PaypalUnifiedV2AdvancedCreditDebitCard;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\NumberRangeIncrementerDecorator;
-use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentController;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\OrderResource;
 use SwagPaymentPayPalUnified\Tests\Functional\AssertLocationTrait;
@@ -51,10 +50,9 @@ class PaypalUnifiedV2AdvancedCreditDebitCardIndexActionTest extends PaypalPaymen
         $payPalOrder = $this->createPayPalOrder();
 
         $sessionMock = $this->createMock(Enlight_Components_Session_Namespace::class);
-        $sessionMock->expects(static::exactly(2))->method('offsetUnset');
+        $sessionMock->expects(static::once())->method('offsetUnset');
         $sessionMock->method('offsetGet')->willReturnMap([
             ['paypalOrderId', '123456789'],
-            [AbstractPaypalPaymentController::ACDC_SHOPWARE_ORDER_ID_SESSION_KEY, $orderNumber],
         ]);
 
         $dependencyProviderMock = $this->createMock(DependencyProvider::class);
