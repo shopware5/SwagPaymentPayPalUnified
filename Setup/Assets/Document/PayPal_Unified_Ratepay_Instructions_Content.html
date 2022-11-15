@@ -4,7 +4,7 @@
     {/if}
 </div>
 {if $PayPalUnifiedInvoiceInstruction}
-    <p>Bitte überweisen Sie den Betrag innerhalb der nächsten 30 Tage.</p>
+    <p>Bitte überweisen Sie {$PayPalUnifiedInvoiceInstruction.amount|currency} bis {$PayPalUnifiedInvoiceInstruction.dueDate|date_format: "%d.%m.%Y"} an:</p>
     <table class="unified_payment_instruction">
         <tbody>
             <tr>

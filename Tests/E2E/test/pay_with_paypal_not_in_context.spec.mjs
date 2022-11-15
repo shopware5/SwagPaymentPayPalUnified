@@ -18,10 +18,6 @@ test.describe('Disabled inContext mode', () => {
     });
 
     test('Disabled inContext mode and buy a product with paypal', async ({ page }) => {
-        page.on('frameattached', await function (frame) {
-            frame.waitForLoadState('load');
-        });
-
         // Disable InContext mode
         connection.query(disableInContextMode);
 

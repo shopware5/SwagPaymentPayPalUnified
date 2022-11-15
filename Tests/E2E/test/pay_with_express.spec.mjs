@@ -171,10 +171,6 @@ test.describe('Is Express Checkout button available', () => {
     });
 
     test('Check register page', async ({ page }) => {
-        page.on('frameattached', await function (frame) {
-            frame.waitForLoadState('load');
-        });
-
         await page.goto('/sommerwelten/beachwear/178/strandtuch-ibiza', { waitUntil: 'load' });
 
         await page.locator('text=In den Warenkorb').click();

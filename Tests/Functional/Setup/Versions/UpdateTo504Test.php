@@ -9,11 +9,11 @@
 namespace SwagPaymentPayPalUnified\Tests\Functional\Setup;
 
 use PHPUnit\Framework\TestCase;
-use SwagPaymentPayPalUnified\Setup\Versions\UpdateToREPLACE_GLOBAL_WITH_NEXT_VERSION;
+use SwagPaymentPayPalUnified\Setup\Versions\UpdateTo504;
 use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 
-class UpdateToREPLACE_GLOBAL_WITH_NEXT_VERSIONTest extends TestCase
+class UpdateTo504Test extends TestCase
 {
     use ContainerTrait;
     use DatabaseTestCaseTrait;
@@ -33,10 +33,10 @@ class UpdateToREPLACE_GLOBAL_WITH_NEXT_VERSIONTest extends TestCase
         // make sure the value before the update is another.
         static::assertSame('AnyOtherTemplate', $connection->fetchColumn($fetchValueSql));
 
-        $updater = new UpdateToREPLACE_GLOBAL_WITH_NEXT_VERSION($connection);
+        $updater = new UpdateTo504($connection);
         $updater->update();
 
-        $expectedContainedString = 'Bitte überweisen Sie den Betrag innerhalb der nächsten 30 Tage.';
+        $expectedContainedString = 'Bitte überweisen Sie {$PayPalUnifiedInvoiceInstruction.amount|currency} bis {$PayPalUnifiedInvoiceInstruction.dueDate|date_format: "%d.%m.%Y"} an:';
         $result = $connection->fetchColumn($fetchValueSql);
 
         if (\method_exists($this, 'assertStringContainsString')) {
