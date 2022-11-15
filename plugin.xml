@@ -5,14 +5,14 @@
     <label lang="de">PayPal</label>
     <label lang="en">PayPal</label>
 
-    <version>5.0.3</version>
+    <version>5.0.4</version>
     <copyright>(c) by shopware AG</copyright>
     <license>MIT</license>
     <link>http://store.shopware.com</link>
     <author>shopware AG</author>
     <compatibility minVersion="5.2.27" maxVersion="5.99.99"/>
 
-    <changelog version="REPLACE_GLOBALLY_WITH_NEXT_VERSION">
+    <changelog version="5.0.4">
         <changes lang="de">
             PT-12725 - Verbessert das Risikomanagement bei Express Checkout und ausgeschlossenen Produkten;
             PT-12859 - Kunden können beim Express Checkout wieder die Adresse wechseln;

@@ -8,6 +8,6 @@
 
 namespace SwagPaymentPayPalUnified\Setup\Versions;
 
-class UpdateToREPLACE_GLOBAL_WITH_NEXT_VERSION extends UpdateTo433
+class UpdateTo504 extends UpdateTo433
 {
 }
