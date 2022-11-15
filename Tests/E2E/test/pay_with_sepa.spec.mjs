@@ -23,10 +23,6 @@ test.describe('Is SEPA fully functional', () => {
     });
 
     test('Buy a product with SEPA', async ({ page }) => {
-        page.on('frameattached', await function(frame) {
-            frame.waitForLoadState('load');
-        });
-
         await loginHelper.login(page);
 
         // Add product to cart

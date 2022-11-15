@@ -36,7 +36,7 @@ class UpdateTo504Test extends TestCase
         $updater = new UpdateTo504($connection);
         $updater->update();
 
-        $expectedContainedString = 'Bitte überweisen Sie den Betrag innerhalb der nächsten 30 Tage.';
+        $expectedContainedString = 'Bitte überweisen Sie {$PayPalUnifiedInvoiceInstruction.amount|currency} bis {$PayPalUnifiedInvoiceInstruction.dueDate|date_format: "%d.%m.%Y"} an:';
         $result = $connection->fetchColumn($fetchValueSql);
 
         if (\method_exists($this, 'assertStringContainsString')) {
