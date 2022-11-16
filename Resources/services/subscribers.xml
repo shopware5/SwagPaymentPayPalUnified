@@ -157,6 +157,20 @@
             <tag name="shopware.event_subscriber"/>
         </service>
 
+        <service id="paypal_unified.subscriber.carrier"
+                 class="SwagPaymentPayPalUnified\Subscriber\Carrier"
+                 public="true">
+            <argument type="service" id="paypal_unified.shipping_provider"/>
+            <argument type="service" id="paypal_unified.order_provider"/>
+            <argument type="service" id="front"/>
+            <argument type="service" id="paypal_unified.shipping_resource"/>
+            <argument type="service" id="paypal_unified.logger_service"/>
+            <argument type="service" id="paypal_unified.settings_service"/>
+            <argument type="service" id="paypal_unified.client_service"/>
+
+            <tag name="shopware.event_subscriber"/>
+        </service>
+
         <service id="paypal_unified.subscriber.risk_management"
                  class="SwagPaymentPayPalUnified\Subscriber\RiskManagement"
                  public="true">

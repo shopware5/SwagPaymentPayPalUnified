@@ -8,7 +8,12 @@
 
 namespace SwagPaymentPayPalUnified\PayPalBundle\Components;
 
-use Shopware\Components\Model\ModelEntity;
+use SwagPaymentPayPalUnified\Models\Settings\AdvancedCreditDebitCard;
+use SwagPaymentPayPalUnified\Models\Settings\ExpressCheckout;
+use SwagPaymentPayPalUnified\Models\Settings\General;
+use SwagPaymentPayPalUnified\Models\Settings\Installments;
+use SwagPaymentPayPalUnified\Models\Settings\PayUponInvoice;
+use SwagPaymentPayPalUnified\Models\Settings\Plus;
 
 interface SettingsServiceInterface
 {
@@ -45,7 +50,7 @@ interface SettingsServiceInterface
      * @param int|null $shopId
      * @param string   $settingsTable
      *
-     * @return ModelEntity|null
+     * @return General|AdvancedCreditDebitCard|PayUponInvoice|Plus|Installments|ExpressCheckout|null
      *
      * @see SettingsTable
      */
