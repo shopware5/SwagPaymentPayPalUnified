@@ -16,20 +16,14 @@ use SwagPaymentPayPalUnified\Components\Services\Common\PriceFormatter;
 use SwagPaymentPayPalUnified\Components\Services\Common\ReturnUrlHelper;
 use SwagPaymentPayPalUnified\Components\Services\PayPalOrder\AmountProvider;
 use SwagPaymentPayPalUnified\Components\Services\PayPalOrder\ItemListProvider;
-use SwagPaymentPayPalUnified\Components\Services\PhoneNumberBuilder;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
-use SwagPaymentPayPalUnified\PayPalBundle\ProcessingInstruction;
-use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\ApplicationContext;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\Payer;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\Payer\Address as PayerAddress;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\Payer\Name as PayerName;
-use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\Payer\Phone\PhoneNumber;
-use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\ExperienceContext;
-use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\PayUponInvoice;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Amount;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Amount\Breakdown;
@@ -70,11 +64,6 @@ abstract class AbstractOrderHandler implements OrderBuilderHandlerInterface
     protected $contextService;
 
     /**
-     * @var PhoneNumberBuilder
-     */
-    protected $phoneNumberBuilder;
-
-    /**
      * @var PriceFormatter
      */
     protected $priceFormatter;
@@ -90,7 +79,6 @@ abstract class AbstractOrderHandler implements OrderBuilderHandlerInterface
         AmountProvider $amountProvider,
         ReturnUrlHelper $returnUrlHelper,
         ContextServiceInterface $contextService,
-        PhoneNumberBuilder $phoneNumberBuilder,
         PriceFormatter $priceFormatter,
         CustomerHelper $customerHelper
     ) {
@@ -99,7 +87,6 @@ abstract class AbstractOrderHandler implements OrderBuilderHandlerInterface
         $this->amountProvider = $amountProvider;
         $this->returnUrlHelper = $returnUrlHelper;
         $this->contextService = $contextService;
-        $this->phoneNumberBuilder = $phoneNumberBuilder;
         $this->priceFormatter = $priceFormatter;
         $this->customerHelper = $customerHelper;
     }
@@ -277,27 +264,6 @@ abstract class AbstractOrderHandler implements OrderBuilderHandlerInterface
     }
 
     /**
-     * @param array<string, mixed> $customer
-     *
-     * @return PhoneNumber
-     */
-    protected function createPaymentSourcePhoneNumber(array $customer)
-    {
-        if (!isset($customer['billingaddress']['phone'])) {
-            return new PhoneNumber();
-        }
-
-        if (!isset($customer['additional']['country']['countryiso'])) {
-            return $this->phoneNumberBuilder->build($customer['billingaddress']['phone']);
-        }
-
-        return $this->phoneNumberBuilder->build(
-            $customer['billingaddress']['phone'],
-            $customer['additional']['country']['countryiso']
-        );
-    }
-
-    /**
      * @param array<string,string> $extraParams
      *
      * @return ApplicationContext
@@ -341,30 +307,6 @@ abstract class AbstractOrderHandler implements OrderBuilderHandlerInterface
         }
 
         return $experienceContext;
-    }
-
-    protected function createPaymentSource(PayPalOrderParameter $orderParameter, Order $order)
-    {
-        if ($orderParameter->getPaymentType() !== PaymentType::PAYPAL_PAY_UPON_INVOICE_V2) {
-            return null;
-        }
-
-        $order->setProcessingInstruction(ProcessingInstruction::ORDER_COMPLETE_ON_PAYMENT_APPROVAL);
-
-        $paymentSource = new PaymentSource();
-        $payUponInvoice = new PayUponInvoice();
-        $experienceContext = $this->createExperienceContext();
-
-        $payUponInvoice->setName($order->getPayer()->getName());
-        $payUponInvoice->setEmail($order->getPayer()->getEmailAddress());
-        $payUponInvoice->setBirthDate($orderParameter->getCustomer()['additional']['user']['birthday']);
-        $payUponInvoice->setPhone($this->createPaymentSourcePhoneNumber($orderParameter->getCustomer()));
-        $payUponInvoice->setBillingAddress($order->getPayer()->getAddress());
-        $payUponInvoice->setExperienceContext($experienceContext);
-
-        $paymentSource->setPayUponInvoice($payUponInvoice);
-
-        return $paymentSource;
     }
 
     /**

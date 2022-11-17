@@ -21,7 +21,6 @@ use SwagPaymentPayPalUnified\Components\Services\OrderBuilder\OrderHandler\ApmOr
 use SwagPaymentPayPalUnified\Components\Services\OrderBuilder\PaymentSource\PaymentSourceFactory;
 use SwagPaymentPayPalUnified\Components\Services\PayPalOrder\AmountProvider;
 use SwagPaymentPayPalUnified\Components\Services\PayPalOrder\ItemListProvider;
-use SwagPaymentPayPalUnified\Components\Services\PhoneNumberBuilder;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit;
@@ -51,7 +50,6 @@ class ApmOrderHandlerTest extends TestCase
             null,
             null,
             $amountProvider,
-            null,
             null,
             null,
             new PriceFormatter(),
@@ -121,7 +119,6 @@ class ApmOrderHandlerTest extends TestCase
             null,
             null,
             null,
-            null,
             new PriceFormatter(),
             new CustomerHelper()
         );
@@ -184,7 +181,6 @@ class ApmOrderHandlerTest extends TestCase
         AmountProvider $amountProvider = null,
         ReturnUrlHelper $returnUrlHelper = null,
         ContextServiceInterface $contextService = null,
-        PhoneNumberBuilder $phoneNumberBuilder = null,
         PriceFormatter $priceFormatter = null,
         CustomerHelper $customerHelper = null,
         PaymentSourceFactory $paymentSourceFactory = null
@@ -194,7 +190,6 @@ class ApmOrderHandlerTest extends TestCase
         $amountProvider = $amountProvider === null ? $this->createMock(AmountProvider::class) : $amountProvider;
         $returnUrlHelper = $returnUrlHelper === null ? $this->createMock(ReturnUrlHelper::class) : $returnUrlHelper;
         $contextService = $contextService === null ? $this->createMock(ContextService::class) : $contextService;
-        $phoneNumberBuilder = $phoneNumberBuilder === null ? $this->createMock(PhoneNumberBuilder::class) : $phoneNumberBuilder;
         $priceFormatter = $priceFormatter === null ? $this->createMock(PriceFormatter::class) : $priceFormatter;
         $customerHelper = $customerHelper === null ? $this->createMock(CustomerHelper::class) : $customerHelper;
         $paymentSourceFactory = $paymentSourceFactory === null ? $this->createMock(PaymentSourceFactory::class) : $paymentSourceFactory;
@@ -205,7 +200,6 @@ class ApmOrderHandlerTest extends TestCase
             $amountProvider,
             $returnUrlHelper,
             $contextService,
-            $phoneNumberBuilder,
             $priceFormatter,
             $customerHelper,
             $paymentSourceFactory

@@ -20,9 +20,9 @@
             <argument type="service" id="paypal_unified.paypal_order.amount_provider"/>
             <argument type="service" id="paypal_unified.common.return_url_helper"/>
             <argument type="service" id="shopware_storefront.context_service"/>
-            <argument type="service" id="paypal_unified.phone_number_builder"/>
             <argument type="service" id="paypal_unified.common.price_formatter"/>
             <argument type="service" id="paypal_unified.common.customer_helper"/>
+            <argument type="service" id="paypal_unified.phone_number_service"/>
             <tag name="paypal_unified.order_factory_handler"/>
         </service>
 
@@ -34,7 +34,6 @@
             <argument type="service" id="paypal_unified.paypal_order.amount_provider"/>
             <argument type="service" id="paypal_unified.common.return_url_helper"/>
             <argument type="service" id="shopware_storefront.context_service"/>
-            <argument type="service" id="paypal_unified.phone_number_builder"/>
             <argument type="service" id="paypal_unified.common.price_formatter"/>
             <argument type="service" id="paypal_unified.common.customer_helper"/>
             <tag name="paypal_unified.order_factory_handler"/>
@@ -48,7 +47,6 @@
             <argument type="service" id="paypal_unified.paypal_order.amount_provider"/>
             <argument type="service" id="paypal_unified.common.return_url_helper"/>
             <argument type="service" id="shopware_storefront.context_service"/>
-            <argument type="service" id="paypal_unified.phone_number_builder"/>
             <argument type="service" id="paypal_unified.common.price_formatter"/>
             <argument type="service" id="paypal_unified.common.customer_helper"/>
             <argument type="service" id="paypal_unified.payment_source_factory"/>
@@ -63,7 +61,6 @@
             <argument type="service" id="paypal_unified.paypal_order.amount_provider"/>
             <argument type="service" id="paypal_unified.common.return_url_helper"/>
             <argument type="service" id="shopware_storefront.context_service"/>
-            <argument type="service" id="paypal_unified.phone_number_builder"/>
             <argument type="service" id="paypal_unified.common.price_formatter"/>
             <argument type="service" id="paypal_unified.common.customer_helper"/>
             <argument type="service" id="paypal_unified.payment_source_factory"/>
@@ -78,7 +75,6 @@
             <argument type="service" id="paypal_unified.paypal_order.amount_provider"/>
             <argument type="service" id="paypal_unified.common.return_url_helper"/>
             <argument type="service" id="shopware_storefront.context_service"/>
-            <argument type="service" id="paypal_unified.phone_number_builder"/>
             <argument type="service" id="paypal_unified.common.price_formatter"/>
             <argument type="service" id="paypal_unified.common.customer_helper"/>
             <argument type="service" id="paypal_unified.payment_source_factory"/>

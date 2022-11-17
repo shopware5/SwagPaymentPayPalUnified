@@ -16,7 +16,6 @@ use SwagPaymentPayPalUnified\Components\Services\Common\ReturnUrlHelper;
 use SwagPaymentPayPalUnified\Components\Services\OrderBuilder\PaymentSource\PaymentSourceFactory;
 use SwagPaymentPayPalUnified\Components\Services\PayPalOrder\AmountProvider;
 use SwagPaymentPayPalUnified\Components\Services\PayPalOrder\ItemListProvider;
-use SwagPaymentPayPalUnified\Components\Services\PhoneNumberBuilder;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
@@ -47,7 +46,6 @@ class ApmOrderHandler extends AbstractOrderHandler
         AmountProvider $amountProvider,
         ReturnUrlHelper $returnUrlHelper,
         ContextServiceInterface $contextService,
-        PhoneNumberBuilder $phoneNumberBuilder,
         PriceFormatter $priceFormatter,
         CustomerHelper $customerHelper,
         PaymentSourceFactory $paymentSourceFactory
@@ -58,7 +56,6 @@ class ApmOrderHandler extends AbstractOrderHandler
             $amountProvider,
             $returnUrlHelper,
             $contextService,
-            $phoneNumberBuilder,
             $priceFormatter,
             $customerHelper
         );

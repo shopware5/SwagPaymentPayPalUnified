@@ -20,6 +20,8 @@ use Shopware_Components_Config;
 use Shopware_Controllers_Frontend_Checkout;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
+use SwagPaymentPayPalUnified\Components\Services\LoggerService;
+use SwagPaymentPayPalUnified\Components\Services\PhoneNumberService;
 use SwagPaymentPayPalUnified\Subscriber\PayUponInvoice;
 use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
@@ -32,7 +34,7 @@ class PayUponInvoiceTest extends TestCase
     use ShopRegistrationTrait;
 
     const DATE_OF_BIRTH = '1970-01-01';
-    const PHONE_NUMBER = '123456789';
+    const PHONE_NUMBER = '0256199785';
     const ANY_ID = 1;
     const CUSTOMER_ID = 999999;
     const ADDRESS_ID = 1000000;
@@ -55,7 +57,8 @@ class PayUponInvoiceTest extends TestCase
         $subscriber = new PayUponInvoice(
             $dependencyProvider,
             $this->getContainer()->get('config'),
-            $this->getContainer()->get('dbal_connection')
+            $this->getContainer()->get('dbal_connection'),
+            $this->getContainer()->get('paypal_unified.phone_number_service')
         );
 
         $subscriber->onCheckout($args);
@@ -99,25 +102,25 @@ class PayUponInvoiceTest extends TestCase
         yield 'Should assign showPayUponInvoiceLegalText => true' => [
             $this->createEnlightEventArgs('confirm', PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME),
             ['sUserData' => ['billingaddress' => ['phone' => self::PHONE_NUMBER], 'additional' => ['user' => ['birthday' => self::DATE_OF_BIRTH]]]],
-            ['expectLegalText' => true, 'expectPhoneField' => null, 'expectBirthdayField' => null],
+            ['expectLegalText' => true, 'expectPhoneField' => true, 'expectBirthdayField' => true],
         ];
 
         yield 'Should assign showPayUponInvoiceLegalText => true, showPayUponInvoicePhoneField => true' => [
             $this->createEnlightEventArgs('confirm', PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME),
             ['sUserData' => ['billingaddress' => ['phone' => null], 'additional' => ['user' => ['birthday' => self::DATE_OF_BIRTH]]]],
-            ['expectLegalText' => true, 'expectPhoneField' => true, 'expectBirthdayField' => null],
+            ['expectLegalText' => true, 'expectPhoneField' => true, 'expectBirthdayField' => true],
         ];
 
         yield 'Should assign showPayUponInvoiceLegalText => true, showPayUponInvoiceBirthdayField => true because birthday is null' => [
             $this->createEnlightEventArgs('confirm', PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME),
             ['sUserData' => ['billingaddress' => ['phone' => self::PHONE_NUMBER], 'additional' => ['user' => ['birthday' => null]]]],
-            ['expectLegalText' => true, 'expectPhoneField' => null, 'expectBirthdayField' => true],
+            ['expectLegalText' => true, 'expectPhoneField' => true, 'expectBirthdayField' => true],
         ];
 
         yield 'Should assign showPayUponInvoiceLegalText => true, showPayUponInvoiceBirthdayField => true because birthday is 0000-00-00' => [
             $this->createEnlightEventArgs('confirm', PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME),
             ['sUserData' => ['billingaddress' => ['phone' => self::PHONE_NUMBER], 'additional' => ['user' => ['birthday' => '0000-00-00']]]],
-            ['expectLegalText' => true, 'expectPhoneField' => null, 'expectBirthdayField' => true],
+            ['expectLegalText' => true, 'expectPhoneField' => true, 'expectBirthdayField' => true],
         ];
 
         yield 'Should assign showPayUponInvoiceLegalText => true, showPayUponInvoicePhoneField => true, showPayUponInvoiceBirthdayField => true because phone and birthday are null' => [
@@ -151,7 +154,8 @@ class PayUponInvoiceTest extends TestCase
         $subscriber = new PayUponInvoice(
             $dependencyProvider,
             $this->getContainer()->get('config'),
-            $this->getContainer()->get('dbal_connection')
+            $this->getContainer()->get('dbal_connection'),
+            $this->getContainer()->get('paypal_unified.phone_number_service')
         );
 
         $subscriber->onCheckout($args);
@@ -292,7 +296,12 @@ class PayUponInvoiceTest extends TestCase
         $subscriber = new PayUponInvoice(
             $dependencyProvider,
             $config,
-            $this->getContainer()->get('dbal_connection')
+            $this->getContainer()->get('dbal_connection'),
+            new PhoneNumberService(
+                $this->createMock(LoggerService::class),
+                $this->getContainer()->get('dbal_connection'),
+                $config
+            )
         );
 
         $request = new Enlight_Controller_Request_RequestTestCase();
@@ -419,7 +428,7 @@ class PayUponInvoiceTest extends TestCase
         }
 
         if ($addPhoneNumber) {
-            $request->setParam('puiTelephoneNumber', '123456789');
+            $request->setParam('puiTelephoneNumber', self::PHONE_NUMBER);
         }
 
         return $request;
@@ -450,9 +459,9 @@ class PayUponInvoiceTest extends TestCase
         $controller = $this->createMock(Shopware_Controllers_Frontend_Checkout::class);
         $controller->method('View')->willReturn($view);
 
-        $eventArgs = $this->createMock(Enlight_Controller_ActionEventArgs::class);
-        $eventArgs->method('getRequest')->willReturn($request);
-        $eventArgs->method('getSubject')->willReturn($controller);
+        $eventArgs = new Enlight_Controller_ActionEventArgs();
+        $eventArgs->set('request', $request);
+        $eventArgs->set('subject', $controller);
 
         return $eventArgs;
     }
