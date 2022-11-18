@@ -11,8 +11,8 @@ import backendLoginHelper from '../helper/backendLoginHelper.mjs';
 const connection = MysqlFactory.getInstance();
 
 test.describe('Frontend', () => {
-    test.beforeAll(() => {
-        clearCacheHelper.clearCache();
+    test.beforeAll(async () => {
+        await clearCacheHelper.clearCache();
     });
 
     test.beforeEach(() => {

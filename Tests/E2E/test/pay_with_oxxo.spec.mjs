@@ -10,8 +10,8 @@ const mxn = '4';
 test.describe('Pay with OXXO', () => {
     test.skip('PT-12775: Not yet stable');
 
-    test.beforeAll(() => {
-        clearCacheHelper.clearCache();
+    test.beforeAll(async () => {
+        await clearCacheHelper.clearCache();
     });
 
     test.beforeEach(() => {

@@ -9,8 +9,8 @@ import getPaypalPaymentMethodSelector from '../helper/getPayPalPaymentMethodSele
 const connection = MysqlFactory.getInstance();
 
 test.describe('Disabled inContext mode', () => {
-    test.beforeAll(() => {
-        clearCacheHelper.clearCache();
+    test.beforeAll(async () => {
+        await clearCacheHelper.clearCache();
     });
 
     test.beforeEach(() => {

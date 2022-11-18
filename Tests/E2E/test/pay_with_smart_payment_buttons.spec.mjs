@@ -12,8 +12,8 @@ const connection = MysqlFactory.getInstance();
 test.use({ locale: 'de-DE' });
 
 test.describe('Is SPB fully functional', () => {
-    test.beforeAll(() => {
-        clearCacheHelper.clearCache();
+    test.beforeAll(async () => {
+        await clearCacheHelper.clearCache();
     });
 
     test.beforeEach(() => {

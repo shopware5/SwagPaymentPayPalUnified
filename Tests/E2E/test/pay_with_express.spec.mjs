@@ -10,8 +10,8 @@ import offCanvasSettingHelper from '../helper/offCanvasSettingHelper.mjs';
 const connection = MysqlFactory.getInstance();
 
 test.describe('Is Express Checkout button available', () => {
-    test.beforeAll(() => {
-        clearCacheHelper.clearCache();
+    test.beforeAll(async () => {
+        await clearCacheHelper.clearCache();
     });
 
     test.beforeEach(() => {

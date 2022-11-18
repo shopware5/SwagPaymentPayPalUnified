@@ -23,7 +23,7 @@ class CarrierTest extends TestCase
     /**
      * @return void
      */
-    public function testOnFilterOrderAttributesShouldAddNoCarrierOnFallbakckId()
+    public function testOnFilterOrderAttributesShouldAddNoCarrierOnFallbackId()
     {
         $eventArgs = new Enlight_Event_EventArgs(['orderParams' => ['dispatchID' => '0']]);
 
