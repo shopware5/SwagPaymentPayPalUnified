@@ -9,6 +9,7 @@
 namespace SwagPaymentPayPalUnified\Components\PayPalOrderParameter;
 
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
+use SwagPaymentPayPalUnified\Components\OrderNumberService;
 use SwagPaymentPayPalUnified\Components\Services\Common\CartPersister;
 use SwagPaymentPayPalUnified\Components\Services\PaymentControllerHelper;
 
@@ -32,14 +33,21 @@ class PayPalOrderParameterFacade implements PayPalOrderParameterFacadeInterface
      */
     private $cartPersister;
 
+    /**
+     * @var OrderNumberService
+     */
+    private $orderNumberService;
+
     public function __construct(
         PaymentControllerHelper $paymentControllerHelper,
         DependencyProvider $dependencyProvider,
-        CartPersister $cartPersister
+        CartPersister $cartPersister,
+        OrderNumberService $orderNumberService
     ) {
         $this->paymentControllerHelper = $paymentControllerHelper;
         $this->dependencyProvider = $dependencyProvider;
         $this->cartPersister = $cartPersister;
+        $this->orderNumberService = $orderNumberService;
     }
 
     /**
@@ -54,6 +62,8 @@ class PayPalOrderParameterFacade implements PayPalOrderParameterFacadeInterface
         $basketUniqueId = $this->cartPersister->persist($cartData, $session->get('sUserId'));
         $paymentToken = $this->dependencyProvider->createPaymentToken();
 
-        return new PayPalOrderParameter($userData, $cartData, $paymentType, $basketUniqueId, $paymentToken);
+        $orderNumber = $this->orderNumberService->getOrderNumber();
+
+        return new PayPalOrderParameter($userData, $cartData, $paymentType, $basketUniqueId, $paymentToken, $orderNumber);
     }
 }

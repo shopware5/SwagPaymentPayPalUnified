@@ -59,7 +59,7 @@ class OrderFactoryTest extends TestCase
     public function createOrderTestDataProvider()
     {
         yield 'Expect exception because PaymentType does not match' => [
-            new PayPalOrderParameter([], [], 'anyPaymentType', null, null),
+            new PayPalOrderParameter([], [], 'anyPaymentType', null, null, 'anyOrderNumber'),
             true,
         ];
 
@@ -142,6 +142,6 @@ class OrderFactoryTest extends TestCase
         $customer = require __DIR__ . '/OrderHandler/_fixtures/b2c_customer.php';
         $cart = require __DIR__ . '/OrderHandler/_fixtures/b2c_basket.php';
 
-        return new PayPalOrderParameter($customer, $cart, $paymentType, null, null);
+        return new PayPalOrderParameter($customer, $cart, $paymentType, null, null, 'anyOrderId');
     }
 }

@@ -17,9 +17,12 @@ use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\ShopwareOrderData;
 use SwagPaymentPayPalUnified\Components\Services\Common\CartPersister;
 use SwagPaymentPayPalUnified\Components\Services\PaymentControllerHelper;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
+use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 
 class PayPalOrderParameterFacadeTest extends TestCase
 {
+    use ContainerTrait;
+
     const USER_ID = 3076905372468594262;
 
     /**
@@ -42,10 +45,13 @@ class PayPalOrderParameterFacadeTest extends TestCase
         $subject = new PayPalOrderParameterFacade(
             $paymentControllerHelper,
             $this->getDependencyProvider(),
-            $this->getCartPersister()
+            $this->getCartPersister(),
+            $this->getContainer()->get('paypal_unified.order_number_service')
         );
 
-        $subject->createPayPalOrderParameter($paymentType, $shopwareOrderData);
+        $result = $subject->createPayPalOrderParameter($paymentType, $shopwareOrderData);
+
+        static::assertNotNull($result->getShopwareOrderNumber());
     }
 
     /**
@@ -68,10 +74,13 @@ class PayPalOrderParameterFacadeTest extends TestCase
         $subject = new PayPalOrderParameterFacade(
             $this->getPaymentControllerHelper(),
             $this->getDependencyProvider(),
-            $cartPersister
+            $cartPersister,
+            $this->getContainer()->get('paypal_unified.order_number_service')
         );
 
-        $subject->createPayPalOrderParameter($paymentType, $shopwareOrderData);
+        $result = $subject->createPayPalOrderParameter($paymentType, $shopwareOrderData);
+
+        static::assertNotNull($result->getShopwareOrderNumber());
     }
 
     /**

@@ -13,6 +13,7 @@ use Exception;
 use PDO;
 use Shopware\Components\NumberRangeIncrementerInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
+use UnexpectedValueException;
 
 class NumberRangeIncrementerDecorator implements NumberRangeIncrementerInterface
 {
@@ -71,9 +72,7 @@ class NumberRangeIncrementerDecorator implements NumberRangeIncrementerInterface
         }
 
         try {
-            $paymentName = $this->dependencyProvider->getSession()->offsetGet('sOrderVariables')['sPayment']['name'];
-
-            $this->paymentMethodProvider->getPaymentTypeByName($paymentName);
+            $this->paymentMethodProvider->getPaymentTypeByName($this->getPaymentName());
         } catch (Exception $exception) {
             return $this->numberRangeIncrementer->increment($name);
         }
@@ -157,5 +156,29 @@ class NumberRangeIncrementerDecorator implements NumberRangeIncrementerInterface
             ->where('id = :id')
             ->setParameter('id', $id)
             ->execute();
+    }
+
+    /**
+     * @return string
+     *
+     * @throw UnexpectedValueException
+     */
+    private function getPaymentName()
+    {
+        $paymentName = $this->dependencyProvider->getSession()->offsetGet('sOrderVariables')['sPayment']['name'];
+
+        if (!empty($paymentName)) {
+            return $paymentName;
+        }
+
+        $paymentName = $this->paymentMethodProvider->getPaymentNameById(
+            $this->dependencyProvider->getSession()->get('sPaymentID')
+        );
+
+        if (!\is_string($paymentName)) {
+            throw new UnexpectedValueException('Cannot find payment name');
+        }
+
+        return $paymentName;
     }
 }

@@ -33,7 +33,6 @@ use SwagPaymentPayPalUnified\Components\Services\PaymentStatusService;
 use SwagPaymentPayPalUnified\Components\Services\Validation\RedirectDataBuilderFactory;
 use SwagPaymentPayPalUnified\Components\Services\Validation\SimpleBasketValidator;
 use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentControllerResults\DeterminedStatus;
-use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentControllerResults\PatchOrderNumberResult;
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\AuthorizationDeniedException;
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\CaptureDeclinedException;
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\CaptureFailedException;
@@ -82,8 +81,6 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
 
     const COMMENT_KEY = 'sComment';
     const NEWSLETTER_KEY = 'sNewsletter';
-
-    const ACDC_SHOPWARE_ORDER_ID_SESSION_KEY = 'advancedCreditDebitCartShopwareOrderId';
 
     /**
      * @var DependencyProvider
@@ -209,29 +206,6 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
             ->setCode($shopwareErrorCode);
 
         $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
-    }
-
-    /**
-     * @param array<int,Patch> $patches
-     *
-     * @return PatchOrderNumberResult
-     */
-    protected function patchOrderNumber(Order $paypalOrder, array $patches = [])
-    {
-        $this->logger->debug(sprintf('%s START', __METHOD__));
-
-        $shopwareOrderNumber = $this->orderNumberService->getOrderNumber();
-        $patches[] = $this->createInvoiceIdPatch($shopwareOrderNumber);
-
-        if (!$this->updatePayPalOrder($paypalOrder->getId(), $patches)) {
-            $this->logger->debug(sprintf('%s FAILS', __METHOD__));
-
-            return new PatchOrderNumberResult(false, $shopwareOrderNumber);
-        }
-
-        $this->logger->debug(sprintf('%s SUCCESS', __METHOD__));
-
-        return new PatchOrderNumberResult(true, $shopwareOrderNumber);
     }
 
     /**
@@ -727,6 +701,9 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
     protected function setTransactionId($shopwareOrderNumber, Order $payPalOrder)
     {
         if (!\is_string($shopwareOrderNumber)) {
+            $logTemplate = 'Cannot set transactionId because order number is not valid. PayPalOrderId: %s';
+            $this->logger->warning(sprintf($logTemplate, $payPalOrder->getId()));
+
             return;
         }
 

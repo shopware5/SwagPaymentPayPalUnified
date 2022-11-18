@@ -178,18 +178,6 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2AdvancedCreditDebitCard extend
             return;
         }
 
-        $result = $this->patchOrderNumber($payPalOrder);
-        if (!$result->getSuccess()) {
-            $this->orderNumberService->restoreOrdernumberToPool($result->getShopwareOrderNumber());
-
-            $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
-                ->setCode(ErrorCodes::COMMUNICATION_FAILURE);
-
-            $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
-
-            return;
-        }
-
         try {
             $payPalOrder = $this->captureOrAuthorizeOrder($payPalOrder);
         } catch (RequireRestartException $requireRestartException) {
@@ -234,13 +222,13 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2AdvancedCreditDebitCard extend
 
             return;
         } catch (NoOrderToProceedException $noOrderToProceedException) {
-            $this->orderNumberService->restoreOrdernumberToPool($result->getShopwareOrderNumber());
+            $this->orderNumberService->restoreOrdernumberToPool();
 
             return;
         }
 
         if (!$this->checkCaptureAuthorizationStatus($payPalOrder)) {
-            $this->orderNumberService->restoreOrdernumberToPool($result->getShopwareOrderNumber());
+            $this->orderNumberService->restoreOrdernumberToPool();
 
             return;
         }
@@ -248,7 +236,6 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2AdvancedCreditDebitCard extend
         $this->logger->debug(sprintf('%s SET PAYPAL ORDER ID TO SESSION: ID: %s', __METHOD__, $payPalOrderId));
 
         $this->dependencyProvider->getSession()->offsetSet('paypalOrderId', $payPalOrderId);
-        $this->dependencyProvider->getSession()->offsetSet(self::ACDC_SHOPWARE_ORDER_ID_SESSION_KEY, $result->getShopwareOrderNumber());
     }
 
     /**

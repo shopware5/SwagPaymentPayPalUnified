@@ -24,6 +24,8 @@ class AbstractOrderHandlerCreatePurchaseUnitTest extends TestCase
     use ContainerTrait;
     use ReflectionHelperTrait;
 
+    const TEST_ORDER_NUMBER = '08154711';
+
     /**
      * @dataProvider createPurchaseUnitsTestDataProvider
      *
@@ -66,6 +68,8 @@ class AbstractOrderHandlerCreatePurchaseUnitTest extends TestCase
         } else {
             static::assertNull($purchaseUnit->getItems());
         }
+
+        static::assertSame(self::TEST_ORDER_NUMBER, $purchaseUnit->getInvoiceId());
     }
 
     /**
@@ -194,7 +198,8 @@ class AbstractOrderHandlerCreatePurchaseUnitTest extends TestCase
             $basketData,
             $paymentType,
             'basketUniqueId',
-            'paymentToken'
+            'paymentToken',
+            self::TEST_ORDER_NUMBER
         );
     }
 

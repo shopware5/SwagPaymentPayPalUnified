@@ -6,7 +6,7 @@
  * file that was distributed with this source code.
  */
 
-namespace SwagPaymentPayPalUnified\Tests\Unit\Components;
+namespace SwagPaymentPayPalUnified\Tests\Functional\Components;
 
 use Doctrine\DBAL\Connection;
 use PHPUnit\Framework\TestCase;
@@ -20,6 +20,7 @@ use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
+use SwagPaymentPayPalUnified\Tests\Functional\ReflectionHelperTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\ShopRegistrationTrait;
 
 class NumberRangeIncrementerDecoratorTest extends TestCase
@@ -27,6 +28,7 @@ class NumberRangeIncrementerDecoratorTest extends TestCase
     use ContainerTrait;
     use ShopRegistrationTrait;
     use DatabaseTestCaseTrait;
+    use ReflectionHelperTrait;
 
     /**
      * @return void
@@ -36,6 +38,7 @@ class NumberRangeIncrementerDecoratorTest extends TestCase
     public function unsetSessionValue()
     {
         $this->getContainer()->get('session')->offsetUnset(NumberRangeIncrementerDecorator::ORDERNUMBER_SESSION_KEY);
+        $this->getContainer()->get('session')->offsetUnset('sPaymentID');
     }
 
     /**
@@ -45,6 +48,7 @@ class NumberRangeIncrementerDecoratorTest extends TestCase
     {
         $expectedResult = 5355104;
         $this->getContainer()->get('session')->offsetSet(NumberRangeIncrementerDecorator::ORDERNUMBER_SESSION_KEY, $expectedResult);
+        $this->getContainer()->get('session')->offsetSet('sPaymentID', 7);
 
         $result = $this->getNumberRangeIncrementerDecorator()->increment(NumberRangeIncrementerDecorator::NAME_INVOICE);
 
@@ -61,6 +65,8 @@ class NumberRangeIncrementerDecoratorTest extends TestCase
         /** @var Connection $connection */
         $connection = $this->getContainer()->get('dbal_connection');
         $connection->exec($sql);
+
+        $this->getContainer()->get('session')->offsetSet('sPaymentID', 7);
 
         $result = (int) $this->getNumberRangeIncrementerDecorator()->increment(NumberRangeIncrementerDecorator::NAME_INVOICE);
 
@@ -142,6 +148,42 @@ class NumberRangeIncrementerDecoratorTest extends TestCase
     }
 
     /**
+     * @return void
+     */
+    public function testGetPaymentNameShouldReturnTheSessionValue()
+    {
+        $expectedPaymentMethodName = 'paymentNameFromSession';
+
+        $numberRangeIncrementerDecorator = $this->getContainer()->get('shopware.number_range_incrementer');
+        static::assertInstanceOf(NumberRangeIncrementerDecorator::class, $numberRangeIncrementerDecorator);
+
+        $this->getContainer()->get('session')->offsetSet('sOrderVariables', ['sPayment' => ['name' => $expectedPaymentMethodName]]);
+
+        $reflectionMethod = $this->getReflectionMethod(NumberRangeIncrementerDecorator::class, 'getPaymentName');
+
+        $result = $reflectionMethod->invoke($numberRangeIncrementerDecorator);
+
+        static::assertSame($expectedPaymentMethodName, $result);
+    }
+
+    /**
+     * @return void
+     */
+    public function testGetPaymentNameShouldReturnTheNameById()
+    {
+        $numberRangeIncrementerDecorator = $this->getContainer()->get('shopware.number_range_incrementer');
+
+        $this->getContainer()->get('session')->offsetUnset('sOrderVariables');
+        $this->getContainer()->get('session')->offsetSet('sPaymentID', 7);
+
+        $reflectionMethod = $this->getReflectionMethod(NumberRangeIncrementerDecorator::class, 'getPaymentName');
+
+        $result = $reflectionMethod->invoke($numberRangeIncrementerDecorator);
+
+        static::assertSame('SwagPaymentPayPalUnified', $result);
+    }
+
+    /**
      * @return NumberRangeIncrementerDecorator
      */
     private function getNumberRangeIncrementerDecorator()
@@ -154,7 +196,7 @@ class NumberRangeIncrementerDecoratorTest extends TestCase
             $this->getContainer()->get('dbal_connection'),
             $this->getContainer()->get('paypal_unified.dependency_provider'),
             $this->createMock(LoggerServiceInterface::class),
-            $this->createMock(PaymentMethodProviderInterface::class)
+            $this->getContainer()->get('paypal_unified.payment_method_provider')
         );
     }
 }

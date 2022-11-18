@@ -23,11 +23,9 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2AdvancedCreditDebitCard exten
         $session = $this->dependencyProvider->getSession();
 
         $payPalOrderId = $session->offsetGet('paypalOrderId');
-        $shopwareOrderNumber = $session->offsetGet(self::ACDC_SHOPWARE_ORDER_ID_SESSION_KEY);
-        $session->offsetUnset(self::ACDC_SHOPWARE_ORDER_ID_SESSION_KEY);
 
         if (!\is_string($payPalOrderId)) {
-            $this->orderNumberService->restoreOrdernumberToPool($shopwareOrderNumber);
+            $this->orderNumberService->restoreOrdernumberToPool();
 
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
                 ->setCode(ErrorCodes::UNKNOWN)
@@ -45,7 +43,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2AdvancedCreditDebitCard exten
                 return;
             }
 
-            $this->createShopwareOrder($payPalOrderId, PaymentType::PAYPAL_ADVANCED_CREDIT_DEBIT_CARD);
+            $shopwareOrderNumber = $this->createShopwareOrder($payPalOrderId, PaymentType::PAYPAL_ADVANCED_CREDIT_DEBIT_CARD);
 
             $this->setTransactionId($shopwareOrderNumber, $payPalOrder);
 

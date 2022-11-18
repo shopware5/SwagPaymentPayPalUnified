@@ -33,7 +33,6 @@ use SwagPaymentPayPalUnified\PayPalBundle\Resources\PaymentResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Instruction\PaymentInstructionType;
-use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\RelatedResources\RelatedResource;
 use Symfony\Component\HttpFoundation\Response;
 
 class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_Frontend_Payment
@@ -233,7 +232,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_F
         try {
             $this->paymentResource->patch($paymentId, [$paymentPatch]);
         } catch (RequestException $exception) {
-            $this->orderNumberService->restoreOrdernumberToPool($shopwareOrderNumber);
+            $this->orderNumberService->restoreOrdernumberToPool();
             $this->handleError(ErrorCodes::COMMUNICATION_FAILURE, $exception);
 
             return;
@@ -247,7 +246,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_F
             // execute the payment to the PayPal API
             $executionResponse = $this->paymentResource->execute($payerId, $paymentId);
             if ($executionResponse === null) {
-                $this->orderNumberService->restoreOrdernumberToPool($shopwareOrderNumber);
+                $this->orderNumberService->restoreOrdernumberToPool();
                 $this->handleError(ErrorCodes::COMMUNICATION_FAILURE);
 
                 return;
@@ -263,26 +262,24 @@ class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_F
             }
 
             $errorCode = ErrorCodes::COMMUNICATION_FAILURE;
-            $this->orderNumberService->restoreOrdernumberToPool($shopwareOrderNumber);
+            $this->orderNumberService->restoreOrdernumberToPool();
             $this->handleError($errorCode, $exception);
 
             return;
         }
 
-        /** @var Payment $response */
         $response = Payment::fromArray($executionResponse);
         $request->setParam('invoiceCheckout', $response->getPaymentInstruction() !== null);
 
         $this->saveOrder($paymentId, $paymentId, Status::PAYMENT_STATE_OPEN);
         $this->orderNumberService->releaseOrderNumber();
 
-        /** @var RelatedResource $relatedResource */
         $relatedResource = $response->getTransactions()->getRelatedResources()->getResources()[0];
 
         // Use TXN-ID instead of the PaymentId
         $relatedResourceId = $relatedResource->getId();
         if (!$orderDataService->applyTransactionId($shopwareOrderNumber, $relatedResourceId)) {
-            $this->orderNumberService->restoreOrdernumberToPool($shopwareOrderNumber);
+            $this->orderNumberService->restoreOrdernumberToPool();
             $this->handleError(ErrorCodes::NO_ORDER_TO_PROCESS);
 
             return;

@@ -52,7 +52,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2PayUponInvoice extends Abstra
         $shopwareOrderNumber = $this->orderNumberService->getOrderNumber();
         $invoiceIdPatch = $this->createInvoiceIdPatch($shopwareOrderNumber);
         if (!$this->updatePayPalOrder($payPalOrderId, [$invoiceIdPatch])) {
-            $this->orderNumberService->restoreOrdernumberToPool($shopwareOrderNumber);
+            $this->orderNumberService->restoreOrdernumberToPool();
 
             return;
         }
@@ -60,12 +60,12 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2PayUponInvoice extends Abstra
         if ($this->isPaymentCompleted($payPalOrderId)) {
             $payPalOrder = $this->getPayPalOrder($payPalOrderId);
             if (!$payPalOrder instanceof Order) {
-                $this->orderNumberService->restoreOrdernumberToPool($shopwareOrderNumber);
+                $this->orderNumberService->restoreOrdernumberToPool();
 
                 return;
             }
 
-            $this->createShopwareOrder($payPalOrderId, PaymentType::PAYPAL_PAY_UPON_INVOICE_V2, Status::PAYMENT_STATE_COMPLETELY_PAID);
+            $shopwareOrderNumber = $this->createShopwareOrder($payPalOrderId, PaymentType::PAYPAL_PAY_UPON_INVOICE_V2, Status::PAYMENT_STATE_COMPLETELY_PAID);
 
             $this->paymentInstructionService->createInstructions($shopwareOrderNumber, $payPalOrder);
 
@@ -83,7 +83,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2PayUponInvoice extends Abstra
             return;
         }
 
-        $this->orderNumberService->restoreOrdernumberToPool($shopwareOrderNumber);
+        $this->orderNumberService->restoreOrdernumberToPool();
 
         $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
             ->setCode(ErrorCodes::COMMUNICATION_FAILURE);

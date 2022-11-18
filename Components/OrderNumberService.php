@@ -44,13 +44,13 @@ class OrderNumberService
     }
 
     /**
-     * @param string $ordernumber
-     *
      * @return void
      */
-    public function restoreOrdernumberToPool($ordernumber)
+    public function restoreOrderNumberToPool()
     {
-        if (!\is_string($ordernumber)) {
+        $orderNumber = $this->dependencyProvider->getSession()->offsetGet(NumberRangeIncrementerDecorator::ORDERNUMBER_SESSION_KEY);
+
+        if (!\is_string($orderNumber)) {
             $this->releaseOrderNumber();
 
             return;
@@ -61,7 +61,7 @@ class OrderNumberService
         $this->connection->createQueryBuilder()
             ->insert(NumberRangeIncrementerDecorator::POOL_DATABASE_TABLE_NAME)
             ->setValue('order_number', ':orderNumber')
-            ->setParameter('orderNumber', $ordernumber)
+            ->setParameter('orderNumber', $orderNumber)
             ->execute();
     }
 

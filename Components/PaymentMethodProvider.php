@@ -191,6 +191,26 @@ class PaymentMethodProvider implements PaymentMethodProviderInterface
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function getPaymentNameById($paymentMethodId)
+    {
+        $paymentName = $this->connection->createQueryBuilder()
+            ->select(['payment.name'])
+            ->from('s_core_paymentmeans', 'payment')
+            ->andWhere('payment.id = :paymentMethodId')
+            ->setParameter('paymentMethodId', $paymentMethodId)
+            ->execute()
+            ->fetchColumn();
+
+        if (!\is_string($paymentName)) {
+            return null;
+        }
+
+        return $paymentName;
+    }
+
+    /**
      * @param array<string> $paymentMethodNames
      *
      * @return QueryBuilder

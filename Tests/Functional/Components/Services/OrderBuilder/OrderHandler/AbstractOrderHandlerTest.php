@@ -76,7 +76,8 @@ class AbstractOrderHandlerTest extends TestCase
             [],
             PaymentType::PAYPAL_CLASSIC_V2,
             'basketUniqueId',
-            null
+            null,
+            'anyOrderId'
         );
     }
 
