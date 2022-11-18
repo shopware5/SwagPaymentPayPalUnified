@@ -14,12 +14,16 @@
 
     <changelog version="REPLACE_GLOBALLY_WITH_NEXT_VERSION(6.0.0)">
         <changes lang="de">
+            PT-12601 - Verbessert Geburtsdatum und Telefonnummer Überprüfung für Kauf auf Rechnung;
             PT-12982 - Shopware-Bestellnummer wird direkt beim Erstellen der PayPal-Zahlung mitgesendet, dadurch reduziert sich die Anzahl der PayPal-API-Aufrufe;
             PT-12725 - PayPal tracking API hinzugefügt;
+            PT-12992 - Verbessert die Betrugsüberprüfung für Kauf auf Rechnung;
         </changes>
         <changes lang="en">
+            PT-12601 - Improved date of birth and phone number validation for pay upon invoice;
             PT-12982 - Shopware order number is sent directly when creating the PayPal payment, reducing the number of PayPal API calls;
             PT-12725 - Added PayPal tracking API;
+            PT-12992 - Improves fraud checking for pay upon invoice;
         </changes>
     </changelog>
 
