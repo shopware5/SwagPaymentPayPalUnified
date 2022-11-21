@@ -114,7 +114,6 @@ trait SettingsHelperTrait
             'button_style_color' => 0,
             'button_style_shape' => 0,
             'button_style_size' => 0,
-            'button_locale' => 'en_US',
             'submit_cart' => 0,
         ];
 

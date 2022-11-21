@@ -50,6 +50,8 @@ class Installments extends ModelEntity
 
     /**
      * @param int $id
+     *
+     * @return void
      */
     public function setId($id)
     {
@@ -66,6 +68,8 @@ class Installments extends ModelEntity
 
     /**
      * @param string $shopId
+     *
+     * @return void
      */
     public function setShopId($shopId)
     {
@@ -82,6 +86,8 @@ class Installments extends ModelEntity
 
     /**
      * @param bool $advertiseInstallments
+     *
+     * @return void
      */
     public function setAdvertiseInstallments($advertiseInstallments)
     {
@@ -89,7 +95,7 @@ class Installments extends ModelEntity
     }
 
     /**
-     * @return array
+     * @return array<string, mixed>
      */
     public function toArray()
     {

@@ -193,7 +193,8 @@ class Updater
 
         if (\version_compare($oldVersion, 'REPLACE_GLOBAL_WITH_NEXT_VERSION', '<')) {
             (new UpdateToREPLACE_GLOBAL_WITH_NEXT_VERSION(
-                $this->attributeCrudService
+                $this->attributeCrudService,
+                $this->connection
             ))->update();
         }
     }
