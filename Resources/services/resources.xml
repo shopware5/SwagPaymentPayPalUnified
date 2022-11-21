@@ -13,6 +13,12 @@
             <argument type="service" id="paypal_unified.logger_service"/>
         </service>
 
+        <service id="paypal_unified.shipping_resource"
+                 class="SwagPaymentPayPalUnified\PayPalBundle\Resources\ShippingResource"
+                 public="true">
+            <argument type="service" id="paypal_unified.client_service"/>
+        </service>
+
         <service id="paypal_unified.sale_resource"
                  class="SwagPaymentPayPalUnified\PayPalBundle\Resources\SaleResource"
                  public="true">

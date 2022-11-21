@@ -21,6 +21,7 @@ final class RequestUri
     const CREDENTIALS_RESOURCE = 'v1/customer/partners/%s/merchant-integrations/credentials';
     const MERCHANT_INTEGRATIONS_RESOURCE = 'v1/customer/partners/%s/merchant-integrations/%s';
     const USER_INFO_RESOURCE = 'v1/identity/oauth2/userinfo';
+    const SHIPPING_RESOURCE = 'v1/shipping';
 
     private function __construct()
     {

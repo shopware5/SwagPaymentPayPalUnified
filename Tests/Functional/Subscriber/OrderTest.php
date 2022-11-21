@@ -15,9 +15,12 @@ use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\Subscriber\Order;
+use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 
 class OrderTest extends TestCase
 {
+    use ContainerTrait;
+
     public function testOnFilterOrderAttributesShouldAddNoPaymentType()
     {
         $eventArgs = new Enlight_Event_EventArgs(['orderParams' => ['paymentID' => 1]]);
@@ -118,10 +121,7 @@ class OrderTest extends TestCase
      */
     private function getOrderSubscriber()
     {
-        return new Order(
-            Shopware()->Container()->get('front'),
-            Shopware()->Container()->get('paypal_unified.payment_method_provider')
-        );
+        return $this->getContainer()->get('paypal_unified.subscriber.order');
     }
 
     /**

@@ -9,8 +9,8 @@ const sweden = '25';
 const sek = '5';
 
 test.describe('Pay with trustly', () => {
-    test.beforeAll(() => {
-        clearCacheHelper.clearCache();
+    test.beforeAll(async () => {
+        await clearCacheHelper.clearCache();
     });
 
     test.beforeEach(() => {

@@ -121,6 +121,18 @@
             <argument type="service" id="models"/>
         </service>
 
+        <service id="paypal_unified.shipping_provider"
+                 class="SwagPaymentPayPalUnified\Components\ShippingProvider"
+                 public="true">
+            <argument type="service" id="dbal_connection"/>
+        </service>
+
+        <service id="paypal_unified.order_provider"
+                 class="SwagPaymentPayPalUnified\Components\OrderProvider"
+                 public="true">
+            <argument type="service" id="dbal_connection"/>
+        </service>
+
         <service id="paypal_unified.paypal_order_parameter_facade"
                  class="SwagPaymentPayPalUnified\Components\PayPalOrderParameter\PayPalOrderParameterFacade"
                  public="true">

@@ -10,8 +10,8 @@ const connection = MysqlFactory.getInstance();
 test.use({ locale: 'de-DE' });
 
 test.describe('Pay with invoice', () => {
-    test.beforeAll(() => {
-        clearCacheHelper.clearCache();
+    test.beforeAll(async () => {
+        await clearCacheHelper.clearCache();
     });
 
     test.beforeEach(() => {

@@ -12,8 +12,8 @@ import getPaypalPaymentMethodSelector from '../helper/getPayPalPaymentMethodSele
 const connection = MysqlFactory.getInstance();
 
 test.describe('Pay with credit card', () => {
-    test.beforeAll(() => {
-        clearCacheHelper.clearCache();
+    test.beforeAll(async () => {
+        await clearCacheHelper.clearCache();
     });
 
     test.beforeEach(({ page }) => {

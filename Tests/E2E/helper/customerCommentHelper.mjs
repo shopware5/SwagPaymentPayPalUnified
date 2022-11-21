@@ -14,8 +14,8 @@ export default (function() {
 
                     resolve();
                 });
-            }).then(() => {
-                clearCacheHelper.clearCache();
+            }).then(async () => {
+                await clearCacheHelper.clearCache();
             });
         },
 

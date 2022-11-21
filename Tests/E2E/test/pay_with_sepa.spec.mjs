@@ -14,8 +14,8 @@ test.use({ locale: 'de-DE' });
 test.describe('Is SEPA fully functional', () => {
     test.skip();
 
-    test.beforeAll(() => {
-        clearCacheHelper.clearCache();
+    test.beforeAll(async () => {
+        await clearCacheHelper.clearCache();
     });
 
     test.beforeEach(() => {
