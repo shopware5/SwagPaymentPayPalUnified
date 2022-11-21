@@ -103,7 +103,7 @@ return [
                     'salutation' => 'mr',
                     'firstname' => 'Max',
                     'lastname' => 'Mustermann',
-                    'birthday' => null,
+                    'birthday' => '2001-01-01',
                     'customernumber' => '20001',
                     'login_token' => '50246d35-ebeb-40d5-baf3-56fae4ed25b7.1',
                     'changed' => null,

@@ -17,9 +17,12 @@ use Shopware_Components_Config as CoreConfig;
 use Shopware_Controllers_Frontend_Checkout;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
+use SwagPaymentPayPalUnified\Components\Services\PhoneNumberService;
 
 class PayUponInvoice implements SubscriberInterface
 {
+    const EMPTY_DATE = '0000-00-00';
+
     /**
      * @var DependencyProvider
      */
@@ -40,12 +43,22 @@ class PayUponInvoice implements SubscriberInterface
      */
     private $session;
 
-    public function __construct(DependencyProvider $dependencyProvider, CoreConfig $config, Connection $connection)
-    {
+    /**
+     * @var PhoneNumberService
+     */
+    private $phoneNumberService;
+
+    public function __construct(
+        DependencyProvider $dependencyProvider,
+        CoreConfig $config,
+        Connection $connection,
+        PhoneNumberService $phoneNumberService
+    ) {
         $this->dependencyProvider = $dependencyProvider;
         $this->config = $config;
         $this->connection = $connection;
         $this->session = $this->dependencyProvider->getSession();
+        $this->phoneNumberService = $phoneNumberService;
     }
 
     /**
@@ -92,16 +105,35 @@ class PayUponInvoice implements SubscriberInterface
 
         $viewAssignVariables = [
             'showPayUponInvoiceLegalText' => true,
+            'showPayUponInvoicePhoneField' => true,
+            'showPayUponInvoiceBirthdayField' => true,
+            'puiPhoneNumberWrong' => $args->getRequest()->getParam('puiPhoneNumberWrong'),
+            'puiBirthdateWrong' => $args->getRequest()->getParam('puiBirthdateWrong'),
         ];
 
-        $customerData = $this->session->offsetGet('sOrderVariables')['sUserData'];
+        $sOrderVariables = $this->session->offsetGet('sOrderVariables');
 
-        if (empty($customerData['billingaddress']['phone'])) {
-            $viewAssignVariables['showPayUponInvoicePhoneField'] = true;
+        $phoneNumber = $this->phoneNumberService->getValidPhoneNumberString($sOrderVariables['sUserData']['billingaddress']['phone']);
+        if (\is_string($phoneNumber)) {
+            $viewAssignVariables['payUponInvoicePhoneFieldValue'] = $phoneNumber;
+
+            if ($sOrderVariables['sUserData']['billingaddress']['phone'] !== $phoneNumber) {
+                // Update Session and Database entry if the validated phone number not equals the given phone number.
+                $sOrderVariables['sUserData']['billingaddress']['phone'] = $phoneNumber;
+
+                $this->session->offsetSet('sOrderVariables', $sOrderVariables);
+                $this->phoneNumberService->savePhoneNumber($sOrderVariables['sUserData']['billingaddress']['id'], $phoneNumber);
+            }
         }
 
-        if (empty($customerData['additional']['user']['birthday']) || $customerData['additional']['user']['birthday'] === '0000-00-00') {
-            $viewAssignVariables['showPayUponInvoiceBirthdayField'] = true;
+        $birthday = $sOrderVariables['sUserData']['additional']['user']['birthday'];
+        if (!empty($birthday) && $birthday !== self::EMPTY_DATE) {
+            $isBirthdaySingleTextField = $this->config->get('birthdaySingleField');
+            if (!$isBirthdaySingleTextField) {
+                $birthday = explode('-', (new DateTime($birthday))->format('j-n-Y'));
+            }
+
+            $viewAssignVariables['payUponInvoiceBirthdayFieldValue'] = $birthday;
         }
 
         $subject->View()->assign($viewAssignVariables);
@@ -171,8 +203,12 @@ class PayUponInvoice implements SubscriberInterface
      *
      * @return void
      */
-    private function saveBirthdayAndPhoneNumberIfFieldsEditable($customerId, $billingAddressId, $dateOfBirth = null, $phoneNumber = null)
-    {
+    private function saveBirthdayAndPhoneNumberIfFieldsEditable(
+        $customerId,
+        $billingAddressId,
+        $dateOfBirth = null,
+        $phoneNumber = null
+    ) {
         $isBirthdayStoreable = $this->config->get('showbirthdayfield');
         if ($isBirthdayStoreable && $dateOfBirth !== null) {
             $this->connection->createQueryBuilder()->update('s_user')
@@ -183,14 +219,15 @@ class PayUponInvoice implements SubscriberInterface
                 ->execute();
         }
 
-        $isPhoneNumberStoreable = $this->config->get('showphonenumberfield');
-        if ($isPhoneNumberStoreable && $phoneNumber !== null) {
-            $this->connection->createQueryBuilder()->update('s_user_addresses')
-                ->set('phone', ':phoneNumber')
-                ->where('id = :addressId')
-                ->setParameter('phoneNumber', $phoneNumber)
-                ->setParameter('addressId', $billingAddressId)
-                ->execute();
+        if ($phoneNumber === null) {
+            return;
         }
+
+        $phoneNumber = $this->phoneNumberService->getValidPhoneNumberString($phoneNumber);
+        if (!\is_string($phoneNumber)) {
+            return;
+        }
+
+        $this->phoneNumberService->savePhoneNumber($billingAddressId, $phoneNumber);
     }
 }

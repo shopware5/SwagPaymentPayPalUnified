@@ -56,3 +56,6 @@ parameters:
         - # Ignore AuthenticationResult::setLiabilityShift() expects 'NO'|'POSSIBLE'|'UNKNOWN'|null
             message: '#Parameter \#1 \$liabilityShift of method SwagPaymentPayPalUnified\\PayPalBundle\\V2\\Api\\Order\\PaymentSource\\Card\\AuthenticationResult::setLiabilityShift\(\) expects.*given.#'
             path: Tests
+        - # Ignore $paymentType parameter expects valid PayPal payment types
+            message: '#Parameter \#. \$paymentType of method.*expects.*string given.#'
+            path: Tests

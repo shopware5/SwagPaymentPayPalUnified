@@ -19,6 +19,7 @@ use Shopware_Controllers_Frontend_Payment;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
 use SwagPaymentPayPalUnified\Components\Exception\OrderNotFoundException;
+use SwagPaymentPayPalUnified\Components\Exception\PuiValidationException;
 use SwagPaymentPayPalUnified\Components\OrderNumberService;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\PayPalOrderParameter;
@@ -229,6 +230,8 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
             $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
 
             return null;
+        } catch (PuiValidationException $puiValidationException) {
+            throw $puiValidationException;
         } catch (Exception $exception) {
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
                 ->setCode(ErrorCodes::UNKNOWN)

@@ -21,10 +21,12 @@
             <argument type="service" id="paypal_unified.common.price_formatter"/>
         </service>
 
-        <service id="paypal_unified.phone_number_builder"
-                 class="SwagPaymentPayPalUnified\Components\Services\PhoneNumberBuilder"
+        <service id="paypal_unified.phone_number_service"
+                 class="SwagPaymentPayPalUnified\Components\Services\PhoneNumberService"
                  public="true">
             <argument type="service" id="paypal_unified.logger_service"/>
+            <argument type="service" id="dbal_connection"/>
+            <argument type="service" id="config"/>
         </service>
     </services>
 </container>

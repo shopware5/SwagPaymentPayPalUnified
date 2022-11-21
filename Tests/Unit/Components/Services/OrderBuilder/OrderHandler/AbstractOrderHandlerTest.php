@@ -17,7 +17,6 @@ use SwagPaymentPayPalUnified\Components\Services\Common\PriceFormatter;
 use SwagPaymentPayPalUnified\Components\Services\Common\ReturnUrlHelper;
 use SwagPaymentPayPalUnified\Components\Services\PayPalOrder\AmountProvider;
 use SwagPaymentPayPalUnified\Components\Services\PayPalOrder\ItemListProvider;
-use SwagPaymentPayPalUnified\Components\Services\PhoneNumberBuilder;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit;
@@ -58,11 +57,6 @@ class AbstractOrderHandlerTest extends TestCase
     private $contextService;
 
     /**
-     * @var PhoneNumberBuilder
-     */
-    private $phoneNumberBuilder;
-
-    /**
      * @var PayPalOrderParameter&MockObject
      */
     private $paypalOrderParameter;
@@ -89,7 +83,6 @@ class AbstractOrderHandlerTest extends TestCase
         $this->amountProvider = $this->createMock(AmountProvider::class);
         $this->returnUrlHelper = $this->createMock(ReturnUrlHelper::class);
         $this->contextService = $this->createMock(ContextServiceInterface::class);
-        $this->phoneNumberBuilder = $this->createMock(PhoneNumberBuilder::class);
         $this->priceFormatter = $this->createMock(PriceFormatter::class);
         $this->customerHelper = $this->createMock(CustomerHelper::class);
 
@@ -196,7 +189,6 @@ class AbstractOrderHandlerTest extends TestCase
      * @param AmountProvider|null           $amountProvider
      * @param ReturnUrlHelper|null          $returnUrlHelper
      * @param ContextServiceInterface|null  $contextService
-     * @param PhoneNumberBuilder|null       $phoneNumberBuilder
      * @param PriceFormatter|null           $priceFormatter
      * @param CustomerHelper|null           $customerHelper
      *
@@ -208,7 +200,6 @@ class AbstractOrderHandlerTest extends TestCase
         $amountProvider = null,
         $returnUrlHelper = null,
         $contextService = null,
-        $phoneNumberBuilder = null,
         $priceFormatter = null,
         $customerHelper = null
     ) {
@@ -218,7 +209,6 @@ class AbstractOrderHandlerTest extends TestCase
             $amountProvider ?: $this->amountProvider,
             $returnUrlHelper ?: $this->returnUrlHelper,
             $contextService ?: $this->contextService,
-            $phoneNumberBuilder ?: $this->phoneNumberBuilder,
             $priceFormatter ?: $this->priceFormatter,
             $customerHelper ?: $this->customerHelper
         );

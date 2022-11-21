@@ -8,6 +8,10 @@
 
 use Shopware\Models\Order\Status;
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
+use SwagPaymentPayPalUnified\Components\Exception\BirthdateNotValidException;
+use SwagPaymentPayPalUnified\Components\Exception\PhoneNumberCountryCodeNotValidException;
+use SwagPaymentPayPalUnified\Components\Exception\PhoneNumberNationalNumberNotValidException;
+use SwagPaymentPayPalUnified\Components\Exception\PuiValidationException;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\ShopwareOrderData;
 use SwagPaymentPayPalUnified\Components\Services\PayUponInvoiceInstructionService;
 use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentController;
@@ -42,7 +46,22 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2PayUponInvoice extends Abstra
 
         $orderParams = $this->payPalOrderParameterFacade->createPayPalOrderParameter(PaymentType::PAYPAL_PAY_UPON_INVOICE_V2, $shopwareOrderData);
 
-        $payPalOrder = $this->createPayPalOrder($orderParams);
+        try {
+            $payPalOrder = $this->createPayPalOrder($orderParams);
+        } catch (BirthdateNotValidException $birthdateNotValidException) {
+            $this->redirectToConfirmWithError(['puiBirthdateWrong' => true], $birthdateNotValidException);
+
+            return;
+        } catch (PhoneNumberCountryCodeNotValidException $phoneNumberCountryCodeNotValidException) {
+            $this->redirectToConfirmWithError(['puiPhoneNumberWrong' => true], $phoneNumberCountryCodeNotValidException);
+
+            return;
+        } catch (PhoneNumberNationalNumberNotValidException $phoneNumberNationalNumberNotValidException) {
+            $this->redirectToConfirmWithError(['puiPhoneNumberWrong' => true], $phoneNumberNationalNumberNotValidException);
+
+            return;
+        }
+
         if (!$payPalOrder instanceof Order) {
             return;
         }
@@ -89,5 +108,28 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2PayUponInvoice extends Abstra
             ->setCode(ErrorCodes::COMMUNICATION_FAILURE);
 
         $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
+    }
+
+    /**
+     * @param array<string,bool> $error
+     *
+     * @return void
+     */
+    private function redirectToConfirmWithError(array $error, PuiValidationException $exception)
+    {
+        $this->logger->debug(
+            sprintf(
+                '%s %s',
+                __METHOD__,
+                $exception->getMessage()
+            ),
+            $exception->getTrace()
+        );
+
+        $this->redirect(array_merge([
+            'module' => 'frontend',
+            'controller' => 'checkout',
+            'action' => 'confirm',
+        ], $error));
     }
 }

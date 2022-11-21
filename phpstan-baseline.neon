@@ -246,11 +246,6 @@ parameters:
 			path: Components/Services/OrderBuilder/OrderHandler/AbstractOrderHandler.php
 
 		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\OrderBuilder\\\\OrderHandler\\\\AbstractOrderHandler\\:\\:createPaymentSource\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Components/Services/OrderBuilder/OrderHandler/AbstractOrderHandler.php
-
-		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\OrderBuilder\\\\PaymentSource\\\\PaymentSourceFactory\\:\\:addHandler\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: Components/Services/OrderBuilder/PaymentSource/PaymentSourceFactory.php
@@ -4104,16 +4099,6 @@ parameters:
 			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Unit\\\\Components\\\\Services\\\\PaymentTokenExtractorTest\\:\\:testExtractWithoutApprovalUrl\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: Tests/Unit/Components/Services/PaymentTokenExtractorTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Unit\\\\Components\\\\Services\\\\PhoneNumberBuilderTest\\:\\:getLogger\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Unit/Components/Services/PhoneNumberBuilderTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Unit\\\\Components\\\\Services\\\\PhoneNumberBuilderTest\\:\\:phoneNumberProvider\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Unit/Components/Services/PhoneNumberBuilderTest.php
 
 		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Unit\\\\Components\\\\Services\\\\Validation\\\\SimpleBasketValidatorTest\\:\\:is_valid_test_dataProvider\\(\\) has no return type specified\\.$#"
