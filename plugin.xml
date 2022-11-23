@@ -19,6 +19,7 @@
             PT-12725 - PayPal tracking API hinzugefügt;
             PT-12648 - PayPal Express Button Sprachfeld entfernt;
             PT-12992 - Verbessert die Betrugsüberprüfung für Kauf auf Rechnung;
+            PT-12991 - SPB Marks angepasst;
         </changes>
         <changes lang="en">
             PT-12601 - Improved date of birth and phone number validation for pay upon invoice;
@@ -26,6 +27,7 @@
             PT-12725 - Added PayPal tracking API;
             PT-12648 - PayPal Express button language field removed;
             PT-12992 - Improves fraud checking for pay upon invoice;
+            PT-12991 - Adjusted SPB marks;
         </changes>
     </changelog>
 
