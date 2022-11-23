@@ -63,7 +63,7 @@ class FraudNet implements SubscriberInterface
         }
 
         $subject->View()->assign([
-            'fraudNetSessionId' => $this->getFraudNetSessionId(),
+            'fraudNetSessionId' => $this->createFraudNetSessionId(),
             'fraudNetFlowId' => self::FRAUD_NET_SOURCE_WEBSITE_IDENTIFIER,
             'fraudnetSandbox' => (bool) $this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_SANDBOX),
             'usePayPalFraudNet' => true,
@@ -73,14 +73,10 @@ class FraudNet implements SubscriberInterface
     /**
      * @return string
      */
-    private function getFraudNetSessionId()
+    private function createFraudNetSessionId()
     {
-        $fraudNetSessionId = $this->dependencyProvider->getSession()->offsetGet(self::FRAUD_NET_SESSION_KEY);
-
-        if ($fraudNetSessionId === null) {
-            $fraudNetSessionId = bin2hex((string) openssl_random_pseudo_bytes(16));
-            $this->dependencyProvider->getSession()->offsetSet(self::FRAUD_NET_SESSION_KEY, $fraudNetSessionId);
-        }
+        $fraudNetSessionId = bin2hex((string) openssl_random_pseudo_bytes(16));
+        $this->dependencyProvider->getSession()->offsetSet(self::FRAUD_NET_SESSION_KEY, $fraudNetSessionId);
 
         return $fraudNetSessionId;
     }
