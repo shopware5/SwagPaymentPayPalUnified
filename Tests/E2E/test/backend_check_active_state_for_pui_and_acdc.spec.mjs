@@ -40,7 +40,7 @@ test.describe('Check the active state of PUI and ACDC', () => {
 
         await backendHandleSaveHelper.save(page);
 
-        const payUponInvoiceSettingsTab = page.locator('div.x-tab[id^="tab-"]', { hasText: 'PayPal Pay Upon Invoice Integration' });
+        const payUponInvoiceSettingsTab = page.locator('div.x-tab[id^="tab-"]', { hasText: 'Kauf auf Rechnung Integration' });
         const payUponInvoiceSettingsTabBody = page.locator('div[id^="paypal-unified-settings-tabs-pay-upon-invoice"][id$="body"]');
         const activationFieldset = payUponInvoiceSettingsTabBody.locator('fieldset[id^="fieldset"]', { hasText: 'Für diesen Shop aktivieren' });
 

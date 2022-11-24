@@ -214,14 +214,28 @@
              *
              * @type string
              */
-            disabledFundings: 'credit,paylater,card,bancontact,blik,eps,giropay,ideal,mercadopago,mybank,p24,sepa,sofort,venmo',
+            disabledFundings: 'card,bancontact,blik,eps,giropay,ideal,mercadopago,mybank,p24,sepa,sofort,venmo',
 
             /**
              * For possible values see: https://developer.paypal.com/sdk/js/configuration/#enable-funding
              *
              * @type string
              */
-            enabledFundings: ''
+            enabledFundings: '',
+
+            /**
+             * Show the pay later button
+             *
+             * @type boolean
+             */
+            showPayLater: false,
+
+            /**
+             * Pay later funding key
+             *
+             * @type string
+             */
+            payLaterFunding: 'paylater'
 
         },
 
@@ -296,14 +310,26 @@
         },
 
         renderSdkUrl: function() {
-            var params = {
-                'client-id': this.opts.clientId,
-                'disable-funding': this.opts.disabledFundings,
-                intent: this.opts.paypalIntent.toLowerCase()
-            };
+            var enabledFundings = this.opts.enabledFundings,
+                params = {
+                    components: 'buttons,funding-eligibility',
+                    'client-id': this.opts.clientId,
+                    'disable-funding': this.opts.disabledFundings,
+                    intent: this.opts.paypalIntent.toLowerCase()
+                };
 
-            if (this.opts.enabledFundings.length > 0) {
-                params['enabled-funding'] = this.opts.enabledFundings;
+            if (this.opts.showPayLater) {
+                if (enabledFundings.length > 0) {
+                    var tmpEnabledFundings = enabledFundings.split(',');
+                    tmpEnabledFundings.push(this.opts.payLaterFunding);
+                    enabledFundings = tmpEnabledFundings.join(',');
+                } else {
+                    enabledFundings = this.opts.payLaterFunding;
+                }
+            }
+
+            if (enabledFundings.length > 0) {
+                params['enable-funding'] = enabledFundings;
             }
 
             if (this.opts.locale.length > 0) {

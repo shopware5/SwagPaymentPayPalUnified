@@ -30,6 +30,9 @@ class InContextSubscriberTest extends TestCase
     use SettingsHelperTrait;
     use ShopRegistrationTrait;
 
+    /**
+     * @return void
+     */
     public function testConstruct()
     {
         $subscriber = $this->getSubscriber();
@@ -37,6 +40,9 @@ class InContextSubscriberTest extends TestCase
         static::assertNotNull($subscriber);
     }
 
+    /**
+     * @return void
+     */
     public function testGetSubscribedEvents()
     {
         $events = InContext::getSubscribedEvents();
@@ -44,8 +50,13 @@ class InContextSubscriberTest extends TestCase
         static::assertSame('addInContextButton', $events['Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout']);
     }
 
+    /**
+     * @return void
+     */
     public function testAddInContextButtonReturnWrongAction()
     {
+        $this->insertInstallmentsSettingsFromArray([]);
+
         $view = new ViewMock(new Enlight_Template_Manager());
         $request = new Enlight_Controller_Request_RequestTestCase();
         $request->setActionName('foo');
@@ -58,10 +69,16 @@ class InContextSubscriberTest extends TestCase
         $subscriber->addInContextButton($enlightEventArgs);
 
         static::assertNull($view->getAssign('paypalUnifiedPaymentId'));
+        static::assertNull($view->getAssign('paypalUnifiedShowPayLaterPaypal'));
     }
 
+    /**
+     * @return void
+     */
     public function testAddInContextButtonReturnUnifiedInactive()
     {
+        $this->insertInstallmentsSettingsFromArray([]);
+
         $paymentMethodProvider = new PaymentMethodProvider(
             $this->getContainer()->get('dbal_connection'),
             $this->getContainer()->get('models')
@@ -83,12 +100,18 @@ class InContextSubscriberTest extends TestCase
         $subscriber->addInContextButton($enlightEventArgs);
 
         static::assertNull($view->getAssign('paypalUnifiedPaymentId'));
+        static::assertNull($view->getAssign('paypalUnifiedShowPayLaterPaypal'));
 
         $paymentMethodProvider->setPaymentMethodActiveFlag(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME, true);
     }
 
+    /**
+     * @return void
+     */
     public function testAddInContextButtonReturnPaymentMethodInactive()
     {
+        $this->insertInstallmentsSettingsFromArray([]);
+
         $view = new ViewMock(new Enlight_Template_Manager());
         $request = new Enlight_Controller_Request_RequestTestCase();
         $request->setActionName('confirm');
@@ -103,10 +126,16 @@ class InContextSubscriberTest extends TestCase
         $subscriber->addInContextButton($enlightEventArgs);
 
         static::assertNull($view->getAssign('paypalUnifiedPaymentId'));
+        static::assertNull($view->getAssign('paypalUnifiedShowPayLaterPaypal'));
     }
 
+    /**
+     * @return void
+     */
     public function testAddInContextButtonReturnNotUseInContext()
     {
+        $this->insertInstallmentsSettingsFromArray([]);
+
         $view = new ViewMock(new Enlight_Template_Manager());
         $request = new Enlight_Controller_Request_RequestTestCase();
         $request->setActionName('confirm');
@@ -121,10 +150,16 @@ class InContextSubscriberTest extends TestCase
         $subscriber->addInContextButton($enlightEventArgs);
 
         static::assertNull($view->getAssign('paypalUnifiedPaymentId'));
+        static::assertNull($view->getAssign('paypalUnifiedShowPayLaterPaypal'));
     }
 
+    /**
+     * @return void
+     */
     public function testAddInContextButtonRightTemplateAssigns()
     {
+        $this->insertInstallmentsSettingsFromArray([]);
+
         $view = new ViewMock(new Enlight_Template_Manager());
         $request = new Enlight_Controller_Request_RequestTestCase();
         $request->setActionName('confirm');
@@ -139,6 +174,31 @@ class InContextSubscriberTest extends TestCase
         $subscriber->addInContextButton($enlightEventArgs);
 
         static::assertTrue($view->getAssign('paypalUnifiedUseInContext'));
+        static::assertTrue($view->getAssign('paypalUnifiedShowPayLaterPaypal'));
+    }
+
+    /**
+     * @return void
+     */
+    public function testAddInContextButtonRightTemplateAssignsAddPayLaterShouldBeFalse()
+    {
+        $this->insertInstallmentsSettingsFromArray(['show_pay_later_paypal' => 0]);
+
+        $view = new ViewMock(new Enlight_Template_Manager());
+        $request = new Enlight_Controller_Request_RequestTestCase();
+        $request->setActionName('confirm');
+
+        $enlightEventArgs = new Enlight_Controller_ActionEventArgs([
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
+        ]);
+
+        $this->importSettings(true, true, true);
+
+        $subscriber = $this->getSubscriber();
+        $subscriber->addInContextButton($enlightEventArgs);
+
+        static::assertTrue($view->getAssign('paypalUnifiedUseInContext'));
+        static::assertFalse($view->getAssign('paypalUnifiedShowPayLaterPaypal'));
     }
 
     /**
@@ -146,6 +206,8 @@ class InContextSubscriberTest extends TestCase
      * @param bool $useInContext
      * @param bool $sandboxMode
      * @param bool $hasEcSettings
+     *
+     * @return void
      */
     private function importSettings($active = false, $useInContext = false, $sandboxMode = false, $hasEcSettings = true)
     {

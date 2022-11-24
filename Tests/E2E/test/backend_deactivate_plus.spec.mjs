@@ -33,7 +33,7 @@ test.describe('Backend testing: Check if plus popup is shown', () => {
         await page.fill('input[name="sandboxClientSecret"]', credentials.paypalSandboxClientSecret);
         await page.fill('input[name="sandboxPaypalPayerId"]', credentials.paypalSandboxMerchantId);
 
-        await page.locator('button[role="button"]:has-text("PayPal Pay Upon Invoice Integration")').click();
+        await page.locator('button[role="button"]:has-text("Kauf auf Rechnung Integration")').click();
         await page.locator('textarea[name="customerServiceInstructions"]').type('This field is required if PayUponInvoice is onboarded');
         await page.locator('button[role="button"]:has-text("Grundeinstellungen")').click();
 

@@ -28,7 +28,7 @@ test.describe('Is Express Checkout button available', () => {
         await page.locator('text=In den Warenkorb').click();
         await page.waitForLoadState('load');
 
-        const locator = await page.frameLocator('.js--modal .component-frame').locator('.paypal-button');
+        const locator = await page.frameLocator('.js--modal .component-frame').locator('.paypal-button.paypal-button-number-0');
         await expect(locator).toHaveText(/Direkt zu/);
 
         await page.waitForTimeout(1000);

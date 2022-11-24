@@ -3,7 +3,7 @@
 Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Installments', {
     extend: 'Ext.form.Panel',
     alias: 'widget.paypal-unified-settings-tabs-installments',
-    title: '{s name="title"}PayPal installments{/s}',
+    title: '{s name="new/title"}PayLater{/s}',
 
     anchor: '100%',
     bodyPadding: 10,
@@ -54,6 +54,24 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Installments', {
                 fieldLabel: '{s name="field/advertiseInstallments"}Installments banner{/s}',
                 boxLabel: '{s name="field/advertiseInstallments/boxLabel"}Enable to advertise installments via PayPal. Works only with a Live Client-ID.{/s}',
             },
+            {
+                xtype: 'checkbox',
+                name: 'showPayLaterPaypal',
+                inputValue: true,
+                uncheckedValue: false,
+                fieldLabel: '{s name="field/showPayLaterAtInContextButton/lable"}Show Pay later under In-Context Button{/s}',
+                boxLabel: '{s name="field/showPayLaterAtInContextButton/boxLable"}Enable to show the "Pay Later" button under the "PayPal" In-Context button.{/s}',
+                helpText: '{s name="field/showPayLaterAt/helpText "}This setting is not dependent on the activation of the payment method PayPal pay later.{/s}'
+            },
+            {
+                xtype: 'checkbox',
+                name: 'showPayLaterExpress',
+                inputValue: true,
+                uncheckedValue: false,
+                fieldLabel: '{s name="field/showPayLaterAtExpressButton/lable"}Show Pay Later under Express Button{/s}',
+                boxLabel: '{s name="field/showPayLaterAtExpressButton/boxLable"}Activate to show the "Pay Later" button under the "PayPal Express" button.{/s}',
+                helpText: '{s name="field/showPayLaterAt/helpText "}This setting is not dependent on the activation of the payment method PayPal pay later.{/s}'
+            },
         ];
     },
 
@@ -61,7 +79,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.Installments', {
      * @returns { Ext.form.Container }
      */
     createNotice: function () {
-        var infoNotice = Shopware.Notification.createBlockMessage('{s name="description"}Offer PayPal installments with 0% effective annual interest rate to your customers. Find out <a href="https://www.paypal.com/de/webapps/mpp/installments" title="https://www.paypal.com/de/webapps/mpp/installments" target="_blank">more here</a>.{/s}', 'info');
+        var infoNotice = Shopware.Notification.createBlockMessage('{s name="new/description"}Offer PayPal installments with 0% effective annual interest rate to your customers. Find out <a href="https://www.paypal.com/en/enterprise/pay-later" title="https://www.paypal.com/en/enterprise/pay-later" target="_blank">more here</a>.{/s}', 'info');
 
         // There is no style defined for the type "info" in the shopware backend stylesheet, therefore we have to apply it manually
         infoNotice.style = {

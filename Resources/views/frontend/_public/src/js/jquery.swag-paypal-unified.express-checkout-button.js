@@ -97,7 +97,7 @@
              *
              *  @type string
              */
-            layout: 'horizontal',
+            layout: 'vertical',
 
             /**
              * The language ISO (ISO_639) locale of the button.
@@ -229,7 +229,56 @@
              *
              * @type string
              */
-            responsiveWidthClass: 'paypal-button-width--responsive'
+            responsiveWidthClass: 'paypal-button-width--responsive',
+
+            /**
+             * PayPal button container class without PayLater
+             *
+             * @type string
+             */
+            hasNotPayLaterClass: 'paypal-unified-ec--button-placeholder',
+
+            /**
+             * PayPal button container class with PayLater
+             *
+             * @type string
+             */
+            hasPayLaterClass: 'paypal-unified-ec--button-placeholder-has-pay-later-button',
+
+            /**
+             * For possible values see: https://developer.paypal.com/sdk/js/configuration/#disable-funding
+             *
+             * @type string
+             */
+            disabledFundings: 'card,bancontact,blik,eps,giropay,ideal,mercadopago,mybank,p24,sepa,sofort,venmo',
+
+            /**
+             * For possible values see: https://developer.paypal.com/sdk/js/configuration/#enable-funding
+             *
+             * @type string
+             */
+            enabledFundings: '',
+
+            /**
+             * Show the pay later button
+             *
+             * @type boolean
+             */
+            showPayLater: false,
+
+            /**
+             * Pay later funding key
+             *
+             * @type boolean
+             */
+            payLaterFunding: 'paylater',
+
+            /**
+             * Indicates that the button is on the listing page
+             *
+             * @type boolean
+             */
+            isListing: false
         },
 
         /**
@@ -345,10 +394,26 @@
         },
 
         renderSdkUrl: function(clientId, currency) {
-            var params = {
-                'client-id': clientId,
-                intent: this.opts.paypalIntent.toLowerCase()
-            };
+            var enabledFundings = this.opts.enabledFundings,
+                params = {
+                    'client-id': clientId,
+                    intent: this.opts.paypalIntent.toLowerCase(),
+                    'disable-funding': this.opts.disabledFundings
+                };
+
+            if (this.opts.showPayLater) {
+                if (enabledFundings.length > 0) {
+                    var tmpEnabledFundings = enabledFundings.split(',');
+                    tmpEnabledFundings.push(this.opts.payLaterFunding);
+                    enabledFundings = tmpEnabledFundings.join(',');
+                } else {
+                    enabledFundings = this.opts.payLaterFunding;
+                }
+            }
+
+            if (enabledFundings.length > 0) {
+                params['enable-funding'] = enabledFundings;
+            }
 
             if (this.opts.locale.length > 0) {
                 params.locale = this.opts.locale;
@@ -370,6 +435,10 @@
          */
         renderButton: function() {
             var me = this;
+
+            if (this.opts.isListing && this.opts.showPayLater) {
+                $('.' + this.opts.hasNotPayLaterClass).removeClass(this.opts.hasNotPayLaterClass).addClass(this.opts.hasPayLaterClass);
+            }
 
             // wait for the PayPal javascript to be loaded
             me.buffer(function() {

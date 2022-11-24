@@ -16,6 +16,7 @@ use SwagPaymentPayPalUnified\Components\ButtonLocaleService;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Models\Settings\General as GeneralSettingsModel;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 
 class InContext implements SubscriberInterface
 {
@@ -98,6 +99,7 @@ class InContext implements SubscriberInterface
             'paypalUnifiedClientId' => $settings->getSandbox() ? $settings->getSandboxClientId() : $settings->getClientId(),
             'paypalUnifiedCurrency' => $this->contextService->getContext()->getCurrency()->getCurrency(),
             'paypalUnifiedIntent' => $this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_INTENT),
+            'paypalUnifiedShowPayLaterPaypal' => (bool) $this->settingsService->get(SettingsServiceInterface::SETTING_INSTALLMENTS_SHOW_PAY_LATER_PAYPAL, SettingsTable::INSTALLMENTS),
         ]);
     }
 }

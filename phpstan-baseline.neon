@@ -1966,11 +1966,6 @@ parameters:
 			path: Setup/PaymentModels/PaymentInstaller.php
 
 		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Setup\\\\Uninstaller\\:\\:uninstall\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Setup/Uninstaller.php
-
-		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Subscriber\\\\Account\\:\\:onPostDispatchAccount\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: Subscriber/Account.php
@@ -3079,46 +3074,6 @@ parameters:
 			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\FrontendSubscriberTest\\:\\:testOnchangeAddressShouldNotAssignToView\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: Tests/Functional/Subscriber/FrontendSubscriberTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\InContextSubscriberTest\\:\\:importSettings\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/InContextSubscriberTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\InContextSubscriberTest\\:\\:testAddInContextButtonReturnNotUseInContext\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/InContextSubscriberTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\InContextSubscriberTest\\:\\:testAddInContextButtonReturnPaymentMethodInactive\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/InContextSubscriberTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\InContextSubscriberTest\\:\\:testAddInContextButtonReturnUnifiedInactive\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/InContextSubscriberTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\InContextSubscriberTest\\:\\:testAddInContextButtonReturnWrongAction\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/InContextSubscriberTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\InContextSubscriberTest\\:\\:testAddInContextButtonRightTemplateAssigns\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/InContextSubscriberTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\InContextSubscriberTest\\:\\:testConstruct\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/InContextSubscriberTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\InContextSubscriberTest\\:\\:testGetSubscribedEvents\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/InContextSubscriberTest.php
 
 		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\LessSubscriberTest\\:\\:testCanBeCreated\\(\\) has no return type specified\\.$#"

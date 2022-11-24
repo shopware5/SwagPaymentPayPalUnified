@@ -3,7 +3,7 @@
 Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.PayUponInvoice', {
     extend: 'Shopware.apps.PaypalUnifiedSettings.view.tabs.AbstractPuiAcdcTab',
     alias: 'widget.paypal-unified-settings-tabs-pay-upon-invoice',
-    title: '{s name="title"}PayPal Pay Upon Invoice Integration{/s}',
+    title: '{s name="new/title"}Pay Upon Invoice Integration{/s}',
 
     mixins: [
         'Shopware.apps.PaypalUnified.mixin.OnboardingHelper'
