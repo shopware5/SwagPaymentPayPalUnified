@@ -10,6 +10,8 @@ use SwagPaymentPayPalUnified\Components\ErrorCodes;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\ShopwareOrderData;
 use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentController;
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\InstrumentDeclinedException;
+use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\InvalidBillingAddressException;
+use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\InvalidShippingAddressException;
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\NoOrderToProceedException;
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\PayerActionRequiredException;
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\RequireRestartException;
@@ -54,7 +56,18 @@ class Shopware_Controllers_Frontend_PaypalUnifiedApm extends AbstractPaypalPayme
             $shopwareOrderData
         );
 
-        $payPalOrder = $this->createPayPalOrder($orderParams);
+        try {
+            $payPalOrder = $this->createPayPalOrder($orderParams);
+        } catch (InvalidBillingAddressException $invalidBillingAddressException) {
+            $this->redirectInvalidAddress(['invalidBillingAddress' => true]);
+
+            return;
+        } catch (InvalidShippingAddressException $invalidShippingAddressException) {
+            $this->redirectInvalidAddress(['invalidShippingAddress' => true]);
+
+            return;
+        }
+
         if (!$payPalOrder instanceof Order) {
             return;
         }

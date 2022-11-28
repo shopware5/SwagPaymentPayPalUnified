@@ -24,8 +24,29 @@
             me.sourcePlugin.opts.basketId = response.basketId;
 
             return response.paypalOrderId;
-        }, function() {
+        }, function(response) {
+            me.latestResponse = response;
         }).promise();
+    };
+
+    SwagPaymentPaypalCreateOrderFunction.prototype.onApiError = function() {
+        if (!this.latestResponse) {
+            this._redirectToErrorPageIfAvailable();
+            return;
+        }
+
+        if (this.latestResponse.responseText !== '') {
+            var jsonResponse = JSON.parse(this.latestResponse.responseText);
+
+            delete this.latestResponse;
+
+            if (jsonResponse.redirectTo) {
+                window.location.replace(jsonResponse.redirectTo);
+                return;
+            }
+        }
+
+        this._redirectToErrorPageIfAvailable();
     };
 
     SwagPaymentPaypalCreateOrderFunction.prototype.createExtraData = function() {
@@ -59,6 +80,14 @@
         }
 
         return result;
+    };
+
+    SwagPaymentPaypalCreateOrderFunction.prototype._redirectToErrorPageIfAvailable = function() {
+        if (!this.sourcePlugin.opts.paypalErrorPage) {
+            return;
+        }
+
+        window.location.replace(this.sourcePlugin.opts.paypalErrorPage);
     };
 
     $.createSwagPaymentPaypalCreateOrderFunction = function(createOrderUrl, sourcePlugin) {

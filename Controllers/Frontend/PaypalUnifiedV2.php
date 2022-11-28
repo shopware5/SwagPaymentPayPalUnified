@@ -10,6 +10,8 @@ use SwagPaymentPayPalUnified\Components\ErrorCodes;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\ShopwareOrderData;
 use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentController;
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\InstrumentDeclinedException;
+use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\InvalidBillingAddressException;
+use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\InvalidShippingAddressException;
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\NoOrderToProceedException;
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\PayerActionRequiredException;
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\RequireRestartException;
@@ -17,6 +19,7 @@ use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Common\Link;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
+use Symfony\Component\HttpFoundation\Response;
 
 class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymentController
 {
@@ -74,7 +77,20 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
             $shopwareOrderData
         );
 
-        $payPalOrder = $this->createPayPalOrder($orderParams);
+        try {
+            $payPalOrder = $this->createPayPalOrder($orderParams);
+        } catch (InvalidBillingAddressException $invalidBillingAddressException) {
+            $this->response->setHttpResponseCode(Response::HTTP_BAD_REQUEST);
+            $this->view->assign('redirectTo', $this->getInvalidAddressUrl(['invalidBillingAddress' => true]));
+
+            return;
+        } catch (InvalidShippingAddressException $invalidShippingAddressException) {
+            $this->response->setHttpResponseCode(Response::HTTP_BAD_REQUEST);
+            $this->view->assign('redirectTo', $this->getInvalidAddressUrl(['invalidShippingAddress' => true]));
+
+            return;
+        }
+
         if (!$payPalOrder instanceof Order) {
             return;
         }

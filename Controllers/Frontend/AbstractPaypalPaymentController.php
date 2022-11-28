@@ -38,6 +38,8 @@ use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\AuthorizationDenied
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\CaptureDeclinedException;
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\CaptureFailedException;
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\InstrumentDeclinedException;
+use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\InvalidBillingAddressException;
+use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\InvalidShippingAddressException;
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\NoOrderToProceedException;
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\PayerActionRequiredException;
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\RequireRestartException;
@@ -223,6 +225,24 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
 
             $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFUL CREATED - ID: %d', __METHOD__, $payPalOrder->getId()));
         } catch (RequestException $exception) {
+            $exceptionBody = json_decode($exception->getBody(), true);
+
+            foreach ($exceptionBody['details'] as $exceptionDetail) {
+                if ($exceptionDetail['issue'] === 'BILLING_ADDRESS_INVALID') {
+                    $this->orderNumberService->releaseOrderNumber();
+
+                    throw new InvalidBillingAddressException();
+                }
+            }
+
+            foreach ($exceptionBody['details'] as $exceptionDetail) {
+                if ($exceptionDetail['issue'] === 'SHIPPING_ADDRESS_INVALID') {
+                    $this->orderNumberService->releaseOrderNumber();
+
+                    throw new InvalidShippingAddressException();
+                }
+            }
+
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
                 ->setCode($this->getErrorCode($exception->getBody()))
                 ->setException($exception, 'create PayPal order');
@@ -816,6 +836,54 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
         }
 
         return (int) $shopwareOrderId;
+    }
+
+    /**
+     * @param array<string,bool> $error
+     *
+     * @return void
+     */
+    protected function redirectInvalidAddress(array $error)
+    {
+        $errorKey = $this->evaluateAddressError($error);
+
+        $this->logger->debug(\sprintf('%s - %s', __METHOD__, $errorKey));
+
+        $this->redirect(array_merge([
+            'module' => 'frontend',
+            'controller' => 'address',
+            'action' => 'index',
+        ], $error));
+    }
+
+    /**
+     * @param array<string,bool> $error
+     *
+     * @return string
+     */
+    protected function getInvalidAddressUrl(array $error)
+    {
+        $errorKey = $this->evaluateAddressError($error);
+
+        $this->logger->debug(\sprintf('%s - %s', __METHOD__, $errorKey));
+
+        return $this->front->Router()->assemble(array_merge([
+            'module' => 'frontend',
+            'controller' => 'address',
+            'action' => 'index',
+        ], $error));
+    }
+
+    /**
+     * @param array<string,bool> $error
+     *
+     * @return string
+     */
+    private function evaluateAddressError(array $error)
+    {
+        \reset($error);
+
+        return (string) \key($error);
     }
 
     /**

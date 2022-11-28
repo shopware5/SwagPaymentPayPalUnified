@@ -293,5 +293,11 @@
                  public="true">
             <tag name="shopware.event_subscriber"/>
         </service>
+
+        <service id="paypal_unified.subscriber.address"
+                 class="SwagPaymentPayPalUnified\Subscriber\Address"
+                 public="true">
+            <tag name="shopware.event_subscriber"/>
+        </service>
     </services>
 </container>
