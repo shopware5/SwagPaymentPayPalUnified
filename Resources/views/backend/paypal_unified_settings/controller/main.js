@@ -120,7 +120,6 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
                 registerWebhook: this.onRegisterWebhook,
                 validateAPI: this.onValidateAPISettings,
                 onChangeShopActivation: this.applyActivationState,
-                onInContextChange: this.onInContextChange,
                 onChangeSandboxActivation: this.applySandboxActivationState,
                 authCodeReceived: this.onAuthCodeReceivedGeneral
             },
@@ -584,14 +583,6 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
 
         this.generalRecord.set('sandbox', active);
         this.allDataLoaded();
-    },
-
-    /**
-     * @param checkbox { Ext.form.field.Checkbox }
-     * @param styleFieldSet { Ext.form.FieldSet }
-     */
-    onInContextChange: function (checkbox, styleFieldSet) {
-        styleFieldSet.setDisabled(!checkbox.getValue());
     },
 
     /**

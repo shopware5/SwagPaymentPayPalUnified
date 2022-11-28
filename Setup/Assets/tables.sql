@@ -53,7 +53,6 @@ CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_settings_express
     `button_style_color` VARCHAR(255),
     `button_style_shape` VARCHAR(255),
     `button_style_size`  VARCHAR(255),
-    `button_locale`      VARCHAR(5),
     `submit_cart`        TINYINT(1) NOT NULL,
     CONSTRAINT unique_shop_id UNIQUE (`shop_id`)
 )

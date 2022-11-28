@@ -8,6 +8,8 @@
 
 namespace SwagPaymentPayPalUnified\Setup\Versions;
 
+use Doctrine\DBAL\Connection;
+use PDO;
 use Shopware\Bundle\AttributeBundle\Service\CrudServiceInterface;
 
 class UpdateToREPLACE_GLOBAL_WITH_NEXT_VERSION
@@ -17,10 +19,17 @@ class UpdateToREPLACE_GLOBAL_WITH_NEXT_VERSION
      */
     private $crudService;
 
+    /**
+     * @var Connection
+     */
+    private $connection;
+
     public function __construct(
-        CrudServiceInterface $crudService
+        CrudServiceInterface $crudService,
+        Connection $connection
     ) {
         $this->crudService = $crudService;
+        $this->connection = $connection;
     }
 
     /**
@@ -29,6 +38,7 @@ class UpdateToREPLACE_GLOBAL_WITH_NEXT_VERSION
     public function update()
     {
         $this->createAttributes();
+        $this->migrateLanguageSettings();
     }
 
     /**
@@ -55,5 +65,22 @@ class UpdateToREPLACE_GLOBAL_WITH_NEXT_VERSION
             'supportText' => 'PayPal offers tracking for orders processed through PayPal. To use this, specify a default shipping carrier, which can be overwritten in the orders. Find a list of all shipping providers <a target="_blank" href="https://developer.paypal.com/docs/tracking/reference/carriers/">here</a>',
             'position' => 100,
         ]);
+    }
+
+    /**
+     * @return void
+     */
+    private function migrateLanguageSettings()
+    {
+        $buttonLocals = $this->connection->query('SELECT shop_id, button_locale from swag_payment_paypal_unified_settings_general')->fetchAll(PDO::FETCH_KEY_PAIR);
+        $buttonExpressLocals = $this->connection->query('SELECT shop_id, button_locale from swag_payment_paypal_unified_settings_express')->fetchAll(PDO::FETCH_KEY_PAIR);
+
+        foreach ($buttonLocals as $shopId => $buttonLocal) {
+            if (empty($buttonLocal) && !empty($buttonExpressLocals[$shopId])) {
+                $this->connection->prepare('UPDATE swag_payment_paypal_unified_settings_general SET button_locale = :button WHERE shop_id = :shopId')->execute(['shopId' => $shopId, 'button' => $buttonExpressLocals[$shopId]]);
+            }
+        }
+
+        $this->connection->exec('ALTER TABLE swag_payment_paypal_unified_settings_express DROP COLUMN button_locale');
     }
 }

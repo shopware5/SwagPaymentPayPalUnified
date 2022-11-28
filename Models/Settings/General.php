@@ -190,6 +190,8 @@ class General extends ModelEntity
 
     /**
      * @param int $id
+     *
+     * @return void
      */
     public function setId($id)
     {
@@ -206,6 +208,8 @@ class General extends ModelEntity
 
     /**
      * @param string $shopId
+     *
+     * @return void
      */
     public function setShopId($shopId)
     {
@@ -222,6 +226,8 @@ class General extends ModelEntity
 
     /**
      * @param bool $active
+     *
+     * @return void
      */
     public function setActive($active)
     {
@@ -238,6 +244,8 @@ class General extends ModelEntity
 
     /**
      * @param string $clientId
+     *
+     * @return void
      */
     public function setClientId($clientId)
     {
@@ -254,6 +262,8 @@ class General extends ModelEntity
 
     /**
      * @param string $clientSecret
+     *
+     * @return void
      */
     public function setClientSecret($clientSecret)
     {
@@ -288,6 +298,8 @@ class General extends ModelEntity
 
     /**
      * @param string $sandboxClientId
+     *
+     * @return void
      */
     public function setSandboxClientId($sandboxClientId)
     {
@@ -304,6 +316,8 @@ class General extends ModelEntity
 
     /**
      * @param string $sandboxClientSecret
+     *
+     * @return void
      */
     public function setSandboxClientSecret($sandboxClientSecret)
     {
@@ -338,6 +352,8 @@ class General extends ModelEntity
 
     /**
      * @param bool $sandbox
+     *
+     * @return void
      */
     public function setSandbox($sandbox)
     {
@@ -354,6 +370,8 @@ class General extends ModelEntity
 
     /**
      * @param bool $showSidebarLogo
+     *
+     * @return void
      */
     public function setShowSidebarLogo($showSidebarLogo)
     {
@@ -370,6 +388,8 @@ class General extends ModelEntity
 
     /**
      * @param string $brandName
+     *
+     * @return void
      */
     public function setBrandName($brandName)
     {
@@ -386,6 +406,8 @@ class General extends ModelEntity
 
     /**
      * @param string $orderNumberPrefix
+     *
+     * @return void
      */
     public function setOrderNumberPrefix($orderNumberPrefix)
     {
@@ -402,6 +424,8 @@ class General extends ModelEntity
 
     /**
      * @param bool $useInContext
+     *
+     * @return void
      */
     public function setUseInContext($useInContext)
     {
@@ -418,6 +442,8 @@ class General extends ModelEntity
 
     /**
      * @param bool $displayErrors
+     *
+     * @return void
      */
     public function setDisplayErrors($displayErrors)
     {
@@ -434,6 +460,8 @@ class General extends ModelEntity
 
     /**
      * @param string $landingPageType
+     *
+     * @return void
      */
     public function setLandingPageType($landingPageType)
     {
@@ -450,6 +478,8 @@ class General extends ModelEntity
 
     /**
      * @param bool $useSmartPaymentButtons
+     *
+     * @return void
      */
     public function setUseSmartPaymentButtons($useSmartPaymentButtons)
     {
@@ -466,6 +496,8 @@ class General extends ModelEntity
 
     /**
      * @param bool $submitCart
+     *
+     * @return void
      */
     public function setSubmitCart($submitCart)
     {
@@ -500,6 +532,8 @@ class General extends ModelEntity
 
     /**
      * @param string $buttonStyleColor
+     *
+     * @return void
      */
     public function setButtonStyleColor($buttonStyleColor)
     {
@@ -516,6 +550,8 @@ class General extends ModelEntity
 
     /**
      * @param string $buttonStyleShape
+     *
+     * @return void
      */
     public function setButtonStyleShape($buttonStyleShape)
     {
@@ -532,6 +568,8 @@ class General extends ModelEntity
 
     /**
      * @param string $buttonStyleSize
+     *
+     * @return void
      */
     public function setButtonStyleSize($buttonStyleSize)
     {
@@ -548,6 +586,8 @@ class General extends ModelEntity
 
     /**
      * @param string $buttonLocale
+     *
+     * @return void
      */
     public function setButtonLocale($buttonLocale)
     {
@@ -555,7 +595,7 @@ class General extends ModelEntity
     }
 
     /**
-     * @return array
+     * @return array<string, mixed>
      */
     public function toArray()
     {

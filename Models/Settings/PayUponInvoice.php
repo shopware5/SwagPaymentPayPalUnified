@@ -78,6 +78,8 @@ class PayUponInvoice extends ModelEntity
 
     /**
      * @param int $id
+     *
+     * @return void
      */
     public function setId($id)
     {
@@ -94,6 +96,8 @@ class PayUponInvoice extends ModelEntity
 
     /**
      * @param int $shopId
+     *
+     * @return void
      */
     public function setShopId($shopId)
     {
@@ -110,6 +114,8 @@ class PayUponInvoice extends ModelEntity
 
     /**
      * @param bool $onboardingCompleted
+     *
+     * @return void
      */
     public function setOnboardingCompleted($onboardingCompleted)
     {
@@ -126,6 +132,8 @@ class PayUponInvoice extends ModelEntity
 
     /**
      * @param bool $sandboxOnboardingCompleted
+     *
+     * @return void
      */
     public function setSandboxOnboardingCompleted($sandboxOnboardingCompleted)
     {
@@ -142,6 +150,8 @@ class PayUponInvoice extends ModelEntity
 
     /**
      * @param bool $active
+     *
+     * @return void
      */
     public function setActive($active)
     {

@@ -22,6 +22,9 @@ class UpdaterTest extends TestCase
 {
     use DatabaseTestCaseTrait;
 
+    /**
+     * @return void
+     */
     public function testUpdateTo303()
     {
         $sql = file_get_contents(__DIR__ . '/_fixtures/orders.sql');
@@ -58,6 +61,9 @@ class UpdaterTest extends TestCase
         static::assertSame(PaymentType::PAYPAL_CLASSIC, $result[100083][0]); // should not be updated
     }
 
+    /**
+     * @return void
+     */
     public function testUpdateTo304()
     {
         $sql = file_get_contents(__DIR__ . '/_fixtures/orders_invoice.sql');

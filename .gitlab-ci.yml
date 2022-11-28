@@ -179,7 +179,7 @@ code-coverage:
             junit: ${ARTIFACTS_ROOT}/*.junit.xml
             coverage_report:
                 coverage_format: cobertura
-                path: cobertura.xml
+                path: ${ARTIFACTS_ROOT}/phpunit-coverage.cobertura.xml
         expire_in: 1 week
 
 shopware-v5.2:

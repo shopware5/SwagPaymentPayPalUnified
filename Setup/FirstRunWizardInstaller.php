@@ -12,6 +12,11 @@ use Doctrine\DBAL\Connection;
 
 class FirstRunWizardInstaller
 {
+    /**
+     * @param array<string, mixed> $configuration
+     *
+     * @return void
+     */
     public function saveConfiguration(Connection $connection, array $configuration)
     {
         $connection->insert('swag_payment_paypal_unified_settings_general', [

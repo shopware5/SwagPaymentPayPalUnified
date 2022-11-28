@@ -65,6 +65,9 @@ class Uninstaller
         }
     }
 
+    /**
+     * @return void
+     */
     private function deactivatePayments()
     {
         foreach (PaymentMethodProvider::getAllUnifiedNames() as $paymentMethodName) {
@@ -72,6 +75,9 @@ class Uninstaller
         }
     }
 
+    /**
+     * @return void
+     */
     private function removeAttributes()
     {
         if ($this->attributeCrudService->get('s_core_paymentmeans_attributes', 'swag_paypal_unified_display_in_plus_iframe') !== null) {
@@ -89,6 +95,9 @@ class Uninstaller
         $this->modelManager->generateAttributeModels(['s_core_paymentmeans_attributes']);
     }
 
+    /**
+     * @return void
+     */
     private function removeSettingsTables()
     {
         $sql = 'DROP TABLE IF EXISTS `swag_payment_paypal_unified_settings_express`;

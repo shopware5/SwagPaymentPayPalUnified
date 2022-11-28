@@ -131,6 +131,9 @@ class Installer
         return $classicPlugin !== null || $classicPlusPlugin !== null || $classicInstallmentsPlugin !== null;
     }
 
+    /**
+     * @return void
+     */
     private function createDatabaseTables()
     {
         $sql = \file_get_contents($this->bootstrapPath . '/Setup/Assets/tables.sql');
@@ -138,6 +141,9 @@ class Installer
         $this->connection->query($sql);
     }
 
+    /**
+     * @return void
+     */
     private function createAttributes()
     {
         $this->attributeCrudService->update('s_order_attributes', 'swag_paypal_unified_payment_type', 'string');
@@ -186,6 +192,9 @@ class Installer
         ]);
     }
 
+    /**
+     * @return void
+     */
     private function createDocumentTemplates()
     {
         $this->removeDocumentTemplates();
@@ -212,12 +221,18 @@ class Installer
         ]);
     }
 
+    /**
+     * @return void
+     */
     private function removeDocumentTemplates()
     {
         $sql = "DELETE FROM s_core_documents_box WHERE `name` LIKE 'PayPal_Unified%'";
         $this->connection->exec($sql);
     }
 
+    /**
+     * @return void
+     */
     private function migrate()
     {
         $sql = \file_get_contents($this->bootstrapPath . '/Setup/Assets/migration.sql');

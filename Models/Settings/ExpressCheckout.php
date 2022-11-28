@@ -90,13 +90,6 @@ class ExpressCheckout extends ModelEntity
     private $buttonStyleSize;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="button_locale", type="string", length=5)
-     */
-    private $buttonLocale = '';
-
-    /**
      * @var bool
      *
      * @ORM\Column(name="submit_cart", type="boolean", nullable=false)
@@ -113,6 +106,8 @@ class ExpressCheckout extends ModelEntity
 
     /**
      * @param int $id
+     *
+     * @return void
      */
     public function setId($id)
     {
@@ -129,6 +124,8 @@ class ExpressCheckout extends ModelEntity
 
     /**
      * @param string $shopId
+     *
+     * @return void
      */
     public function setShopId($shopId)
     {
@@ -145,6 +142,8 @@ class ExpressCheckout extends ModelEntity
 
     /**
      * @param bool $detailActive
+     *
+     * @return void
      */
     public function setDetailActive($detailActive)
     {
@@ -161,6 +160,8 @@ class ExpressCheckout extends ModelEntity
 
     /**
      * @param bool $cartActive
+     *
+     * @return void
      */
     public function setCartActive($cartActive)
     {
@@ -177,6 +178,8 @@ class ExpressCheckout extends ModelEntity
 
     /**
      * @param bool $offCanvasActive
+     *
+     * @return void
      */
     public function setOffCanvasActive($offCanvasActive)
     {
@@ -193,6 +196,8 @@ class ExpressCheckout extends ModelEntity
 
     /**
      * @param bool $loginActive
+     *
+     * @return void
      */
     public function setLoginActive($loginActive)
     {
@@ -209,6 +214,8 @@ class ExpressCheckout extends ModelEntity
 
     /**
      * @param bool $listingActive
+     *
+     * @return void
      */
     public function setListingActive($listingActive)
     {
@@ -225,6 +232,8 @@ class ExpressCheckout extends ModelEntity
 
     /**
      * @param string $buttonStyleColor
+     *
+     * @return void
      */
     public function setButtonStyleColor($buttonStyleColor)
     {
@@ -241,6 +250,8 @@ class ExpressCheckout extends ModelEntity
 
     /**
      * @param string $buttonStyleShape
+     *
+     * @return void
      */
     public function setButtonStyleShape($buttonStyleShape)
     {
@@ -257,26 +268,12 @@ class ExpressCheckout extends ModelEntity
 
     /**
      * @param string $buttonStyleSize
+     *
+     * @return void
      */
     public function setButtonStyleSize($buttonStyleSize)
     {
         $this->buttonStyleSize = $buttonStyleSize;
-    }
-
-    /**
-     * @return string
-     */
-    public function getButtonLocale()
-    {
-        return $this->buttonLocale;
-    }
-
-    /**
-     * @param string $buttonLocale
-     */
-    public function setButtonLocale($buttonLocale)
-    {
-        $this->buttonLocale = $buttonLocale;
     }
 
     /**
@@ -289,6 +286,8 @@ class ExpressCheckout extends ModelEntity
 
     /**
      * @param bool $submitCart
+     *
+     * @return void
      */
     public function setSubmitCart($submitCart)
     {
@@ -296,7 +295,7 @@ class ExpressCheckout extends ModelEntity
     }
 
     /**
-     * @return array
+     * @return array<string, mixed>
      */
     public function toArray()
     {
