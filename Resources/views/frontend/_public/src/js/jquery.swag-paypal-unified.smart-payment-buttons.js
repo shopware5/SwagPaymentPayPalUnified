@@ -185,8 +185,8 @@
             if (this.opts.marksOnly) {
                 params.components = 'funding-eligibility,marks';
             } else {
-                params.components = 'marks,buttons';
-                params.commit = false;
+                params.components = 'funding-eligibility,marks,buttons';
+                params.commit = true;
                 params.currency = this.opts.currency;
             }
 
