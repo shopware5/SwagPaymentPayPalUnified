@@ -63,3 +63,6 @@ parameters:
         - # Ignore $paymentType parameter expects valid PayPal payment types
             message: '#Parameter \#. \$paymentType of method.*expects.*string given.#'
             path: Tests
+        - # CrudService instead of CrudServiceInterface given
+            message: '#Parameter \#1 \$crudService of .*#'
+            path: Setup/Updater.php

@@ -20,6 +20,7 @@ test.describe('Is Pay Later fully functional', () => {
     });
 
     test('Buy a product with Pay Later', async ({ page }) => {
+        test.skip();
         // Add product to cart
         await page.goto('/sommerwelten/beachwear/178/strandtuch-ibiza', { waitUntil: 'load' });
         await page.click('.buybox--button');

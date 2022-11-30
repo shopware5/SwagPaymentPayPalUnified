@@ -10,12 +10,12 @@ namespace SwagPaymentPayPalUnified\Setup\Versions;
 
 use Doctrine\DBAL\Connection;
 use PDO;
-use Shopware\Bundle\AttributeBundle\Service\CrudServiceInterface;
+use Shopware\Bundle\AttributeBundle\Service\CrudService;
 
 class UpdateToREPLACE_GLOBAL_WITH_NEXT_VERSION
 {
     /**
-     * @var CrudServiceInterface
+     * @var CrudService
      */
     private $crudService;
 
@@ -25,7 +25,7 @@ class UpdateToREPLACE_GLOBAL_WITH_NEXT_VERSION
     private $connection;
 
     public function __construct(
-        CrudServiceInterface $crudService,
+        CrudService $crudService,
         Connection $connection
     ) {
         $this->crudService = $crudService;
