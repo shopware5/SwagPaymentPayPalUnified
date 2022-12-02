@@ -20,7 +20,7 @@ test.describe('Is Express Checkout button available', () => {
     test('Check product detail page', async ({ page }) => {
         await page.goto('/sommerwelten/beachwear/178/strandtuch-ibiza', { waitUntil: 'load' });
 
-        const locator = await page.frameLocator('.component-frame').locator('.paypal-button');
+        const locator = await page.frameLocator('.component-frame').locator('.paypal-button.paypal-button-number-0');
         await expect(locator).toHaveText(/Direkt zu/);
 
         await page.waitForTimeout(1000);
@@ -61,7 +61,7 @@ test.describe('Is Express Checkout button available', () => {
         await page.waitForLoadState('load');
         await expect(page.locator('.ajax--cart')).toHaveText(/Warenkorb bearbeiten/);
 
-        const locator = await page.frameLocator('.ajax--cart >> .component-frame').locator('.paypal-button');
+        const locator = await page.frameLocator('.ajax--cart >> .component-frame').locator('.paypal-button.paypal-button-number-0');
         await expect(locator).toHaveText(/Direkt zu/);
 
         await page.waitForTimeout(1000);
@@ -108,7 +108,7 @@ test.describe('Is Express Checkout button available', () => {
 
         await expect(page).toHaveURL('/checkout/cart');
 
-        const locator = await page.frameLocator('.component-frame').locator('.paypal-button');
+        const locator = await page.frameLocator('.component-frame').locator('.paypal-button.paypal-button-number-0');
         await expect(locator).toHaveText(/Direkt zu/);
 
         await page.waitForTimeout(1000);
@@ -154,7 +154,7 @@ test.describe('Is Express Checkout button available', () => {
 
         await expect(page).toHaveURL('/checkout/confirm');
 
-        const locator = await page.frameLocator('.component-frame').locator('.paypal-button');
+        const locator = await page.frameLocator('.component-frame').locator('.paypal-button.paypal-button-number-0');
         await expect(locator).toHaveText(/Direkt zu/);
 
         await page.waitForTimeout(1000);
@@ -191,7 +191,7 @@ test.describe('Is Express Checkout button available', () => {
     test('Check product listing page @notIn5.2', async ({ page }) => {
         await page.goto('/sommerwelten/beachwear/', { waitUntil: 'load' });
 
-        const locator = await page.frameLocator('.component-frame >> nth=1').locator('.paypal-button');
+        const locator = await page.frameLocator('.component-frame >> nth=1').locator('.paypal-button.paypal-button-number-0');
         await expect(locator).toHaveText(/Direkt zu/);
 
         await page.waitForTimeout(1000);
@@ -230,7 +230,7 @@ test.describe('Is Express Checkout button available', () => {
 
         await page.goto('/genusswelten/koestlichkeiten/272/spachtelmasse', { waitUntil: 'load' });
 
-        const locator = await page.frameLocator('.component-frame').locator('.paypal-button');
+        const locator = await page.frameLocator('.component-frame').locator('.paypal-button.paypal-button-number-0');
         await expect(locator).toHaveText(/Direkt zu/);
 
         await page.waitForTimeout(1000);

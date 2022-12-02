@@ -31,13 +31,13 @@ test.describe('Check for a readable message if the merchant Id is wrong', () => 
         await expect(growlMessage.isVisible()).toBeTruthy();
         await growlMessage.locator('text=Schließen').click();
 
-        await page.click('text=PayPal Pay Upon Invoice Integration');
+        await page.click('text=Kauf auf Rechnung Integration');
         await page.locator('text=Verfügbarkeitstest >> visible=true').click();
 
         await expect(growlMessage.isVisible()).toBeTruthy();
         await growlMessage.locator('text=Schließen').click();
 
-        await page.click('text=PayPal Advanced Credit Debit Card Integration');
+        await page.click('text=Advanced Credit Debit Card Integration');
         await page.locator('text=Verfügbarkeitstest >> visible=true').click();
 
         await expect(growlMessage.isVisible()).toBeTruthy();

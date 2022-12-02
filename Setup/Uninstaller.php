@@ -54,6 +54,8 @@ class Uninstaller
 
     /**
      * @param bool $safeMode
+     *
+     * @return void
      */
     public function uninstall($safeMode)
     {

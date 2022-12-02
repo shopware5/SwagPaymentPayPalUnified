@@ -13,6 +13,7 @@
                  data-createOrderUrl="{url controller='PaypalUnifiedV2' action='index' forceSecure}"
                  data-returnUrl="{url module='frontend' controller='PaypalUnifiedV2' action='return' inContextCheckout=1 forceSecure}"
                  data-paypalIntent="{$paypalUnifiedIntent}"
+                 data-showPayLater="{$paypalUnifiedShowPayLaterPaypal}"
                 {block name='frontend_checkout_confirm_paypal_unified_in_context_button_data'}{/block}>
             </div>
         {/block}

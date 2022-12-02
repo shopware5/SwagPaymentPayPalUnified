@@ -3,7 +3,7 @@
 Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.AdvancedCreditDebitCard', {
     extend: 'Shopware.apps.PaypalUnifiedSettings.view.tabs.AbstractPuiAcdcTab',
     alias: 'widget.paypal-unified-settings-tabs-advanced-credit-debit-card',
-    title: '{s name="title"}PayPal Advanced Credit Debit Card Integration{/s}',
+    title: '{s name="new/title"}Advanced Credit Debit Card Integration{/s}',
 
     mixins: [
         'Shopware.apps.PaypalUnified.mixin.OnboardingHelper'

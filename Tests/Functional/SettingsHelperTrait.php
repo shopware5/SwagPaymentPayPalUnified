@@ -131,6 +131,8 @@ trait SettingsHelperTrait
             'id' => null,
             'shop_id' => 1,
             'advertise_installments' => 0,
+            'show_pay_later_paypal' => 1,
+            'show_pay_later_express' => 1,
         ];
 
         $this->addOrUpdateSettings('swag_payment_paypal_unified_settings_installments', $default, $data);

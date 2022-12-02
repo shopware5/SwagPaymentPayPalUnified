@@ -114,7 +114,6 @@ test.describe('Pay with credit card', () => {
 
         await cookieHelper.acceptCookies(locators.contingencyHandlerIFrame);
 
-        await locators.cancelForm.scrollIntoViewIfNeeded();
         await locators.cancelButton.click();
 
         await locators.contingencyHandlerWrapper.waitFor({ state: 'detached' });

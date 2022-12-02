@@ -41,6 +41,20 @@ class Installments extends ModelEntity
     private $advertiseInstallments;
 
     /**
+     * @var bool
+     *
+     * @ORM\Column(name="show_pay_later_paypal", type="boolean", nullable=false)
+     */
+    private $showPayLaterPaypal;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="show_pay_later_express", type="boolean", nullable=false)
+     */
+    private $showPayLaterExpress;
+
+    /**
      * @return int
      */
     public function getId()
@@ -100,5 +114,41 @@ class Installments extends ModelEntity
     public function toArray()
     {
         return \get_object_vars($this);
+    }
+
+    /**
+     * @return bool
+     */
+    public function getShowPayLaterPaypal()
+    {
+        return $this->showPayLaterPaypal;
+    }
+
+    /**
+     * @param bool $showPayLaterPaypal
+     *
+     * @return void
+     */
+    public function setShowPayLaterPaypal($showPayLaterPaypal)
+    {
+        $this->showPayLaterPaypal = $showPayLaterPaypal;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getShowPayLaterExpress()
+    {
+        return $this->showPayLaterExpress;
+    }
+
+    /**
+     * @param bool $showPayLaterExpress
+     *
+     * @return void
+     */
+    public function setShowPayLaterExpress($showPayLaterExpress)
+    {
+        $this->showPayLaterExpress = $showPayLaterExpress;
     }
 }

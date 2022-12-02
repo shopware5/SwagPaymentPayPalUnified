@@ -5,7 +5,7 @@
 
     {if $paypalUnifiedEcListingActive && $paypalIsNotAllowed === false}
         <div class="paypal-unified-ec--button-placeholder">
-            {include file='frontend/paypal_unified/express_checkout/button.tpl' isProduct = true}
+            {include file='frontend/paypal_unified/express_checkout/button.tpl' isProduct = true isListing = true}
         </div>
     {/if}
 {/block}

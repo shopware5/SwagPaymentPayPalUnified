@@ -17,8 +17,8 @@ SELECT @uuid := UUID();
 INSERT INTO swag_payment_paypal_unified_settings_general (id, shop_id, active, client_id, client_secret, sandbox_client_id, sandbox_client_secret, sandbox, show_sidebar_logo, brand_name, landing_page_type, order_number_prefix, use_in_context, display_errors, advertise_returns, use_smart_payment_buttons, submit_cart, intent, button_style_color, button_style_shape, button_style_size, paypal_payer_id, sandbox_paypal_payer_id) VALUES
 (1, 1, 1, '', '', 'sandbox_client_id::replace::me', 'sandbox_client_secret::replace::me', 1, 0, '', 'NO_PREFERENCE', @uuid, 1, 0, 0, 0, 1, 'CAPTURE', 'gold', 'rect', 'large', '', 'sandbox_paypal_payer_id::replace::me');
 
-INSERT INTO swag_payment_paypal_unified_settings_installments (id, shop_id, advertise_installments) VALUES
-(1, 1, 1);
+INSERT INTO swag_payment_paypal_unified_settings_installments (id, shop_id, advertise_installments, show_pay_later_paypal, show_pay_later_express) VALUES
+(1, 1, 1, 1, 1);
 
 INSERT INTO swag_payment_paypal_unified_settings_pay_upon_invoice (id, shop_id, onboarding_completed, sandbox_onboarding_completed, active, customer_service_instructions) VALUES
 (1, 1, 0, 1, 1, 'Fill');

@@ -59,10 +59,7 @@ parameters:
         - # SQLSTATE[42S22]: Column not found: 1054 Unknown column 'button_locale' in 'field list
             message: '#.*Unknown column.*button_locale.*#'
             paths:
-                - Setup/Versions/UpdateToREPLACE_GLOBAL_WITH_NEXT_VERSION.php
+                - Setup/Versions/UpdateTo600.php
         - # Ignore $paymentType parameter expects valid PayPal payment types
             message: '#Parameter \#. \$paymentType of method.*expects.*string given.#'
             path: Tests
-        - # CrudService instead of CrudServiceInterface given
-            message: '#Parameter \#1 \$crudService of .*#'
-            path: Setup/Updater.php

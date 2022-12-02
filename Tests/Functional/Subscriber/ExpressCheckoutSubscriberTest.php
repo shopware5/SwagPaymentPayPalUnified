@@ -85,11 +85,13 @@ class ExpressCheckoutSubscriberTest extends TestCase
         ]);
 
         $this->importSettings();
+        $this->insertInstallmentsSettingsFromArray([]);
 
         $subscriber = $this->getSubscriber();
         $subscriber->addExpressCheckoutButtonCart($enlightEventArgs);
 
         static::assertNull($view->getAssign('paypalUnifiedUseInContext'));
+        static::assertNull($view->getAssign('paypalUnifiedShowPayLaterExpress'));
         $paymentMethodProvider->setPaymentMethodActiveFlag(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME, true);
     }
 
@@ -107,11 +109,13 @@ class ExpressCheckoutSubscriberTest extends TestCase
         ]);
 
         $this->importSettings(false, true, true);
+        $this->insertInstallmentsSettingsFromArray([]);
 
         $subscriber = $this->getSubscriber();
         $subscriber->addExpressCheckoutButtonCart($enlightEventArgs);
 
         static::assertNull($view->getAssign('paypalUnifiedUseInContext'));
+        static::assertNull($view->getAssign('paypalUnifiedShowPayLaterExpress'));
     }
 
     /**
@@ -129,11 +133,13 @@ class ExpressCheckoutSubscriberTest extends TestCase
         ]);
 
         $this->importSettings(true, false, true);
+        $this->insertInstallmentsSettingsFromArray([]);
 
         $subscriber = $this->getSubscriber();
         $subscriber->addExpressCheckoutButtonCart($enlightEventArgs);
 
         static::assertNull($view->getAssign('paypalUnifiedUseInContext'));
+        static::assertNull($view->getAssign('paypalUnifiedShowPayLaterExpress'));
     }
 
     /**
@@ -152,11 +158,13 @@ class ExpressCheckoutSubscriberTest extends TestCase
         ]);
 
         $this->importSettings(true, true, true);
+        $this->insertInstallmentsSettingsFromArray([]);
 
         $subscriber = $this->getSubscriber();
         $subscriber->addExpressCheckoutButtonCart($enlightEventArgs);
 
         static::assertNull($view->getAssign('paypalUnifiedUseInContext'));
+        static::assertNull($view->getAssign('paypalUnifiedShowPayLaterExpress'));
     }
 
     /**
@@ -184,11 +192,13 @@ class ExpressCheckoutSubscriberTest extends TestCase
         ]);
 
         $this->importSettings(true, true, true);
+        $this->insertInstallmentsSettingsFromArray([]);
 
         $subscriber = $this->getSubscriber();
         $subscriber->addExpressCheckoutButtonCart($enlightEventArgs);
 
         static::assertNull($view->getAssign('paypalUnifiedUseInContext'));
+        static::assertNull($view->getAssign('paypalUnifiedShowPayLaterExpress'));
     }
 
     /**
@@ -231,11 +241,62 @@ class ExpressCheckoutSubscriberTest extends TestCase
             [null, SettingsTable::GENERAL, $generalSettings],
             [null, SettingsTable::EXPRESS_CHECKOUT, $expressSettings],
         ]);
+        $settingsServiceMock->method('get')->willReturn(true);
 
         $subscriber = $this->getSubscriber(null, $dependencyProviderMock, $settingsServiceMock);
         $subscriber->addExpressCheckoutButtonCart($enlightEventArgs);
 
         static::assertNotNull($enlightEventArgs->getSubject()->View()->getAssign('paypalUnifiedClientId'));
+        static::assertTrue($enlightEventArgs->getSubject()->View()->getAssign('paypalUnifiedShowPayLaterExpress'));
+    }
+
+    /**
+     * @return void
+     */
+    public function testAddExpressCheckoutButtonCartAssignsValueToCartShowPayLaterShouldBeFalse()
+    {
+        $view = new ViewMock(new Enlight_Template_Manager());
+        $request = new Enlight_Controller_Request_RequestTestCase();
+        $request->setActionName('cart');
+        $request->setControllerName('checkout');
+        $view->assign('sBasket', ['content' => [['articleID' => 2]]]);
+
+        $enlightEventArgs = new Enlight_Controller_ActionEventArgs([
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
+            'request' => $request,
+        ]);
+
+        $this->importSettings(true, true, true, true);
+
+        $shop = $this->getContainer()->get('models')->getRepository(Shop::class)->getActiveDefault();
+        $basket = $this->getContainer()->get('modules')->getModule('sBasket');
+
+        $dependencyProviderMock = $this->createMock(DependencyProvider::class);
+        $dependencyProviderMock->method('getShop')->willReturn($shop);
+        $dependencyProviderMock->method('getModule')->willReturnMap([
+            ['sBasket', $basket],
+        ]);
+
+        $generalSettings = new General();
+        $generalSettings->setActive(true);
+        $generalSettings->setSandbox(true);
+        $generalSettings->setSandboxClientId('thisIsATestClientId');
+
+        $expressSettings = new ExpressCheckout();
+        $expressSettings->setLoginActive(false);
+
+        $settingsServiceMock = $this->createMock(SettingsService::class);
+        $settingsServiceMock->method('getSettings')->willReturnMap([
+            [null, SettingsTable::GENERAL, $generalSettings],
+            [null, SettingsTable::EXPRESS_CHECKOUT, $expressSettings],
+        ]);
+        $settingsServiceMock->method('get')->willReturn(false);
+
+        $subscriber = $this->getSubscriber(null, $dependencyProviderMock, $settingsServiceMock);
+        $subscriber->addExpressCheckoutButtonCart($enlightEventArgs);
+
+        static::assertNotNull($enlightEventArgs->getSubject()->View()->getAssign('paypalUnifiedClientId'));
+        static::assertFalse($enlightEventArgs->getSubject()->View()->getAssign('paypalUnifiedShowPayLaterExpress'));
     }
 
     /**
@@ -473,11 +534,13 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $enlightEventArgs = $this->createEventArgs($view);
 
         $this->importSettings();
+        $this->insertInstallmentsSettingsFromArray([]);
 
         $subscriber = $this->getSubscriber();
         $subscriber->addExpressCheckoutButtonDetail($enlightEventArgs);
 
         static::assertNull($view->getAssign('paypalUnifiedEcDetailActive'));
+        static::assertNull($view->getAssign('paypalUnifiedShowPayLaterExpress'));
         $paymentMethodProvider->setPaymentMethodActiveFlag(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME, true);
     }
 
@@ -490,11 +553,13 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $enlightEventArgs = $this->createEventArgs($view);
 
         $this->importSettings();
+        $this->insertInstallmentsSettingsFromArray([]);
 
         $subscriber = $this->getSubscriber();
         $subscriber->addExpressCheckoutButtonDetail($enlightEventArgs);
 
         static::assertNull($view->getAssign('paypalUnifiedEcDetailActive'));
+        static::assertNull($view->getAssign('paypalUnifiedShowPayLaterExpress'));
     }
 
     /**
@@ -506,11 +571,12 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $enlightEventArgs = $this->createEventArgs($view);
 
         $this->importSettings(true);
+        $this->insertInstallmentsSettingsFromArray([]);
 
         $subscriber = $this->getSubscriber();
         $subscriber->addExpressCheckoutButtonDetail($enlightEventArgs);
 
-        static::assertNull($view->getAssign('paypalUnifiedEcDetailActive'));
+        static::assertNull($view->getAssign('paypalUnifiedShowPayLaterExpress'));
     }
 
     /**
@@ -522,11 +588,13 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $enlightEventArgs = $this->createEventArgs($view);
 
         $this->importSettings(true, true);
+        $this->insertInstallmentsSettingsFromArray([]);
 
         $subscriber = $this->getSubscriber();
         $subscriber->addExpressCheckoutButtonDetail($enlightEventArgs);
 
         static::assertNull($view->getAssign('paypalUnifiedEcDetailActive'));
+        static::assertNull($view->getAssign('paypalUnifiedShowPayLaterExpress'));
     }
 
     /**
@@ -540,11 +608,13 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $this->getContainer()->get('session')->offsetUnset('sUserId');
 
         $this->importSettings(true, true, true);
+        $this->insertInstallmentsSettingsFromArray([]);
 
         $subscriber = $this->getSubscriber();
         $subscriber->addExpressCheckoutButtonDetail($enlightEventArgs);
 
         static::assertTrue($view->getAssign('paypalUnifiedEcDetailActive'));
+        static::assertTrue((bool) $view->getAssign('paypalUnifiedShowPayLaterExpress'));
     }
 
     /**
@@ -559,11 +629,13 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $this->getContainer()->get('session')->offsetUnset('sUserId');
 
         $this->importSettings(true, true, true);
+        $this->insertInstallmentsSettingsFromArray([]);
 
         $subscriber = $this->getSubscriber();
         $subscriber->addExpressCheckoutButtonDetail($enlightEventArgs);
 
         static::assertNull($view->getAssign('paypalUnifiedEcDetailActive'));
+        static::assertNull($view->getAssign('paypalUnifiedShowPayLaterExpress'));
     }
 
     /**
@@ -578,11 +650,13 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $enlightEventArgs = $this->createEventArgs($view);
 
         $this->importSettings();
+        $this->insertInstallmentsSettingsFromArray([]);
 
         $subscriber = $this->getSubscriber();
         $subscriber->addExpressCheckoutButtonListing($enlightEventArgs);
 
         static::assertNull($view->getAssign('paypalUnifiedEcDetailActive'));
+        static::assertNull($view->getAssign('paypalUnifiedShowPayLaterExpress'));
         $paymentMethodProvider->setPaymentMethodActiveFlag(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME, true);
     }
 
@@ -595,11 +669,13 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $enlightEventArgs = $this->createEventArgs($view);
 
         $this->importSettings();
+        $this->insertInstallmentsSettingsFromArray([]);
 
         $subscriber = $this->getSubscriber();
         $subscriber->addExpressCheckoutButtonListing($enlightEventArgs);
 
         static::assertNull($view->getAssign('paypalUnifiedEcDetailActive'));
+        static::assertNull($view->getAssign('paypalUnifiedShowPayLaterExpress'));
     }
 
     /**
@@ -611,11 +687,13 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $enlightEventArgs = $this->createEventArgs($view);
 
         $this->importSettings(true);
+        $this->insertInstallmentsSettingsFromArray([]);
 
         $subscriber = $this->getSubscriber();
         $subscriber->addExpressCheckoutButtonListing($enlightEventArgs);
 
         static::assertNull($view->getAssign('paypalUnifiedEcDetailActive'));
+        static::assertNull($view->getAssign('paypalUnifiedShowPayLaterExpress'));
     }
 
     /**
@@ -627,11 +705,13 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $enlightEventArgs = $this->createEventArgs($view);
 
         $this->importSettings(true, true);
+        $this->insertInstallmentsSettingsFromArray([]);
 
         $subscriber = $this->getSubscriber();
         $subscriber->addExpressCheckoutButtonListing($enlightEventArgs);
 
         static::assertNull($view->getAssign('paypalUnifiedEcDetailActive'));
+        static::assertNull($view->getAssign('paypalUnifiedShowPayLaterExpress'));
     }
 
     /**
@@ -643,12 +723,33 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $enlightEventArgs = $this->createEventArgs($view);
 
         $this->importSettings(true, false, false, false, false, false, true);
+        $this->insertInstallmentsSettingsFromArray([]);
 
         $subscriber = $this->getSubscriber();
         $subscriber->addExpressCheckoutButtonListing($enlightEventArgs);
 
         static::assertSame('small', $view->getAssign('paypalUnifiedEcButtonStyleSize'));
         static::assertTrue($view->getAssign('paypalUnifiedEcListingActive'));
+        static::assertTrue((bool) $view->getAssign('paypalUnifiedShowPayLaterExpress'));
+    }
+
+    /**
+     * @return void
+     */
+    public function testAddExpressCheckoutButtonListingAssignsCorrectValuesShowPayLaterShouldBeFalse()
+    {
+        $view = new ViewMock(new Enlight_Template_Manager());
+        $enlightEventArgs = $this->createEventArgs($view);
+
+        $this->importSettings(true, false, false, false, false, false, true);
+        $this->insertInstallmentsSettingsFromArray(['show_pay_later_express' => 0]);
+
+        $subscriber = $this->getSubscriber();
+        $subscriber->addExpressCheckoutButtonListing($enlightEventArgs);
+
+        static::assertSame('small', $view->getAssign('paypalUnifiedEcButtonStyleSize'));
+        static::assertTrue($view->getAssign('paypalUnifiedEcListingActive'));
+        static::assertFalse((bool) $view->getAssign('paypalUnifiedShowPayLaterExpress'));
     }
 
     /**
@@ -661,11 +762,32 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $enlightEventArgs->getSubject()->Request()->setParam('sCategory', 10);
 
         $this->importSettings(true, false, false, false, false, false, true);
+        $this->insertInstallmentsSettingsFromArray([]);
 
         $subscriber = $this->getSubscriber();
         $subscriber->addExpressCheckoutButtonListing($enlightEventArgs);
 
         static::assertSame('["SW10196"]', $view->getAssign('paypalUnifiedEsdProducts'));
+        static::assertTrue((bool) $view->getAssign('paypalUnifiedShowPayLaterExpress'));
+    }
+
+    /**
+     * @return void
+     */
+    public function testAddExpressCheckoutButtonListingAssignsEsdProductNumbersShowPayLaterShouldBeFalse()
+    {
+        $view = new ViewMock(new Enlight_Template_Manager());
+        $enlightEventArgs = $this->createEventArgs($view);
+        $enlightEventArgs->getSubject()->Request()->setParam('sCategory', 10);
+
+        $this->importSettings(true, false, false, false, false, false, true);
+        $this->insertInstallmentsSettingsFromArray(['show_pay_later_express' => 0]);
+
+        $subscriber = $this->getSubscriber();
+        $subscriber->addExpressCheckoutButtonListing($enlightEventArgs);
+
+        static::assertSame('["SW10196"]', $view->getAssign('paypalUnifiedEsdProducts'));
+        static::assertFalse((bool) $view->getAssign('paypalUnifiedShowPayLaterExpress'));
     }
 
     /**
@@ -680,11 +802,13 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $enlightEventArgs = $this->createEventArgs($view);
 
         $this->importSettings();
+        $this->insertInstallmentsSettingsFromArray([]);
 
         $subscriber = $this->getSubscriber();
         $subscriber->addExpressCheckoutButtonLogin($enlightEventArgs);
 
         static::assertNull($view->getAssign('paypalUnifiedEcLoginActive'));
+        static::assertNull($view->getAssign('paypalUnifiedShowPayLaterExpress'));
         $paymentMethodProvider->setPaymentMethodActiveFlag(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME, true);
     }
 
@@ -697,11 +821,13 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $enlightEventArgs = $this->createEventArgs($view);
 
         $this->importSettings();
+        $this->insertInstallmentsSettingsFromArray([]);
 
         $subscriber = $this->getSubscriber();
         $subscriber->addExpressCheckoutButtonLogin($enlightEventArgs);
 
         static::assertNull($view->getAssign('paypalUnifiedEcLoginActive'));
+        static::assertNull($view->getAssign('paypalUnifiedShowPayLaterExpress'));
     }
 
     /**
@@ -713,11 +839,13 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $enlightEventArgs = $this->createEventArgs($view);
 
         $this->importSettings(true);
+        $this->insertInstallmentsSettingsFromArray([]);
 
         $subscriber = $this->getSubscriber();
         $subscriber->addExpressCheckoutButtonLogin($enlightEventArgs);
 
         static::assertNull($view->getAssign('paypalUnifiedEcLoginActive'));
+        static::assertNull($view->getAssign('paypalUnifiedShowPayLaterExpress'));
     }
 
     /**
@@ -729,11 +857,13 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $enlightEventArgs = $this->createEventArgs($view);
 
         $this->importSettings(true, true);
+        $this->insertInstallmentsSettingsFromArray([]);
 
         $subscriber = $this->getSubscriber();
         $subscriber->addExpressCheckoutButtonLogin($enlightEventArgs);
 
         static::assertNull($view->getAssign('paypalUnifiedEcLoginActive'));
+        static::assertNull($view->getAssign('paypalUnifiedShowPayLaterExpress'));
     }
 
     /**
@@ -752,11 +882,13 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $enlightEventArgs->set('request', $request);
 
         $this->importSettings(true, true, true, false, true);
+        $this->insertInstallmentsSettingsFromArray([]);
 
         $subscriber = $this->getSubscriber();
         $subscriber->addExpressCheckoutButtonLogin($enlightEventArgs);
 
         static::assertTrue($view->getAssign('paypalUnifiedEcLoginActive'));
+        static::assertTrue((bool) $view->getAssign('paypalUnifiedShowPayLaterExpress'));
     }
 
     /**

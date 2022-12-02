@@ -301,7 +301,12 @@ class ExpressCheckout implements SubscriberInterface
      */
     private function addEcButtonBehaviour(ViewEngine $view, GeneralSettingsModel $generalSettings)
     {
-        $view->assign('paypalUnifiedClientId', $generalSettings->getSandbox() ? $generalSettings->getSandboxClientId() : $generalSettings->getClientId());
+        $viewAssign = [
+            'paypalUnifiedClientId' => $generalSettings->getSandbox() ? $generalSettings->getSandboxClientId() : $generalSettings->getClientId(),
+            'paypalUnifiedShowPayLaterExpress' => $this->settingsService->get(SettingsServiceInterface::SETTING_INSTALLMENTS_SHOW_PAY_LATER_EXPRESS, SettingsTable::INSTALLMENTS),
+        ];
+
+        $view->assign($viewAssign);
 
         $shop = $this->dependencyProvider->getShop();
 

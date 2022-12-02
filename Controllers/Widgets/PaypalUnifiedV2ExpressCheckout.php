@@ -32,6 +32,9 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout extends Abstra
 
         $paymentId = $this->paymentMethodProvider->getPaymentId(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
 
+        // Set PayPal as paymentMethod
+        $this->dependencyProvider->getSession()->offsetSet('sPaymentID', $paymentId);
+
         $checkoutController = $this->prepareCheckoutController();
 
         $basketData = $checkoutController->getBasket();
@@ -43,12 +46,6 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout extends Abstra
                 return;
             }
         }
-
-        // Set PayPal as paymentMethod
-        $this->dependencyProvider->getSession()->offsetSet(
-            'sPaymentID',
-            $this->paymentMethodProvider->getPaymentId(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME)
-        );
 
         // If the PayPal express button on the detail page was clicked, the addProduct equals true.
         // That means, that it has to be added manually to the basket.
