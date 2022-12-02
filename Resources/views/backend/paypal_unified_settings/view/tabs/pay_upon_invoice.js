@@ -38,6 +38,11 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.PayUponInvoice', {
             this.createSettingsFieldset()
         );
 
+        this.items.insert(
+            0,
+            this.createMoreInformationNotice()
+        )
+
         this.registerEvents()
     },
 
@@ -105,5 +110,23 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.PayUponInvoice', {
     onActivationChange: function() {
         this.handleView();
     },
+
+    createMoreInformationNotice: function() {
+        var noticeText = '{s name="moreInformationText"}Worth knowing and details about Pay Upon Invoice you can find <a href="https://www.paypal.com/de/rechnungskauf-information" target="_blank">here</a>.{/s}',
+            noticeStyle = {
+                'color': 'white',
+                'font-size': '14px',
+                'background-color': '#4AA3DF',
+                'text-shadow': '0 0 5px rgba(0, 0, 0, 0.3)'
+            },
+            notice = Shopware.Notification.createBlockMessage(noticeText, 'info');
+        notice.style = noticeStyle;
+
+        this.noticeContainer = Ext.create('Ext.container.Container', {
+            items: [notice]
+        });
+
+        return this.noticeContainer;
+    }
 });
 // {/block}
