@@ -8,7 +8,6 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Controller\Frontend;
 
-use Enlight_Components_Session_Namespace;
 use Enlight_Controller_Request_RequestTestCase;
 use Enlight_Controller_Response_ResponseTestCase;
 use Shopware_Controllers_Frontend_PaypalUnifiedV2PayUponInvoice;
@@ -28,6 +27,17 @@ class PaypalUnifiedV2PayUponInvoiceIndexActionTest extends PaypalPaymentControll
 {
     use ShopRegistrationTrait;
     use AssertLocationTrait;
+
+    /**
+     * @after
+     *
+     * @return void
+     */
+    public function clearSession()
+    {
+        $session = $this->getContainer()->get('session');
+        $session->offsetUnset('sOrderVariables');
+    }
 
     /**
      * @return void
@@ -51,13 +61,11 @@ class PaypalUnifiedV2PayUponInvoiceIndexActionTest extends PaypalPaymentControll
             'sUserData' => require __DIR__ . '/_fixtures/getUser_result.php',
         ];
 
-        $sessionMock = $this->createMock(Enlight_Components_Session_Namespace::class);
-        $sessionMock->method('offsetGet')->willReturnMap([
-            ['sOrderVariables', $sOrderVariablesMock],
-        ]);
+        $session = $this->getContainer()->get('session');
+        $session->offsetSet('sOrderVariables', $sOrderVariablesMock);
 
         $dependencyProviderMock = $this->createMock(DependencyProvider::class);
-        $dependencyProviderMock->method('getSession')->willReturn($sessionMock);
+        $dependencyProviderMock->method('getSession')->willReturn($session);
 
         $paymentInstructionServiceMock = $this->createMock(PayUponInvoiceInstructionService::class);
 

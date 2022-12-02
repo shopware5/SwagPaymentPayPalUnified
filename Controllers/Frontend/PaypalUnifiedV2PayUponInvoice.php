@@ -15,6 +15,8 @@ use SwagPaymentPayPalUnified\Components\Exception\PuiValidationException;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\ShopwareOrderData;
 use SwagPaymentPayPalUnified\Components\Services\PayUponInvoiceInstructionService;
 use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentController;
+use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\InvalidBillingAddressException;
+use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\InvalidShippingAddressException;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
 
@@ -58,6 +60,14 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2PayUponInvoice extends Abstra
             return;
         } catch (PhoneNumberNationalNumberNotValidException $phoneNumberNationalNumberNotValidException) {
             $this->redirectToConfirmWithError(['puiPhoneNumberWrong' => true], $phoneNumberNationalNumberNotValidException);
+
+            return;
+        } catch (InvalidBillingAddressException $invalidBillingAddressException) {
+            $this->redirectInvalidAddress(['invalidBillingAddress' => true]);
+
+            return;
+        } catch (InvalidShippingAddressException $invalidShippingAddressException) {
+            $this->redirectInvalidAddress(['invalidShippingAddress' => true]);
 
             return;
         }

@@ -14,6 +14,8 @@ use SwagPaymentPayPalUnified\Components\Services\ThreeDSecureResultChecker\Excep
 use SwagPaymentPayPalUnified\Components\Services\ThreeDSecureResultChecker\ThreeDSecureResultChecker;
 use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentController;
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\InstrumentDeclinedException;
+use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\InvalidBillingAddressException;
+use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\InvalidShippingAddressException;
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\NoOrderToProceedException;
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\PayerActionRequiredException;
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\RequireRestartException;
@@ -76,7 +78,20 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2AdvancedCreditDebitCard extend
         $shopwareOrderData = new ShopwareOrderData($shopwareSessionOrderData['sUserData'], $shopwareSessionOrderData['sBasket']);
         $orderParams = $this->payPalOrderParameterFacade->createPayPalOrderParameter(PaymentType::PAYPAL_ADVANCED_CREDIT_DEBIT_CARD, $shopwareOrderData);
 
-        $payPalOrder = $this->createPayPalOrder($orderParams);
+        try {
+            $payPalOrder = $this->createPayPalOrder($orderParams);
+        } catch (InvalidBillingAddressException $invalidBillingAddressException) {
+            $this->response->setHttpResponseCode(Response::HTTP_BAD_REQUEST);
+            $this->view->assign('redirectTo', $this->getInvalidAddressUrl(['invalidBillingAddress' => true]));
+
+            return;
+        } catch (InvalidShippingAddressException $invalidShippingAddressException) {
+            $this->response->setHttpResponseCode(Response::HTTP_BAD_REQUEST);
+            $this->view->assign('redirectTo', $this->getInvalidAddressUrl(['invalidShippingAddress' => true]));
+
+            return;
+        }
+
         if (!$payPalOrder instanceof Order) {
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
                 ->setCode(ErrorCodes::NO_ORDER_TO_PROCESS);

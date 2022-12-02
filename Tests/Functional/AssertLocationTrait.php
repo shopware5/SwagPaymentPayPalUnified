@@ -31,6 +31,6 @@ trait AssertLocationTrait
             }
         }
 
-        static::assertGreaterThan(0, $counter);
+        static::assertGreaterThan(0, $counter, 'AssertLocation: No location headers found');
     }
 }

@@ -401,7 +401,7 @@
                 /**
                  * Will be called if any api error occurred
                  */
-                onError: this.onPayPalAPIError.bind(this)
+                onError: this.createOrderFunction.onApiError.bind(this.createOrderFunction)
             };
 
             $.publish('plugin/swagPayPalUnifiedInContextCheckout/createConfig', [this, buttonConfig]);
@@ -439,10 +439,6 @@
 
         onCancel: function() {
             $.loadingIndicator.close();
-        },
-
-        onPayPalAPIError: function() {
-            window.location.replace(this.opts.paypalErrorPage);
         }
     });
 
