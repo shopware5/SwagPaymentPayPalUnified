@@ -71,7 +71,6 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
         PaymentType::APM_IDEAL => 'getIdeal',
         PaymentType::APM_MULTIBANCO => 'getMultibanco',
         PaymentType::APM_MYBANK => 'getMybank',
-        PaymentType::APM_OXXO => 'getOxxo',
         PaymentType::APM_P24 => 'getP24',
         PaymentType::APM_SOFORT => 'getSofort',
         PaymentType::APM_TRUSTLY => 'getTrustly',

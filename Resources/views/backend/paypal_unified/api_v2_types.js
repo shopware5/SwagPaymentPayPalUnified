@@ -16,7 +16,6 @@ Ext.define('Shopware.apps.PaypalUnified.ApiV2Types', {
         'ideal',
         'multibanco',
         'mybank',
-        'oxxo',
         'p24',
         'sofort',
         'trustly'

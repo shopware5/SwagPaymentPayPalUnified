@@ -40,8 +40,6 @@ interface PaymentMethodProviderInterface
 
     const MY_BANK_METHOD_NAME = 'SwagPaymentPayPalUnifiedMyBank';
 
-    const OXXO_METHOD_NAME = 'SwagPaymentPayPalUnifiedOXXO';
-
     const P24_METHOD_NAME = 'SwagPaymentPayPalUnifiedP24';
 
     const SOFORT_METHOD_NAME = 'SwagPaymentPayPalUnifiedSofort';

@@ -53,20 +53,6 @@
             <tag name="paypal_unified.order_factory_handler"/>
         </service>
 
-        <service id="paypal_unified.oxxo_order_factory_handler"
-                 class="SwagPaymentPayPalUnified\Components\Services\OrderBuilder\OrderHandler\OxxoOrderHandler"
-                 public="true">
-            <argument type="service" id="paypal_unified.settings_service"/>
-            <argument type="service" id="paypal_unified.paypal_order.item_list_provider"/>
-            <argument type="service" id="paypal_unified.paypal_order.amount_provider"/>
-            <argument type="service" id="paypal_unified.common.return_url_helper"/>
-            <argument type="service" id="shopware_storefront.context_service"/>
-            <argument type="service" id="paypal_unified.common.price_formatter"/>
-            <argument type="service" id="paypal_unified.common.customer_helper"/>
-            <argument type="service" id="paypal_unified.payment_source_factory"/>
-            <tag name="paypal_unified.order_factory_handler"/>
-        </service>
-
         <service id="paypal_unified.multi_banco_order_factory_handler"
                  class="SwagPaymentPayPalUnified\Components\Services\OrderBuilder\OrderHandler\MultiBancoOrderHandler"
                  public="true">

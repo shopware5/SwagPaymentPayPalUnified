@@ -16,7 +16,6 @@ use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\Giropay;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\Ideal;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\Multibanco;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\Mybank;
-use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\Oxxo;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\P24;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\PayUponInvoice;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\Sofort;
@@ -64,11 +63,6 @@ class PaymentSource extends PayPalApiStruct
      * @var Mybank|null
      */
     protected $mybank;
-
-    /**
-     * @var Oxxo|null
-     */
-    protected $oxxo;
 
     /**
      * @var P24|null
@@ -216,22 +210,6 @@ class PaymentSource extends PayPalApiStruct
     public function setMybank($mybank)
     {
         $this->mybank = $mybank;
-    }
-
-    /**
-     * @return Oxxo|null
-     */
-    public function getOxxo()
-    {
-        return $this->oxxo;
-    }
-
-    /**
-     * @param Oxxo|null $oxxo
-     */
-    public function setOxxo($oxxo)
-    {
-        $this->oxxo = $oxxo;
     }
 
     /**

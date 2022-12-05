@@ -31,7 +31,6 @@ final class PaymentType
     const APM_IDEAL = 'ideal';
     const APM_MULTIBANCO = 'multibanco';
     const APM_MYBANK = 'mybank';
-    const APM_OXXO = 'oxxo';
     const APM_P24 = 'p24';
     const APM_SOFORT = 'sofort';
     const APM_TRUSTLY = 'trustly';

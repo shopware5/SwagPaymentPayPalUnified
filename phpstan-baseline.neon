@@ -261,11 +261,6 @@ parameters:
 			path: Components/Services/OrderBuilder/PaymentSource/PaymentSourceValueHandler/AbstractPaymentSourceValueHandler.php
 
 		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\OrderBuilder\\\\PaymentSource\\\\PaymentSourceValueHandler\\\\OxxoPaymentSourceValueHandler\\:\\:setValues\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Components/Services/OrderBuilder/PaymentSource/PaymentSourceValueHandler/OxxoPaymentSourceValueHandler.php
-
-		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\OrderBuilder\\\\PaymentSource\\\\PaymentSourceValueHandler\\\\P24PaymentSourceValueHandler\\:\\:setValues\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: Components/Services/OrderBuilder/PaymentSource/PaymentSourceValueHandler/P24PaymentSourceValueHandler.php
@@ -1781,11 +1776,6 @@ parameters:
 			path: PayPalBundle/V2/Api/Order/PaymentSource.php
 
 		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\V2\\\\Api\\\\Order\\\\PaymentSource\\:\\:setOxxo\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: PayPalBundle/V2/Api/Order/PaymentSource.php
-
-		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\V2\\\\Api\\\\Order\\\\PaymentSource\\:\\:setP24\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: PayPalBundle/V2/Api/Order/PaymentSource.php
@@ -1859,11 +1849,6 @@ parameters:
 			message: "#^Property SwagPaymentPayPalUnified\\\\PayPalBundle\\\\V2\\\\Api\\\\Order\\\\PaymentSource\\\\ExperienceContext\\:\\:\\$customerServiceInstructions type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: PayPalBundle/V2/Api/Order/PaymentSource/ExperienceContext.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\V2\\\\Api\\\\Order\\\\PaymentSource\\\\Oxxo\\:\\:setEmail\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: PayPalBundle/V2/Api/Order/PaymentSource/Oxxo.php
 
 		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\V2\\\\Api\\\\Order\\\\PaymentSource\\\\P24\\:\\:setEmail\\(\\) has no return type specified\\.$#"

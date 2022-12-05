@@ -115,7 +115,7 @@ class PaymentMethodProvider implements PaymentMethodProviderInterface
     }
 
     /**
-     * @return array{0: self::BANCONTACT_METHOD_NAME, 1: self::BLIK_METHOD_NAME, 2:self::EPS_METHOD_NAME, 3: self::GIROPAY_METHOD_NAME, 4: self::IDEAL_METHOD_NAME, 5: self::MULTIBANCO_METHOD_NAME, 6: self::MY_BANK_METHOD_NAME, 7: self::OXXO_METHOD_NAME, 8: self::P24_METHOD_NAME, 9: self::SOFORT_METHOD_NAME, 10: self::TRUSTLY_METHOD_NAME}
+     * @return array{0: self::BANCONTACT_METHOD_NAME, 1: self::BLIK_METHOD_NAME, 2:self::EPS_METHOD_NAME, 3: self::GIROPAY_METHOD_NAME, 4: self::IDEAL_METHOD_NAME, 5: self::MULTIBANCO_METHOD_NAME, 6: self::MY_BANK_METHOD_NAME, 7: self::P24_METHOD_NAME, 8: self::SOFORT_METHOD_NAME, 9: self::TRUSTLY_METHOD_NAME}
      */
     public static function getAlternativePaymentMethodNames()
     {
@@ -127,7 +127,6 @@ class PaymentMethodProvider implements PaymentMethodProviderInterface
             self::IDEAL_METHOD_NAME,
             self::MULTIBANCO_METHOD_NAME,
             self::MY_BANK_METHOD_NAME,
-            self::OXXO_METHOD_NAME,
             self::P24_METHOD_NAME,
             self::SOFORT_METHOD_NAME,
             self::TRUSTLY_METHOD_NAME,
@@ -175,8 +174,6 @@ class PaymentMethodProvider implements PaymentMethodProviderInterface
                 return PaymentType::APM_MULTIBANCO;
             case self::MY_BANK_METHOD_NAME:
                 return PaymentType::APM_MYBANK;
-            case self::OXXO_METHOD_NAME:
-                return PaymentType::APM_OXXO;
             case self::P24_METHOD_NAME:
                 return PaymentType::APM_P24;
             case self::SOFORT_METHOD_NAME:

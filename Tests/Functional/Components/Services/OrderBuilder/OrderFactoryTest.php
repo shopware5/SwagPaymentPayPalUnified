@@ -115,10 +115,6 @@ class OrderFactoryTest extends TestCase
             $this->createPaypalOrderParameter(PaymentType::APM_MYBANK),
         ];
 
-        yield 'Expect order with PaymentType::APM_OXXO' => [
-            $this->createPaypalOrderParameter(PaymentType::APM_OXXO),
-        ];
-
         yield 'Expect order with PaymentType::APM_P24' => [
             $this->createPaypalOrderParameter(PaymentType::APM_P24),
         ];

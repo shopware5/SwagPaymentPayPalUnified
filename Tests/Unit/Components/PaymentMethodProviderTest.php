@@ -135,7 +135,6 @@ class PaymentMethodProviderTest extends TestCase
             [PaymentMethodProviderInterface::IDEAL_METHOD_NAME, PaymentType::APM_IDEAL],
             [PaymentMethodProviderInterface::MULTIBANCO_METHOD_NAME, PaymentType::APM_MULTIBANCO],
             [PaymentMethodProviderInterface::MY_BANK_METHOD_NAME, PaymentType::APM_MYBANK],
-            [PaymentMethodProviderInterface::OXXO_METHOD_NAME, PaymentType::APM_OXXO],
             [PaymentMethodProviderInterface::P24_METHOD_NAME, PaymentType::APM_P24],
             [PaymentMethodProviderInterface::SOFORT_METHOD_NAME, PaymentType::APM_SOFORT],
             [PaymentMethodProviderInterface::TRUSTLY_METHOD_NAME, PaymentType::APM_TRUSTLY],

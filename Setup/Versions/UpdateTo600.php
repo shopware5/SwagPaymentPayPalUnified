@@ -45,6 +45,7 @@ class UpdateTo600
         $this->createAttributes();
         $this->migrateLanguageSettings();
         $this->addShowPayLaterButtonSettings();
+        $this->disableOxxoPaymentMethod();
     }
 
     /**
@@ -114,5 +115,20 @@ class UpdateTo600
 
             $this->connection->exec($sql);
         }
+    }
+
+    /**
+     * @return void
+     */
+    private function disableOxxoPaymentMethod()
+    {
+        $this->connection->createQueryBuilder()
+            ->update('s_core_paymentmeans')
+            ->set('active', '0')
+            ->set('description', ':newOxxoDescription')
+            ->where('name = :oxxoPaymentMethodName')
+            ->setParameter('newOxxoDescription', 'OXXO. Do not activate again, the payment method is removed from PayPal plugin.')
+            ->setParameter('oxxoPaymentMethodName', 'SwagPaymentPayPalUnifiedOXXO')
+            ->execute();
     }
 }

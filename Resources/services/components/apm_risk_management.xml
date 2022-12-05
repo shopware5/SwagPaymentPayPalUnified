@@ -66,12 +66,6 @@
             <tag name="paypal_unified.risk_management.validator_handler"/>
         </service>
 
-        <service id="paypal_unified.risk_management.oxxo_validator"
-                 class="SwagPaymentPayPalUnified\Components\Services\RiskManagement\Apm\Validator\OxxoValidatorHandler"
-                 public="true">
-            <tag name="paypal_unified.risk_management.validator_handler"/>
-        </service>
-
         <service id="paypal_unified.risk_management.p24_validator"
                  class="SwagPaymentPayPalUnified\Components\Services\RiskManagement\Apm\Validator\P24ValidatorHandler"
                  public="true">

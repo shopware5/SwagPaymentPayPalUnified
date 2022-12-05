@@ -59,6 +59,17 @@ class UpdateTo600Test extends TestCase
             'Column show_pay_later_express is not created.'
         );
 
+        $removeOxxoResult = $connection->createQueryBuilder()
+            ->select(['active', 'description'])
+            ->from('s_core_paymentmeans')
+            ->where('name = :oxxoPaymentMethodName')
+            ->setParameter('oxxoPaymentMethodName', 'SwagPaymentPayPalUnifiedOXXO')
+            ->execute()
+            ->fetch(PDO::FETCH_ASSOC);
+
+        static::assertFalse((bool) $removeOxxoResult['active']);
+        static::assertSame('OXXO. Do not activate again, the payment method is removed from PayPal plugin.', $removeOxxoResult['description']);
+
         $this->removeData();
     }
 
@@ -120,5 +131,12 @@ class UpdateTo600Test extends TestCase
           TRUNCATE TABLE swag_payment_paypal_unified_settings_express;
           TRUNCATE TABLE swag_payment_paypal_unified_settings_general;
         ');
+
+        $removeOxxoResult = $this->getContainer()->get('dbal_connection')
+            ->createQueryBuilder()
+            ->delete('s_core_paymentmeans')
+            ->where('name = :oxxoPaymentMethodName')
+            ->setParameter('oxxoPaymentMethodName', 'SwagPaymentPayPalUnifiedOXXO')
+            ->execute();
     }
 }

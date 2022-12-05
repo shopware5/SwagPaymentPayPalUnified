@@ -54,12 +54,6 @@
             <tag name="paypal_unified.payment_source_value_handler"/>
         </service>
 
-        <service id="paypal_unified.oxxo_payment_source_value_handler"
-                 class="SwagPaymentPayPalUnified\Components\Services\OrderBuilder\PaymentSource\PaymentSourceValueHandler\OxxoPaymentSourceValueHandler"
-                 public="true">
-            <tag name="paypal_unified.payment_source_value_handler"/>
-        </service>
-
         <service id="paypal_unified.p24_payment_source_value_handler"
                  class="SwagPaymentPayPalUnified\Components\Services\OrderBuilder\PaymentSource\PaymentSourceValueHandler\P24PaymentSourceValueHandler"
                  public="true">
