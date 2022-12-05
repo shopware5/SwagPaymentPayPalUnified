@@ -28,6 +28,10 @@ use UnexpectedValueException;
 
 class CustomerService
 {
+    const NOT_DEFINED_SALUTATION = 'not_defined';
+
+    const MR_SALUTATION = 'mr';
+
     /**
      * @var ShopwareConfig
      */
@@ -200,11 +204,18 @@ class CustomerService
      */
     private function getSalutation()
     {
-        $possibleSalutations = $this->shopwareConfig->get('shopsalutations');
-        $possibleSalutations = \explode(',', $possibleSalutations);
+        $possibleSalutationsString = $this->shopwareConfig->get('shopsalutations');
+        if (!\is_string($possibleSalutationsString) || $possibleSalutationsString === '') {
+            return self::MR_SALUTATION;
+        }
+
+        $possibleSalutationsArray = \explode(',', $possibleSalutationsString);
+        if (\in_array(self::NOT_DEFINED_SALUTATION, $possibleSalutationsArray)) {
+            return self::NOT_DEFINED_SALUTATION;
+        }
 
         // as PayPal does not provide a salutation, we have to set one of the possible options
-        return isset($possibleSalutations[0]) ? $possibleSalutations[0] : 'mr';
+        return isset($possibleSalutationsArray[0]) ? $possibleSalutationsArray[0] : self::MR_SALUTATION;
     }
 
     private function loginCustomer(Customer $customerModel)
