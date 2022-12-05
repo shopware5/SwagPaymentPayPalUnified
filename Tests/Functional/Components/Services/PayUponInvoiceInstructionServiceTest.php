@@ -11,6 +11,7 @@ namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services;
 use DateInterval;
 use DateTime;
 use PHPUnit\Framework\TestCase;
+use SwagPaymentPayPalUnified\Models\PaymentInstruction as PaymentInstructionModel;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\Card\AuthenticationResult;
@@ -38,7 +39,16 @@ class PayUponInvoiceInstructionServiceTest extends TestCase
         $order = $this->createPayPalOrder();
 
         $instructionService = $this->getContainer()->get('paypal_unified.pay_upon_invoice_instruction_service');
-        $instructionService->createInstructions($ordernumber, $order);
+        $instructions = $instructionService->createInstructions($ordernumber, $order);
+        static::assertInstanceOf(PaymentInstructionModel::class, $instructions);
+
+        static::assertSame('Muster Bank', $instructions->getBankName());
+        static::assertSame('Max Mustermann', $instructions->getAccountHolder());
+        static::assertSame('any IBAN', $instructions->getIban());
+        static::assertSame('any BIC', $instructions->getBic());
+        static::assertSame('99,99', $instructions->getAmount());
+        static::assertSame('ABC123', $instructions->getReference());
+        static::assertSame((new DateTime())->add(new DateInterval('P30D'))->format('Y-m-d'), $instructions->getDueDate());
 
         $result = $this->getContainer()->get('dbal_connection')->createQueryBuilder()
             ->select('*')

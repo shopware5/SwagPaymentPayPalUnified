@@ -252,6 +252,10 @@
             <argument type="service" id="config"/>
             <argument type="service" id="dbal_connection"/>
             <argument type="service" id="paypal_unified.phone_number_service"/>
+            <argument type="service" id="router"/>
+            <argument type="service" id="paypal_unified.pay_upon_invoice_instruction_service"/>
+            <argument type="service" id="paypal_unified.v2.order_resource"/>
+
             <tag name="shopware.event_subscriber"/>
         </service>
 

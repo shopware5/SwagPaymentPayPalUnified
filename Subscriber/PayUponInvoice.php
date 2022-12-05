@@ -10,18 +10,25 @@ namespace SwagPaymentPayPalUnified\Subscriber;
 
 use DateTime;
 use Doctrine\DBAL\Connection;
+use DomainException;
 use Enlight\Event\SubscriberInterface;
 use Enlight_Components_Session_Namespace as Session;
 use Enlight_Controller_ActionEventArgs;
+use Enlight_Controller_Router;
 use Shopware_Components_Config as CoreConfig;
 use Shopware_Controllers_Frontend_Checkout;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
+use SwagPaymentPayPalUnified\Components\Services\PayUponInvoiceInstructionService;
 use SwagPaymentPayPalUnified\Components\Services\PhoneNumberService;
+use SwagPaymentPayPalUnified\Models\PaymentInstruction as PaymentInstructionModel;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\OrderResource;
 
 class PayUponInvoice implements SubscriberInterface
 {
     const EMPTY_DATE = '0000-00-00';
+
+    const PUI_SHOPWARE_ORDER = 'PUI_ORDER';
 
     /**
      * @var DependencyProvider
@@ -48,17 +55,38 @@ class PayUponInvoice implements SubscriberInterface
      */
     private $phoneNumberService;
 
+    /**
+     * @var Enlight_Controller_Router
+     */
+    private $router;
+
+    /**
+     * @var OrderResource
+     */
+    private $orderResource;
+
+    /**
+     * @var PayUponInvoiceInstructionService
+     */
+    private $payUponInvoiceInstruction;
+
     public function __construct(
         DependencyProvider $dependencyProvider,
         CoreConfig $config,
         Connection $connection,
-        PhoneNumberService $phoneNumberService
+        PhoneNumberService $phoneNumberService,
+        Enlight_Controller_Router $router,
+        PayUponInvoiceInstructionService $payUponInvoiceInstruction,
+        OrderResource $orderResource
     ) {
         $this->dependencyProvider = $dependencyProvider;
         $this->config = $config;
         $this->connection = $connection;
         $this->session = $this->dependencyProvider->getSession();
         $this->phoneNumberService = $phoneNumberService;
+        $this->router = $router;
+        $this->orderResource = $orderResource;
+        $this->payUponInvoiceInstruction = $payUponInvoiceInstruction;
     }
 
     /**
@@ -70,6 +98,8 @@ class PayUponInvoice implements SubscriberInterface
             'Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout' => [
                 ['onCheckout'],
                 ['onFinish'],
+                ['assignPayUponInvoicePolling'],
+                ['assignPaypalPaymentInstructions'],
             ],
         ];
     }
@@ -161,6 +191,88 @@ class PayUponInvoice implements SubscriberInterface
         );
 
         $this->session->offsetUnset('puiExtraFields');
+    }
+
+    /**
+     * @return void
+     */
+    public function assignPaypalPaymentInstructions(Enlight_Controller_ActionEventArgs $args)
+    {
+        if ($args->getRequest()->getActionName() !== 'finish') {
+            return;
+        }
+
+        if (!$this->session->offsetExists(self::PUI_SHOPWARE_ORDER)) {
+            return;
+        }
+
+        /** @var Shopware_Controllers_Frontend_Checkout $subject */
+        $subject = $args->getSubject();
+
+        if (!$subject->Request()->has('pollingFinished') || $subject->Request()->has('pollingError')) {
+            return;
+        }
+
+        $orderNumber = $subject->Request()->get('sOrderNumber');
+        $payPalOrderId = $subject->Request()->get('sUniqueID');
+
+        $payPalOrder = $this->orderResource->get($payPalOrderId);
+        $paymentInstructions = $this->payUponInvoiceInstruction->createInstructions($orderNumber, $payPalOrder);
+
+        if (!$paymentInstructions instanceof PaymentInstructionModel) {
+            throw new DomainException('Payment instructions could not be created');
+        }
+
+        $subject->View()->assign('paypalUnifiedPaymentInstructions', $paymentInstructions->toArray());
+        $this->session->offsetUnset(self::PUI_SHOPWARE_ORDER);
+    }
+
+    /**
+     * @return void
+     */
+    public function assignPayUponInvoicePolling(Enlight_Controller_ActionEventArgs $args)
+    {
+        if ($args->getRequest()->getActionName() !== 'finish') {
+            return;
+        }
+
+        if (!$this->session->offsetExists(self::PUI_SHOPWARE_ORDER)) {
+            return;
+        }
+
+        /** @var Shopware_Controllers_Frontend_Checkout $subject */
+        $subject = $args->getSubject();
+
+        if ($subject->Request()->has('pollingFinished') || $subject->Request()->has('pollingError')) {
+            return;
+        }
+
+        $orderNumber = $this->session->get(self::PUI_SHOPWARE_ORDER);
+
+        $subject->View()->assign([
+            'isPui' => true,
+            'puiPollingUrl' => $this->router->assemble([
+                'module' => 'widgets',
+                'controller' => 'PaypalUnifiedV2PayUponInvoice',
+                'action' => 'pollOrder',
+                'sUniqueID' => $subject->Request()->get('sUniqueID'),
+            ]),
+            'puiSuccessUrl' => $this->router->assemble([
+                'module' => 'frontend',
+                'controller' => 'checkout',
+                'action' => 'finish',
+                'sUniqueID' => $subject->Request()->get('sUniqueID'),
+                'sOrderNumber' => $orderNumber,
+                'pollingFinished' => true,
+            ]),
+            'puiErrorUrl' => $this->router->assemble([
+                'module' => 'frontend',
+                'controller' => 'checkout',
+                'action' => 'finish',
+                'sUniqueID' => $subject->Request()->get('sUniqueID'),
+                'pollingError' => true,
+            ]),
+        ]);
     }
 
     /**

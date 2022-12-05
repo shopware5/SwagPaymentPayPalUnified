@@ -48,28 +48,28 @@ class PayUponInvoiceInstructionService
     /**
      * @param string $orderNumber
      *
-     * @return void
+     * @return PaymentInstructionModel|null
      */
     public function createInstructions($orderNumber, Order $order)
     {
         $payUponInvoice = $this->orderPropertyHelper->getPayUponInvoice($order);
         if (!$payUponInvoice instanceof PayUponInvoice) {
-            return;
+            return null;
         }
 
         $bankDetails = $payUponInvoice->getDepositBankDetails();
         if (!$bankDetails instanceof DepositBankDetails) {
-            return;
+            return null;
         }
 
         $capture = $this->orderPropertyHelper->getFirstCapture($order);
         if (!$capture instanceof Capture) {
-            return;
+            return null;
         }
 
         $amount = $capture->getAmount();
         if (!$amount instanceof Amount) {
-            return;
+            return null;
         }
 
         $model = new PaymentInstructionModel();
@@ -94,6 +94,8 @@ class PayUponInvoiceInstructionService
                 'paymentInstruction' => $model,
             ]
         );
+
+        return $model;
     }
 
     /**

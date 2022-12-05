@@ -43,11 +43,11 @@ test.describe('Pay with invoice', () => {
 
         await page.click('input[name="sAGB"]');
 
-        await page.waitForTimeout(5000);
-
         await page.click('button:has-text("Zahlungspflichtig bestellen")', { timeout: 120000 });
 
-        await expect(page.locator('.teaser--title')).toHaveText(/Vielen Dank für Ihre Bestellung bei Shopware Demo/);
+        await expect(page.locator('.teaser--title').first()).toHaveText(/Vielen Dank für Ihre Bestellung bei Shopware Demo/);
+
+        await expect(page.locator('.unified--instruction')).toHaveText(/.*Bitte überweisen Sie.*/);
     });
 
     test('Buy ten products with "Pay Upon Invoice"', async ({ page }) => {
@@ -72,10 +72,10 @@ test.describe('Pay with invoice', () => {
 
         await page.click('input[name="sAGB"]');
 
-        await page.waitForTimeout(5000);
-
         await page.click('button:has-text("Zahlungspflichtig bestellen")', { timeout: 120000 });
 
-        await expect(page.locator('.teaser--title')).toHaveText(/Vielen Dank für Ihre Bestellung bei Shopware Demo/);
+        await expect(page.locator('.teaser--title').first()).toHaveText(/Vielen Dank für Ihre Bestellung bei Shopware Demo/);
+
+        await expect(page.locator('.unified--instruction')).toHaveText(/.*Bitte überweisen Sie.*/);
     });
 });
