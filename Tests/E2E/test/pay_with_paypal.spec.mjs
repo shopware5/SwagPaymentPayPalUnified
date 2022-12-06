@@ -85,7 +85,7 @@ test.describe('Frontend', () => {
         await paypalPage.locator('#btnLogin').click();
 
         // Click [data-testid="submit-button-initial"]
-        await paypalPage.locator('button:has-text("Kauf abschließen")').click();
+        await paypalPage.locator('button:has-text("Kauf abschließen"), button:has-text("Jetzt zahlen")').click();
 
         await expect(page.locator('.teaser--title')).toHaveText(/Vielen Dank für Ihre Bestellung bei Shopware Demo/);
 

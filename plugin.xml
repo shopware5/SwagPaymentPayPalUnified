@@ -20,6 +20,7 @@
             PT-12648 - PayPal Express Button Sprachfeld entfernt;
             PT-12892 - Fügt einen Link für weitere Informationen zu Kauf auf Rechnung hinzu;
             PT-12926 - Verbessert Verhalten bei invalider Adresse;
+            PT-12757 - Vendor-Ordner kann außerhalb des Plugins bereitgestellt werden
             PT-12991 - SPB Marks angepasst;
             PT-12992 - Verbessert die Betrugsüberprüfung für Kauf auf Rechnung;
             PT-12994 - "PayPal, Später Bezahlen" ist jetzt am In-context und Express Check-out verfügbar;
@@ -31,6 +32,8 @@
             PT-12648 - PayPal Express button language field removed;
             PT-12892 - Add link for more information about pay upon invoice;
             PT-12926 - Improves behavior with invalid address;
+            PT-12992 - Improves fraud checking for pay upon invoice;
+            PT-12757 - Vendor folder can be provided outside the plugin;
             PT-12991 - Adjusted SPB marks;
             PT-12992 - Improves fraud checking for pay upon invoice;
             PT-12994 - "PayPal, PayLater" is now available at In-context and Express Check-out;
