@@ -15,21 +15,23 @@
     <changelog version="REPLACE_GLOBALLY_WITH_NEXT_VERSION(6.0.0)">
         <changes lang="de">
             PT-12601 - Verbessert Geburtsdatum und Telefonnummer Überprüfung für Kauf auf Rechnung;
-            PT-12757 - Vendor-Ordner kann außerhalb des Plugins bereitgestellt werden
+            PT-12714 - Entfernt zweiten Titel aus Einstellungs-Tab;
+            PT-12757 - Externe Abhängigkeiten können außerhalb des Plugins bereitgestellt werden
             PT-12775 - Entfernt die OXXO Zahlungsart;
             PT-12982 - Shopware-Bestellnummer wird direkt beim Erstellen der PayPal-Zahlung mitgesendet, dadurch reduziert sich die Anzahl der PayPal-API-Aufrufe;
             PT-12725 - PayPal tracking API hinzugefügt;
             PT-12648 - PayPal Express Button Sprachfeld entfernt;
             PT-12892 - Fügt einen Link für weitere Informationen zu Kauf auf Rechnung hinzu;
             PT-12926 - Verbessert Verhalten bei invalider Adresse;
-            PT-12945 - PayPal Express verwendet not_defined als Anrede, wenn vorhanden;
-            PT-12991 - SPB Marks angepasst;
+            PT-12945 - PayPal Express verwendet "nicht definiert" als Anrede, wenn vorhanden;
+            PT-12991 - Smart Payment Button Symbole werden immer gleich angezeigt;
             PT-12992 - Verbessert die Betrugsüberprüfung für Kauf auf Rechnung;
             PT-12994 - "PayPal, Später Bezahlen" ist jetzt am In-context und Express Check-out verfügbar;
         </changes>
         <changes lang="en">
             PT-12601 - Improved date of birth and phone number validation for pay upon invoice;
-            PT-12757 - Vendor folder can be provided outside the plugin;
+            PT-12714 - Removes second title from settings tab;
+            PT-12757 - External dependencies can be provided outside the plugin;
             PT-12775 - Removes the OXXO payment method;
             PT-12982 - Shopware order number is sent directly when creating the PayPal payment, reducing the number of PayPal API calls;
             PT-12725 - Added PayPal tracking API;
@@ -37,8 +39,8 @@
             PT-12892 - Add link for more information about pay upon invoice;
             PT-12926 - Improves behavior with invalid address;
             PT-12992 - Improves fraud checking for pay upon invoice;
-            PT-12945 - PayPal Express used not_defined as salutation if it is available;
-            PT-12991 - Adjusted SPB marks;
+            PT-12945 - PayPal Express used "not defined" as salutation if it is available;
+            PT-12991 - Smart Payment Button symbols are always displaying the same;
             PT-12992 - Improves fraud checking for pay upon invoice;
             PT-12994 - "PayPal, PayLater" is now available at In-context and Express Check-out;
         </changes>

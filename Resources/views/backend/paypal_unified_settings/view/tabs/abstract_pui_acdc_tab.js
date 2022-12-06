@@ -200,6 +200,20 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.AbstractPuiAcdcTab', {
         this.showHasLimits();
     },
 
+    /**
+     * @override
+     *
+     * @param { string } newIconCls
+     */
+    setIconCls: function(newIconCls) {
+        var me = this,
+            oldIconCls = me.iconCls;
+
+        me.iconCls = newIconCls;
+
+        me.fireEvent('iconclschange', me, newIconCls, oldIconCls);
+    },
+
     showHasLimits: function () {
         this.setIconCls(this.hasLimitsIcon);
         this.adjustIconHeight();
