@@ -2,70 +2,7 @@
     'use strict';
 
     $.plugin('swagPayPalUnifiedAdvancedCreditDebitCardFallback', {
-        defaults: {
-            /**
-             * PayPal button label
-             *
-             * IMPORTANT: Changing this value can lead to legal issues!
-             *
-             * @type string
-             */
-            label: 'buynow',
-
-            /**
-             * @type boolean
-             */
-            tagline: false,
-
-            /**
-             * @type string
-             */
-            size: 'medium',
-
-            /**
-             * @type string
-             */
-            shape: 'rect',
-
-            /**
-             * Possible black, white
-             *
-             * @type string
-             */
-            color: 'black',
-
-            /**
-             *  @type string
-             */
-            layout: 'horizontal',
-
-            /**
-             * The PayPal clientId
-             *
-             * @type string|null
-             */
-            clientId: null,
-
-            /**
-             * @type string
-             */
-            paypalErrorPage: '',
-
-            /**
-             * @type string
-             */
-            confirmFormSelector: '#confirm--form',
-
-            /**
-             * @type string
-             */
-            confirmFormSubmitButtonSelector: ':submit[form="confirm--form"]',
-
-            /**
-             * @type string
-             */
-            hiddenClass: 'is--hidden',
-
+        defaults: Object.assign($.swagPayPalCreateDefaultPluginConfig(), {
             /**
              * @type string
              */
@@ -75,7 +12,7 @@
              * @type string
              */
             fallbackReturnUrl: ''
-        },
+        }),
 
         init: function() {
             this.applyDataAttributes();
@@ -91,6 +28,8 @@
             this.formValidityFunctions.hideConfirmButton();
             this.formValidityFunctions.disableConfirmButton();
 
+            this.buttonSize = $.swagPayPalCreateButtonSizeObject(this.opts);
+
             this.renderButton();
         },
 
@@ -100,6 +39,8 @@
             var buttonConfig = this.getButtonConfig(),
                 el = $('.main--actions'),
                 buttonContainer = $('<div class="paypal-unified--smart-payment-buttons acdc">');
+
+            buttonContainer.addClass(this.buttonSize[this.opts.size].widthClass);
 
             el.append(buttonContainer);
 
@@ -113,13 +54,7 @@
             var buttonConfig = {
                 fundingSource: 'card',
 
-                style: {
-                    label: this.opts.label,
-                    color: this.opts.color,
-                    shape: this.opts.shape,
-                    layout: this.opts.layout,
-                    tagline: this.opts.tagline
-                },
+                style: $.swagPayPalCreateButtonStyle(this.opts, this.buttonSize, false),
 
                 /**
                  * Will be called on initialisation of the payment button

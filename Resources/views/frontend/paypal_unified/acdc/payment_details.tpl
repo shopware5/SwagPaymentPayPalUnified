@@ -9,6 +9,8 @@
              data-cardHolderData="{$cardHolderData|json_encode|escapeHtml}"
              data-currency="{$paypalUnifiedCurrency}"
              data-locale="{$paypalUnifiedButtonLocale}"
+             data-shape="{$paypalUnifiedEcButtonStyleShape}"
+             data-size="{$paypalUnifiedEcButtonStyleSize}"
              data-createOrderUrl="{url module='widgets' controller='PaypalUnifiedV2AdvancedCreditDebitCard' action='createOrder' forceSecure}"
              data-captureUrl="{url module='widgets' controller='PaypalUnifiedV2AdvancedCreditDebitCard' action='capture' forceSecure}"
              data-createOrderUrlFallback="{url module='widgets' controller='PaypalUnifiedV2SmartPaymentButtons' action='createOrder' forceSecure}"

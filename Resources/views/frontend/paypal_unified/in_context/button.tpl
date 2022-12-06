@@ -7,6 +7,7 @@
                  data-shape="{$paypalUnifiedButtonStyleShape}"
                  data-size="{$paypalUnifiedButtonStyleSize}"
                  data-locale="{$paypalUnifiedButtonLocale}"
+                 data-layout="vertical"
                  data-paypalErrorPage="{url controller='checkout' action='shippingPayment' paypal_unified_error_code=2 forceSecure}"
                  data-clientId="{$paypalUnifiedClientId}"
                  data-currency="{$paypalUnifiedCurrency}"

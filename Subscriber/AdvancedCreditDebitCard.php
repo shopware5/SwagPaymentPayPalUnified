@@ -139,6 +139,8 @@ class AdvancedCreditDebitCard implements SubscriberInterface
             'cardHolderData' => $cardHolderData,
             'paypalUnifiedCurrency' => $this->contextService->getContext()->getCurrency()->getCurrency(),
             'paypalUnifiedButtonLocale' => $this->buttonLocaleService->getButtonLocale($generalSettings->getButtonLocale()),
+            'paypalUnifiedEcButtonStyleShape' => $generalSettings->getButtonStyleShape(),
+            'paypalUnifiedEcButtonStyleSize' => $generalSettings->getButtonStyleSize(),
         ];
 
         if (!isset($cardHolderData['contingencies'])) {

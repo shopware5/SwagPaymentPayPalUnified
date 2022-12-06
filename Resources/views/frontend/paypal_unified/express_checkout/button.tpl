@@ -12,6 +12,8 @@
                  data-color="{$paypalUnifiedEcButtonStyleColor}"
                  data-shape="{$paypalUnifiedEcButtonStyleShape}"
                  data-size="{$paypalUnifiedEcButtonStyleSize}"
+                 data-label="checkout"
+                 data-layout="vertical"
                  data-locale="{$paypalUnifiedButtonLocale}"
                  data-productNumber="{$sArticle.ordernumber}"
                     {if $isProduct}

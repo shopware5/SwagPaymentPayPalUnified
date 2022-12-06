@@ -2,19 +2,7 @@
     'use strict';
 
     $.plugin('swagPayPalUnifiedSepa', {
-        defaults: {
-            /**
-             * @type string
-             */
-            sdkUrl: 'https://www.paypal.com/sdk/js',
-
-            /**
-             * Use PayPal debug mode
-             *
-             * @type boolean
-             */
-            useDebugMode: false,
-
+        defaults: Object.assign($.swagPayPalCreateDefaultPluginConfig(), {
             /**
              * The URL used to create the order
              *
@@ -28,30 +16,6 @@
             paypalErrorPageUrl: '',
 
             /**
-             *  @type string
-             */
-            layout: 'horizontal',
-
-            /**
-             * @type string
-             */
-            size: 'medium',
-
-            /**
-             * @type string
-             */
-            shape: 'rect',
-
-            /**
-             * The language ISO (ISO_639) locale of the button.
-             *
-             * for possible values see: https://developer.paypal.com/api/rest/reference/locale-codes/
-             *
-             * @type string
-             */
-            locale: '',
-
-            /**
              * After approval, redirect to this URL
              *
              * @type string
@@ -59,122 +23,12 @@
             returnUrl: '',
 
             /**
-             * The class name to identify whether or not the paypal sdk has been loaded
-             *
-             * @type string
-             */
-            paypalScriptLoadedSelector: 'paypal-checkout-js-loaded',
-
-            /**
-             * Holds the client id
-             *
-             * @type string
-             */
-            clientId: '',
-
-            /**
-             * Currency which should be used for the Smart Payment Buttons
-             *
-             * @type string
-             */
-            currency: 'EUR',
-
-            /**
-             * @type string
-             */
-            intent: '',
-
-            /**
              * The unique ID of the basket. Will be generated on creating the payment
              *
              * @type string
              */
-            basketId: '',
-
-            /**
-             * PayPal button height small
-             *
-             * @type number
-             */
-            smallHeight: 25,
-
-            /**
-             * PayPal button height medium
-             *
-             * @type number
-             */
-            mediumHeight: 35,
-
-            /**
-             * PayPal button height large
-             *
-             * @type number
-             */
-            largeHeight: 45,
-
-            /**
-             * PayPal button height responsive
-             *
-             * @type number
-             */
-            responsiveHeight: 55,
-
-            /**
-             * selector for the checkout confirm form element
-             *
-             * @type string
-             */
-            confirmFormSelector: '#confirm--form',
-
-            /**
-             * selector for the submit button of the checkout confirm form
-             *
-             * @type string
-             */
-            confirmFormSubmitButtonSelector: ':submit[form="confirm--form"]',
-
-            /**
-             *  @type string
-             */
-            hiddenClass: 'is--hidden',
-
-            /**
-             * PayPal button width small
-             *
-             * @type string
-             */
-            smallWidthClass: 'paypal-button-width--small',
-
-            /**
-             * PayPal button width medium
-             *
-             * @type string
-             */
-            mediumWidthClass: 'paypal-button-width--medium',
-
-            /**
-             * PayPal button width large
-             *
-             * @type string
-             */
-            largeWidthClass: 'paypal-button-width--large',
-
-            /**
-             * PayPal button width responsive
-             *
-             * @type string
-             */
-            responsiveWidthClass: 'paypal-button-width--responsive',
-
-            /**
-             * PayPal button label
-             *
-             * IMPORTANT: Changing this value can lead to legal issues!
-             *
-             * @type string
-             */
-            label: 'buynow'
-        },
+            basketId: ''
+        }),
 
         /**
          * PayPal Object
@@ -195,7 +49,8 @@
             this.formValidityFunctions.hideConfirmButton();
             this.formValidityFunctions.disableConfirmButton();
 
-            this.createButtonSizeObject();
+            this.buttonSize = $.swagPayPalCreateButtonSizeObject(this.opts);
+
             this.$el.addClass(this.buttonSize[this.opts.size].widthClass);
             this.subscribeEvents();
 
@@ -240,7 +95,7 @@
         renderSdkUrl: function() {
             var params = {
                 'client-id': this.opts.clientId,
-                intent: this.opts.intent.toLowerCase(),
+                intent: this.opts.paypalIntent.toLowerCase(),
                 components: 'buttons,funding-eligibility'
             };
 
@@ -275,12 +130,7 @@
             return {
                 fundingSource: this.paypal.FUNDING.SEPA,
 
-                style: {
-                    shape: this.opts.shape,
-                    layout: this.opts.layout,
-                    label: this.opts.label,
-                    height: this.buttonSize[this.opts.size].height
-                },
+                style: $.swagPayPalCreateButtonStyle(this.opts, this.buttonSize, false),
 
                 /**
                  * Will be called on initialisation of the payment button
@@ -334,27 +184,6 @@
             $.loadingIndicator.close();
         },
 
-        createButtonSizeObject: function() {
-            this.buttonSize = {
-                small: {
-                    height: this.opts.smallHeight,
-                    widthClass: this.opts.smallWidthClass
-                },
-                medium: {
-                    height: this.opts.mediumHeight,
-                    widthClass: this.opts.mediumWidthClass
-                },
-                large: {
-                    height: this.opts.largeHeight,
-                    widthClass: this.opts.largeWidthClass
-                },
-                responsive: {
-                    height: this.opts.responsiveHeight,
-                    widthClass: this.opts.responsiveWidthClass
-                }
-            };
-        },
-
         /**
          * @param { object|null } extraParams
          */
@@ -363,7 +192,7 @@
                 extraParams = {};
             }
 
-            window.location.replace($.swagPayPalRenderUrl(this.opts.paypalErrorPageUrl, extraParams));
+            window.location.replace($.swagPayPalRenderUrl(this.opts.paypalErrorPage, extraParams));
         }
     });
 

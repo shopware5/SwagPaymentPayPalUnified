@@ -14,6 +14,9 @@
                      data-paypalIntent="{$paypalUnifiedIntent}"
                      data-currency="{$paypalUnifiedSpbCurrency}"
                      data-locale="{$paypalUnifiedButtonLocale}"
+                     data-layout="vertical"
+                     data-shape="{$paypalUnifiedSpbButtonStyleShape}"
+                     data-size="{$paypalUnifiedSpbButtonStyleSize}"
                      data-createOrderUrl="{url module=widgets controller=PaypalUnifiedV2SmartPaymentButtons action=createOrder forceSecure}"
                      data-returnUrl="{url module='frontend' controller='PaypalUnifiedV2' action='return' spbCheckout=1 forceSecure}"
                      data-paypalErrorPage="{url controller=checkout action=shippingPayment paypal_unified_error_code=2 forceSecure}">
