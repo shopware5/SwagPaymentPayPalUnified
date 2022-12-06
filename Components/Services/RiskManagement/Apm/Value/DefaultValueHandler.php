@@ -22,7 +22,6 @@ class DefaultValueHandler implements ValueHandlerInterface
         PaymentType::APM_IDEAL,
         PaymentType::APM_MULTIBANCO,
         PaymentType::APM_MYBANK,
-        PaymentType::APM_OXXO,
         PaymentType::APM_P24,
         PaymentType::APM_SOFORT,
         PaymentType::APM_TRUSTLY,

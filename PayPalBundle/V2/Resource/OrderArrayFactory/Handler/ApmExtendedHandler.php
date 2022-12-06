@@ -14,7 +14,6 @@ use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
 class ApmExtendedHandler extends ApmDefaultHandler
 {
     const SUPPORTET_PAYMENT_TYPES = [
-        PaymentType::APM_OXXO,
         PaymentType::APM_P24,
     ];
 

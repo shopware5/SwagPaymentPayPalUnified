@@ -19,7 +19,6 @@ use SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentModels\Giropay;
 use SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentModels\Ideal;
 use SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentModels\MultiBanco;
 use SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentModels\MyBank;
-use SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentModels\Oxxo;
 use SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentModels\PayLater;
 use SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentModels\PayPalAdvancedCreditAndDebitCard;
 use SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentModels\PayPalClassic;
@@ -52,7 +51,6 @@ class PaymentModelFactory
             PaymentMethodProviderInterface::P24_METHOD_NAME => new Przelewy24($plugin),
             PaymentMethodProviderInterface::SOFORT_METHOD_NAME => new Sofort($plugin),
             PaymentMethodProviderInterface::MULTIBANCO_METHOD_NAME => new MultiBanco($plugin),
-            PaymentMethodProviderInterface::OXXO_METHOD_NAME => new Oxxo($plugin),
             PaymentMethodProviderInterface::TRUSTLY_METHOD_NAME => new Trustly($plugin),
             PaymentMethodProviderInterface::PAYPAL_UNIFIED_SEPA_METHOD_NAME => new Sepa($plugin),
         ];

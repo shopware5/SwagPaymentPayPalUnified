@@ -24,7 +24,6 @@ use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\Giropay;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\Ideal;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\Multibanco;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\Mybank;
-use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\Oxxo;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\P24;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\PayUponInvoice;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\Sofort;
@@ -246,12 +245,6 @@ class AbstractPaypalPaymentControllerTest extends UnifiedControllerTestCase
             PaymentType::APM_MYBANK,
         ];
 
-        yield 'Expect APM_OXXO' => [
-            $this->createOrderWithPaymentSource(PaymentType::APM_OXXO),
-            $this->createRequest(),
-            PaymentType::APM_OXXO,
-        ];
-
         yield 'Expect APM_P24' => [
             $this->createOrderWithPaymentSource(PaymentType::APM_P24),
             $this->createRequest(),
@@ -316,9 +309,6 @@ class AbstractPaypalPaymentControllerTest extends UnifiedControllerTestCase
                 // no break
             case PaymentType::APM_MYBANK:
                 $paymentSource->setMybank(new Mybank());
-                // no break
-            case PaymentType::APM_OXXO:
-                $paymentSource->setOxxo(new Oxxo());
                 // no break
             case PaymentType::APM_P24:
                 $paymentSource->setP24(new P24());

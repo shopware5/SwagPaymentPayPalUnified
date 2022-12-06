@@ -23,7 +23,6 @@ abstract class AbstractPaymentModel
     const POSITION_IDEAL = -93;
     const POSITION_MULTIBANCO = -92;
     const POSITION_MY_BANK = -91;
-    const POSITION_OXXO = -90;
     const POSITION_P24 = -89;
     const POSITION_SOFORT = -88;
     const POSITION_TRUSTLY = -87;
