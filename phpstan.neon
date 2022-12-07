@@ -63,3 +63,6 @@ parameters:
         - # Ignore $paymentType parameter expects valid PayPal payment types
             message: '#Parameter \#. \$paymentType of method.*expects.*string given.#'
             path: Tests
+        - # Ignore Parameter should be PaymentMethodProviderInterface::*
+            message: ' #Parameter \#. \$paymentMethodName of method SwagPaymentPayPalUnified\\Components\\PaymentMethodProvider::getPaymentId\(\) expects.*given.#'
+            path: Tests

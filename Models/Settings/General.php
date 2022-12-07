@@ -111,13 +111,6 @@ class General extends ModelEntity
     private $orderNumberPrefix;
 
     /**
-     * @var bool
-     *
-     * @ORM\Column(name="use_in_context", type="boolean", nullable=false)
-     */
-    private $useInContext;
-
-    /**
      * @var string
      *
      * @ORM\Column(name="landing_page_type", type="string")
@@ -412,24 +405,6 @@ class General extends ModelEntity
     public function setOrderNumberPrefix($orderNumberPrefix)
     {
         $this->orderNumberPrefix = $orderNumberPrefix;
-    }
-
-    /**
-     * @return bool
-     */
-    public function getUseInContext()
-    {
-        return $this->useInContext;
-    }
-
-    /**
-     * @param bool $useInContext
-     *
-     * @return void
-     */
-    public function setUseInContext($useInContext)
-    {
-        $this->useInContext = $useInContext;
     }
 
     /**

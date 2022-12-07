@@ -293,7 +293,7 @@
         </service>
 
         <service id="paypal_unified.subscriber.checkout"
-                    class="SwagPaymentPayPalUnified\Subscriber\Checkout"
+                 class="SwagPaymentPayPalUnified\Subscriber\Checkout"
                  public="true">
             <tag name="shopware.event_subscriber"/>
         </service>

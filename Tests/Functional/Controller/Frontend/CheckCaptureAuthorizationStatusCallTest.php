@@ -93,7 +93,6 @@ class CheckCaptureAuthorizationStatusCallTest extends PaypalPaymentControllerTes
 
         $request = new Enlight_Controller_Request_RequestTestCase();
         $request->setParam('token', '123456');
-        $request->setParam('inContextCheckout', true);
 
         $orderResource = $this->createOrderResource($payPalOrder);
         $simpleBasketValidator = $this->createSimpleBasketValidator();

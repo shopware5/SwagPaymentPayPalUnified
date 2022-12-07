@@ -144,7 +144,6 @@ class ExpressCheckout implements SubscriberInterface
         $product = $view->getAssign('sArticle'); // content on modal window of ajaxAddArticleAction
 
         if ((isset($cart['content']) || $product) && !$this->isUserLoggedIn()) {
-            $view->assign('paypalUnifiedUseInContext', $generalSettings->getUseInContext());
             $this->addEcButtonBehaviour($view, $generalSettings);
             $this->addEcButtonStyleInfo($view, $expressSettings, $generalSettings);
         }

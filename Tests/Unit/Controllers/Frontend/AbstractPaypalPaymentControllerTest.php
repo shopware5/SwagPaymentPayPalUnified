@@ -8,11 +8,8 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Unit\Controllers\Frontend;
 
-use ReflectionClass;
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
 use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentController;
-use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
-use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
 use SwagPaymentPayPalUnified\Tests\Unit\PaypalPaymentControllerTestCase;
 
 class AbstractPaypalPaymentControllerTest extends PaypalPaymentControllerTestCase
@@ -34,30 +31,6 @@ class AbstractPaypalPaymentControllerTest extends PaypalPaymentControllerTestCas
     }
 
     /**
-     * @param string $checkoutType
-     * @param string $expectedPaymentType
-     *
-     * @dataProvider getPaymentTypeCheckoutTypeProvider
-     *
-     * @return void
-     */
-    public function testGetPaymentTypeReturnsEarlyForCertainCheckoutTypes($checkoutType, $expectedPaymentType)
-    {
-        $this->givenTheCheckoutTypeEquals($checkoutType);
-
-        $controller = $this->getController(TestPaypalPaymentController::class, []);
-        $reflectionMethod = (new ReflectionClass(TestPaypalPaymentController::class))->getMethod('getPaymentType');
-        $reflectionMethod->setAccessible(true);
-
-        $paymentType = $reflectionMethod->invoke($controller, new Order());
-
-        static::assertSame(
-            $expectedPaymentType,
-            $paymentType
-        );
-    }
-
-    /**
      * @return array<string,array<string|int>>
      */
     public function cancelActionErrorCodeProvider()
@@ -70,31 +43,6 @@ class AbstractPaypalPaymentControllerTest extends PaypalPaymentControllerTestCas
             'Processing error' => [
                 'processing_error',
                 ErrorCodes::COMMUNICATION_FAILURE,
-            ],
-        ];
-    }
-
-    /**
-     * @return array<string,array<string>>
-     */
-    public function getPaymentTypeCheckoutTypeProvider()
-    {
-        return [
-            '"SEPA" checkout' => [
-                'sepaCheckout',
-                PaymentType::PAYPAL_SEPA,
-            ],
-            '"ACDC" checkout' => [
-                'acdcCheckout',
-                PaymentType::PAYPAL_ADVANCED_CREDIT_DEBIT_CARD,
-            ],
-            '"Smart Payment Buttons" checkout' => [
-                'spbCheckout',
-                PaymentType::PAYPAL_SMART_PAYMENT_BUTTONS_V2,
-            ],
-            '"In Context" checkout' => [
-                'inContextCheckout',
-                PaymentType::PAYPAL_CLASSIC_V2,
             ],
         ];
     }

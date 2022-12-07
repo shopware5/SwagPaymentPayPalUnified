@@ -81,7 +81,6 @@ class InContext implements SubscriberInterface
         $settings = $this->settingsService->getSettings();
         if (!$settings
             || !$settings->getActive()
-            || !$settings->getUseInContext()
             || $settings->getUseSmartPaymentButtons()
         ) {
             return;
@@ -91,7 +90,6 @@ class InContext implements SubscriberInterface
 
         $view->assign([
             'paypalUnifiedPaymentId' => $this->paymentMethodProvider->getPaymentId(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME),
-            'paypalUnifiedUseInContext' => $settings->getUseInContext(),
             'paypalUnifiedButtonStyleColor' => $settings->getButtonStyleColor(),
             'paypalUnifiedButtonStyleShape' => $settings->getButtonStyleShape(),
             'paypalUnifiedButtonStyleSize' => $settings->getButtonStyleSize(),

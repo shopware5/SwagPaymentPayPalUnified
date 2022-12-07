@@ -65,9 +65,9 @@ class PaypalUnifiedV2ExpressCheckoutExpressCheckoutFinishActionTest extends Payp
         $response = new Enlight_Controller_Response_ResponseTestCase();
 
         $settingsServiceMock = $this->createMock(SettingsService::class);
-        $settingsServiceMock->method('get')->willReturnMap([
-            [SettingsServiceInterface::SETTING_GENERAL_USE_IN_CONTEXT, SettingsTable::GENERAL, true],
-        ]);
+//        $settingsServiceMock->method('get')->willReturnMap([
+//            [SettingsServiceInterface::SETTING_GENERAL_USE_IN_CONTEXT, SettingsTable::GENERAL, true],
+//        ]);
 
         $payPalOrder = $this->createPayPalOrder();
 

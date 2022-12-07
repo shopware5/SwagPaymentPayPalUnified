@@ -14,7 +14,7 @@
     {$smarty.block.parent}
 
     {block name='frontend_checkout_cart_table_actions_paypal_unified_ec_button'}
-        {if $paypalUnifiedEcCartActive && $paypalUnifiedUseInContext !== null && $paypalIsNotAllowed === false}
+        {if $paypalUnifiedEcCartActive && $paypalIsNotAllowed === false}
             {include file='frontend/paypal_unified/express_checkout/button.tpl'}
         {/if}
     {/block}

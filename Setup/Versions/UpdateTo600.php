@@ -45,6 +45,7 @@ class UpdateTo600
         $this->createAttributes();
         $this->migrateLanguageSettings();
         $this->addShowPayLaterButtonSettings();
+        $this->dropInContextSetting();
         $this->disableOxxoPaymentMethod();
     }
 
@@ -112,6 +113,21 @@ class UpdateTo600
                 ADD COLUMN `show_pay_later_express` TINYINT(1)
                 NOT NULL
                 DEFAULT 1;';
+
+            $this->connection->exec($sql);
+        }
+    }
+
+    /**
+     * @return void
+     */
+    private function dropInContextSetting()
+    {
+        if ($this->columnService->checkIfColumnExist('swag_payment_paypal_unified_settings_general', 'use_in_context')) {
+            $sql = '
+                ALTER TABLE `swag_payment_paypal_unified_settings_general`
+                DROP COLUMN `use_in_context`;
+            ';
 
             $this->connection->exec($sql);
         }

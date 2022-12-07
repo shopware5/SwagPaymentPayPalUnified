@@ -70,6 +70,11 @@ class UpdateTo600Test extends TestCase
         static::assertFalse((bool) $removeOxxoResult['active']);
         static::assertSame('OXXO. Do not activate again, the payment method is removed from PayPal plugin.', $removeOxxoResult['description']);
 
+        static::assertFalse(
+            $this->checkIfColumnExist($connection, 'swag_payment_paypal_unified_settings_general', 'use_in_context'),
+            'Column use_in_context is not dropped.'
+        );
+
         $this->removeData();
     }
 
@@ -110,6 +115,18 @@ class UpdateTo600Test extends TestCase
             $this->checkIfColumnExist($connection, 'swag_payment_paypal_unified_settings_installments', 'show_pay_later_express'),
             'Column show_pay_later_express is not dropped.'
         );
+
+        $inContextSql = 'ALTER TABLE `swag_payment_paypal_unified_settings_general`
+                ADD COLUMN `use_in_context` TINYINT(1)
+                NOT NULL
+                DEFAULT 1;';
+
+        $connection->exec($inContextSql);
+
+        static::assertTrue(
+            $this->checkIfColumnExist($connection, 'swag_payment_paypal_unified_settings_general', 'use_in_context'),
+            'While setup updateTo600Test, the column use_in_context was not created.'
+        );
     }
 
     /**
@@ -132,7 +149,7 @@ class UpdateTo600Test extends TestCase
           TRUNCATE TABLE swag_payment_paypal_unified_settings_general;
         ');
 
-        $removeOxxoResult = $this->getContainer()->get('dbal_connection')
+        $this->getContainer()->get('dbal_connection')
             ->createQueryBuilder()
             ->delete('s_core_paymentmeans')
             ->where('name = :oxxoPaymentMethodName')

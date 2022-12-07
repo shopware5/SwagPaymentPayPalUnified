@@ -69,7 +69,7 @@ class PaypalUnifiedV2CaptureOrAuthorizeErrorTest extends PaypalPaymentController
 
         static::assertLocationEndsWith(
             $controller->Response(),
-            'PaypalUnifiedV2/return/paypalOrderId/xxxxxxxxxxxxxxxx/inContextCheckout/1'
+            'PaypalUnifiedV2/return/paypalOrderId/xxxxxxxxxxxxxxxx'
         );
 
         static::assertSame(302, $controller->Response()->getHttpResponseCode());
@@ -122,7 +122,6 @@ class PaypalUnifiedV2CaptureOrAuthorizeErrorTest extends PaypalPaymentController
     {
         $request = new Enlight_Controller_Request_RequestTestCase();
         $request->setParam('paypalOrderId', 'xxxxxxxxxxxxxxxx');
-        $request->setParam('inContextCheckout', true);
 
         $orderResourceMock = $this->createMock(OrderResource::class);
         $orderResourceMock->method('get')->willReturn($this->createPaypalOrder());

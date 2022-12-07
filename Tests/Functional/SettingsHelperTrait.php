@@ -39,7 +39,6 @@ trait SettingsHelperTrait
             'brand_name' => null,
             'landing_page_type' => null,
             'order_number_prefix' => null,
-            'use_in_context' => 0,
             'display_errors' => 0,
             'advertise_returns' => 0,
             'use_smart_payment_buttons' => 0,

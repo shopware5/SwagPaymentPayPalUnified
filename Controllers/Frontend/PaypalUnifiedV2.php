@@ -15,7 +15,6 @@ use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\InvalidShippingAddr
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\NoOrderToProceedException;
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\PayerActionRequiredException;
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\RequireRestartException;
-use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Common\Link;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
@@ -167,8 +166,6 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
             return;
         }
 
-        $paymentType = $this->getPaymentType($payPalOrder);
-
         try {
             $payPalOrder = $this->captureOrAuthorizeOrder($payPalOrder);
         } catch (RequireRestartException $requireRestartException) {
@@ -181,7 +178,6 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
                 'controller' => 'PaypalUnifiedV2',
                 'action' => 'return',
                 'paypalOrderId' => $payPalOrderId,
-                'inContextCheckout' => (int) $this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_USE_IN_CONTEXT),
             ]);
 
             return;
@@ -219,7 +215,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
             return;
         }
 
-        $shopwareOrderNumber = $this->createShopwareOrder($payPalOrder->getId(), $paymentType);
+        $shopwareOrderNumber = $this->createShopwareOrder($payPalOrder->getId(), $this->getPaymentType());
 
         $this->setTransactionId($shopwareOrderNumber, $payPalOrder);
 

@@ -147,11 +147,8 @@ class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_F
         $addressPatch = new PaymentAddressPatch($addressService->getShippingAddress($userData));
         $payerInfoPatch = new PayerInfoPatch($addressService->getPayerInfo($userData));
 
-        $useInContext = (bool) $this->Request()->getParam('useInContext', false);
-        if ($useInContext) {
-            $this->Front()->Plugins()->Json()->setRenderer();
-            $this->View()->setTemplate();
-        }
+        $this->Front()->Plugins()->Json()->setRenderer();
+        $this->View()->setTemplate();
 
         try {
             $this->paymentResource->patch($responseStruct->getId(), [
@@ -164,13 +161,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_F
             return;
         }
 
-        if ($useInContext) {
-            $this->View()->assign('paymentId', $responseStruct->getId());
-
-            return;
-        }
-
-        $this->redirect($responseStruct->getLinks()[1]->getHref());
+        $this->View()->assign('paymentId', $responseStruct->getId());
     }
 
     /**

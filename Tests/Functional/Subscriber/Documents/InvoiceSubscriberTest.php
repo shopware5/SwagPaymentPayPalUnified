@@ -61,6 +61,7 @@ class InvoiceSubscriberTest extends TestCase
             $this->getContainer()->get('paypal_unified.payment_method_provider'),
             $this->getContainer()->get('paypal_unified.settings_service')
         );
+
         static::assertNotNull($subscriber);
     }
 

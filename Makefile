@@ -72,7 +72,7 @@ else
 endif
 endif
 
-make run-javascript-tests:
+make run-javascript-tests: ## Executes the jest tests
 	./../../../themes/Frontend/Responsive/node_modules/.bin/jest -c Tests/Javascript/jest.config.js
 
 CS_FIXER_RUN=
