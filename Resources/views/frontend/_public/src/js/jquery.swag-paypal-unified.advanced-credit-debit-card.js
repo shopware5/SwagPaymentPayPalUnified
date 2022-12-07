@@ -2,21 +2,11 @@
     'use strict';
 
     $.plugin('swagPayPalUnifiedAdvancedCreditDebitCard', {
-        defaults: {
+        defaults: Object.assign($.swagPayPalCreateDefaultPluginConfig(), {
             /**
              * @type string
              */
             paypalScriptId: 'swagPayPalUnifiedPayPalSdk',
-
-            /**
-             * @type string
-             */
-            orderFormSelector: '#confirm--form',
-
-            /**
-             * @type string
-             */
-            submitButtonSelector: 'button[type="submit"][form="confirm--form"]',
 
             /**
              * @type string
@@ -56,11 +46,6 @@
             /**
              * @type string
              */
-            sdkUrl: 'https://www.paypal.com/sdk/js',
-
-            /**
-             * @type string
-             */
             createOrderUrl: '',
 
             /**
@@ -76,19 +61,7 @@
             /**
              * @type string
              */
-            clientId: '',
-
-            /**
-             * @type string
-             */
             clientToken: '',
-
-            /**
-             * Use PayPal debug mode
-             *
-             * @type boolean
-             */
-            useDebugMode: false,
 
             /**
              * Cardholder Data for the hosted fields
@@ -106,21 +79,6 @@
              * @type string
              */
             paypalScriptLoadedSelector: 'paypal-checkout-js-loaded',
-
-            /**
-             * @type string
-             */
-            currency: '',
-
-            /**
-             * @type string
-             */
-            locale: '',
-
-            /**
-             * @type string
-             */
-            isHiddenClass: 'is--hidden',
 
             /**
              * @type string
@@ -151,12 +109,12 @@
              * @type string
              */
             placeholderSecurityCode: ''
-        },
+        }),
 
         init: function() {
             this.applyDataAttributes();
 
-            this.$submitBtn = $(this.opts.submitButtonSelector);
+            this.$submitBtn = $(this.opts.confirmFormSubmitButtonSelector);
             this.$submitBtn.prop('disabled', true);
 
             this.insertScript();
@@ -251,7 +209,7 @@
         },
 
         showHostedFields: function() {
-            this.$el.removeClass(this.opts.isHiddenClass);
+            this.$el.removeClass(this.opts.hiddenClass);
             this.updateAutoResizer();
             this.$submitBtn.prop('disabled', false);
         },
@@ -272,7 +230,7 @@
         },
 
         bindFieldActions: function(hostedFields) {
-            var $orderForm = $(this.opts.orderFormSelector);
+            var $orderForm = $(this.opts.confirmFormSelector);
 
             $orderForm.on('submit.paypalUnified', this.onSubmitForm.bind(this, hostedFields));
         },
@@ -314,7 +272,7 @@
         },
 
         onSubmitError: function() {
-            $(this.opts.onSubmitErrorMessageSelector).removeClass(this.opts.isHiddenClass);
+            $(this.opts.onSubmitErrorMessageSelector).removeClass(this.opts.hiddenClass);
 
             this.resetPreloaderPlugin(true);
 
@@ -377,7 +335,7 @@
          * @param paypalOrderId { String }
          */
         submitForm: function(paypalOrderId) {
-            var $orderForm = $(this.opts.orderFormSelector),
+            var $orderForm = $(this.opts.confirmFormSelector),
                 input = document.createElement('input');
 
             input.setAttribute('type', 'hidden');
@@ -430,7 +388,7 @@
                 return;
             }
 
-            $(this.opts.submitButtonSelector).data(this.opts.preloaderPluginName).reset();
+            $(this.opts.confirmFormSubmitButtonSelector).data(this.opts.preloaderPluginName).reset();
         },
 
         updateAutoResizer: function() {

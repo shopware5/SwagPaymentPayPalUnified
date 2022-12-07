@@ -2,38 +2,7 @@
     'use strict';
 
     $.plugin('swagPayPalUnifiedExpressCheckoutButton', {
-        defaults: {
-            /**
-             * @type string
-             */
-            sdkUrl: 'https://www.paypal.com/sdk/js',
-
-            /**
-             * @type string
-             */
-            currency: '',
-
-            /**
-             * The API client-ID identifying a merchant.
-             *
-             * @type string
-             */
-            clientId: '',
-
-            /**
-             * Use PayPal debug mode
-             *
-             * @type boolean
-             */
-            useDebugMode: false,
-
-            /**
-             * URL used to create a new payment
-             *
-             * @type string
-             */
-            createOrderUrl: '',
-
+        defaults: Object.assign($.swagPayPalCreateDefaultPluginConfig(), {
             /**
              * @type string
              */
@@ -43,70 +12,6 @@
              * @type string
              */
             confirmUrl: '',
-
-            /**
-             * size of the button
-             * possible values:
-             *  - small
-             *  - medium
-             *  - large
-             *  - responsive
-             *
-             *  @type string
-             */
-            size: 'medium',
-
-            /**
-             * shape of the button
-             * possible values:
-             *  - pill
-             *  - rect
-             *
-             *  @type string
-             */
-            shape: 'rect',
-
-            /**
-             * size of the button
-             * possible values:
-             *  - gold
-             *  - blue
-             *  - silver
-             *  - black
-             *
-             *  @type string
-             */
-            color: 'gold',
-
-            /**
-             * show text under the button
-             *
-             * @type boolean
-             */
-            tagline: false,
-
-            /**
-             * Button label: https://developer.paypal.com/docs/business/checkout/reference/style-guide/#label
-             *
-             *  @type string
-             */
-            label: 'checkout',
-
-            /**
-             * Button layout: https://developer.paypal.com/docs/business/checkout/reference/style-guide/#layout
-             *
-             *  @type string
-             */
-            layout: 'vertical',
-
-            /**
-             * The language ISO (ISO_639) locale of the button.
-             *
-             * for possible values see: https://developer.paypal.com/api/rest/reference/locale-codes/
-             *
-             * @type string
-             */
-            locale: '',
 
             /**
              * A boolean indicating if the current page is a product detail page.
@@ -130,23 +35,11 @@
             productNumber: null,
 
             /**
-             * The selector for the indicator whether the PayPal javascript is already loaded or not
-             *
-             * @type string
-             */
-            paypalScriptLoadedSelector: 'paypal-checkout-js-loaded',
-
-            /**
              * Excluded products by the risk management.
              *
              * @type array|null
              */
             riskManagementMatchedProducts: null,
-
-            /**
-             * @type string
-             */
-            paypalIntent: 'capture',
 
             /**
              * Excluded esd products.
@@ -174,62 +67,6 @@
              * @type string
              */
             riskManagementErrorMessage: '',
-
-            /**
-             * PayPal button height small
-             *
-             * @type number
-             */
-            smallHeight: 25,
-
-            /**
-             * PayPal button height medium
-             *
-             * @type number
-             */
-            mediumHeight: 35,
-
-            /**
-             * PayPal button height large
-             *
-             * @type number
-             */
-            largeHeight: 45,
-
-            /**
-             * PayPal button height responsive
-             *
-             * @type number
-             */
-            responsiveHeight: 55,
-
-            /**
-             * PayPal button width small
-             *
-             * @type string
-             */
-            smallWidthClass: 'paypal-button-width--small',
-
-            /**
-             * PayPal button width medium
-             *
-             * @type string
-             */
-            mediumWidthClass: 'paypal-button-width--medium',
-
-            /**
-             * PayPal button width large
-             *
-             * @type string
-             */
-            largeWidthClass: 'paypal-button-width--large',
-
-            /**
-             * PayPal button width responsive
-             *
-             * @type string
-             */
-            responsiveWidthClass: 'paypal-button-width--responsive',
 
             /**
              * PayPal button container class without PayLater
@@ -279,7 +116,7 @@
              * @type boolean
              */
             isListing: false
-        },
+        }),
 
         /**
          * @type {Object}
@@ -294,7 +131,8 @@
                 return;
             }
 
-            this.createButtonSizeObject();
+            this.buttonSize = $.swagPayPalCreateButtonSizeObject(this.opts);
+
             this.$el.addClass(this.buttonSize[this.opts.size].widthClass);
 
             this.createButton();
@@ -306,29 +144,8 @@
             }
         },
 
-        applyOrderNumberDataAttribute: function () {
+        applyOrderNumberDataAttribute: function() {
             this.opts.productNumber = this.$el.attr('data-productNumber');
-        },
-
-        createButtonSizeObject: function() {
-            this.buttonSize = {
-                small: {
-                    height: this.opts.smallHeight,
-                    widthClass: this.opts.smallWidthClass
-                },
-                medium: {
-                    height: this.opts.mediumHeight,
-                    widthClass: this.opts.mediumWidthClass
-                },
-                large: {
-                    height: this.opts.largeHeight,
-                    widthClass: this.opts.largeWidthClass
-                },
-                responsive: {
-                    height: this.opts.responsiveHeight,
-                    widthClass: this.opts.responsiveWidthClass
-                }
-            };
         },
 
         /**
@@ -478,14 +295,7 @@
                 /**
                  * styling of the button
                  */
-                style: {
-                    shape: me.opts.shape,
-                    color: me.opts.color,
-                    layout: me.opts.layout,
-                    label: me.opts.label,
-                    tagline: me.opts.tagline,
-                    height: this.buttonSize[this.opts.size].height
-                },
+                style: $.swagPayPalCreateButtonStyle(this.opts, this.buttonSize, true),
 
                 /**
                  * listener for the button

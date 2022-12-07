@@ -14,6 +14,7 @@
 
     <changelog version="REPLACE_GLOBALLY_WITH_NEXT_VERSION(6.0.0)">
         <changes lang="de">
+            PT-12545 - Vereinheitlicht das Verhalten der Buttons bei Style Änderungen.
             PT-12601 - Verbessert Geburtsdatum und Telefonnummer Überprüfung für Kauf auf Rechnung;
             PT-12714 - Entfernt zweiten Titel aus Einstellungs-Tab;
             PT-12757 - Externe Abhängigkeiten können außerhalb des Plugins bereitgestellt werden
@@ -29,6 +30,7 @@
             PT-12994 - "PayPal, Später Bezahlen" ist jetzt am In-context und Express Check-out verfügbar;
         </changes>
         <changes lang="en">
+            PT-12545 - Unifies the behavior of buttons on style changes.
             PT-12601 - Improved date of birth and phone number validation for pay upon invoice;
             PT-12714 - Removes second title from settings tab;
             PT-12757 - External dependencies can be provided outside the plugin;

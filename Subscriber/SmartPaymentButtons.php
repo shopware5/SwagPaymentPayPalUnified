@@ -84,12 +84,16 @@ class SmartPaymentButtons implements SubscriberInterface
 
         $this->changePaymentDescription($view, 'sPayments');
 
-        $view->assign('paypalUnifiedUseSmartPaymentButtons', true);
-        $view->assign('paypalUnifiedSpbClientId', $generalSettings->getSandbox() ? $generalSettings->getSandboxClientId() : $generalSettings->getClientId());
-        $view->assign('paypalUnifiedSpbCurrency', $view->getAssign('sBasket')['sCurrencyName']);
-        $view->assign('paypalUnifiedPaymentId', $this->paymentMethodProvider->getPaymentId(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME));
-        $view->assign('paypalUnifiedIntent', $this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_INTENT));
-        $view->assign('paypalUnifiedButtonLocale', $this->buttonLocaleService->getButtonLocale($generalSettings->getButtonLocale()));
+        $view->assign([
+            'paypalUnifiedUseSmartPaymentButtons' => true,
+            'paypalUnifiedSpbClientId' => $generalSettings->getSandbox() ? $generalSettings->getSandboxClientId() : $generalSettings->getClientId(),
+            'paypalUnifiedSpbCurrency' => $view->getAssign('sBasket')['sCurrencyName'],
+            'paypalUnifiedPaymentId' => $this->paymentMethodProvider->getPaymentId(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME),
+            'paypalUnifiedIntent' => $this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_INTENT),
+            'paypalUnifiedButtonLocale' => $this->buttonLocaleService->getButtonLocale($generalSettings->getButtonLocale()),
+            'paypalUnifiedSpbButtonStyleShape' => $generalSettings->getButtonStyleShape(),
+            'paypalUnifiedSpbButtonStyleSize' => $generalSettings->getButtonStyleSize(),
+        ]);
     }
 
     /**

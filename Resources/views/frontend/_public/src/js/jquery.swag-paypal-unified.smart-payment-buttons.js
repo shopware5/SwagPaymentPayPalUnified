@@ -2,7 +2,7 @@
     'use strict';
 
     $.plugin('swagPayPalUnifiedSmartPaymentButtons', {
-        defaults: {
+        defaults: Object.assign($.swagPayPalCreateDefaultPluginConfig(), {
             /**
              * Determines whether only the marks are needed on the current page
              *
@@ -11,108 +11,12 @@
             marksOnly: false,
 
             /**
-             * The URL used to create the order
-             *
-             * @type string
-             */
-            createOrderUrl: '',
-
-            /**
-             * After approval, redirect to this URL
-             *
-             * @type string
-             */
-            returnUrl: '',
-
-            /**
-             * This page will be opened when the payment creation fails.
-             *
-             * @type string
-             */
-            paypalErrorPage: '',
-
-            /**
-             * The class name to identify whether the PayPal sdk has been loaded
-             *
-             * @type string
-             */
-            paypalScriptLoadedSelector: 'paypal-checkout-js-loaded',
-
-            /**
-             * selector for the checkout confirm form element
-             *
-             * @type string
-             */
-            confirmFormSelector: '#confirm--form',
-
-            /**
-             * selector for the submit button of the checkout confirm form
-             *
-             * @type string
-             */
-            confirmFormSubmitButtonSelector: ':submit[form="confirm--form"]',
-
-            /**
-             * @type string
-             */
-            sdkUrl: 'https://www.paypal.com/sdk/js',
-
-            /**
-             * Holds the client id
-             *
-             * @type string
-             */
-            clientId: '',
-
-            /**
-             * @type string
-             */
-            paypalIntent: 'capture',
-
-            /**
-             * The language ISO (ISO_639) or the Smart Payment Buttons.
-             *
-             * for possible values see: https://developer.paypal.com/api/rest/reference/locale-codes/
-             *
-             * @type string
-             */
-            locale: 'en_GB',
-
-            /**
-             * Use PayPal debug mode
-             *
-             * @type boolean
-             */
-            useDebugMode: false,
-
-            /**
-             * Currency which should be used for the Smart Payment Buttons
-             *
-             * @type string
-             */
-            currency: 'EUR',
-
-            /**
              * The unique ID of the basket. Will be generated on creating the payment
              *
              * @type string
              */
-            basketId: '',
-
-            /**
-             * PayPal button label
-             *
-             * IMPORTANT: Changing this value can lead to legal issues!
-             *
-             * @type string
-             */
-            label: 'buynow',
-
-            /**
-             *  @type string
-             */
-            hiddenClass: 'is--hidden'
-        },
+            basketId: ''
+        }),
 
         /**
          * PayPal Object
@@ -132,6 +36,10 @@
 
             this.formValidityFunctions.hideConfirmButton();
             this.formValidityFunctions.disableConfirmButton();
+
+            this.buttonSize = $.swagPayPalCreateButtonSizeObject(this.opts);
+
+            this.$el.addClass(this.buttonSize[this.opts.size].widthClass);
 
             this.subscribeEvents();
             $.publish('plugin/swagPayPalUnifiedSmartPaymentButtons/init', this);
@@ -220,9 +128,7 @@
 
         getButtonConfig: function() {
             return {
-                style: {
-                    label: this.opts.label
-                },
+                style: $.swagPayPalCreateButtonStyle(this.opts, this.buttonSize, false),
 
                 /**
                  * Will be called on initialisation of the payment button

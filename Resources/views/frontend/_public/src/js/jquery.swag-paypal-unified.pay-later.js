@@ -2,211 +2,12 @@
     'use strict';
 
     $.plugin('swagPayPalUnifiedPayLater', {
-        defaults: {
-            /**
-             * label of the button
-             * possible values:
-             *  - buynow
-             *  - checkout
-             *  - credit
-             *  - pay
-             *
-             * IMPORTANT: Changing this value can lead to legal issues!
-             *
-             * @type string
-             */
-            label: 'buynow',
-
-            /**
-             * show text under the button
-             *
-             * @type boolean
-             */
-            tagline: false,
-
-            /**
-             * size of the button
-             * possible values:
-             *  - small
-             *  - medium
-             *  - large
-             *  - responsive
-             *
-             * @type string
-             */
-            size: 'medium',
-
-            /**
-             * shape of the button
-             * possible values:
-             *  - pill
-             *  - rect
-             *
-             * @type string
-             */
-            shape: 'rect',
-
-            /**
-             * color of the button
-             * possible values:
-             *  - gold
-             *  - blue
-             *  - silver
-             *  - black
-             *
-             * @type string
-             */
-            color: 'gold',
-
-            /**
-             * The language ISO (ISO_639) locale of the button.
-             *
-             * for possible values see: https://developer.paypal.com/api/rest/reference/locale-codes/
-             *
-             * @type string
-             */
-            locale: '',
-
-            /**
-             *  @type string
-             */
-            layout: 'horizontal',
-
-            /**
-             * selector for the checkout confirm form element
-             *
-             * @type string
-             */
-            confirmFormSelector: '#confirm--form',
-
-            /**
-             * selector for the submit button of the checkout confirm form
-             *
-             * @type string
-             */
-            confirmFormSubmitButtonSelector: ':submit[form="confirm--form"]',
-
-            /**
-             * The selector for the indicator whether the PayPal javascript is already loaded or not
-             *
-             * @type string
-             */
-            paypalScriptLoadedSelector: 'paypal-checkout-js-loaded',
-
-            /**
-             * This page will be opened when the payment creation fails.
-             *
-             * @type string
-             */
-            paypalErrorPage: '',
-
-            /**
-             * This page will be opened when the payment creation fails.
-             *
-             * @type string
-             */
-            currency: 'EUR',
-
-            /**
-             * The PayPal clientId
-             *
-             * @type string|null
-             */
-            clientId: null,
-
-            /**
-             * @type string
-             */
-            sdkUrl: 'https://www.paypal.com/sdk/js',
-
-            /**
-             * @type string
-             */
-            createOrderUrl: '',
-
-            /**
-             * @type string
-             */
-            returnUrl: '',
-
-            /**
-             * Use PayPal debug mode
-             *
-             * @type boolean
-             */
-            useDebugMode: false,
-
-            /**
-             * @type string
-             */
-            paypalIntent: 'capture',
-
-            /**
-             * PayPal button height small
-             *
-             * @type number
-             */
-            smallHeight: 25,
-
-            /**
-             * PayPal button height medium
-             *
-             * @type number
-             */
-            mediumHeight: 35,
-
-            /**
-             * PayPal button height large
-             *
-             * @type number
-             */
-            largeHeight: 45,
-
-            /**
-             * PayPal button height responsive
-             *
-             * @type number
-             */
-            responsiveHeight: 55,
-
-            /**
-             *  @type string
-             */
-            hiddenClass: 'is--hidden',
-
-            /**
-             * PayPal button width small
-             *
-             * @type string
-             */
-            smallWidthClass: 'paypal-button-width--small',
-
-            /**
-             * PayPal button width medium
-             *
-             * @type string
-             */
-            mediumWidthClass: 'paypal-button-width--medium',
-
-            /**
-             * PayPal button width large
-             *
-             * @type string
-             */
-            largeWidthClass: 'paypal-button-width--large',
-
-            /**
-             * PayPal button width responsive
-             *
-             * @type string
-             */
-            responsiveWidthClass: 'paypal-button-width--responsive',
-
+        defaults: Object.assign($.swagPayPalCreateDefaultPluginConfig(), {
             /**
              * @type string
              */
             enabledFundings: 'paylater'
-        },
+        }),
 
         init: function() {
             this.applyDataAttributes();
@@ -222,34 +23,13 @@
             this.formValidityFunctions.hideConfirmButton();
             this.formValidityFunctions.disableConfirmButton();
 
-            this.createButtonSizeObject();
+            this.buttonSize = $.swagPayPalCreateButtonSizeObject(this.opts);
 
             this.$el.addClass(this.buttonSize[this.opts.size].widthClass);
 
             this.createButton();
 
             $.publish('plugin/swagPayPalUnifiedPayLater/init', this);
-        },
-
-        createButtonSizeObject: function() {
-            this.buttonSize = {
-                small: {
-                    height: this.opts.smallHeight,
-                    widthClass: this.opts.smallWidthClass
-                },
-                medium: {
-                    height: this.opts.mediumHeight,
-                    widthClass: this.opts.mediumWidthClass
-                },
-                large: {
-                    height: this.opts.largeHeight,
-                    widthClass: this.opts.largeWidthClass
-                },
-                responsive: {
-                    height: this.opts.responsiveHeight,
-                    widthClass: this.opts.responsiveWidthClass
-                }
-            };
         },
 
         /**
@@ -317,14 +97,12 @@
             var buttonConfig = {
                 fundingSource: 'paylater',
 
-                style: {
-                    label: this.opts.label,
-                    color: this.opts.color,
-                    shape: this.opts.shape,
-                    layout: this.opts.layout,
-                    tagline: this.opts.tagline,
-                    height: this.buttonSize[this.opts.size].height
-                },
+                style: Object.assign(
+                    $.swagPayPalCreateButtonStyle(this.opts, this.buttonSize, false),
+                    {
+                        color: 'gold'
+                    }
+                ),
 
                 /**
                  * Will be called on initialisation of the payment button
