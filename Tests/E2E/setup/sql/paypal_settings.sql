@@ -27,3 +27,5 @@ INSERT INTO swag_payment_paypal_unified_settings_plus (id, shop_id, active, rest
 (1, 1, 0, 0, 0, 'PayPal, Lastschrift oder Kreditkarte', 'Zahlung per Lastschrift oder Kreditkarte ist auch ohne PayPal Konto möglich', 0, 0);
 
 UPDATE s_user_addresses SET country_id = 2 WHERE user_id = 1;
+
+UPDATE s_core_theme_settings SET compiler_force = 1 WHERE 1 = 1;

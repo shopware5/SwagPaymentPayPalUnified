@@ -80,8 +80,12 @@ services:
                         'ignoredExceptionClasses' => [],
                     ],
 
+                    'template' => [
+                        'forceCompile' => true,
+                    ],
+
                     'cache' => [
-                        'backend' => 'file',
+                        'backend' => 'Black-Hole',
                     ],
                 ];
         volumes:
@@ -103,7 +107,7 @@ services:
             - "${CI_PROJECT_DIR}:/project"
         working_dir: "/project/Tests/E2E"
         entrypoint: [ "npm" ]
-        command: [ "install" ]
+        command: [ "install", "--no-update-notifie" ]
     playwright:
         image: mcr.microsoft.com/playwright:v1.27.1-focal
         environment:

@@ -20,8 +20,6 @@ use SwagPaymentPayPalUnified\Components\Services\OrderDataService;
 use SwagPaymentPayPalUnified\Components\Services\PaymentStatusService;
 use SwagPaymentPayPalUnified\Components\Services\SettingsService;
 use SwagPaymentPayPalUnified\Components\Services\Validation\SimpleBasketValidator;
-use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
-use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\OrderResource;
 use SwagPaymentPayPalUnified\Tests\Functional\AssertLocationTrait;
@@ -55,9 +53,6 @@ class PayPalUnifiedV2ReturnActionTest extends PaypalPaymentControllerTestCase
         $response = new Enlight_Controller_Response_ResponseTestCase();
 
         $settingsServiceMock = $this->createMock(SettingsService::class);
-//        $settingsServiceMock->method('get')->willReturnMap([
-//            [SettingsServiceInterface::SETTING_GENERAL_USE_IN_CONTEXT, SettingsTable::GENERAL, true],
-//        ]);
 
         $payPalOrder = $this->createPayPalOrder();
 

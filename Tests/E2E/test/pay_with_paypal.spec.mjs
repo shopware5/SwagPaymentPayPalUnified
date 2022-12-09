@@ -22,6 +22,8 @@ test.describe('Frontend', () => {
         // activate customer comments
         await customerCommentHelper.updateCommentSetting();
 
+        await clearCacheHelper.clearCache();
+
         await loginHelper.login(page);
 
         // Buy Product
