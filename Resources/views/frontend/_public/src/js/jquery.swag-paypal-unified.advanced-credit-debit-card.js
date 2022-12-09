@@ -312,7 +312,7 @@
          * @return { String }
          */
         onCreatePaypalOrderSuccess: function(response) {
-            return response.paypalOrderId;
+            return response.token;
         },
 
         /**
@@ -323,7 +323,7 @@
                 type: 'POST',
                 url: this.opts.captureUrl,
                 data: {
-                    paypalOrderId: response.orderId
+                    token: response.orderId
                 },
                 success: this.submitForm.bind(this, response.orderId),
                 error: this.onError.bind(this),
@@ -339,7 +339,7 @@
                 input = document.createElement('input');
 
             input.setAttribute('type', 'hidden');
-            input.setAttribute('name', 'paypalOrderId');
+            input.setAttribute('name', 'token');
             input.setAttribute('value', paypalOrderId);
 
             $orderForm.append(input);

@@ -101,7 +101,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2AdvancedCreditDebitCard extend
             return;
         }
 
-        $this->view->assign('paypalOrderId', $payPalOrder->getId());
+        $this->view->assign('token', $payPalOrder->getId());
     }
 
     /**
@@ -111,13 +111,13 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2AdvancedCreditDebitCard extend
     {
         $this->logger->debug(sprintf('%s START', __METHOD__));
 
-        $payPalOrderId = $this->request->getParam('paypalOrderId');
+        $payPalOrderId = $this->request->getParam('token');
         $threeDSecureRetry = (int) $this->request->getParam('threeDSecureRetry', 0);
 
         if (!\is_string($payPalOrderId)) {
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
                 ->setCode(ErrorCodes::UNKNOWN)
-                ->setException(new UnexpectedValueException("Required request parameter 'paypalOrderId' is missing"), '');
+                ->setException(new UnexpectedValueException("Required request parameter 'token' (paypalOrderId) is missing"), '');
 
             $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
 
@@ -152,7 +152,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2AdvancedCreditDebitCard extend
                     'module' => 'widgets',
                     'controller' => 'PaypalUnifiedV2AdvancedCreditDebitCard',
                     'action' => 'capture',
-                    'paypalOrderId' => $payPalOrderId,
+                    'token' => $payPalOrderId,
                     'threeDSecureRetry' => ++$threeDSecureRetry,
                 ]);
 
@@ -204,7 +204,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2AdvancedCreditDebitCard extend
                 'module' => 'widgets',
                 'controller' => 'PaypalUnifiedV2AdvancedCreditDebitCard',
                 'action' => 'capture',
-                'paypalOrderId' => $payPalOrderId,
+                'token' => $payPalOrderId,
             ]);
 
             return;
@@ -250,7 +250,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2AdvancedCreditDebitCard extend
 
         $this->logger->debug(sprintf('%s SET PAYPAL ORDER ID TO SESSION: ID: %s', __METHOD__, $payPalOrderId));
 
-        $this->dependencyProvider->getSession()->offsetSet('paypalOrderId', $payPalOrderId);
+        $this->dependencyProvider->getSession()->offsetSet('token', $payPalOrderId);
     }
 
     /**

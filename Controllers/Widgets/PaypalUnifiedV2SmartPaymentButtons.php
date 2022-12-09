@@ -77,7 +77,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2SmartPaymentButtons extends Ab
             return;
         }
 
-        $this->view->assign('paypalOrderId', $payPalOrder->getId());
+        $this->view->assign('token', $payPalOrder->getId());
         $this->view->assign('basketId', $orderParams->getBasketUniqueId());
     }
 }

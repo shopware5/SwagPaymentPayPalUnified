@@ -144,7 +144,6 @@ class ExpressCheckout implements SubscriberInterface
         $product = $view->getAssign('sArticle'); // content on modal window of ajaxAddArticleAction
 
         if ((isset($cart['content']) || $product) && !$this->isUserLoggedIn()) {
-            $view->assign('paypalUnifiedUseInContext', $generalSettings->getUseInContext());
             $this->addEcButtonBehaviour($view, $generalSettings);
             $this->addEcButtonStyleInfo($view, $expressSettings, $generalSettings);
         }
@@ -169,7 +168,7 @@ class ExpressCheckout implements SubscriberInterface
 
         if (\strtolower($request->getActionName()) === 'confirm' && $request->getParam('expressCheckout', false)) {
             $view->assign('paypalUnifiedExpressCheckout', true);
-            $view->assign('paypalUnifiedExpressOrderId', $request->getParam('paypalOrderId'));
+            $view->assign('paypalUnifiedExpressOrderId', $request->getParam('token'));
             $view->assign('paypalUnifiedExpressPayerId', $request->getParam('payerId'));
             $view->assign('paypalUnifiedExpressBasketId', $request->getParam('basketId'));
         }
@@ -178,7 +177,7 @@ class ExpressCheckout implements SubscriberInterface
             $args->getSubject()->redirect([
                 'controller' => 'PaypalUnifiedV2ExpressCheckout',
                 'action' => 'expressCheckoutFinish',
-                'paypalOrderId' => $request->getParam('paypalOrderId'),
+                'token' => $request->getParam('token'),
             ]);
         }
     }

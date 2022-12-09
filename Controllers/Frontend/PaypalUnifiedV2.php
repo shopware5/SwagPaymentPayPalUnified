@@ -15,7 +15,6 @@ use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\InvalidShippingAddr
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\NoOrderToProceedException;
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\PayerActionRequiredException;
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\RequireRestartException;
-use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Common\Link;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
@@ -98,7 +97,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
         if ($this->Request()->isXmlHttpRequest()) {
             $this->logger->debug(sprintf('%s IS XHR REQUEST', __METHOD__));
 
-            $this->view->assign('paypalOrderId', $payPalOrder->getId());
+            $this->view->assign('token', $payPalOrder->getId());
             $this->view->assign('basketId', $orderParams->getBasketUniqueId());
 
             return;
@@ -137,10 +136,10 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
                 ->setCode(ErrorCodes::NO_ORDER_TO_PROCESS)
                 ->setException(
                     new UnexpectedValueException(
-                        'Cannot get PayPalOrderId from request',
+                        'Cannot get token (PayPalOrderId) from request',
                         ErrorCodes::NO_ORDER_TO_PROCESS
                     ),
-                    sprintf('%s try to get PayPalOrderId from request', __METHOD__)
+                    sprintf('%s try to get token (PayPalOrderId) from request', __METHOD__)
                 );
 
             $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
@@ -167,8 +166,6 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
             return;
         }
 
-        $paymentType = $this->getPaymentType($payPalOrder);
-
         try {
             $payPalOrder = $this->captureOrAuthorizeOrder($payPalOrder);
         } catch (RequireRestartException $requireRestartException) {
@@ -180,8 +177,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
                 'module' => 'frontend',
                 'controller' => 'PaypalUnifiedV2',
                 'action' => 'return',
-                'paypalOrderId' => $payPalOrderId,
-                'inContextCheckout' => (int) $this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_USE_IN_CONTEXT),
+                'token' => $payPalOrderId,
             ]);
 
             return;
@@ -219,14 +215,14 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
             return;
         }
 
-        $shopwareOrderNumber = $this->createShopwareOrder($payPalOrder->getId(), $paymentType);
+        $shopwareOrderNumber = $this->createShopwareOrder($payPalOrder->getId(), $this->getPaymentType());
 
         $this->setTransactionId($shopwareOrderNumber, $payPalOrder);
 
         $this->updatePaymentStatus($payPalOrder->getIntent(), $this->getOrderId($shopwareOrderNumber));
 
         if ($this->Request()->isXmlHttpRequest()) {
-            $this->view->assign('paypalOrderId', $payPalOrderId);
+            $this->view->assign('token', $payPalOrderId);
 
             $this->logger->debug(sprintf('%s IS XHR REQUEST', __METHOD__));
 
@@ -248,11 +244,6 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
      */
     private function getPayPalOrderIdFromRequest()
     {
-        $payPalOrderID = $this->Request()->getParam('paypalOrderId');
-        if ($payPalOrderID !== null) {
-            return (string) $payPalOrderID;
-        }
-
         $payPalOrderID = $this->Request()->getParam('token');
         if ($payPalOrderID !== null) {
             return (string) $payPalOrderID;

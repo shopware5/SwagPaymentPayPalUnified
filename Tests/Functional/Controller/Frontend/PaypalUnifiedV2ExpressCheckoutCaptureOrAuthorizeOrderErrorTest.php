@@ -66,7 +66,7 @@ class PaypalUnifiedV2ExpressCheckoutCaptureOrAuthorizeOrderErrorTest extends Pay
 
         $controller->expressCheckoutFinishAction();
 
-        static::assertLocationEndsWith($controller->Response(), 'PaypalUnifiedV2ExpressCheckout/expressCheckoutFinish/paypalOrderId/xxxxxxxxxxxxxxxx');
+        static::assertLocationEndsWith($controller->Response(), 'PaypalUnifiedV2ExpressCheckout/expressCheckoutFinish/token/xxxxxxxxxxxxxxxx');
         static::assertSame(302, $controller->Response()->getHttpResponseCode());
     }
 
@@ -116,7 +116,7 @@ class PaypalUnifiedV2ExpressCheckoutCaptureOrAuthorizeOrderErrorTest extends Pay
     private function createController(array $captureErrorResponse)
     {
         $request = new Enlight_Controller_Request_RequestTestCase();
-        $request->setParam('paypalOrderId', 'xxxxxxxxxxxxxxxx');
+        $request->setParam('token', 'xxxxxxxxxxxxxxxx');
 
         $payPalOrderParameterMock = $this->createMock(PayPalOrderParameter::class);
 

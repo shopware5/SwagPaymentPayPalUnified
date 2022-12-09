@@ -48,7 +48,6 @@ use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
-use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Payments\Authorization;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Payments\Capture;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Patch;
@@ -464,40 +463,28 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
     /**
      * @return PaymentType::*
      */
-    protected function getPaymentType(Order $order)
+    protected function getPaymentType()
     {
-        if ($this->request->getParam('sepaCheckout', false)) {
-            return PaymentType::PAYPAL_SEPA;
-        }
+        $customer = $this->getUser();
 
-        if ($this->request->getParam('acdcCheckout', false)) {
-            return PaymentType::PAYPAL_ADVANCED_CREDIT_DEBIT_CARD;
-        }
-
-        if ($this->request->getParam('spbCheckout', false)) {
-            return PaymentType::PAYPAL_SMART_PAYMENT_BUTTONS_V2;
-        }
-
-        if ($this->request->getParam('paypalUnifiedPayLater', false)) {
-            return PaymentType::PAYPAL_PAY_LATER;
-        }
-
-        $paymentSource = $order->getPaymentSource();
-        if (!$paymentSource instanceof PaymentSource) {
+        if (!\is_array($customer)) {
             return PaymentType::PAYPAL_CLASSIC_V2;
         }
 
-        foreach (self::PAYMENT_SOURCE_GETTER_LIST as $paymentType => $getter) {
-            if ($paymentSource->$getter() !== null) {
-                return $paymentType;
-            }
-        }
-
-        if ($this->request->getParam('inContextCheckout', false) || $this->request->getParam('token', false)) {
+        $paymentName = $this->paymentMethodProvider->getPaymentNameById($customer['additional']['payment']['id']);
+        if (!\is_string($paymentName)) {
             return PaymentType::PAYPAL_CLASSIC_V2;
         }
 
-        throw new UnexpectedValueException('Payment type not found');
+        try {
+            $paymentType = $this->paymentMethodProvider->getPaymentTypeByName($paymentName);
+        } catch (UnexpectedValueException $exception) {
+            // In this case it is a payment method that does not come from the PayPalPlugin.
+            // Since this should not happen, we return the classic payment method.
+            return PaymentType::PAYPAL_CLASSIC_V2;
+        }
+
+        return $paymentType;
     }
 
     /**
@@ -724,7 +711,7 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
     protected function setTransactionId($shopwareOrderNumber, Order $payPalOrder)
     {
         if (!\is_string($shopwareOrderNumber)) {
-            $logTemplate = 'Cannot set transactionId because order number is not valid. PayPalOrderId: %s';
+            $logTemplate = 'Cannot set transactionId because order number is not valid. token (PayPalOrderId): %s';
             $this->logger->warning(sprintf($logTemplate, $payPalOrder->getId()));
 
             return;

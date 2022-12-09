@@ -195,7 +195,7 @@ class Shopware_Controllers_Backend_PaypalUnifiedV2 extends Shopware_Controllers_
         $this->logger->debug(sprintf('%s START', __METHOD__));
 
         $authorizationId = $this->Request()->getParam('authorizationId');
-        $paypalOrderId = $this->Request()->getParam('paypalOrderId');
+        $paypalOrderId = $this->Request()->getParam('token');
         $shopwareOrderId = $this->Request()->getParam('shopwareOrderId');
 
         try {

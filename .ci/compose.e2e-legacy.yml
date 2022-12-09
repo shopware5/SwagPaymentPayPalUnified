@@ -41,7 +41,7 @@ services:
         tmpfs:
             - "/var/lib/mysql"
     shopware:
-        image: gitlab.shopware.com:5005/shopware/5/product/image/aio:latest
+        image: gitlab.shopware.com:5005/shopware/5/product/image/aio:v5.2.27
         environment:
             <<: *default-environment
             SHOPWARE_CONFIG: |
@@ -75,13 +75,17 @@ services:
                         'display_errors' => 1,
                     ],
 
+                    'template' => [
+                        'forceCompile' => true,
+                    ],
+
                     'errorHandler' => [
                         'throwOnRecoverableError' => true,
                         'ignoredExceptionClasses' => [],
                     ],
 
                     'cache' => [
-                        'backend' => 'file',
+                        'backend' => 'Black-Hole',
                     ],
                 ];
         volumes:
@@ -103,7 +107,7 @@ services:
             - "${CI_PROJECT_DIR}:/project"
         working_dir: "/project/Tests/E2E"
         entrypoint: [ "npm" ]
-        command: [ "install" ]
+        command: [ "install", "--no-update-notifie" ]
     playwright:
         image: mcr.microsoft.com/playwright:v1.27.1-focal
         environment:

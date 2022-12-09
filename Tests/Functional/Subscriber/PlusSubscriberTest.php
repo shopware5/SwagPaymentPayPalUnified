@@ -573,7 +573,6 @@ class PlusSubscriberTest extends TestCase
             'shopId' => 1,
             'active' => 1,
             'showSidebarLogo' => 0,
-            'useInContext' => 0,
             'displayErrors' => 0,
             'brandName' => 'PlusTestBrandName',
         ];

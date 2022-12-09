@@ -316,14 +316,6 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
                 },
                 {
                     xtype: 'checkbox',
-                    name: 'useInContext',
-                    inputValue: true,
-                    uncheckedValue: false,
-                    fieldLabel: '{s name="fieldset/behaviour/useInContext"}Use in-context mode{/s}',
-                    helpText: '{s name="fieldset/behaviour/useInContext/help"}Enable to use the PayPal in-context solution. Instead of redirecting to the PayPal login page, an overlay will be shown and the customer does not need to leave the shop. This option has no effect on the Smart Payment Buttons, as they always use the in-Context mode.{/s}',
-                },
-                {
-                    xtype: 'checkbox',
                     name: 'submitCart',
                     inputValue: true,
                     uncheckedValue: false,
@@ -339,8 +331,6 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
                     fieldLabel: '{s name="fieldset/behaviour/showSidebarLogo"}Show logo in sidebar{/s}',
                     boxLabel: '{s name="fieldset/behaviour/showSidebarLogo/help"}Enable this option to show the PayPal logo in the storefront sidebar.{/s}'
                 },
-                me.orderStatusSelect,
-                me.paymentStatusSelect,
                 me.orderNumberPrefix,
                 me.smartPaymentButtonsCheckbox
             ]

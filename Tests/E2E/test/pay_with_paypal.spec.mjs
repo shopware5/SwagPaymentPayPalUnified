@@ -6,7 +6,6 @@ import loginHelper from '../helper/loginHelper.mjs';
 import clearCacheHelper from '../helper/clearCacheHelper.mjs';
 import customerCommentHelper from '../helper/customerCommentHelper.mjs';
 import getPaypalPaymentMethodSelector from '../helper/getPayPalPaymentMethodSelector.mjs';
-import backendLoginHelper from '../helper/backendLoginHelper.mjs';
 
 const connection = MysqlFactory.getInstance();
 
@@ -23,24 +22,7 @@ test.describe('Frontend', () => {
         // activate customer comments
         await customerCommentHelper.updateCommentSetting();
 
-        // clear the shopware cache
-        await backendLoginHelper.login(page);
-
-        // open the performance module
-        await page.locator('text=Einstellungen').click();
-        await page.locator('text=Caches / Performance').click();
-
-        await page.waitForLoadState('load');
-
-        // select the cache tab
-        await page.locator('.x-tab-inner:has-text("Cache")').click();
-
-        // clear the cache
-        await page.locator('button[role="button"]:has-text("Alle auswählen")').click();
-        await page.locator('button[role="button"]:has-text("Leeren") >> visible=true').click();
-        await page.locator('button[role="button"]:has-text("Themes kompilieren")').click();
-
-        await page.waitForLoadState('load');
+        await clearCacheHelper.clearCache();
 
         await loginHelper.login(page);
 

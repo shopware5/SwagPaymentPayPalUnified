@@ -18,8 +18,6 @@ use stdClass;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\Services\SettingsService;
 use SwagPaymentPayPalUnified\Components\Services\Validation\SimpleBasketValidator;
-use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
-use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\OrderResource;
 use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
@@ -50,12 +48,11 @@ class PaypalUnifiedReturnActionNotInContextTest extends PaypalPaymentControllerT
      * @dataProvider returnActionShouldRedirectWithTokenRequestParameterTestDataProvider
      *
      * @param array<string,string> $requestParameter
-     * @param int                  $useInContext
      * @param string               $expectedResult
      *
      * @return void
      */
-    public function testReturnActionShouldRedirectWithTokenRequestParameter(array $requestParameter, $useInContext, $expectedResult)
+    public function testReturnActionShouldRedirectWithTokenRequestParameter(array $requestParameter, $expectedResult)
     {
         $sBasket = require __DIR__ . '/_fixtures/getBasket_result.php';
         $sUserData = require __DIR__ . '/_fixtures/getUser_result.php';
@@ -77,7 +74,7 @@ class PaypalUnifiedReturnActionNotInContextTest extends PaypalPaymentControllerT
             [
                 self::SERVICE_ORDER_RESOURCE => $this->createOrderResource(),
                 self::SERVICE_SIMPLE_BASKET_VALIDATOR => $this->createSimpleBasketValidator(),
-                self::SERVICE_SETTINGS_SERVICE => $this->createSettingService($useInContext),
+                self::SERVICE_SETTINGS_SERVICE => $this->createSettingService(),
                 self::SERVICE_DBAL_CONNECTION => $connectionMock,
                 self::SERVICE_DEPENDENCY_PROVIDER => $dependencyProviderMock,
             ],
@@ -101,13 +98,11 @@ class PaypalUnifiedReturnActionNotInContextTest extends PaypalPaymentControllerT
     {
         yield 'request contains token' => [
             ['key' => 'token', 'value' => '08154711'],
-            0,
             'checkout/finish/sUniqueID/08154711',
         ];
 
         yield 'negative test -> request contains paypalOrderId' => [
-            ['key' => 'paypalOrderId', 'value' => '42007579'],
-            1,
+            ['key' => 'token', 'value' => '42007579'],
             'checkout/finish/sUniqueID/42007579',
         ];
     }
@@ -117,7 +112,7 @@ class PaypalUnifiedReturnActionNotInContextTest extends PaypalPaymentControllerT
      */
     public function testReturnActionWithoutRequestParameter()
     {
-        $this->insertGeneralSettingsFromArray(['active' => 1, 'use_in_context' => 0]);
+        $this->insertGeneralSettingsFromArray(['active' => 1]);
 
         $orderResource = $this->createMock(OrderResource::class);
         $orderResource->expects(static::once())->method('get')->willReturn(null);
@@ -131,7 +126,7 @@ class PaypalUnifiedReturnActionNotInContextTest extends PaypalPaymentControllerT
         $dependencyProviderMock->method('getModule')->willReturn(new stdClass());
 
         $request = new Enlight_Controller_Request_RequestTestCase();
-        $request->setParam('paypalOrderId', 'xxxxxxxxxxxxxxx');
+        $request->setParam('token', 'xxxxxxxxxxxxxxx');
 
         $controller = $this->getController(
             Shopware_Controllers_Frontend_PaypalUnifiedV2::class,
@@ -188,18 +183,11 @@ class PaypalUnifiedReturnActionNotInContextTest extends PaypalPaymentControllerT
     }
 
     /**
-     * @param int $returnValue
-     *
      * @return SettingsService&MockObject
      */
-    private function createSettingService($returnValue)
+    private function createSettingService()
     {
-        $settingsService = $this->createMock(SettingsService::class);
-        $settingsService->method('get')->willReturnMap([
-            [SettingsServiceInterface::SETTING_GENERAL_USE_IN_CONTEXT, SettingsTable::GENERAL, $returnValue],
-        ]);
-
-        return $settingsService;
+        return $this->createMock(SettingsService::class);
     }
 
     /**

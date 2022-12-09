@@ -108,8 +108,6 @@ class Shopware_Controllers_Frontend_PaypalUnifiedApm extends AbstractPaypalPayme
             return;
         }
 
-        $paymentType = $this->getPaymentType($payPalOrder);
-
         try {
             $this->captureOrAuthorizeOrder($payPalOrder);
         } catch (RequireRestartException $requireRestartException) {
@@ -154,7 +152,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedApm extends AbstractPaypalPayme
         }
 
         if ($this->Request()->isXmlHttpRequest()) {
-            $this->view->assign('paypalOrderId', $payPalOrderId);
+            $this->view->assign('token', $payPalOrderId);
 
             $this->logger->debug(sprintf('%s IS XHR REQUEST', __METHOD__));
 
@@ -167,7 +165,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedApm extends AbstractPaypalPayme
                 return;
             }
 
-            $shopwareOrderNumber = $this->createShopwareOrder($payPalOrderId, $paymentType);
+            $shopwareOrderNumber = $this->createShopwareOrder($payPalOrderId, $this->getPaymentType());
 
             $this->setTransactionId($shopwareOrderNumber, $payPalOrder);
 

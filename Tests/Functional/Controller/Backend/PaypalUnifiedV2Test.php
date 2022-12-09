@@ -239,21 +239,21 @@ class PaypalUnifiedV2Test extends PaypalPaymentControllerTestCase
     public function cancelAuthorizationTestDataProvider()
     {
         yield 'Expect success false because of a error while void' => [
-            ['authorizationId' => '123456', 'paypalOrderId' => '123456', 'shopwareOrderId' => '173000', 'shopId' => 1],
+            ['authorizationId' => '123456', 'token' => '123456', 'shopwareOrderId' => '173000', 'shopId' => 1],
             true,
             PaymentStatusV2::ORDER_AUTHORIZATION_PENDING,
             self::DEFAULT_PAYMENT_STATE,
         ];
 
         yield 'Expect success true and DEFAULT_PAYMENT_STATE => 99' => [
-            ['authorizationId' => '123456', 'paypalOrderId' => '123456', 'shopwareOrderId' => '173000', 'shopId' => 1],
+            ['authorizationId' => '123456', 'token' => '123456', 'shopwareOrderId' => '173000', 'shopId' => 1],
             false,
             PaymentStatusV2::ORDER_AUTHORIZATION_PENDING,
             self::DEFAULT_PAYMENT_STATE,
         ];
 
         yield 'Expect success true and PAYMENT_STATE_THE_PROCESS_HAS_BEEN_CANCELLED => 35' => [
-            ['authorizationId' => '123456', 'paypalOrderId' => '123456', 'shopwareOrderId' => '173000', 'shopId' => 1],
+            ['authorizationId' => '123456', 'token' => '123456', 'shopwareOrderId' => '173000', 'shopId' => 1],
             false,
             PaymentStatusV2::ORDER_VOIDED,
             Status::PAYMENT_STATE_THE_PROCESS_HAS_BEEN_CANCELLED,

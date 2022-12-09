@@ -50,7 +50,7 @@ class PaypalUnifiedV2AdvancedCreditDebitCardThreeDSecureTest extends PaypalPayme
             new Enlight_View_Default($this->getContainer()->get('template'))
         );
 
-        $controller->Request()->setParam('paypalOrderId', 'any');
+        $controller->Request()->setParam('token', 'any');
         $controller->Request()->setParam('threeDSecureRetry', 3);
         $controller->Request()->setHeader('X-Requested-With', 'XMLHttpRequest');
 

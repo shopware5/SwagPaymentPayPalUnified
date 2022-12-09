@@ -90,7 +90,6 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $subscriber = $this->getSubscriber();
         $subscriber->addExpressCheckoutButtonCart($enlightEventArgs);
 
-        static::assertNull($view->getAssign('paypalUnifiedUseInContext'));
         static::assertNull($view->getAssign('paypalUnifiedShowPayLaterExpress'));
         $paymentMethodProvider->setPaymentMethodActiveFlag(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME, true);
     }
@@ -114,7 +113,6 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $subscriber = $this->getSubscriber();
         $subscriber->addExpressCheckoutButtonCart($enlightEventArgs);
 
-        static::assertNull($view->getAssign('paypalUnifiedUseInContext'));
         static::assertNull($view->getAssign('paypalUnifiedShowPayLaterExpress'));
     }
 
@@ -138,7 +136,6 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $subscriber = $this->getSubscriber();
         $subscriber->addExpressCheckoutButtonCart($enlightEventArgs);
 
-        static::assertNull($view->getAssign('paypalUnifiedUseInContext'));
         static::assertNull($view->getAssign('paypalUnifiedShowPayLaterExpress'));
     }
 
@@ -163,7 +160,6 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $subscriber = $this->getSubscriber();
         $subscriber->addExpressCheckoutButtonCart($enlightEventArgs);
 
-        static::assertNull($view->getAssign('paypalUnifiedUseInContext'));
         static::assertNull($view->getAssign('paypalUnifiedShowPayLaterExpress'));
     }
 
@@ -197,7 +193,6 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $subscriber = $this->getSubscriber();
         $subscriber->addExpressCheckoutButtonCart($enlightEventArgs);
 
-        static::assertNull($view->getAssign('paypalUnifiedUseInContext'));
         static::assertNull($view->getAssign('paypalUnifiedShowPayLaterExpress'));
     }
 
@@ -348,7 +343,6 @@ class ExpressCheckoutSubscriberTest extends TestCase
 
         static::assertNull($view->getAssign('paypalUnifiedEcCartActive'));
         static::assertNull($view->getAssign('paypalUnifiedEcOffCanvasActive'));
-        static::assertNull($view->getAssign('paypalUnifiedUseInContext'));
     }
 
     /**
@@ -399,7 +393,7 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $view = new ViewMock(new Enlight_Template_Manager());
         $request = new Enlight_Controller_Request_RequestTestCase();
         $request->setActionName('confirm');
-        $request->setParam('paypalOrderId', 'TEST_PAYMENT_ID');
+        $request->setParam('token', 'TEST_PAYMENT_ID');
         $request->setParam('payerId', 'TEST_PAYER_ID');
         $request->setParam('expressCheckout', true);
 
@@ -430,7 +424,7 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $view = new ViewMock(new Enlight_Template_Manager());
         $request = new Enlight_Controller_Request_RequestTestCase();
         $request->setActionName('confirm');
-        $request->setParam('paypalOrderId', 'TEST_PAYMENT_ID');
+        $request->setParam('token', 'TEST_PAYMENT_ID');
         $request->setParam('payerId', 'TEST_PAYER_ID');
         $request->setParam('expressCheckout', true);
         $this->getContainer()->get('front')->setRequest($request);

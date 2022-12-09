@@ -166,7 +166,7 @@
 
         onApprove: function(data, actions) {
             var params = {
-                paypalOrderId: data.orderID,
+                token: data.orderID,
                 payerId: data.payerID,
                 basketId: this.opts.basketId
             };

@@ -63,8 +63,8 @@ PAYPAL_SEPA_PHONE="${PAYPAL_SEPA_PHONE}"
 PAYPAL_SEPA_BIRTHDAY="${PAYPAL_SEPA_BIRTHDAY}"
 ```
 
-2. Execute `.ci/compose.sh e2e shopware-current run playwright` or
-`.ci/compose.sh e2e shopware-legacy run playwright`
+2. Execute `.ci/compose.sh e2e-current shopware-current run playwright` or
+`.ci/compose.sh e2e-legacy shopware-legacy run playwright`
 
 #### Debug container
 

@@ -30,12 +30,12 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2ExpressCheckout extends Abstr
     {
         $this->logger->debug(sprintf('%s START', __METHOD__));
 
-        $payPalOrderId = $this->request->getParam('paypalOrderId');
+        $payPalOrderId = $this->request->getParam('token');
 
         if (!\is_string($payPalOrderId)) {
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
                 ->setCode(ErrorCodes::UNKNOWN)
-                ->setException(new UnexpectedValueException("Required request parameter 'paypalOrderId' is missing"), '');
+                ->setException(new UnexpectedValueException("Required request parameter 'token' (paypalOrderId) is missing"), '');
             $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
 
             return;
@@ -87,7 +87,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2ExpressCheckout extends Abstr
                 'module' => 'frontend',
                 'controller' => 'PaypalUnifiedV2ExpressCheckout',
                 'action' => 'expressCheckoutFinish',
-                'paypalOrderId' => $payPalOrderId,
+                'token' => $payPalOrderId,
             ]);
 
             return;

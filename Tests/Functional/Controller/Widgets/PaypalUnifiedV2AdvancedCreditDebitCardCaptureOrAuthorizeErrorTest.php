@@ -63,7 +63,7 @@ class PaypalUnifiedV2AdvancedCreditDebitCardCaptureOrAuthorizeErrorTest extends 
 
         $controller->captureAction();
 
-        static::assertLocationEndsWith($controller->Response(), 'PaypalUnifiedV2AdvancedCreditDebitCard/capture/paypalOrderId/xxxxxxxxxxxxxxxx');
+        static::assertLocationEndsWith($controller->Response(), 'PaypalUnifiedV2AdvancedCreditDebitCard/capture/token/xxxxxxxxxxxxxxxx');
         static::assertSame(302, $controller->Response()->getHttpResponseCode());
     }
 
@@ -113,7 +113,7 @@ class PaypalUnifiedV2AdvancedCreditDebitCardCaptureOrAuthorizeErrorTest extends 
     private function createController(array $captureErrorResponse)
     {
         $request = new Enlight_Controller_Request_RequestTestCase();
-        $request->setParam('paypalOrderId', 'xxxxxxxxxxxxxxxx');
+        $request->setParam('token', 'xxxxxxxxxxxxxxxx');
 
         $orderResourceMock = $this->createMock(OrderResource::class);
         $orderResourceMock->method('get')->willReturn($this->createPaypalOrder());

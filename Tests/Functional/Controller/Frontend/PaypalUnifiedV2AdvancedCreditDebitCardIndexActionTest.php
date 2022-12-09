@@ -52,7 +52,7 @@ class PaypalUnifiedV2AdvancedCreditDebitCardIndexActionTest extends PaypalPaymen
         $sessionMock = $this->createMock(Enlight_Components_Session_Namespace::class);
         $sessionMock->expects(static::once())->method('offsetUnset');
         $sessionMock->method('offsetGet')->willReturnMap([
-            ['paypalOrderId', '123456789'],
+            ['token', '123456789'],
         ]);
 
         $dependencyProviderMock = $this->createMock(DependencyProvider::class);

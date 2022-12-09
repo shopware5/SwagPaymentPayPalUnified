@@ -107,7 +107,7 @@ class OrderResource
             $this->loggerService->notify(
                 'PayPal order with payment source created',
                 [
-                    'paypalOrderId' => $paypalOrder->getId(),
+                    'token' => $paypalOrder->getId(),
                     'requestId' => $paypalRequestId,
                 ]
             );

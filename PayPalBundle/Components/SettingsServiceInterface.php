@@ -39,7 +39,6 @@ interface SettingsServiceInterface
     const SETTING_GENERAL_DETAIL_ACTIVE = 'detail_active';
     const SETTING_GENERAL_LOGIN_ACTIVE = 'login_active';
     const SETTING_GENERAL_OFF_CANVAS_ACTIVE = 'off_canvas_active';
-    const SETTING_GENERAL_USE_IN_CONTEXT = 'use_in_context';
 
     const SETTING_INSTALLMENTS_SHOW_PAY_LATER_PAYPAL = 'show_pay_later_paypal';
     const SETTING_INSTALLMENTS_SHOW_PAY_LATER_EXPRESS = 'show_pay_later_express';
