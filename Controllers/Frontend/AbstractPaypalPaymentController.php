@@ -607,10 +607,11 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
 
     /**
      * @param string $payPalOrderId
+     * @param string $awaitedStatus
      *
      * @return bool indicating whether the payment is complete
      */
-    protected function isPaymentCompleted($payPalOrderId)
+    protected function isPaymentCompleted($payPalOrderId, $awaitedStatus = PaymentStatusV2::ORDER_CAPTURE_COMPLETED)
     {
         $methodStart = microtime(true);
         $this->logger->debug(sprintf('%s START POLLING AT: %f', __METHOD__, microtime(true)));
@@ -625,7 +626,7 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
                 break;
             }
 
-            $determinedStatus = $this->determineStatus($paypalOrder);
+            $determinedStatus = $this->determineStatus($paypalOrder, $awaitedStatus);
             if ($determinedStatus->isSuccess()) {
                 $currentTime = microtime(true);
                 $elapsedTime = $currentTime - $timeoutStart;
@@ -921,9 +922,11 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
     }
 
     /**
+     * @param string $awaitedStatus
+     *
      * @return DeterminedStatus
      */
-    private function determineStatus(Order $paypalOrder)
+    private function determineStatus(Order $paypalOrder, $awaitedStatus = PaymentStatusV2::ORDER_CAPTURE_COMPLETED)
     {
         $successStatusDetermined = false;
         $paymentFailed = false;
@@ -949,7 +952,7 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
                     break;
                 }
 
-                $successStatusDetermined = $capture->getStatus() === PaymentStatusV2::ORDER_CAPTURE_COMPLETED;
+                $successStatusDetermined = \in_array($capture->getStatus(), [$awaitedStatus, PaymentStatusV2::ORDER_CAPTURE_COMPLETED]);
                 $paymentFailed = \in_array($capture->getStatus(), [
                     PaymentStatusV2::ORDER_CAPTURE_DECLINED,
                     PaymentStatusV2::ORDER_CAPTURE_FAILED,

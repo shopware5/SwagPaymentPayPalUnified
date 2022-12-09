@@ -21,7 +21,11 @@ use Shopware_Controllers_Frontend_Checkout;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Components\Services\LoggerService;
+use SwagPaymentPayPalUnified\Components\Services\PayUponInvoiceInstructionService;
 use SwagPaymentPayPalUnified\Components\Services\PhoneNumberService;
+use SwagPaymentPayPalUnified\Models\PaymentInstruction as PaymentInstructionModel;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\OrderResource;
 use SwagPaymentPayPalUnified\Subscriber\PayUponInvoice;
 use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
@@ -58,7 +62,10 @@ class PayUponInvoiceTest extends TestCase
             $dependencyProvider,
             $this->getContainer()->get('config'),
             $this->getContainer()->get('dbal_connection'),
-            $this->getContainer()->get('paypal_unified.phone_number_service')
+            $this->getContainer()->get('paypal_unified.phone_number_service'),
+            $this->getContainer()->get('router'),
+            $this->getContainer()->get('paypal_unified.pay_upon_invoice_instruction_service'),
+            $this->getContainer()->get('paypal_unified.v2.order_resource')
         );
 
         $subscriber->onCheckout($args);
@@ -155,7 +162,10 @@ class PayUponInvoiceTest extends TestCase
             $dependencyProvider,
             $this->getContainer()->get('config'),
             $this->getContainer()->get('dbal_connection'),
-            $this->getContainer()->get('paypal_unified.phone_number_service')
+            $this->getContainer()->get('paypal_unified.phone_number_service'),
+            $this->getContainer()->get('router'),
+            $this->getContainer()->get('paypal_unified.pay_upon_invoice_instruction_service'),
+            $this->getContainer()->get('paypal_unified.v2.order_resource')
         );
 
         $subscriber->onCheckout($args);
@@ -301,7 +311,10 @@ class PayUponInvoiceTest extends TestCase
                 $this->createMock(LoggerService::class),
                 $this->getContainer()->get('dbal_connection'),
                 $config
-            )
+            ),
+            $this->getContainer()->get('router'),
+            $this->getContainer()->get('paypal_unified.pay_upon_invoice_instruction_service'),
+            $this->getContainer()->get('paypal_unified.v2.order_resource')
         );
 
         $request = new Enlight_Controller_Request_RequestTestCase();
@@ -405,6 +418,108 @@ class PayUponInvoiceTest extends TestCase
     }
 
     /**
+     * @return void
+     */
+    public function testPollingUrlCreationOnFinish()
+    {
+        $dependencyProvider = $this->getContainer()->get('paypal_unified.dependency_provider');
+        $session = $dependencyProvider->getSession();
+        $session->offsetSet(PayUponInvoice::PUI_SHOPWARE_ORDER, '000000');
+        $config = $this->getContainer()->get('config');
+
+        $subscriber = new PayUponInvoice(
+            $dependencyProvider,
+            $config,
+            $this->getContainer()->get('dbal_connection'),
+            new PhoneNumberService(
+                $this->createMock(LoggerService::class),
+                $this->getContainer()->get('dbal_connection'),
+                $config
+            ),
+            $this->getContainer()->get('router'),
+            $this->getContainer()->get('paypal_unified.pay_upon_invoice_instruction_service'),
+            $this->getContainer()->get('paypal_unified.v2.order_resource')
+        );
+
+        $request = new Enlight_Controller_Request_RequestTestCase();
+        $request->setActionName('finish');
+        $request->setParam('sUniqueID', 'foo');
+
+        $args = $this->createEnlightEventArgs('finish', null, $request);
+
+        $subscriber->assignPayUponInvoicePolling($args);
+
+        $view = $args->getSubject()->View();
+
+        static::assertStringEndsWith('/widgets/PaypalUnifiedV2PayUponInvoice/pollOrder/sUniqueID/foo', $view->getAssign('puiPollingUrl'));
+        static::assertStringEndsWith('/checkout/finish/sUniqueID/foo/sOrderNumber/000000/pollingFinished/1', $view->getAssign('puiSuccessUrl'));
+        static::assertStringEndsWith('/checkout/finish/sUniqueID/foo/pollingError/1', $view->getAssign('puiErrorUrl'));
+        static::assertEquals(true, $view->getAssign('isPui'));
+    }
+
+    /**
+     * @return void
+     */
+    public function testAssignPaypalPaymentInstructions()
+    {
+        $dependencyProvider = $this->getContainer()->get('paypal_unified.dependency_provider');
+        $session = $dependencyProvider->getSession();
+        $session->offsetSet(PayUponInvoice::PUI_SHOPWARE_ORDER, '000000');
+        $config = $this->getContainer()->get('config');
+
+        $orderResourceBuild = $this->getMockBuilder(OrderResource::class)->disableOriginalConstructor()->getMock();
+        $orderResourceBuild->method('get')->willReturn(new Order());
+
+        $instructions = new PaymentInstructionModel();
+        $instructions->setOrderNumber('000000');
+        $instructions->setBankName('FOO Bank');
+        $instructions->setAccountHolder('FOO BAR');
+        $instructions->setIban('IBAN');
+        $instructions->setBic('BIC');
+        $instructions->setAmount('99');
+
+        $instructionServiceMock = $this->getMockBuilder(PayUponInvoiceInstructionService::class)->disableOriginalConstructor()->getMock();
+        $instructionServiceMock->method('createInstructions')->willReturn($instructions);
+
+        $subscriber = new PayUponInvoice(
+            $dependencyProvider,
+            $config,
+            $this->getContainer()->get('dbal_connection'),
+            new PhoneNumberService(
+                $this->createMock(LoggerService::class),
+                $this->getContainer()->get('dbal_connection'),
+                $config
+            ),
+            $this->getContainer()->get('router'),
+            $instructionServiceMock,
+            $orderResourceBuild
+        );
+
+        $request = new Enlight_Controller_Request_RequestTestCase();
+        $request->setActionName('finish');
+        $request->setParam('pollingFinished', true);
+        $request->setParam('sOrderNumber', '000000');
+        $request->setParam('sUniqueID', 'uniqueId');
+
+        $args = $this->createEnlightEventArgs('finish', null, $request);
+
+        $subscriber->assignPaypalPaymentInstructions($args);
+
+        static::assertEquals([
+                'id' => null,
+                    'orderNumber' => '000000',
+        'order' => null,
+        'bankName' => 'FOO Bank',
+        'accountHolder' => 'FOO BAR',
+        'iban' => 'IBAN',
+        'bic' => 'BIC',
+        'amount' => '99',
+        'dueDate' => null,
+        'reference' => null,
+        ], $args->getSubject()->View()->getAssign('paypalUnifiedPaymentInstructions'));
+    }
+
+    /**
      * @param bool|null $addDateOfBirth
      * @param bool|null $addDateOfBirthAsArray
      * @param bool|null $addPhoneNumber
@@ -458,6 +573,7 @@ class PayUponInvoiceTest extends TestCase
 
         $controller = $this->createMock(Shopware_Controllers_Frontend_Checkout::class);
         $controller->method('View')->willReturn($view);
+        $controller->method('Request')->willReturn($request);
 
         $eventArgs = new Enlight_Controller_ActionEventArgs();
         $eventArgs->set('request', $request);
