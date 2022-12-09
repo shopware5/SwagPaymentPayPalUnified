@@ -50,7 +50,7 @@ class CheckCaptureAuthorizationStatusCallTest extends PaypalPaymentControllerTes
         $this->prepareSession();
 
         $request = new Enlight_Controller_Request_RequestTestCase();
-        $request->setParam('paypalOrderId', '123456');
+        $request->setParam('token', '123456');
 
         $payPalOrderParameterFacade = $this->createMock(PayPalOrderParameterFacade::class);
         $payPalOrderParameterFacade->expects(static::once())->method('createPayPalOrderParameter')->willReturn(
@@ -131,7 +131,7 @@ class CheckCaptureAuthorizationStatusCallTest extends PaypalPaymentControllerTes
         $this->prepareSession();
 
         $request = new Enlight_Controller_Request_RequestTestCase();
-        $request->setParam('paypalOrderId', '123456');
+        $request->setParam('token', '123456');
 
         $payPalOrder = $this->createPayPalOrder(PaymentIntentV2::CAPTURE, PaymentStatusV2::ORDER_CAPTURE_COMPLETED);
 

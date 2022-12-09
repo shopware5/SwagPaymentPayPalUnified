@@ -354,7 +354,7 @@
                     return;
                 }
 
-                return response.paypalOrderId;
+                return response.token;
             }, function() {
             }).promise();
         },
@@ -372,7 +372,7 @@
             }).then(function(response) {
                 var params = {
                     expressCheckout: response.expressCheckout,
-                    paypalOrderId: response.paypalOrderId
+                    token: response.token
                 };
 
                 actions.redirect($.swagPayPalRenderUrl(me.opts.confirmUrl, params));

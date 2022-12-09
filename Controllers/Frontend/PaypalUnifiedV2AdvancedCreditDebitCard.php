@@ -22,21 +22,21 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2AdvancedCreditDebitCard exten
 
         $session = $this->dependencyProvider->getSession();
 
-        $payPalOrderId = $session->offsetGet('paypalOrderId');
+        $payPalOrderId = $session->offsetGet('token');
 
         if (!\is_string($payPalOrderId)) {
             $this->orderNumberService->restoreOrdernumberToPool();
 
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
                 ->setCode(ErrorCodes::UNKNOWN)
-                ->setException(new UnexpectedValueException("Required session parameter 'paypalOrderId' is missing"), '');
+                ->setException(new UnexpectedValueException("Required session parameter 'token' (paypalOrderId) is missing"), '');
             $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
 
             return;
         }
 
         if ($this->isPaymentCompleted($payPalOrderId)) {
-            $session->offsetUnset('paypalOrderId');
+            $session->offsetUnset('token');
 
             $payPalOrder = $this->getPayPalOrder($payPalOrderId);
             if (!$payPalOrder instanceof Order) {

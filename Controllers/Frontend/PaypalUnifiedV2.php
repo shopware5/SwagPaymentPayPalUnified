@@ -97,7 +97,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
         if ($this->Request()->isXmlHttpRequest()) {
             $this->logger->debug(sprintf('%s IS XHR REQUEST', __METHOD__));
 
-            $this->view->assign('paypalOrderId', $payPalOrder->getId());
+            $this->view->assign('token', $payPalOrder->getId());
             $this->view->assign('basketId', $orderParams->getBasketUniqueId());
 
             return;
@@ -136,10 +136,10 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
                 ->setCode(ErrorCodes::NO_ORDER_TO_PROCESS)
                 ->setException(
                     new UnexpectedValueException(
-                        'Cannot get PayPalOrderId from request',
+                        'Cannot get token (PayPalOrderId) from request',
                         ErrorCodes::NO_ORDER_TO_PROCESS
                     ),
-                    sprintf('%s try to get PayPalOrderId from request', __METHOD__)
+                    sprintf('%s try to get token (PayPalOrderId) from request', __METHOD__)
                 );
 
             $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
@@ -177,7 +177,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
                 'module' => 'frontend',
                 'controller' => 'PaypalUnifiedV2',
                 'action' => 'return',
-                'paypalOrderId' => $payPalOrderId,
+                'token' => $payPalOrderId,
             ]);
 
             return;
@@ -222,7 +222,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
         $this->updatePaymentStatus($payPalOrder->getIntent(), $this->getOrderId($shopwareOrderNumber));
 
         if ($this->Request()->isXmlHttpRequest()) {
-            $this->view->assign('paypalOrderId', $payPalOrderId);
+            $this->view->assign('token', $payPalOrderId);
 
             $this->logger->debug(sprintf('%s IS XHR REQUEST', __METHOD__));
 
@@ -244,11 +244,6 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
      */
     private function getPayPalOrderIdFromRequest()
     {
-        $payPalOrderID = $this->Request()->getParam('paypalOrderId');
-        if ($payPalOrderID !== null) {
-            return (string) $payPalOrderID;
-        }
-
         $payPalOrderID = $this->Request()->getParam('token');
         if ($payPalOrderID !== null) {
             return (string) $payPalOrderID;

@@ -42,7 +42,7 @@ class PaypalUnifiedV2ExpressCheckoutExpressCheckoutFinishActionShouldRedirectToC
         $this->getContainer()->get('session')->offsetSet('sUserId', 1);
 
         $request = new Enlight_Controller_Request_RequestTestCase();
-        $request->setParam('paypalOrderId', 'anyPaypalOrderId');
+        $request->setParam('token', 'anyPaypalOrderId');
 
         $response = new Enlight_Controller_Response_ResponseTestCase();
 
@@ -95,7 +95,7 @@ class PaypalUnifiedV2ExpressCheckoutExpressCheckoutFinishActionShouldRedirectToC
         $this->getContainer()->get('session')->offsetSet('sUserId', 1);
 
         $request = new Enlight_Controller_Request_RequestTestCase();
-        $request->setParam('paypalOrderId', 'anyPaypalOrderId');
+        $request->setParam('token', 'anyPaypalOrderId');
 
         $response = new Enlight_Controller_Response_ResponseTestCase();
 

@@ -393,7 +393,7 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $view = new ViewMock(new Enlight_Template_Manager());
         $request = new Enlight_Controller_Request_RequestTestCase();
         $request->setActionName('confirm');
-        $request->setParam('paypalOrderId', 'TEST_PAYMENT_ID');
+        $request->setParam('token', 'TEST_PAYMENT_ID');
         $request->setParam('payerId', 'TEST_PAYER_ID');
         $request->setParam('expressCheckout', true);
 
@@ -424,7 +424,7 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $view = new ViewMock(new Enlight_Template_Manager());
         $request = new Enlight_Controller_Request_RequestTestCase();
         $request->setActionName('confirm');
-        $request->setParam('paypalOrderId', 'TEST_PAYMENT_ID');
+        $request->setParam('token', 'TEST_PAYMENT_ID');
         $request->setParam('payerId', 'TEST_PAYER_ID');
         $request->setParam('expressCheckout', true);
         $this->getContainer()->get('front')->setRequest($request);

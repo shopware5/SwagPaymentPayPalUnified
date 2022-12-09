@@ -104,7 +104,7 @@ class AdvancedCreditDebitCard implements SubscriberInterface
 
         if ($args->getRequest()->getActionName() === 'payment') {
             $session = $this->dependencyProvider->getSession();
-            $session->offsetSet('paypalOrderId', $args->getRequest()->getParam('paypalOrderId'));
+            $session->offsetSet('token', $args->getRequest()->getParam('token'));
 
             return;
         }

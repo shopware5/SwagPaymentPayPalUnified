@@ -102,7 +102,7 @@ class PaypalUnifiedReturnActionNotInContextTest extends PaypalPaymentControllerT
         ];
 
         yield 'negative test -> request contains paypalOrderId' => [
-            ['key' => 'paypalOrderId', 'value' => '42007579'],
+            ['key' => 'token', 'value' => '42007579'],
             'checkout/finish/sUniqueID/42007579',
         ];
     }
@@ -126,7 +126,7 @@ class PaypalUnifiedReturnActionNotInContextTest extends PaypalPaymentControllerT
         $dependencyProviderMock->method('getModule')->willReturn(new stdClass());
 
         $request = new Enlight_Controller_Request_RequestTestCase();
-        $request->setParam('paypalOrderId', 'xxxxxxxxxxxxxxx');
+        $request->setParam('token', 'xxxxxxxxxxxxxxx');
 
         $controller = $this->getController(
             Shopware_Controllers_Frontend_PaypalUnifiedV2::class,

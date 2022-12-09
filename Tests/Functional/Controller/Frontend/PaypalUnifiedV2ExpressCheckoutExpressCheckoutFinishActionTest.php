@@ -60,7 +60,7 @@ class PaypalUnifiedV2ExpressCheckoutExpressCheckoutFinishActionTest extends Payp
         ]);
 
         $request = new Enlight_Controller_Request_RequestTestCase();
-        $request->setParam('paypalOrderId', '123456789');
+        $request->setParam('token', '123456789');
 
         $response = new Enlight_Controller_Response_ResponseTestCase();
 

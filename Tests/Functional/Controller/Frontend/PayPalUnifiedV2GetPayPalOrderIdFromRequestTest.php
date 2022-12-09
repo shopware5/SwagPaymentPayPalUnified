@@ -51,7 +51,7 @@ class PayPalUnifiedV2GetPayPalOrderIdFromRequestTest extends PaypalPaymentContro
     public function getPayPalOrderIdFromRequestTestDataProvider()
     {
         yield 'Use inContext' => [
-            $this->createKeyValuePairForRequest('paypalOrderId', 'thisIsAPayPalOrderId'),
+            $this->createKeyValuePairForRequest('token', 'thisIsAPayPalOrderId'),
             'thisIsAPayPalOrderId',
         ];
 

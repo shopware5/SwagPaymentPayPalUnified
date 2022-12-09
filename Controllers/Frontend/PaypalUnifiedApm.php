@@ -152,7 +152,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedApm extends AbstractPaypalPayme
         }
 
         if ($this->Request()->isXmlHttpRequest()) {
-            $this->view->assign('paypalOrderId', $payPalOrderId);
+            $this->view->assign('token', $payPalOrderId);
 
             $this->logger->debug(sprintf('%s IS XHR REQUEST', __METHOD__));
 

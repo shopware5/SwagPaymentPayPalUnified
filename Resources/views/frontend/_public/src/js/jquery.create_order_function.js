@@ -23,7 +23,7 @@
         }).then(function(response) {
             me.sourcePlugin.opts.basketId = response.basketId;
 
-            return response.paypalOrderId;
+            return response.token;
         }, function(response) {
             me.latestResponse = response;
         }).promise();

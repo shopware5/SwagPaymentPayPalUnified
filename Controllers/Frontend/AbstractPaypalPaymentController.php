@@ -711,7 +711,7 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
     protected function setTransactionId($shopwareOrderNumber, Order $payPalOrder)
     {
         if (!\is_string($shopwareOrderNumber)) {
-            $logTemplate = 'Cannot set transactionId because order number is not valid. PayPalOrderId: %s';
+            $logTemplate = 'Cannot set transactionId because order number is not valid. token (PayPalOrderId): %s';
             $this->logger->warning(sprintf($logTemplate, $payPalOrder->getId()));
 
             return;

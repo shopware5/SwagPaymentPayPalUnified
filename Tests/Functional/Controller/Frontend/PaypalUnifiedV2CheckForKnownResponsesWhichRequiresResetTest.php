@@ -44,7 +44,7 @@ class PaypalUnifiedV2CheckForKnownResponsesWhichRequiresResetTest extends Paypal
         ]);
 
         $controller = $this->getPayPalUnifiedV2Controller($this->createPayerActionRequiredRequestException());
-        $controller->Request()->setParam('paypalOrderId', 'anyPayPalOrderId');
+        $controller->Request()->setParam('token', 'anyPayPalOrderId');
 
         $controller->returnAction();
 
@@ -65,7 +65,7 @@ class PaypalUnifiedV2CheckForKnownResponsesWhichRequiresResetTest extends Paypal
         ]);
 
         $controller = $this->getPayPalUnifiedV2Controller($this->createInstrumentDeclinedException());
-        $controller->Request()->setParam('paypalOrderId', 'anyPayPalOrderId');
+        $controller->Request()->setParam('token', 'anyPayPalOrderId');
 
         $controller->returnAction();
 

@@ -177,7 +177,7 @@ Ext.define('Shopware.apps.PaypalUnified.controller.ApiV2', {
         var window = this.getWindow(),
             parameter = {
                 authorizationId: this.currentOrderData.purchase_units[0].payments.authorizations[0].id,
-                paypalOrderId: this.currentOrderData.id
+                token: this.currentOrderData.id
             };
 
         window.setLoading(true);

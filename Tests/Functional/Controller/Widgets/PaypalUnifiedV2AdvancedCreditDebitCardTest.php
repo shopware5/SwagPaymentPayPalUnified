@@ -32,7 +32,7 @@ class PaypalUnifiedV2AdvancedCreditDebitCardTest extends PaypalPaymentController
     {
         $request = new Enlight_Controller_Request_RequestHttp();
         $request->setHeader('X-Requested-With', 'XMLHttpRequest');
-        $request->setParam('paypalOrderId', '123456789');
+        $request->setParam('token', '123456789');
 
         // this is just for Shopware 5.6 tests
         if ($request->headers instanceof HeaderBag) {
