@@ -25,7 +25,7 @@
     {/block}
 
     {* PayPal Pay Upon Invoice *}
-    {block name='frontend_checkout_finish_teaser_paypal_unified_plus'}
+    {block name='frontend_checkout_finish_teaser_paypal_unified_pui'}
         {if $isPui && !$paypalUnifiedPaymentInstructions}
             <div data-swagPayPalUnifiedPolling="true"
                  data-pollingUrl="{$puiPollingUrl}"
