@@ -11,7 +11,6 @@ namespace SwagPaymentPayPalUnified\Components\Services;
 use DateInterval;
 use DateTime;
 use DateTimeInterface;
-use Shopware\Components\HttpClient\RequestException;
 use SwagPaymentPayPalUnified\Components\Services\Onboarding\IsCapableResult;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\MerchantIntegrationsResource;
@@ -60,6 +59,16 @@ class OnboardingStatusService
      */
     private $loggerService;
 
+    /**
+     * @var bool|null
+     */
+    private $lastResponsePaymentsReceivable;
+
+    /**
+     * @var bool|null
+     */
+    private $lastResponsePrimaryEmailConfirmed;
+
     public function __construct(
         MerchantIntegrationsResource $integrationsResource,
         LoggerServiceInterface $loggerService
@@ -74,12 +83,14 @@ class OnboardingStatusService
      * @param bool   $sandbox
      * @param string $targetCapability
      *
-     * @throws RequestException
-     *
      * @return IsCapableResult
      */
-    public function getIsCapableResult($payerId, $shopId, $sandbox, $targetCapability = self::CAPABILITY_PAY_WITH_PAYPAL)
-    {
+    public function getIsCapableResult(
+        $payerId,
+        $shopId,
+        $sandbox,
+        $targetCapability = self::CAPABILITY_PAY_WITH_PAYPAL
+    ) {
         $partnerId = self::PARTNER_ID;
 
         if ($sandbox) {
@@ -103,6 +114,9 @@ class OnboardingStatusService
                 return new IsCapableResult(false);
             }
 
+            $this->lastResponsePaymentsReceivable = $this->getBoolValueFromResponseArray(IsCapableResult::PAYMENTS_RECEIVABLE, $response);
+            $this->lastResponsePrimaryEmailConfirmed = $this->getBoolValueFromResponseArray(IsCapableResult::PRIMARY_EMAIL_CONFIRMED, $response);
+
             $this->lastResponseCapabilities = $capabilities;
             $this->expiry = (new DateTime())->add(new DateInterval(self::CACHE_LIFETIME));
         }
@@ -111,7 +125,12 @@ class OnboardingStatusService
             if (\is_array($capability) && \array_key_exists('name', $capability) && $capability['name'] === $targetCapability) {
                 $isCapable = $capability['status'] && $capability['status'] === self::STATUS_ACTIVE;
 
-                return new IsCapableResult($isCapable, $capability['limits']);
+                return new IsCapableResult(
+                    $isCapable,
+                    $capability['limits'],
+                    $this->lastResponsePaymentsReceivable,
+                    $this->lastResponsePrimaryEmailConfirmed
+                );
             }
         }
 
@@ -123,8 +142,6 @@ class OnboardingStatusService
      * @param int    $shopId
      * @param bool   $sandbox
      * @param string $targetProduct
-     *
-     * @throws RequestException
      *
      * @return bool
      */
@@ -163,5 +180,21 @@ class OnboardingStatusService
         }
 
         return false;
+    }
+
+    /**
+     * @param string              $arrayKey
+     * @param array<string,mixed> $response
+     * @param bool                $default
+     *
+     * @return bool
+     */
+    private function getBoolValueFromResponseArray($arrayKey, array $response, $default = false)
+    {
+        if (\array_key_exists($arrayKey, $response)) {
+            return $response[$arrayKey];
+        }
+
+        return $default;
     }
 }

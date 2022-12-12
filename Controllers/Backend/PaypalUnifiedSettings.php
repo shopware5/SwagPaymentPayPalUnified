@@ -23,6 +23,9 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
 {
     const HAS_LIMITS_SUFFIX = '_HAS_LIMITS';
 
+    const PAYMENTS_RECEIVABLE_RESPONSE_KEY = 'PAYMENTS_RECEIVABLE';
+    const PRIMARY_EMAIL_CONFIRMED_RESPONSE_KEY = 'PRIMARY_EMAIL_CONFIRMED';
+
     /**
      * {@inheritdoc}
      */
@@ -186,6 +189,8 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
                 $isCapableResult = $this->onboardingStatusService->getIsCapableResult($payerId, $shopId, $sandbox, $paymentMethodCapabilityName);
                 $viewAssign[$paymentMethodCapabilityName] = $isCapableResult->isCapable();
                 $viewAssign[$paymentMethodCapabilityName . self::HAS_LIMITS_SUFFIX] = $isCapableResult->hasLimits();
+                $viewAssign[self::PAYMENTS_RECEIVABLE_RESPONSE_KEY] = $isCapableResult->getIsPaymentsReceivable();
+                $viewAssign[self::PRIMARY_EMAIL_CONFIRMED_RESPONSE_KEY] = $isCapableResult->getIsPrimaryEmailConfirmed();
             }
             foreach ($productSubscriptionNames as $productSubscriptionName) {
                 $viewAssign[$productSubscriptionName] = $this->onboardingStatusService->isSubscribed($payerId, $shopId, $sandbox, $productSubscriptionName);

@@ -10,6 +10,9 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
         ADVANCED_CREDIT_DEBIT_CARD_HAS_LIMITS: 'ADVANCED_CREDIT_DEBIT_CARD_HAS_LIMITS',
     },
 
+    PAYMENTS_RECEIVABLE_RESPONSE_KEY: 'PAYMENTS_RECEIVABLE',
+    PRIMARY_EMAIL_CONFIRMED_RESPONSE_KEY: 'PRIMARY_EMAIL_CONFIRMED',
+
     PRODUCT_SUBSCRIPTION_NAME: {
         PPCP: 'PPCP_STANDARD',
     },
@@ -351,6 +354,8 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
         // Set limits result
         this.getPayUponInvoiceTab().setHasLimits(responseBody[this.PAYMENT_METHOD_CAPABILITY_NAME.PAY_UPON_INVOICE_HAS_LIMITS])
         this.getAdvancedCreditDebitCardTab().setHasLimits(responseBody[this.PAYMENT_METHOD_CAPABILITY_NAME.ADVANCED_CREDIT_DEBIT_CARD_HAS_LIMITS])
+
+        this._showPaymentReceivableAndEmailNotConfirmedErrorIfNeeded(responseBody);
 
         this.saveRecords();
     },
@@ -696,6 +701,8 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
             return;
         }
 
+        this._showPaymentReceivableAndEmailNotConfirmedErrorIfNeeded(responseJson);
+
         if (responseJson.hasOwnProperty(this.PAYMENT_METHOD_CAPABILITY_NAME.PAY_UPON_INVOICE)) {
             newValue = responseJson[this.PAYMENT_METHOD_CAPABILITY_NAME.PAY_UPON_INVOICE];
             payUponInvoiceTab.setHasLimits(responseJson[this.PAYMENT_METHOD_CAPABILITY_NAME.PAY_UPON_INVOICE_HAS_LIMITS])
@@ -905,6 +912,32 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
     _shouldPlusTabBeDisabled: function () {
         return !this.plusRecord.get('active') &&
             (this.generalRecord.get('sandbox') ? this.plusRecord.get('sandboxPpcpActive') : this.plusRecord.get('ppcpActive'));
-    }
+    },
+
+    /**
+     * @param { Object } responseObject
+     * @private
+     */
+    _showPaymentReceivableAndEmailNotConfirmedErrorIfNeeded: function (responseObject) {
+        if (responseObject.hasOwnProperty(this.PAYMENTS_RECEIVABLE_RESPONSE_KEY) && !responseObject[this.PAYMENTS_RECEIVABLE_RESPONSE_KEY]) {
+            Shopware.Notification.createStickyGrowlMessage(
+                {
+                    title: '{s name="growl/accountError/title"}Error{/s}',
+                    text: '{s name="growl/paymentsReceivableErrorMessage"}It is currently not possible to receive payments from PayPal. Please activate your bank account at PayPal.{/s}'
+                },
+                this.window.title
+            );
+        }
+
+        if (responseObject.hasOwnProperty(this.PRIMARY_EMAIL_CONFIRMED_RESPONSE_KEY) && !responseObject[this.PRIMARY_EMAIL_CONFIRMED_RESPONSE_KEY]) {
+            Shopware.Notification.createStickyGrowlMessage(
+                {
+                    title: '{s name="growl/accountError/title"}Error{/s}',
+                    text: '{s name="growl/primaryEmailConfirmedErrorMessage"}Your email address is not yet confirmed with PayPal. Please confirm your email address at PayPal.{/s}'
+                },
+                this.window.title
+            );
+        }
+    },
 });
 // {/block}
