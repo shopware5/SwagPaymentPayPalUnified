@@ -191,7 +191,7 @@ class Updater
             ))->update();
         }
 
-        if (\version_compare($oldVersion, 'REPLACE_GLOBAL_WITH_NEXT_VERSION', '<')) {
+        if (\version_compare($oldVersion, '6.0.0', '<')) {
             (new UpdateTo600(
                 $this->connection,
                 $this->attributeCrudService,
