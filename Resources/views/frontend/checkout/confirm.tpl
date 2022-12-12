@@ -66,6 +66,15 @@
     {/block}
 {/block}
 
+{block name='frontend_checkout_confirm_left_payment_method_actions'}
+    <div class="panel--actions is--wide">
+        {* Action buttons *}
+        <a href="{url controller=checkout action=shippingPayment sTarget=checkout}" class="btn is--small btn--change-payment">
+            {s name="ChangePaymentAndDispatch" namespace="frontend/paypal_unified/checkout/confirm"}Change payment and dispatch{/s}
+        </a>
+    </div>
+{/block}
+
 {* PayPal In-Context and SPB integration *}
 {block name='frontend_checkout_confirm_submit'}
     {block name='frontend_checkout_confirm_submit_paypal_unified_in_context'}
