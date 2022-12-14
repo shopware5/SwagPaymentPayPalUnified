@@ -14,25 +14,25 @@
 
     <changelog version="6.0.0">
         <changes lang="de">
-            PT-12545 - Vereinheitlicht das Verhalten der Buttons bei Style Änderungen.
+            PT-12545 - Vereinheitlicht das Verhalten der Buttons bei Style Änderungen;
             PT-12601 - Verbessert Geburtsdatum und Telefonnummer Überprüfung für Kauf auf Rechnung;
             PT-12878 - Zahlungsinformationen für "Kauf auf Rechnung" werden nun auf der Finish-Seite angezeigt;
             PT-12714 - Entfernt zweiten Titel aus Einstellungs-Tab;
-            PT-12757 - Externe Abhängigkeiten können außerhalb des Plugins bereitgestellt werden
+            PT-12757 - Externe Abhängigkeiten können außerhalb des Plugins bereitgestellt werden;
             PT-12775 - Entfernt die OXXO Zahlungsart;
             PT-12982 - Shopware-Bestellnummer wird direkt beim Erstellen der PayPal-Zahlung mitgesendet, dadurch reduziert sich die Anzahl der PayPal-API-Aufrufe;
             PT-12725 - PayPal tracking API hinzugefügt;
             PT-12648 - PayPal Express Button Sprachfeld entfernt;
             PT-12892 - Fügt einen Link für weitere Informationen zu Kauf auf Rechnung hinzu;
             PT-12926 - Verbessert Verhalten bei invalider Adresse;
-            PT-12964 - Entfernt die Weiterleitungsoption zu PayPal zugunsten des bevorzugten In-Context / Mini-Browsers (optimiert für conversion):
+            PT-12964 - Entfernt die Weiterleitungsoption zu PayPal zugunsten des bevorzugten In-Context / Mini-Browsers (optimiert für conversion);
             PT-12945 - PayPal Express verwendet "nicht definiert" als Anrede, wenn vorhanden;
             PT-12991 - Smart Payment Button Symbole werden immer gleich angezeigt;
             PT-12992 - Verbessert die Betrugsüberprüfung für Kauf auf Rechnung;
             PT-12994 - "PayPal, Später Bezahlen" ist jetzt am PayPal und Express Check-out verfügbar;
         </changes>
         <changes lang="en">
-            PT-12545 - Unifies the behavior of buttons on style changes.
+            PT-12545 - Unifies the behavior of buttons on style changes;
             PT-12601 - Improved date of birth and phone number validation for pay upon invoice;
             PT-12878 - Payment information for "Pay on Invoice" is now loaded on the finish page;
             PT-12714 - Removes second title from settings tab;
