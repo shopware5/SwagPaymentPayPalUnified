@@ -19,7 +19,7 @@
     {/block}
 {/if}
 
-{if $paypalUnifiedInstallmentsBanner && $paypalIsNotAllowed === false}
+{if $paypalUnifiedInstallmentsBanner && $paypalIsNotAllowed === false && $paypalUnifiedInstallmentsBannerCurrency && $paypalUnifiedInstallmentsBannerBuyerCountry}
     {block name='frontend_index_sidebar_paypal_unified_installments_banner'}
         <div class="panel is--rounded paypal--sidebar">
             {block name='frontend_index_sidebar_paypal_unified_installments_banner_body'}
