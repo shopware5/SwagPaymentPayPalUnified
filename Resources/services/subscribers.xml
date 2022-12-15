@@ -303,5 +303,11 @@
                  public="true">
             <tag name="shopware.event_subscriber"/>
         </service>
+
+        <service id="paypal_unified.subscriber.apm_checkout_finish"
+                 class="SwagPaymentPayPalUnified\Subscriber\ApmCheckoutFinish"
+                 public="true">
+            <tag name="shopware.event_subscriber"/>
+        </service>
     </services>
 </container>

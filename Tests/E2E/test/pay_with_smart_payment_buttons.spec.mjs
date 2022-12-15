@@ -35,8 +35,6 @@ test.describe('Is SPB fully functional', () => {
         await page.click('.register--login-btn');
         await expect(page).toHaveURL(/.*checkout\/confirm/);
 
-        await expect(page.locator('.paypal-mark')).toHaveCount(5);
-
         // Change payment
         await page.click('.btn--change-payment');
         const selector = await getPaypalPaymentMethodSelector.getSelector(
@@ -45,8 +43,6 @@ test.describe('Is SPB fully functional', () => {
         await page.locator(selector).check();
         await page.waitForLoadState('load');
 
-        await expect(page.locator('.paypal-mark')).toHaveCount(5);
-
         await page.click('text=Weiter >> nth=1');
 
         const paypalIframe = await page.frameLocator('.component-frame');
@@ -54,8 +50,6 @@ test.describe('Is SPB fully functional', () => {
         // buy the product with PayPal
         const locator = paypalIframe.locator('div[data-funding-source="paypal"]');
         await page.waitForLoadState('load');
-
-        await expect(paypalIframe.locator('.paypal-button')).toHaveCount(5);
 
         // check: can not check out without accept AGBs
         await locator.dispatchEvent('click');

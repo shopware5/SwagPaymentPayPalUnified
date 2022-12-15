@@ -13,7 +13,6 @@ use RuntimeException;
 use Shopware\Components\HttpClient\GuzzleFactory;
 use Shopware\Components\HttpClient\GuzzleHttpClient as GuzzleClient;
 use Shopware\Components\HttpClient\RequestException;
-use Shopware\Components\HttpClient\Response;
 use Shopware\Models\Shop\Shop;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\PayPalBundle\BaseURL;
@@ -180,7 +179,7 @@ class ClientService
                     throw new RuntimeException('An unsupported request type was provided. The type was: ' . $type);
             }
         } catch (Exception $exception) {
-            $this->logger->error('GOT ERROR WHILE REQUEST OF TYPE [' . $type . '] TO URL: ' . $resourceUri, [
+            $exceptionLogData = [
                 'payload' => $data,
                 'headers' => $headersOnlyForLogging,
                 'exception' => [
@@ -190,7 +189,13 @@ class ClientService
                     'file' => $exception->getFile(),
                     'line' => $exception->getLine(),
                 ],
-            ]);
+            ];
+
+            if ($exception instanceof RequestException) {
+                $exceptionLogData['exception']['body'] = $exception->getBody();
+            }
+
+            $this->logger->error('GOT ERROR WHILE REQUEST OF TYPE [' . $type . '] TO URL: ' . $resourceUri, $exceptionLogData);
 
             throw $exception;
         }
