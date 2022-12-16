@@ -30,6 +30,7 @@
             PT-12991 - Smart Payment Button Symbole werden immer gleich angezeigt;
             PT-12992 - Verbessert die Betrugsüberprüfung für Kauf auf Rechnung;
             PT-12994 - "PayPal, Später Bezahlen" ist jetzt am PayPal und Express Check-out verfügbar;
+            PT-13008 - Verbessert den Zahlungsabschluss für alternative Zahlungsarten (APM's);
         </changes>
         <changes lang="en">
             PT-12545 - Unifies the behavior of buttons on style changes;
@@ -48,6 +49,7 @@
             PT-12991 - Smart Payment Button symbols are always displaying the same;
             PT-12992 - Improves fraud checking for pay upon invoice;
             PT-12994 - "PayPal, PayLater" is now available at PayPal and Express Check-out;
+            PT-13008 - Improves payment completion for alternative payment methods (APM's);
         </changes>
     </changelog>
 

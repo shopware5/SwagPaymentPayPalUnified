@@ -34,6 +34,8 @@ final class ErrorCodes
 
     const THREE_D_SECURE_CHECK_FAILED = 17;
 
+    const APM_PAYMENT_FAILED_CONTACT_MERCHANT = 18;
+
     private function __construct()
     {
     }

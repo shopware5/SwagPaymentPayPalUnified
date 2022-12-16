@@ -47,4 +47,20 @@ class DummyController extends Enlight_Controller_Action
     {
         return Shopware()->Container()->get($key);
     }
+
+    /**
+     * @return Enlight_View_Default
+     */
+    public function getView()
+    {
+        return $this->view;
+    }
+
+    /**
+     * @return Enlight_Controller_Request_RequestTestCase
+     */
+    public function getRequest()
+    {
+        return $this->request;
+    }
 }

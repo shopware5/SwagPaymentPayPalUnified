@@ -40,6 +40,8 @@
         {elseif $paypalUnifiedErrorCode == 14 || $paypalUnifiedErrorCode == 15 || $paypalUnifiedErrorCode == 16 || $paypalUnifiedErrorCode == 17}
             {* Authorization is denied or 3D-Secure check failed *}
             {include file='frontend/_includes/messages.tpl' type='error' content="{s name="error/authorization/capture/denied"}{/s}"}
+        {elseif $paypalUnifiedErrorCode == 18}
+            {include file='frontend/_includes/messages.tpl' type='error' content="{s name="error/apm/code18"}{/s}"}
         {elseif $paypalUnifiedErrorCode === 1001}
             {include file='frontend/_includes/messages.tpl' type='error' content="{s name="error/threeDSecure/1000" namespace="frontend/paypal_unified/checkout/messages"}{/s}"}
         {elseif $paypalUnifiedErrorCode === 1001}

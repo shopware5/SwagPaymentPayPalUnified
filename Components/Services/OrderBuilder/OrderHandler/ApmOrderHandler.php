@@ -18,6 +18,7 @@ use SwagPaymentPayPalUnified\Components\Services\PayPalOrder\AmountProvider;
 use SwagPaymentPayPalUnified\Components\Services\PayPalOrder\ItemListProvider;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
+use SwagPaymentPayPalUnified\PayPalBundle\ProcessingInstruction;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\PaymentIntentV2;
 
@@ -33,6 +34,7 @@ class ApmOrderHandler extends AbstractOrderHandler
         PaymentType::APM_P24,
         PaymentType::APM_SOFORT,
         PaymentType::APM_TRUSTLY,
+        PaymentType::APM_MULTIBANCO,
     ];
 
     /**
@@ -89,6 +91,7 @@ class ApmOrderHandler extends AbstractOrderHandler
         $order->setPaymentSource($this->paymentSourceFactory->createPaymentSource($orderParameter));
         $order->setPurchaseUnits($this->createPurchaseUnits($orderParameter));
         $order->setPayer($this->createPayer($orderParameter));
+        $order->setProcessingInstruction(ProcessingInstruction::ORDER_COMPLETE_ON_PAYMENT_APPROVAL);
 
         return $order;
     }

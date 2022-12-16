@@ -9,12 +9,8 @@
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\ShopwareOrderData;
 use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentController;
-use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\InstrumentDeclinedException;
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\InvalidBillingAddressException;
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\InvalidShippingAddressException;
-use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\NoOrderToProceedException;
-use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\PayerActionRequiredException;
-use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\RequireRestartException;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Common\Link;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
 
@@ -108,49 +104,6 @@ class Shopware_Controllers_Frontend_PaypalUnifiedApm extends AbstractPaypalPayme
             return;
         }
 
-        try {
-            $this->captureOrAuthorizeOrder($payPalOrder);
-        } catch (RequireRestartException $requireRestartException) {
-            $this->logger->debug(sprintf('%s REQUIRES A RESTART', __METHOD__));
-
-            $this->orderNumberService->releaseOrderNumber();
-
-            $this->redirect([
-                'module' => 'frontend',
-                'controller' => 'PaypalUnifiedApm',
-                'action' => 'return',
-                'token' => $payPalOrderId,
-            ]);
-
-            return;
-        } catch (PayerActionRequiredException $payerActionRequiredException) {
-            $this->logger->debug(sprintf('%s PAYER_ACTION_REQUIRED', __METHOD__));
-
-            $this->redirect([
-                'module' => 'frontend',
-                'controller' => 'checkout',
-                'action' => 'confirm',
-                'payerActionRequired' => true,
-            ]);
-
-            return;
-        } catch (InstrumentDeclinedException $instrumentDeclinedException) {
-            $this->logger->debug(sprintf('%s INSTRUMENT_DECLINED', __METHOD__));
-
-            $this->redirect([
-                'module' => 'frontend',
-                'controller' => 'checkout',
-                'action' => 'confirm',
-                'payerInstrumentDeclined' => true,
-            ]);
-
-            return;
-        } catch (NoOrderToProceedException $noOrderToProceedException) {
-            $this->orderNumberService->restoreOrdernumberToPool();
-
-            return;
-        }
-
         if ($this->Request()->isXmlHttpRequest()) {
             $this->view->assign('token', $payPalOrderId);
 
@@ -179,6 +132,29 @@ class Shopware_Controllers_Frontend_PaypalUnifiedApm extends AbstractPaypalPayme
                 'action' => 'finish',
                 'sUniqueID' => $payPalOrderId,
             ]);
+
+            return;
         }
+
+        $paymentType = $this->getPaymentType();
+
+        $shopwareOrderNumber = $this->createShopwareOrder($payPalOrderId, $paymentType);
+
+        $this->logger->warning(
+            sprintf('A payment with type: %s has failed. Review previous error messages to clarify the issue. The customer was invited to contact the merchant.', $paymentType),
+            [
+                'paymentType' => $paymentType,
+                'paypalOrderId' => $payPalOrderId,
+                'shopwareOrderNumber' => $shopwareOrderNumber,
+            ]
+        );
+
+        $this->redirect([
+            'module' => 'frontend',
+            'controller' => 'checkout',
+            'action' => 'finish',
+            'sUniqueID' => $payPalOrderId,
+            'requireContactToMerchant' => true,
+        ]);
     }
 }
