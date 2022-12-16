@@ -16,9 +16,12 @@ Ext.define('Shopware.apps.Payment.controller.PaymentPaypalUnified', {
      * @param { Ext.data.Record } record
      */
     onItemClick: function (view, record) {
-        var me = this,
-            win = view.up('window'),
-            tabPanel = win.tabPanel,
+        if (this.alreadyAdded === true) {
+            this.callParent(arguments);
+            return;
+        }
+
+        var win = view.up('window'),
             form = win.generalForm,
             treeToolBar = win.down('toolbar[name=treeToolBar]'),
             gridToolBar = win.down('toolbar[name=gridToolBar]'),
@@ -27,14 +30,15 @@ Ext.define('Shopware.apps.Payment.controller.PaymentPaypalUnified', {
             surchargeGrid = win.down('payment-main-surcharge');
 
         if (record.get('name') === this.payUponInvoicePaymentMethodName) {
-            form.insert(0, this._createOnboardingMessage())
+            form.insert(0, this._createOnboardingMessage());
+            this.alreadyAdded = true;
         } else if (this.onboardingMessage !== null) {
             form.remove(this.onboardingMessage);
 
             this.onboardingMessage = null;
         }
 
-        me.callParent(arguments);
+        this.callParent(arguments);
     },
 
     _createOnboardingMessage: function () {

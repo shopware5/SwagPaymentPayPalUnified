@@ -16,12 +16,14 @@
         <changes lang="de">
             PT-12723 - Verbessert die Benutzerfreundlichkeit der Kreditkartenfelder;
             PT-12761 - Verbessert die Benutzerfreundlichkeit beim Wechsel der Zahlungsart;
+            PT-12833 - Verhindert das Anzeigen mehrerer gleicher Nachrichten im Zahlartenmodul;
             PT-12942 - Fügt eine Warnung für erneute Autorisierung hinzu;
             PT-12987 - Verbessert den Verfügbarkeitstest von "Kauf auf Rechnung" und "Kreditkarten Zahlung" in den Einstellungen;
         </changes>
         <changes lang="en">
             PT-12723 - Improves the usability of the credit card fields;
             PT-12761 - Improves the usability when changing the payment method;
+            PT-12833 - Prevents displaying multiple identical messages in the payment type module;
             PT-12942 - Adds a warning for reauthorization;
             PT-12987 - Improves the availability test of "pay upon invoice" and "credit card payment" in the settings;
         </changes>
