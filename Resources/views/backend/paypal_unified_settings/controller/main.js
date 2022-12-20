@@ -965,7 +965,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.controller.Main', {
     _getIsAlreadyAuthorized: function() {
         var getKey = 'onboardingCompleted';
 
-        if (this.generalRecord.raw.sandbox) {
+        if (this.generalRecord.get('sandbox')) {
             getKey = 'sandboxOnboardingCompleted';
         }
 
