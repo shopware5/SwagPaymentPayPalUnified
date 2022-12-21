@@ -42,11 +42,12 @@ class OrderProvider
             ->from('s_order', 'sorder')
             ->innerJoin('sorder', 's_order_attributes', 'order_attributes', 'sorder.id = order_attributes.orderID')
             ->innerJoin('sorder', 's_core_paymentmeans', 'payment_means', 'sorder.paymentID = payment_means.id')
-            ->where('swag_paypal_unified_carrier IS NOT NULL')
+            ->where('swag_paypal_unified_carrier IS NOT NULL AND swag_paypal_unified_carrier <> \'\'')
             ->andWhere('sorder.status <> -1')
             ->andWhere('order_attributes.swag_paypal_unified_carrier_was_sent = 0')
             ->andWhere('sorder.trackingcode IS NOT NULL AND sorder.trackingcode <> \'\'')
             ->andWhere('payment_means.name in (:names)')
+            ->andWhere('sorder.ordertime > DATE_SUB(NOW(), INTERVAL 30 DAY)')
             ->orderBy('sorder.subshopID')
             ->setParameter('names', PaymentMethodProvider::getAllUnifiedNames(), Connection::PARAM_STR_ARRAY);
 

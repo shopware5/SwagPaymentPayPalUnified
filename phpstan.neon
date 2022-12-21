@@ -66,3 +66,7 @@ parameters:
         - # Ignore Parameter should be PaymentMethodProviderInterface::*
             message: ' #Parameter \#. \$paymentMethodName of method SwagPaymentPayPalUnified\\Components\\PaymentMethodProvider::getPaymentId\(\) expects.*given.#'
             path: Tests
+        - # Parameter is not available on default
+            message: '#.*Ternary operator condition is always false.*#'
+            paths:
+                - Subscriber/Carrier.php
