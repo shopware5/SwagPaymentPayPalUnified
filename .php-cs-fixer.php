@@ -18,7 +18,7 @@ use PhpCsFixerCustomFixers\Fixers;
 
 $finder = PhpCsFixer\Finder::create()
     ->in(__DIR__)
-    ->exclude('Tests/E2E');
+    ->exclude(['Tests/E2E', 'PhpStan']);
 
 $header = <<<EOF
 (c) shopware AG <info@shopware.com>

@@ -173,7 +173,7 @@ class PreCommitChecks
             return;
         }
 
-        exec('./../../../vendor/bin/phpstan analyse .', $output, $return);
+        exec('./../../../vendor/bin/phpstan analyse . -a PhpStan/phpstan-autoload.php', $output, $return);
         if ($return !== 0) {
             $this->error = true;
             $this->writeln('> PHPStan errors found');

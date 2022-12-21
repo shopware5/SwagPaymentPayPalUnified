@@ -151,7 +151,7 @@ php-analysis:
     script:
         - composer require --dev phpcompatibility/php-compatibility
         - ./vendor/bin/phpcs --config-set installed_paths vendor/phpcompatibility/php-compatibility
-        - ./vendor/bin/phpcs -p --ignore="./vendor/" --standard="PHPCompatibility" --runtime-set testVersion 5.6 ./
+        - ./vendor/bin/phpcs -p --ignore="./vendor/,./PhpStan/" --standard="PHPCompatibility" --runtime-set testVersion 5.6 ./
         - make fix-cs-dry
         - php ../../../bin/console -e production -q # Initialise DIC (var/cache/production____REVISION____) for phpstan
         - >

@@ -1951,11 +1951,6 @@ parameters:
 			path: Setup/PaymentModels/PaymentInstaller.php
 
 		-
-			message: "#^Parameter \\#2 \\$crudService of class SwagPaymentPayPalUnified\\\\Setup\\\\Versions\\\\UpdateTo600 constructor expects Shopware\\\\Bundle\\\\AttributeBundle\\\\Service\\\\CrudService, Shopware\\\\Bundle\\\\AttributeBundle\\\\Service\\\\CrudServiceInterface given\\.$#"
-			count: 1
-			path: Setup/Updater.php
-
-		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Subscriber\\\\Account\\:\\:onPostDispatchAccount\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: Subscriber/Account.php

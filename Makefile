@@ -106,7 +106,7 @@ check-eslint-e2e:
 	./../../../themes/node_modules/eslint/bin/eslint.js -c ./Tests/E2E/.eslintrc.js ./Tests/E2E/helper/*.mjs ./Tests/E2E/setup/*.mjs ./Tests/E2E/test/*.mjs $(ESLINT_FIX)
 
 phpstan: ## Run PHPStan
-	./../../../vendor/bin/phpstan analyse .
+	./../../../vendor/bin/phpstan analyse . -a PhpStan/phpstan-autoload.php
 
 phpstan-generate-baseline: ## Run PHPStan and generate a baseline file
 	./../../../vendor/bin/phpstan analyse . --generate-baseline
