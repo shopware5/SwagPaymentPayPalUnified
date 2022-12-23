@@ -3,9 +3,7 @@
 <container xmlns="http://symfony.com/schema/dic/services"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
-
     <services>
-
         <service id="paypal_unified.subscriber.controller.backend"
                  class="SwagPaymentPayPalUnified\Subscriber\ControllerRegistration\Backend"
                  public="true">
@@ -167,6 +165,7 @@
             <argument type="service" id="paypal_unified.logger_service"/>
             <argument type="service" id="paypal_unified.settings_service"/>
             <argument type="service" id="paypal_unified.client_service"/>
+            <argument type="service" id="service_container"/>
 
             <tag name="shopware.event_subscriber"/>
         </service>

@@ -21,10 +21,14 @@ use SwagPaymentPayPalUnified\PayPalBundle\Resources\ShippingResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Shipping;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Shipping\Tracker;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Throwable;
 
 class Carrier implements SubscriberInterface
 {
     const FALLBACK_DISPATCH_ID = '0';
+
+    const TRACKING_CODE_DELIMITER = ',';
 
     /**
      * @var ShippingProvider
@@ -61,6 +65,11 @@ class Carrier implements SubscriberInterface
      */
     private $clientService;
 
+    /**
+     * @var bool
+     */
+    private $enabled;
+
     public function __construct(
         ShippingProvider $shippingProvider,
         OrderProvider $orderProvider,
@@ -68,7 +77,8 @@ class Carrier implements SubscriberInterface
         ShippingResource $shippingResource,
         LoggerServiceInterface $logger,
         SettingsServiceInterface $settingsService,
-        ClientService $clientService
+        ClientService $clientService,
+        ContainerInterface $container
     ) {
         $this->shippingProvider = $shippingProvider;
         $this->orderProvider = $orderProvider;
@@ -77,6 +87,7 @@ class Carrier implements SubscriberInterface
         $this->logger = $logger;
         $this->settingsService = $settingsService;
         $this->clientService = $clientService;
+        $this->enabled = $container->hasParameter('shopware.plugin.paypal.tracking.enabled') ? $container->getParameter('shopware.plugin.paypal.tracking.enabled') : true;
     }
 
     /**
@@ -96,6 +107,10 @@ class Carrier implements SubscriberInterface
      */
     public function onFilterOrderAttributes(Enlight_Event_EventArgs $args)
     {
+        if (!$this->enabled) {
+            return;
+        }
+
         $dispatchId = $args->get('orderParams')['dispatchID'];
 
         if ($dispatchId === self::FALLBACK_DISPATCH_ID) {
@@ -121,6 +136,10 @@ class Carrier implements SubscriberInterface
      */
     public function syncCarrier()
     {
+        if (!$this->enabled) {
+            return;
+        }
+
         $request = $this->front->Request();
 
         if (!$request instanceof Enlight_Controller_Request_Request) {
@@ -148,8 +167,11 @@ class Carrier implements SubscriberInterface
 
             $trackers = [];
             foreach ($orders as $order) {
-                $trackers[$order['id']] = $this->getTrackerFromOrder($order);
+                foreach ($this->getTrackerFromOrder($order) as $tracker) {
+                    $trackers[sprintf('%s_%s', $order['id'], $tracker->getTrackingNumber())] = $tracker;
+                }
 
+                // Only send 3 orders to support multiple Transaction numbers per order
                 if (\count($trackers) % 20 === 0) {
                     $this->sendTrackingData($trackers);
                     $trackers = [];
@@ -167,17 +189,22 @@ class Carrier implements SubscriberInterface
     /**
      * @param array{id: string, transactionID: string, trackingCode: string, status: string, carrier: string, shopId: string} $order
      *
-     * @return Tracker
+     * @return Tracker[]
      */
     private function getTrackerFromOrder(array $order)
     {
-        $tracker = new Tracker();
-        $tracker->setTransactionId($order['transactionID']);
-        $tracker->setCarrier($order['carrier']);
-        $tracker->setStatus(Tracker::STATUS_SHIPPED);
-        $tracker->setTrackingNumber($order['trackingCode']);
+        $trackers = [];
 
-        return $tracker;
+        foreach (explode(self::TRACKING_CODE_DELIMITER, $order['trackingCode']) as $multiTrackingCode) {
+            $tracker = new Tracker();
+            $tracker->setTransactionId($order['transactionID']);
+            $tracker->setCarrier('');
+            $tracker->setStatus(Tracker::STATUS_SHIPPED);
+            $tracker->setTrackingNumber('');
+            $trackers[] = $tracker;
+        }
+
+        return $trackers;
     }
 
     /**
@@ -187,11 +214,28 @@ class Carrier implements SubscriberInterface
      */
     private function sendTrackingData(array $trackers)
     {
+        $orderIds = [];
+        foreach (array_keys($trackers) as $keys) {
+            $orderIds[] = explode('_', $keys)[0];
+        }
+
         $shipping = new Shipping();
         $shipping->setTrackers(array_values($trackers));
 
         $this->logger->debug(sprintf('%s ORDERS %s ARE SYNCED', __METHOD__, implode(' ', array_keys($trackers))));
-        $this->shippingResource->batch($shipping);
-        $this->orderProvider->setPaypalCarrierSent(array_keys($trackers));
+        try {
+            $this->shippingResource->batch($shipping);
+        } catch (Throwable $e) {
+            $this->logger->debug(sprintf('%s TRACKERS FOR ORDERS %s COULD NOT BE SYNCED', __METHOD__, implode(' ', array_values($orderIds))));
+
+            return;
+        }
+
+        $orderIds = [];
+        foreach (array_keys($trackers) as $keys) {
+            $orderIds[] = explode('_', $keys)[0];
+        }
+
+        $this->orderProvider->setPaypalCarrierSent($orderIds);
     }
 }

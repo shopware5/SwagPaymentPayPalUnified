@@ -18,6 +18,7 @@ use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\ShippingResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService;
 use SwagPaymentPayPalUnified\Subscriber\Carrier;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class CarrierTest extends TestCase
 {
@@ -41,6 +42,8 @@ class CarrierTest extends TestCase
         $settingsService = $this->getMockForAbstractClass(SettingsServiceInterface::class);
         $clientService = $this->getMockBuilder(ClientService::class)->disableOriginalConstructor()->getMock();
 
+        $containerInterface = $this->getMockForAbstractClass(ContainerInterface::class);
+
         $carrier = new Carrier(
             $shippingProvider,
             $orderProvider,
@@ -48,7 +51,8 @@ class CarrierTest extends TestCase
             $shippingResource,
             $logger,
             $settingsService,
-            $clientService
+            $clientService,
+            $containerInterface
         );
 
         $carrier->syncCarrier();
@@ -79,8 +83,7 @@ class CarrierTest extends TestCase
                 ],
                 2 => [
                     ['id' => 10, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingcode' => 'bar', 'shopId' => 1],
-                    ['id' => 11, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingcode' => 'bar', 'shopId' => 2],
-                    ['id' => 12, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingcode' => 'bar', 'shopId' => 2],
+                    ['id' => 11, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingcode' => 'bar,foo', 'shopId' => 2],
                     ['id' => 13, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingcode' => 'bar', 'shopId' => 2],
                     ['id' => 14, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingcode' => 'bar', 'shopId' => 2],
                     ['id' => 15, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingcode' => 'bar', 'shopId' => 2],
@@ -119,6 +122,8 @@ class CarrierTest extends TestCase
         $settingsService->method('getSettings')->willReturn(new MockSettings());
         $clientService = $this->getMockBuilder(ClientService::class)->disableOriginalConstructor()->getMock();
 
+        $containerInterface = $this->getMockForAbstractClass(ContainerInterface::class);
+
         $carrier = new Carrier(
             $shippingProvider,
             $orderProvider,
@@ -126,7 +131,8 @@ class CarrierTest extends TestCase
             $shippingResource,
             $logger,
             $settingsService,
-            $clientService
+            $clientService,
+            $containerInterface
         );
 
         $carrier->syncCarrier();
