@@ -12,8 +12,7 @@
     <author>shopware AG</author>
     <compatibility minVersion="5.2.27" maxVersion="5.99.99"/>
 
-
-    <changelog version="6.0.)">
+    <changelog version="6.0.1">
         <changes lang="de">
             PT-137010 - Verbessert die Tracking-API;
         </changes>
