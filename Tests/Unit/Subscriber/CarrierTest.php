@@ -17,6 +17,7 @@ use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Resources\ShippingResource;
 use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService;
+use SwagPaymentPayPalUnified\PayPalBundle\Structs\Shipping;
 use SwagPaymentPayPalUnified\Subscriber\Carrier;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -71,42 +72,42 @@ class CarrierTest extends TestCase
         $orderProvider->expects(static::once())->method('getNotSyncedTrackingOrders')->willReturn(
             [
                 1 => [
-                    ['id' => 1, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingcode' => 'bar', 'shopId' => 1],
-                    ['id' => 2, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingcode' => 'bar', 'shopId' => 1],
-                    ['id' => 3, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingcode' => 'bar', 'shopId' => 1],
-                    ['id' => 4, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingcode' => 'bar', 'shopId' => 1],
-                    ['id' => 5, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingcode' => 'bar', 'shopId' => 1],
-                    ['id' => 6, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingcode' => 'bar', 'shopId' => 1],
-                    ['id' => 7, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingcode' => 'bar', 'shopId' => 1],
-                    ['id' => 8, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingcode' => 'bar', 'shopId' => 1],
-                    ['id' => 9, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingcode' => 'bar', 'shopId' => 1],
+                    ['id' => 1, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingCode' => 'bar', 'shopId' => 1],
+                    ['id' => 2, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingCode' => 'bar', 'shopId' => 1],
+                    ['id' => 3, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingCode' => 'bar', 'shopId' => 1],
+                    ['id' => 4, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingCode' => 'bar', 'shopId' => 1],
+                    ['id' => 5, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingCode' => 'bar', 'shopId' => 1],
+                    ['id' => 6, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingCode' => 'bar', 'shopId' => 1],
+                    ['id' => 7, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingCode' => 'bar', 'shopId' => 1],
+                    ['id' => 8, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingCode' => 'bar', 'shopId' => 1],
+                    ['id' => 9, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingCode' => 'bar', 'shopId' => 1],
                 ],
                 2 => [
-                    ['id' => 10, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingcode' => 'bar', 'shopId' => 1],
-                    ['id' => 11, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingcode' => 'bar,foo', 'shopId' => 2],
-                    ['id' => 13, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingcode' => 'bar', 'shopId' => 2],
-                    ['id' => 14, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingcode' => 'bar', 'shopId' => 2],
-                    ['id' => 15, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingcode' => 'bar', 'shopId' => 2],
-                    ['id' => 16, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingcode' => 'bar', 'shopId' => 2],
-                    ['id' => 17, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingcode' => 'bar', 'shopId' => 2],
-                    ['id' => 18, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingcode' => 'bar', 'shopId' => 2],
-                    ['id' => 19, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingcode' => 'bar', 'shopId' => 2],
-                    ['id' => 20, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingcode' => 'bar', 'shopId' => 2],
-                    ['id' => 21, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingcode' => 'bar', 'shopId' => 2],
-                    ['id' => 22, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingcode' => 'bar', 'shopId' => 2],
-                    ['id' => 23, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingcode' => 'bar', 'shopId' => 2],
-                    ['id' => 24, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingcode' => 'bar', 'shopId' => 2],
-                    ['id' => 25, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingcode' => 'bar', 'shopId' => 2],
-                    ['id' => 26, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingcode' => 'bar', 'shopId' => 2],
-                    ['id' => 27, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingcode' => 'bar', 'shopId' => 2],
-                    ['id' => 28, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingcode' => 'bar', 'shopId' => 2],
-                    ['id' => 29, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingcode' => 'bar', 'shopId' => 2],
-                    ['id' => 30, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingcode' => 'bar', 'shopId' => 2],
-                    ['id' => 31, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingcode' => 'bar', 'shopId' => 2],
-                    ['id' => 32, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingcode' => 'bar', 'shopId' => 2],
-                    ['id' => 33, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingcode' => 'bar', 'shopId' => 2],
-                    ['id' => 34, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingcode' => 'bar', 'shopId' => 2],
-                    ['id' => 35, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingcode' => 'bar', 'shopId' => 2],
+                    ['id' => 10, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingCode' => 'bar', 'shopId' => 1],
+                    ['id' => 11, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingCode' => 'bar,foo', 'shopId' => 2],
+                    ['id' => 13, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingCode' => 'bar', 'shopId' => 2],
+                    ['id' => 14, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingCode' => 'bar', 'shopId' => 2],
+                    ['id' => 15, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingCode' => 'bar', 'shopId' => 2],
+                    ['id' => 16, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingCode' => 'bar', 'shopId' => 2],
+                    ['id' => 17, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingCode' => 'bar', 'shopId' => 2],
+                    ['id' => 18, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingCode' => 'bar', 'shopId' => 2],
+                    ['id' => 19, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingCode' => 'bar', 'shopId' => 2],
+                    ['id' => 20, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingCode' => 'bar', 'shopId' => 2],
+                    ['id' => 21, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingCode' => 'bar', 'shopId' => 2],
+                    ['id' => 22, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingCode' => 'bar', 'shopId' => 2],
+                    ['id' => 23, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingCode' => 'bar', 'shopId' => 2],
+                    ['id' => 24, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingCode' => 'bar', 'shopId' => 2],
+                    ['id' => 25, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingCode' => 'bar', 'shopId' => 2],
+                    ['id' => 26, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingCode' => 'bar', 'shopId' => 2],
+                    ['id' => 27, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingCode' => 'bar', 'shopId' => 2],
+                    ['id' => 28, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingCode' => 'bar', 'shopId' => 2],
+                    ['id' => 29, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingCode' => 'bar', 'shopId' => 2],
+                    ['id' => 30, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingCode' => 'bar', 'shopId' => 2],
+                    ['id' => 31, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingCode' => 'bar', 'shopId' => 2],
+                    ['id' => 32, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingCode' => 'bar', 'shopId' => 2],
+                    ['id' => 33, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingCode' => 'bar', 'shopId' => 2],
+                    ['id' => 34, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingCode' => 'bar', 'shopId' => 2],
+                    ['id' => 35, 'transactionID' => 'foo', 'carrier' => 'DHL', 'trackingCode' => 'bar', 'shopId' => 2],
                 ],
             ]
         );
@@ -116,6 +117,18 @@ class CarrierTest extends TestCase
         $front = $this->getMockBuilder(Enlight_Controller_Front::class)->disableOriginalConstructor()->getMock();
         $front->method('Request')->willReturn($request);
         $shippingResource = $this->getMockBuilder(ShippingResource::class)->disableOriginalConstructor()->getMock();
+        $shippingResource->method('batch')->with(
+            static::callback(
+                function (Shipping $shipping) {
+                    foreach ($shipping->getTrackers() as $tracker) {
+                        $this->assertEquals('DHL', $tracker->getCarrier());
+                        $this->assertTrue(\in_array($tracker->getTrackingNumber(), ['bar', 'foo']));
+                    }
+
+                    return true;
+                }
+            )
+        )->willReturn(true, true, true);
 
         $logger = $this->getMockForAbstractClass(LoggerServiceInterface::class);
         $settingsService = $this->getMockForAbstractClass(SettingsServiceInterface::class);

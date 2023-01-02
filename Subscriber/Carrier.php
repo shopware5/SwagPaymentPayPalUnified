@@ -198,9 +198,9 @@ class Carrier implements SubscriberInterface
         foreach (explode(self::TRACKING_CODE_DELIMITER, $order['trackingCode']) as $multiTrackingCode) {
             $tracker = new Tracker();
             $tracker->setTransactionId($order['transactionID']);
-            $tracker->setCarrier('');
+            $tracker->setCarrier($order['carrier']);
             $tracker->setStatus(Tracker::STATUS_SHIPPED);
-            $tracker->setTrackingNumber('');
+            $tracker->setTrackingNumber($multiTrackingCode);
             $trackers[] = $tracker;
         }
 
