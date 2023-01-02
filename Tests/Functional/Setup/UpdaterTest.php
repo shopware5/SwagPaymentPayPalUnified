@@ -15,12 +15,15 @@ use ReflectionClass;
 use Shopware\Models\Plugin\Plugin;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentModelFactory;
+use SwagPaymentPayPalUnified\Setup\TranslationTransformer;
 use SwagPaymentPayPalUnified\Setup\Updater;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
+use SwagPaymentPayPalUnified\Tests\Functional\TranslationTestCaseTrait;
 
 class UpdaterTest extends TestCase
 {
     use DatabaseTestCaseTrait;
+    use TranslationTestCaseTrait;
 
     /**
      * @return void
@@ -29,14 +32,16 @@ class UpdaterTest extends TestCase
     {
         $sql = file_get_contents(__DIR__ . '/_fixtures/orders.sql');
         static::assertTrue(\is_string($sql));
-        Shopware()->Container()->get('dbal_connection')->exec($sql);
+        $this->getContainer()->get('dbal_connection')->exec($sql);
 
         $updater = new Updater(
-            Shopware()->Container()->get('shopware_attribute.crud_service'),
-            Shopware()->Container()->get('models'),
-            Shopware()->Container()->get('dbal_connection'),
-            Shopware()->Container()->get('paypal_unified.payment_method_provider'),
-            new PaymentModelFactory(static::createMock(Plugin::class))
+            $this->getContainer()->get('shopware_attribute.crud_service'),
+            $this->getContainer()->get('models'),
+            $this->getContainer()->get('dbal_connection'),
+            $this->getContainer()->get('paypal_unified.payment_method_provider'),
+            new PaymentModelFactory(static::createMock(Plugin::class)),
+            $this->getTranslationService(),
+            new TranslationTransformer($this->getContainer()->get('models'))
         );
 
         $reflectionMethod = (new ReflectionClass(Updater::class))->getMethod('updateTo303');
@@ -45,7 +50,7 @@ class UpdaterTest extends TestCase
         $reflectionMethod->invoke($updater);
 
         $orderIds = [100080, 100081, 100082, 100083];
-        $result = Shopware()->Container()->get('dbal_connection')->createQueryBuilder()
+        $result = $this->getContainer()->get('dbal_connection')->createQueryBuilder()
             ->select(['orderID', 'swag_paypal_unified_payment_type'])
             ->from('s_order_attributes')
             ->where('orderID IN (:orderIds)')
@@ -68,14 +73,16 @@ class UpdaterTest extends TestCase
     {
         $sql = file_get_contents(__DIR__ . '/_fixtures/orders_invoice.sql');
         static::assertTrue(\is_string($sql));
-        Shopware()->Container()->get('dbal_connection')->exec($sql);
+        $this->getContainer()->get('dbal_connection')->exec($sql);
 
         $updater = new Updater(
-            Shopware()->Container()->get('shopware_attribute.crud_service'),
-            Shopware()->Container()->get('models'),
-            Shopware()->Container()->get('dbal_connection'),
-            Shopware()->Container()->get('paypal_unified.payment_method_provider'),
-            new PaymentModelFactory(static::createMock(Plugin::class))
+            $this->getContainer()->get('shopware_attribute.crud_service'),
+            $this->getContainer()->get('models'),
+            $this->getContainer()->get('dbal_connection'),
+            $this->getContainer()->get('paypal_unified.payment_method_provider'),
+            new PaymentModelFactory(static::createMock(Plugin::class)),
+            $this->getTranslationService(),
+            new TranslationTransformer($this->getContainer()->get('models'))
         );
 
         $reflectionMethod = (new ReflectionClass(Updater::class))->getMethod('updateTo304');
@@ -84,7 +91,7 @@ class UpdaterTest extends TestCase
         $reflectionMethod->invoke($updater);
 
         $orderIds = [100080, 100081, 100082, 100083];
-        $result = Shopware()->Container()->get('dbal_connection')->createQueryBuilder()
+        $result = $this->getContainer()->get('dbal_connection')->createQueryBuilder()
             ->select(['orderID', 'swag_paypal_unified_payment_type'])
             ->from('s_order_attributes')
             ->where('orderID IN (:orderIds)')

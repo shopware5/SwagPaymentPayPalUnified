@@ -13,6 +13,7 @@ use PDO;
 use Shopware\Bundle\AttributeBundle\Service\CrudService;
 use Shopware\Bundle\AttributeBundle\Service\CrudServiceInterface;
 use Shopware\Components\Model\ModelManager;
+use Shopware_Components_Translation;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Components\Services\Plus\PaymentInstructionService;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
@@ -25,6 +26,7 @@ use SwagPaymentPayPalUnified\Setup\Versions\UpdateTo433;
 use SwagPaymentPayPalUnified\Setup\Versions\UpdateTo500;
 use SwagPaymentPayPalUnified\Setup\Versions\UpdateTo504;
 use SwagPaymentPayPalUnified\Setup\Versions\UpdateTo600;
+use SwagPaymentPayPalUnified\Setup\Versions\UpdateTo602;
 
 class Updater
 {
@@ -59,6 +61,16 @@ class Updater
     private $columnService;
 
     /**
+     * @var Shopware_Components_Translation
+     */
+    private $translation;
+
+    /**
+     * @var TranslationTransformer
+     */
+    private $translationTransformer;
+
+    /**
      * @param CrudService|CrudServiceInterface $attributeCrudService
      */
     public function __construct(
@@ -66,13 +78,17 @@ class Updater
         ModelManager $modelManager,
         Connection $connection,
         PaymentMethodProviderInterface $paymentMethodProvider,
-        PaymentModelFactory $paymentModelFactory
+        PaymentModelFactory $paymentModelFactory,
+        Shopware_Components_Translation $translation,
+        TranslationTransformer $translationTransformer
     ) {
         $this->attributeCrudService = $attributeCrudService;
         $this->modelManager = $modelManager;
         $this->connection = $connection;
         $this->paymentMethodProvider = $paymentMethodProvider;
         $this->paymentModelFactory = $paymentModelFactory;
+        $this->translationTransformer = $translationTransformer;
+        $this->translation = $translation;
 
         $this->columnService = new ColumnService($this->connection);
     }
@@ -196,6 +212,13 @@ class Updater
                 $this->connection,
                 $this->attributeCrudService,
                 $this->columnService
+            ))->update();
+        }
+
+        if (\version_compare($oldVersion, '6.0.2', '<')) {
+            (new UpdateTo602(
+                $this->translation,
+                $this->translationTransformer
             ))->update();
         }
     }
