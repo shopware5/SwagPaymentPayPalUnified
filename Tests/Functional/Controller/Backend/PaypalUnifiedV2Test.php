@@ -38,6 +38,7 @@ use SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\CaptureResource;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\OrderResource;
 use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
+use SwagPaymentPayPalUnified\Tests\Functional\ReflectionHelperTrait;
 use SwagPaymentPayPalUnified\Tests\Unit\PaypalPaymentControllerTestCase;
 use UnexpectedValueException;
 
@@ -45,8 +46,10 @@ class PaypalUnifiedV2Test extends PaypalPaymentControllerTestCase
 {
     use ContainerTrait;
     use DatabaseTestCaseTrait;
+    use ReflectionHelperTrait;
 
     const DEFAULT_PAYMENT_STATE = 99;
+    const SHOPWARE_ORDER_ID = 173000;
 
     /**
      * @dataProvider captureOrderTestDataProvider
@@ -343,11 +346,56 @@ class PaypalUnifiedV2Test extends PaypalPaymentControllerTestCase
     }
 
     /**
+     * @return void
+     */
+    public function testRefundOrderActionCheckPaymentStatusForPartiallyPayed()
+    {
+        $this->insatllOrderForToTestUpdatePaymentStatus();
+
+        $controller = $this->createController(false, true);
+        $controller->Request()->setParam('maxCaptureAmount', 1000.00);
+        $controller->Request()->setParam('shopwareOrderId', self::SHOPWARE_ORDER_ID);
+
+        $controller->refundOrderAction();
+
+        static::assertSame(Status::PAYMENT_STATE_PARTIALLY_PAID, $this->getClearedResult(self::SHOPWARE_ORDER_ID));
+    }
+
+    /**
+     * @return void
+     */
+    public function testRefundOrderActionCheckPaymentStatusForReCrediting()
+    {
+        $this->insatllOrderForToTestUpdatePaymentStatus();
+
+        $controller = $this->createController(false, true);
+        $controller->Request()->setParam('maxCaptureAmount', 10.00);
+        $controller->Request()->setParam('shopwareOrderId', self::SHOPWARE_ORDER_ID);
+
+        $controller->refundOrderAction();
+
+        static::assertSame(Status::PAYMENT_STATE_RE_CREDITING, $this->getClearedResult(self::SHOPWARE_ORDER_ID));
+    }
+
+    /**
+     * @param int $orderId
+     *
+     * @return int
+     */
+    private function getClearedResult($orderId)
+    {
+        $sql = 'SELECT `cleared` FROM `s_order` WHERE id = ?;';
+
+        return (int) $this->getContainer()->get('dbal_connection')->fetchColumn($sql, [$orderId]);
+    }
+
+    /**
      * @param bool $captureResourceWillThrowException
+     * @param bool $requireOriginalPaymentStatusService
      *
      * @return Shopware_Controllers_Backend_PaypalUnifiedV2
      */
-    private function createController($captureResourceWillThrowException)
+    private function createController($captureResourceWillThrowException, $requireOriginalPaymentStatusService = false)
     {
         $logger = $this->createMock(LoggerService::class);
         $exceptionHandler = $this->createMock(ExceptionHandlerService::class);
@@ -363,7 +411,12 @@ class PaypalUnifiedV2Test extends PaypalPaymentControllerTestCase
             $exceptionHandler->expects(static::once())->method('handle')->willReturn($exception);
         } else {
             $captureResource->expects(static::once())->method('refund')->willReturn($refund);
-            $paymentStatusService->expects(static::once())->method('updatePaymentStatusV2');
+
+            if ($requireOriginalPaymentStatusService) {
+                $paymentStatusService = $this->getContainer()->get('paypal_unified.payment_status_service');
+            } else {
+                $paymentStatusService->expects(static::once())->method('updatePaymentStatusV2');
+            }
         }
 
         $request = $this->createRequest();
