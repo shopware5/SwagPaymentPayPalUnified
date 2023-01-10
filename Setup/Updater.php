@@ -217,6 +217,7 @@ class Updater
 
         if (\version_compare($oldVersion, '6.0.2', '<')) {
             (new UpdateTo602(
+                $this->connection,
                 $this->translation,
                 $this->translationTransformer
             ))->update();

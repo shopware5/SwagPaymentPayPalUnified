@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Setup;
 
+use PDO;
 use PHPUnit\Framework\TestCase;
 use Shopware_Components_Translation;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
@@ -56,6 +57,7 @@ class UpdateTo602Test extends TestCase
 
         $translationResult = $this->getCurrentEnGbTranslation();
 
+        static::assertSame('PayPal, Später Bezahlen', $this->getPaymentMethodDescription());
         static::assertSame('PayPal, Pay in 3', $translationResult['description']);
 
         if (\method_exists($this, 'assertStringContainsString')) {
@@ -70,7 +72,11 @@ class UpdateTo602Test extends TestCase
      */
     private function getUpdateTo602()
     {
-        return new UpdateTo602($this->translation, $this->translationTransformer);
+        return new UpdateTo602(
+            $this->getContainer()->get('dbal_connection'),
+            $this->translation,
+            $this->translationTransformer
+        );
     }
 
     /**
@@ -105,5 +111,25 @@ class UpdateTo602Test extends TestCase
     private function getCurrentEnGbTranslation()
     {
         return $this->translation->read(2, 'config_payment', 1)[8];
+    }
+
+    /**
+     * @return string
+     */
+    private function getPaymentMethodDescription()
+    {
+        $description = $this->getContainer()->get('dbal_connection')->createQueryBuilder()
+            ->select(['description'])
+            ->from('s_core_paymentmeans')
+            ->where('name = :payLaterPaymentMethodName')
+            ->setParameter('payLaterPaymentMethodName', PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_LATER_METHOD_NAME)
+            ->execute()
+            ->fetch(PDO::FETCH_COLUMN);
+
+        if (!\is_string($description)) {
+            static::fail('Cannot read payment method description');
+        }
+
+        return $description;
     }
 }
