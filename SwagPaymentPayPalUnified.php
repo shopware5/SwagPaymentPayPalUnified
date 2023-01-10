@@ -8,7 +8,6 @@
 
 namespace SwagPaymentPayPalUnified;
 
-use RuntimeException;
 use Shopware\Components\Plugin;
 use Shopware\Components\Plugin\Context\ActivateContext;
 use Shopware\Components\Plugin\Context\DeactivateContext;
@@ -138,14 +137,14 @@ class SwagPaymentPayPalUnified extends Plugin
      */
     public function getTranslation()
     {
-        $translation = new Shopware_Components_Translation($this->container->get('dbal_connection'), $this->container);
+        $translation = null;
 
         if ($this->container->initialized('translation')) {
             $translation = $this->container->get('translation');
         }
 
         if (!$translation instanceof Shopware_Components_Translation) {
-            throw new RuntimeException('This should not happen. Shopware_Components_Translation is not available.');
+            $translation = new Shopware_Components_Translation($this->container->get('dbal_connection'), $this->container);
         }
 
         return $translation;
