@@ -8,12 +8,19 @@
 
 namespace SwagPaymentPayPalUnified\Setup\Versions;
 
+use Doctrine\DBAL\Connection;
 use Shopware_Components_Translation;
+use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Setup\Assets\Translations;
 use SwagPaymentPayPalUnified\Setup\TranslationTransformer;
 
 class UpdateTo602
 {
+    /**
+     * @var Connection
+     */
+    private $connection;
+
     /**
      * @var Shopware_Components_Translation
      */
@@ -24,10 +31,14 @@ class UpdateTo602
      */
     private $translationTransformer;
 
-    public function __construct(Shopware_Components_Translation $translation, TranslationTransformer $translationTransformer)
-    {
+    public function __construct(
+        Connection $connection,
+        Shopware_Components_Translation $translation,
+        TranslationTransformer $translationTransformer
+    ) {
         $this->translationTransformer = $translationTransformer;
         $this->translation = $translation;
+        $this->connection = $connection;
     }
 
     /**
@@ -35,7 +46,22 @@ class UpdateTo602
      */
     public function update()
     {
+        $this->updatePayLaterDescription();
         $this->updatePaymentNameTranslations();
+    }
+
+    /**
+     * @return void
+     */
+    private function updatePayLaterDescription()
+    {
+        $this->connection->createQueryBuilder()
+            ->update('s_core_paymentmeans')
+            ->set('description', ':newPayLaterDescription')
+            ->where('name = :payLaterPaymentMethodName')
+            ->setParameter('newPayLaterDescription', Translations::CONFIG_PAYMENT_TRANSLATIONS['de_DE'][PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_LATER_METHOD_NAME]['description'])
+            ->setParameter('payLaterPaymentMethodName', PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_LATER_METHOD_NAME)
+            ->execute();
     }
 
     /**

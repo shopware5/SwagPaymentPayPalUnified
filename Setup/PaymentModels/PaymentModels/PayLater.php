@@ -23,8 +23,8 @@ class PayLater extends AbstractPaymentModel
         $payment->setActive(false);
         $payment->setPosition(self::POSITION_PAY_LATER);
         $payment->setName(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_LATER_METHOD_NAME);
-        $payment->setDescription(Translations::CONFIG_PAYMENT_TRANSLATIONS['en_GB'][PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_LATER_METHOD_NAME]['description']);
-        $payment->setAdditionalDescription(Translations::CONFIG_PAYMENT_TRANSLATIONS['en_GB'][PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_LATER_METHOD_NAME]['additionalDescription']);
+        $payment->setDescription(Translations::CONFIG_PAYMENT_TRANSLATIONS['de_DE'][PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_LATER_METHOD_NAME]['description']);
+        $payment->setAdditionalDescription(Translations::CONFIG_PAYMENT_TRANSLATIONS['de_DE'][PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_LATER_METHOD_NAME]['additionalDescription']);
         $payment->setAction(self::ACTION_PAYPAL_CLASSIC);
         $payment->setPlugin($this->plugin);
 
