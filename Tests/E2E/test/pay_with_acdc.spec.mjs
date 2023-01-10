@@ -32,8 +32,11 @@ test.describe('Pay with credit card', () => {
         await page.click('.button--checkout');
         await expect(page).toHaveURL(/.*checkout\/confirm/);
 
+        const changePaymentButton = await page.locator('.btn--change-payment');
+        await expect(changePaymentButton).toHaveText('Zahlung und Versand ändern');
+
         // Change payment
-        await page.click('.btn--change-payment');
+        await changePaymentButton.click('.btn--change-payment');
         const selector = await getPaypalPaymentMethodSelector.getSelector(
             getPaypalPaymentMethodSelector.paymentMethodNames.SwagPaymentPayPalUnifiedAdvancedCreditDebitCard
         );

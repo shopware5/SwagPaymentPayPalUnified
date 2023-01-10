@@ -8,6 +8,7 @@
 
 namespace SwagPaymentPayPalUnified;
 
+use RuntimeException;
 use Shopware\Components\Plugin;
 use Shopware\Components\Plugin\Context\ActivateContext;
 use Shopware\Components\Plugin\Context\DeactivateContext;
@@ -57,15 +58,11 @@ class SwagPaymentPayPalUnified extends Plugin
      */
     public function install(InstallContext $context)
     {
-        $translation = $this->container->initialized('translation')
-            ? $this->container->get('translation')
-            : new Shopware_Components_Translation($this->container->get('dbal_connection'), $this->container);
-
         $installer = new Installer(
             $this->container->get('models'),
             $this->container->get('dbal_connection'),
             $this->container->get('shopware_attribute.crud_service'),
-            $translation,
+            $this->getTranslation(),
             new TranslationTransformer($this->container->get('models')),
             $this->getPaymentMethodProvider(),
             new PaymentModelFactory($context->getPlugin()),
@@ -101,7 +98,9 @@ class SwagPaymentPayPalUnified extends Plugin
             $this->container->get('models'),
             $this->container->get('dbal_connection'),
             $this->getPaymentMethodProvider(),
-            new PaymentModelFactory($context->getPlugin())
+            new PaymentModelFactory($context->getPlugin()),
+            $this->getTranslation(),
+            new TranslationTransformer($this->container->get('models'))
         );
         $updater->update($context->getCurrentVersion());
 
@@ -132,6 +131,24 @@ class SwagPaymentPayPalUnified extends Plugin
         }
 
         $context->scheduleClearCache(DeactivateContext::CACHE_LIST_ALL);
+    }
+
+    /**
+     * @return Shopware_Components_Translation
+     */
+    public function getTranslation()
+    {
+        $translation = new Shopware_Components_Translation($this->container->get('dbal_connection'), $this->container);
+
+        if ($this->container->initialized('translation')) {
+            $translation = $this->container->get('translation');
+        }
+
+        if (!$translation instanceof Shopware_Components_Translation) {
+            throw new RuntimeException('This should not happen. Shopware_Components_Translation is not available.');
+        }
+
+        return $translation;
     }
 
     private function getPaymentMethodProvider()

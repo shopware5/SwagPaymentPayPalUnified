@@ -1,6 +1,12 @@
 includes:
 	- phpstan-baseline.neon
 
+services:
+	- # CrudService or CrudServiceInterface rule
+		class: SwagPaymentPayPalUnified\PhpStan\CustomRules\CrudServiceTest
+		tags:
+			- phpstan.rules.rule
+
 parameters:
     level: 8
     reportUnmatchedIgnoredErrors: true

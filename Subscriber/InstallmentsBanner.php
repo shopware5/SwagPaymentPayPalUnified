@@ -158,6 +158,8 @@ class InstallmentsBanner implements SubscriberInterface
             'eur_fr_fr' => 'FR',
             'gbp_en_gb' => 'GB',
             'usd_en_us' => 'US',
+            'eur_es_es' => 'ES',
+            'eur_it_it' => 'IT',
         ];
 
         if (!isset($currencies[$key])) {

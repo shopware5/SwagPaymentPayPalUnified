@@ -121,6 +121,8 @@ class PaypalUnifiedSettingsTest extends TestCase
             [
                 'PAY_UPON_INVOICE' => true,
                 'PAY_UPON_INVOICE_HAS_LIMITS' => false,
+                'PAYMENTS_RECEIVABLE' => null,
+                'PRIMARY_EMAIL_CONFIRMED' => null,
                 'success' => true,
             ],
         ];
@@ -132,6 +134,8 @@ class PaypalUnifiedSettingsTest extends TestCase
             [
                 'PAY_UPON_INVOICE' => true,
                 'PAY_UPON_INVOICE_HAS_LIMITS' => false,
+                'PAYMENTS_RECEIVABLE' => null,
+                'PRIMARY_EMAIL_CONFIRMED' => null,
                 'CUSTOM_CARD_PROCESSING' => true,
                 'CUSTOM_CARD_PROCESSING_HAS_LIMITS' => false,
                 'success' => true,
@@ -145,6 +149,8 @@ class PaypalUnifiedSettingsTest extends TestCase
             [
                 'PAY_UPON_INVOICE' => true,
                 'PAY_UPON_INVOICE_HAS_LIMITS' => true,
+                'PAYMENTS_RECEIVABLE' => null,
+                'PRIMARY_EMAIL_CONFIRMED' => null,
                 'success' => true,
             ],
         ];
@@ -156,8 +162,40 @@ class PaypalUnifiedSettingsTest extends TestCase
             [
                 'PAY_UPON_INVOICE' => true,
                 'PAY_UPON_INVOICE_HAS_LIMITS' => true,
+                'PAYMENTS_RECEIVABLE' => null,
+                'PRIMARY_EMAIL_CONFIRMED' => null,
                 'CUSTOM_CARD_PROCESSING' => true,
                 'CUSTOM_CARD_PROCESSING_HAS_LIMITS' => true,
+                'success' => true,
+            ],
+        ];
+
+        yield 'CAPABILITY_PAY_UPON_INVOICE and CAPABILITY_ADVANCED_CREDIT_DEBIT_CARD paymentsReceivable and primaryEmailConfirmed is false' => [
+            $this->createRequestMock(1, 'fooBar', [OnboardingStatusService::CAPABILITY_PAY_UPON_INVOICE, OnboardingStatusService::CAPABILITY_ADVANCED_CREDIT_DEBIT_CARD], []),
+            new IsCapableResult(true, null, false, false),
+            false,
+            [
+                'PAY_UPON_INVOICE' => true,
+                'PAY_UPON_INVOICE_HAS_LIMITS' => false,
+                'PAYMENTS_RECEIVABLE' => false,
+                'PRIMARY_EMAIL_CONFIRMED' => false,
+                'CUSTOM_CARD_PROCESSING' => true,
+                'CUSTOM_CARD_PROCESSING_HAS_LIMITS' => false,
+                'success' => true,
+            ],
+        ];
+
+        yield 'CAPABILITY_PAY_UPON_INVOICE and CAPABILITY_ADVANCED_CREDIT_DEBIT_CARD paymentsReceivable and primaryEmailConfirmed is true' => [
+            $this->createRequestMock(1, 'fooBar', [OnboardingStatusService::CAPABILITY_PAY_UPON_INVOICE, OnboardingStatusService::CAPABILITY_ADVANCED_CREDIT_DEBIT_CARD], []),
+            new IsCapableResult(true, null, true, true),
+            false,
+            [
+                'PAY_UPON_INVOICE' => true,
+                'PAY_UPON_INVOICE_HAS_LIMITS' => false,
+                'PAYMENTS_RECEIVABLE' => true,
+                'PRIMARY_EMAIL_CONFIRMED' => true,
+                'CUSTOM_CARD_PROCESSING' => true,
+                'CUSTOM_CARD_PROCESSING_HAS_LIMITS' => false,
                 'success' => true,
             ],
         ];

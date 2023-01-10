@@ -233,6 +233,19 @@
             var $orderForm = $(this.opts.confirmFormSelector);
 
             $orderForm.on('submit.paypalUnified', this.onSubmitForm.bind(this, hostedFields));
+
+            hostedFields.on('validityChange', this.onValidityChange.bind(this));
+        },
+
+        /**
+         * @param event { Event }
+         */
+        onValidityChange: function (event) {
+            var field = event.fields[event.emittedBy];
+
+            if (field.isValid || field.isPotentiallyValid) {
+                field.container.classList.remove(this.opts.hasErrorClass);
+            }
         },
 
         /**

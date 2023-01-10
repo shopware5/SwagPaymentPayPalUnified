@@ -5,12 +5,37 @@
     <label lang="de">PayPal</label>
     <label lang="en">PayPal</label>
 
-    <version>6.0.1</version>
+    <version>6.0.2</version>
     <copyright>(c) by shopware AG</copyright>
     <license>MIT</license>
     <link>http://store.shopware.com</link>
     <author>shopware AG</author>
     <compatibility minVersion="5.2.27" maxVersion="5.99.99"/>
+
+    <changelog version="REPLACE_GLOBALLY_WITH_NEXT_VERSION(6.0.2)">
+        <changes lang="de">
+            PT-10637 - Setzt richtigen Zahlungsstatus nach Teilrückzahlung;
+            PT-12937 - Fehlende Banner für "Später Zahlen" hinzugefügt;
+            PT-12937 - Sidebar wird nur angezeigt, wenn das Banner verfügbar ist;
+            PT-12723 - Verbessert die Benutzerfreundlichkeit der Kreditkartenfelder;
+            PT-12761 - Verbessert die Benutzerfreundlichkeit beim Wechsel der Zahlungsart;
+            PT-12833 - Verhindert das Anzeigen mehrerer gleicher Nachrichten im Zahlartenmodul;
+            PT-12942 - Fügt eine Warnung für erneute Autorisierung hinzu;
+            PT-12987 - Verbessert den Verfügbarkeitstest von "Kauf auf Rechnung" und "Kreditkarten Zahlung" in den Einstellungen;
+            PT-13012 - Ändert den englischen Namen für "PayPal, Pay Later" im Frontend zu "PayPal, Pay in 3";
+        </changes>
+        <changes lang="en">
+            PT-10637 - Sets correct payment status after partial refund;
+            PT-12937 - Missing banner for "Pay later" added;
+            PT-12937 - Sidebar is displayed only when the banner is available;
+            PT-12723 - Improves the usability of the credit card fields;
+            PT-12761 - Improves the usability when changing the payment method;
+            PT-12833 - Prevents displaying multiple identical messages in the payment type module;
+            PT-12942 - Adds a warning for reauthorization;
+            PT-12987 - Improves the availability test of "pay upon invoice" and "credit card payment" in the settings;
+            PT-13012 - Changed the English name for "PayPal, Pay Later" in the frontend to "PayPal, Pay in 3";
+        </changes>
+    </changelog>
 
     <changelog version="6.0.1">
         <changes lang="de">

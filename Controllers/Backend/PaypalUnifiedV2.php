@@ -157,6 +157,7 @@ class Shopware_Controllers_Backend_PaypalUnifiedV2 extends Shopware_Controllers_
         $amountToRefund = $this->request->getParam('amount');
         $currency = $this->request->getParam('currency');
         $note = $this->request->getParam('note');
+        $maxCaptureAmount = $this->request->getParam('maxCaptureAmount');
 
         $amount = new Amount();
         $amount->setCurrencyCode($currency);
@@ -184,7 +185,12 @@ class Shopware_Controllers_Backend_PaypalUnifiedV2 extends Shopware_Controllers_
         }
 
         if ($refundResult->getStatus() === PaymentStatusV2::ORDER_REFUND_COMPLETED) {
-            $this->paymentStatusService->updatePaymentStatusV2($shopwareOrderId, Status::PAYMENT_STATE_RE_CREDITING);
+            $newStatus = Status::PAYMENT_STATE_RE_CREDITING;
+            if ($amountToRefund < $maxCaptureAmount) {
+                $newStatus = Status::PAYMENT_STATE_PARTIALLY_PAID;
+            }
+
+            $this->paymentStatusService->updatePaymentStatusV2($shopwareOrderId, $newStatus);
         }
 
         $this->view->assign(['success' => true]);

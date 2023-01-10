@@ -342,7 +342,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
     /**
      * @return { Ext.data.Store }
      */
-    createIntentStore: function () {
+    createIntentStore: function() {
         return Ext.create('Ext.data.Store', {
             fields: ['id', 'text'],
             data: [
@@ -402,6 +402,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
         var me = this;
 
         me.onboardingButton = me.createOnboardingButtonStandalone(this.buttonValue);
+        me.onboardingButton.hide();
 
         return Ext.create('Ext.form.Panel', {
             dock: 'bottom',
@@ -411,6 +412,12 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
 
             items: [
                 me.onboardingButton,
+                {
+                    xtype: 'button',
+                    cls: 'primary',
+                    text: '{s name="onboarding_button/text"}Authorize{/s}',
+                    handler: Ext.bind(me.onBeforeAuthorize, me)
+                },
                 {
                     xtype: 'button',
                     cls: 'secondary',
@@ -431,6 +438,12 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
                 }
             ]
         });
+    },
+
+    onBeforeAuthorize: function() {
+        var me = this;
+
+        me.fireEvent('onBeforeAuthorize');
     },
 
     /**
@@ -493,6 +506,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
         this.onboardingButton.destroy();
 
         this.onboardingButton = this.createOnboardingButtonStandalone(this.buttonValue);
+        this.onboardingButton.hide();
 
         this.toolbarContainer.add(this.onboardingButton);
     },
@@ -515,7 +529,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.tabs.General', {
      *
      * @return { Ext.form.Container }
      */
-    createPayerIdNotice: function (noticeText) {
+    createPayerIdNotice: function(noticeText) {
         var notice = this.createNotice(noticeText, 'alert');
 
         notice.hide();

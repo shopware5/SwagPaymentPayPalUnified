@@ -41,7 +41,7 @@ EOD
 EOD
             ],
             PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_LATER_METHOD_NAME => [
-                'description' => 'PayPal, Pay later',
+                'description' => 'PayPal, Pay in 3',
                 'additionalDescription' => <<<'EOD'
 <!-- PayPal PayLater Message -->
 <div data-pp-message data-pp-style-logo-type="primary" data-pp-placement="payment" data-pp-style-logo-position="left" data-pp-style-text-size="14" data-pp-style-text-color="black" style="margin-top: 5px;"></div>
@@ -76,7 +76,7 @@ EOD
 EOD
             ],
             PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_LATER_METHOD_NAME => [
-                'description' => 'PayPal, Später bezahlen',
+                'description' => 'PayPal, Später Bezahlen',
                 'additionalDescription' => <<<'EOD'
 <!-- PayPal PayLater Message -->
 <div data-pp-message data-pp-style-logo-type="primary" data-pp-placement="payment" data-pp-style-logo-position="left" data-pp-style-text-size="14" data-pp-style-text-color="black" style="margin-top: 5px;"></div>

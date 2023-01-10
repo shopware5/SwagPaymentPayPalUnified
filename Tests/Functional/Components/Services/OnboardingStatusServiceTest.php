@@ -9,6 +9,7 @@
 namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services;
 
 use Generator;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\Components\Services\LoggerService;
 use SwagPaymentPayPalUnified\Components\Services\OnboardingStatusService;
@@ -157,9 +158,157 @@ class OnboardingStatusServiceTest extends TestCase
     }
 
     /**
+     * @dataProvider getIsCapableResultShouldReturnValuesForPaymentsReceivableAndPrimaryEmailConfirmedTestDataProvider
+     *
+     * @param bool|null $paymentsReceivable
+     * @param bool|null $primaryEmailConfirmed
+     * @param string    $targetCapability
+     * @param bool      $expectedPaymentsReceivableResult
+     * @param bool      $expectedPrimaryEmailConfirmedResult
+     *
+     * @return void
+     */
+    public function testGetIsCapableResultShouldReturnValuesForPaymentsReceivableAndPrimaryEmailConfirmed(
+        $paymentsReceivable,
+        $primaryEmailConfirmed,
+        $targetCapability,
+        $expectedPaymentsReceivableResult,
+        $expectedPrimaryEmailConfirmedResult
+    ) {
+        $response = $this->getMerchantIntegrationsResponse($paymentsReceivable, $primaryEmailConfirmed);
+
+        $onboardingStatusService = $this->createOnboardingStatusService(
+            $this->createMerchantIntegrationsResourceMock($response)
+        );
+
+        $result = $onboardingStatusService->getIsCapableResult('anyPayerId', 1, false, $targetCapability);
+
+        static::assertSame($expectedPaymentsReceivableResult, $result->getIsPaymentsReceivable());
+        static::assertSame($expectedPrimaryEmailConfirmedResult, $result->getIsPrimaryEmailConfirmed());
+    }
+
+    /**
+     * @return Generator<array<int,mixed>>
+     */
+    public function getIsCapableResultShouldReturnValuesForPaymentsReceivableAndPrimaryEmailConfirmedTestDataProvider()
+    {
+        yield 'CAPABILITY_PAY_UPON_INVOICE paymentsReceivable is false and primaryEmailConfirmed is false' => [
+            false,
+            false,
+            OnboardingStatusService::CAPABILITY_PAY_UPON_INVOICE,
+            false,
+            false,
+        ];
+
+        yield 'CAPABILITY_ADVANCED_CREDIT_DEBIT_CARD paymentsReceivable is false and primaryEmailConfirmed is false' => [
+            false,
+            false,
+            OnboardingStatusService::CAPABILITY_ADVANCED_CREDIT_DEBIT_CARD,
+            false,
+            false,
+        ];
+
+        yield 'CAPABILITY_PAY_UPON_INVOICE paymentsReceivable is true and primaryEmailConfirmed is false' => [
+            true,
+            false,
+            OnboardingStatusService::CAPABILITY_PAY_UPON_INVOICE,
+            true,
+            false,
+        ];
+
+        yield 'CAPABILITY_ADVANCED_CREDIT_DEBIT_CARD paymentsReceivable is true and primaryEmailConfirmed is false' => [
+            true,
+            false,
+            OnboardingStatusService::CAPABILITY_ADVANCED_CREDIT_DEBIT_CARD,
+            true,
+            false,
+        ];
+
+        yield 'CAPABILITY_PAY_UPON_INVOICE paymentsReceivable is true and primaryEmailConfirmed is true' => [
+            true,
+            true,
+            OnboardingStatusService::CAPABILITY_PAY_UPON_INVOICE,
+            true,
+            true,
+        ];
+
+        yield 'CAPABILITY_ADVANCED_CREDIT_DEBIT_CARD paymentsReceivable is true and primaryEmailConfirmed is true' => [
+            true,
+            true,
+            OnboardingStatusService::CAPABILITY_ADVANCED_CREDIT_DEBIT_CARD,
+            true,
+            true,
+        ];
+
+        yield 'CAPABILITY_PAY_UPON_INVOICE paymentsReceivable is false and primaryEmailConfirmed is true' => [
+            false,
+            true,
+            OnboardingStatusService::CAPABILITY_PAY_UPON_INVOICE,
+            false,
+            true,
+        ];
+
+        yield 'CAPABILITY_ADVANCED_CREDIT_DEBIT_CARD paymentsReceivable is false and primaryEmailConfirmed is true' => [
+            false,
+            true,
+            OnboardingStatusService::CAPABILITY_ADVANCED_CREDIT_DEBIT_CARD,
+            false,
+            true,
+        ];
+
+        yield 'CAPABILITY_PAY_UPON_INVOICE paymentsReceivable is null and primaryEmailConfirmed is null' => [
+            null,
+            null,
+            OnboardingStatusService::CAPABILITY_PAY_UPON_INVOICE,
+            false,
+            false,
+        ];
+
+        yield 'CAPABILITY_ADVANCED_CREDIT_DEBIT_CARD paymentsReceivable is null and primaryEmailConfirmed is null' => [
+            null,
+            null,
+            OnboardingStatusService::CAPABILITY_ADVANCED_CREDIT_DEBIT_CARD,
+            false,
+            false,
+        ];
+
+        yield 'CAPABILITY_PAY_UPON_INVOICE paymentsReceivable is true and primaryEmailConfirmed is null' => [
+            true,
+            null,
+            OnboardingStatusService::CAPABILITY_PAY_UPON_INVOICE,
+            true,
+            false,
+        ];
+
+        yield 'CAPABILITY_ADVANCED_CREDIT_DEBIT_CARD paymentsReceivable is true and primaryEmailConfirmed is null' => [
+            true,
+            null,
+            OnboardingStatusService::CAPABILITY_ADVANCED_CREDIT_DEBIT_CARD,
+            true,
+            false,
+        ];
+
+        yield 'CAPABILITY_PAY_UPON_INVOICE paymentsReceivable is null and primaryEmailConfirmed is true' => [
+            null,
+            true,
+            OnboardingStatusService::CAPABILITY_PAY_UPON_INVOICE,
+            false,
+            true,
+        ];
+
+        yield 'CAPABILITY_ADVANCED_CREDIT_DEBIT_CARD paymentsReceivable is null and primaryEmailConfirmed is true' => [
+            null,
+            true,
+            OnboardingStatusService::CAPABILITY_ADVANCED_CREDIT_DEBIT_CARD,
+            false,
+            true,
+        ];
+    }
+
+    /**
      * @param array<string,mixed>|null $response
      *
-     * @return \PHPUnit\Framework\MockObject\MockObject|MerchantIntegrationsResource
+     * @return MockObject|MerchantIntegrationsResource
      */
     private function createMerchantIntegrationsResourceMock(array $response = null)
     {
@@ -194,6 +343,68 @@ class OnboardingStatusServiceTest extends TestCase
             foreach ($response['capabilities'] as &$capability) {
                 $capability['limits'] = null;
             }
+        }
+
+        return $response;
+    }
+
+    /**
+     * @param bool|null $paymentsReceivable
+     * @param bool|null $primaryEmailConfirmed
+     *
+     * @return array<string,mixed>
+     */
+    private function getMerchantIntegrationsResponse($paymentsReceivable, $primaryEmailConfirmed)
+    {
+        $response = [
+            'products' => [
+                [
+                    'name' => 'PAYMENT_METHODS',
+                    'vetting_status' => 'SUBSCRIBED',
+                    'capabilities' => [
+                        'PAY_UPON_INVOICE',
+                    ],
+                ], [
+                    'name' => 'PPCP_CUSTOM',
+                    'vetting_status' => 'SUBSCRIBED',
+                    'capabilities' => [
+                        'CUSTOM_CARD_PROCESSING',
+                    ],
+                ], [
+                    'name' => 'PPCP_STANDARD',
+                    'vetting_status' => 'SUBSCRIBED',
+                    'capabilities' => [
+                        'STANDARD_CARD_PROCESSING',
+                    ],
+                ],
+            ],
+            'capabilities' => [
+                [
+                    'name' => 'PAY_UPON_INVOICE',
+                    'status' => 'ACTIVE',
+                    'limits' => [
+                        [
+                            'type' => 'GENERAL',
+                        ],
+                    ],
+                ], [
+                    'name' => 'CUSTOM_CARD_PROCESSING',
+                    'status' => 'ACTIVE',
+                ], [
+                    'name' => 'STANDARD_CARD_PROCESSING',
+                    'status' => 'ACTIVE',
+                ],
+            ],
+            'payments_receivable' => $paymentsReceivable,
+            'primary_email_confirmed' => $primaryEmailConfirmed,
+        ];
+
+        if ($paymentsReceivable === null) {
+            unset($response['payments_receivable']);
+        }
+
+        if ($primaryEmailConfirmed === null) {
+            unset($response['primary_email_confirmed']);
         }
 
         return $response;

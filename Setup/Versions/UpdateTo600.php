@@ -11,6 +11,7 @@ namespace SwagPaymentPayPalUnified\Setup\Versions;
 use Doctrine\DBAL\Connection;
 use PDO;
 use Shopware\Bundle\AttributeBundle\Service\CrudService;
+use Shopware\Bundle\AttributeBundle\Service\CrudServiceInterface;
 use SwagPaymentPayPalUnified\Setup\ColumnService;
 
 class UpdateTo600
@@ -21,7 +22,7 @@ class UpdateTo600
     private $connection;
 
     /**
-     * @var CrudService
+     * @var CrudService|CrudServiceInterface
      */
     private $crudService;
 
@@ -30,7 +31,10 @@ class UpdateTo600
      */
     private $columnService;
 
-    public function __construct(Connection $connection, CrudService $crudService, ColumnService $columnService)
+    /**
+     * @param CrudService|CrudServiceInterface $crudService
+     */
+    public function __construct(Connection $connection, $crudService, ColumnService $columnService)
     {
         $this->connection = $connection;
         $this->crudService = $crudService;
