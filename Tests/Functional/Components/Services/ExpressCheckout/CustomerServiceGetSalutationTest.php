@@ -8,11 +8,11 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services\ExpressCheckout;
 
-use Doctrine\DBAL\Connection;
 use Enlight_Controller_Front;
 use PHPUnit\Framework\TestCase;
 use Shopware\Bundle\AccountBundle\Service\RegisterServiceInterface;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
+use Shopware\Components\Model\ModelManager;
 use Shopware_Components_Config as ShopwareConfig;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
@@ -102,7 +102,7 @@ class CustomerServiceGetSalutationTest extends TestCase
     {
         return new CustomerService(
             $shopwareConfig,
-            $this->createMock(Connection::class),
+            $this->createMock(ModelManager::class),
             $this->createMock(FormFactoryInterface::class),
             $this->createMock(ContextServiceInterface::class),
             $this->createMock(RegisterServiceInterface::class),

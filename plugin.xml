@@ -15,6 +15,7 @@
     <changelog version="REPLACE_GLOBALLY_WITH_NEXT_VERSION(6.0.2)">
         <changes lang="de">
             PT-10637 - Setzt richtigen Zahlungsstatus nach Teilrückzahlung;
+            PT-12473 - Wiederholende Bestellungen mit Express Checkout erstellen keine doppelten Gastkonten mehr;
             PT-12937 - Fehlende Banner für "Später Zahlen" hinzugefügt;
             PT-12937 - Sidebar wird nur angezeigt, wenn das Banner verfügbar ist;
             PT-12723 - Verbessert die Benutzerfreundlichkeit der Kreditkartenfelder;
@@ -26,6 +27,7 @@
         </changes>
         <changes lang="en">
             PT-10637 - Sets correct payment status after partial refund;
+            PT-12473 - Recurring orders with Express Checkout no longer create duplicate guest accounts;
             PT-12937 - Missing banner for "Pay later" added;
             PT-12937 - Sidebar is displayed only when the banner is available;
             PT-12723 - Improves the usability of the credit card fields;

@@ -19,10 +19,14 @@ trait TranslationTestCaseTrait
      */
     public function getTranslationService()
     {
-        $translation = new Shopware_Components_Translation($this->getContainer()->get('dbal_connection'), $this->getContainer());
+        $translation = null;
 
         if ($this->getContainer()->initialized('translation')) {
             $translation = $this->getContainer()->get('translation');
+        }
+
+        if (!$translation instanceof Shopware_Components_Translation) {
+            $translation = new Shopware_Components_Translation($this->getContainer()->get('dbal_connection'), $this->getContainer());
         }
 
         return $translation;

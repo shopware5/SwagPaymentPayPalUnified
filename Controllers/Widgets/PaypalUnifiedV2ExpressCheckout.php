@@ -86,9 +86,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout extends Abstra
         }
 
         $customerService = $this->get('paypal_unified.express_checkout.customer_service');
-
-        $this->logger->debug(sprintf('%s CREATE NEW CUSTOMER FOR PAYPAL ORDER WITH ID: %s', __METHOD__, $payPalOrderId));
-        $customerService->createNewCustomer($payPalOrder);
+        $customerService->upsertCustomer($payPalOrder);
 
         $this->view->assign([
             'expressCheckout' => true,

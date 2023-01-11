@@ -9,12 +9,14 @@
 namespace SwagPaymentPayPalUnified\Components\Services\ExpressCheckout;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\ORM\AbstractQuery;
 use Enlight_Controller_Front;
 use Enlight_Controller_Request_Request;
 use Shopware\Bundle\AccountBundle\Form\Account\AddressFormType;
 use Shopware\Bundle\AccountBundle\Form\Account\PersonalFormType;
 use Shopware\Bundle\AccountBundle\Service\RegisterServiceInterface;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
+use Shopware\Components\Model\ModelManager;
 use Shopware\Models\Customer\Address;
 use Shopware\Models\Customer\Customer;
 use Shopware_Components_Config as ShopwareConfig;
@@ -77,9 +79,14 @@ class CustomerService
      */
     private $logger;
 
+    /**
+     * @var ModelManager
+     */
+    private $modelManager;
+
     public function __construct(
         ShopwareConfig $shopwareConfig,
-        Connection $connection,
+        ModelManager $modelManager,
         FormFactoryInterface $formFactory,
         ContextServiceInterface $contextService,
         RegisterServiceInterface $registerService,
@@ -89,7 +96,7 @@ class CustomerService
         LoggerServiceInterface $logger
     ) {
         $this->shopwareConfig = $shopwareConfig;
-        $this->connection = $connection;
+        $this->modelManager = $modelManager;
         $this->formFactory = $formFactory;
         $this->contextService = $contextService;
         $this->registerService = $registerService;
@@ -97,9 +104,78 @@ class CustomerService
         $this->dependencyProvider = $dependencyProvider;
         $this->paymentMethodProvider = $paymentMethodProvider;
         $this->logger = $logger;
+
+        $this->connection = $this->modelManager->getConnection();
     }
 
+    /**
+     * @return void
+     */
+    public function upsertCustomer(Order $orderStruct)
+    {
+        $this->logger->debug(sprintf('%s CREATE OR UPDATE CUSTOMER FOR PAYPAL EXPRESS ORDER WITH ID: %s', __METHOD__, $orderStruct->getId()));
+
+        $payer = $orderStruct->getPayer();
+
+        $customerModel = $this->getCustomerByPayerId($payer->getPayerId());
+        if (!$customerModel instanceof Customer) {
+            $this->logger->debug(sprintf('%s NO CUSTOMER FOUND WITH PAYER-ID: %s CONTINUE WITH CREATING A NEW CUSTOMER', __METHOD__, $payer->getPayerId()));
+
+            $this->createNewCustomer($orderStruct);
+
+            return;
+        }
+
+        $address = $customerModel->getDefaultBillingAddress();
+        if (!$address instanceof Address) {
+            $this->logger->debug(sprintf('%s CUSTOMER WITH ID: %s HAS NO ADDRESS.', __METHOD__, $customerModel->getId()));
+
+            return;
+        }
+
+        $customerData = $this->createCustomerData($orderStruct);
+        if (!\is_array($customerData)) {
+            return;
+        }
+
+        $customerModel->setEmail($payer->getEmailAddress());
+
+        $addressForm = $this->formFactory->create(AddressFormType::class, $address);
+        $addressForm->submit($customerData);
+
+        $this->logger->debug(sprintf('%s UPDATE ADDRESS WITH ID: %s FOR QUICK ORDERER: %s', __METHOD__, $address->getId(), $customerModel->getId()));
+
+        $this->modelManager->persist($customerModel);
+        $this->modelManager->persist($address);
+        $this->modelManager->flush();
+
+        $this->logger->debug(sprintf('%s LOG IN EXISTING QUICK ORDERER WITH ID: %s', __METHOD__, $customerModel->getId()));
+
+        $this->loginCustomer($customerModel);
+    }
+
+    /**
+     * @deprecated in 6.0.2, will be private in 7.0.0. Use CustomerService::upsertCustomer instead.
+     */
     public function createNewCustomer(Order $orderStruct)
+    {
+        $customerData = $this->createCustomerData($orderStruct);
+        if (!\is_array($customerData)) {
+            return;
+        }
+
+        $customerModel = $this->registerCustomer($customerData);
+        $this->addIdentifierToCustomerAttribute($customerModel->getId(), $orderStruct->getPayer()->getPayerId());
+
+        $this->logger->debug(sprintf('%s NEW CUSTOMER CREATED WITH ID: %s', __METHOD__, $customerModel->getId()));
+
+        $this->loginCustomer($customerModel);
+    }
+
+    /**
+     * @return array<string,mixed>|null
+     */
+    private function createCustomerData(Order $orderStruct)
     {
         $payer = $orderStruct->getPayer();
         if (!empty($orderStruct->getPurchaseUnits())) {
@@ -107,7 +183,7 @@ class CustomerService
             if (!$shipping instanceof Shipping) {
                 $this->logger->error(sprintf('%s COULD NOT CREATE CUSTOMER. ADDRESS IS MISSING', __METHOD__));
 
-                return;
+                return null;
             }
             $address = $shipping->getAddress();
             $names = \explode(' ', $shipping->getName()->getFullName());
@@ -128,7 +204,7 @@ class CustomerService
             $stateId = $this->getStateId($countryId, $address->getAdminArea1());
         }
 
-        $customerData = [
+        return [
             'email' => $payer->getEmailAddress(),
             'password' => $payer->getPayerId(),
             'accountmode' => 1,
@@ -143,12 +219,6 @@ class CustomerService
             'state' => $stateId,
             'phone' => $phone !== null ? $phone->getPhoneNumber()->getNationalNumber() : null,
         ];
-
-        $customerModel = $this->registerCustomer($customerData);
-
-        $this->logger->debug(sprintf('%s NEW CUSTOMER CREATED WITH ID: %s', __METHOD__, $customerModel->getId()));
-
-        $this->loginCustomer($customerModel);
     }
 
     /**
@@ -220,7 +290,7 @@ class CustomerService
 
     private function loginCustomer(Customer $customerModel)
     {
-        $this->logger->debug(sprintf('%s LOGIN NEW CUSTOMER WITH ID: %s', __METHOD__, $customerModel->getId()));
+        $this->logger->debug(sprintf('%s LOGIN CUSTOMER WITH ID: %s', __METHOD__, $customerModel->getId()));
 
         $request = $this->front->Request();
 
@@ -240,6 +310,46 @@ class CustomerService
         $session->offsetSet('sCountry', $customerShippingCountry->getId());
         $session->offsetSet('sArea', $customerShippingCountry->getArea()->getId());
 
-        $this->logger->debug(sprintf('%s NEW CUSTOMER WITH ID: %s SUCCESSFUL LOGGED IN', __METHOD__, $customerModel->getId()));
+        $this->logger->debug(sprintf('%s CUSTOMER WITH ID: %s SUCCESSFUL LOGGED IN', __METHOD__, $customerModel->getId()));
+    }
+
+    /**
+     * @param int    $customerId
+     * @param string $identifier
+     *
+     * @return void
+     */
+    private function addIdentifierToCustomerAttribute($customerId, $identifier)
+    {
+        $this->connection->createQueryBuilder()
+            ->update('s_user_attributes')
+            ->set('swag_paypal_unified_payer_id', ':identifier')
+            ->where('userID = :customerId')
+            ->setParameter('identifier', $identifier)
+            ->setParameter('customerId', $customerId)
+            ->execute();
+    }
+
+    /**
+     * @param string $payerId
+     *
+     * @return Customer|null
+     */
+    private function getCustomerByPayerId($payerId)
+    {
+        $customer = $this->modelManager->createQueryBuilder()
+            ->select(['customer'])
+            ->from(Customer::class, 'customer')
+            ->innerJoin('customer.attribute', 'attributes')
+            ->where('attributes.swagPaypalUnifiedPayerId = :payerId')
+            ->setParameter('payerId', $payerId)
+            ->getQuery()
+            ->getOneOrNullResult(AbstractQuery::HYDRATE_OBJECT);
+
+        if (!$customer instanceof Customer) {
+            return null;
+        }
+
+        return $customer;
     }
 }

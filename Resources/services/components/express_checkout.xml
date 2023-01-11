@@ -5,24 +5,11 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
-
-        <service id="paypal_unified.express_checkout.payment_builder_service"
-                 class="SwagPaymentPayPalUnified\Components\Services\ExpressCheckout\ExpressCheckoutPaymentBuilderService"
-                 public="true">
-            <argument type="service" id="paypal_unified.settings_service"/>
-            <argument type="service" id="snippets"/>
-            <argument type="service" id="paypal_unified.dependency_provider"/>
-            <argument type="service" id="paypal_unified.common.price_formatter"/>
-            <argument type="service" id="paypal_unified.common.customer_helper"/>
-            <argument type="service" id="paypal_unified.common.cart_helper"/>
-            <argument type="service" id="paypal_unified.common.return_url_helper"/>
-        </service>
-
         <service id="paypal_unified.express_checkout.customer_service"
                  class="SwagPaymentPayPalUnified\Components\Services\ExpressCheckout\CustomerService"
                  public="true">
             <argument type="service" id="config"/>
-            <argument type="service" id="dbal_connection"/>
+            <argument type="service" id="models"/>
             <argument type="service" id="shopware.form.factory"/>
             <argument type="service" id="shopware_storefront.context_service"/>
             <argument type="service" id="shopware_account.register_service"/>
