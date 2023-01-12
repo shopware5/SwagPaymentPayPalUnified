@@ -8,19 +8,25 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Setup;
 
+use Doctrine\DBAL\Connection;
 use PDO;
 use PHPUnit\Framework\TestCase;
+use Shopware\Bundle\AttributeBundle\Service\CrudService;
+use Shopware\Bundle\AttributeBundle\Service\CrudServiceInterface;
 use Shopware_Components_Translation;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Setup\TranslationTransformer;
 use SwagPaymentPayPalUnified\Setup\Versions\UpdateTo602;
-use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\TranslationTestCaseTrait;
 
 class UpdateTo602Test extends TestCase
 {
-    use DatabaseTestCaseTrait;
     use TranslationTestCaseTrait;
+
+    const LANGUAGE_SHOP_ID = 2;
+    const TRANSLATION_KEY = 1;
+    const PAY_LATER_ID = 8;
+    const PAYMENT_TYPE = 'config_payment';
 
     /**
      * @var Shopware_Components_Translation
@@ -33,6 +39,16 @@ class UpdateTo602Test extends TestCase
     private $translationTransformer;
 
     /**
+     * @var CrudService|CrudServiceInterface
+     */
+    private $attributeCrudService;
+
+    /**
+     * @var Connection
+     */
+    private $connection;
+
+    /**
      * @before
      *
      * @return void
@@ -41,6 +57,8 @@ class UpdateTo602Test extends TestCase
     {
         $this->translation = $this->getTranslationService();
         $this->translationTransformer = new TranslationTransformer($this->getContainer()->get('models'));
+        $this->attributeCrudService = $this->getContainer()->get('shopware_attribute.crud_service');
+        $this->connection = $this->getContainer()->get('dbal_connection');
     }
 
     /**
@@ -48,7 +66,11 @@ class UpdateTo602Test extends TestCase
      */
     public function testUpdate()
     {
-        $this->renamePayLater();
+        $originalEnGbTranslations = $this->getCurrentEnGbTranslation();
+
+        $this->renamePaymentMethodDescription('anyNewDescription');
+        $this->changeEnGbTranslation('PayPal, PAY_LATER', 'Any description');
+        $this->attributeCrudService->delete('s_user_attributes', 'swag_paypal_unified_payer_id', true);
 
         $updater = $this->getUpdateTo602();
 
@@ -65,6 +87,10 @@ class UpdateTo602Test extends TestCase
         } else {
             static::assertContains('PayPal PayLater Message', $translationResult['additionalDescription']);
         }
+
+        static::assertNotNull($this->attributeCrudService->get('s_user_attributes', 'swag_paypal_unified_payer_id'));
+
+        $this->changeEnGbTranslation($originalEnGbTranslations['description'], $originalEnGbTranslations['additionalDescription']);
     }
 
     /**
@@ -73,16 +99,20 @@ class UpdateTo602Test extends TestCase
     private function getUpdateTo602()
     {
         return new UpdateTo602(
-            $this->getContainer()->get('dbal_connection'),
+            $this->connection,
             $this->translation,
-            $this->translationTransformer
+            $this->translationTransformer,
+            $this->attributeCrudService
         );
     }
 
     /**
+     * @param string $description
+     * @param string $additionalDescription
+     *
      * @return void
      */
-    private function renamePayLater()
+    private function changeEnGbTranslation($description, $additionalDescription)
     {
         $this->translation->writeBatch(
             $this->translationTransformer->getTranslations(
@@ -90,8 +120,8 @@ class UpdateTo602Test extends TestCase
                 [
                     'en_GB' => [
                         PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_LATER_METHOD_NAME => [
-                            'description' => 'PayPal, PAY_LATER',
-                            'additionalDescription' => 'Any description',
+                            'description' => $description,
+                            'additionalDescription' => $additionalDescription,
                         ],
                     ],
                 ]
@@ -101,8 +131,8 @@ class UpdateTo602Test extends TestCase
 
         $translation = $this->getCurrentEnGbTranslation();
 
-        static::assertSame('PayPal, PAY_LATER', $translation['description']);
-        static::assertSame('Any description', $translation['additionalDescription']);
+        static::assertSame($description, $translation['description']);
+        static::assertSame($additionalDescription, $translation['additionalDescription']);
     }
 
     /**
@@ -110,7 +140,7 @@ class UpdateTo602Test extends TestCase
      */
     private function getCurrentEnGbTranslation()
     {
-        return $this->translation->read(2, 'config_payment', 1)[8];
+        return $this->translation->read(self::LANGUAGE_SHOP_ID, self::PAYMENT_TYPE, self::TRANSLATION_KEY)[self::PAY_LATER_ID];
     }
 
     /**
@@ -118,7 +148,7 @@ class UpdateTo602Test extends TestCase
      */
     private function getPaymentMethodDescription()
     {
-        $description = $this->getContainer()->get('dbal_connection')->createQueryBuilder()
+        $description = $this->connection->createQueryBuilder()
             ->select(['description'])
             ->from('s_core_paymentmeans')
             ->where('name = :payLaterPaymentMethodName')
@@ -131,5 +161,25 @@ class UpdateTo602Test extends TestCase
         }
 
         return $description;
+    }
+
+    /**
+     * @param string $newDescription
+     *
+     * @return void
+     */
+    private function renamePaymentMethodDescription($newDescription)
+    {
+        $this->connection->createQueryBuilder()
+            ->update('s_core_paymentmeans')
+            ->set('description', ':newDescription')
+            ->where('name = :payLaterPaymentMethodName')
+            ->setParameter('newDescription', $newDescription)
+            ->setParameter('payLaterPaymentMethodName', PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_LATER_METHOD_NAME)
+            ->execute();
+
+        $result = $this->getPaymentMethodDescription();
+
+        static::assertSame($newDescription, $result);
     }
 }

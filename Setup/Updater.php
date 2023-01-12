@@ -12,6 +12,7 @@ use Doctrine\DBAL\Connection;
 use PDO;
 use Shopware\Bundle\AttributeBundle\Service\CrudService;
 use Shopware\Bundle\AttributeBundle\Service\CrudServiceInterface;
+use Shopware\Bundle\AttributeBundle\Service\TypeMapping;
 use Shopware\Components\Model\ModelManager;
 use Shopware_Components_Translation;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
@@ -219,7 +220,8 @@ class Updater
             (new UpdateTo602(
                 $this->connection,
                 $this->translation,
-                $this->translationTransformer
+                $this->translationTransformer,
+                $this->attributeCrudService
             ))->update();
         }
     }
@@ -232,7 +234,7 @@ class Updater
         $this->attributeCrudService->update(
             's_core_paymentmeans_attributes',
             'swag_paypal_unified_plus_iframe_payment_logo',
-            'string',
+            TypeMapping::TYPE_STRING,
             [
                 'position' => -99,
                 'displayInBackend' => true,

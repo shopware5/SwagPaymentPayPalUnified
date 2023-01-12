@@ -12,6 +12,7 @@ use Doctrine\DBAL\Connection;
 use PDO;
 use Shopware\Bundle\AttributeBundle\Service\CrudService;
 use Shopware\Bundle\AttributeBundle\Service\CrudServiceInterface;
+use Shopware\Bundle\AttributeBundle\Service\TypeMapping;
 use SwagPaymentPayPalUnified\Setup\ColumnService;
 
 class UpdateTo600
@@ -58,9 +59,9 @@ class UpdateTo600
      */
     private function createAttributes()
     {
-        $this->crudService->update('s_order_attributes', 'swag_paypal_unified_carrier_was_sent', 'boolean');
+        $this->crudService->update('s_order_attributes', 'swag_paypal_unified_carrier_was_sent', TypeMapping::TYPE_BOOLEAN);
 
-        $this->crudService->update('s_order_attributes', 'swag_paypal_unified_carrier', 'string', [
+        $this->crudService->update('s_order_attributes', 'swag_paypal_unified_carrier', TypeMapping::TYPE_STRING, [
             'displayInBackend' => true,
             'label' => 'Carrier code',
             'helpText' => 'Enter a PayPal carrier code (e.g. DHL_GLOBAL_ECOMMERCE)...',
@@ -69,7 +70,7 @@ class UpdateTo600
             'position' => 100,
         ]);
 
-        $this->crudService->update('s_premium_dispatch_attributes', 'swag_paypal_unified_carrier', 'string', [
+        $this->crudService->update('s_premium_dispatch_attributes', 'swag_paypal_unified_carrier', TypeMapping::TYPE_STRING, [
             'displayInBackend' => true,
             'label' => 'Carrier code',
             'helpText' => 'Enter a PayPal carrier code (e.g. DHL_GLOBAL_ECOMMERCE)...',

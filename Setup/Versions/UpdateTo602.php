@@ -9,6 +9,9 @@
 namespace SwagPaymentPayPalUnified\Setup\Versions;
 
 use Doctrine\DBAL\Connection;
+use Shopware\Bundle\AttributeBundle\Service\CrudService;
+use Shopware\Bundle\AttributeBundle\Service\CrudServiceInterface;
+use Shopware\Bundle\AttributeBundle\Service\TypeMapping;
 use Shopware_Components_Translation;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Setup\Assets\Translations;
@@ -31,14 +34,24 @@ class UpdateTo602
      */
     private $translationTransformer;
 
+    /**
+     * @var CrudService|CrudServiceInterface
+     */
+    private $crudService;
+
+    /**
+     * @param CrudService|CrudServiceInterface $crudService
+     */
     public function __construct(
         Connection $connection,
         Shopware_Components_Translation $translation,
-        TranslationTransformer $translationTransformer
+        TranslationTransformer $translationTransformer,
+        $crudService
     ) {
         $this->translationTransformer = $translationTransformer;
         $this->translation = $translation;
         $this->connection = $connection;
+        $this->crudService = $crudService;
     }
 
     /**
@@ -48,6 +61,7 @@ class UpdateTo602
     {
         $this->updatePayLaterDescription();
         $this->updatePaymentNameTranslations();
+        $this->addCustomerAttributeForQuickOrderer();
     }
 
     /**
@@ -73,5 +87,13 @@ class UpdateTo602
             $this->translationTransformer->getTranslations('config_payment', Translations::CONFIG_PAYMENT_TRANSLATIONS),
             true
         );
+    }
+
+    /**
+     * @return void
+     */
+    private function addCustomerAttributeForQuickOrderer()
+    {
+        $this->crudService->update('s_user_attributes', 'swag_paypal_unified_payer_id', TypeMapping::TYPE_STRING);
     }
 }

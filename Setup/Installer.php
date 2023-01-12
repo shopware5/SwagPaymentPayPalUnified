@@ -11,6 +11,7 @@ namespace SwagPaymentPayPalUnified\Setup;
 use Doctrine\DBAL\Connection;
 use Shopware\Bundle\AttributeBundle\Service\CrudService;
 use Shopware\Bundle\AttributeBundle\Service\CrudServiceInterface;
+use Shopware\Bundle\AttributeBundle\Service\TypeMapping;
 use Shopware\Components\Model\ModelManager;
 use Shopware\Models\Plugin\Plugin;
 use Shopware_Components_Translation;
@@ -146,12 +147,12 @@ class Installer
      */
     private function createAttributes()
     {
-        $this->attributeCrudService->update('s_order_attributes', 'swag_paypal_unified_payment_type', 'string');
-        $this->attributeCrudService->update('s_order_attributes', 'swag_paypal_unified_carrier_was_sent', 'boolean');
+        $this->attributeCrudService->update('s_order_attributes', 'swag_paypal_unified_payment_type', TypeMapping::TYPE_STRING);
+        $this->attributeCrudService->update('s_order_attributes', 'swag_paypal_unified_carrier_was_sent', TypeMapping::TYPE_BOOLEAN);
         $this->attributeCrudService->update(
             's_core_paymentmeans_attributes',
             'swag_paypal_unified_display_in_plus_iframe',
-            'boolean',
+            TypeMapping::TYPE_BOOLEAN,
             [
                 'position' => -100,
                 'displayInBackend' => true,
@@ -162,7 +163,7 @@ class Installer
         $this->attributeCrudService->update(
             's_core_paymentmeans_attributes',
             'swag_paypal_unified_plus_iframe_payment_logo',
-            'string',
+            TypeMapping::TYPE_STRING,
             [
                 'position' => -99,
                 'displayInBackend' => true,
@@ -173,7 +174,7 @@ class Installer
 
         $this->modelManager->generateAttributeModels(['s_order_attributes', 's_core_paymentmeans_attributes']);
 
-        $this->attributeCrudService->update('s_order_attributes', 'swag_paypal_unified_carrier', 'string', [
+        $this->attributeCrudService->update('s_order_attributes', 'swag_paypal_unified_carrier', TypeMapping::TYPE_STRING, [
             'displayInBackend' => true,
             'label' => 'Carrier code',
             'helpText' => 'Enter a PayPal carrier code (e.g. DHL_GLOBAL_ECOMMERCE)...',
@@ -182,7 +183,7 @@ class Installer
             'position' => 100,
         ]);
 
-        $this->attributeCrudService->update('s_premium_dispatch_attributes', 'swag_paypal_unified_carrier', 'string', [
+        $this->attributeCrudService->update('s_premium_dispatch_attributes', 'swag_paypal_unified_carrier', TypeMapping::TYPE_STRING, [
             'displayInBackend' => true,
             'label' => 'Carrier code',
             'helpText' => 'Enter a PayPal carrier code (e.g. DHL_GLOBAL_ECOMMERCE)...',
@@ -190,6 +191,8 @@ class Installer
             'supportText' => 'PayPal offers tracking for orders processed through PayPal. To use this, specify a default shipping carrier, which can be overwritten in the orders. Find a list of all shipping providers <a target="_blank" href="https://developer.paypal.com/docs/tracking/reference/carriers/">here</a>',
             'position' => 100,
         ]);
+
+        $this->attributeCrudService->update('s_user_attributes', 'swag_paypal_unified_payer_id', TypeMapping::TYPE_STRING);
     }
 
     /**
