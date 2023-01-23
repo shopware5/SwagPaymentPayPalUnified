@@ -12,5 +12,6 @@
         <import resource="services/resources.xml"/>
         <import resource="services/resources_v2.xml"/>
         <import resource="services/subscribers.xml"/>
+        <import resource="services/webhook.xml"/>
     </imports>
 </container>

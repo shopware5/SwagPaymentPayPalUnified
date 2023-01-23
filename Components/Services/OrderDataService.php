@@ -9,7 +9,13 @@
 namespace SwagPaymentPayPalUnified\Components\Services;
 
 use Doctrine\DBAL\Connection;
+use PDO;
+use sOrder;
+use SwagPaymentPayPalUnified\Components\DependencyProvider;
+use SwagPaymentPayPalUnified\Components\Services\OrderDataServiceResults\OrderAndPaymentStatusResult;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
+use UnexpectedValueException;
 
 class OrderDataService
 {
@@ -18,10 +24,36 @@ class OrderDataService
      */
     private $dbalConnection;
 
+    /**
+     * @var LoggerServiceInterface
+     */
+    private $logger;
+
+    /**
+     * @var DependencyProvider
+     */
+    private $dependencyProvider;
+
+    /**
+     * @var sOrder
+     */
+    private $sOrderModule;
+
     public function __construct(
-        Connection $dbalConnection
+        Connection $dbalConnection,
+        LoggerServiceInterface $logger,
+        DependencyProvider $dependencyProvider
     ) {
         $this->dbalConnection = $dbalConnection;
+        $this->logger = $logger;
+        $this->dependencyProvider = $dependencyProvider;
+
+        $sOrderModule = $this->dependencyProvider->getModule('order');
+        if (!$sOrderModule instanceof sOrder) {
+            throw new UnexpectedValueException('Cannot get sOrder module');
+        }
+
+        $this->sOrderModule = $sOrderModule;
     }
 
     /**
@@ -40,6 +72,8 @@ class OrderDataService
     /**
      * @param string $orderNumber
      * @param int    $orderStateId
+     *
+     * @deprecated in 6.0.2, and will be removed with 7.0.0 without replacement
      */
     public function setOrderState($orderNumber, $orderStateId)
     {
@@ -73,6 +107,8 @@ class OrderDataService
 
     /**
      * @param string $orderNumber
+     *
+     * @deprecated in 6.0.2, and will be removed with 7.0.0 without replacement
      */
     public function removeTransactionId($orderNumber)
     {
@@ -125,5 +161,40 @@ class OrderDataService
             ->execute();
 
         return (string) $statement->fetchColumn();
+    }
+
+    /**
+     * @param int $orderId
+     * @param int $newOrderStatusId
+     *
+     * @return void
+     */
+    public function setOrderStatus($orderId, $newOrderStatusId)
+    {
+        $this->logger->debug(\sprintf('Update order status for order with id: %d and statusId %d', $orderId, $newOrderStatusId));
+
+        $this->sOrderModule->setOrderStatus($orderId, $newOrderStatusId, true);
+    }
+
+    /**
+     * @param string $transactionId
+     *
+     * @return OrderAndPaymentStatusResult|null
+     */
+    public function getOrderAndPaymentStatusResultByTransactionId($transactionId)
+    {
+        $order = $this->dbalConnection->createQueryBuilder()
+            ->select(['id', 'status', 'cleared'])
+            ->from('s_order')
+            ->where('transactionID = :transactionId')
+            ->setParameter('transactionId', $transactionId)
+            ->execute()
+            ->fetch(PDO::FETCH_ASSOC);
+
+        if (!\is_array($order)) {
+            return null;
+        }
+
+        return new OrderAndPaymentStatusResult((int) $order['id'], (int) $order['status'], (int) $order['cleared']);
     }
 }

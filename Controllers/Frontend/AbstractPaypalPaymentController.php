@@ -310,15 +310,7 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
         }
 
         try {
-            if ($payPalOrder->getIntent() === PaymentIntentV2::CAPTURE) {
-                $this->logger->debug(sprintf('%s CAPTURE PAYPAL ORDER WITH ID: %s', __METHOD__, $payPalOrder->getId()));
-
-                $capturedPayPalOrder = $this->orderResource->capture($payPalOrder->getId(), false);
-
-                $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFULLY CAPTURED', __METHOD__));
-
-                return $capturedPayPalOrder;
-            } elseif ($payPalOrder->getIntent() === PaymentIntentV2::AUTHORIZE) {
+            if ($payPalOrder->getIntent() === PaymentIntentV2::AUTHORIZE) {
                 $this->logger->debug(sprintf('%s AUTHORIZE PAYPAL ORDER WITH ID: %s', __METHOD__, $payPalOrder->getId()));
 
                 $authorizedPayPalOrder = $this->orderResource->authorize($payPalOrder->getId(), false);
@@ -327,6 +319,14 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
 
                 return $authorizedPayPalOrder;
             }
+
+            $this->logger->debug(sprintf('%s CAPTURE PAYPAL ORDER WITH ID: %s', __METHOD__, $payPalOrder->getId()));
+
+            $capturedPayPalOrder = $this->orderResource->capture($payPalOrder->getId(), false);
+
+            $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFULLY CAPTURED', __METHOD__));
+
+            return $capturedPayPalOrder;
         } catch (RequestException $exception) {
             $exceptionBody = json_decode($exception->getBody(), true);
 
@@ -366,8 +366,6 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
 
             throw new NoOrderToProceedException();
         }
-
-        throw new NoOrderToProceedException();
     }
 
     /**

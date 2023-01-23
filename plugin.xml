@@ -24,6 +24,7 @@
             PT-12942 - Fügt eine Warnung für erneute Autorisierung hinzu;
             PT-12987 - Verbessert den Verfügbarkeitstest von "Kauf auf Rechnung" und "Kreditkarten Zahlung" in den Einstellungen;
             PT-13012 - Ändert den englischen Namen für "PayPal, Pay Later" im Frontend zu "PayPal, Pay in 3";
+            PT-13022 - Webhooks für abgeschlossene und abgelehnte PayPal-Bestellungen hinzugefügt;
         </changes>
         <changes lang="en">
             PT-10637 - Sets correct payment status after partial refund;
@@ -36,6 +37,7 @@
             PT-12942 - Adds a warning for reauthorization;
             PT-12987 - Improves the availability test of "pay upon invoice" and "credit card payment" in the settings;
             PT-13012 - Changed the English name for "PayPal, Pay Later" in the frontend to "PayPal, Pay in 3";
+            PT-13022 - Added Webhooks for completed and denied PayPal Orders;
         </changes>
     </changelog>
 

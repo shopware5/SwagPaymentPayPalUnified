@@ -10,11 +10,17 @@ namespace SwagPaymentPayPalUnified\Components\DependencyInjection;
 
 class RiskManagementValueCompilerPass extends AbstractFactoryCompilerPass
 {
+    /**
+     * {@inheritdoc}
+     */
     public function getFactoryId()
     {
         return 'paypal_unified.risk_management.value_factory';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getFactoryTag()
     {
         return 'paypal_unified.risk_management.value_handler';

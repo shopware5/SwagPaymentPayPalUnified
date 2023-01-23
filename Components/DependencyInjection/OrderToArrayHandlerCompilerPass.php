@@ -10,11 +10,17 @@ namespace SwagPaymentPayPalUnified\Components\DependencyInjection;
 
 class OrderToArrayHandlerCompilerPass extends AbstractFactoryCompilerPass
 {
+    /**
+     * {@inheritdoc}
+     */
     public function getFactoryId()
     {
         return 'paypal_unified.order_array_factory';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getFactoryTag()
     {
         return 'paypal_unified.order_array_factory_handler';
