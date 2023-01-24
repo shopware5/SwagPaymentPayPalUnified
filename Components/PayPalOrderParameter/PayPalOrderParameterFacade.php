@@ -12,6 +12,7 @@ use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\OrderNumberService;
 use SwagPaymentPayPalUnified\Components\Services\Common\CartPersister;
 use SwagPaymentPayPalUnified\Components\Services\PaymentControllerHelper;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 
 /**
  * @phpstan-import-type CheckoutBasketArray from \Shopware_Controllers_Frontend_Checkout
@@ -38,16 +39,23 @@ class PayPalOrderParameterFacade implements PayPalOrderParameterFacadeInterface
      */
     private $orderNumberService;
 
+    /**
+     * @var SettingsServiceInterface
+     */
+    private $settingsService;
+
     public function __construct(
         PaymentControllerHelper $paymentControllerHelper,
         DependencyProvider $dependencyProvider,
         CartPersister $cartPersister,
-        OrderNumberService $orderNumberService
+        OrderNumberService $orderNumberService,
+        SettingsServiceInterface $settingsService
     ) {
         $this->paymentControllerHelper = $paymentControllerHelper;
         $this->dependencyProvider = $dependencyProvider;
         $this->cartPersister = $cartPersister;
         $this->orderNumberService = $orderNumberService;
+        $this->settingsService = $settingsService;
     }
 
     /**
@@ -62,7 +70,7 @@ class PayPalOrderParameterFacade implements PayPalOrderParameterFacadeInterface
         $basketUniqueId = $this->cartPersister->persist($cartData, $session->get('sUserId'));
         $paymentToken = $this->dependencyProvider->createPaymentToken();
 
-        $orderNumber = $this->orderNumberService->getOrderNumber();
+        $orderNumber = $this->settingsService->get(SettingsServiceInterface::SETTING_GENERAL_ORDER_NUMBER_PREFIX) . $this->orderNumberService->getOrderNumber();
 
         return new PayPalOrderParameter($userData, $cartData, $paymentType, $basketUniqueId, $paymentToken, $orderNumber);
     }

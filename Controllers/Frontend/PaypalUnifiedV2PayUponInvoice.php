@@ -80,15 +80,6 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2PayUponInvoice extends Abstra
 
         $payPalOrderId = $payPalOrder->getId();
 
-        $shopwareOrderNumber = $this->orderNumberService->getOrderNumber();
-
-        $invoiceIdPatch = $this->createInvoiceIdPatch($shopwareOrderNumber);
-        if (!$this->updatePayPalOrder($payPalOrderId, [$invoiceIdPatch])) {
-            $this->orderNumberService->restoreOrdernumberToPool();
-
-            return;
-        }
-
         if ($this->isPaymentCompleted($payPalOrderId, PaymentStatusV2::ORDER_PAYMENT_PENDING_APPROVAL)) {
             $payPalOrder = $this->getPayPalOrder($payPalOrderId);
             if (!$payPalOrder instanceof Order) {

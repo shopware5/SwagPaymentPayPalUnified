@@ -16,6 +16,7 @@ use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\PayPalOrderParamete
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\ShopwareOrderData;
 use SwagPaymentPayPalUnified\Components\Services\Common\CartPersister;
 use SwagPaymentPayPalUnified\Components\Services\PaymentControllerHelper;
+use SwagPaymentPayPalUnified\Components\Services\SettingsService;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 
@@ -46,7 +47,8 @@ class PayPalOrderParameterFacadeTest extends TestCase
             $paymentControllerHelper,
             $this->getDependencyProvider(),
             $this->getCartPersister(),
-            $this->getContainer()->get('paypal_unified.order_number_service')
+            $this->getContainer()->get('paypal_unified.order_number_service'),
+            $this->createMock(SettingsService::class)
         );
 
         $result = $subject->createPayPalOrderParameter($paymentType, $shopwareOrderData);
@@ -75,7 +77,8 @@ class PayPalOrderParameterFacadeTest extends TestCase
             $this->getPaymentControllerHelper(),
             $this->getDependencyProvider(),
             $cartPersister,
-            $this->getContainer()->get('paypal_unified.order_number_service')
+            $this->getContainer()->get('paypal_unified.order_number_service'),
+            $this->createMock(SettingsService::class)
         );
 
         $result = $subject->createPayPalOrderParameter($paymentType, $shopwareOrderData);
