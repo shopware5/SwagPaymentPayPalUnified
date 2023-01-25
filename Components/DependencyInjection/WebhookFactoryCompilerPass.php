@@ -8,14 +8,14 @@
 
 namespace SwagPaymentPayPalUnified\Components\DependencyInjection;
 
-class OrderHandlerCompilerPass extends AbstractFactoryCompilerPass
+class WebhookFactoryCompilerPass extends AbstractFactoryCompilerPass
 {
     /**
      * {@inheritdoc}
      */
     public function getFactoryId()
     {
-        return 'paypal_unified.order_factory';
+        return 'paypal_unified.webhook_service';
     }
 
     /**
@@ -23,6 +23,14 @@ class OrderHandlerCompilerPass extends AbstractFactoryCompilerPass
      */
     public function getFactoryTag()
     {
-        return 'paypal_unified.order_factory_handler';
+        return 'paypal_unified.webhook_service.handler';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getMethodName()
+    {
+        return 'registerWebhook';
     }
 }

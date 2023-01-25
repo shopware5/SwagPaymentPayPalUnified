@@ -10,11 +10,17 @@ namespace SwagPaymentPayPalUnified\Components\DependencyInjection;
 
 class PaymentSourceValueHandlerCompilerPass extends AbstractFactoryCompilerPass
 {
+    /**
+     * {@inheritdoc}
+     */
     public function getFactoryId()
     {
         return 'paypal_unified.payment_source_value_factory';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getFactoryTag()
     {
         return 'paypal_unified.payment_source_value_handler';

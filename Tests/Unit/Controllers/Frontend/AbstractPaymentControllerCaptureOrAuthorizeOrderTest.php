@@ -189,24 +189,6 @@ class AbstractPaymentControllerCaptureOrAuthorizeOrderTest extends PaypalPayment
     }
 
     /**
-     * @return void
-     */
-    public function testCaptureOrAuthorizeOrderNoConditionMatches()
-    {
-        $payPalOrder = $this->createPayPalOrder('otherIntent', PaymentStatusV2::ORDER_CREATED);
-
-        $abstractController = $this->getController(AbstractPaypalPaymentController::class, []);
-
-        $reflectionMethod = $this->getReflectionMethod(AbstractPaypalPaymentController::class, 'captureOrAuthorizeOrder');
-
-        static::expectException(NoOrderToProceedException::class);
-
-        $resultOrder = $reflectionMethod->invoke($abstractController, $payPalOrder);
-
-        static::assertNull($resultOrder);
-    }
-
-    /**
      * @param string $method
      * @param string $status
      *

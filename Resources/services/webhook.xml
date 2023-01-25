@@ -1,0 +1,65 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+
+        <service id="paypal_unified.webhook_service"
+                 class="SwagPaymentPayPalUnified\PayPalBundle\Services\WebhookService"
+                 public="true"/>
+
+        <service id="paypal_unified.webhook_service_handler.authorization_voided"
+                 class="SwagPaymentPayPalUnified\WebhookHandlers\AuthorizationVoided"
+                 public="true">
+            <argument type="service" id="paypal_unified.logger_service"/>
+            <argument type="service" id="paypal_unified.payment_status_service"/>
+            <tag name="paypal_unified.webhook_service.handler"/>
+        </service>
+
+        <service id="paypal_unified.webhook_service_handler.sales_denied"
+                 class="SwagPaymentPayPalUnified\WebhookHandlers\SaleDenied"
+                 public="true">
+            <argument type="service" id="paypal_unified.logger_service"/>
+            <argument type="service" id="paypal_unified.payment_status_service"/>
+            <tag name="paypal_unified.webhook_service.handler"/>
+        </service>
+
+        <service id="paypal_unified.webhook_service_handler.sale_refunded"
+                 class="SwagPaymentPayPalUnified\WebhookHandlers\SaleRefunded"
+                 public="true">
+            <argument type="service" id="paypal_unified.logger_service"/>
+            <argument type="service" id="paypal_unified.payment_status_service"/>
+            <tag name="paypal_unified.webhook_service.handler"/>
+        </service>
+
+        <service id="paypal_unified.webhook_service_handler.payment_capture_completed"
+                 class="SwagPaymentPayPalUnified\WebhookHandlers\PaymentCaptureCompleted"
+                 public="true">
+            <argument type="service" id="paypal_unified.logger_service"/>
+            <argument type="service" id="paypal_unified.payment_status_service"/>
+            <argument type="service" id="paypal_unified.order_data_service"/>
+            <tag name="paypal_unified.webhook_service.handler"/>
+        </service>
+
+        <service id="paypal_unified.webhook_service_handler.payment_capture_denied"
+                 class="SwagPaymentPayPalUnified\WebhookHandlers\PaymentCaptureDenied"
+                 public="true">
+            <argument type="service" id="paypal_unified.logger_service"/>
+            <argument type="service" id="paypal_unified.payment_status_service"/>
+            <argument type="service" id="paypal_unified.order_data_service"/>
+            <tag name="paypal_unified.webhook_service.handler"/>
+        </service>
+
+        <service id="paypal_unified.webhook_service_handler.checkout_payment_approval_reversed"
+                 class="SwagPaymentPayPalUnified\WebhookHandlers\CheckoutPaymentApprovalReversed"
+                 public="true">
+            <argument type="service" id="paypal_unified.logger_service"/>
+            <argument type="service" id="paypal_unified.payment_status_service"/>
+            <argument type="service" id="paypal_unified.order_data_service"/>
+            <tag name="paypal_unified.webhook_service.handler"/>
+        </service>
+
+    </services>
+</container>

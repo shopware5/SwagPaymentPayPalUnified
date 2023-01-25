@@ -24,6 +24,14 @@ abstract class AbstractFactoryCompilerPass implements CompilerPassInterface
      */
     abstract public function getFactoryTag();
 
+    /**
+     * @return string
+     */
+    public function getMethodName()
+    {
+        return 'addHandler';
+    }
+
     public function process(ContainerBuilder $container)
     {
         if (!$container->hasDefinition($this->getFactoryId())) {
@@ -38,7 +46,7 @@ abstract class AbstractFactoryCompilerPass implements CompilerPassInterface
             $container->getDefinition($id)->setPublic(true);
 
             $definition->addMethodCall(
-                'addHandler',
+                $this->getMethodName(),
                 [new Reference($id)]
             );
         }

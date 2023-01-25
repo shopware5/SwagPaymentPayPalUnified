@@ -8,8 +8,12 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services;
 
+use Generator;
+use PDO;
 use PHPUnit\Framework\TestCase;
+use Shopware\Models\Order\Status;
 use SwagPaymentPayPalUnified\Components\Services\OrderDataService;
+use SwagPaymentPayPalUnified\Components\Services\OrderDataServiceResults\OrderAndPaymentStatusResult;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
@@ -127,6 +131,110 @@ class OrderDataServiceTest extends TestCase
         $updatedAttribute = $dbalConnection->executeQuery('SELECT swag_paypal_unified_payment_type FROM s_order_attributes WHERE orderID=9999')->fetchColumn();
 
         static::assertSame(PaymentType::PAYPAL_EXPRESS_V2, $updatedAttribute);
+    }
+
+    /**
+     * @dataProvider setOrderStatusTestDataProvider
+     *
+     * @param int $newOrderStatus
+     *
+     * @return void
+     */
+    public function testSetOrderStatus($newOrderStatus)
+    {
+        $sql = file_get_contents(__DIR__ . '/_fixtures/order_status.sql');
+        static::assertTrue(\is_string($sql));
+
+        $this->getContainer()->get('dbal_connection')->exec($sql);
+
+        $orderData = $this->getOrderData();
+        static::assertTrue(\is_array($orderData));
+        $this->getOrderDataService()->setOrderStatus($orderData['id'], $newOrderStatus);
+
+        $result = $this->getOrderData();
+        static::assertTrue(\is_array($result));
+        static::assertSame($orderData['id'], $result['id']);
+        static::assertSame($newOrderStatus, (int) $result['status']);
+    }
+
+    /**
+     * @return Generator<array<int,int>>
+     */
+    public function setOrderStatusTestDataProvider()
+    {
+        yield 'Order status 1000' => [
+            1000,
+        ];
+
+        yield 'Status::ORDER_STATE_CANCELLED' => [
+            Status::ORDER_STATE_CANCELLED,
+        ];
+
+        yield 'Status::ORDER_STATE_OPEN' => [
+            Status::ORDER_STATE_OPEN,
+        ];
+
+        yield 'Status::ORDER_STATE_IN_PROCESS' => [
+            Status::ORDER_STATE_IN_PROCESS,
+        ];
+
+        yield 'Status::ORDER_STATE_COMPLETED' => [
+            Status::ORDER_STATE_COMPLETED,
+        ];
+
+        yield 'Status::ORDER_STATE_CANCELLED_REJECTED' => [
+            Status::ORDER_STATE_CANCELLED_REJECTED,
+        ];
+
+        yield 'Status::ORDER_STATE_READY_FOR_DELIVERY' => [
+            Status::ORDER_STATE_READY_FOR_DELIVERY,
+        ];
+
+        yield 'Status::ORDER_STATE_CLARIFICATION_REQUIRED' => [
+            Status::ORDER_STATE_CLARIFICATION_REQUIRED,
+        ];
+    }
+
+    /**
+     * @return void
+     */
+    public function testGetShopwareOrderServiceResultByTransactionIdShouldReturnNull()
+    {
+        static::assertNull(
+            $this->getOrderDataService()->getOrderAndPaymentStatusResultByTransactionId('anyTransactionId')
+        );
+    }
+
+    /**
+     * @return void
+     */
+    public function testGetShopwareOrderServiceResultByTransactionIdShouldReturnOrderServiceResult()
+    {
+        $sql = file_get_contents(__DIR__ . '/_fixtures/order_status.sql');
+        static::assertTrue(\is_string($sql));
+
+        $this->getContainer()->get('dbal_connection')->exec($sql);
+
+        $result = $this->getOrderDataService()->getOrderAndPaymentStatusResultByTransactionId('unitTestTransactionId');
+
+        static::assertInstanceOf(OrderAndPaymentStatusResult::class, $result);
+        static::assertTrue(\is_int($result->getOrderId()));
+        static::assertSame(-1, $result->getOrderStatusId());
+        static::assertSame(1, $result->getPaymentStatusId());
+    }
+
+    /**
+     * @return array<string,int>|null
+     */
+    private function getOrderData()
+    {
+        return $this->getContainer()->get('dbal_connection')->createQueryBuilder()
+            ->select(['id', 'status'])
+            ->from('s_order')
+            ->where('transactionID = :transactionId')
+            ->setParameter('transactionId', 'unitTestTransactionId')
+            ->execute()
+            ->fetch(PDO::FETCH_ASSOC);
     }
 
     private function createTestSettings()

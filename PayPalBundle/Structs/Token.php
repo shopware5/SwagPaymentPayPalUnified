@@ -13,6 +13,8 @@ use DateTime;
 
 class Token
 {
+    const FALLBACK_EXPIRE_TIME_5_MINUTES = 'PT5M';
+
     /**
      * Scopes expressed in the form of resource URL endpoints. The value of the scope parameter
      * is expressed as a list of space-delimited, case-sensitive strings.
@@ -106,6 +108,11 @@ class Token
         // Calculate the expiration date manually
         $expirationDateTime = new DateTime();
         $interval = DateInterval::createFromDateString($token->getExpiresIn() . ' seconds');
+
+        if (!$interval instanceof DateInterval) {
+            $interval = new DateInterval(self::FALLBACK_EXPIRE_TIME_5_MINUTES);
+        }
+
         $expirationDateTime = $expirationDateTime->add($interval);
 
         $token->setExpireDateTime($expirationDateTime);

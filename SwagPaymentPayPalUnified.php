@@ -21,6 +21,7 @@ use SwagPaymentPayPalUnified\Components\DependencyInjection\PaymentSourceHandler
 use SwagPaymentPayPalUnified\Components\DependencyInjection\PaymentSourceValueHandlerCompilerPass;
 use SwagPaymentPayPalUnified\Components\DependencyInjection\RiskManagementValidatorCompilerPass;
 use SwagPaymentPayPalUnified\Components\DependencyInjection\RiskManagementValueCompilerPass;
+use SwagPaymentPayPalUnified\Components\DependencyInjection\WebhookFactoryCompilerPass;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Setup\Installer;
 use SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentModelFactory;
@@ -48,6 +49,7 @@ class SwagPaymentPayPalUnified extends Plugin
         $container->addCompilerPass(new RiskManagementValueCompilerPass());
         $container->addCompilerPass(new RiskManagementValidatorCompilerPass());
         $container->addCompilerPass(new OrderToArrayHandlerCompilerPass());
+        $container->addCompilerPass(new WebhookFactoryCompilerPass());
 
         parent::build($container);
     }

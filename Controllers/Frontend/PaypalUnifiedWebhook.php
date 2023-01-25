@@ -11,10 +11,6 @@ use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\Webhook\WebhookException;
 use SwagPaymentPayPalUnified\PayPalBundle\Services\WebhookService;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Webhook;
-use SwagPaymentPayPalUnified\WebhookHandlers\AuthorizationVoided;
-use SwagPaymentPayPalUnified\WebhookHandlers\SaleComplete;
-use SwagPaymentPayPalUnified\WebhookHandlers\SaleDenied;
-use SwagPaymentPayPalUnified\WebhookHandlers\SaleRefunded;
 
 class Shopware_Controllers_Frontend_PaypalUnifiedWebhook extends Enlight_Controller_Action implements CSRFWhitelistAware
 {
@@ -42,15 +38,6 @@ class Shopware_Controllers_Frontend_PaypalUnifiedWebhook extends Enlight_Control
     {
         $this->webhookService = $this->get('paypal_unified.webhook_service');
         $this->logger = $this->get('paypal_unified.logger_service');
-
-        $paymentStatusService = $this->get('paypal_unified.payment_status_service');
-
-        $this->webhookService->registerWebhooks([
-            new SaleComplete($this->logger, $paymentStatusService),
-            new SaleDenied($this->logger, $paymentStatusService),
-            new SaleRefunded($this->logger, $paymentStatusService),
-            new AuthorizationVoided($this->logger, $paymentStatusService),
-        ]);
     }
 
     /**
