@@ -142,6 +142,7 @@
             <argument type="service" id="paypal_unified.dependency_provider"/>
             <argument type="service" id="paypal_unified.common.cart_persister"/>
             <argument type="service" id="paypal_unified.order_number_service"/>
+            <argument type="service" id="paypal_unified.settings_service"/>
         </service>
 
         <service id="paypal_unified.onboarding_status_service"
