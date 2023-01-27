@@ -852,7 +852,7 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
 
         $this->logger->debug(\sprintf('%s - %s', __METHOD__, $errorKey));
 
-        return $this->front->Router()->assemble(array_merge([
+        return $this->dependencyProvider->getRouter()->assemble(array_merge([
             'module' => 'frontend',
             'controller' => 'address',
             'action' => 'index',
