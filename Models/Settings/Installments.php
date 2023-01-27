@@ -13,6 +13,7 @@ use Shopware\Components\Model\ModelEntity;
 
 /**
  * @ORM\Entity()
+ *
  * @ORM\Table(name="swag_payment_paypal_unified_settings_installments")
  */
 class Installments extends ModelEntity
@@ -21,7 +22,9 @@ class Installments extends ModelEntity
      * @var int
      *
      * @ORM\Column(name="id", type="integer", nullable=false)
+     *
      * @ORM\Id
+     *
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $id;

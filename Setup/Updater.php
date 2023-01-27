@@ -212,7 +212,8 @@ class Updater
             (new UpdateTo600(
                 $this->connection,
                 $this->attributeCrudService,
-                $this->columnService
+                $this->columnService,
+                $this->modelManager
             ))->update();
         }
 
@@ -221,7 +222,8 @@ class Updater
                 $this->connection,
                 $this->translation,
                 $this->translationTransformer,
-                $this->attributeCrudService
+                $this->attributeCrudService,
+                $this->modelManager
             ))->update();
         }
     }

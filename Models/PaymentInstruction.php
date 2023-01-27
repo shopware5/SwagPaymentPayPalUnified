@@ -17,6 +17,7 @@ use Shopware\Models\Order\Order;
  * PayPal during a payment execution.
  *
  * @ORM\Entity()
+ *
  * @ORM\Table(name="swag_payment_paypal_unified_payment_instruction")
  */
 class PaymentInstruction extends ModelEntity
@@ -25,7 +26,9 @@ class PaymentInstruction extends ModelEntity
      * @var int
      *
      * @ORM\Column(name="id", type="integer", nullable=false)
+     *
      * @ORM\Id
+     *
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     protected $id;
@@ -41,6 +44,7 @@ class PaymentInstruction extends ModelEntity
      * @var Order
      *
      * @ORM\OneToOne(targetEntity="Shopware\Models\Order\Order")
+     *
      * @ORM\JoinColumn(name="order_number", referencedColumnName="ordernumber", nullable=false)
      */
     private $order;

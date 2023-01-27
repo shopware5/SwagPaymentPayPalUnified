@@ -26,6 +26,7 @@
             PT-13012 - Ändert den englischen Namen für "PayPal, Pay Later" im Frontend zu "PayPal, Pay in 3";
             PT-13022 - Webhooks für abgeschlossene und abgelehnte PayPal-Bestellungen hinzugefügt;
             PT-13028 - Das Bestellnummern-Prefix wird wieder mit an PayPal übertragen;
+            PT-13031 - Verbessert das Update auf die Version 6.0.0;
         </changes>
         <changes lang="en">
             PT-10637 - Sets correct payment status after partial refund;
@@ -40,6 +41,7 @@
             PT-13012 - Changed the English name for "PayPal, Pay Later" in the frontend to "PayPal, Pay in 3";
             PT-13022 - Added Webhooks for completed and denied PayPal Orders;
             PT-13028 - The order number prefix will be transferred to PayPal again;
+            PT-13031 - Improves the update to version 6.0.0;
         </changes>
     </changelog>
 

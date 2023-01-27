@@ -13,6 +13,7 @@ use PDO;
 use PHPUnit\Framework\TestCase;
 use Shopware\Bundle\AttributeBundle\Service\CrudService;
 use Shopware\Bundle\AttributeBundle\Service\CrudServiceInterface;
+use Shopware\Components\Model\ModelManager;
 use Shopware_Components_Translation;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Setup\TranslationTransformer;
@@ -49,6 +50,11 @@ class UpdateTo602Test extends TestCase
     private $connection;
 
     /**
+     * @var ModelManager
+     */
+    private $modelManager;
+
+    /**
      * @before
      *
      * @return void
@@ -59,6 +65,7 @@ class UpdateTo602Test extends TestCase
         $this->translationTransformer = new TranslationTransformer($this->getContainer()->get('models'));
         $this->attributeCrudService = $this->getContainer()->get('shopware_attribute.crud_service');
         $this->connection = $this->getContainer()->get('dbal_connection');
+        $this->modelManager = $this->getContainer()->get('models');
     }
 
     /**
@@ -102,7 +109,8 @@ class UpdateTo602Test extends TestCase
             $this->connection,
             $this->translation,
             $this->translationTransformer,
-            $this->attributeCrudService
+            $this->attributeCrudService,
+            $this->modelManager
         );
     }
 
