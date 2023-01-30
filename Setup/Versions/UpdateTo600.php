@@ -13,6 +13,7 @@ use PDO;
 use Shopware\Bundle\AttributeBundle\Service\CrudService;
 use Shopware\Bundle\AttributeBundle\Service\CrudServiceInterface;
 use Shopware\Bundle\AttributeBundle\Service\TypeMapping;
+use Shopware\Components\Model\ModelManager;
 use SwagPaymentPayPalUnified\Setup\ColumnService;
 
 class UpdateTo600
@@ -33,13 +34,19 @@ class UpdateTo600
     private $columnService;
 
     /**
+     * @var ModelManager
+     */
+    private $modelManager;
+
+    /**
      * @param CrudService|CrudServiceInterface $crudService
      */
-    public function __construct(Connection $connection, $crudService, ColumnService $columnService)
+    public function __construct(Connection $connection, $crudService, ColumnService $columnService, ModelManager $modelManager)
     {
         $this->connection = $connection;
         $this->crudService = $crudService;
         $this->columnService = $columnService;
+        $this->modelManager = $modelManager;
     }
 
     /**
@@ -78,6 +85,8 @@ class UpdateTo600
             'supportText' => 'PayPal offers tracking for orders processed through PayPal. To use this, specify a default shipping carrier, which can be overwritten in the orders. Find a list of all shipping providers <a target="_blank" href="https://developer.paypal.com/docs/tracking/reference/carriers/">here</a>',
             'position' => 100,
         ]);
+
+        $this->modelManager->generateAttributeModels(['s_order_attributes', 's_premium_dispatch_attributes']);
     }
 
     /**

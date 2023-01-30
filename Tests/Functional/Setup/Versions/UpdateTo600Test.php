@@ -36,7 +36,9 @@ class UpdateTo600Test extends TestCase
         $attributeCrudService->delete('s_order_attributes', 'swag_paypal_unified_carrier', true);
         $attributeCrudService->delete('s_premium_dispatch_attributes', 'swag_paypal_unified_carrier', true);
 
-        $updater = new UpdateTo600($connection, $attributeCrudService, new ColumnService($connection));
+        $modelManager = $this->getContainer()->get('models');
+
+        $updater = new UpdateTo600($connection, $attributeCrudService, new ColumnService($connection), $modelManager);
         $updater->update();
         $updater->update();
 
