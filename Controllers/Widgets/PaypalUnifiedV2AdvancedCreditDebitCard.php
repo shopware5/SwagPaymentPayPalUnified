@@ -212,7 +212,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2AdvancedCreditDebitCard extend
             $this->logger->debug(sprintf('%s PAYER_ACTION_REQUIRED', __METHOD__));
 
             $this->Response()->setHttpResponseCode(Response::HTTP_BAD_REQUEST);
-            $redirectUrl = $this->front->Router()->assemble([
+            $redirectUrl = $this->dependencyProvider->getRouter()->assemble([
                 'module' => 'frontend',
                 'controller' => 'checkout',
                 'action' => 'confirm',
@@ -226,7 +226,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2AdvancedCreditDebitCard extend
             $this->logger->debug(sprintf('%s INSTRUMENT_DECLINED', __METHOD__));
 
             $this->Response()->setHttpResponseCode(Response::HTTP_BAD_REQUEST);
-            $redirectUrl = $this->front->Router()->assemble([
+            $redirectUrl = $this->dependencyProvider->getRouter()->assemble([
                 'module' => 'frontend',
                 'controller' => 'checkout',
                 'action' => 'confirm',

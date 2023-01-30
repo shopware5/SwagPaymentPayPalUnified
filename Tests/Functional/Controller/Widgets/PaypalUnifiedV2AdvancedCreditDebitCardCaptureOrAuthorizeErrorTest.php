@@ -129,6 +129,7 @@ class PaypalUnifiedV2AdvancedCreditDebitCardCaptureOrAuthorizeErrorTest extends 
             [
                 self::SERVICE_ORDER_RESOURCE => $orderResourceMock,
                 self::SERVICE_SIMPLE_BASKET_VALIDATOR => $simpleBasketValidatorMock,
+                self::SERVICE_DEPENDENCY_PROVIDER => $this->getContainer()->get('paypal_unified.dependency_provider'),
             ],
             $request,
             new Enlight_Controller_Response_ResponseTestCase()

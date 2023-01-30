@@ -121,6 +121,8 @@ class InstallmentsBanner implements SubscriberInterface
             'en_gb',
             'en_us',
             'fr_fr',
+            'es_es',
+            'it_it',
         ];
 
         return \in_array(\strtolower($countryIso), $countryCodes, true);

@@ -10,6 +10,8 @@ namespace SwagPaymentPayPalUnified\Components;
 
 use Enlight_Components_Session_Namespace as ShopwareSession;
 use Enlight_Controller_Front;
+use Enlight_Controller_Router;
+use RuntimeException;
 use Shopware\Components\Cart\PaymentTokenService;
 use Shopware\Components\DependencyInjection\Container as DIContainer;
 use Shopware\Models\Shop\Shop;
@@ -76,6 +78,28 @@ class DependencyProvider
     public function getSession()
     {
         return $this->container->get('session');
+    }
+
+    /**
+     * @return Enlight_Controller_Router
+     */
+    public function getRouter()
+    {
+        $frontController = $this->getFront();
+        if (!$frontController instanceof Enlight_Controller_Front) {
+            throw new RuntimeException('Front is not initialized');
+        }
+
+        if (method_exists($frontController, 'ensureRouter')) {
+            return $frontController->ensureRouter();
+        }
+
+        $router = $frontController->Router();
+        if (!$router instanceof Enlight_Controller_Router) {
+            throw new RuntimeException('Router is not initialized');
+        }
+
+        return $router;
     }
 
     /**
