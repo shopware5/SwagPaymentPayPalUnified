@@ -126,9 +126,6 @@ class ExpressCheckout implements SubscriberInterface
             return;
         }
 
-        $view->assign('paypalUnifiedEcCartActive', $expressSettings->getCartActive());
-        $view->assign('paypalUnifiedEcOffCanvasActive', $expressSettings->getOffCanvasActive());
-
         $request = $args->getRequest();
         $controller = \strtolower($request->getControllerName());
         if ($controller !== 'checkout') {
@@ -144,6 +141,9 @@ class ExpressCheckout implements SubscriberInterface
         $product = $view->getAssign('sArticle'); // content on modal window of ajaxAddArticleAction
 
         if ((isset($cart['content']) || $product) && !$this->isUserLoggedIn()) {
+            $view->assign('paypalUnifiedEcCartActive', $expressSettings->getCartActive());
+            $view->assign('paypalUnifiedEcOffCanvasActive', $expressSettings->getOffCanvasActive());
+
             $this->addEcButtonBehaviour($view, $generalSettings);
             $this->addEcButtonStyleInfo($view, $expressSettings, $generalSettings);
         }

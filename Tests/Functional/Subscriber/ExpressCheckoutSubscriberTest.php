@@ -316,6 +316,32 @@ class ExpressCheckoutSubscriberTest extends TestCase
         $subscriber->addExpressCheckoutButtonCart($enlightEventArgs);
 
         static::assertTrue($view->getAssign('paypalUnifiedEcCartActive'));
+        static::assertFalse($view->getAssign('paypalUnifiedEcOffCanvasActive'));
+    }
+
+    /**
+     * @return void
+     */
+    public function testAddExpressCheckoutButtonCartAssignsValueToAjaxCartPaypalUnifiedEcOffCanvasActiveIsTrue()
+    {
+        $view = new ViewMock(new Enlight_Template_Manager());
+        $request = new Enlight_Controller_Request_RequestTestCase();
+        $request->setActionName('ajaxCart');
+        $request->setControllerName('checkout');
+        $view->assign('sBasket', ['content' => [['articleID' => 2]]]);
+
+        $enlightEventArgs = new Enlight_Controller_ActionEventArgs([
+            'subject' => new DummyController($request, $view, new Enlight_Controller_Response_ResponseTestCase()),
+            'request' => $request,
+        ]);
+
+        $this->importSettings(true, true, true, true, true, true);
+
+        $subscriber = $this->getSubscriber();
+        $subscriber->addExpressCheckoutButtonCart($enlightEventArgs);
+
+        static::assertTrue($view->getAssign('paypalUnifiedEcCartActive'));
+        static::assertTrue($view->getAssign('paypalUnifiedEcOffCanvasActive'));
     }
 
     /**
