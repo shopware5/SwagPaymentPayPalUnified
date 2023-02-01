@@ -14,9 +14,11 @@
 
     <changelog version="REPLACE_GLOBAL_WITH_NEXT_VERSION(6.0.4)">
         <changes lang="de">
+            PT-13030 - Verbessert die Benutzerfreundlichkeit für Express Bestellungen mit falsch separierten Namen;
             PT-13057 - Falls ein Sprachshop keine eigenen Einstellungen hat, werden die Einstellungen des Hauptshops berücksichtigt;
         </changes>
         <changes lang="en">
+            PT-13030 - Improves usability for Express Orders with incorrectly separated names;
             PT-13057 - If a language shop does not have its own settings, the settings of the main shop are taken into account;
         </changes>
     </changelog>

@@ -185,14 +185,17 @@ class CustomerService
 
                 return null;
             }
+
             $address = $shipping->getAddress();
-            $names = \explode(' ', $shipping->getName()->getFullName());
-            $firstName = \array_shift($names);
-            $lastName = \implode(' ', $names);
+
+            $customerNameResult = $this->getCustomerNameResult($shipping->getName()->getFullName());
         } else {
             $address = $payer->getAddress();
-            $firstName = $payer->getName()->getGivenName();
-            $lastName = $payer->getName()->getSurname();
+
+            $customerNameResult = new CustomerNameResult(
+                $payer->getName()->getGivenName(),
+                $payer->getName()->getSurname()
+            );
         }
 
         $salutation = $this->getSalutation();
@@ -209,8 +212,8 @@ class CustomerService
             'password' => $payer->getPayerId(),
             'accountmode' => 1,
             'salutation' => $salutation,
-            'firstname' => $firstName,
-            'lastname' => $lastName,
+            'firstname' => $customerNameResult->getFirstName(),
+            'lastname' => $customerNameResult->getLastName(),
             'street' => $address->getAddressLine1(),
             'additionalAddressLine1' => $address->getAddressLine2(),
             'zipcode' => $address->getPostalCode(),
@@ -351,5 +354,21 @@ class CustomerService
         }
 
         return $customer;
+    }
+
+    /**
+     * @param string $fullName
+     *
+     * @return CustomerNameResult
+     */
+    private function getCustomerNameResult($fullName)
+    {
+        $fullNameArray = \explode(' ', $fullName);
+
+        if (\count($fullNameArray) > 1) {
+            return new CustomerNameResult(\array_shift($fullNameArray), \implode(' ', $fullNameArray));
+        }
+
+        return new CustomerNameResult($fullName, $fullName);
     }
 }
