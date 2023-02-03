@@ -13,7 +13,6 @@ use Shopware\Components\Model\ModelEntity;
 
 /**
  * @ORM\Entity()
- *
  * @ORM\Table(name="swag_payment_paypal_unified_settings_advanced_credit_debit_card")
  */
 class AdvancedCreditDebitCard extends ModelEntity
@@ -22,9 +21,7 @@ class AdvancedCreditDebitCard extends ModelEntity
      * @var int
      *
      * @ORM\Column(name="id", type="integer", nullable=false)
-     *
      * @ORM\Id
-     *
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $id;
