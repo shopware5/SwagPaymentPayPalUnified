@@ -30,6 +30,8 @@ class Order extends PayPalApiStruct
 
     /**
      * @var ApplicationContext
+     *
+     * @deprecated Since v6.0.3 and will be removed with version 7.0.0.
      */
     protected $applicationContext;
 
@@ -111,6 +113,8 @@ class Order extends PayPalApiStruct
 
     /**
      * @return ApplicationContext
+     *
+     * @deprecated Since v6.0.3 and will be removed with version 7.0.0.
      */
     public function getApplicationContext()
     {
@@ -119,6 +123,8 @@ class Order extends PayPalApiStruct
 
     /**
      * @return void
+     *
+     * @deprecated Since v6.0.3 and will be removed with version 7.0.0.
      */
     public function setApplicationContext(ApplicationContext $applicationContext)
     {

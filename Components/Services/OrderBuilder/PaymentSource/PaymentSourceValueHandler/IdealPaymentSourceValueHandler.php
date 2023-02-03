@@ -30,6 +30,7 @@ class IdealPaymentSourceValueHandler extends AbstractPaymentSourceValueHandler
         $paymentSourceValue = new Ideal();
 
         $this->setDefaultValues($paymentSourceValue, $orderParameter);
+        $paymentSourceValue->setExperienceContext($this->createExperienceContext($orderParameter));
 
         return $paymentSourceValue;
     }

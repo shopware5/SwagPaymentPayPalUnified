@@ -181,11 +181,6 @@ parameters:
 			path: Components/Services/Common/ReturnUrlHelper.php
 
 		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\Common\\\\ReturnUrlHelper\\:\\:getRedirectUrl\\(\\) has parameter \\$additionalParameter with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: Components/Services/Common/ReturnUrlHelper.php
-
-		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Services\\\\Common\\\\ReturnUrlHelper\\:\\:getReturnUrl\\(\\) has parameter \\$additionalParameter with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: Components/Services/Common/ReturnUrlHelper.php
@@ -1806,37 +1801,7 @@ parameters:
 			path: PayPalBundle/V2/Api/Order/PaymentSource/ExperienceContext.php
 
 		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\V2\\\\Api\\\\Order\\\\PaymentSource\\\\ExperienceContext\\:\\:setBrandName\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: PayPalBundle/V2/Api/Order/PaymentSource/ExperienceContext.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\V2\\\\Api\\\\Order\\\\PaymentSource\\\\ExperienceContext\\:\\:setCancelUrl\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: PayPalBundle/V2/Api/Order/PaymentSource/ExperienceContext.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\V2\\\\Api\\\\Order\\\\PaymentSource\\\\ExperienceContext\\:\\:setCustomerServiceInstructions\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: PayPalBundle/V2/Api/Order/PaymentSource/ExperienceContext.php
-
-		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\V2\\\\Api\\\\Order\\\\PaymentSource\\\\ExperienceContext\\:\\:setCustomerServiceInstructions\\(\\) has parameter \\$customerServiceInstructions with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: PayPalBundle/V2/Api/Order/PaymentSource/ExperienceContext.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\V2\\\\Api\\\\Order\\\\PaymentSource\\\\ExperienceContext\\:\\:setLocale\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: PayPalBundle/V2/Api/Order/PaymentSource/ExperienceContext.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\V2\\\\Api\\\\Order\\\\PaymentSource\\\\ExperienceContext\\:\\:setLogoUrl\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: PayPalBundle/V2/Api/Order/PaymentSource/ExperienceContext.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\V2\\\\Api\\\\Order\\\\PaymentSource\\\\ExperienceContext\\:\\:setReturnUrl\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: PayPalBundle/V2/Api/Order/PaymentSource/ExperienceContext.php
 
@@ -1862,11 +1827,6 @@ parameters:
 
 		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\V2\\\\Api\\\\Order\\\\PaymentSource\\\\PayUponInvoice\\:\\:setEmail\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: PayPalBundle/V2/Api/Order/PaymentSource/PayUponInvoice.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\PayPalBundle\\\\V2\\\\Api\\\\Order\\\\PaymentSource\\\\PayUponInvoice\\:\\:setExperienceContext\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: PayPalBundle/V2/Api/Order/PaymentSource/PayUponInvoice.php
 

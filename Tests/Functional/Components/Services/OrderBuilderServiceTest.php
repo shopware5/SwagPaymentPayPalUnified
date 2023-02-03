@@ -13,21 +13,27 @@ use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\ShopwareOrderData;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\Payer;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Amount;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Amount\Breakdown;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Amount\Breakdown\Discount;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Amount\Breakdown\ItemTotal;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Amount\Breakdown\Shipping as ShippingCosts;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Shipping as ShippingAddress;
+use SwagPaymentPayPalUnified\Tests\Functional\AssertStringContainsTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\SettingsHelperTrait;
+use SwagPaymentPayPalUnified\Tests\Functional\ShopRegistrationTrait;
 
 class OrderBuilderServiceTest extends TestCase
 {
     use DatabaseTestCaseTrait;
     use SettingsHelperTrait;
     use ContainerTrait;
+    use ShopRegistrationTrait;
+    use AssertStringContainsTrait;
 
     /**
      * @dataProvider getOrderTestDataProvider
@@ -80,29 +86,35 @@ class OrderBuilderServiceTest extends TestCase
         static::assertSame($intent, $payPalOrderData->getIntent());
 
         // Check Payer data
-        static::assertSame('PhpUnit', $payPalOrderData->getPayer()->getName()->getGivenName());
-        static::assertSame('Tester', $payPalOrderData->getPayer()->getName()->getSurname());
-        static::assertSame('phpUnit.tester@test.com', $payPalOrderData->getPayer()->getEmailAddress());
-        static::assertSame('FooBarStreet, 42', $payPalOrderData->getPayer()->getAddress()->getAddressLine1());
-        static::assertNull($payPalOrderData->getPayer()->getAddress()->getAddressLine2());
-        static::assertNull($payPalOrderData->getPayer()->getAddress()->getAdminArea1());
-        static::assertSame('SinCity', $payPalOrderData->getPayer()->getAddress()->getAdminArea2());
-        static::assertSame('12345', $payPalOrderData->getPayer()->getAddress()->getPostalCode());
-        static::assertSame('DE', $payPalOrderData->getPayer()->getAddress()->getCountryCode());
+        $payer = $payPalOrderData->getPayer();
+        static::assertInstanceOf(Payer::class, $payer);
+        $name = $payer->getName();
+        static::assertInstanceOf(Payer\Name::class, $name);
+        $address = $payer->getAddress();
+        static::assertInstanceOf(Payer\Address::class, $address);
+
+        static::assertSame('PhpUnit', $name->getGivenName());
+        static::assertSame('Tester', $name->getSurname());
+        static::assertSame('phpUnit.tester@test.com', $payer->getEmailAddress());
+        static::assertSame('FooBarStreet, 42', $address->getAddressLine1());
+        static::assertNull($address->getAddressLine2());
+        static::assertNull($address->getAdminArea1());
+        static::assertSame('SinCity', $address->getAdminArea2());
+        static::assertSame('12345', $address->getPostalCode());
+        static::assertSame('DE', $address->getCountryCode());
+
+        $paymentSource = $payPalOrderData->getPaymentSource();
+        static::assertInstanceOf(PaymentSource::class, $paymentSource);
+        $payPal = $paymentSource->getPaypal();
+        static::assertInstanceOf(PaymentSource\PayPal::class, $payPal);
+        $experienceContext = $payPal->getExperienceContext();
+        static::assertInstanceOf(PaymentSource\ExperienceContext::class, $experienceContext);
 
         // Check application context data
-        static::assertSame('DefaultTestBrandName', $payPalOrderData->getApplicationContext()->getBrandName());
-        static::assertSame('NO_PREFERENCE', $payPalOrderData->getApplicationContext()->getLandingPage());
-        static::assertSame('SET_PROVIDED_ADDRESS', $payPalOrderData->getApplicationContext()->getShippingPreference());
-        static::assertSame('PAY_NOW', $payPalOrderData->getApplicationContext()->getUserAction());
-
-        if (method_exists($this, 'assertStringContainsString')) {
-            static::assertStringContainsString('/PaypalUnifiedV2/return', $payPalOrderData->getApplicationContext()->getReturnUrl());
-            static::assertStringContainsString('/PaypalUnifiedV2/cancel', $payPalOrderData->getApplicationContext()->getCancelUrl());
-        } else {
-            static::assertContains('/PaypalUnifiedV2/return', $payPalOrderData->getApplicationContext()->getReturnUrl());
-            static::assertContains('/PaypalUnifiedV2/cancel', $payPalOrderData->getApplicationContext()->getCancelUrl());
-        }
+        static::assertSame('DefaultTestBrandName', $experienceContext->getBrandName());
+        static::assertSame('NO_PREFERENCE', $experienceContext->getLandingPage());
+        static::assertSame('SET_PROVIDED_ADDRESS', $experienceContext->getShippingPreference());
+        static::assertSame('PAY_NOW', $experienceContext->getUserAction());
 
         // Check purchase units
         static::assertTrue(\is_array($payPalOrderData->getPurchaseUnits()));

@@ -16,18 +16,24 @@ use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\ProcessingInstruction;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
 use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
+use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
+use SwagPaymentPayPalUnified\Tests\Functional\SettingsHelperTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\ShopRegistrationTrait;
 
 class ApmOrderHandlerTest extends TestCase
 {
     use ContainerTrait;
     use ShopRegistrationTrait;
+    use SettingsHelperTrait;
+    use DatabaseTestCaseTrait;
 
     /**
      * @return void
      */
     public function testCreateOrderShouldSetProcessingInstruction()
     {
+        $this->insertGeneralSettingsFromArray(['active' => true]);
+
         $result = $this->getApmOrderHandler()->createOrder($this->createPayPalOrderParameter());
 
         static::assertInstanceOf(Order::class, $result);

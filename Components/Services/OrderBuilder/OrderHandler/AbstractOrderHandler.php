@@ -267,6 +267,8 @@ abstract class AbstractOrderHandler implements OrderBuilderHandlerInterface
      * @param array<string,string> $extraParams
      *
      * @return ApplicationContext
+     *
+     * @deprecated Since v6.0.3 and will be removed with version 7.0.0.
      */
     protected function createApplicationContext(PayPalOrderParameter $orderParameter, array $extraParams = [])
     {

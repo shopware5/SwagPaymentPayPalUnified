@@ -10,6 +10,7 @@ namespace SwagPaymentPayPalUnified\Tests\Functional\Setup;
 
 use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\Setup\Versions\UpdateTo504;
+use SwagPaymentPayPalUnified\Tests\Functional\AssertStringContainsTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 
@@ -17,6 +18,7 @@ class UpdateTo504Test extends TestCase
 {
     use ContainerTrait;
     use DatabaseTestCaseTrait;
+    use AssertStringContainsTrait;
 
     /**
      * @return void
@@ -39,12 +41,6 @@ class UpdateTo504Test extends TestCase
         $expectedContainedString = 'Bitte überweisen Sie {$PayPalUnifiedInvoiceInstruction.amount|currency} bis {$PayPalUnifiedInvoiceInstruction.dueDate|date_format: "%d.%m.%Y"} an:';
         $result = $connection->fetchColumn($fetchValueSql);
 
-        if (\method_exists($this, 'assertStringContainsString')) {
-            static::assertStringContainsString($expectedContainedString, $result);
-
-            return;
-        }
-
-        static::assertContains($expectedContainedString, $result);
+        static::assertStringContains($this, $expectedContainedString, $result);
     }
 }

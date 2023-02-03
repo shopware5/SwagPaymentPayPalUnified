@@ -12,6 +12,7 @@ use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Instruction\Amount;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Instruction\RecipientBanking;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\PaymentInstruction;
+use SwagPaymentPayPalUnified\Tests\Functional\AssertStringContainsTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 
@@ -19,6 +20,7 @@ class PaymentInstructionServiceTest extends TestCase
 {
     use DatabaseTestCaseTrait;
     use ContainerTrait;
+    use AssertStringContainsTrait;
 
     const TEST_ORDER_NUMBER = '20001';
     const TEST_AMOUNT_VALUE = 50.5;
@@ -63,12 +65,7 @@ class PaymentInstructionServiceTest extends TestCase
 {"jsonDescription":"Pay Upon Invoice Payment Instructions","orderNumber":"20001","bankName":"TEST_BANK","accountHolder":"TEST_ACCOUNT_HOLDER","iban":"TEST_IBAN","bic":"TEST_BIC","amount":"50.5","dueDate":"01-01-2000","reference":"TEST_REFERENCE_NUMBER"}
 ';
 
-        if (method_exists($this, 'assertStringContainsString')) {
-            static::assertStringContainsString($expected, $internalComment);
-
-            return;
-        }
-        static::assertContains($expected, $internalComment);
+        static::assertStringContains($this, $expected, $internalComment);
     }
 
     /**

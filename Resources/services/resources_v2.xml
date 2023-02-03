@@ -21,7 +21,6 @@
                  class="SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\OrderResource"
                  public="true">
             <argument type="service" id="paypal_unified.client_service"/>
-            <argument type="service" id="paypal_unified.order_array_factory"/>
             <argument type="service" id="paypal_unified.logger_service"/>
             <argument type="service" id="paypal_unified.dependency_provider"/>
             <argument type="service" id="paypal_unified.request_id_service"/>

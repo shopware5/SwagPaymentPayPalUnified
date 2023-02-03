@@ -28,6 +28,7 @@ class P24PaymentSourceValueHandler extends AbstractPaymentSourceValueHandler
 
         $this->setDefaultValues($paymentSourceValue, $orderParameter);
         $this->setValues($paymentSourceValue, $orderParameter);
+        $paymentSourceValue->setExperienceContext($this->createExperienceContext($orderParameter));
 
         return $paymentSourceValue;
     }

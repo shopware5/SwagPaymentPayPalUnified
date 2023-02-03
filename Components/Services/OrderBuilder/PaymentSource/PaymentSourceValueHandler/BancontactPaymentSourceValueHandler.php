@@ -30,6 +30,7 @@ class BancontactPaymentSourceValueHandler extends AbstractPaymentSourceValueHand
         $paymentSourceValue = new Bancontact();
 
         $this->setDefaultValues($paymentSourceValue, $orderParameter);
+        $paymentSourceValue->setExperienceContext($this->createExperienceContext($orderParameter));
 
         return $paymentSourceValue;
     }

@@ -228,7 +228,7 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
 
             $payPalOrder = $this->orderResource->create($payPalOrderData, $orderParameter->getPaymentType());
 
-            $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFUL CREATED - ID: %d', __METHOD__, $payPalOrder->getId()));
+            $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFUL CREATED - ID: %s', __METHOD__, $payPalOrder->getId()));
         } catch (RequestException $exception) {
             $exceptionBody = json_decode($exception->getBody(), true);
 
@@ -723,7 +723,6 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
         }
 
         $paymentId = $this->getPaymentId($payPalOrder);
-
         if (!\is_string($paymentId)) {
             return;
         }

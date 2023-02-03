@@ -9,24 +9,25 @@
         <service id="paypal_unified.order_array_factory"
                  class="SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\OrderArrayFactory\OrderArrayFactory"
                  public="true">
+            <deprecated>The service "%service_id%" is deprecated since v6.0.3 and will be removed with version 7.0.0. Use Order->toArray() instead</deprecated>
         </service>
 
         <service id="paypal_unified.order_array_factory_handler_apm_default"
                  class="SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\OrderArrayFactory\Handler\ApmDefaultHandler"
                  public="true">
-            <tag name="paypal_unified.order_array_factory_handler"/>
+            <deprecated>The service "%service_id%" is deprecated since v6.0.3 and will be removed with version 7.0.0. Use Order->toArray() instead</deprecated>
         </service>
 
         <service id="paypal_unified.order_array_factory_handler_apm_extended"
                  class="SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\OrderArrayFactory\Handler\ApmExtendedHandler"
                  public="true">
-            <tag name="paypal_unified.order_array_factory_handler"/>
+            <deprecated>The service "%service_id%" is deprecated since v6.0.3 and will be removed with version 7.0.0. Use Order->toArray() instead</deprecated>
         </service>
 
         <service id="paypal_unified.order_array_factory_handler_default"
                  class="SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\OrderArrayFactory\Handler\DefaultHandler"
                  public="true">
-            <tag name="paypal_unified.order_array_factory_handler"/>
+            <deprecated>The service "%service_id%" is deprecated since v6.0.3 and will be removed with version 7.0.0. Use Order->toArray() instead</deprecated>
         </service>
 
     </services>

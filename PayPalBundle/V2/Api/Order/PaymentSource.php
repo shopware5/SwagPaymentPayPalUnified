@@ -17,6 +17,7 @@ use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\Ideal;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\Multibanco;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\Mybank;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\P24;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\PayPal;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\PayUponInvoice;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\Sofort;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\Trustly;
@@ -24,6 +25,11 @@ use SwagPaymentPayPalUnified\PayPalBundle\V2\PayPalApiStruct;
 
 class PaymentSource extends PayPalApiStruct
 {
+    /**
+     * @var PayPal|null
+     */
+    protected $paypal;
+
     /**
      * @var PayUponInvoice|null
      */
@@ -83,6 +89,24 @@ class PaymentSource extends PayPalApiStruct
      * @var Card|null
      */
     protected $card;
+
+    /**
+     * @return PayPal|null
+     */
+    public function getPaypal()
+    {
+        return $this->paypal;
+    }
+
+    /**
+     * @param PayPal|null $paypal
+     *
+     * @return void
+     */
+    public function setPaypal($paypal)
+    {
+        $this->paypal = $paypal;
+    }
 
     /**
      * @return PayUponInvoice|null

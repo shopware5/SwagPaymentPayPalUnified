@@ -18,11 +18,13 @@ use Shopware_Components_Translation;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Setup\TranslationTransformer;
 use SwagPaymentPayPalUnified\Setup\Versions\UpdateTo602;
+use SwagPaymentPayPalUnified\Tests\Functional\AssertStringContainsTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\TranslationTestCaseTrait;
 
 class UpdateTo602Test extends TestCase
 {
     use TranslationTestCaseTrait;
+    use AssertStringContainsTrait;
 
     const LANGUAGE_SHOP_ID = 2;
     const TRANSLATION_KEY = 1;
@@ -89,11 +91,7 @@ class UpdateTo602Test extends TestCase
         static::assertSame('PayPal, Später Bezahlen', $this->getPaymentMethodDescription());
         static::assertSame('PayPal, Pay in 3', $translationResult['description']);
 
-        if (\method_exists($this, 'assertStringContainsString')) {
-            static::assertStringContainsString('PayPal PayLater Message', $translationResult['additionalDescription']);
-        } else {
-            static::assertContains('PayPal PayLater Message', $translationResult['additionalDescription']);
-        }
+        static::assertStringContains($this, 'PayPal PayLater Message', $translationResult['additionalDescription']);
 
         static::assertNotNull($this->attributeCrudService->get('s_user_attributes', 'swag_paypal_unified_payer_id'));
 

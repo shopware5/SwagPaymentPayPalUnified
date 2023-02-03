@@ -8,12 +8,16 @@
 
 namespace SwagPaymentPayPalUnified\Components\Services\Common;
 
-use RuntimeException;
-use Shopware\Components\Cart\PaymentTokenService;
 use Shopware\Components\Routing\RouterInterface;
 
 class ReturnUrlHelper
 {
+    const DEFAULT_CONTROLLER = 'PaypalUnifiedV2';
+
+    const ACTION_RETURN = 'return';
+
+    const ACTION_CANCEL = 'cancel';
+
     /**
      * @var RouterInterface
      */
@@ -32,7 +36,7 @@ class ReturnUrlHelper
      */
     public function getReturnUrl($basketUniqueId, $paymentToken, array $additionalParameter = [])
     {
-        return $this->getRedirectUrl('return', $basketUniqueId, $paymentToken, $additionalParameter);
+        return $this->createRedirectUrl(self::DEFAULT_CONTROLLER, self::ACTION_RETURN, $basketUniqueId, $paymentToken, $additionalParameter);
     }
 
     /**
@@ -43,41 +47,48 @@ class ReturnUrlHelper
      */
     public function getCancelUrl($basketUniqueId, $paymentToken, array $additionalParameter = [])
     {
-        return $this->getRedirectUrl('cancel', $basketUniqueId, $paymentToken, $additionalParameter);
+        return $this->createRedirectUrl(self::DEFAULT_CONTROLLER, self::ACTION_CANCEL, $basketUniqueId, $paymentToken, $additionalParameter);
     }
 
     /**
-     * @param string      $action
-     * @param string|null $basketUniqueId
-     * @param string|null $paymentToken
+     * @param string              $controller
+     * @param string              $action
+     * @param string|null         $basketUniqueId
+     * @param string|null         $paymentToken
+     * @param array<string,mixed> $additionalParameter
      *
      * @return string
      */
-    private function getRedirectUrl($action, $basketUniqueId, $paymentToken, array $additionalParameter = [])
-    {
-        $routingParameters = [
-            'controller' => 'PaypalUnifiedV2',
-            'action' => $action,
-            'forceSecure' => true,
-        ];
-
-        $routingParameters = array_merge($routingParameters, $additionalParameter);
+    public function createRedirectUrl(
+        $controller,
+        $action,
+        $basketUniqueId,
+        $paymentToken,
+        array $additionalParameter = []
+    ) {
+        $urlBuilder = $this->createUrlBuilder()
+            ->setController($controller)
+            ->setControllerAction($action)
+            ->setAdditionalParameter($additionalParameter);
 
         // Shopware 5.3+ supports cart validation.
         if (\is_string($basketUniqueId)) {
-            $routingParameters['basketId'] = $basketUniqueId;
+            $urlBuilder->setBasketUniqueId($basketUniqueId);
         }
 
         // Shopware 5.6+ supports session restoring
         if (\is_string($paymentToken)) {
-            $routingParameters[PaymentTokenService::TYPE_PAYMENT_TOKEN] = $paymentToken;
+            $urlBuilder->setPaymentToken($paymentToken);
         }
 
-        $url = $this->router->assemble($routingParameters);
-        if (!\is_string($url)) {
-            throw new RuntimeException('Could not assemble URL');
-        }
+        return $urlBuilder->buildUrl();
+    }
 
-        return $url;
+    /**
+     * @return UrlBuilder
+     */
+    private function createUrlBuilder()
+    {
+        return new UrlBuilder($this->router);
     }
 }

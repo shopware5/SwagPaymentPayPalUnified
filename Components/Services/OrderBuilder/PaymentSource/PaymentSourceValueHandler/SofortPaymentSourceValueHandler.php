@@ -30,6 +30,7 @@ class SofortPaymentSourceValueHandler extends AbstractPaymentSourceValueHandler
         $paymentSourceValue = new Sofort();
 
         $this->setDefaultValues($paymentSourceValue, $orderParameter);
+        $paymentSourceValue->setExperienceContext($this->createExperienceContext($orderParameter));
 
         return $paymentSourceValue;
     }
