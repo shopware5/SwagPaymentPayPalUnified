@@ -1,4 +1,6 @@
+.ci
 .githooks
+PhpStan
 Tests
 .eslintignore
 .gitignore
@@ -6,6 +8,7 @@ Tests
 .make.env
 .php-cs-fixer.php
 .psh.yml.dist
+.template-block-ignore-list
 before_install_plugin.sh
 Makefile
 phpstan.neon
