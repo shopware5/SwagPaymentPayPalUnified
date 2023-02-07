@@ -1,11 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Bundle\\\\AccountBundle\\\\Service\\\\Validator\\\\AddressValidatorDecorator\\:\\:validate\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Bundle/AccountBundle/Service/Validator/AddressValidatorDecorator.php
-
-		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Components\\\\Backend\\\\CaptureService\\:\\:captureAuthorization\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: Components/Backend/CaptureService.php
@@ -2102,16 +2097,6 @@ parameters:
 
 		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Bundle\\\\AccountBundle\\\\Service\\\\Validator\\\\AddressValidatorDecoratorTest\\:\\:testValidateThrowValidationExceptionCountry\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Bundle/AccountBundle/Service/Validator/AddressValidatorDecoratorTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Bundle\\\\AccountBundle\\\\Service\\\\Validator\\\\AddressValidatorMock\\:\\:validate\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Bundle/AccountBundle/Service/Validator/AddressValidatorDecoratorTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Bundle\\\\AccountBundle\\\\Service\\\\Validator\\\\AddressValidatorWithStateException\\:\\:validate\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: Tests/Functional/Bundle/AccountBundle/Service/Validator/AddressValidatorDecoratorTest.php
 
