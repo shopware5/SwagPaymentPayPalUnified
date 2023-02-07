@@ -172,8 +172,6 @@ class Installer
             ]
         );
 
-        $this->modelManager->generateAttributeModels(['s_order_attributes', 's_core_paymentmeans_attributes']);
-
         $this->attributeCrudService->update('s_order_attributes', 'swag_paypal_unified_carrier', TypeMapping::TYPE_STRING, [
             'displayInBackend' => true,
             'label' => 'Carrier code',
@@ -193,6 +191,8 @@ class Installer
         ]);
 
         $this->attributeCrudService->update('s_user_attributes', 'swag_paypal_unified_payer_id', TypeMapping::TYPE_STRING);
+
+        $this->modelManager->generateAttributeModels(['s_order_attributes', 's_core_paymentmeans_attributes', 's_premium_dispatch_attributes', 's_user_attributes']);
     }
 
     /**
