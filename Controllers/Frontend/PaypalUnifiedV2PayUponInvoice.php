@@ -43,6 +43,14 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2PayUponInvoice extends Abstra
     {
         $this->logger->debug(sprintf('%s START', __METHOD__));
 
+        $requestId = $this->requestIdService->getRequestIdFromRequest($this->Request());
+        $isRequestIdAlreadyUsed = $this->requestIdService->checkRequestIdIsAlreadySetToSession($requestId);
+        if ($isRequestIdAlreadyUsed) {
+            return;
+        }
+
+        $this->requestIdService->saveRequestIdToSession($requestId);
+
         $session = $this->dependencyProvider->getSession();
         $shopwareSessionOrderData = $session->offsetGet('sOrderVariables');
 
@@ -83,6 +91,12 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2PayUponInvoice extends Abstra
         if ($this->isPaymentCompleted($payPalOrderId, PaymentStatusV2::ORDER_PAYMENT_PENDING_APPROVAL)) {
             $payPalOrder = $this->getPayPalOrder($payPalOrderId);
             if (!$payPalOrder instanceof Order) {
+                $this->orderNumberService->restoreOrdernumberToPool();
+
+                return;
+            }
+
+            if ($this->checkIfTransactionIdIsAlreadyAssigned($payPalOrder)) {
                 $this->orderNumberService->restoreOrdernumberToPool();
 
                 return;

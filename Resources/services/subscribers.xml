@@ -297,6 +297,15 @@
             <tag name="shopware.event_subscriber"/>
         </service>
 
+        <service id="paypal_unified.subscriber.checkout_request_id"
+                 class="SwagPaymentPayPalUnified\Subscriber\CheckoutRequestId"
+                 public="true">
+            <argument type="service" id="paypal_unified.request_id_service"/>
+            <argument type="service" id="paypal_unified.payment_method_provider"/>
+            <argument type="service" id="paypal_unified.dependency_provider"/>
+            <tag name="shopware.event_subscriber"/>
+        </service>
+
         <service id="paypal_unified.subscriber.address"
                  class="SwagPaymentPayPalUnified\Subscriber\Address"
                  public="true">

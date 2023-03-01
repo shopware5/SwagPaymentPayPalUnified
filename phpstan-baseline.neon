@@ -2071,36 +2071,6 @@ parameters:
 			path: SwagPaymentPayPalUnified.php
 
 		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Bundle\\\\AccountBundle\\\\Service\\\\Validator\\\\AddressValidatorDecoratorTest\\:\\:testConstruct\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Bundle/AccountBundle/Service/Validator/AddressValidatorDecoratorTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Bundle\\\\AccountBundle\\\\Service\\\\Validator\\\\AddressValidatorDecoratorTest\\:\\:testIsValidInnerValidator\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Bundle/AccountBundle/Service/Validator/AddressValidatorDecoratorTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Bundle\\\\AccountBundle\\\\Service\\\\Validator\\\\AddressValidatorDecoratorTest\\:\\:testValidateReturnWithWrongControllerName\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Bundle/AccountBundle/Service/Validator/AddressValidatorDecoratorTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Bundle\\\\AccountBundle\\\\Service\\\\Validator\\\\AddressValidatorDecoratorTest\\:\\:testValidateReturnWithoutRequest\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Bundle/AccountBundle/Service/Validator/AddressValidatorDecoratorTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Bundle\\\\AccountBundle\\\\Service\\\\Validator\\\\AddressValidatorDecoratorTest\\:\\:testValidateThrowNoValidationException\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Bundle/AccountBundle/Service/Validator/AddressValidatorDecoratorTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Bundle\\\\AccountBundle\\\\Service\\\\Validator\\\\AddressValidatorDecoratorTest\\:\\:testValidateThrowValidationExceptionCountry\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Bundle/AccountBundle/Service/Validator/AddressValidatorDecoratorTest.php
-
-		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Components\\\\Backend\\\\CaptureServiceTest\\:\\:before\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: Tests/Functional/Components/Backend/CaptureServiceTest.php

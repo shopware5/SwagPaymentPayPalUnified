@@ -28,5 +28,12 @@
             <argument type="service" id="dbal_connection"/>
             <argument type="service" id="config"/>
         </service>
+
+        <service id="paypal_unified.request_id_service"
+                 class="SwagPaymentPayPalUnified\Components\Services\RequestIdService"
+                 public="true">
+            <argument type="service" id="paypal_unified.dependency_provider"/>
+            <argument type="service" id="paypal_unified.logger_service"/>
+        </service>
     </services>
 </container>

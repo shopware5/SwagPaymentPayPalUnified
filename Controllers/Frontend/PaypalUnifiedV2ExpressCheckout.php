@@ -125,6 +125,12 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2ExpressCheckout extends Abstr
             return;
         }
 
+        if ($this->checkIfTransactionIdIsAlreadyAssigned($payPalOrder)) {
+            $this->orderNumberService->restoreOrdernumberToPool();
+
+            return;
+        }
+
         $shopwareOrderNumber = $this->createShopwareOrder($payPalOrderId, PaymentType::PAYPAL_EXPRESS_V2);
 
         $this->setTransactionId($shopwareOrderNumber, $payPalOrder);

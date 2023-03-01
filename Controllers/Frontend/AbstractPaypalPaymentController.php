@@ -31,6 +31,7 @@ use SwagPaymentPayPalUnified\Components\Services\OrderDataService;
 use SwagPaymentPayPalUnified\Components\Services\OrderPropertyHelper;
 use SwagPaymentPayPalUnified\Components\Services\PaymentControllerHelper;
 use SwagPaymentPayPalUnified\Components\Services\PaymentStatusService;
+use SwagPaymentPayPalUnified\Components\Services\RequestIdService;
 use SwagPaymentPayPalUnified\Components\Services\Validation\RedirectDataBuilderFactory;
 use SwagPaymentPayPalUnified\Components\Services\Validation\SimpleBasketValidator;
 use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentControllerResults\DeterminedStatus;
@@ -168,6 +169,11 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
      */
     protected $orderNumberService;
 
+    /**
+     * @var RequestIdService
+     */
+    protected $requestIdService;
+
     public function preDispatch()
     {
         $this->dependencyProvider = $this->get('paypal_unified.dependency_provider');
@@ -187,6 +193,7 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
         $this->orderPropertyHelper = $this->get('paypal_unified.order_property_helper');
         $this->simpleBasketValidator = $this->get('paypal_unified.simple_basket_validator');
         $this->orderNumberService = $this->get('paypal_unified.order_number_service');
+        $this->requestIdService = $this->get('paypal_unified.request_id_service');
     }
 
     /**
@@ -715,21 +722,7 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
             return;
         }
 
-        $paymentId = null;
-        $payments = $payPalOrder->getPurchaseUnits()[0]->getPayments();
-        if ($payPalOrder->getIntent() === PaymentIntentV2::CAPTURE) {
-            $captures = $payments->getCaptures();
-            if (!\is_array($captures)) {
-                throw new UnexpectedValueException('PayPal order has intent CAPTURE, but no captures in "payments" object');
-            }
-            $paymentId = $captures[0]->getId();
-        } elseif ($payPalOrder->getIntent() === PaymentIntentV2::AUTHORIZE) {
-            $authorizations = $payments->getAuthorizations();
-            if (!\is_array($authorizations)) {
-                throw new UnexpectedValueException('PayPal order has intent AUTHORIZE, but no authorizations in "payments" object');
-            }
-            $paymentId = $authorizations[0]->getId();
-        }
+        $paymentId = $this->getPaymentId($payPalOrder);
 
         if (!\is_string($paymentId)) {
             return;
@@ -857,6 +850,68 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
             'controller' => 'address',
             'action' => 'index',
         ], $error));
+    }
+
+    /**
+     * @return bool
+     */
+    protected function checkIfTransactionIdIsAlreadyAssigned(Order $payPalOrder)
+    {
+        $transactionId = $this->getPaymentId($payPalOrder);
+        if (!\is_string($transactionId)) {
+            return true;
+        }
+
+        return $this->checkOrdersByTransactionId($transactionId);
+    }
+
+    /**
+     * @return string|null
+     */
+    protected function getPaymentId(Order $payPalOrder)
+    {
+        $paymentId = null;
+
+        $payments = $payPalOrder->getPurchaseUnits()[0]->getPayments();
+        if ($payPalOrder->getIntent() === PaymentIntentV2::CAPTURE) {
+            $captures = $payments->getCaptures();
+            if (!\is_array($captures)) {
+                throw new UnexpectedValueException('PayPal order has intent CAPTURE, but no captures in "payments" object');
+            }
+
+            $paymentId = $captures[0]->getId();
+        } elseif ($payPalOrder->getIntent() === PaymentIntentV2::AUTHORIZE) {
+            $authorizations = $payments->getAuthorizations();
+            if (!\is_array($authorizations)) {
+                throw new UnexpectedValueException('PayPal order has intent AUTHORIZE, but no authorizations in "payments" object');
+            }
+
+            $paymentId = $authorizations[0]->getId();
+        }
+
+        return $paymentId;
+    }
+
+    /**
+     * @param string $transactionId
+     *
+     * @return bool
+     */
+    private function checkOrdersByTransactionId($transactionId)
+    {
+        $result = $this->container->get('dbal_connection')->createQueryBuilder()
+            ->select(['id'])
+            ->from('s_order')
+            ->where('transactionID = :transactionId')
+            ->setParameter('transactionId', $transactionId)
+            ->execute()
+            ->fetchAll();
+
+        if (empty($result)) {
+            return false;
+        }
+
+        return true;
     }
 
     /**

@@ -73,6 +73,13 @@ class PaypalUnifiedApmTest extends PaypalPaymentControllerTestCase
             'token' => self::PAYPAL_ORDER_ID,
             'basketId' => null,
         ]);
+
+        $capture = new Capture();
+        $capture->setId('any');
+
+        $authorization = new Authorization();
+        $authorization->setId('any');
+
         $this->givenThePayPalOrder(
             self::PAYPAL_ORDER_ID,
             (new Order())->assign([
@@ -83,8 +90,8 @@ class PaypalUnifiedApmTest extends PaypalPaymentControllerTestCase
                 $this->createConfiguredMock(PurchaseUnit::class, [
                     'getAmount' => $this->createMock(Amount::class),
                     'getPayments' => $this->createConfiguredMock(Payments::class, [
-                        'getCaptures' => [$this->createMock(Capture::class)],
-                        'getAuthorizations' => [$this->createMock(Authorization::class)],
+                        'getCaptures' => [$capture],
+                        'getAuthorizations' => [$authorization],
                     ]),
                 ]),
             ],

@@ -58,7 +58,7 @@ test.describe('Pay with credit card', () => {
 
         await page.waitForLoadState('load');
 
-        await page.waitForTimeout(5000);
+        await page.waitForTimeout(1000);
 
         await page.click('button:has-text("Zahlungspflichtig bestellen")');
         await page.waitForLoadState('load');
@@ -110,7 +110,7 @@ test.describe('Pay with credit card', () => {
 
         await page.waitForLoadState('load');
 
-        await page.waitForTimeout(5000);
+        await page.waitForTimeout(1000);
 
         await page.click('button:has-text("Zahlungspflichtig bestellen")');
         await page.waitForLoadState('load');

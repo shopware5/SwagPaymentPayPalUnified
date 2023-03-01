@@ -9,6 +9,7 @@
 namespace SwagPaymentPayPalUnified\PayPalBundle\V2\Resource;
 
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
+use SwagPaymentPayPalUnified\Components\Services\RequestIdService;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\PartnerAttributionId;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
@@ -42,17 +43,24 @@ class OrderResource
      */
     private $dependencyProvider;
 
+    /**
+     * @var RequestIdService
+     */
+    private $requestIdService;
+
     public function __construct(
         ClientService $clientService,
         OrderArrayFactory $arrayFactory,
         LoggerServiceInterface $loggerService,
-        DependencyProvider $dependencyProvider
+        DependencyProvider $dependencyProvider,
+        RequestIdService $requestIdService
     ) {
         $this->clientService = $clientService;
         $this->clientService->setPartnerAttributionId(PartnerAttributionId::PAYPAL_ALL_V2);
         $this->arrayFactory = $arrayFactory;
         $this->loggerService = $loggerService;
         $this->dependencyProvider = $dependencyProvider;
+        $this->requestIdService = $requestIdService;
     }
 
     /**
@@ -78,17 +86,17 @@ class OrderResource
      */
     public function create(Order $order, $paymentType, $minimalResponse = true)
     {
-        $paypalRequestId = null;
+        $paypalRequestId = $this->requestIdService->generateNewRequestId();
 
         if ($minimalResponse === false) {
             $this->clientService->setHeader('Prefer', 'return=representation');
         }
 
-        if ($order->getPaymentSource() !== null) {
-            $paypalRequestId = bin2hex((string) openssl_random_pseudo_bytes(16));
-
-            $this->clientService->setHeader('PayPal-Request-Id', $paypalRequestId);
+        if ($this->requestIdService->isRequestIdRequired($paymentType)) {
+            $paypalRequestId = $this->requestIdService->getRequestIdFromSession();
         }
+
+        $this->clientService->setHeader('PayPal-Request-Id', $paypalRequestId);
 
         $payPalMetaDataId = $this->dependencyProvider->getSession()->offsetGet(FraudNet::FRAUD_NET_SESSION_KEY);
         if (\is_string($payPalMetaDataId)) {
