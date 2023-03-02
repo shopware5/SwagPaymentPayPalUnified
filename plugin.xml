@@ -5,7 +5,7 @@
     <label lang="de">PayPal</label>
     <label lang="en">PayPal</label>
 
-    <version>6.0.2</version>
+    <version>6.0.3</version>
     <copyright>(c) by shopware AG</copyright>
     <license>MIT</license>
     <link>http://store.shopware.com</link>
@@ -14,10 +14,10 @@
 
     <changelog version="6.0.3">
         <changes lang="de">
-            PT-13059 - Fügt eine Request-ID für Rechnungskauf und alternative Zahlungsarten (APMs) hinzu um doppelte Zahlungen zu vermeiden;
+            PT-13059 - Fügt eine Request-ID für Rechnungskauf und alternative Zahlungsarten (APMs) hinzu, um doppelte Zahlungen zu vermeiden;
         </changes>
         <changes lang="en">
-            PT-13059 - Adds a request ID for invoice purchases and alternative payment methods (APMs) to avoid duplicate payments;
+            PT-13059 - Adds a request ID for pay upon invoice and alternative payment methods (APMs) to avoid duplicate payments;
         </changes>
     </changelog>
 
@@ -25,15 +25,15 @@
         <changes lang="de">
             PT-10637 - Setzt richtigen Zahlungsstatus nach Teilrückzahlung;
             PT-12473 - Wiederholende Bestellungen mit Express Checkout erstellen keine doppelten Gastkonten mehr;
-            PT-12673 - Verbessert den Zahlungsabschluss für alternative Zahlungsarten (APM's);
+            PT-12673 - Verbessert den Zahlungsabschluss für alternative Zahlungsarten (APMs);
             PT-12937 - Fehlende Banner für "Später Zahlen" hinzugefügt;
             PT-12937 - Sidebar wird nur angezeigt, wenn das Banner verfügbar ist;
             PT-12723 - Verbessert die Benutzerfreundlichkeit der Kreditkartenfelder;
             PT-12761 - Verbessert die Benutzerfreundlichkeit beim Wechsel der Zahlungsart;
             PT-12833 - Verhindert das Anzeigen mehrerer gleicher Nachrichten im Zahlartenmodul;
             PT-12942 - Fügt eine Warnung für erneute Autorisierung hinzu;
-            PT-12987 - Verbessert den Verfügbarkeitstest von "Kauf auf Rechnung" und "Kreditkarten Zahlung" in den Einstellungen;
-            PT-13008 - Behebt API Fehler für alternative Zahlungsarten (APM's);
+            PT-12987 - Verbessert den Verfügbarkeitstest von Rechnungskauf und Kreditkarten Zahlung in den Einstellungen;
+            PT-13008 - Behebt API Fehler für alternative Zahlungsarten (APMs);
             PT-13012 - Ändert den englischen Namen für "PayPal, Pay Later" im Frontend zu "PayPal, Pay in 3";
             PT-13022 - Webhooks für abgeschlossene und abgelehnte PayPal-Bestellungen hinzugefügt;
             PT-13028 - Das Bestellnummern-Prefix wird wieder mit an PayPal übertragen;
@@ -43,15 +43,15 @@
         <changes lang="en">
             PT-10637 - Sets correct payment status after partial refund;
             PT-12473 - Recurring orders with Express Checkout no longer create duplicate guest accounts;
-            PT-12673 - Improves payment completion for alternative payment methods (APM's);
+            PT-12673 - Improves payment completion for alternative payment methods (APMs);
             PT-12937 - Missing banner for "Pay later" added;
             PT-12937 - Sidebar is displayed only when the banner is available;
             PT-12723 - Improves the usability of the credit card fields;
             PT-12761 - Improves the usability when changing the payment method;
             PT-12833 - Prevents displaying multiple identical messages in the payment type module;
             PT-12942 - Adds a warning for reauthorization;
-            PT-12987 - Improves the availability test of "pay upon invoice" and "credit card payment" in the settings;
-            PT-13008 - Fixes API error for alternative payment methods (APM's);
+            PT-12987 - Improves the availability test of pay upon invoice and credit card payment in the settings;
+            PT-13008 - Fixes API error for alternative payment methods (APMs);
             PT-13012 - Changed the English name for "PayPal, Pay Later" in the frontend to "PayPal, Pay in 3";
             PT-13022 - Added Webhooks for completed and denied PayPal Orders;
             PT-13028 - The order number prefix will be transferred to PayPal again;
@@ -72,27 +72,27 @@
     <changelog version="6.0.0">
         <changes lang="de">
             PT-12545 - Vereinheitlicht das Verhalten der Buttons bei Style Änderungen;
-            PT-12601 - Verbessert Geburtsdatum und Telefonnummer Überprüfung für Kauf auf Rechnung;
-            PT-12878 - Zahlungsinformationen für "Kauf auf Rechnung" werden nun auf der Finish-Seite angezeigt;
+            PT-12601 - Verbessert Geburtsdatum und Telefonnummer Überprüfung für Rechnungskauf;
+            PT-12878 - Zahlungsinformationen für Rechnungskauf werden nun auf der Finish-Seite angezeigt;
             PT-12714 - Entfernt zweiten Titel aus Einstellungs-Tab;
             PT-12757 - Externe Abhängigkeiten können außerhalb des Plugins bereitgestellt werden;
             PT-12775 - Entfernt die OXXO Zahlungsart;
             PT-12982 - Shopware-Bestellnummer wird direkt beim Erstellen der PayPal-Zahlung mitgesendet, dadurch reduziert sich die Anzahl der PayPal-API-Aufrufe;
             PT-12725 - PayPal tracking API hinzugefügt;
             PT-12648 - PayPal Express Button Sprachfeld entfernt;
-            PT-12892 - Fügt einen Link für weitere Informationen zu Kauf auf Rechnung hinzu;
+            PT-12892 - Fügt einen Link für weitere Informationen zu Rechnungskauf hinzu;
             PT-12926 - Verbessert Verhalten bei invalider Adresse;
             PT-12964 - Entfernt die Weiterleitungsoption zu PayPal zugunsten des bevorzugten In-Context / Mini-Browsers (optimiert für conversion);
             PT-12945 - PayPal Express verwendet "nicht definiert" als Anrede, wenn vorhanden;
             PT-12991 - Smart Payment Button Symbole werden immer gleich angezeigt;
-            PT-12992 - Verbessert die Betrugsüberprüfung für Kauf auf Rechnung;
+            PT-12992 - Verbessert die Betrugsüberprüfung für Rechnungskauf;
             PT-12994 - "PayPal, Später Bezahlen" ist jetzt am PayPal und Express Check-out verfügbar;
             PT-13008 - Verbessert den Zahlungsabschluss für alternative Zahlungsarten (APM's);
         </changes>
         <changes lang="en">
             PT-12545 - Unifies the behavior of buttons on style changes;
             PT-12601 - Improved date of birth and phone number validation for pay upon invoice;
-            PT-12878 - Payment information for "Pay on Invoice" is now loaded on the finish page;
+            PT-12878 - Payment information for pay upon invoice is now loaded on the finish page;
             PT-12714 - Removes second title from settings tab;
             PT-12757 - External dependencies can be provided outside the plugin;
             PT-12775 - Removes the OXXO payment method;
