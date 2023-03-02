@@ -24,6 +24,7 @@
             <argument type="service" id="paypal_unified.order_array_factory"/>
             <argument type="service" id="paypal_unified.logger_service"/>
             <argument type="service" id="paypal_unified.dependency_provider"/>
+            <argument type="service" id="paypal_unified.request_id_service"/>
         </service>
 
         <service id="paypal_unified.v2.refund_resource"

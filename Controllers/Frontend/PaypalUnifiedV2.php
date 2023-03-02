@@ -215,6 +215,12 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
             return;
         }
 
+        if ($this->checkIfTransactionIdIsAlreadyAssigned($payPalOrder)) {
+            $this->orderNumberService->restoreOrdernumberToPool();
+
+            return;
+        }
+
         $shopwareOrderNumber = $this->createShopwareOrder($payPalOrder->getId(), $this->getPaymentType());
 
         $this->setTransactionId($shopwareOrderNumber, $payPalOrder);

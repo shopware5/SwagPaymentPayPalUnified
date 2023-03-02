@@ -76,7 +76,7 @@ parameters:
             message: '#.*Ternary operator condition is always false.*#'
             paths:
                 - Subscriber/Carrier.php
-        - # This is a temporary entry for suppress error wich are fixed in another mr. With the rebase of PT-13029 this should be removed
-            message: '#Call to static method PHPUnit\\Framework\\Assert\:\:assertNull\(\) with void will always evaluate to false.#'
-        - # This is a temporary entry for suppress error wich are fixed in another mr. With the rebase of PT-13029 this should be removed
-            message: '#Result of method SwagPaymentPayPalUnified\\Bundle\\AccountBundle\\Service\\Validator\\AddressValidatorDecorator\:\:validate\(\) \(void\) is used.#'
+        - # Allow null Parameter value for RequestIdService tests
+            message: '#Parameter \#1 \$requestId of method SwagPaymentPayPalUnified\\Components\\Services\\RequestIdService::.*\(\) expects string, null given.#'
+            paths:
+                - Tests/Functional/Components/Services/RequestIdServiceTest.php

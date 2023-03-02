@@ -12,6 +12,7 @@ use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Amount;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Payments;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Payments\Authorization;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Payments\Capture;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\PaymentIntentV2;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\PaymentStatusV2;
@@ -25,9 +26,14 @@ class SimplePayPalOrderCreator
     {
         $capture = new Capture();
         $capture->setStatus(PaymentStatusV2::ORDER_CAPTURE_COMPLETED);
+        $capture->setId('anyId');
+
+        $authorization = new Authorization();
+        $authorization->setId('anyId');
 
         $payments = new Payments();
         $payments->setCaptures([$capture]);
+        $payments->setAuthorizations([$authorization]);
 
         $amount = new Amount();
         $amount->setValue('100');

@@ -40,7 +40,7 @@ test.describe('Pay with Giropay', () => {
         await page.waitForLoadState('load');
 
         await page.click('button:has-text("Zahlungspflichtig bestellen")');
-        await page.click('text=Success');
+        await page.click('text=Test Successful Payment');
 
         await expect(page.locator('.teaser--title')).toHaveText(/Vielen Dank für Ihre Bestellung bei Shopware Demo/);
     });

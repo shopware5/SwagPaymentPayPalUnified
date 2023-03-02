@@ -38,4 +38,23 @@ final class PaymentType
     private function __construct()
     {
     }
+
+    /**
+     * @return array<int,PaymentType::*>
+     */
+    public static function getApmPaymentTypes()
+    {
+        return [
+            self::APM_BANCONTACT,
+            self::APM_BLIK,
+            self::APM_EPS,
+            self::APM_GIROPAY,
+            self::APM_IDEAL,
+            self::APM_MULTIBANCO,
+            self::APM_MYBANK,
+            self::APM_P24,
+            self::APM_SOFORT,
+            self::APM_TRUSTLY,
+        ];
+    }
 }

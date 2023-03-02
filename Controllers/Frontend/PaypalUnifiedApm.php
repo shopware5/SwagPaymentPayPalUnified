@@ -23,6 +23,14 @@ class Shopware_Controllers_Frontend_PaypalUnifiedApm extends AbstractPaypalPayme
     {
         $this->logger->debug(sprintf('%s START', __METHOD__));
 
+        $requestId = $this->requestIdService->getRequestIdFromRequest($this->Request());
+        $isRequestIdAlreadyUsed = $this->requestIdService->checkRequestIdIsAlreadySetToSession($requestId);
+        if ($isRequestIdAlreadyUsed) {
+            return;
+        }
+
+        $this->requestIdService->saveRequestIdToSession($requestId);
+
         $session = $this->dependencyProvider->getSession();
 
         $shopwareSessionOrderData = $session->get('sOrderVariables');
@@ -115,6 +123,12 @@ class Shopware_Controllers_Frontend_PaypalUnifiedApm extends AbstractPaypalPayme
         if ($this->isPaymentCompleted($payPalOrderId)) {
             $payPalOrder = $this->getPayPalOrder($payPalOrderId);
             if (!$payPalOrder instanceof Order) {
+                return;
+            }
+
+            if ($this->checkIfTransactionIdIsAlreadyAssigned($payPalOrder)) {
+                $this->orderNumberService->restoreOrdernumberToPool();
+
                 return;
             }
 

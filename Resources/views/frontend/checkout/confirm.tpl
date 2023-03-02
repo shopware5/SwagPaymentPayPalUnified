@@ -127,6 +127,10 @@
         {/if}
     {/block}
 
+    {if $payPalUnifiedCurrentRequestId}
+        <input type="hidden" name="payPalUnifiedCurrentRequestId" value="{$payPalUnifiedCurrentRequestId}">
+    {/if}
+
     {$smarty.block.parent}
 {/block}
 

@@ -12,6 +12,7 @@ use Enlight_Controller_Request_RequestTestCase;
 use Enlight_Controller_Response_ResponseTestCase;
 use Shopware_Controllers_Frontend_PaypalUnifiedV2PayUponInvoice;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
+use SwagPaymentPayPalUnified\Components\Services\RequestIdService;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\OrderResource;
 use SwagPaymentPayPalUnified\Tests\Functional\AssertLocationTrait;
@@ -66,6 +67,10 @@ class PaypalUnifiedV2PayUponInvoiceIndexActionTest extends PaypalPaymentControll
         $dependencyProviderMock = $this->createMock(DependencyProvider::class);
         $dependencyProviderMock->method('getSession')->willReturn($session);
 
+        $requestIdServiceMock = $this->createMock(RequestIdService::class);
+        $requestIdServiceMock->expects(static::once())->method('getRequestIdFromRequest')->willReturn('anyRequestId');
+        $requestIdServiceMock->expects(static::once())->method('checkRequestIdIsAlreadySetToSession')->willReturn(false);
+
         $paypalUnifiedV2Controller = $this->getController(
             Shopware_Controllers_Frontend_PaypalUnifiedV2PayUponInvoice::class,
             [
@@ -74,6 +79,7 @@ class PaypalUnifiedV2PayUponInvoiceIndexActionTest extends PaypalPaymentControll
                 self::SERVICE_ORDER_RESOURCE => $orderResourceMock,
                 self::SERVICE_DEPENDENCY_PROVIDER => $dependencyProviderMock,
                 self::SERVICE_ORDER_FACTORY => $this->getContainer()->get('paypal_unified.order_factory'),
+                self::SERVICE_REQUEST_ID_SERVICE => $requestIdServiceMock,
             ],
             $request,
             $response

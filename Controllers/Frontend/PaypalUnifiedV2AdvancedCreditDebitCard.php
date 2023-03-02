@@ -43,6 +43,12 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2AdvancedCreditDebitCard exten
                 return;
             }
 
+            if ($this->checkIfTransactionIdIsAlreadyAssigned($payPalOrder)) {
+                $this->orderNumberService->restoreOrdernumberToPool();
+
+                return;
+            }
+
             $shopwareOrderNumber = $this->createShopwareOrder($payPalOrderId, PaymentType::PAYPAL_ADVANCED_CREDIT_DEBIT_CARD);
 
             $this->setTransactionId($shopwareOrderNumber, $payPalOrder);

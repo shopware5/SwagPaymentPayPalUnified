@@ -14,6 +14,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Shopware\Components\HttpClient\RequestException;
 use Shopware_Controllers_Frontend_PaypalUnifiedApm;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
+use SwagPaymentPayPalUnified\Components\Services\RequestIdService;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\OrderResource;
 use SwagPaymentPayPalUnified\Tests\Functional\AssertLocationTrait;
@@ -80,6 +81,10 @@ class PaypalUnifiedApmCatchesInvalidAddressExceptionTest extends PaypalPaymentCo
      */
     private function createController($issue)
     {
+        $requestIdServiceMock = $this->createMock(RequestIdService::class);
+        $requestIdServiceMock->expects(static::once())->method('getRequestIdFromRequest')->willReturn('anyRequestId');
+        $requestIdServiceMock->expects(static::once())->method('checkRequestIdIsAlreadySetToSession')->willReturn(false);
+
         $controller = $this->getController(
             Shopware_Controllers_Frontend_PaypalUnifiedApm::class,
             [
@@ -88,6 +93,7 @@ class PaypalUnifiedApmCatchesInvalidAddressExceptionTest extends PaypalPaymentCo
                 self::SERVICE_ORDER_FACTORY => $this->getContainer()->get('paypal_unified.order_factory'),
                 self::SERVICE_PAYMENT_METHOD_PROVIDER => $this->createPaymentMethodProvider(),
                 self::SERVICE_ORDER_RESOURCE => $this->createResourceMock($issue),
+                self::SERVICE_REQUEST_ID_SERVICE => $requestIdServiceMock,
             ],
             new Enlight_Controller_Request_RequestTestCase(),
             new Enlight_Controller_Response_ResponseTestCase()

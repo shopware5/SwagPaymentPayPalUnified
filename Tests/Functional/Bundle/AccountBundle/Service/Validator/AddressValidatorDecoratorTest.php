@@ -10,6 +10,7 @@ namespace SwagPaymentPayPalUnified\Tests\Functional\Bundle\AccountBundle\Service
 
 use Enlight_Controller_Front;
 use Enlight_Controller_Request_RequestTestCase;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shopware\Bundle\AccountBundle\Service\Validator\AddressValidatorInterface as AddressValInterface;
 use Shopware\Components\Api\Exception\ValidationException;
@@ -20,37 +21,56 @@ use Symfony\Component\Validator\ConstraintViolationList;
 
 class AddressValidatorDecoratorTest extends TestCase
 {
+    /**
+     * @return void
+     */
     public function testConstruct()
     {
         $validator = new AddressDecorator(new AddressValidatorMock(), Shopware()->Container()->get('front'));
         static::assertNotNull($validator);
     }
 
+    /**
+     * @return void
+     */
     public function testIsValidInnerValidator()
     {
         $validator = new AddressDecorator(new AddressValidatorMock(), Shopware()->Container()->get('front'));
         static::assertTrue($validator->isValid(new Address()));
     }
 
+    /**
+     * @return void
+     */
     public function testValidateReturnWithoutRequest()
     {
         $front = new FrontMock();
 
-        $validator = new AddressDecorator(new AddressValidatorMock(), $front);
-        static::assertNull($validator->validate(new Address()));
+        $innerAddressValidator = $this->createInnerAddressValidator();
+
+        $validator = new AddressDecorator($innerAddressValidator, $front);
+
+        $validator->validate(new Address());
     }
 
+    /**
+     * @return void
+     */
     public function testValidateReturnWithWrongControllerName()
     {
         $request = new Enlight_Controller_Request_RequestTestCase();
-        $request->setControllerName('fake');
         $front = new FrontMock();
         $front->setRequest($request);
 
-        $validator = new AddressDecorator(new AddressValidatorMock(), $front);
-        static::assertNull($validator->validate(new Address()));
+        $innerAddressValidator = $this->createInnerAddressValidator();
+
+        $validator = new AddressDecorator($innerAddressValidator, $front);
+        $validator->validate(new Address());
     }
 
+    /**
+     * @return void
+     */
     public function testValidateThrowValidationExceptionCountry()
     {
         $request = new Enlight_Controller_Request_RequestTestCase();
@@ -64,6 +84,9 @@ class AddressValidatorDecoratorTest extends TestCase
         $validator->validate(new Address());
     }
 
+    /**
+     * @return void
+     */
     public function testValidateThrowNoValidationException()
     {
         $request = new Enlight_Controller_Request_RequestTestCase();
@@ -71,9 +94,22 @@ class AddressValidatorDecoratorTest extends TestCase
         $front = new FrontMock();
         $front->setRequest($request);
 
-        $validator = new AddressDecorator(new AddressValidatorMock(), $front);
+        $innerAddressValidator = $this->createInnerAddressValidator();
 
-        static::assertNull($validator->validate(new Address()));
+        $validator = new AddressDecorator($innerAddressValidator, $front);
+
+        $validator->validate(new Address());
+    }
+
+    /**
+     * @return AddressValInterface&MockObject
+     */
+    private function createInnerAddressValidator()
+    {
+        $innerAddressValidator = $this->createMock(AddressValInterface::class);
+        $innerAddressValidator->expects(static::once())->method('validate');
+
+        return $innerAddressValidator;
     }
 }
 
