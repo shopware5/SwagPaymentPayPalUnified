@@ -12,6 +12,15 @@
     <author>shopware AG</author>
     <compatibility minVersion="5.2.27" maxVersion="5.99.99"/>
 
+    <changelog version="REPLACE_GLOBAL_WITH_NEXT_VERSION(6.0.4)">
+        <changes lang="de">
+            PT-13057 - Falls ein Sprachshop keine eigenen Einstellungen hat, werden die Einstellungen des Hauptshops berücksichtigt;
+        </changes>
+        <changes lang="en">
+            PT-13057 - If a language shop does not have its own settings, the settings of the main shop are taken into account;
+        </changes>
+    </changelog>
+
     <changelog version="6.0.3">
         <changes lang="de">
             PT-13059 - Fügt eine Request-ID für Rechnungskauf und alternative Zahlungsarten (APMs) hinzu, um doppelte Zahlungen zu vermeiden;

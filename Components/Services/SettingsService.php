@@ -54,6 +54,7 @@ class SettingsService implements SettingsServiceInterface
         $this->dbalConnection = $modelManager->getConnection();
 
         $this->refreshDependencies();
+        $this->checkAndDetermineShop();
     }
 
     /**
@@ -164,5 +165,31 @@ class SettingsService implements SettingsServiceInterface
         }
 
         throw new RuntimeException('The provided table ' . $settingsType . ' is not supported');
+    }
+
+    /**
+     * @return void
+     */
+    private function checkAndDetermineShop()
+    {
+        if ($this->hasSettings()) {
+            return;
+        }
+
+        if (!$this->shop instanceof Shop) {
+            return;
+        }
+
+        $mainShop = $this->shop->getMain();
+        if (!$mainShop instanceof Shop) {
+            return;
+        }
+
+        $mainShopId = (int) $mainShop->getId();
+        if ((int) $this->shop->getId() === $mainShopId || empty($mainShopId)) {
+            return;
+        }
+
+        $this->shop = $mainShop;
     }
 }

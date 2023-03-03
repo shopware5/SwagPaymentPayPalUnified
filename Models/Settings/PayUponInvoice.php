@@ -66,7 +66,7 @@ class PayUponInvoice extends ModelEntity
      *
      * @ORM\Column(name="show_rate_pay_hint_in_mail", type="boolean", nullable=false)
      */
-    private $showRatePayHintInMail;
+    private $showRatePayHintInMail = true;
 
     /**
      * @return int
