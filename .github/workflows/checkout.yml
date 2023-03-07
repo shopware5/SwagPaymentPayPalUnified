@@ -1,0 +1,7 @@
+name: SwagPayPalUnified install Shopware and plugin
+
+jobs:
+    checkout-Shopware:
+        name: Checkout Shopware
+
+
