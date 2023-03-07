@@ -12,6 +12,18 @@ use SwagPaymentPayPalUnified\PayPalBundle\V2\PayPalApiStruct;
 
 class ExperienceContext extends PayPalApiStruct
 {
+    const PAYMENT_METHOD_PREFERENCE = 'IMMEDIATE_PAYMENT_REQUIRED';
+
+    const PAYMENT_METHOD = 'PAYPAL';
+
+    const SHIPPING_PREFERENCE_PROVIDED_ADDRESS = 'SET_PROVIDED_ADDRESS';
+
+    const SHIPPING_PREFERENCE_GET_FROM_FILE = 'GET_FROM_FILE';
+
+    const USER_ACTION_PAY_NOW = 'PAY_NOW';
+
+    const USER_ACTION_CONTINUE = 'CONTINUE';
+
     /**
      * @var string
      */
@@ -43,6 +55,31 @@ class ExperienceContext extends PayPalApiStruct
     protected $customerServiceInstructions;
 
     /**
+     * @var string|null
+     */
+    protected $paymentMethodPreference;
+
+    /**
+     * @var string|null
+     */
+    protected $paymentMethodSelected;
+
+    /**
+     * @var string|null
+     */
+    protected $landingPage;
+
+    /**
+     * @var string|null
+     */
+    protected $shippingPreference;
+
+    /**
+     * @var string|null
+     */
+    protected $userAction;
+
+    /**
      * @return string
      */
     public function getLocale()
@@ -52,6 +89,8 @@ class ExperienceContext extends PayPalApiStruct
 
     /**
      * @param string $locale
+     *
+     * @return void
      */
     public function setLocale($locale)
     {
@@ -68,6 +107,8 @@ class ExperienceContext extends PayPalApiStruct
 
     /**
      * @param string $brandName
+     *
+     * @return void
      */
     public function setBrandName($brandName)
     {
@@ -84,6 +125,8 @@ class ExperienceContext extends PayPalApiStruct
 
     /**
      * @param string $logoUrl
+     *
+     * @return void
      */
     public function setLogoUrl($logoUrl)
     {
@@ -100,6 +143,8 @@ class ExperienceContext extends PayPalApiStruct
 
     /**
      * @param string $returnUrl
+     *
+     * @return void
      */
     public function setReturnUrl($returnUrl)
     {
@@ -116,6 +161,8 @@ class ExperienceContext extends PayPalApiStruct
 
     /**
      * @param string $cancelUrl
+     *
+     * @return void
      */
     public function setCancelUrl($cancelUrl)
     {
@@ -132,9 +179,101 @@ class ExperienceContext extends PayPalApiStruct
 
     /**
      * @param array $customerServiceInstructions
+     *
+     * @return void
      */
     public function setCustomerServiceInstructions($customerServiceInstructions)
     {
         $this->customerServiceInstructions = $customerServiceInstructions;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getPaymentMethodPreference()
+    {
+        return $this->paymentMethodPreference;
+    }
+
+    /**
+     * @param string $paymentMethodPreference
+     *
+     * @return void
+     */
+    public function setPaymentMethodPreference($paymentMethodPreference)
+    {
+        $this->paymentMethodPreference = $paymentMethodPreference;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getPaymentMethodSelected()
+    {
+        return $this->paymentMethodSelected;
+    }
+
+    /**
+     * @param string $paymentMethodSelected
+     *
+     * @return void
+     */
+    public function setPaymentMethodSelected($paymentMethodSelected)
+    {
+        $this->paymentMethodSelected = $paymentMethodSelected;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getLandingPage()
+    {
+        return $this->landingPage;
+    }
+
+    /**
+     * @param string $landingPage
+     *
+     * @return void
+     */
+    public function setLandingPage($landingPage)
+    {
+        $this->landingPage = $landingPage;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getShippingPreference()
+    {
+        return $this->shippingPreference;
+    }
+
+    /**
+     * @param string $shippingPreference
+     *
+     * @return void
+     */
+    public function setShippingPreference($shippingPreference)
+    {
+        $this->shippingPreference = $shippingPreference;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getUserAction()
+    {
+        return $this->userAction;
+    }
+
+    /**
+     * @param string $userAction
+     *
+     * @return void
+     */
+    public function setUserAction($userAction)
+    {
+        $this->userAction = $userAction;
     }
 }

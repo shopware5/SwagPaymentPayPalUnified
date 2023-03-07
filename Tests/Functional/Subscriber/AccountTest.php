@@ -16,6 +16,7 @@ use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Subscriber\Account;
+use SwagPaymentPayPalUnified\Tests\Functional\AssertStringContainsTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\SettingsHelperTrait;
@@ -29,6 +30,7 @@ class AccountTest extends TestCase
     use DatabaseTestCaseTrait;
     use SettingsHelperTrait;
     use ShopRegistrationTrait;
+    use AssertStringContainsTrait;
 
     public function testCanBeCreated()
     {
@@ -186,15 +188,8 @@ class AccountTest extends TestCase
         $customerData = $view->getAssign('sUserData');
 
         static::assertSame('PayPal, Lastschrift oder Kreditkarte', $customerData['additional']['payment']['description']);
-        if (\method_exists($this, 'assertStringContainsString')) {
-            static::assertStringContainsString(
-                '<br>Zahlung per Lastschrift oder Kreditkarte ist auch ohne PayPal Konto möglich',
-                $customerData['additional']['payment']['additionaldescription']
-            );
-
-            return;
-        }
-        static::assertContains(
+        static::assertStringContains(
+            $this,
             '<br>Zahlung per Lastschrift oder Kreditkarte ist auch ohne PayPal Konto möglich',
             $customerData['additional']['payment']['additionaldescription']
         );
@@ -231,15 +226,8 @@ class AccountTest extends TestCase
 
         static::assertNotNull($unifiedPayment);
         static::assertSame('PayPal, Lastschrift oder Kreditkarte', $unifiedPayment['description']);
-        if (\method_exists($this, 'assertStringContainsString')) {
-            static::assertStringContainsString(
-                '<br>Zahlung per Lastschrift oder Kreditkarte ist auch ohne PayPal Konto möglich',
-                $unifiedPayment['additionaldescription']
-            );
-
-            return;
-        }
-        static::assertContains(
+        static::assertStringContains(
+            $this,
             '<br>Zahlung per Lastschrift oder Kreditkarte ist auch ohne PayPal Konto möglich',
             $unifiedPayment['additionaldescription']
         );

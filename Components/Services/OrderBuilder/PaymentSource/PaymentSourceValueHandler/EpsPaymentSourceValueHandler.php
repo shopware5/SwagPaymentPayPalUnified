@@ -30,6 +30,7 @@ class EpsPaymentSourceValueHandler extends AbstractPaymentSourceValueHandler
         $paymentSourceValue = new Eps();
 
         $this->setDefaultValues($paymentSourceValue, $orderParameter);
+        $paymentSourceValue->setExperienceContext($this->createExperienceContext($orderParameter));
 
         return $paymentSourceValue;
     }

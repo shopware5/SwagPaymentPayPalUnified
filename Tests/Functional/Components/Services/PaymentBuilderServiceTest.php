@@ -14,6 +14,7 @@ use SwagPaymentPayPalUnified\Components\Services\Common\CustomerHelper;
 use SwagPaymentPayPalUnified\Components\Services\PaymentBuilderService;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
+use SwagPaymentPayPalUnified\Tests\Functional\AssertStringContainsTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\Components\Services\Mock\SettingsServicePaymentBuilderServiceMock;
 use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\ShopRegistrationTrait;
@@ -22,6 +23,7 @@ class PaymentBuilderServiceTest extends TestCase
 {
     use ContainerTrait;
     use ShopRegistrationTrait;
+    use AssertStringContainsTrait;
 
     /**
      * @return void
@@ -371,18 +373,7 @@ class PaymentBuilderServiceTest extends TestCase
 
         $requestParameters = $requestService->getPayment($params);
 
-        if (\method_exists($this, 'assertStringContainsString')) {
-            static::assertStringContainsString(
-                '/PaypalUnified/return/basketId/MyUniqueBasketId',
-                $requestParameters->getRedirectUrls()->getReturnUrl()
-            );
-
-            return;
-        }
-        static::assertContains(
-            '/PaypalUnified/return/basketId/MyUniqueBasketId',
-            $requestParameters->getRedirectUrls()->getReturnUrl()
-        );
+        static::assertStringContains($this, '/PaypalUnified/return/basketId/MyUniqueBasketId', $requestParameters->getRedirectUrls()->getReturnUrl());
     }
 
     /**

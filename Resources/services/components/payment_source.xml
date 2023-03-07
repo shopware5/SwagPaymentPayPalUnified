@@ -82,5 +82,19 @@
             <tag name="paypal_unified.payment_source_handler"/>
         </service>
 
+        <service id="paypal_unified.pay_pal_payment_source_handler"
+                 class="SwagPaymentPayPalUnified\Components\Services\OrderBuilder\PaymentSource\PaymentSourceHandler\PayPalPaymentSourceHandler"
+                 public="true">
+            <argument type="service" id="paypal_unified.payment_source_value_factory"/>
+            <tag name="paypal_unified.payment_source_handler"/>
+        </service>
+
+        <service id="paypal_unified.advanced_credit_debit_card_payment_source_handler"
+                 class="SwagPaymentPayPalUnified\Components\Services\OrderBuilder\PaymentSource\PaymentSourceHandler\AdvancedCreditDebitCardPaymentSourceHandler"
+                 public="true">
+            <argument type="service" id="paypal_unified.payment_source_value_factory"/>
+            <tag name="paypal_unified.payment_source_handler"/>
+        </service>
+
     </services>
 </container>

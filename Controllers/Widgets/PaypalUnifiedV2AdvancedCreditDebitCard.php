@@ -198,8 +198,6 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2AdvancedCreditDebitCard extend
         } catch (RequireRestartException $requireRestartException) {
             $this->logger->debug(sprintf('%s REQUIRES A RESTART', __METHOD__));
 
-            $this->orderNumberService->releaseOrderNumber();
-
             $this->redirect([
                 'module' => 'widgets',
                 'controller' => 'PaypalUnifiedV2AdvancedCreditDebitCard',

@@ -41,11 +41,6 @@ class PayUponInvoice extends AbstractPaymentSource
     protected $billingAddress;
 
     /**
-     * @var ExperienceContext
-     */
-    protected $experienceContext;
-
-    /**
      * @var string
      */
     protected $paymentReference;
@@ -133,22 +128,6 @@ class PayUponInvoice extends AbstractPaymentSource
     public function setBillingAddress($billingAddress)
     {
         $this->billingAddress = $billingAddress;
-    }
-
-    /**
-     * @return ExperienceContext
-     */
-    public function getExperienceContext()
-    {
-        return $this->experienceContext;
-    }
-
-    /**
-     * @param ExperienceContext $experienceContext
-     */
-    public function setExperienceContext($experienceContext)
-    {
-        $this->experienceContext = $experienceContext;
     }
 
     /**

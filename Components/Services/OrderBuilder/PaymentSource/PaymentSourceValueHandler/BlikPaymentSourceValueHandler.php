@@ -30,6 +30,7 @@ class BlikPaymentSourceValueHandler extends AbstractPaymentSourceValueHandler
         $paymentSourceValue = new Blik();
 
         $this->setDefaultValues($paymentSourceValue, $orderParameter);
+        $paymentSourceValue->setExperienceContext($this->createExperienceContext($orderParameter));
 
         return $paymentSourceValue;
     }

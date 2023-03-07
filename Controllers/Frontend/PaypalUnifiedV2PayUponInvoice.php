@@ -6,7 +6,6 @@
  * file that was distributed with this source code.
  */
 
-use Shopware\Components\DependencyInjection\Bridge\Session;
 use Shopware\Models\Order\Status;
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
 use SwagPaymentPayPalUnified\Components\Exception\BirthdateNotValidException;

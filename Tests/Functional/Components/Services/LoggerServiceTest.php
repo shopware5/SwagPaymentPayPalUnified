@@ -9,6 +9,7 @@
 namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services;
 
 use PHPUnit\Framework\TestCase;
+use SwagPaymentPayPalUnified\Tests\Functional\AssertStringContainsTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\SettingsHelperTrait;
@@ -18,6 +19,7 @@ class LoggerServiceTest extends TestCase
     use DatabaseTestCaseTrait;
     use SettingsHelperTrait;
     use ContainerTrait;
+    use AssertStringContainsTrait;
 
     public function testWarningAddsLine()
     {
@@ -36,13 +38,7 @@ class LoggerServiceTest extends TestCase
         $lastLine = $this->getLastLine($fileName);
 
         static::assertNotNull($lastLine);
-
-        if (\method_exists($this, 'assertStringContainsString')) {
-            static::assertStringContainsString('Test message', $lastLine);
-
-            return;
-        }
-        static::assertContains('Test message', $lastLine);
+        static::assertStringContains($this, 'Test message', $lastLine);
     }
 
     public function testNotifyAddsLine()
@@ -63,12 +59,7 @@ class LoggerServiceTest extends TestCase
 
         static::assertNotNull($lastLine);
 
-        if (\method_exists($this, 'assertStringContainsString')) {
-            static::assertStringContainsString('Test message', $lastLine);
-
-            return;
-        }
-        static::assertContains('Test message', $lastLine);
+        static::assertStringContains($this, 'Test message', $lastLine);
     }
 
     public function testErrorAddsLine()
@@ -84,12 +75,7 @@ class LoggerServiceTest extends TestCase
 
         $lastLine = $this->getLastLine($fileName);
 
-        if (\method_exists($this, 'assertStringContainsString')) {
-            static::assertStringContainsString('A very fatal error', $lastLine);
-
-            return;
-        }
-        static::assertContains('A very fatal error', $lastLine);
+        static::assertStringContains($this, 'A very fatal error', $lastLine);
     }
 
     /**

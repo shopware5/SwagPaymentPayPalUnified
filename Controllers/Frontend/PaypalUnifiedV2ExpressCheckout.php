@@ -81,8 +81,6 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2ExpressCheckout extends Abstr
         } catch (RequireRestartException $requireRestartException) {
             $this->logger->debug(sprintf('%s REQUIRES A RESTART', __METHOD__));
 
-            $this->orderNumberService->releaseOrderNumber();
-
             $this->redirect([
                 'module' => 'frontend',
                 'controller' => 'PaypalUnifiedV2ExpressCheckout',

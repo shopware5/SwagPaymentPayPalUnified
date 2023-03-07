@@ -20,11 +20,14 @@ use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\Card;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\Card\AuthenticationResult;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\OrderResource;
+use SwagPaymentPayPalUnified\Tests\Functional\AssertStringContainsTrait;
 use SwagPaymentPayPalUnified\Tests\Unit\PaypalPaymentControllerTestCase;
 use Symfony\Component\HttpFoundation\HeaderBag;
 
 class PaypalUnifiedV2AdvancedCreditDebitCardTest extends PaypalPaymentControllerTestCase
 {
+    use AssertStringContainsTrait;
+
     /**
      * @return void
      */
@@ -74,13 +77,7 @@ class PaypalUnifiedV2AdvancedCreditDebitCardTest extends PaypalPaymentController
         static::assertSame(400, $controller->Response()->getHttpResponseCode());
         static::assertSame(ThreeDSecureExceptionDescription::STATUS_CODE___UNKNOWN, (int) $controller->View()->getAssign('paypalUnifiedErrorCode'));
 
-        if (\method_exists($this, 'assertStringContainsString')) {
-            static::assertStringContainsString('<div class="paypal-unified--error">', $controller->View()->getAssign('errorTemplate'));
-
-            return;
-        }
-
-        static::assertContains('<div class="paypal-unified--error">', $controller->View()->getAssign('errorTemplate'));
+        static::assertStringContains($this, '<div class="paypal-unified--error">', $controller->View()->getAssign('errorTemplate'));
     }
 
     /**

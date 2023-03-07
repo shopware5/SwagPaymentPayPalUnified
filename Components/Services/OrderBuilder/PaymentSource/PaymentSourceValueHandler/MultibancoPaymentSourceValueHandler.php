@@ -30,6 +30,7 @@ class MultibancoPaymentSourceValueHandler extends AbstractPaymentSourceValueHand
         $paymentSourceValue = new Multibanco();
 
         $this->setDefaultValues($paymentSourceValue, $orderParameter);
+        $paymentSourceValue->setExperienceContext($this->createExperienceContext($orderParameter));
 
         return $paymentSourceValue;
     }

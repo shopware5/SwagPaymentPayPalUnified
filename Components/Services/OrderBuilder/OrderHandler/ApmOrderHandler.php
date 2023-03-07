@@ -24,19 +24,6 @@ use SwagPaymentPayPalUnified\PayPalBundle\V2\PaymentIntentV2;
 
 class ApmOrderHandler extends AbstractOrderHandler
 {
-    const SUPPORTED_PAYMENT_TYPES = [
-        PaymentType::APM_BANCONTACT,
-        PaymentType::APM_BLIK,
-        PaymentType::APM_EPS,
-        PaymentType::APM_GIROPAY,
-        PaymentType::APM_IDEAL,
-        PaymentType::APM_MYBANK,
-        PaymentType::APM_P24,
-        PaymentType::APM_SOFORT,
-        PaymentType::APM_TRUSTLY,
-        PaymentType::APM_MULTIBANCO,
-    ];
-
     /**
      * @var PaymentSourceFactory
      */
@@ -70,7 +57,7 @@ class ApmOrderHandler extends AbstractOrderHandler
      */
     public function supports($paymentType)
     {
-        return \in_array($paymentType, self::SUPPORTED_PAYMENT_TYPES);
+        return \in_array($paymentType, PaymentType::getApmPaymentTypes());
     }
 
     /**
@@ -82,12 +69,6 @@ class ApmOrderHandler extends AbstractOrderHandler
 
         $order->setIntent(PaymentIntentV2::CAPTURE);
 
-        $applicationContext = $this->createApplicationContext($orderParameter, ['controller' => 'PaypalUnifiedApm']);
-        $applicationContext->setLocale(
-            str_replace('_', '-', $this->contextService->getShopContext()->getShop()->getLocale()->getLocale())
-        );
-
-        $order->setApplicationContext($applicationContext);
         $order->setPaymentSource($this->paymentSourceFactory->createPaymentSource($orderParameter));
         $order->setPurchaseUnits($this->createPurchaseUnits($orderParameter));
         $order->setPayer($this->createPayer($orderParameter));

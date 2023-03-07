@@ -14,19 +14,6 @@ use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 
 class DefaultValueHandler implements ValueHandlerInterface
 {
-    const SUPPORTED_PAYMENT_TYPES = [
-        PaymentType::APM_BANCONTACT,
-        PaymentType::APM_BLIK,
-        PaymentType::APM_EPS,
-        PaymentType::APM_GIROPAY,
-        PaymentType::APM_IDEAL,
-        PaymentType::APM_MULTIBANCO,
-        PaymentType::APM_MYBANK,
-        PaymentType::APM_P24,
-        PaymentType::APM_SOFORT,
-        PaymentType::APM_TRUSTLY,
-    ];
-
     /**
      * @var ContextServiceInterface
      */
@@ -42,7 +29,7 @@ class DefaultValueHandler implements ValueHandlerInterface
      */
     public function supports($paymentType)
     {
-        return \in_array($paymentType, self::SUPPORTED_PAYMENT_TYPES);
+        return \in_array($paymentType, PaymentType::getApmPaymentTypes());
     }
 
     /**

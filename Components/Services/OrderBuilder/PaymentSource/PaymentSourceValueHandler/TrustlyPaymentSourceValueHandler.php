@@ -30,6 +30,7 @@ class TrustlyPaymentSourceValueHandler extends AbstractPaymentSourceValueHandler
         $paymentSourceValue = new Trustly();
 
         $this->setDefaultValues($paymentSourceValue, $orderParameter);
+        $paymentSourceValue->setExperienceContext($this->createExperienceContext($orderParameter));
 
         return $paymentSourceValue;
     }

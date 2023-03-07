@@ -10,11 +10,13 @@ namespace SwagPaymentPayPalUnified\Tests\Functional\Setup;
 
 use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\Setup\Versions\UpdateTo433;
+use SwagPaymentPayPalUnified\Tests\Functional\AssertStringContainsTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 
 class UpdateTo433Test extends TestCase
 {
     use ContainerTrait;
+    use AssertStringContainsTrait;
 
     /**
      * @return void
@@ -27,13 +29,7 @@ class UpdateTo433Test extends TestCase
 
         $result = $this->getResultFromDatabase();
 
-        if (\method_exists($this, 'assertStringContainsString')) {
-            static::assertStringContainsString('{if $PayPalUnifiedInvoiceInstruction}', $result);
-
-            return;
-        }
-
-        static::assertContains('{if $PayPalUnifiedInvoiceInstruction}', $result);
+        static::assertStringContains($this, '{if $PayPalUnifiedInvoiceInstruction}', $result);
     }
 
     /**
