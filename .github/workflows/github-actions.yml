@@ -1,0 +1,16 @@
+name: SwagPaymentPayPalUnified GitHub actions
+
+on:
+    workflow_dispatch:
+
+jobs:
+    javascript-code-analysis:
+        name: Javascript code analysis
+        runs-on: ubuntu-latest
+
+        steps:
+        - name: Checkout Shopware
+          run: gh repo clone shopware/shopware
+
+        - name: Checkout SwagPaymentPayPalUnified
+          run: ls -la
