@@ -11,6 +11,9 @@ namespace SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\OrderArrayFactory;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
 use UnexpectedValueException;
 
+/**
+ * @deprecated Since v6.0.3 and will be removed with version 7.0.0. Use Order->toArray() instead
+ */
 class OrderArrayFactory
 {
     /**

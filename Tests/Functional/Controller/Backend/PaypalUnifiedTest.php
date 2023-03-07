@@ -9,11 +9,13 @@
 namespace SwagPaymentPayPalUnified\Tests\Functional\Controller\Backend;
 
 use Enlight_Components_Test_Controller_TestCase as ControllerTestCase;
+use SwagPaymentPayPalUnified\Tests\Functional\AssertStringContainsTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 
 class PaypalUnifiedTest extends ControllerTestCase
 {
     use ContainerTrait;
+    use AssertStringContainsTrait;
 
     /**
      * @return void
@@ -30,11 +32,7 @@ class PaypalUnifiedTest extends ControllerTestCase
         $responseText = $this->dispatch('/backend/paypalUnified')->getBody();
         static::assertTrue(\is_string($responseText));
 
-        if (\method_exists($this, 'assertStringContainsString')) {
-            static::assertStringContainsString("loadPath: '/backend/paypalUnified/load',", $responseText);
-        } else {
-            static::assertContains("loadPath: '/backend/paypalUnified/load',", $responseText);
-        }
+        static::assertStringContains($this, "loadPath: '/backend/paypalUnified/load',", $responseText);
 
         $this->getContainer()->get('dbal_connection')->executeUpdate('UPDATE `s_core_shops` SET `base_url` = NULL WHERE `s_core_shops`.`id` = 1;');
     }

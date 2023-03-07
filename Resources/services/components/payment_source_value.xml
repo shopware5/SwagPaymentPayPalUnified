@@ -15,60 +15,108 @@
         <service id="paypal_unified.bancontact_payment_source_value_handler"
                  class="SwagPaymentPayPalUnified\Components\Services\OrderBuilder\PaymentSource\PaymentSourceValueHandler\BancontactPaymentSourceValueHandler"
                  public="true">
+            <argument type="service" id="paypal_unified.settings_service"/>
+            <argument type="service" id="shopware_storefront.context_service"/>
+            <argument type="service" id="paypal_unified.common.return_url_helper"/>
             <tag name="paypal_unified.payment_source_value_handler"/>
         </service>
 
         <service id="paypal_unified.blik_payment_source_value_handler"
                  class="SwagPaymentPayPalUnified\Components\Services\OrderBuilder\PaymentSource\PaymentSourceValueHandler\BlikPaymentSourceValueHandler"
                  public="true">
+            <argument type="service" id="paypal_unified.settings_service"/>
+            <argument type="service" id="shopware_storefront.context_service"/>
+            <argument type="service" id="paypal_unified.common.return_url_helper"/>
             <tag name="paypal_unified.payment_source_value_handler"/>
         </service>
 
         <service id="paypal_unified.eps_payment_source_value_handler"
                  class="SwagPaymentPayPalUnified\Components\Services\OrderBuilder\PaymentSource\PaymentSourceValueHandler\EpsPaymentSourceValueHandler"
                  public="true">
+            <argument type="service" id="paypal_unified.settings_service"/>
+            <argument type="service" id="shopware_storefront.context_service"/>
+            <argument type="service" id="paypal_unified.common.return_url_helper"/>
             <tag name="paypal_unified.payment_source_value_handler"/>
         </service>
 
         <service id="paypal_unified.giropay_payment_source_value_handler"
                  class="SwagPaymentPayPalUnified\Components\Services\OrderBuilder\PaymentSource\PaymentSourceValueHandler\GiropayPaymentSourceValueHandler"
                  public="true">
+            <argument type="service" id="paypal_unified.settings_service"/>
+            <argument type="service" id="shopware_storefront.context_service"/>
+            <argument type="service" id="paypal_unified.common.return_url_helper"/>
             <tag name="paypal_unified.payment_source_value_handler"/>
         </service>
 
         <service id="paypal_unified.ideal_payment_source_value_handler"
                  class="SwagPaymentPayPalUnified\Components\Services\OrderBuilder\PaymentSource\PaymentSourceValueHandler\IdealPaymentSourceValueHandler"
                  public="true">
+            <argument type="service" id="paypal_unified.settings_service"/>
+            <argument type="service" id="shopware_storefront.context_service"/>
+            <argument type="service" id="paypal_unified.common.return_url_helper"/>
             <tag name="paypal_unified.payment_source_value_handler"/>
         </service>
 
         <service id="paypal_unified.multibanco_payment_source_value_handler"
                  class="SwagPaymentPayPalUnified\Components\Services\OrderBuilder\PaymentSource\PaymentSourceValueHandler\MultibancoPaymentSourceValueHandler"
                  public="true">
+            <argument type="service" id="paypal_unified.settings_service"/>
+            <argument type="service" id="shopware_storefront.context_service"/>
+            <argument type="service" id="paypal_unified.common.return_url_helper"/>
             <tag name="paypal_unified.payment_source_value_handler"/>
         </service>
 
         <service id="paypal_unified.mybank_payment_source_value_handler"
                  class="SwagPaymentPayPalUnified\Components\Services\OrderBuilder\PaymentSource\PaymentSourceValueHandler\MyBankPaymentSourceValueHandler"
                  public="true">
+            <argument type="service" id="paypal_unified.settings_service"/>
+            <argument type="service" id="shopware_storefront.context_service"/>
+            <argument type="service" id="paypal_unified.common.return_url_helper"/>
             <tag name="paypal_unified.payment_source_value_handler"/>
         </service>
 
         <service id="paypal_unified.p24_payment_source_value_handler"
                  class="SwagPaymentPayPalUnified\Components\Services\OrderBuilder\PaymentSource\PaymentSourceValueHandler\P24PaymentSourceValueHandler"
                  public="true">
+            <argument type="service" id="paypal_unified.settings_service"/>
+            <argument type="service" id="shopware_storefront.context_service"/>
+            <argument type="service" id="paypal_unified.common.return_url_helper"/>
+            <tag name="paypal_unified.payment_source_value_handler"/>
+        </service>
+
+        <service id="paypal_unified.pay_pal_payment_source_value_handler"
+                 class="SwagPaymentPayPalUnified\Components\Services\OrderBuilder\PaymentSource\PaymentSourceValueHandler\PayPalPaymentSourceValueHandler"
+                 public="true">
+            <argument type="service" id="paypal_unified.settings_service"/>
+            <argument type="service" id="shopware_storefront.context_service"/>
+            <argument type="service" id="paypal_unified.common.return_url_helper"/>
+            <tag name="paypal_unified.payment_source_value_handler"/>
+        </service>
+
+        <service id="paypal_unified.advanced_credit_debit_card_payment_source_value_handler"
+                 class="SwagPaymentPayPalUnified\Components\Services\OrderBuilder\PaymentSource\PaymentSourceValueHandler\AdvancedCreditDebitCardPaymentSourceValueHandler"
+                 public="true">
+            <argument type="service" id="paypal_unified.settings_service"/>
+            <argument type="service" id="shopware_storefront.context_service"/>
+            <argument type="service" id="paypal_unified.common.return_url_helper"/>
             <tag name="paypal_unified.payment_source_value_handler"/>
         </service>
 
         <service id="paypal_unified.sofort_payment_source_value_handler"
                  class="SwagPaymentPayPalUnified\Components\Services\OrderBuilder\PaymentSource\PaymentSourceValueHandler\SofortPaymentSourceValueHandler"
                  public="true">
+            <argument type="service" id="paypal_unified.settings_service"/>
+            <argument type="service" id="shopware_storefront.context_service"/>
+            <argument type="service" id="paypal_unified.common.return_url_helper"/>
             <tag name="paypal_unified.payment_source_value_handler"/>
         </service>
 
         <service id="paypal_unified.trustly_payment_source_value_handler"
                  class="SwagPaymentPayPalUnified\Components\Services\OrderBuilder\PaymentSource\PaymentSourceValueHandler\TrustlyPaymentSourceValueHandler"
                  public="true">
+            <argument type="service" id="paypal_unified.settings_service"/>
+            <argument type="service" id="shopware_storefront.context_service"/>
+            <argument type="service" id="paypal_unified.common.return_url_helper"/>
             <tag name="paypal_unified.payment_source_value_handler"/>
         </service>
 

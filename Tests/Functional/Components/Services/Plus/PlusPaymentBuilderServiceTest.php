@@ -17,6 +17,7 @@ use SwagPaymentPayPalUnified\Components\Services\Validation\BasketIdWhitelist;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Payment\Transactions\ShipmentDetails;
+use SwagPaymentPayPalUnified\Tests\Functional\AssertStringContainsTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\Components\Services\Mock\SettingsServicePaymentBuilderServiceMock;
 use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\ShopRegistrationTrait;
@@ -25,6 +26,7 @@ class PlusPaymentBuilderServiceTest extends TestCase
 {
     use ContainerTrait;
     use ShopRegistrationTrait;
+    use AssertStringContainsTrait;
 
     public function testServiceIsAvailable()
     {
@@ -36,18 +38,7 @@ class PlusPaymentBuilderServiceTest extends TestCase
     {
         $request = $this->getRequestData();
 
-        if (\method_exists($this, 'assertStringContainsString')) {
-            static::assertStringContainsString(
-                '/PaypalUnified/return/plus/1/basketId/' . BasketIdWhitelist::WHITELIST_IDS['PayPalPlus'],
-                $request->getRedirectUrls()->getReturnUrl()
-            );
-
-            return;
-        }
-        static::assertContains(
-            '/PaypalUnified/return/plus/1/basketId/' . BasketIdWhitelist::WHITELIST_IDS['PayPalPlus'],
-            $request->getRedirectUrls()->getReturnUrl()
-        );
+        static::assertStringContains($this, '/PaypalUnified/return/plus/1/basketId/' . BasketIdWhitelist::WHITELIST_IDS['PayPalPlus'], $request->getRedirectUrls()->getReturnUrl());
     }
 
     public function testEstimatedDeliveryDateAttributeExistsButNotSet()

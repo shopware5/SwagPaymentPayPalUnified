@@ -10,6 +10,9 @@ namespace SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
 
 use SwagPaymentPayPalUnified\PayPalBundle\V2\PayPalApiStruct;
 
+/**
+ * @deprecated Since v6.0.3 and will be removed with version 7.0.0. Use ExperienceContext instead.
+ */
 class ApplicationContext extends PayPalApiStruct
 {
     const LANDING_PAGE_TYPE_LOGIN = 'LOGIN';

@@ -82,21 +82,21 @@ class DependencyProvider
 
     /**
      * @return Enlight_Controller_Router
+     *
+     * @throw RuntimeException
      */
     public function getRouter()
     {
-        $frontController = $this->getFront();
-        if (!$frontController instanceof Enlight_Controller_Front) {
-            throw new RuntimeException('Front is not initialized');
-        }
-
-        if (method_exists($frontController, 'ensureRouter')) {
-            return $frontController->ensureRouter();
-        }
-
-        $router = $frontController->Router();
-        if (!$router instanceof Enlight_Controller_Router) {
+        if (!$this->container->initialized('router')) {
             throw new RuntimeException('Router is not initialized');
+        }
+
+        $router = $this->container->get('router');
+
+        if (!$router instanceof Enlight_Controller_Router) {
+            throw new RuntimeException(
+                \sprintf('Router expect to be instance of Enlight_Controller_Router got %s', \gettype($router))
+            );
         }
 
         return $router;

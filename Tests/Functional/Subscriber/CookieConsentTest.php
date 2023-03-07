@@ -11,9 +11,12 @@ namespace SwagPaymentPayPalUnified\Tests\Functional\Subscriber;
 use PHPUnit\Framework\TestCase;
 use Shopware\Bundle\CookieBundle\Structs\CookieStruct;
 use SwagPaymentPayPalUnified\Subscriber\CookieConsent;
+use SwagPaymentPayPalUnified\Tests\Functional\AssertStringContainsTrait;
 
 class CookieConsentTest extends TestCase
 {
+    use AssertStringContainsTrait;
+
     public function testCanBeCreated()
     {
         $subscriber = $this->getSubscriber();
@@ -37,15 +40,8 @@ class CookieConsentTest extends TestCase
         static::assertSame('paypal-cookies', $cookie->getName());
 
         $matchingPattern = $cookie->getMatchingPattern();
-        if (\method_exists($this, 'assertStringContainsString')) {
-            static::assertStringContainsString('paypal-cookie-consent-manager', $matchingPattern);
-            static::assertStringContainsString('paypalplus_session_v2', $matchingPattern);
-
-            return;
-        }
-
-        static::assertContains('paypal-cookie-consent-manager', $matchingPattern);
-        static::assertContains('paypalplus_session_v2', $matchingPattern);
+        static::assertStringContains($this, 'paypal-cookie-consent-manager', $matchingPattern);
+        static::assertStringContains($this, 'paypalplus_session_v2', $matchingPattern);
     }
 
     /**

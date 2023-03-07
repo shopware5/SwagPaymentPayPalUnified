@@ -12,4 +12,24 @@ use SwagPaymentPayPalUnified\PayPalBundle\V2\PayPalApiStruct;
 
 abstract class AbstractPaymentSource extends PayPalApiStruct
 {
+    /**
+     * @var ExperienceContext|null
+     */
+    protected $experienceContext;
+
+    /**
+     * @return ExperienceContext|null
+     */
+    public function getExperienceContext()
+    {
+        return $this->experienceContext;
+    }
+
+    /**
+     * @return void
+     */
+    public function setExperienceContext(ExperienceContext $experienceContext)
+    {
+        $this->experienceContext = $experienceContext;
+    }
 }

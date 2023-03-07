@@ -9,9 +9,8 @@
 namespace SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource;
 
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\Card\AuthenticationResult;
-use SwagPaymentPayPalUnified\PayPalBundle\V2\PayPalApiStruct;
 
-class Card extends PayPalApiStruct
+class Card extends AbstractPaymentSource
 {
     const TYPE_CREDIT = 'CREDIT';
     const TYPE_UNKNOWN = 'UNKNOWN';

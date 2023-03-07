@@ -30,6 +30,7 @@ class MyBankPaymentSourceValueHandler extends AbstractPaymentSourceValueHandler
         $paymentSourceValue = new Mybank();
 
         $this->setDefaultValues($paymentSourceValue, $orderParameter);
+        $paymentSourceValue->setExperienceContext($this->createExperienceContext($orderParameter));
 
         return $paymentSourceValue;
     }

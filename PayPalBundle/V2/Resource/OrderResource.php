@@ -18,7 +18,6 @@ use SwagPaymentPayPalUnified\PayPalBundle\Services\ClientService;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Patch;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\RequestUriV2;
-use SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\OrderArrayFactory\OrderArrayFactory;
 use SwagPaymentPayPalUnified\Subscriber\FraudNet;
 
 class OrderResource
@@ -27,11 +26,6 @@ class OrderResource
      * @var ClientService
      */
     private $clientService;
-
-    /**
-     * @var OrderArrayFactory
-     */
-    private $arrayFactory;
 
     /**
      * @var LoggerServiceInterface
@@ -50,14 +44,12 @@ class OrderResource
 
     public function __construct(
         ClientService $clientService,
-        OrderArrayFactory $arrayFactory,
         LoggerServiceInterface $loggerService,
         DependencyProvider $dependencyProvider,
         RequestIdService $requestIdService
     ) {
         $this->clientService = $clientService;
         $this->clientService->setPartnerAttributionId(PartnerAttributionId::PAYPAL_ALL_V2);
-        $this->arrayFactory = $arrayFactory;
         $this->loggerService = $loggerService;
         $this->dependencyProvider = $dependencyProvider;
         $this->requestIdService = $requestIdService;
@@ -106,7 +98,7 @@ class OrderResource
         $response = $this->clientService->sendRequest(
             RequestType::POST,
             RequestUriV2::ORDERS_RESOURCE,
-            $this->arrayFactory->toArray($order, $paymentType)
+            $order->toArray()
         );
 
         $paypalOrder = (new Order())->assign($response);
