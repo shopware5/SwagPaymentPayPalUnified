@@ -1,0 +1,43 @@
+name: PHP
+
+on:
+    workflow_call:
+
+jobs:
+    php-code-analysis:
+        name: Code analysis
+        runs-on: ubuntu-latest
+        container:
+            image: ghcr.io/shopware5/docker-images-testing/install:shopware_5.7_8.0_8.2_none
+            credentials:
+                username: ${{ github.actor }}
+                password: ${{ secrets.github_token }}
+
+        steps:
+            -   run: /usr/bin/supervisord -c /etc/supervisord.conf &
+
+            -   name: Checkout SwagPaymentPayPalUnified
+                uses: actions/checkout@v3
+                with:
+                    path: plugin
+
+            -   name: Move plugin
+                run: mv "$(pwd)/plugin" /shopware/custom/plugins/SwagPaymentPayPalUnified
+
+            -   name: Setup SwagPaymentPayPalUnified
+                run: |
+                    cd /shopware/custom/plugins/SwagPaymentPayPalUnified
+                    make composer-install
+                    make install-plugin
+
+            -   name: Execute PHP Code-Style-fixer
+                run: |
+                    cd /shopware/custom/plugins/SwagPaymentPayPalUnified
+                    make fix-cs-dry
+
+            -   name: Execute PHP-Stan
+                run: |
+                    cd /shopware
+                    php bin/console -e production -q # Initialise DIC (var/cache/production____REVISION____) for phpstan
+                    cd custom/plugins/SwagPaymentPayPalUnified
+                    make phpstan

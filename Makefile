@@ -39,6 +39,11 @@ install-plugin: .refresh-plugin-list ## Install and activate the plugin
 	@echo "Install the plugin"
 	./../../../bin/console sw:plugin:install $(dirname) --activate -c
 
+install-plugin-legacy: .refresh-plugin-list ## Install and activate the plugin for older shopware versions
+	@echo "Install the plugin"
+	./../../../bin/console sw:plugin:install $(dirname) --activate
+	php ./../../../bin/console sw:cache:clear --env=$(envname)
+
 install-test-environment: ## Installs the plugin test environment
 	@echo "Install the test environment"
 	./psh local:init

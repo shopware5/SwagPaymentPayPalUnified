@@ -1,0 +1,44 @@
+name: Javascript
+
+on:
+    workflow_call:
+
+jobs:
+    javascript-code-analysis:
+        name: Code analysis
+        runs-on: ubuntu-latest
+        container:
+            image: ghcr.io/shopware5/docker-images-testing/install:shopware_5.7_8.0_8.2_none
+            credentials:
+                username: ${{ github.actor }}
+                password: ${{ secrets.github_token }}
+
+        env:
+            GH_TOKEN: ${{ github.token }}
+
+        steps:
+            -   run: /usr/bin/supervisord -c /etc/supervisord.conf &
+
+            -   name: Checkout SwagPaymentPayPalUnified
+                uses: actions/checkout@v3
+                with:
+                    path: plugin
+
+            -   name: Move plugin
+                run: mv "$(pwd)/plugin" /shopware/custom/plugins/SwagPaymentPayPalUnified
+
+            -   name: Setup SwagPaymentPayPalUnified
+                run: |
+                    cd /shopware/custom/plugins/SwagPaymentPayPalUnified/Tests/E2E
+                    npm install
+
+            -   name: Execute javascript code analysis
+                run: |
+                    cd /shopware/custom/plugins/SwagPaymentPayPalUnified
+                    make check-js-code
+
+            -   name: Execute jest tests
+                run: |
+                    cd /shopware/custom/plugins/SwagPaymentPayPalUnified
+                    make run-jest-tests
+
