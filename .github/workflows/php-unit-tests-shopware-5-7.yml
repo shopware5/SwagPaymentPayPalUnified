@@ -1,0 +1,73 @@
+name: PHPUnit Tests
+
+on:
+    workflow_call:
+
+jobs:
+    php-unit-tests-shopware-5-7:
+        name: Shopware 5.7 PHP version 7.4 - 8.2
+        runs-on: ubuntu-latest
+
+        strategy:
+            matrix:
+                php-version: [ '7.4' , '8.0', '8.1', '8.2' ]
+
+        env:
+            GH_TOKEN: ${{ github.token }}
+            DB_USER: root
+            DB_PASSWORD: root
+            DB_HOST: 127.0.0.1
+            DB_PORT: 3306
+            DB_NAME: shopware
+            SW_HOST: localhost
+            SW_BASE_PATH: ""
+            ELASTICSEARCH_HOST: elasticsearch
+
+        steps:
+            -   name: Setup PHP
+                uses: shivammathur/setup-php@v2
+                with:
+                    php-version: ${{ matrix.php-version }}
+                    tools: composer
+                    coverage: none
+
+            -   name: Start MySQL
+                run: sudo /etc/init.d/mysql start
+
+            -   name: Checkout Shopware
+                uses: actions/checkout@v3
+                with:
+                    repository: shopware/shopware
+                    path: shopware
+
+            -   name: Setup Shopware
+                run: |
+                    cd shopware
+                    composer update
+                    make init
+
+            -   name: Checkout SwagPaymentPayPalUnified
+                uses: actions/checkout@v3
+                with:
+                    path: shopware/custom/plugins/SwagPaymentPayPalUnified
+
+            -   name: Setup SwagPaymentPayPalUnified
+                run: |
+                    cd shopware/custom/plugins/SwagPaymentPayPalUnified
+                    make composer-install
+                    make install-plugin
+
+            -   name: Prepare Shopware config.php
+                run: |
+                    yes | cp shopware/custom/plugins/SwagPaymentPayPalUnified/.github/config.php shopware/config.php
+                    sed -i "s/__DB_USER__/${DB_USER}/g" shopware/config.php
+                    sed -i "s/__DB_PASSWORD__/${DB_PASSWORD}/g" shopware/config.php
+                    sed -i "s/__DB_NAME__/${DB_NAME}/g" shopware/config.php
+                    sed -i "s/__DB_HOST__/${DB_HOST}/g" shopware/config.php
+                    sed -i "s/__DB_PORT__/${DB_PORT}/g" shopware/config.php
+                    cat shopware/config.php
+
+            -   name: Execute PHP unit tests
+                run: |
+                    cd shopware/custom/plugins/SwagPaymentPayPalUnified
+                    make run-tests

@@ -1,0 +1,118 @@
+name: PHPUnit Tests
+
+on:
+    workflow_call:
+
+jobs:
+    php-unit-tests-shopware-legacy-versions:
+        name: Shopware legacy versions 5.2 - 5.6
+        runs-on: ubuntu-latest
+
+        strategy:
+            matrix:
+                versions:
+                    -   shopware: '5.2'
+                        php: '5.6'
+                        consentManager: '5.2.11-5.2.27'
+
+                    -   shopware: '5.3'
+                        php: '5.6'
+                        consentManager: '5.3.5-5.3.7'
+
+                    -   shopware: '5.4'
+                        php: '5.6'
+                        consentManager: '5.4.6'
+
+                    -   shopware: '5.5'
+                        php: '7.1'
+                        consentManager: '5.5.0-5.5.10'
+
+                    -   shopware: '5.6'
+                        php: '7.2'
+                        consentManager: '5.6.0-5.6.2'
+
+        env:
+            GH_TOKEN: ${{ github.token }}
+            DB_USER: root
+            DB_PASSWORD: root
+            DB_HOST: 127.0.0.1
+            DB_PORT: 3306
+            DB_NAME: shopware
+            SW_HOST: localhost
+            SW_BASE_PATH: ""
+            ELASTICSEARCH_HOST: elasticsearch
+
+        steps:
+            -   name: Setup PHP
+                uses: shivammathur/setup-php@v2
+                with:
+                    php-version: ${{ matrix.versions.php }}
+                    tools: composer
+                    coverage: none
+
+            -   name: Checkout Shopware
+                uses: actions/checkout@v3
+                with:
+                    repository: shopware/shopware
+                    path: shopware
+                    ref: ${{ matrix.versions.shopware }}
+
+            -   name: Checkout SwagPaymentPayPalUnified
+                uses: actions/checkout@v3
+                with:
+                    path: shopware/custom/plugins/SwagPaymentPayPalUnified
+
+            -   name: Setup MySQL
+                uses: shogo82148/actions-setup-mysql@v1
+                with:
+                    mysql-version: '5.7'
+                    root-password: 'root'
+            -   run: mysql -uroot -proot -h127.0.0.1 -e 'SELECT version()'
+
+            -   name: Checkout SwagCookieConsentManager
+                uses: actions/checkout@v3
+                with:
+                    repository: shopware5/SwagCookieConsentManager
+                    path: shopware/custom/plugins/SwagCookieConsentManager
+                    ref: ${{ matrix.versions.consentManager }}
+
+            -   name: Prepare Shopware config.php
+                run: |
+                    yes | cp shopware/custom/plugins/SwagPaymentPayPalUnified/.github/config.php shopware/config.php
+                    sed -i "s/__DB_USER__/${DB_USER}/g" shopware/config.php
+                    sed -i "s/__DB_PASSWORD__/${DB_PASSWORD}/g" shopware/config.php
+                    sed -i "s/__DB_NAME__/${DB_NAME}/g" shopware/config.php
+                    sed -i "s/__DB_HOST__/${DB_HOST}/g" shopware/config.php
+                    sed -i "s/__DB_PORT__/${DB_PORT}/g" shopware/config.php
+                    cat shopware/config.php
+
+            -   name: Setup Shopware
+                run: |
+                    cd shopware
+                    composer update
+                    php bin/console sw:database:setup --steps=drop,create,import,importDemodata
+                    php bin/console sw:cache:clear
+                    php bin/console sw:database:setup --steps=setupShop --shop-url=http://${DB_HOST}${SW_BASE_PATH}
+                    php bin/console sw:snippets:to:db --include-plugins
+                    php bin/console sw:theme:initialize
+                    php bin/console sw:firstrunwizard:disable
+                    php bin/console sw:admin:create --name="Demo" --email="demo@demo.de" --username="demo" --password="demo" --locale=de_DE -n
+                    touch recovery/install/data/install.lock
+
+            -   name: Setup SwagCookieConsentManager
+                run: |
+                    cd shopware
+                    php bin/console sw:plugin:refresh
+                    php bin/console sw:plugin:install SwagCookieConsentManager --activate
+                    php bin/console sw:cache:clear
+
+            -   name: Setup SwagPaymentPayPalUnified
+                run: |
+                    cd shopware/custom/plugins/SwagPaymentPayPalUnified
+                    make composer-install
+                    make install-plugin-legacy
+
+            -   name: Execute PHP unit tests
+                run: |
+                    cd shopware/custom/plugins/SwagPaymentPayPalUnified
+                    make run-tests

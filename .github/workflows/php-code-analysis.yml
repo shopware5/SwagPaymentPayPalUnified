@@ -1,0 +1,61 @@
+name: PHP
+
+on:
+    workflow_call:
+
+jobs:
+    php-code-analysis:
+        name: Code analysis
+        runs-on: ubuntu-latest
+
+        env:
+            GH_TOKEN: ${{ github.token }}
+            DB_USER: root
+            DB_PASSWORD: root
+            DB_HOST: 127.0.0.1
+            DB_PORT: 3306
+            DB_NAME: shopware
+            SW_HOST: localhost
+            SW_BASE_PATH: ""
+            ELASTICSEARCH_HOST: elasticsearch
+
+        steps:
+            -   name: Setup PHP
+                uses: shivammathur/setup-php@v2
+                with:
+                    php-version: '8.1'
+                    tools: composer
+                    coverage: none
+
+            -   name: Start MySQL
+                run: sudo /etc/init.d/mysql start
+
+            -   name: Checkout Shopware
+                uses: actions/checkout@v3
+                with:
+                    repository: shopware/shopware
+                    path: shopware
+
+            -   name: Setup Shopware
+                run: |
+                    cd shopware
+                    make init
+
+            -   name: Checkout SwagPaymentPayPalUnified
+                uses: actions/checkout@v3
+                with:
+                    path: shopware/custom/plugins/SwagPaymentPayPalUnified
+
+            -   name: Setup SwagPaymentPayPalUnified
+                run: |
+                    cd shopware/custom/plugins/SwagPaymentPayPalUnified
+                    make composer-install
+                    make install-plugin
+
+            -   name: Execute PHP code analysis
+                run: |
+                    cd shopware
+                    php bin/console -e production -q # Initialise DIC (var/cache/production____REVISION____) for phpstan
+                    cd custom/plugins/SwagPaymentPayPalUnified
+                    make fix-cs-dry
+                    make phpstan
