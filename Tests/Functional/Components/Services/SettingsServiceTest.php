@@ -298,6 +298,45 @@ class SettingsServiceTest extends TestCase
     }
 
     /**
+     * @return void
+     */
+    public function testGetSettingsWithShopIdWichHasSettings()
+    {
+        $this->insertGeneralSettingsFromArray(['shop_id' => self::SHOP_ID, 'active' => true]);
+
+        $shop = $this->createMock(Shop::class);
+        $shop->method('getId')->willReturn(self::SHOP_ID);
+
+        $settingsService = $this->createSettingsService($shop);
+
+        $result = $settingsService->getSettings(self::SHOP_ID);
+
+        static::assertInstanceOf(General::class, $result);
+    }
+
+    /**
+     * @return void
+     */
+    public function testGetSettingsWithShopIdWichHasNoSettings()
+    {
+        $languageShopId = 12;
+
+        $this->insertGeneralSettingsFromArray(['shop_id' => self::SHOP_ID, 'active' => true]);
+
+        $mainShop = $this->createMock(Shop::class);
+        $mainShop->method('getId')->willReturn(self::SHOP_ID);
+        $shop = $this->createMock(Shop::class);
+        $shop->method('getId')->willReturn($languageShopId);
+        $shop->method('getMain')->willReturn($mainShop);
+
+        $settingsService = $this->createSettingsService($shop);
+
+        $result = $settingsService->getSettings($languageShopId);
+
+        static::assertInstanceOf(General::class, $result);
+    }
+
+    /**
      * @return SettingsService
      */
     private function createSettingsService(Shop $shop = null)

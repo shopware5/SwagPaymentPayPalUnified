@@ -76,10 +76,6 @@ class SettingsService implements SettingsServiceInterface
             $shopId = $this->shop->getId();
         }
 
-        $baseCriteria = [
-            'shopId' => $shopId,
-        ];
-
         switch ($settingsType) {
             case SettingsTable::EXPRESS_CHECKOUT:
                 $entity = ExpressCheckout::class;
@@ -100,9 +96,12 @@ class SettingsService implements SettingsServiceInterface
                 $entity = General::class;
         }
 
-        return $this->modelManager
-            ->getRepository($entity)
-            ->findOneBy($baseCriteria);
+        $settings = $this->modelManager->getRepository($entity)->findOneBy(['shopId' => $shopId]);
+        if (!$settings instanceof $entity && $this->shop instanceof Shop && $shopId !== $this->shop->getId()) {
+            return $this->getSettings($this->shop->getId());
+        }
+
+        return $settings;
     }
 
     /**
