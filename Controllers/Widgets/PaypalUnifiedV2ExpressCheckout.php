@@ -121,7 +121,12 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout extends Abstra
         /** @var sAdmin $admin */
         $admin = $this->dependencyProvider->getModule('admin');
         $countries = $admin->sGetCountryList();
-        $admin->sGetPremiumShippingcosts(\reset($countries));
+        $country = \reset($countries);
+        if (!\is_array($country)) {
+            $country = null;
+        }
+
+        $admin->sGetPremiumShippingcosts($country);
 
         $this->logger->debug(sprintf('%s REFRESH BASKET', __METHOD__));
 
