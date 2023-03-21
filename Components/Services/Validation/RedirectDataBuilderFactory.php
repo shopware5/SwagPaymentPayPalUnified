@@ -9,6 +9,7 @@
 namespace SwagPaymentPayPalUnified\Components\Services\Validation;
 
 use SwagPaymentPayPalUnified\Components\ExceptionHandlerServiceInterface;
+use SwagPaymentPayPalUnified\Components\Services\ErrorMessages\ErrorMessageTransporter;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 
 class RedirectDataBuilderFactory implements RedirectDataBuilderFactoryInterface
@@ -23,10 +24,19 @@ class RedirectDataBuilderFactory implements RedirectDataBuilderFactoryInterface
      */
     private $settingsService;
 
-    public function __construct(ExceptionHandlerServiceInterface $exceptionHandlerService, SettingsServiceInterface $settingsService)
-    {
+    /**
+     * @var ErrorMessageTransporter
+     */
+    private $errorMessageTransporter;
+
+    public function __construct(
+        ExceptionHandlerServiceInterface $exceptionHandlerService,
+        SettingsServiceInterface $settingsService,
+        ErrorMessageTransporter $errorMessageTransporter
+    ) {
         $this->exceptionHandlerService = $exceptionHandlerService;
         $this->settingsService = $settingsService;
+        $this->errorMessageTransporter = $errorMessageTransporter;
     }
 
     /**
@@ -34,6 +44,6 @@ class RedirectDataBuilderFactory implements RedirectDataBuilderFactoryInterface
      */
     public function createRedirectDataBuilder()
     {
-        return new RedirectDataBuilder($this->exceptionHandlerService, $this->settingsService);
+        return new RedirectDataBuilder($this->exceptionHandlerService, $this->settingsService, $this->errorMessageTransporter);
     }
 }

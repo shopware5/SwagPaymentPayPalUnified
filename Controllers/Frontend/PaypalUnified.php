@@ -15,11 +15,13 @@ use SwagPaymentPayPalUnified\Components\OrderNumberService;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
 use SwagPaymentPayPalUnified\Components\PaymentStatus;
 use SwagPaymentPayPalUnified\Components\Services\Common\CustomerHelper;
+use SwagPaymentPayPalUnified\Components\Services\ErrorMessages\ErrorMessageTransporter;
 use SwagPaymentPayPalUnified\Components\Services\OrderDataService;
 use SwagPaymentPayPalUnified\Components\Services\PaymentAddressService;
 use SwagPaymentPayPalUnified\Components\Services\Plus\PaymentInstructionService;
 use SwagPaymentPayPalUnified\Components\Services\Validation\BasketIdWhitelist;
 use SwagPaymentPayPalUnified\Components\Services\Validation\BasketValidatorInterface;
+use SwagPaymentPayPalUnified\Components\Services\Validation\RedirectDataBuilder;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PayerInfoPatch;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PaymentAddressPatch;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\Patches\PaymentAmountPatch;
@@ -67,6 +69,11 @@ class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_F
      */
     private $orderNumberService;
 
+    /**
+     * @var ErrorMessageTransporter
+     */
+    private $errorMessageTransporter;
+
     public function preDispatch()
     {
         $this->dependencyProvider = $this->get('paypal_unified.dependency_provider');
@@ -75,6 +82,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_F
         $this->settingsService = $this->get('paypal_unified.settings_service');
         $this->shopwareConfig = $this->get('config');
         $this->orderNumberService = $this->get('paypal_unified.order_number_service');
+        $this->errorMessageTransporter = $this->get('paypal_unified.error_message_transporter');
     }
 
     /**
@@ -445,9 +453,8 @@ class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_F
             $redirectData['action'] = 'finish';
         }
 
-        if ($name !== null) {
-            $redirectData['paypal_unified_error_name'] = $name;
-            $redirectData['paypal_unified_error_message'] = $message;
+        if (\is_string($name) && \is_string($message)) {
+            $redirectData[RedirectDataBuilder::PAYPAL_UNIFIED_ERROR_KEY] = $this->errorMessageTransporter->setErrorMessageToSession($name, $message);
         }
 
         $this->redirect($redirectData);

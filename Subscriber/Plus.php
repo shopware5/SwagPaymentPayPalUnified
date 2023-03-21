@@ -26,8 +26,10 @@ use SwagPaymentPayPalUnified\Components\PaymentBuilderInterface;
 use SwagPaymentPayPalUnified\Components\PaymentBuilderParameters;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Components\Services\Common\CustomerHelper;
+use SwagPaymentPayPalUnified\Components\Services\ErrorMessages\ErrorMessageTransporter;
 use SwagPaymentPayPalUnified\Components\Services\OrderDataService;
 use SwagPaymentPayPalUnified\Components\Services\Plus\PaymentInstructionService;
+use SwagPaymentPayPalUnified\Components\Services\Validation\RedirectDataBuilder;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use SwagPaymentPayPalUnified\PayPalBundle\PartnerAttributionId;
@@ -96,6 +98,11 @@ class Plus implements SubscriberInterface
      */
     private $exceptionHandlerService;
 
+    /**
+     * @var ErrorMessageTransporter
+     */
+    private $errorMessageTransporter;
+
     public function __construct(
         SettingsServiceInterface $settingsService,
         DependencyProvider $dependencyProvider,
@@ -107,7 +114,8 @@ class Plus implements SubscriberInterface
         ClientService $clientService,
         PaymentResource $paymentResource,
         ExceptionHandlerServiceInterface $exceptionHandlerService,
-        PaymentMethodProviderInterface $paymentMethodProvider
+        PaymentMethodProviderInterface $paymentMethodProvider,
+        ErrorMessageTransporter $errorMessageTransporter
     ) {
         $this->settingsService = $settingsService;
         $this->dependencyProvider = $dependencyProvider;
@@ -120,6 +128,7 @@ class Plus implements SubscriberInterface
         $this->paymentResource = $paymentResource;
         $this->exceptionHandlerService = $exceptionHandlerService;
         $this->paymentMethodProvider = $paymentMethodProvider;
+        $this->errorMessageTransporter = $errorMessageTransporter;
     }
 
     /**
@@ -161,14 +170,18 @@ class Plus implements SubscriberInterface
         $view = $controller->View();
 
         $errorCode = $request->getParam('paypal_unified_error_code');
-        $errorName = $request->getParam('paypal_unified_error_name');
-        $errorMessage = $request->getParam('paypal_unified_error_message');
+        $errorKey = $request->getParam(RedirectDataBuilder::PAYPAL_UNIFIED_ERROR_KEY);
 
         if ($errorCode) {
             // all integrations
             $view->assign('paypalUnifiedErrorCode', $errorCode);
-            $view->assign('paypalUnifiedErrorName', $errorName);
-            $view->assign('paypalUnifiedErrorMessage', $errorMessage);
+        }
+
+        if ($errorKey) {
+            // all integrations
+            $errorMessage = $this->errorMessageTransporter->getErrorMessageFromSession($errorKey);
+            $view->assign('paypalUnifiedErrorName', $errorMessage->getErrorName());
+            $view->assign('paypalUnifiedErrorMessage', $errorMessage->getErrorMessage());
         }
 
         $basket = $view->getAssign('sBasket');

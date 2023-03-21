@@ -45,6 +45,7 @@
                  public="true">
             <argument type="service" id="paypal_unified.exception_handler_service"/>
             <argument type="service" id="paypal_unified.settings_service"/>
+            <argument type="service" id="paypal_unified.error_message_transporter"/>
         </service>
 
     </services>

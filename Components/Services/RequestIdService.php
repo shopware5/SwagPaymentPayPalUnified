@@ -10,6 +10,7 @@ namespace SwagPaymentPayPalUnified\Components\Services;
 
 use Enlight_Controller_Request_Request;
 use SwagPaymentPayPalUnified\Components\DependencyProvider;
+use SwagPaymentPayPalUnified\Components\Uuid;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use UnexpectedValueException;
@@ -39,7 +40,7 @@ class RequestIdService
      */
     public function generateNewRequestId()
     {
-        $newRequestId = $this->randomHex();
+        $newRequestId = Uuid::generateUuid();
 
         $this->loggerService->debug(sprintf('%s GENERATES NEW REQUEST ID: %s', __METHOD__, $newRequestId));
 
@@ -175,36 +176,5 @@ class RequestIdService
         $this->loggerService->debug(sprintf('%s PROVIDED REQUEST ID: %s IS VALID', __METHOD__, $requestId));
 
         return $requestId;
-    }
-
-    /**
-     * @return string
-     */
-    private function randomHex()
-    {
-        return \sprintf(
-            '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
-
-            // 32 bits for "time_low"
-            \mt_rand(0, 0xFFFF),
-            \mt_rand(0, 0xFFFF),
-
-            // 16 bits for "time_mid"
-            \mt_rand(0, 0xFFFF),
-
-            // 16 bits for "time_hi_and_version",
-            // four most significant bits holds version number 4
-            \mt_rand(0, 0x0FFF) | 0x4000,
-
-            // 16 bits, 8 bits for "clk_seq_hi_res",
-            // 8 bits for "clk_seq_low",
-            // two most significant bits holds zero and one for variant DCE1.1
-            \mt_rand(0, 0x3FFF) | 0x8000,
-
-            // 48 bits for "node"
-            \mt_rand(0, 0xFFFF),
-            \mt_rand(0, 0xFFFF),
-            \mt_rand(0, 0xFFFF)
-        );
     }
 }
