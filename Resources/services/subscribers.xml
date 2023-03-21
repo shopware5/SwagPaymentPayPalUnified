@@ -134,6 +134,7 @@
             <argument type="service" id="paypal_unified.payment_resource"/>
             <argument type="service" id="paypal_unified.exception_handler_service"/>
             <argument type="service" id="paypal_unified.payment_method_provider"/>
+            <argument type="service" id="paypal_unified.error_message_transporter"/>
             <tag name="shopware.event_subscriber"/>
         </service>
 

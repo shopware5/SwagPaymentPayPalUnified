@@ -5,17 +5,18 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <imports>
+        <import resource="components/apm_risk_management.xml"/>
         <import resource="components/common.xml"/>
+        <import resource="components/error_messages.xml"/>
         <import resource="components/express_checkout.xml"/>
         <import resource="components/legacy.xml"/>
-        <import resource="components/paypal_order.xml"/>
-        <import resource="components/plus.xml"/>
-        <import resource="components/validation.xml"/>
+        <import resource="components/order_array_factory.xml"/>
         <import resource="components/order_builder.xml"/>
         <import resource="components/payment_source.xml"/>
         <import resource="components/payment_source_value.xml"/>
-        <import resource="components/apm_risk_management.xml"/>
-        <import resource="components/order_array_factory.xml"/>
+        <import resource="components/paypal_order.xml"/>
+        <import resource="components/plus.xml"/>
+        <import resource="components/validation.xml"/>
     </imports>
 
     <services>

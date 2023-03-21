@@ -11,12 +11,15 @@ namespace SwagPaymentPayPalUnified\Tests\Functional\Components\Services\Validati
 use Exception;
 use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\Components\Exception\PayPalApiException;
+use SwagPaymentPayPalUnified\Components\Services\ErrorMessages\ErrorMessageTransporter;
 use SwagPaymentPayPalUnified\Components\Services\ExceptionHandlerService;
 use SwagPaymentPayPalUnified\Components\Services\SettingsService;
 use SwagPaymentPayPalUnified\Components\Services\Validation\RedirectDataBuilder;
 
 class RedirectDataBuilderTest extends TestCase
 {
+    const ERROR_KEY = 'aErrorKey';
+
     /**
      * @return void
      */
@@ -50,8 +53,11 @@ class RedirectDataBuilderTest extends TestCase
         static::assertInstanceOf(RedirectDataBuilder::class, $setExceptionResult);
 
         static::assertTrue($redirectDataBuilder->hasException());
-        static::assertSame('ErrorName', $redirectDataBuilder->getErrorName());
-        static::assertSame('ErrorMessage', $redirectDataBuilder->getErrorMessage());
+
+        $redirectData = $redirectDataBuilder->getRedirectData();
+
+        static::assertArrayHasKey(RedirectDataBuilder::PAYPAL_UNIFIED_ERROR_KEY, $redirectData);
+        static::assertSame(self::ERROR_KEY, $redirectData[RedirectDataBuilder::PAYPAL_UNIFIED_ERROR_KEY]);
     }
 
     /**
@@ -81,8 +87,6 @@ class RedirectDataBuilderTest extends TestCase
         $redirectDataBuilder = $this->getRedirectDataBuilder($exceptionHandlerServiceMock, $settingsServiceMock);
 
         static::assertNull($redirectDataBuilder->getCode());
-        static::assertNull($redirectDataBuilder->getErrorName());
-        static::assertNull($redirectDataBuilder->getErrorMessage());
         static::assertFalse($redirectDataBuilder->hasException());
 
         $redirectDataBuilder->setCode($code)
@@ -90,8 +94,6 @@ class RedirectDataBuilderTest extends TestCase
             ->setRedirectToFinishAction();
 
         static::assertSame($code, $redirectDataBuilder->getCode());
-        static::assertNotNull($redirectDataBuilder->getErrorName());
-        static::assertNotNull($redirectDataBuilder->getErrorMessage());
         static::assertTrue($redirectDataBuilder->hasException());
 
         $result = $redirectDataBuilder->getRedirectData();
@@ -100,8 +102,7 @@ class RedirectDataBuilderTest extends TestCase
             'controller' => 'checkout',
             'action' => 'finish',
             'paypal_unified_error_code' => 12,
-            'paypal_unified_error_name' => 'ErrorName',
-            'paypal_unified_error_message' => 'ErrorMessage',
+            RedirectDataBuilder::PAYPAL_UNIFIED_ERROR_KEY => self::ERROR_KEY,
         ];
 
         static::assertSame($expectedResult, $result);
@@ -110,11 +111,15 @@ class RedirectDataBuilderTest extends TestCase
     /**
      * @param ExceptionHandlerService|null $exceptionHandlerService
      * @param SettingsService|null         $settingsService
+     * @param ErrorMessageTransporter      $errorMessageTransporter
      *
      * @return RedirectDataBuilder
      */
-    private function getRedirectDataBuilder($exceptionHandlerService = null, $settingsService = null)
-    {
+    private function getRedirectDataBuilder(
+        $exceptionHandlerService = null,
+        $settingsService = null,
+        $errorMessageTransporter = null
+    ) {
         if ($exceptionHandlerService === null) {
             $exceptionHandlerService = $this->getMockBuilder(ExceptionHandlerService::class)
                 ->disableOriginalConstructor()
@@ -127,7 +132,12 @@ class RedirectDataBuilderTest extends TestCase
                 ->getMock();
         }
 
-        return new RedirectDataBuilder($exceptionHandlerService, $settingsService);
+        if ($errorMessageTransporter === null) {
+            $errorMessageTransporter = $this->createMock(ErrorMessageTransporter::class);
+            $errorMessageTransporter->method('setErrorMessageToSession')->willReturn(self::ERROR_KEY);
+        }
+
+        return new RedirectDataBuilder($exceptionHandlerService, $settingsService, $errorMessageTransporter);
     }
 
     /**
