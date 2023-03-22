@@ -18,6 +18,7 @@
     };
 
     SwagPaymentPaypalFormBaseFunction.prototype.hasErrorClass = 'has--error';
+    SwagPaymentPaypalFormBaseFunction.prototype.radioType = 'radio';
 
     SwagPaymentPaypalFormBaseFunction.prototype.hideConfirmButton = function() {
         this.$submitButton.addClass(this.hiddenClass);
@@ -58,7 +59,8 @@
         }
 
         this.$form.on('change', function() {
-            if (me.checkFormValidity()) {
+            if (me.checkFormValidity(false)) {
+                me.clearErrorClass();
                 actions.enable();
                 return;
             }
@@ -76,7 +78,7 @@
         var me = this,
             isValid = true,
             checkedAttributeTypes = [
-                'radio',
+                this.radioType,
                 'checkbox'
             ];
 
@@ -92,8 +94,13 @@
             }
 
             if (checkedAttributeTypes.indexOf($element.attr('type')) >= 0 && !$element.is(':checked')) {
-                isValid = false;
-                if (!isInitial) {
+                if ($element.attr('type') === me.radioType) {
+                    isValid = me.validateRadioInputs($element);
+                } else {
+                    isValid = false;
+                }
+
+                if (!isInitial && !isValid) {
                     me.addErrorClass($element);
                 }
 
@@ -111,11 +118,29 @@
         return isValid;
     };
 
+    /**
+     * @param { object }$element
+     * @returns { boolean }
+     */
+    SwagPaymentPaypalFormBaseFunction.prototype.validateRadioInputs = function($element) {
+        var checkedRadio = this.$form.find("input[type='radio'][name='%s']:checked".replace('%s', $element.attr('name')));
+
+        return checkedRadio.length > 0;
+    };
+
+    /**
+     * @param { object }$element
+     */
     SwagPaymentPaypalFormBaseFunction.prototype.addErrorClass = function($element) {
-        var elementName = $element.attr('name'),
+        var isRadio = $element.attr('type') === this.radioType,
+            elementName = isRadio ? $element.attr('id') : $element.attr('name'),
             $lable = $('label[for="%s"]'.replace('%s', elementName));
 
         $lable.addClass(this.hasErrorClass);
+    };
+
+    SwagPaymentPaypalFormBaseFunction.prototype.clearErrorClass = function () {
+        this.$form.find('label').removeClass(this.hasErrorClass);
     };
 
     /**

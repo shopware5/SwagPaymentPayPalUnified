@@ -18,6 +18,7 @@
             PT-13030 - Verbessert die Benutzerfreundlichkeit für Express Bestellungen mit falsch separierten Namen;
             PT-13038 - Fügt eine Beschreibung der Bestellnummer/Rechnungsnummer zu PayPal-Bestellungen hinzu;
             PT-13044 - Verbessert die Übertragung von Fehlermeldungen;
+            PT-13053 - Berücksichtigt Radio-Optionen im Checkout-Formular;
             PT-13057 - Falls ein Sprachshop keine eigenen Einstellungen hat, werden die Einstellungen des Hauptshops berücksichtigt;
             PT-13060 - Deaktiviert vorübergehend die Zahlungsmethode "Trustly", da sie derzeit bei PayPal nicht verfügbar ist;
         </changes>
@@ -26,6 +27,7 @@
             PT-13030 - Improves usability for Express Orders with incorrectly separated names;
             PT-13038 - Adds a description of the order number/invoice number to PayPal orders;
             PT-13044 - Improves the transmission of error messages;
+            PT-13053 - Considers radio buttons in checkout form;
             PT-13057 - If a language shop does not have its own settings, the settings of the main shop are taken into account;
             PT-13060 - Temporarily disables the "Trustly" payment method, as it is currently not available at PayPal;
         </changes>
