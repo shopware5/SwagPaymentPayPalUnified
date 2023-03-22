@@ -8,9 +8,11 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Unit\Components\Services\OrderBuilder\OrderHandler;
 
+use Enlight_Components_Snippet_Namespace as SnippetNameSpace;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
+use Shopware_Components_Snippet_Manager as SnippetManager;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\PayPalOrderParameter;
 use SwagPaymentPayPalUnified\Components\Services\Common\CustomerHelper;
 use SwagPaymentPayPalUnified\Components\Services\Common\PriceFormatter;
@@ -72,6 +74,11 @@ class AbstractOrderHandlerTest extends TestCase
     private $customerHelper;
 
     /**
+     * @var SnippetManager
+     */
+    private $snippetManager;
+
+    /**
      * @before
      *
      * @return void
@@ -85,6 +92,7 @@ class AbstractOrderHandlerTest extends TestCase
         $this->contextService = $this->createMock(ContextServiceInterface::class);
         $this->priceFormatter = $this->createMock(PriceFormatter::class);
         $this->customerHelper = $this->createMock(CustomerHelper::class);
+        $this->snippetManager = $this->createSnippetManagerMock();
 
         $this->paypalOrderParameter = $this->createMock(PayPalOrderParameter::class);
     }
@@ -191,6 +199,7 @@ class AbstractOrderHandlerTest extends TestCase
      * @param ContextServiceInterface|null  $contextService
      * @param PriceFormatter|null           $priceFormatter
      * @param CustomerHelper|null           $customerHelper
+     * @param SnippetManager|null           $snippetManager
      *
      * @return TestOrderHandler
      */
@@ -201,7 +210,8 @@ class AbstractOrderHandlerTest extends TestCase
         $returnUrlHelper = null,
         $contextService = null,
         $priceFormatter = null,
-        $customerHelper = null
+        $customerHelper = null,
+        $snippetManager = null
     ) {
         return new TestOrderHandler(
             $settingsService ?: $this->settingsService,
@@ -210,7 +220,8 @@ class AbstractOrderHandlerTest extends TestCase
             $returnUrlHelper ?: $this->returnUrlHelper,
             $contextService ?: $this->contextService,
             $priceFormatter ?: $this->priceFormatter,
-            $customerHelper ?: $this->customerHelper
+            $customerHelper ?: $this->customerHelper,
+            $snippetManager ?: $this->snippetManager
         );
     }
 
@@ -315,5 +326,17 @@ class AbstractOrderHandlerTest extends TestCase
     private function givenThePriceFormatter($priceFormatter)
     {
         $this->priceFormatter = $priceFormatter;
+    }
+
+    /**
+     * @return MockObject&SnippetManager
+     */
+    private function createSnippetManagerMock()
+    {
+        $nameSpaceMock = $this->createMock(SnippetNameSpace::class);
+        $snippetManagerMock = $this->createMock(SnippetManager::class);
+        $snippetManagerMock->method('getNamespace')->willReturn($nameSpaceMock);
+
+        return $snippetManagerMock;
     }
 }

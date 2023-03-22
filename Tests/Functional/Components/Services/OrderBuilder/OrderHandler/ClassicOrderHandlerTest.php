@@ -224,7 +224,8 @@ class ClassicOrderHandlerTest extends TestCase
             $this->getContainer()->get('shopware_storefront.context_service'),
             new PriceFormatter(),
             new CustomerHelper(),
-            $this->getContainer()->get('paypal_unified.payment_source_factory')
+            $this->getContainer()->get('paypal_unified.payment_source_factory'),
+            $this->getContainer()->get('snippets')
         );
     }
 

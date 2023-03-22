@@ -10,6 +10,7 @@ namespace SwagPaymentPayPalUnified\Components\Services\OrderBuilder\OrderHandler
 
 use RuntimeException;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
+use Shopware_Components_Snippet_Manager as SnippetManager;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\PayPalOrderParameter;
 use SwagPaymentPayPalUnified\Components\Services\Common\CustomerHelper;
 use SwagPaymentPayPalUnified\Components\Services\Common\PriceFormatter;
@@ -73,6 +74,11 @@ abstract class AbstractOrderHandler implements OrderBuilderHandlerInterface
      */
     protected $customerHelper;
 
+    /**
+     * @var SnippetManager
+     */
+    private $snippetManager;
+
     public function __construct(
         SettingsServiceInterface $settingsService,
         ItemListProvider $itemListProvider,
@@ -80,7 +86,8 @@ abstract class AbstractOrderHandler implements OrderBuilderHandlerInterface
         ReturnUrlHelper $returnUrlHelper,
         ContextServiceInterface $contextService,
         PriceFormatter $priceFormatter,
-        CustomerHelper $customerHelper
+        CustomerHelper $customerHelper,
+        SnippetManager $snippetManager
     ) {
         $this->settings = $settingsService;
         $this->itemListProvider = $itemListProvider;
@@ -89,6 +96,7 @@ abstract class AbstractOrderHandler implements OrderBuilderHandlerInterface
         $this->contextService = $contextService;
         $this->priceFormatter = $priceFormatter;
         $this->customerHelper = $customerHelper;
+        $this->snippetManager = $snippetManager;
     }
 
     /**
@@ -167,6 +175,12 @@ abstract class AbstractOrderHandler implements OrderBuilderHandlerInterface
         $submitCart = $this->settings->get(SettingsServiceInterface::SETTING_GENERAL_SUBMIT_CART) || $orderParameter->getPaymentType() === PaymentType::PAYPAL_PAY_UPON_INVOICE_V2;
 
         $purchaseUnit->setInvoiceId($orderParameter->getShopwareOrderNumber());
+        $orderNumberDescription = \sprintf(
+            $this->snippetManager->getNamespace('frontend/paypal_unified/order/order')->get('orderNumberDescriptions'),
+            $orderParameter->getShopwareOrderNumber()
+        );
+
+        $purchaseUnit->setDescription($orderNumberDescription);
 
         if ($submitCart) {
             $purchaseUnit->setItems($this->itemListProvider->getItemList(

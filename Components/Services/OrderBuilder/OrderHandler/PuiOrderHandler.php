@@ -11,6 +11,7 @@ namespace SwagPaymentPayPalUnified\Components\Services\OrderBuilder\OrderHandler
 use DateTime;
 use Exception;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
+use Shopware_Components_Snippet_Manager as SnippetManager;
 use SwagPaymentPayPalUnified\Components\Exception\BirthdateNotValidException;
 use SwagPaymentPayPalUnified\Components\Exception\PhoneNumberCountryCodeNotValidException;
 use SwagPaymentPayPalUnified\Components\Exception\PhoneNumberNationalNumberNotValidException;
@@ -48,18 +49,20 @@ class PuiOrderHandler extends AbstractOrderHandler
         ContextServiceInterface $contextService,
         PriceFormatter $priceFormatter,
         CustomerHelper $customerHelper,
-        PhoneNumberService $phoneNumberService
+        PhoneNumberService $phoneNumberService,
+        SnippetManager $snippetManager
     ) {
         $this->phoneNumberService = $phoneNumberService;
 
         parent::__construct(
-            $this->settings = $settingsService,
-            $this->itemListProvider = $itemListProvider,
-            $this->amountProvider = $amountProvider,
-            $this->returnUrlHelper = $returnUrlHelper,
-            $this->contextService = $contextService,
-            $this->priceFormatter = $priceFormatter,
-            $this->customerHelper = $customerHelper
+            $settingsService,
+            $itemListProvider,
+            $amountProvider,
+            $returnUrlHelper,
+            $contextService,
+            $priceFormatter,
+            $customerHelper,
+            $snippetManager
         );
     }
 

@@ -8,10 +8,13 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Unit\Components\Services\OrderBuilder\OrderHandler;
 
+use Enlight_Components_Snippet_Namespace as SnippetNameSpace;
 use Generator;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
 use Shopware\Bundle\StoreFrontBundle\Service\Core\ContextService;
+use Shopware_Components_Snippet_Manager as SnippetManager;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\PayPalOrderParameter;
 use SwagPaymentPayPalUnified\Components\Services\Common\CartHelper;
 use SwagPaymentPayPalUnified\Components\Services\Common\CustomerHelper;
@@ -154,8 +157,13 @@ class ApmOrderHandlerTest extends TestCase
      *
      * @return PayPalOrderParameter
      */
-    private function createPayPalOrderParameter(array $customer, array $cart, $paymentType, $basketUniqueId, $paymentToken)
-    {
+    private function createPayPalOrderParameter(
+        array $customer,
+        array $cart,
+        $paymentType,
+        $basketUniqueId,
+        $paymentToken
+    ) {
         $extendedCustomer = require __DIR__ . '/../../../../../_fixtures/s_user_data.php';
         $customer = array_merge($extendedCustomer['sUserData'], $customer);
 
@@ -183,7 +191,8 @@ class ApmOrderHandlerTest extends TestCase
         ContextServiceInterface $contextService = null,
         PriceFormatter $priceFormatter = null,
         CustomerHelper $customerHelper = null,
-        PaymentSourceFactory $paymentSourceFactory = null
+        PaymentSourceFactory $paymentSourceFactory = null,
+        SnippetManager $snippetManager = null
     ) {
         $settingsService = $settingsService === null ? $this->createMock(SettingsServiceInterface::class) : $settingsService;
         $itemListProvider = $itemListProvider === null ? $this->createMock(ItemListProvider::class) : $itemListProvider;
@@ -193,6 +202,7 @@ class ApmOrderHandlerTest extends TestCase
         $priceFormatter = $priceFormatter === null ? $this->createMock(PriceFormatter::class) : $priceFormatter;
         $customerHelper = $customerHelper === null ? $this->createMock(CustomerHelper::class) : $customerHelper;
         $paymentSourceFactory = $paymentSourceFactory === null ? $this->createMock(PaymentSourceFactory::class) : $paymentSourceFactory;
+        $snippetManager = $snippetManager === null ? $this->createSnippetManagerMock() : $snippetManager;
 
         return new ApmOrderHandler(
             $settingsService,
@@ -202,7 +212,20 @@ class ApmOrderHandlerTest extends TestCase
             $contextService,
             $priceFormatter,
             $customerHelper,
-            $paymentSourceFactory
+            $paymentSourceFactory,
+            $snippetManager
         );
+    }
+
+    /**
+     * @return MockObject&SnippetManager
+     */
+    private function createSnippetManagerMock()
+    {
+        $nameSpaceMock = $this->createMock(SnippetNameSpace::class);
+        $snippetManagerMock = $this->createMock(SnippetManager::class);
+        $snippetManagerMock->method('getNamespace')->willReturn($nameSpaceMock);
+
+        return $snippetManagerMock;
     }
 }

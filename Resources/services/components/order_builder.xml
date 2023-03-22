@@ -23,6 +23,7 @@
             <argument type="service" id="paypal_unified.common.price_formatter"/>
             <argument type="service" id="paypal_unified.common.customer_helper"/>
             <argument type="service" id="paypal_unified.phone_number_service"/>
+            <argument type="service" id="snippets"/>
             <tag name="paypal_unified.order_factory_handler"/>
         </service>
 
@@ -37,6 +38,7 @@
             <argument type="service" id="paypal_unified.common.price_formatter"/>
             <argument type="service" id="paypal_unified.common.customer_helper"/>
             <argument type="service" id="paypal_unified.payment_source_factory"/>
+            <argument type="service" id="snippets"/>
             <tag name="paypal_unified.order_factory_handler"/>
         </service>
 
@@ -51,6 +53,7 @@
             <argument type="service" id="paypal_unified.common.price_formatter"/>
             <argument type="service" id="paypal_unified.common.customer_helper"/>
             <argument type="service" id="paypal_unified.payment_source_factory"/>
+            <argument type="service" id="snippets"/>
             <tag name="paypal_unified.order_factory_handler"/>
         </service>
 
