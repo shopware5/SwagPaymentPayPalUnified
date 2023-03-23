@@ -110,9 +110,9 @@ trait SettingsHelperTrait
             'off_canvas_active' => 0,
             'login_active' => 0,
             'listing_active' => 0,
-            'button_style_color' => 0,
-            'button_style_shape' => 0,
-            'button_style_size' => 0,
+            'button_style_color' => 'gold',
+            'button_style_shape' => 'rectangle',
+            'button_style_size' => 'medium',
             'submit_cart' => 0,
         ];
 

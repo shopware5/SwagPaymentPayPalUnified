@@ -253,7 +253,7 @@ class ExpressCheckout implements SubscriberInterface
         $view->assign('paypalUnifiedEcListingActive', true);
         $this->addEcButtonBehaviour($view, $generalSettings);
         $this->addEcButtonStyleInfo($view, $expressSettings, $generalSettings);
-        $view->assign('paypalUnifiedEcButtonStyleSize', 'small');
+        $view->assign('paypalUnifiedEcButtonStyleSize', $expressSettings->getButtonStyleSize() === 'responsive' ? $expressSettings->getButtonStyleSize() : 'small');
     }
 
     /**

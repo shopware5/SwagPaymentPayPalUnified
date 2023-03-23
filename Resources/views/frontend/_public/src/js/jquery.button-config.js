@@ -125,7 +125,7 @@
              *
              * @type string
              */
-            size: 'large',
+            size: 'responsive',
 
             /**
              * shape of the button
@@ -175,7 +175,7 @@
              *
              * @type number
              */
-            responsiveHeight: 55,
+            responsiveHeight: 40,
 
             /**
              * PayPal button width small
