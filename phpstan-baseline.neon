@@ -1911,16 +1911,6 @@ parameters:
 			path: Subscriber/Account.php
 
 		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Subscriber\\\\ApmRiskManagement\\:\\:afterManageRisks\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Subscriber/ApmRiskManagement.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Subscriber\\\\ApmRiskManagement\\:\\:onExecuteApmRule\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Subscriber/ApmRiskManagement.php
-
-		-
 			message: "#^Property SwagPaymentPayPalUnified\\\\Subscriber\\\\Documents\\\\Invoice\\:\\:\\$translation \\(Shopware_Components_Translation\\) does not accept Shopware_Components_Translation\\|null\\.$#"
 			count: 1
 			path: Subscriber/Documents/Invoice.php

@@ -75,6 +75,9 @@ class ApmRiskManagement implements SubscriberInterface
         ];
     }
 
+    /**
+     * @return bool
+     */
     public function afterManageRisks(Enlight_Hook_HookArgs $args)
     {
         if ($args->getReturn() === true) {
@@ -118,6 +121,9 @@ class ApmRiskManagement implements SubscriberInterface
         return $args->getSubject()->executeRiskRule('ApmRiskManagementRule', $user, $basket, $currentPaymentName, $currentPaymentId);
     }
 
+    /**
+     * @return bool
+     */
     public function onExecuteApmRule(Enlight_Event_EventArgs $args)
     {
         $user = $args->get('user');
@@ -128,6 +134,11 @@ class ApmRiskManagement implements SubscriberInterface
 
         $values = $this->valueFactory->createValue($paymentType, $basket, $user);
         $validator = $this->validatorFactory->createValidator($paymentType);
+
+        // This is temporary to disable Trustly as it will not available until the end of quarter 2 2023.
+        if ($paymentType === PaymentType::APM_TRUSTLY) {
+            return true;
+        }
 
         if ($paymentType === PaymentType::APM_SOFORT) {
             $group = $user['additional']['country']['countryiso'] === 'GB' ? self::GROUP_UK : self::GROUP_EURO;
