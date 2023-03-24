@@ -72,8 +72,8 @@ else
 endif
 endif
 
-make run-javascript-tests: ## Executes the jest tests
-	./../../../themes/Frontend/Responsive/node_modules/.bin/jest -c Tests/Javascript/jest.config.js
+make run-jest-tests: ## Executes the jest tests
+	./../../../themes/Frontend/Responsive/node_modules/.bin/jest -c Tests/Jest/jest.config.js
 
 CS_FIXER_RUN=
 fix-cs: ## Run the code style fixer
@@ -82,13 +82,13 @@ fix-cs: ## Run the code style fixer
 fix-cs-dry: CS_FIXER_RUN= --dry-run
 fix-cs-dry: fix-cs  ## Run the code style fixer in dry mode
 
-check-js-code: check-eslint-frontend check-eslint-backend check-eslint-e2e ## Run esLint
-fix-js-code: fix-eslint-frontend fix-eslint-backend fix-eslint-e2e ## Fix js code
+check-js-code: check-eslint-frontend check-eslint-backend check-eslint-e2e check-eslint-jest-tests ## Run esLint
+fix-js-code: fix-eslint-frontend fix-eslint-backend fix-eslint-e2e fix-eslint-jest-tests ## Fix js code
 
 ESLINT_FIX=
 check-eslint-frontend:
 	./../../../themes/node_modules/eslint/bin/eslint.js --ignore-path .eslintignore -c ./../../../themes/Frontend/.eslintrc.js --global "jQuery,StateManager, PAYPAL, paypal, location" Resources/views/frontend $(ESLINT_FIX)
-	./../../../themes/node_modules/eslint/bin/eslint.js --ignore-path .eslintignore -c ./../../../themes/Frontend/.eslintrc.js --global "jQuery" Tests/Javascript $(ESLINT_FIX)
+	./../../../themes/node_modules/eslint/bin/eslint.js --ignore-path .eslintignore -c ./../../../themes/Frontend/.eslintrc.js --global "jQuery" $(ESLINT_FIX)
 
 fix-eslint-frontend: ESLINT_FIX= --fix
 fix-eslint-frontend: check-eslint-frontend
@@ -104,6 +104,12 @@ fix-eslint-e2e: check-eslint-e2e
 
 check-eslint-e2e:
 	./../../../themes/node_modules/eslint/bin/eslint.js -c ./Tests/E2E/.eslintrc.js ./Tests/E2E/helper/*.mjs ./Tests/E2E/setup/*.mjs ./Tests/E2E/test/*.mjs $(ESLINT_FIX)
+
+fix-eslint-jest-tests: ESLINT_FIX= --fix
+fix-eslint-jest-tests: check-eslint-jest-tests
+
+check-eslint-jest-tests:
+	./../../../themes/node_modules/eslint/bin/eslint.js -c ./Tests/Jest/.eslintrc.js ./Tests/Jest $(ESLINT_FIX)
 
 phpstan: ## Run PHPStan
 	./../../../vendor/bin/phpstan analyse . -a PhpStan/phpstan-autoload.php

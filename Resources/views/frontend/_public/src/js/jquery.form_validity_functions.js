@@ -134,9 +134,9 @@
     SwagPaymentPaypalFormBaseFunction.prototype.addErrorClass = function($element) {
         var isRadio = $element.attr('type') === this.radioType,
             elementName = isRadio ? $element.attr('id') : $element.attr('name'),
-            $lable = $('label[for="%s"]'.replace('%s', elementName));
+            $label = $('label[for="%s"]'.replace('%s', elementName));
 
-        $lable.addClass(this.hasErrorClass);
+        $label.addClass(this.hasErrorClass);
     };
 
     SwagPaymentPaypalFormBaseFunction.prototype.clearErrorClass = function () {
