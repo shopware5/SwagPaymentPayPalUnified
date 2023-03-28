@@ -111,8 +111,7 @@ services:
     playwright:
         image: mcr.microsoft.com/playwright:v1.27.1-focal
         environment:
-            <<: *default-environment
-            <<: *playwright-environment
+            <<: [ *default-environment, *playwright-environment ]
         user: "pwuser:pwuser"
         volumes:
             - "${CI_PROJECT_DIR}:/project"
@@ -124,8 +123,7 @@ services:
     playwright-debug:
         image: mcr.microsoft.com/playwright:v1.27.1-focal
         environment:
-            <<: *default-environment
-            <<: *playwright-environment
+            <<: [ *default-environment, *playwright-environment ]
             DISPLAY: "unix${DISPLAY}"
             PWDEBUG: "console"
         user: "pwuser:pwuser"
