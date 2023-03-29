@@ -26,6 +26,8 @@ class AbstractOrderHandlerCreatePurchaseUnitTest extends TestCase
 
     const TEST_ORDER_NUMBER = '08154711';
 
+    const TEST_DESCRIPTION = 'PayPal-Rechnungsnummer 08154711 entspricht Shopware-Bestellnummer';
+
     /**
      * @dataProvider createPurchaseUnitsTestDataProvider
      *
@@ -70,6 +72,7 @@ class AbstractOrderHandlerCreatePurchaseUnitTest extends TestCase
         }
 
         static::assertSame(self::TEST_ORDER_NUMBER, $purchaseUnit->getInvoiceId());
+        static::assertSame(self::TEST_DESCRIPTION, $purchaseUnit->getDescription());
     }
 
     /**
@@ -176,7 +179,8 @@ class AbstractOrderHandlerCreatePurchaseUnitTest extends TestCase
             $this->getContainer()->get('paypal_unified.common.return_url_helper'),
             $this->getContainer()->get('shopware_storefront.context_service'),
             $this->getContainer()->get('paypal_unified.common.price_formatter'),
-            $this->getContainer()->get('paypal_unified.common.customer_helper')
+            $this->getContainer()->get('paypal_unified.common.customer_helper'),
+            $this->getContainer()->get('snippets')
         );
     }
 

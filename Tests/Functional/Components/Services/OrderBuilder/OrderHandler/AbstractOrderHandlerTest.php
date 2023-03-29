@@ -93,7 +93,8 @@ class AbstractOrderHandlerTest extends TestCase
             $this->getContainer()->get('paypal_unified.common.return_url_helper'),
             $this->getContainer()->get('shopware_storefront.context_service'),
             $this->getContainer()->get('paypal_unified.common.price_formatter'),
-            $this->getContainer()->get('paypal_unified.common.customer_helper')
+            $this->getContainer()->get('paypal_unified.common.customer_helper'),
+            $this->getContainer()->get('snippets')
         );
     }
 

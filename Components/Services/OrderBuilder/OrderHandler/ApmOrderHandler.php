@@ -9,6 +9,7 @@
 namespace SwagPaymentPayPalUnified\Components\Services\OrderBuilder\OrderHandler;
 
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
+use Shopware_Components_Snippet_Manager as SnippetManager;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\PayPalOrderParameter;
 use SwagPaymentPayPalUnified\Components\Services\Common\CustomerHelper;
 use SwagPaymentPayPalUnified\Components\Services\Common\PriceFormatter;
@@ -37,7 +38,8 @@ class ApmOrderHandler extends AbstractOrderHandler
         ContextServiceInterface $contextService,
         PriceFormatter $priceFormatter,
         CustomerHelper $customerHelper,
-        PaymentSourceFactory $paymentSourceFactory
+        PaymentSourceFactory $paymentSourceFactory,
+        SnippetManager $snippetManager
     ) {
         parent::__construct(
             $settingsService,
@@ -46,7 +48,8 @@ class ApmOrderHandler extends AbstractOrderHandler
             $returnUrlHelper,
             $contextService,
             $priceFormatter,
-            $customerHelper
+            $customerHelper,
+            $snippetManager
         );
 
         $this->paymentSourceFactory = $paymentSourceFactory;
