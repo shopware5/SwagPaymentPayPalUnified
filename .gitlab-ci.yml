@@ -143,7 +143,7 @@ javascript-checks:
         - cd custom/plugins/${PLUGIN_NAME}
         - (cd Tests/E2E && npm install)
         - make check-js-code
-        - make run-javascript-tests
+        - make run-jest-tests
 
 php-analysis:
     extends: .phpunit_base
