@@ -4,7 +4,7 @@
     {$smarty.block.parent}
 
     {if $paypalUnifiedEcListingActive && $paypalIsNotAllowed === false}
-        <div class="paypal-unified-ec--button-placeholder">
+        <div class="paypal-unified-ec--button-placeholder{if $paypalUnifiedEcButtonStyleSize == 'responsive'} paypal-button--is-responsive-size{/if}">
             {include file='frontend/paypal_unified/express_checkout/button.tpl' isProduct = true isListing = true}
         </div>
     {/if}

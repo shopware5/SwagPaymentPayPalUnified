@@ -12,8 +12,40 @@
 }
 
 .paypal-button-width--responsive {
-    width: 100%;
+    width: 63%;
     text-align: right;
+
+    &.paypal-button--is-ajax-cart {
+        width: 100%;
+        text-align: right;
+    }
+
+    &.paypal-button--is-login {
+        width: 100%;
+    }
+
+    &.paypal-button--is-listing {
+        width: 100%;
+    }
+
+    &.paypal-button--is-cart {
+        .unitize-width(290);
+    }
+
+    &.paypal-unified-in-context--button-container,
+    &.paypal-unified-pay-later--button-container,
+    &.paypal-unified--smart-payment-buttons,
+    &.paypal-unified--sepa-payment-buttons {
+        .unitize-width(236);
+    }
+}
+
+.container--ajax-cart.is--shown {
+    .paypal-unified-ec--outer-button-container {
+        .paypal-unified-ec--button-container.paypal-button--is-ajax-cart.paypal-button-width--responsive {
+            width: 100%;
+        }
+    }
 }
 
 .paypal-unified--smart-payment-buttons{

@@ -28,6 +28,7 @@ use SwagPaymentPayPalUnified\Setup\Versions\UpdateTo500;
 use SwagPaymentPayPalUnified\Setup\Versions\UpdateTo504;
 use SwagPaymentPayPalUnified\Setup\Versions\UpdateTo600;
 use SwagPaymentPayPalUnified\Setup\Versions\UpdateTo602;
+use SwagPaymentPayPalUnified\Setup\Versions\UpdateTo604;
 
 class Updater
 {
@@ -224,6 +225,12 @@ class Updater
                 $this->translationTransformer,
                 $this->attributeCrudService,
                 $this->modelManager
+            ))->update();
+        }
+
+        if (\version_compare($oldVersion, '6.0.4', '<')) {
+            (new UpdateTo604(
+                $this->connection
             ))->update();
         }
     }

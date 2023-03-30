@@ -15,7 +15,7 @@
 
     {block name='frontend_checkout_cart_table_actions_paypal_unified_ec_button'}
         {if $paypalUnifiedEcCartActive && $paypalIsNotAllowed === false}
-            {include file='frontend/paypal_unified/express_checkout/button.tpl'}
+            {include file='frontend/paypal_unified/express_checkout/button.tpl' isCart = true}
         {/if}
     {/block}
 {/block}

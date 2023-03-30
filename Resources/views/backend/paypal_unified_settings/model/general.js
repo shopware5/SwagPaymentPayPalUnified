@@ -30,7 +30,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.model.General', {
         { name: 'intent', type: 'string', defaultValue: 'CAPTURE' },
         { name: 'buttonStyleColor', type: 'string', defaultValue: 'gold' },
         { name: 'buttonStyleShape', type: 'string', defaultValue: 'rect' },
-        { name: 'buttonStyleSize', type: 'string', defaultValue: 'large' },
+        { name: 'buttonStyleSize', type: 'string', defaultValue: 'responsive' },
         { name: 'buttonLocale', type: 'string', defaultValue: '' }
     ]
 });

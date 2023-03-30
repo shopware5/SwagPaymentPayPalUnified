@@ -1,7 +1,21 @@
 {block name='paypal_unified_ec_button_container_cart'}
     <div class="paypal-unified-ec--outer-button-container">
         {block name='paypal_unified_ec_button_container_cart_inner'}
-            <div class="paypal-unified-ec--button-container{if $isLoginPage} left{else} right{/if}"
+            {block name='paypal_unified_ec_button_container_cart_inner_class_list'}
+                {$classList = 'paypal-unified-ec--button-container'}
+
+                {if $isLoginPage}
+                    {$classList = $classList|cat:' paypal-button--is-login left'}
+                {else}
+                    {$classList = $classList|cat:' right'}
+                {/if}
+
+                {if $paypalEcAjaxCart} {$classList = $classList|cat:' paypal-button--is-ajax-cart'}{/if}
+                {if $isListing}{$classList = $classList|cat:' paypal-button--is-listing'}{/if}
+                {if $isCart}{$classList = $classList|cat:' paypal-button--is-cart'}{/if}
+            {/block}
+
+            <div class="{$classList}"
                  data-paypalUnifiedEcButton="true"
                  data-clientId="{$paypalUnifiedClientId}"
                  data-currency="{$paypalUnifiedCurrency}"
