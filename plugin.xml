@@ -22,6 +22,7 @@
             PT-13057 - Falls ein Sprachshop keine eigenen Einstellungen hat, werden die Einstellungen des Hauptshops berücksichtigt;
             PT-13060 - Deaktiviert vorübergehend die Zahlungsmethode "Trustly", da sie derzeit bei PayPal nicht verfügbar ist;
             PT-13062 - Standardgröße der PayPal Buttons geändert und Größe angepasst;
+            PT-13063 - Verbessert den Kaufen-Button-Text für Express-Bestellungen;
         </changes>
         <changes lang="en">
             PT-13029 - Improved transfer of PayPal settings via API;
@@ -32,6 +33,7 @@
             PT-13057 - If a language shop does not have its own settings, the settings of the main shop are taken into account;
             PT-13060 - Temporarily disables the "Trustly" payment method, as it is currently not available at PayPal;
             PT-13062 - Default size of PayPal buttons changed and resized;
+            PT-13063 - Improves the buy button text for Express Orders;
         </changes>
     </changelog>
 

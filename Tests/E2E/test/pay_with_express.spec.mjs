@@ -46,7 +46,7 @@ test.describe('Is Express Checkout button available', () => {
         await paypalPage.locator('#btnLogin').click();
 
         // Click [data-testid="submit-button-initial"]
-        await paypalPage.locator('button:has-text("Kauf abschließen"), button:has-text("Jetzt zahlen")').click();
+        await paypalPage.locator('button:has-text("Weiter zur Überprüfung der Bestellung")').click();
 
         await page.click('input[name="sAGB"]');
 
@@ -87,7 +87,7 @@ test.describe('Is Express Checkout button available', () => {
         await paypalPage.locator('#btnLogin').click();
 
         // Click [data-testid="submit-button-initial"]
-        await paypalPage.locator('button:has-text("Kauf abschließen"), button:has-text("Jetzt zahlen")').click();
+        await paypalPage.locator('button:has-text("Weiter zur Überprüfung der Bestellung")').click();
 
         await page.click('input[name="sAGB"]');
 
@@ -134,7 +134,7 @@ test.describe('Is Express Checkout button available', () => {
         await paypalPage.locator('#btnLogin').click();
 
         // Click [data-testid="submit-button-initial"]
-        await paypalPage.locator('button:has-text("Kauf abschließen"), button:has-text("Jetzt zahlen")').click();
+        await paypalPage.locator('button:has-text("Weiter zur Überprüfung der Bestellung")').click();
 
         await page.click('input[name="sAGB"]');
 
@@ -180,7 +180,7 @@ test.describe('Is Express Checkout button available', () => {
         await paypalPage.locator('#btnLogin').click();
 
         // Click [data-testid="submit-button-initial"]
-        await paypalPage.locator('button:has-text("Kauf abschließen"), button:has-text("Jetzt zahlen")').click();
+        await paypalPage.locator('button:has-text("Weiter zur Überprüfung der Bestellung")').click();
 
         await page.click('input[name="sAGB"]');
 
@@ -217,7 +217,7 @@ test.describe('Is Express Checkout button available', () => {
         await paypalPage.locator('#btnLogin').click();
 
         // Click [data-testid="submit-button-initial"]
-        await paypalPage.locator('button:has-text("Kauf abschließen"), button:has-text("Jetzt zahlen")').click();
+        await paypalPage.locator('button:has-text("Weiter zur Überprüfung der Bestellung")').click();
 
         await page.click('input[name="sAGB"]');
 
