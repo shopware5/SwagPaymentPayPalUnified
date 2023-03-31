@@ -50,23 +50,57 @@
     };
 
     SwagPaymentPaypalCreateOrderFunction.prototype.createExtraData = function() {
-        var $extraDataPlugin = $(this.storageFieldPluginCssSelector).data(this.storageFieldPluginSelector),
-            result = this.checkNewsletterCheckbox(),
-            $customerCommentField;
+        var me = this,
+            $formElements = $(this.storageFieldPluginCssSelector),
+            result = this.checkNewsletterCheckbox();
 
-        if ($extraDataPlugin && $extraDataPlugin.$el.length && $extraDataPlugin.storage.getItem($extraDataPlugin.getStorageKey())) {
-            result[$extraDataPlugin.opts.storageKeyName] = $extraDataPlugin.storage.getItem($extraDataPlugin.getStorageKey());
-
-            // Removes the value from the storage manager
-            $extraDataPlugin.onFormSubmit();
-
-            return result;
+        // This is a fallback for Shopware versions that do not have swStorageField jQuery plugin.
+        if (!$.isFunction($.fn.swStorageField)) {
+            return this.createExtraDataLegacy(result);
         }
 
-        $customerCommentField = $(this.customerCommentFieldSelector);
-        if ($customerCommentField.length) {
-            result[this.fallbackParamerterName] = $customerCommentField.val();
-        }
+        $formElements.each(function(index, formElement) {
+            var $formElement = $(formElement),
+                $formElementPlugin = $formElement.data(me.storageFieldPluginSelector),
+                storageKeyName = $formElementPlugin.storageKey.replace($formElementPlugin.opts.storageKeyPrefix, ''),
+                storageItemValue;
+
+            if (!$formElementPlugin || !$formElementPlugin.$el.length) {
+                return;
+            }
+
+            if (storageKeyName) {
+                storageItemValue = $formElementPlugin.storage.getItem($formElementPlugin.getStorageKey());
+            }
+
+            if (storageItemValue) {
+                result[storageKeyName] = storageItemValue;
+            }
+
+            $formElementPlugin.onFormSubmit();
+        });
+
+        return result;
+    };
+
+    SwagPaymentPaypalCreateOrderFunction.prototype.createExtraDataLegacy = function(result) {
+        var me = this,
+            $formElements = $(':input');
+
+        $formElements.each(function(index, formElement) {
+            var $formElement = $(formElement),
+                storageKeyName = $formElement.attr('name');
+
+            if ($formElement.hasClass(me.customerCommentFieldSelector)) {
+                storageKeyName = me.fallbackParamerterName;
+            }
+
+            if (!storageKeyName) {
+                return;
+            }
+
+            result[storageKeyName.toLowerCase()] = $formElement.val();
+        });
 
         return result;
     };

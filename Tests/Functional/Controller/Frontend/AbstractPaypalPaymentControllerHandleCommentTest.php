@@ -245,7 +245,7 @@ class AbstractPaypalPaymentControllerHandleCommentTest extends PaypalPaymentCont
     private function createRequest($comment = null)
     {
         $request = new Enlight_Controller_Request_RequestTestCase();
-        $request->setParam(AbstractPaypalPaymentController::COMMENT_KEY, $comment);
+        $request->setParam(\strtolower(AbstractPaypalPaymentController::COMMENT_KEY), $comment);
 
         return $request;
     }

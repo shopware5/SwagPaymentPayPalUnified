@@ -23,6 +23,7 @@
             PT-13060 - Deaktiviert vorübergehend die Zahlungsmethode "Trustly", da sie derzeit bei PayPal nicht verfügbar ist;
             PT-13062 - Standardgröße der PayPal Buttons geändert und Größe angepasst;
             PT-13063 - Verbessert den Kaufen-Button-Text für Express-Bestellungen;
+            PT-13066 - Individuelle Eingabefelder werden nun bei der Bestellbestätigung mit übertragen;
         </changes>
         <changes lang="en">
             PT-13029 - Improved transfer of PayPal settings via API;
@@ -34,6 +35,7 @@
             PT-13060 - Temporarily disables the "Trustly" payment method, as it is currently not available at PayPal;
             PT-13062 - Default size of PayPal buttons changed and resized;
             PT-13063 - Improves the buy button text for Express Orders;
+            PT-13066 - Custom input fields are now transferred with the order confirmation;
         </changes>
     </changelog>
 
