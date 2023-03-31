@@ -215,7 +215,8 @@
                 params = {
                     'client-id': clientId,
                     intent: this.opts.paypalIntent.toLowerCase(),
-                    'disable-funding': this.opts.disabledFundings
+                    'disable-funding': this.opts.disabledFundings,
+                    commit: false
                 };
 
             if (this.opts.showPayLater) {
