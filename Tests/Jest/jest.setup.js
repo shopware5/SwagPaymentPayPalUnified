@@ -1,9 +1,13 @@
 window.$ = window.jQuery = require('./../../../../../themes/Frontend/Responsive/node_modules/jquery');
+window.cookieRemoval = 0;
+
 require('./matchMedia.mock.js');
 require('./paypal.mock.js');
 
 require('./../../../../../themes/Frontend/Responsive/frontend/_public/src/js/jquery.plugin-base.js');
 require('./../../../../../themes/Frontend/Responsive/frontend/_public/src/js/jquery.state-manager.js');
+require('./../../../../../themes/Frontend/Responsive/frontend/_public/src/js/jquery.storage-manager.js');
+require('./../../../../../themes/Frontend/Responsive/frontend/_public/src/js/jquery.storage-field');
 
 // Base functions
 require('./../../Resources/views/frontend/_public/src/js/jquery.button-config');

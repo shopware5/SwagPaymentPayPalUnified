@@ -736,7 +736,7 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
     protected function handleComment()
     {
         $session = $this->dependencyProvider->getSession();
-        $sComment = $this->request->get(self::COMMENT_KEY, '');
+        $sComment = $this->request->get(\strtolower(self::COMMENT_KEY), '');
 
         if (empty($sComment) && $session->offsetExists(self::COMMENT_KEY) && \is_string($session->offsetGet(self::COMMENT_KEY))) {
             $sComment = $session->offsetGet(self::COMMENT_KEY);

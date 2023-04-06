@@ -50,7 +50,9 @@ test.describe('Frontend', () => {
         await page.waitForLoadState('load');
 
         // add a customer comment for a later check
-        await page.fill('.user-comment--field', 'This is a customer comment');
+        const commentField = await page.locator('.user-comment--field');
+        await commentField.scrollIntoViewIfNeeded();
+        await commentField.type('This is a customer comment');
 
         // check: can not check out without accept AGBs
         await locator.dispatchEvent('click');
