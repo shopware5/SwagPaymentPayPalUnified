@@ -22,11 +22,12 @@ class WidgetsRegistrationSubscriberTest extends TestCase
     public function testGetSubscribedEvents()
     {
         $events = Widgets::getSubscribedEvents();
-        static::assertCount(4, $events);
+        static::assertCount(5, $events);
         static::assertSame('onGetEcV2ControllerPath', $events['Enlight_Controller_Dispatcher_ControllerPath_Widgets_PaypalUnifiedV2ExpressCheckout']);
         static::assertSame('onGetSpbV2ControllerPath', $events['Enlight_Controller_Dispatcher_ControllerPath_Widgets_PaypalUnifiedV2SmartPaymentButtons']);
         static::assertSame('onGetAcdcV2ControllerPath', $events['Enlight_Controller_Dispatcher_ControllerPath_Widgets_PaypalUnifiedV2AdvancedCreditDebitCard']);
         static::assertSame('onGetPui2ControllerPath', $events['Enlight_Controller_Dispatcher_ControllerPath_Widgets_PaypalUnifiedV2PayUponInvoice']);
+        static::assertSame('onGetOrderNumberControllerPath', $events['Enlight_Controller_Dispatcher_ControllerPath_Widgets_PaypalUnifiedOrderNumber']);
     }
 
     public function testOnGetEcControllerPath()

@@ -133,6 +133,8 @@
 
             this.buttonSize = $.swagPayPalCreateButtonSizeObject(this.opts);
 
+            this.cancelPaymentFunction = $.createCancelPaymentFunction();
+
             this.$el.addClass(this.buttonSize[this.opts.size].widthClass);
 
             this.createButton();
@@ -311,7 +313,7 @@
                 /**
                  * Will be called if the payment process is cancelled by the customer
                  */
-                onCancel: this.onCancel.bind(this),
+                onCancel: this.cancelPaymentFunction.onCancel.bind(this.cancelPaymentFunction),
 
                 /**
                  * Will be called if any api error occurred
@@ -380,10 +382,6 @@
             }, function() {
                 me.onPayPalAPIError();
             }).promise();
-        },
-
-        onCancel: function() {
-            $.loadingIndicator.close();
         },
 
         onPayPalAPIError: function() {

@@ -50,7 +50,7 @@ class OrderNumberService
     {
         $orderNumber = $this->dependencyProvider->getSession()->offsetGet(NumberRangeIncrementerDecorator::ORDERNUMBER_SESSION_KEY);
 
-        if (!\is_string($orderNumber)) {
+        if (!\is_string($orderNumber) && !\is_int($orderNumber)) {
             $this->releaseOrderNumber();
 
             return;

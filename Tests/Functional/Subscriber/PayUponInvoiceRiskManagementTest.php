@@ -639,18 +639,4 @@ class PayUponInvoiceRiskManagementTest extends TestCase
             return true;
         };
     }
-
-    /**
-     * @return ShopwareConfig
-     */
-    private function getShopwareConfig()
-    {
-        $config = $this->createMock(ShopwareConfig::class);
-        $config->method('offsetGet')->willReturnMap([
-            ['showphonenumberfield', true],
-            ['showbirthdayfield', true],
-        ]);
-
-        return $config;
-    }
 }

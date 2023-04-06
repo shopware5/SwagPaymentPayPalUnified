@@ -24,6 +24,7 @@
             PT-13062 - Standardgröße der PayPal Buttons geändert und Größe angepasst;
             PT-13063 - Verbessert den Kaufen-Button-Text für Express-Bestellungen;
             PT-13066 - Individuelle Eingabefelder werden nun bei der Bestellbestätigung mit übertragen;
+            PT-13069 - Bestellnummer wird wiederhergestellt, wenn der Kunde die Zahlung abbricht;
         </changes>
         <changes lang="en">
             PT-13029 - Improved transfer of PayPal settings via API;
@@ -36,6 +37,7 @@
             PT-13062 - Default size of PayPal buttons changed and resized;
             PT-13063 - Improves the buy button text for Express Orders;
             PT-13066 - Custom input fields are now transferred with the order confirmation;
+            PT-13069 - Order number is restored when the customer cancels the payment;
         </changes>
     </changelog>
 

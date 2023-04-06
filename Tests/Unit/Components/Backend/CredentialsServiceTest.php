@@ -154,7 +154,7 @@ class CredentialsServiceTest extends TestCase
     {
         static::expectException(UnexpectedValueException::class);
 
-        if (\is_callable([TestCase::class, 'expectExceptionMessageMatches'])) {
+        if (\method_exists($this, 'expectExceptionMessageMatches')) {
             static::expectExceptionMessageMatches(self::UNEXPECTED_VALUE_EXCEPTION_MESSAGE);
         }
 
