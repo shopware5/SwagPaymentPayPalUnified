@@ -40,7 +40,7 @@ class ThreeDSecureResultCheckerTest extends TestCase
             $this->expectException(Exception::class);
             $this->expectExceptionCode($expectedExceptionCode);
 
-            if (\is_callable([TestCase::class, 'expectExceptionMessageMatches'])) {
+            if (\method_exists($this, 'expectExceptionMessageMatches')) {
                 $this->expectExceptionMessageMatches(
                     '/^.* REASON: ' . ThreeDSecureExceptionDescription::getDescriptionByCode($expectedExceptionCode) . '.*$/'
                 );

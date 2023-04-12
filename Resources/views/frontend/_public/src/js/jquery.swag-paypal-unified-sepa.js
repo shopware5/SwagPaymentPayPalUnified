@@ -46,6 +46,8 @@
                 'swagPayPalUnifiedSepa'
             );
 
+            this.cancelPaymentFunction = $.createCancelPaymentFunction();
+
             this.formValidityFunctions.hideConfirmButton();
             this.formValidityFunctions.disableConfirmButton();
 
@@ -155,7 +157,7 @@
                 /**
                  * Will be called if the payment process is cancelled by the customer
                  */
-                onCancel: this.onCancel.bind(this),
+                onCancel: this.cancelPaymentFunction.onCancel.bind(this.cancelPaymentFunction),
 
                 /**
                  * Will be called if any api error occurred
@@ -178,10 +180,6 @@
             });
 
             actions.redirect($.swagPayPalRenderUrl(this.opts.returnUrl, params));
-        },
-
-        onCancel: function() {
-            $.loadingIndicator.close();
         },
 
         /**

@@ -14,6 +14,8 @@ require('./../../Resources/views/frontend/_public/src/js/jquery.button-config');
 require('./../../Resources/views/frontend/_public/src/js/jquery.create-url-function');
 require('./../../Resources/views/frontend/_public/src/js/jquery.create_order_function');
 require('./../../Resources/views/frontend/_public/src/js/jquery.form_validity_functions');
+require('./../../Resources/views/frontend/_public/src/js/jquery.button-restore-ordernumber-to-pool');
+require('./../../Resources/views/frontend/_public/src/js/jquery.cancel-payment-function');
 
 // Plugins
 require('./../../Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.advanced-credit-debit-card');

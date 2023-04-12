@@ -108,6 +108,25 @@ class OrderNumberServiceTest extends TestCase
     /**
      * @return void
      */
+    public function testPutBackRestoreOrderNumberToPoolWithInt()
+    {
+        $this->getContainer()->get('session')->offsetSet(NumberRangeIncrementerDecorator::ORDERNUMBER_SESSION_KEY, 999);
+        $this->getContainer()->get('session')->offsetSet('sPaymentID', 7);
+
+        $this->getOrderNumberService()->restoreOrdernumberToPool();
+
+        $session = $this->getContainer()->get('session');
+        static::assertFalse($session->offsetExists(NumberRangeIncrementerDecorator::ORDERNUMBER_SESSION_KEY));
+        static::assertNull($session->offsetGet(NumberRangeIncrementerDecorator::ORDERNUMBER_SESSION_KEY));
+
+        $result = $this->getOrderNumberService()->getOrderNumber();
+
+        static::assertSame('999', $result);
+    }
+
+    /**
+     * @return void
+     */
     public function testReleaseOrderNumber()
     {
         $sessionValue = 'anyOrderNumber';
