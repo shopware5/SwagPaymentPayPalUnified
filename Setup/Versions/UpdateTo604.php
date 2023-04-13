@@ -9,6 +9,8 @@
 namespace SwagPaymentPayPalUnified\Setup\Versions;
 
 use Doctrine\DBAL\Connection;
+use Shopware_Components_Translation as TranslationWriter;
+use SwagPaymentPayPalUnified\Setup\TranslationUpdater;
 
 class UpdateTo604
 {
@@ -17,9 +19,15 @@ class UpdateTo604
      */
     private $connection;
 
-    public function __construct(Connection $connection)
+    /**
+     * @var TranslationWriter
+     */
+    private $translationWriter;
+
+    public function __construct(Connection $connection, TranslationWriter $translationWriter)
     {
         $this->connection = $connection;
+        $this->translationWriter = $translationWriter;
     }
 
     /**
@@ -29,6 +37,16 @@ class UpdateTo604
     {
         $this->updateGeneralSettingsButtonStyleSize();
         $this->updateExpressSettingsButtonStyleSize();
+        $this->updatePayLaterTranslations();
+    }
+
+    /**
+     * @return void
+     */
+    private function updatePayLaterTranslations()
+    {
+        $translationUpdater = new TranslationUpdater($this->connection, $this->translationWriter);
+        $translationUpdater->updateTranslationForAllShops();
     }
 
     /**

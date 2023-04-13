@@ -2606,26 +2606,6 @@ parameters:
 			path: Tests/Functional/Subscriber/AdvancedCreditDebitCartRiskManagementTest.php
 
 		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\BackendSubscriberTest\\:\\:testCanBeCreated\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/BackendSubscriberTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\BackendSubscriberTest\\:\\:testGetSubscribedEventsHasCorrectEvents\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/BackendSubscriberTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\BackendSubscriberTest\\:\\:testOnLoadBackendIndexExtendsTemplate\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/BackendSubscriberTest.php
-
-		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\BackendSubscriberTest\\:\\:testOnPostDispatchConfigExtendsTemplate\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: Tests/Functional/Subscriber/BackendSubscriberTest.php
-
-		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Functional\\\\Subscriber\\\\ControllerRegistration\\\\BackendRegistrationSubscriberTest\\:\\:testCanBeCreated\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: Tests/Functional/Subscriber/ControllerRegistration/BackendRegistrationSubscriberTest.php

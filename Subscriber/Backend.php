@@ -8,11 +8,15 @@
 
 namespace SwagPaymentPayPalUnified\Subscriber;
 
+use Doctrine\DBAL\Connection;
 use Enlight\Event\SubscriberInterface;
 use Enlight_Controller_ActionEventArgs as ActionEventArgs;
 use Enlight_View_Default;
+use Shopware_Components_Translation;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\PayPalBundle\Services\NonceService;
+use SwagPaymentPayPalUnified\Setup\TranslationUpdater;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class Backend implements SubscriberInterface
 {
@@ -27,12 +31,35 @@ class Backend implements SubscriberInterface
     private $nonceService;
 
     /**
+     * @var Shopware_Components_Translation
+     */
+    private $translationWriter;
+
+    /**
+     * @var Connection
+     */
+    private $connection;
+
+    /**
+     * @var ContainerInterface
+     */
+    private $container;
+
+    /**
      * @param string $pluginDir
      */
-    public function __construct($pluginDir, NonceService $nonceService)
-    {
+    public function __construct(
+        $pluginDir,
+        NonceService $nonceService,
+        ContainerInterface $container,
+        Connection $connection
+    ) {
         $this->pluginDir = $pluginDir;
         $this->nonceService = $nonceService;
+        $this->connection = $connection;
+        $this->container = $container;
+
+        $this->translationWriter = $this->getTranslator();
     }
 
     /**
@@ -77,10 +104,16 @@ class Backend implements SubscriberInterface
     public function onPostDispatchConfig(ActionEventArgs $arguments)
     {
         $view = $arguments->getSubject()->View();
+        $request = $arguments->getSubject()->Request();
 
-        if ($arguments->getRequest()->getActionName() === 'load') {
+        if ($request->getActionName() === 'load') {
             $view->addTemplateDir($this->pluginDir . '/Resources/views/');
             $view->extendsTemplate('backend/config/view/form/document_paypal_unified.js');
+        }
+
+        if ($request->getActionName() === 'saveValues' && $request->getParam('_repositoryClass') === 'shop') {
+            $translationUpdater = new TranslationUpdater($this->connection, $this->translationWriter);
+            $translationUpdater->updateTranslationByLocaleId($request->getParam('localeId', 1));
         }
     }
 
@@ -115,5 +148,23 @@ class Backend implements SubscriberInterface
         }
 
         $view->extendsTemplate('backend/order/detail/overview_paypal_extension.js');
+    }
+
+    /**
+     * @return Shopware_Components_Translation
+     */
+    private function getTranslator()
+    {
+        $translation = null;
+
+        if ($this->container->initialized('translation')) {
+            $translation = $this->container->get('translation');
+        }
+
+        if (!$translation instanceof Shopware_Components_Translation) {
+            $translation = new Shopware_Components_Translation($this->connection, $this->container);
+        }
+
+        return $translation;
     }
 }
