@@ -230,7 +230,8 @@ class Updater
 
         if (\version_compare($oldVersion, '6.0.4', '<')) {
             (new UpdateTo604(
-                $this->connection
+                $this->connection,
+                $this->translation
             ))->update();
         }
     }

@@ -11,14 +11,15 @@ namespace SwagPaymentPayPalUnified\Tests\Functional\Setup;
 use PDO;
 use PHPUnit\Framework\TestCase;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
+use SwagPaymentPayPalUnified\Setup\TranslationUpdater;
 use SwagPaymentPayPalUnified\Setup\Versions\UpdateTo604;
-use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\SettingsHelperTrait;
+use SwagPaymentPayPalUnified\Tests\Functional\TranslationTestCaseTrait;
 
 class UpdateTo604Test extends TestCase
 {
-    use ContainerTrait;
+    use TranslationTestCaseTrait;
     use SettingsHelperTrait;
     use DatabaseTestCaseTrait;
 
@@ -27,6 +28,10 @@ class UpdateTo604Test extends TestCase
      */
     public function testUpdate()
     {
+        $sql = file_get_contents(__DIR__ . '/../../../_fixtures/shops_for_translation.sql');
+        static::assertTrue(\is_string($sql));
+        $this->getContainer()->get('dbal_connection')->exec($sql);
+
         $this->insertGeneralSettingsFromArray(['active' => 1]);
         $this->insertGeneralSettingsFromArray(['active' => 1, 'shop_id' => 2]);
         $this->insertExpressCheckoutSettingsFromArray([]);
@@ -59,6 +64,29 @@ class UpdateTo604Test extends TestCase
         foreach ($expressSizeResult as $currentSize) {
             static::assertSame('responsive', $currentSize);
         }
+
+        $translationReader = $this->getTranslationService();
+        $paymentMethodId = 8;
+
+        $australianTranslation = $translationReader->read(3, TranslationUpdater::TRANSLATION_TYPE, $paymentMethodId, true);
+        static::assertArrayHasKey('description', $australianTranslation);
+        static::assertSame('PayPal, Pay in 4', $australianTranslation['description']);
+
+        $usTranslation = $translationReader->read(4, TranslationUpdater::TRANSLATION_TYPE, $paymentMethodId, true);
+        static::assertArrayHasKey('description', $usTranslation);
+        static::assertSame('PayPal, Pay Later', $usTranslation['description']);
+
+        $spainTranslation = $translationReader->read(5, TranslationUpdater::TRANSLATION_TYPE, $paymentMethodId, true);
+        static::assertArrayHasKey('description', $spainTranslation);
+        static::assertSame('PayPal, Paga en 3 plazos', $spainTranslation['description']);
+
+        $frenchTranslation = $translationReader->read(6, TranslationUpdater::TRANSLATION_TYPE, $paymentMethodId, true);
+        static::assertArrayHasKey('description', $frenchTranslation);
+        static::assertSame('PayPal, Paiement en 4X', $frenchTranslation['description']);
+
+        $italianTranslation = $translationReader->read(7, TranslationUpdater::TRANSLATION_TYPE, $paymentMethodId, true);
+        static::assertArrayHasKey('description', $italianTranslation);
+        static::assertSame('PayPal, Paga in 3 rate', $italianTranslation['description']);
     }
 
     /**
@@ -80,6 +108,9 @@ class UpdateTo604Test extends TestCase
      */
     private function createUpdateTo604()
     {
-        return new UpdateTo604($this->getContainer()->get('dbal_connection'));
+        return new UpdateTo604(
+            $this->getContainer()->get('dbal_connection'),
+            $this->getTranslationService()
+        );
     }
 }

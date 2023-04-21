@@ -83,6 +83,51 @@ EOD
 EOD
             ],
         ],
+        'en_US' => [
+            PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_LATER_METHOD_NAME => [
+                'description' => 'PayPal, Pay Later',
+                'additionalDescription' => <<<'EOD'
+<!-- PayPal PayLater Message -->
+<div data-pp-message data-pp-style-logo-type="primary" data-pp-placement="payment" data-pp-style-logo-position="left" data-pp-style-text-size="14" data-pp-style-text-color="black" style="margin-top: 5px;"></div>
+EOD
+            ],
+        ],
+        'fr_FR' => [
+            PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_LATER_METHOD_NAME => [
+                'description' => 'PayPal, Paiement en 4X',
+                'additionalDescription' => <<<'EOD'
+<!-- PayPal PayLater Message -->
+<div data-pp-message data-pp-style-logo-type="primary" data-pp-placement="payment" data-pp-style-logo-position="left" data-pp-style-text-size="14" data-pp-style-text-color="black" style="margin-top: 5px;"></div>
+EOD
+            ],
+        ],
+        'it_IT' => [
+            PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_LATER_METHOD_NAME => [
+                'description' => 'PayPal, Paga in 3 rate',
+                'additionalDescription' => <<<'EOD'
+<!-- PayPal PayLater Message -->
+<div data-pp-message data-pp-style-logo-type="primary" data-pp-placement="payment" data-pp-style-logo-position="left" data-pp-style-text-size="14" data-pp-style-text-color="black" style="margin-top: 5px;"></div>
+EOD
+            ],
+        ],
+        'es_ES' => [
+            PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_LATER_METHOD_NAME => [
+                'description' => 'PayPal, Paga en 3 plazos',
+                'additionalDescription' => <<<'EOD'
+<!-- PayPal PayLater Message -->
+<div data-pp-message data-pp-style-logo-type="primary" data-pp-placement="payment" data-pp-style-logo-position="left" data-pp-style-text-size="14" data-pp-style-text-color="black" style="margin-top: 5px;"></div>
+EOD
+            ],
+        ],
+        'en_AU' => [
+            PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_LATER_METHOD_NAME => [
+                'description' => 'PayPal, Pay in 4',
+                'additionalDescription' => <<<'EOD'
+<!-- PayPal PayLater Message -->
+<div data-pp-message data-pp-style-logo-type="primary" data-pp-placement="payment" data-pp-style-logo-position="left" data-pp-style-text-size="14" data-pp-style-text-color="black" style="margin-top: 5px;"></div>
+EOD
+            ],
+        ],
     ];
 
     private function __construct()
