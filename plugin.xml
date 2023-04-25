@@ -5,14 +5,14 @@
     <label lang="de">PayPal</label>
     <label lang="en">PayPal</label>
 
-    <version>6.0.3</version>
+    <version>6.0.4</version>
     <copyright>(c) by shopware AG</copyright>
     <license>MIT</license>
     <link>http://store.shopware.com</link>
     <author>shopware AG</author>
     <compatibility minVersion="5.2.27" maxVersion="5.99.99"/>
 
-    <changelog version="REPLACE_GLOBAL_WITH_NEXT_VERSION(6.0.4)">
+    <changelog version="6.0.4">
         <changes lang="de">
             PT-13029 - Übertragung der PayPal-Einstellungen via API verbessert;
             PT-13030 - Verbessert die Benutzerfreundlichkeit für Express Bestellungen mit falsch separierten Namen;
