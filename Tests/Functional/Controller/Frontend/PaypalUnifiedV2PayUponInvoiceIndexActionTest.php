@@ -17,6 +17,8 @@ use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\OrderResource;
 use SwagPaymentPayPalUnified\Tests\Functional\AssertLocationTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\Controller\Frontend\_fixtures\SimplePayPalOrderCreator;
+use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
+use SwagPaymentPayPalUnified\Tests\Functional\SettingsHelperTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\ShopRegistrationTrait;
 use SwagPaymentPayPalUnified\Tests\Mocks\ConnectionMock;
 use SwagPaymentPayPalUnified\Tests\Unit\PaypalPaymentControllerTestCase;
@@ -27,6 +29,8 @@ class PaypalUnifiedV2PayUponInvoiceIndexActionTest extends PaypalPaymentControll
 {
     use ShopRegistrationTrait;
     use AssertLocationTrait;
+    use DatabaseTestCaseTrait;
+    use SettingsHelperTrait;
 
     /**
      * @after
@@ -45,6 +49,8 @@ class PaypalUnifiedV2PayUponInvoiceIndexActionTest extends PaypalPaymentControll
     public function testIndexAction()
     {
         $orderNumber = '55555555555';
+
+        $this->insertGeneralSettingsFromArray(['active' => true]);
 
         $request = new Enlight_Controller_Request_RequestTestCase();
         $response = new Enlight_Controller_Response_ResponseTestCase();

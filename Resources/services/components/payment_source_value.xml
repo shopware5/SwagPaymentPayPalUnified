@@ -111,6 +111,16 @@
             <tag name="paypal_unified.payment_source_value_handler"/>
         </service>
 
+        <service id="paypal_unified.pay_upon_invoice_payment_source_value_handler"
+                 class="SwagPaymentPayPalUnified\Components\Services\OrderBuilder\PaymentSource\PaymentSourceValueHandler\PuiPaymentSourceValueHandler"
+                 public="true">
+            <argument type="service" id="paypal_unified.settings_service"/>
+            <argument type="service" id="shopware_storefront.context_service"/>
+            <argument type="service" id="paypal_unified.common.return_url_helper"/>
+            <argument type="service" id="paypal_unified.phone_number_service"/>
+            <tag name="paypal_unified.payment_source_value_handler"/>
+        </service>
+
         <service id="paypal_unified.trustly_payment_source_value_handler"
                  class="SwagPaymentPayPalUnified\Components\Services\OrderBuilder\PaymentSource\PaymentSourceValueHandler\TrustlyPaymentSourceValueHandler"
                  public="true">

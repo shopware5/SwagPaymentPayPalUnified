@@ -19,6 +19,7 @@ use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\PayPalOrderParamete
 use SwagPaymentPayPalUnified\Components\Services\Common\CustomerHelper;
 use SwagPaymentPayPalUnified\Components\Services\Common\PriceFormatter;
 use SwagPaymentPayPalUnified\Components\Services\Common\ReturnUrlHelper;
+use SwagPaymentPayPalUnified\Components\Services\OrderBuilder\PaymentSource\PaymentSourceFactory;
 use SwagPaymentPayPalUnified\Components\Services\PayPalOrder\AmountProvider;
 use SwagPaymentPayPalUnified\Components\Services\PayPalOrder\ItemListProvider;
 use SwagPaymentPayPalUnified\Components\Services\PhoneNumberService;
@@ -41,6 +42,11 @@ class PuiOrderHandler extends AbstractOrderHandler
      */
     protected $phoneNumberService;
 
+    /**
+     * @var PaymentSourceFactory
+     */
+    protected $paymentSourceFactory;
+
     public function __construct(
         SettingsServiceInterface $settingsService,
         ItemListProvider $itemListProvider,
@@ -50,9 +56,11 @@ class PuiOrderHandler extends AbstractOrderHandler
         PriceFormatter $priceFormatter,
         CustomerHelper $customerHelper,
         PhoneNumberService $phoneNumberService,
-        SnippetManager $snippetManager
+        SnippetManager $snippetManager,
+        PaymentSourceFactory $paymentSourceFactory
     ) {
         $this->phoneNumberService = $phoneNumberService;
+        $this->paymentSourceFactory = $paymentSourceFactory;
 
         parent::__construct(
             $settingsService,
@@ -75,19 +83,30 @@ class PuiOrderHandler extends AbstractOrderHandler
     {
         $order = new Order();
 
+        $order->setProcessingInstruction(ProcessingInstruction::ORDER_COMPLETE_ON_PAYMENT_APPROVAL);
         $order->setIntent(PaymentIntentV2::CAPTURE);
         $order->setPurchaseUnits($this->createPurchaseUnits($orderParameter));
         $order->setPayer($this->createPayer($orderParameter));
-        $order->setPaymentSource($this->createPaymentSource($orderParameter, $order));
+
+        $paymentSource = $this->paymentSourceFactory->createPaymentSource($orderParameter);
+
+        $payUponInvoice = $paymentSource->getPayUponInvoice();
+        if (!$payUponInvoice instanceof PayUponInvoice) {
+            throw new UnexpectedValueException(sprintf('PayUponInvoice expected. Got "%s"', \gettype($payUponInvoice)));
+        }
+
+        $payUponInvoice->setBillingAddress($order->getPayer()->getAddress());
+
+        $order->setPaymentSource($paymentSource);
 
         return $this->validateOrder($order);
     }
 
     /**
-     * @throws PhoneNumberNationalNumberNotValidException
      * @throws BirthdateNotValidException
      * @throws UnexpectedValueException
      * @throws PhoneNumberCountryCodeNotValidException
+     * @throws PhoneNumberNationalNumberNotValidException
      *
      * @return Order
      */
@@ -130,43 +149,6 @@ class PuiOrderHandler extends AbstractOrderHandler
         }
 
         return $order;
-    }
-
-    /**
-     * @return PaymentSource
-     */
-    private function createPaymentSource(PayPalOrderParameter $orderParameter, Order $order)
-    {
-        $order->setProcessingInstruction(ProcessingInstruction::ORDER_COMPLETE_ON_PAYMENT_APPROVAL);
-
-        $paymentSource = new PaymentSource();
-        $payUponInvoice = new PayUponInvoice();
-        $experienceContext = $this->createExperienceContext();
-
-        $payUponInvoice->setName($order->getPayer()->getName());
-        $payUponInvoice->setEmail($order->getPayer()->getEmailAddress());
-        $payUponInvoice->setBirthDate($orderParameter->getCustomer()['additional']['user']['birthday']);
-        $payUponInvoice->setPhone($this->createPaymentSourcePhoneNumber($orderParameter->getCustomer()));
-        $payUponInvoice->setBillingAddress($order->getPayer()->getAddress());
-        $payUponInvoice->setExperienceContext($experienceContext);
-
-        $paymentSource->setPayUponInvoice($payUponInvoice);
-
-        return $paymentSource;
-    }
-
-    /**
-     * @param array<string, mixed> $customer
-     *
-     * @return PhoneNumber
-     */
-    private function createPaymentSourcePhoneNumber(array $customer)
-    {
-        if (!isset($customer['billingaddress']['phone'])) {
-            return new PhoneNumber();
-        }
-
-        return $this->phoneNumberService->buildPayPalPhoneNumber($customer['billingaddress']['phone']);
     }
 
     /**

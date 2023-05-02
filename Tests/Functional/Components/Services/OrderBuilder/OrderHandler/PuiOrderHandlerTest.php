@@ -16,12 +16,16 @@ use SwagPaymentPayPalUnified\Components\Exception\PhoneNumberNationalNumberNotVa
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\PayPalOrderParameter;
 use SwagPaymentPayPalUnified\Components\Services\OrderBuilder\OrderHandler\PuiOrderHandler;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Common\Address;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\Payer\Phone\PhoneNumber;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\ExperienceContext;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\PayUponInvoice;
 use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
+use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\ReflectionHelperTrait;
+use SwagPaymentPayPalUnified\Tests\Functional\SettingsHelperTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\ShopRegistrationTrait;
 use UnexpectedValueException;
 
@@ -30,6 +34,8 @@ class PuiOrderHandlerTest extends TestCase
     use ContainerTrait;
     use ShopRegistrationTrait;
     use ReflectionHelperTrait;
+    use DatabaseTestCaseTrait;
+    use SettingsHelperTrait;
 
     /**
      * @dataProvider supportsTestDataProvider
@@ -67,11 +73,32 @@ class PuiOrderHandlerTest extends TestCase
      */
     public function testCreateOrderExpectOrder()
     {
+        $this->insertGeneralSettingsFromArray(['active' => true]);
+        $this->insertPayUponInvoiceSettingsFromArray([
+            'onboarding_completed' => true,
+            'sandbox_onboarding_completed' => true,
+            'active' => true,
+            'customer_service_instructions' => 'Customer instructions',
+        ]);
+
         $puiOrderHandler = $this->getPuiOrderHandler();
 
         $result = $puiOrderHandler->createOrder($this->createPayPalOrderParameter());
 
         static::assertInstanceOf(Order::class, $result);
+
+        $paymentSource = $result->getPaymentSource();
+        static::assertInstanceOf(PaymentSource::class, $paymentSource);
+
+        $payUponInvoice = $paymentSource->getPayUponInvoice();
+        static::assertInstanceOf(PayUponInvoice::class, $payUponInvoice);
+
+        $address = $payUponInvoice->getBillingAddress();
+        static::assertInstanceOf(Address::class, $address);
+
+        $experienceContext = $payUponInvoice->getExperienceContext();
+        static::assertInstanceOf(ExperienceContext::class, $experienceContext);
+        static::assertSame('Customer instructions', $experienceContext->getCustomerServiceInstructions()[0]);
     }
 
     /**

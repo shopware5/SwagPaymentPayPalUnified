@@ -14,9 +14,11 @@
 
     <changelog version="REPLACE_GLOBAL_WITH_NEXT_VERSION(6.0.5)">
         <changes lang="de">
+            PT-13073 - Verbessert das Erstellen der API Daten;
             PT-13080 - Wenn die Lieferadresse während eines "PayPal Express" Kaufes geändert wird, wird diese an PayPal übermittelt;
         </changes>
         <changes lang="en">
+            PT-13073 - Improves the creation of API data;
             PT-13080 - If the shipping address is changed during a "PayPal Express" purchase, it will be transmitted to PayPal;
         </changes>
     </changelog>
