@@ -16,11 +16,15 @@ use Enlight_View_Default;
 use Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\PayPalOrderParameter;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\PayPalOrderParameterFacadeInterface;
+use SwagPaymentPayPalUnified\Components\Services\ExpressCheckout\PatchOrderService;
+use SwagPaymentPayPalUnified\Components\Services\LoggerService;
 use SwagPaymentPayPalUnified\Components\Services\OrderBuilder\OrderFactory;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Patches\OrderPurchaseUnitShippingPatch;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\OrderResource;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
+use SwagPaymentPayPalUnified\Tests\Functional\ReflectionHelperTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\ShopRegistrationTrait;
 use SwagPaymentPayPalUnified\Tests\Unit\PaypalPaymentControllerTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -31,6 +35,7 @@ class PaypalUnifiedV2ExpressCheckoutTest extends PaypalPaymentControllerTestCase
 {
     use ShopRegistrationTrait;
     use DatabaseTestCaseTrait;
+    use ReflectionHelperTrait;
 
     const DEFAULT_SHIPPING_METHOD_ID = 9;
 
@@ -109,6 +114,66 @@ class PaypalUnifiedV2ExpressCheckoutTest extends PaypalPaymentControllerTestCase
         $session->offsetUnset('sessionId');
 
         static::assertTrue($controller->View()->getAssign('riskManagementFailed'));
+    }
+
+    /**
+     * @return void
+     */
+    public function testPatchAddressActionExpectEarlyReturnBecauseTokenIsNotGiven()
+    {
+        $request = new Enlight_Controller_Request_RequestTestCase();
+        $response = new Enlight_Controller_Response_ResponseTestCase();
+
+        $controller = Enlight_Class::Instance(
+            Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout::class,
+            [$request, $response]
+        );
+
+        static::assertInstanceOf(Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout::class, $controller);
+
+        $controller->setRequest($request);
+        $controller->setResponse($response);
+
+        $loggerMock = $this->createMock(LoggerService::class);
+        $loggerMock->expects(static::once())->method('warning');
+
+        $reflectionProperty = $this->getReflectionProperty(Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout::class, 'logger');
+        $reflectionProperty->setValue($controller, $loggerMock);
+
+        $controller->patchAddressAction();
+    }
+
+    /**
+     * @return void
+     */
+    public function testPatchAddressAction()
+    {
+        $request = new Enlight_Controller_Request_RequestTestCase();
+        $response = new Enlight_Controller_Response_ResponseTestCase();
+        $request->setParam('token', 'anyToken');
+
+        $controller = Enlight_Class::Instance(
+            Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout::class,
+            [$request, $response]
+        );
+
+        static::assertInstanceOf(Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout::class, $controller);
+
+        $controller->setContainer($this->getContainer());
+        $controller->setFront($this->getContainer()->get('front'));
+        $controller->setRequest($request);
+        $controller->setResponse($response);
+        $controller->setView(new Enlight_View_Default(new Enlight_Template_Manager()));
+        $controller->preDispatch();
+
+        $patchOrderServiceMock = $this->createMock(PatchOrderService::class);
+        $patchOrderServiceMock->expects(static::once())->method('createExpressShippingAddressPatch')->willReturn(new OrderPurchaseUnitShippingPatch());
+        $patchOrderServiceMock->expects(static::once())->method('patchPayPalExpressOrder');
+
+        $reflectionProperty = $this->getReflectionProperty(Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout::class, 'patchOrderService');
+        $reflectionProperty->setValue($controller, $patchOrderServiceMock);
+
+        $controller->patchAddressAction();
     }
 
     /**

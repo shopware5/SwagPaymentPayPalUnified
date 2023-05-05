@@ -21,6 +21,7 @@ require('./../../Resources/views/frontend/_public/src/js/jquery.cancel-payment-f
 require('./../../Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.advanced-credit-debit-card');
 require('./../../Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.advanced-credit-debit-card-fallback');
 require('./../../Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.custom-shipping-payment');
+require('./../../Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.express-address-patch');
 require('./../../Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.express-checkout-button');
 require('./../../Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.in-context-checkout');
 require('./../../Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.installments-banner');
