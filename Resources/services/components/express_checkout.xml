@@ -18,5 +18,14 @@
             <argument type="service" id="paypal_unified.payment_method_provider"/>
             <argument type="service" id="paypal_unified.logger_service"/>
         </service>
+
+        <service id="paypal_unified.express_checkout.patch_service"
+                 class="SwagPaymentPayPalUnified\Components\Services\ExpressCheckout\PatchOrderService"
+                 public="true">
+            <argument type="service" id="paypal_unified.paypal_order_parameter_facade"/>
+            <argument type="service" id="paypal_unified.order_factory"/>
+            <argument type="service" id="paypal_unified.v2.order_resource"/>
+            <argument type="service" id="paypal_unified.logger_service"/>
+        </service>
     </services>
 </container>

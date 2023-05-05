@@ -8,12 +8,19 @@
 
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\ShopwareOrderData;
+use SwagPaymentPayPalUnified\Components\Services\ExpressCheckout\PatchOrderService;
 use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentController;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Patches\OrderPurchaseUnitShippingPatch;
 
 class Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout extends AbstractPaypalPaymentController
 {
+    /**
+     * @var PatchOrderService
+     */
+    private $patchOrderService;
+
     public function preDispatch()
     {
         parent::preDispatch();
@@ -21,6 +28,8 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout extends Abstra
         $this->Front()->Plugins()->ViewRenderer()->setNoRender();
         $this->Front()->Plugins()->Json()->setRenderer();
         $this->View()->setTemplate();
+
+        $this->patchOrderService = $this->container->get('paypal_unified.express_checkout.patch_service');
     }
 
     /**
@@ -92,6 +101,33 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout extends Abstra
             'expressCheckout' => true,
             'token' => $payPalOrder->getId(),
         ]);
+    }
+
+    /**
+     * @return void
+     */
+    public function patchAddressAction()
+    {
+        $this->logger->debug(sprintf('%s START', __METHOD__));
+
+        $payPalOrderId = $this->request->getParam('token');
+        if (!\is_string($payPalOrderId)) {
+            $this->logger->warning(sprintf('%s REQUIRED REQUEST PARAMETER "token" NOT FOUND', __METHOD__));
+
+            return;
+        }
+
+        $userData = $this->getUser() ?: [];
+        $patch = $this->patchOrderService->createExpressShippingAddressPatch($userData);
+        if (!$patch instanceof OrderPurchaseUnitShippingPatch) {
+            $this->logger->debug(sprintf('%s COULD NOT CREATE PATCH', __METHOD__));
+
+            return;
+        }
+
+        $this->patchOrderService->patchPayPalExpressOrder($patch, $payPalOrderId);
+
+        $this->logger->debug(sprintf('%s END', __METHOD__));
     }
 
     /**

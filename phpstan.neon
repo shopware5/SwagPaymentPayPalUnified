@@ -80,3 +80,6 @@ parameters:
             message: '#Parameter \#1 \$requestId of method SwagPaymentPayPalUnified\\Components\\Services\\RequestIdService::.*\(\) expects string, null given.#'
             paths:
                 - Tests/Functional/Components/Services/RequestIdServiceTest.php
+        - # Allow
+            message: '#Parameter \#2 \$shopwareBasketData of class SwagPaymentPayPalUnified\\Components\\PayPalOrderParameter\\ShopwareOrderData constructor expects array{.*}, array{} given.*#'
+            path: Components/Services/ExpressCheckout/PatchOrderService.php

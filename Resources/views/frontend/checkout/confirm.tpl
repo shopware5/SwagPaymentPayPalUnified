@@ -179,3 +179,14 @@
         </noscript>
     {/if}
 {/block}
+
+{block name='frontend_checkout_confirm_information_wrapper'}
+    {if $paypalUnifiedExpressCheckout}
+        <div data-swagPayPalUnifiedExpressAddressPatch="true"
+             data-patchAddressUrl="{url module='widgets' controller='PaypalUnifiedV2ExpressCheckout' action='patchAddress' forceSecure}">
+            {$smarty.block.parent}
+        </div>
+    {else}
+        {$smarty.block.parent}
+    {/if}
+{/block}
