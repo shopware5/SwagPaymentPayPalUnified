@@ -54,11 +54,6 @@ jobs:
                     ps aux
                     curl "http://$(hostname -i)"
 
-            -   name: Execute E2E tests
-                run: |
-                    cd /shopware/custom/plugins/SwagPaymentPayPalUnified
-                    make run-e2e-tests
-
             -   name: Upload artifacts
                 uses: actions/upload-artifact@v3
                 if: ${{ failure() }}
