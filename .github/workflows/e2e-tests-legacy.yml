@@ -34,6 +34,38 @@ jobs:
                 with:
                     path: plugin
 
+            -   name: Cache node modules
+                id: cache-npm
+                uses: actions/cache@v3
+                env:
+                    cache-name: cache-node-modules
+                with:
+                    # npm cache files are stored in `~/.npm` on Linux/macOS
+                    path: ~/.npm
+                    key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('plugin/package-lock.json') }}
+                    restore-keys: |
+                        ${{ runner.os }}-build-${{ env.cache-name }}-
+                        ${{ runner.os }}-build-
+                        ${{ runner.os }}-
+
+
+            - name: Get Composer Cache Directory
+              id: composer-cache
+              run: |
+                echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+            - uses: actions/cache@v3
+              with:
+                  path: ${{ steps.composer-cache.outputs.dir }}
+                  key: ${{ runner.os }}-composer-${{ hashFiles('plugin/composer.lock') }}
+                  restore-keys: |
+                      ${{ runner.os }}-composer-
+
+            -   name: Check
+                run: |
+                    ps aux
+                    curl "http://$(hostname -i)"
+
             -   name: Move plugin
                 run: mv "$(pwd)/plugin" /shopware/custom/plugins/SwagPaymentPayPalUnified
 
