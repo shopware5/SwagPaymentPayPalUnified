@@ -21,7 +21,8 @@ use SwagPaymentPayPalUnified\Components\Services\LoggerService;
 use SwagPaymentPayPalUnified\Components\Services\OrderBuilder\OrderFactory;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
-use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Patches\OrderPurchaseUnitShippingPatch;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Patches\OrderPurchaseUnitShippingAddressPatch;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Patches\OrderPurchaseUnitShippingNamePatch;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\OrderResource;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\ReflectionHelperTrait;
@@ -167,7 +168,8 @@ class PaypalUnifiedV2ExpressCheckoutTest extends PaypalPaymentControllerTestCase
         $controller->preDispatch();
 
         $patchOrderServiceMock = $this->createMock(PatchOrderService::class);
-        $patchOrderServiceMock->expects(static::once())->method('createExpressShippingAddressPatch')->willReturn(new OrderPurchaseUnitShippingPatch());
+        $patchOrderServiceMock->expects(static::once())->method('createExpressShippingAddressPatch')->willReturn(new OrderPurchaseUnitShippingAddressPatch());
+        $patchOrderServiceMock->expects(static::once())->method('createExpressShippingNamePatch')->willReturn(new OrderPurchaseUnitShippingNamePatch());
         $patchOrderServiceMock->expects(static::once())->method('patchPayPalExpressOrder');
 
         $reflectionProperty = $this->getReflectionProperty(Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout::class, 'patchOrderService');

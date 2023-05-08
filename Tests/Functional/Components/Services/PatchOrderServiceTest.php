@@ -18,7 +18,8 @@ use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Shipping;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Shipping\Address;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Patch;
-use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Patches\OrderPurchaseUnitShippingPatch;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Patches\OrderPurchaseUnitShippingAddressPatch;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Patches\OrderPurchaseUnitShippingNamePatch;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\OrderResource;
 use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\ShopRegistrationTrait;
@@ -109,8 +110,8 @@ class PatchOrderServiceTest extends TestCase
 
         $result = $patchOrderService->createExpressShippingAddressPatch([]);
 
-        static::assertInstanceOf(OrderPurchaseUnitShippingPatch::class, $result);
-        static::assertSame(OrderPurchaseUnitShippingPatch::PATH, $result->getPath());
+        static::assertInstanceOf(OrderPurchaseUnitShippingAddressPatch::class, $result);
+        static::assertSame(OrderPurchaseUnitShippingAddressPatch::PATH, $result->getPath());
         static::assertSame(Patch::OPERATION_REPLACE, $result->getOp());
         static::assertTrue(\is_array($result->getValue()));
         static::assertSame('AddressLine1', $result->getValue()['address_line_1']);
@@ -119,6 +120,59 @@ class PatchOrderServiceTest extends TestCase
         static::assertSame('AdminArea1', $result->getValue()['admin_area_1']);
         static::assertSame('12345', $result->getValue()['postal_code']);
         static::assertSame('EN', $result->getValue()['country_code']);
+    }
+
+    /**
+     * @return void
+     */
+    public function testCreateExpressShippingNamePatchShouldReturnNullNoNameDataIsset()
+    {
+        $patchOrderService = $this->createPatchOrderService();
+
+        static::assertNull($patchOrderService->createExpressShippingNamePatch([]));
+    }
+
+    /**
+     * @return void
+     */
+    public function testCreateExpressShippingNamePatchShouldReturnNullNoFirstNameIsset()
+    {
+        $patchOrderService = $this->createPatchOrderService();
+
+        $customerData = ['shippingaddress' => ['lastname' => 'Bar']];
+
+        static::assertNull($patchOrderService->createExpressShippingNamePatch($customerData));
+    }
+
+    /**
+     * @return void
+     */
+    public function testCreateExpressShippingNamePatchShouldReturnNullNoLastNameIsset()
+    {
+        $patchOrderService = $this->createPatchOrderService();
+
+        $customerData = ['shippingaddress' => ['firstname' => 'Foo']];
+
+        static::assertNull($patchOrderService->createExpressShippingNamePatch($customerData));
+    }
+
+    /**
+     * @return void
+     */
+    public function testCreateExpressShippingNamePatch()
+    {
+        $patchOrderService = $this->createPatchOrderService();
+
+        $customerData = ['shippingaddress' => ['firstname' => 'Foo', 'lastname' => 'Bar']];
+
+        $result = $patchOrderService->createExpressShippingNamePatch($customerData);
+
+        static::assertInstanceOf(OrderPurchaseUnitShippingNamePatch::class, $result);
+
+        $nameResult = $result->getValue();
+
+        static::assertTrue(\is_array($nameResult));
+        static::assertSame('Foo Bar', $nameResult['full_name']);
     }
 
     /**

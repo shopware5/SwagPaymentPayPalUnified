@@ -17,8 +17,10 @@ use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Shipping;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Shipping\Address;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Shipping\Name;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Patch;
-use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Patches\OrderPurchaseUnitShippingPatch;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Patches\OrderPurchaseUnitShippingAddressPatch;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Patches\OrderPurchaseUnitShippingNamePatch;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\OrderResource;
 
 class PatchOrderService
@@ -56,14 +58,15 @@ class PatchOrderService
     }
 
     /**
-     * @param string $payPalOrderId
+     * @param array<int, Patch> $patches
+     * @param string            $payPalOrderId
      *
      * @return void
      */
-    public function patchPayPalExpressOrder(Patch $patch, $payPalOrderId)
+    public function patchPayPalExpressOrder(array $patches, $payPalOrderId)
     {
         try {
-            $this->orderResource->update([$patch], $payPalOrderId);
+            $this->orderResource->update($patches, $payPalOrderId);
         } catch (Exception $exception) {
             $this->loggerService->warning(sprintf('%s CANNOT PATCH EXPRESS ORDER ADDRESS. OrderId: %s', __METHOD__, $payPalOrderId));
         }
@@ -76,10 +79,6 @@ class PatchOrderService
      */
     public function createExpressShippingAddressPatch(array $customerData)
     {
-        $patch = new OrderPurchaseUnitShippingPatch();
-        $patch->setPath(OrderPurchaseUnitShippingPatch::PATH);
-        $patch->setOp(Patch::OPERATION_REPLACE);
-
         $shopwareOrderData = new ShopwareOrderData($customerData, []);
         $orderParams = $this->orderParameterFacade->createPayPalOrderParameter(PaymentType::PAYPAL_CLASSIC_V2, $shopwareOrderData);
         $order = $this->orderFactory->createOrder($orderParams);
@@ -105,9 +104,36 @@ class PatchOrderService
             return null;
         }
 
+        $patch = new OrderPurchaseUnitShippingAddressPatch();
+        $patch->setPath(OrderPurchaseUnitShippingAddressPatch::PATH);
+        $patch->setOp(Patch::OPERATION_REPLACE);
+
         $patch->setValue($shippingAddress->toArray());
 
         $this->loggerService->debug(sprintf('%s PATCH CREATED', __METHOD__));
+
+        return $patch;
+    }
+
+    /**
+     * @param array<string,mixed> $customerData
+     *
+     * @return OrderPurchaseUnitShippingNamePatch|null
+     */
+    public function createExpressShippingNamePatch(array $customerData)
+    {
+        if (!isset($customerData['shippingaddress']['firstname']) || !isset($customerData['shippingaddress']['lastname'])) {
+            return null;
+        }
+
+        $patch = new OrderPurchaseUnitShippingNamePatch();
+        $patch->setPath(OrderPurchaseUnitShippingNamePatch::PATH);
+        $patch->setOp(Patch::OPERATION_REPLACE);
+
+        $name = new Name();
+        $name->setFullName(\sprintf('%s %s', $customerData['shippingaddress']['firstname'], $customerData['shippingaddress']['lastname']));
+
+        $patch->setValue($name->toArray());
 
         return $patch;
     }
