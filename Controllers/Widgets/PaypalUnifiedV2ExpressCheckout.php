@@ -12,7 +12,8 @@ use SwagPaymentPayPalUnified\Components\Services\ExpressCheckout\PatchOrderServi
 use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentController;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
-use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Patches\OrderPurchaseUnitShippingPatch;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Patches\OrderPurchaseUnitShippingAddressPatch;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Patches\OrderPurchaseUnitShippingNamePatch;
 
 class Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout extends AbstractPaypalPaymentController
 {
@@ -117,15 +118,24 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout extends Abstra
             return;
         }
 
+        $patches = [];
         $userData = $this->getUser() ?: [];
-        $patch = $this->patchOrderService->createExpressShippingAddressPatch($userData);
-        if (!$patch instanceof OrderPurchaseUnitShippingPatch) {
-            $this->logger->debug(sprintf('%s COULD NOT CREATE PATCH', __METHOD__));
-
-            return;
+        $shippingAddressPatch = $this->patchOrderService->createExpressShippingAddressPatch($userData);
+        if ($shippingAddressPatch instanceof OrderPurchaseUnitShippingAddressPatch) {
+            $patches[] = $shippingAddressPatch;
+        } else {
+            $this->logger->debug(sprintf('%s COULD NOT CREATE ADDRESS PATCH FOR PAYPAL ORDER: %s', __METHOD__, $payPalOrderId));
         }
 
-        $this->patchOrderService->patchPayPalExpressOrder($patch, $payPalOrderId);
+        $shippingNamePatch = $this->patchOrderService->createExpressShippingNamePatch($userData);
+
+        if ($shippingNamePatch instanceof OrderPurchaseUnitShippingNamePatch) {
+            $patches[] = $shippingNamePatch;
+        } else {
+            $this->logger->debug(sprintf('%s COULD NOT CREATE NAME PATCH FOR PAYPAL ORDER: %s', __METHOD__, $payPalOrderId));
+        }
+
+        $this->patchOrderService->patchPayPalExpressOrder($patches, $payPalOrderId);
 
         $this->logger->debug(sprintf('%s END', __METHOD__));
     }

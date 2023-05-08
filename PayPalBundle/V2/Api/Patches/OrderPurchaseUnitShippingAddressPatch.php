@@ -10,7 +10,7 @@ namespace SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Patches;
 
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Patch;
 
-class OrderPurchaseUnitShippingPatch extends Patch
+class OrderPurchaseUnitShippingAddressPatch extends Patch
 {
     const PATH = "/purchase_units/@reference_id=='default'/shipping/address";
 }
