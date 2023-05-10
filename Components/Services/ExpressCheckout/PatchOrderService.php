@@ -19,6 +19,7 @@ use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Shipping;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Shipping\Address;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Shipping\Name;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Patch;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Patches\OrderPurchaseUnitPatch;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Patches\OrderPurchaseUnitShippingAddressPatch;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Patches\OrderPurchaseUnitShippingNamePatch;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\OrderResource;
@@ -135,6 +136,45 @@ class PatchOrderService
         $name->setFullName(\sprintf('%s %s', $customerData['shippingaddress']['firstname'], $customerData['shippingaddress']['lastname']));
 
         $patch->setValue($name->toArray());
+
+        return $patch;
+    }
+
+    /**
+     * @param array<string,mixed> $customerData
+     * @param array<string,mixed> $cartData
+     *
+     * @return OrderPurchaseUnitPatch|null
+     */
+    public function createOrderPurchaseUnitPatch(array $customerData, array $cartData)
+    {
+        $shopwareOrderData = new ShopwareOrderData($customerData, $cartData);
+        $orderParams = $this->orderParameterFacade->createPayPalOrderParameter(PaymentType::PAYPAL_EXPRESS_V2, $shopwareOrderData);
+        $order = $this->orderFactory->createOrder($orderParams);
+
+        $excludeFilter = [
+            'payee',
+            'description',
+            'custom_id',
+            'invoice_id',
+            'shipping',
+            'payments',
+            'reference_id',
+        ];
+
+        $purchaseUnitObject = $order->getPurchaseUnits()[0];
+        if (!$purchaseUnitObject instanceof PurchaseUnit) {
+            return null;
+        }
+
+        $purchaseUnit = array_filter($purchaseUnitObject->toArray(), function ($value, $key) use ($excludeFilter) {
+            return !\in_array($key, $excludeFilter);
+        }, \ARRAY_FILTER_USE_BOTH);
+
+        $patch = new OrderPurchaseUnitPatch();
+        $patch->setPath(OrderPurchaseUnitPatch::PATH);
+        $patch->setOp(Patch::OPERATION_REPLACE);
+        $patch->setValue($purchaseUnit);
 
         return $patch;
     }

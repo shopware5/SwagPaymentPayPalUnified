@@ -11,9 +11,21 @@ namespace SwagPaymentPayPalUnified\Subscriber;
 use Enlight\Event\SubscriberInterface;
 use Enlight_Event_EventArgs;
 use Shopware_Controllers_Frontend_Checkout;
+use SwagPaymentPayPalUnified\Components\Services\ExpressCheckout\PatchOrderService;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Patches\OrderPurchaseUnitPatch;
 
 class Checkout implements SubscriberInterface
 {
+    /**
+     * @var PatchOrderService
+     */
+    private $patchOrderService;
+
+    public function __construct(PatchOrderService $patchOrderService)
+    {
+        $this->patchOrderService = $patchOrderService;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -44,5 +56,24 @@ class Checkout implements SubscriberInterface
         $subject->View()->assign('payerActionRequired', $payerActionRequired);
         $subject->View()->assign('payerInstrumentDeclined', $payerInstrumentDeclined);
         $subject->View()->assign('threeDSecureExceptionCode', $threeDSecureExceptionCode);
+
+        $basketHasChanged = $request->getParam('payPalCartHasChanged', false);
+        $isExpressCheckout = $request->getParam('expressCheckout', false);
+        $token = $request->getParam('token', false);
+
+        if (!$basketHasChanged || !$isExpressCheckout || !$token) {
+            return;
+        }
+
+        $patch = $this->patchOrderService->createOrderPurchaseUnitPatch(
+            $subject->View()->getAssign('sUserData'),
+            $subject->View()->getAssign('sBasket')
+        );
+
+        if (!$patch instanceof OrderPurchaseUnitPatch) {
+            return;
+        }
+
+        $this->patchOrderService->patchPayPalExpressOrder([$patch], $token);
     }
 }

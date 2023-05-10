@@ -6,3 +6,4 @@
 {block name='frontend_checkout_payment_fieldset_input_label'}
 {block name='frontend_checkout_payment_fieldset_description'}
 {block name='frontend_checkout_confirm_paypal_unified_ec_inputs'}
+{block name='frontend_checkout_cart_footer_add_voucher'}
