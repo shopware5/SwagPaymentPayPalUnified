@@ -70,6 +70,11 @@ test.describe('Pay with credit card', () => {
 
         await locators.submitTokenForm.scrollIntoViewIfNeeded();
 
+        const consentButton = await locators.contingencyHandlerIFrame.locator('#acceptAllButton');
+        if (await consentButton.count() > 0 && await consentButton.isVisible()) {
+            await consentButton.click();
+        }
+
         await locators.submitTokenInput.fill(threeDSecureToken);
         await locators.submitButton.click();
 

@@ -16,7 +16,6 @@ use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\NoOrderToProceedExc
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\PayerActionRequiredException;
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\RequireRestartException;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
-use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Common\Link;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -94,31 +93,10 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
             return;
         }
 
-        if ($this->Request()->isXmlHttpRequest()) {
-            $this->logger->debug(sprintf('%s IS XHR REQUEST', __METHOD__));
+        $this->view->assign('token', $payPalOrder->getId());
+        $this->view->assign('basketId', $orderParams->getBasketUniqueId());
 
-            $this->view->assign('token', $payPalOrder->getId());
-            $this->view->assign('basketId', $orderParams->getBasketUniqueId());
-
-            return;
-        }
-
-        $url = null;
-        foreach ($payPalOrder->getLinks() as $link) {
-            if ($link->getRel() === Link::RELATION_APPROVE) {
-                $url = $link->getHref();
-            }
-        }
-
-        if ($url === null) {
-            $this->logger->debug(sprintf('%s NO URL FOUND', __METHOD__));
-
-            throw new \RuntimeException('No link for redirect found');
-        }
-
-        $this->logger->debug(sprintf('%s REDIRECT TO: %s', __METHOD__, $url));
-
-        $this->redirect($url);
+        $this->logger->debug(sprintf('%s END WITH PAYPAL ORDER ID: %s', __METHOD__, $payPalOrder->getId()));
     }
 
     /**
@@ -224,14 +202,6 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
         $this->setTransactionId($shopwareOrderNumber, $payPalOrder);
 
         $this->updatePaymentStatus($payPalOrder->getIntent(), $this->getOrderId($shopwareOrderNumber));
-
-        if ($this->Request()->isXmlHttpRequest()) {
-            $this->view->assign('token', $payPalOrderId);
-
-            $this->logger->debug(sprintf('%s IS XHR REQUEST', __METHOD__));
-
-            return;
-        }
 
         $this->logger->debug(sprintf('%s REDIRECT TO checkout/finish', __METHOD__));
 
