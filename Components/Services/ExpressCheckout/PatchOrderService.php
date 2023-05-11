@@ -74,12 +74,13 @@ class PatchOrderService
 
     /**
      * @param array<string,mixed> $customerData
+     * @param array<string,mixed> $cartData
      *
      * @return Patch|null
      */
-    public function createExpressShippingAddressPatch(array $customerData)
+    public function createExpressShippingAddressPatch(array $customerData, array $cartData)
     {
-        $shopwareOrderData = new ShopwareOrderData($customerData, []);
+        $shopwareOrderData = new ShopwareOrderData($customerData, $cartData);
         $orderParams = $this->orderParameterFacade->createPayPalOrderParameter(PaymentType::PAYPAL_CLASSIC_V2, $shopwareOrderData);
         $order = $this->orderFactory->createOrder($orderParams);
 
