@@ -120,7 +120,9 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout extends Abstra
 
         $patches = [];
         $userData = $this->getUser() ?: [];
-        $shippingAddressPatch = $this->patchOrderService->createExpressShippingAddressPatch($userData);
+        $cartData = $this->getBasket() ?: [];
+
+        $shippingAddressPatch = $this->patchOrderService->createExpressShippingAddressPatch($userData, $cartData);
         if ($shippingAddressPatch instanceof OrderPurchaseUnitShippingAddressPatch) {
             $patches[] = $shippingAddressPatch;
         } else {

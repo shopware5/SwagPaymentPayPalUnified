@@ -39,7 +39,7 @@ class PatchOrderServiceTest extends TestCase
 
         $patchOrderService = $this->createPatchOrderService(null, $orderFactoryMock);
 
-        $result = $patchOrderService->createExpressShippingAddressPatch([]);
+        $result = $patchOrderService->createExpressShippingAddressPatch([], $this->getCartData());
 
         static::assertNull($result);
     }
@@ -58,7 +58,7 @@ class PatchOrderServiceTest extends TestCase
 
         $patchOrderService = $this->createPatchOrderService(null, $orderFactoryMock);
 
-        $result = $patchOrderService->createExpressShippingAddressPatch([]);
+        $result = $patchOrderService->createExpressShippingAddressPatch([], $this->getCartData());
 
         static::assertNull($result);
     }
@@ -79,7 +79,7 @@ class PatchOrderServiceTest extends TestCase
 
         $patchOrderService = $this->createPatchOrderService(null, $orderFactoryMock);
 
-        $result = $patchOrderService->createExpressShippingAddressPatch([]);
+        $result = $patchOrderService->createExpressShippingAddressPatch([], $this->getCartData());
 
         static::assertNull($result);
     }
@@ -108,7 +108,7 @@ class PatchOrderServiceTest extends TestCase
 
         $patchOrderService = $this->createPatchOrderService(null, $orderFactoryMock);
 
-        $result = $patchOrderService->createExpressShippingAddressPatch([]);
+        $result = $patchOrderService->createExpressShippingAddressPatch([], $this->getCartData());
 
         static::assertInstanceOf(OrderPurchaseUnitShippingAddressPatch::class, $result);
         static::assertSame(OrderPurchaseUnitShippingAddressPatch::PATH, $result->getPath());
@@ -195,5 +195,22 @@ class PatchOrderServiceTest extends TestCase
             $orderResource ?: $this->getContainer()->get('paypal_unified.v2.order_resource'),
             $loggerService ?: $this->createMock(LoggerService::class)
         );
+    }
+
+    /**
+     * @return array<string,mixed>
+     */
+    private function getCartData()
+    {
+        return [
+            'content' => [
+                [
+                    'ordernumber' => 'SW12345',
+                    'quantity' => '1',
+                    'tax_rate' => '19.0',
+                    'price' => '10.0',
+                ],
+            ],
+        ];
     }
 }
