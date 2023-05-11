@@ -24,6 +24,7 @@
             <argument type="service" id="paypal_unified.common.customer_helper"/>
             <argument type="service" id="paypal_unified.phone_number_service"/>
             <argument type="service" id="snippets"/>
+            <argument type="service" id="paypal_unified.payment_source_factory"/>
             <tag name="paypal_unified.order_factory_handler"/>
         </service>
 
