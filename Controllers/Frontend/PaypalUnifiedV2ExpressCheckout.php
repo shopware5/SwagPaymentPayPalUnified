@@ -12,6 +12,7 @@ use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentControlle
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\InstrumentDeclinedException;
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\NoOrderToProceedException;
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\PayerActionRequiredException;
+use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\PendingException;
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\RequireRestartException;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
@@ -117,8 +118,14 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2ExpressCheckout extends Abstr
             return;
         }
 
-        if (!$this->checkCaptureAuthorizationStatus($payPalOrder)) {
-            $this->orderNumberService->restoreOrdernumberToPool();
+        try {
+            if (!$this->checkCaptureAuthorizationStatus($payPalOrder)) {
+                $this->orderNumberService->restoreOrdernumberToPool();
+
+                return;
+            }
+        } catch (PendingException $capturePendingException) {
+            $this->handlePendingOrder($payPalOrder);
 
             return;
         }

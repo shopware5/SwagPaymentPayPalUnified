@@ -36,8 +36,10 @@ use SwagPaymentPayPalUnified\Components\Services\Validation\RedirectDataBuilderF
 use SwagPaymentPayPalUnified\Components\Services\Validation\SimpleBasketValidator;
 use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentControllerResults\DeterminedStatus;
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\AuthorizationDeniedException;
+use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\AuthorizationPendingException;
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\CaptureDeclinedException;
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\CaptureFailedException;
+use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\CapturePendingException;
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\InstrumentDeclinedException;
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\InvalidBillingAddressException;
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\InvalidShippingAddressException;
@@ -396,6 +398,10 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
                 if ($capture->getStatus() === PaymentStatusV2::ORDER_CAPTURE_FAILED) {
                     throw new CaptureFailedException();
                 }
+
+                if ($capture->getStatus() === PaymentStatusV2::ORDER_CAPTURE_PENDING) {
+                    throw new CapturePendingException();
+                }
             }
 
             if ($payPalOrder->getIntent() === PaymentIntentV2::AUTHORIZE) {
@@ -406,6 +412,10 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
 
                 if ($authorization->getStatus() === PaymentStatusV2::ORDER_AUTHORIZATION_DENIED) {
                     throw new AuthorizationDeniedException();
+                }
+
+                if ($authorization->getStatus() === PaymentStatusV2::ORDER_AUTHORIZATION_PENDING) {
+                    throw new AuthorizationPendingException();
                 }
             }
         } catch (UnexpectedValueException $exception) {
@@ -889,6 +899,27 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
         }
 
         return $paymentId;
+    }
+
+    /**
+     * @return void
+     */
+    protected function handlePendingOrder(Order $payPalOrder)
+    {
+        $shopwareOrderNumber = $this->createShopwareOrder($payPalOrder->getId(), $this->getPaymentType());
+
+        $this->logger->notify(sprintf('%s PAYMENT IS PENDING. ORDER NUMBER: %s PAYPAL ORDER ID: %s', __METHOD__, $shopwareOrderNumber, $payPalOrder->getId()));
+
+        $this->setTransactionId($shopwareOrderNumber, $payPalOrder);
+
+        $this->logger->debug(sprintf('%s REDIRECT TO checkout/finish', __METHOD__));
+
+        $this->redirect([
+            'module' => 'frontend',
+            'controller' => 'checkout',
+            'action' => 'finish',
+            'sUniqueID' => $payPalOrder->getId(),
+        ]);
     }
 
     /**

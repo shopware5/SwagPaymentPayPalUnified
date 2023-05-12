@@ -3166,16 +3166,6 @@ parameters:
 			path: Tests/Mocks/DummyController.php
 
 		-
-			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Mocks\\\\LoggerMock\\:\\:getErrors\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: Tests/Mocks/LoggerMock.php
-
-		-
-			message: "#^Property SwagPaymentPayPalUnified\\\\Tests\\\\Mocks\\\\LoggerMock\\:\\:\\$errors type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: Tests/Mocks/LoggerMock.php
-
-		-
 			message: "#^Method SwagPaymentPayPalUnified\\\\Tests\\\\Mocks\\\\OrderResourceMock\\:\\:capture\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: Tests/Mocks/OrderResourceMock.php
