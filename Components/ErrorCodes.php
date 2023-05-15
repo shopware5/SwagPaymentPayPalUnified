@@ -29,8 +29,10 @@ final class ErrorCodes
     const PAYMENT_SOURCE_DECLINED_BY_PROCESSOR = 13;
 
     const AUTHORIZATION_DENIED = 14;
+    const AUTHORIZATION_PENDING = 141;
     const CAPTURE_FAILED = 15;
     const CAPTURE_DECLINED = 16;
+    const CAPTURE_PENDING = 161;
 
     const THREE_D_SECURE_CHECK_FAILED = 17;
 

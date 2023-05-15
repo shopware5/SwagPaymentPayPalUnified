@@ -18,6 +18,7 @@ use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\InvalidBillingAddre
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\InvalidShippingAddressException;
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\NoOrderToProceedException;
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\PayerActionRequiredException;
+use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\PendingException;
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\RequireRestartException;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
@@ -240,8 +241,14 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2AdvancedCreditDebitCard extend
             return;
         }
 
-        if (!$this->checkCaptureAuthorizationStatus($payPalOrder)) {
-            $this->orderNumberService->restoreOrdernumberToPool();
+        try {
+            if (!$this->checkCaptureAuthorizationStatus($payPalOrder)) {
+                $this->orderNumberService->restoreOrdernumberToPool();
+
+                return;
+            }
+        } catch (PendingException $capturePendingException) {
+            $this->handlePendingOrder($payPalOrder);
 
             return;
         }

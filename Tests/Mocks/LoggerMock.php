@@ -13,13 +13,19 @@ use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 class LoggerMock implements LoggerServiceInterface
 {
     /**
-     * @var array
+     * @var array<string, mixed>
      */
     private $errors;
+
+    /**
+     * @var array<string, mixed>
+     */
+    private $debug;
 
     public function __construct()
     {
         $this->errors = [];
+        $this->debug = [];
     }
 
     /**
@@ -45,14 +51,29 @@ class LoggerMock implements LoggerServiceInterface
     }
 
     /**
-     * @return array
+     * @return array<string, mixed>
      */
     public function getErrors()
     {
         return $this->errors;
     }
 
+    /**
+     * @param string                   $message
+     * @param array<int|string, mixed> $context
+     *
+     * @return void
+     */
     public function debug($message, array $context = [])
     {
+        $this->debug[$message] = $context;
+    }
+
+    /**
+     * @return array<string, array<int,mixed>>
+     */
+    public function getDebug()
+    {
+        return $this->debug;
     }
 }
