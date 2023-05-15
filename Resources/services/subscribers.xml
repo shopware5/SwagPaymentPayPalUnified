@@ -297,6 +297,7 @@
         <service id="paypal_unified.subscriber.checkout"
                  class="SwagPaymentPayPalUnified\Subscriber\Checkout"
                  public="true">
+            <argument type="service" id="paypal_unified.express_checkout.patch_service"/>
             <tag name="shopware.event_subscriber"/>
         </service>
 

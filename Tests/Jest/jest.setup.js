@@ -23,6 +23,7 @@ require('./../../Resources/views/frontend/_public/src/js/jquery.swag-paypal-unif
 require('./../../Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.custom-shipping-payment');
 require('./../../Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.express-address-patch');
 require('./../../Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.express-checkout-button');
+require('./../../Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.express-checkout-change-cart.js');
 require('./../../Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.in-context-checkout');
 require('./../../Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.installments-banner');
 require('./../../Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.pay-later');

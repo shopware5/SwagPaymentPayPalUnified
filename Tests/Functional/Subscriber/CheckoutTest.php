@@ -13,12 +13,18 @@ use Enlight_Controller_Request_RequestTestCase;
 use Enlight_Controller_Response_ResponseTestCase;
 use Enlight_Template_Manager;
 use PHPUnit\Framework\TestCase;
+use Shopware_Controllers_Frontend_Checkout;
+use SwagPaymentPayPalUnified\Components\Services\ExpressCheckout\PatchOrderService;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Patches\OrderPurchaseUnitPatch;
 use SwagPaymentPayPalUnified\Subscriber\Checkout;
+use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Mocks\DummyController;
 use SwagPaymentPayPalUnified\Tests\Mocks\ViewMock;
 
 class CheckoutTest extends TestCase
 {
+    use ContainerTrait;
+
     /**
      * @return void
      */
@@ -123,11 +129,71 @@ class CheckoutTest extends TestCase
     }
 
     /**
+     * @return void
+     */
+    public function testOnCheckoutConfirmEarlyReturnBecausePatchIsNull()
+    {
+        $patchOrderServiceMock = $this->createMock(PatchOrderService::class);
+        $patchOrderServiceMock->expects(static::once())->method('createOrderPurchaseUnitPatch')->willReturn(null);
+        $patchOrderServiceMock->expects(static::never())->method('patchPayPalExpressOrder');
+
+        $subscriber = $this->createCheckoutSubscriber($patchOrderServiceMock);
+
+        $eventArgs = $this->createEventArgs();
+
+        /** @var Shopware_Controllers_Frontend_Checkout $subject */
+        $subject = $eventArgs->get('subject');
+        $request = $subject->Request();
+        $request->setActionName('confirm');
+
+        $request->setParam('payPalCartHasChanged', true);
+        $request->setParam('expressCheckout', true);
+        $request->setParam('token', 'anyToken');
+
+        $view = $subject->View();
+        $view->assign('sUserData', []);
+        $view->assign('sBasket', []);
+
+        $subscriber->onCheckoutConfirm($eventArgs);
+    }
+
+    /**
+     * @return void
+     */
+    public function testOnCheckoutConfirm()
+    {
+        $patchOrderServiceMock = $this->createMock(PatchOrderService::class);
+        $patchOrderServiceMock->expects(static::once())->method('createOrderPurchaseUnitPatch')->willReturn(new OrderPurchaseUnitPatch());
+        $patchOrderServiceMock->expects(static::once())->method('patchPayPalExpressOrder');
+
+        $subscriber = $this->createCheckoutSubscriber($patchOrderServiceMock);
+
+        $eventArgs = $this->createEventArgs();
+
+        /** @var Shopware_Controllers_Frontend_Checkout $subject */
+        $subject = $eventArgs->get('subject');
+        $request = $subject->Request();
+        $request->setActionName('confirm');
+
+        $request->setParam('payPalCartHasChanged', true);
+        $request->setParam('expressCheckout', true);
+        $request->setParam('token', 'anyToken');
+
+        $view = $subject->View();
+        $view->assign('sUserData', []);
+        $view->assign('sBasket', []);
+
+        $subscriber->onCheckoutConfirm($eventArgs);
+    }
+
+    /**
+     * @param PatchOrderService|null $patchOrderService
+     *
      * @return Checkout
      */
-    private function createCheckoutSubscriber()
+    private function createCheckoutSubscriber($patchOrderService = null)
     {
-        return new Checkout();
+        return new Checkout($patchOrderService ?: $this->getContainer()->get('paypal_unified.express_checkout.patch_service'));
     }
 
     /**

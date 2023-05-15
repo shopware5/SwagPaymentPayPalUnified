@@ -18,16 +18,21 @@ use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Shipping;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Shipping\Address;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Patch;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Patches\OrderPurchaseUnitPatch;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Patches\OrderPurchaseUnitShippingAddressPatch;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Patches\OrderPurchaseUnitShippingNamePatch;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\OrderResource;
 use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
+use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
+use SwagPaymentPayPalUnified\Tests\Functional\SettingsHelperTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\ShopRegistrationTrait;
 
 class PatchOrderServiceTest extends TestCase
 {
     use ContainerTrait;
     use ShopRegistrationTrait;
+    use SettingsHelperTrait;
+    use DatabaseTestCaseTrait;
 
     /**
      * @return void
@@ -173,6 +178,54 @@ class PatchOrderServiceTest extends TestCase
 
         static::assertTrue(\is_array($nameResult));
         static::assertSame('Foo Bar', $nameResult['full_name']);
+    }
+
+    /**
+     * @return void
+     */
+    public function testCreateOrderPurchaseUnitPatchShouldReturnNull()
+    {
+        $this->insertGeneralSettingsFromArray(['active' => true, 'submit_cart' => true]);
+
+        $orderFactoryMock = $this->createMock(OrderFactory::class);
+        $orderFactoryMock->method('createOrder')->willReturn(new Order());
+
+        $patchOrderService = $this->createPatchOrderService(null, $orderFactoryMock);
+
+        $userData = require __DIR__ . '/_fixtures/OrderBuilderServiceTestUserData.php';
+        $cartData = require __DIR__ . '/_fixtures/OrderBuilderServiceTestBasketData.php';
+
+        static::assertNull($patchOrderService->createOrderPurchaseUnitPatch($userData, $cartData));
+    }
+
+    /**
+     * @return void
+     */
+    public function testCreateOrderPurchaseUnitPatch()
+    {
+        $this->insertGeneralSettingsFromArray(['active' => true, 'submit_cart' => true]);
+
+        $patchOrderService = $this->createPatchOrderService();
+
+        $userData = require __DIR__ . '/_fixtures/OrderBuilderServiceTestUserData.php';
+        $cartData = require __DIR__ . '/_fixtures/OrderBuilderServiceTestBasketData.php';
+
+        $result = $patchOrderService->createOrderPurchaseUnitPatch($userData, $cartData);
+
+        static::assertInstanceOf(OrderPurchaseUnitPatch::class, $result);
+
+        $resultValue = $result->getValue();
+        static::assertTrue(\is_array($resultValue));
+        static::assertFalse(\array_key_exists('payee', $resultValue));
+        static::assertFalse(\array_key_exists('description', $resultValue));
+        static::assertFalse(\array_key_exists('custom_id', $resultValue));
+        static::assertFalse(\array_key_exists('invoice_id', $resultValue));
+        static::assertFalse(\array_key_exists('shipping', $resultValue));
+        static::assertFalse(\array_key_exists('payments', $resultValue));
+        static::assertFalse(\array_key_exists('reference_id', $resultValue));
+
+        static::assertTrue(\array_key_exists('amount', $resultValue));
+        static::assertTrue(\array_key_exists('items', $resultValue));
     }
 
     /**
