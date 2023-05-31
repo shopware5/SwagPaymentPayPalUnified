@@ -17,7 +17,7 @@ trait SettingsHelperTrait
      * /**
      * @var CamelCaseToSnakeCaseNameConverter|null
      */
-    private $camelCaseToSnakeCaseConverter = null;
+    private $camelCaseToSnakeCaseConverter;
 
     /**
      * @param array<string, mixed> $data
