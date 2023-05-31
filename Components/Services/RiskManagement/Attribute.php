@@ -13,12 +13,12 @@ class Attribute
     /**
      * @var string|null
      */
-    private $attributeName = null;
+    private $attributeName;
 
     /**
      * @var string|null
      */
-    private $attributeValue = null;
+    private $attributeValue;
 
     public function __construct(array $attributeKeyAndValue)
     {

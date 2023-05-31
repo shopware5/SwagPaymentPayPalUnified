@@ -23,7 +23,7 @@ class Context
     /**
      * @var int|null
      */
-    private $sessionCategoryId = null;
+    private $sessionCategoryId;
 
     /**
      * @var int|null
