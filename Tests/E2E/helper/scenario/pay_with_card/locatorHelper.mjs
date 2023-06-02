@@ -74,7 +74,7 @@ export const locators = (function () {
             this.submitTokenInput = this.submitTokenForm.locator('input[name="challengeDataEntry"]');
             this.submitButton = this.submitTokenForm.locator('input[type="submit"]');
             this.resendButton = this.resendTokenForm.locator('input[type="submit"]');
-            this.cancelButton = this.cancelForm.locator('input[type="submit"]');
+            this.cancelButton = this.cancelForm.locator('input[value="CANCEL"]');
             this.paypalUnifiedErrorMessageContainer = page.locator('.paypal-unified--error');
         },
     };
