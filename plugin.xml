@@ -5,12 +5,21 @@
     <label lang="de">PayPal</label>
     <label lang="en">PayPal</label>
 
-    <version>6.0.5</version>
+    <version>6.0.6</version>
     <copyright>(c) by shopware AG</copyright>
     <license>MIT</license>
     <link>http://store.shopware.com</link>
     <author>shopware AG</author>
     <compatibility minVersion="5.2.27" maxVersion="5.99.99"/>
+
+    <changelog version="6.0.6">
+        <changes lang="de">
+            PT-13097 - Gutscheinfeld wird wieder korrekt angezeigt;
+        </changes>
+        <changes lang="en">
+            PT-13097 - Voucher field is displayed correctly again;
+        </changes>
+    </changelog>
 
     <changelog version="6.0.5">
         <changes lang="de">
