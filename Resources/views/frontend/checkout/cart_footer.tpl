@@ -5,6 +5,8 @@
         <div class="paypal-unified--voucher-extension" data-paypalUnifiedEcButtonChangeCart="true">
             {$smarty.block.parent}
         </div>
+    {else}
+        {$smarty.block.parent}
     {/if}
 {/block}
 
