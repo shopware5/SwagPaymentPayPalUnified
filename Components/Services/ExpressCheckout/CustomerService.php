@@ -139,7 +139,7 @@ class CustomerService
         }
 
         $customerModel->setEmail($payer->getEmailAddress());
-
+        $customerModel->setPaymentId($this->paymentMethodProvider->getPaymentId(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME));
         $addressForm = $this->formFactory->create(AddressFormType::class, $address);
         $addressForm->submit($customerData);
 
