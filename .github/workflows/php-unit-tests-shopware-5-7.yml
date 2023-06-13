@@ -1,0 +1,52 @@
+name: PHPUnit Tests
+
+on:
+    workflow_call:
+
+jobs:
+    php-unit-tests-shopware-5-7:
+        name: Shopware 5.7 PHP version 7.4 - 8.2
+        runs-on: ubuntu-latest
+        container:
+            image:  ghcr.io/shopware5/docker-images-testing/install:shopware_5.7_8.0_${{ matrix.php-version }}_none
+            credentials:
+                username: ${{ github.actor }}
+                password: ${{ secrets.github_token }}
+
+        strategy:
+            matrix:
+                php-version: [ '7.4' , '8.0', '8.1', '8.2' ]
+
+        steps:
+            -   run: /usr/bin/supervisord -c /etc/supervisord.conf &
+
+            -   name: Checkout SwagPaymentPayPalUnified
+                uses: actions/checkout@v3
+                with:
+                    path: plugin
+
+            - name: Get Composer Cache Directory
+              id: composer-cache
+              run: |
+                  echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+            - uses: actions/cache@v3
+              with:
+                  path: ${{ steps.composer-cache.outputs.dir }}
+                  key: ${{ runner.os }}-composer-${{ hashFiles('plugin/composer.lock') }}
+                  restore-keys: |
+                      ${{ runner.os }}-composer-
+
+
+            -   name: Move plugin
+                run: mv "$(pwd)/plugin" /shopware/custom/plugins/SwagPaymentPayPalUnified
+
+            -   name: Setup SwagPaymentPayPalUnified
+                run: |
+                    cd /shopware/custom/plugins/SwagPaymentPayPalUnified
+                    make composer-install
+                    make install-plugin
+
+            -   name: Execute PHP unit tests
+                run: |
+                    cd /shopware/custom/plugins/SwagPaymentPayPalUnified
+                    make run-tests

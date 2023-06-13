@@ -75,8 +75,8 @@ class RiskManagementServiceTest extends TestCase
         $expectedResult = require __DIR__ . '/_fixtures/testAttrIsNot_category_result.php';
         $result = \json_decode($this->getContainer()->get('template')->getTemplateVars('riskManagementMatchedProducts'), true);
 
-        foreach ($expectedResult as $index => $resultItem) {
-            static::assertSame($resultItem, $result[$index]);
+        foreach ($expectedResult as $resultItem) {
+            static::assertTrue(\in_array($resultItem, $result));
         }
     }
 

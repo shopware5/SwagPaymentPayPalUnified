@@ -126,8 +126,6 @@ class ClientService
      * @param array<mixed>|null $data
      * @param bool              $jsonPayload true if the given data should be JSON-encoded
      *
-     * @throws Exception
-     *
      * @return array<mixed>
      */
     public function sendRequest($type, $resourceUri, $data = [], $jsonPayload = true)
@@ -231,21 +229,23 @@ class ClientService
     /**
      * @param string $key
      *
-     * @return string
+     * @return string|null
      */
     public function getHeader($key)
     {
+        if (!\array_key_exists($key, $this->headers)) {
+            return null;
+        }
+
         return $this->headers[$key];
     }
 
     /**
-     * @throws RequestException
-     *
      * @return GuzzleClient
      */
     public function getClient()
     {
-        if ($this->getHeader('Authorization')) {
+        if (!empty($this->getHeader('Authorization'))) {
             return $this->client;
         }
 
