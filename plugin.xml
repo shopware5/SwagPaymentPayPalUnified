@@ -12,6 +12,15 @@
     <author>shopware AG</author>
     <compatibility minVersion="5.2.27" maxVersion="5.99.99"/>
 
+    <changelog version="REPLACE_GLOBAL_WITH_NEXT_VERSION(6.0.8)">
+        <changes lang="de">
+            PT-13099 - Bei wiederkehrendem Express-Checkout ist die PayPal Zahlungsart nun korrekt ausgewählt;
+        </changes>
+        <changes lang="en">
+            PT-13099 - For recurring express checkout, the PayPal payment method is now correctly selected;
+        </changes>
+    </changelog>
+
     <changelog version="6.0.7">
         <changes lang="de">
             PT-13098 - Gutscheinfeld wird im Warenkorb wieder korrekt angezeigt;

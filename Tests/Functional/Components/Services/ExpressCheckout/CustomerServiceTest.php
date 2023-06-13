@@ -13,6 +13,7 @@ use Generator;
 use PHPUnit\Framework\TestCase;
 use Shopware\Models\Customer\Address;
 use Shopware\Models\Customer\Customer;
+use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Components\Services\ExpressCheckout\CustomerService;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\Payer;
@@ -78,6 +79,8 @@ class CustomerServiceTest extends TestCase
         static::assertSame(self::POSTAL_CODE, $createdCustomerShippingAddress->getZipcode());
         static::assertSame(self::CITY, $createdCustomerShippingAddress->getCity());
 
+        $this->updatePaymentMethod((int) $createdCustomer->getId(), -1);
+
         // update customer
         $orderStruct = $this->createOrderStruct(true);
         $orderStruct->getPayer()->setEmailAddress(self::CHANGED_CUSTOMER_EMAIL_ADDRESS);
@@ -104,6 +107,9 @@ class CustomerServiceTest extends TestCase
         static::assertSame(self::STREET, $updatedCustomerShippingAddress->getStreet());
         static::assertSame(self::POSTAL_CODE, $updatedCustomerShippingAddress->getZipcode());
         static::assertSame(self::CITY, $updatedCustomerShippingAddress->getCity());
+
+        $payPalPaymentMethodId = $this->getContainer()->get('paypal_unified.payment_method_provider')->getPaymentId(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
+        static::assertSame($payPalPaymentMethodId, $updatedCustomer->getPaymentId());
     }
 
     /**
@@ -301,5 +307,22 @@ class CustomerServiceTest extends TestCase
         $shipping->setAddress($shippingAddress);
 
         return $shipping;
+    }
+
+    /**
+     * @param int $userId
+     * @param int $paymentMethodId
+     *
+     * @return void
+     */
+    private function updatePaymentMethod($userId, $paymentMethodId)
+    {
+        $this->getContainer()->get('dbal_connection')->createQueryBuilder()
+            ->update('s_user')
+            ->set('paymentID', ':paymentId')
+            ->where('id = :userId')
+            ->setParameter('paymentId', $paymentMethodId)
+            ->setParameter('userId', $userId)
+            ->execute();
     }
 }
