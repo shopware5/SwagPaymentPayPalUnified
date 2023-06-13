@@ -85,4 +85,6 @@ jobs:
                 if: ${{ failure() }}
                 with:
                     name: E2E test results
-                    path: /shopware/custom/plugins/SwagPaymentPayPalUnified/Tests/E2E/results
+                    path: |
+                        /shopware/custom/plugins/SwagPaymentPayPalUnified/Tests/E2E/results
+                        /shopware/var/log

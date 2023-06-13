@@ -14,7 +14,7 @@ test.describe('Check the active state of PUI and ACDC', () => {
     test('Check active state', async ({ page }) => {
         connection.query(clearPaypalSettingsSql);
 
-        backendLoginHelper.login(page);
+        await backendLoginHelper.login(page);
 
         await page.hover('.customers--main');
         await page.hover('.settings--payment-methods');

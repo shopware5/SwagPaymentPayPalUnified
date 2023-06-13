@@ -17,7 +17,7 @@ test.describe('Backend testing: Check if plus popup is shown', () => {
     test('Deactivate plus on save', async ({ page }) => {
         connection.query(updatePlusSettingsSql);
 
-        backendLoginHelper.login(page);
+        await backendLoginHelper.login(page);
 
         await page.hover('.customers--main');
         await page.hover('.settings--payment-methods');

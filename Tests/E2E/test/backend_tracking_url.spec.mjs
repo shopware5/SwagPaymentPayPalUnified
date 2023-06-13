@@ -15,10 +15,17 @@ test.describe('Tracking url testing', () => {
         connection.query(clearOrderSql);
         connection.query(orderSql);
 
-        backendLoginHelper.login(page);
+        await backendLoginHelper.login(page);
 
         await page.hover('.customers--main');
         await page.click('.customers--orders');
+
+        await page.waitForTimeout(1000);
+        const popupCloseButtons = await page.$$('text=\'Schließen\'');
+        for (let i = 0; i < popupCloseButtons.length; i++) {
+            await popupCloseButtons[i].click();
+        }
+        await page.waitForTimeout(500);
 
         await page.waitForSelector('.sprite-pencil');
         const orders = await page.$$('.sprite-pencil');

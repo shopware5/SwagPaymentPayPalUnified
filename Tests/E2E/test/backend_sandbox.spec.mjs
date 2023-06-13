@@ -16,7 +16,7 @@ test.describe('Backend testing', () => {
     });
 
     test('activate the sandbox', async ({ page }) => {
-        backendLoginHelper.login(page);
+        await backendLoginHelper.login(page);
 
         await page.hover('.customers--main');
         await page.hover('.settings--payment-methods');
