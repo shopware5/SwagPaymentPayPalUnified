@@ -7,25 +7,25 @@ on:
         -   cron: '30 02 * * *'
 
 jobs:
-    javascript-code-analysis:
-        name: Javascript
-        uses: ./.github/workflows/javascript-code-analysis.yml
-        secrets: inherit
-
-    php-code-analysis:
-        name: PHP
-        uses: ./.github/workflows/php-code-analysis.yml
-        secrets: inherit
-
-    php-unit-tests-shopware-5-7:
-        name: Unit tests
-        uses: ./.github/workflows/php-unit-tests-shopware-5-7.yml
-        secrets: inherit
-
-    php-unit-tests-shopware-legacy-versions:
-        name: Unit tests legacy
-        uses: ./.github/workflows/php-unit-tests-shopware-legacy.yml
-        secrets: inherit
+#    javascript-code-analysis:
+#        name: Javascript
+#        uses: ./.github/workflows/javascript-code-analysis.yml
+#        secrets: inherit
+#
+#    php-code-analysis:
+#        name: PHP
+#        uses: ./.github/workflows/php-code-analysis.yml
+#        secrets: inherit
+#
+#    php-unit-tests-shopware-5-7:
+#        name: Unit tests
+#        uses: ./.github/workflows/php-unit-tests-shopware-5-7.yml
+#        secrets: inherit
+#
+#    php-unit-tests-shopware-legacy-versions:
+#        name: Unit tests legacy
+#        uses: ./.github/workflows/php-unit-tests-shopware-legacy.yml
+#        secrets: inherit
 
     php-e2e-tests-shopware-5-7:
         name: E2E

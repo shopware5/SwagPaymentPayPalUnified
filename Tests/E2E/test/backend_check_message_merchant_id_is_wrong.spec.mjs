@@ -15,7 +15,7 @@ test.describe('Check for a readable message if the merchant Id is wrong', () => 
         connection.query(clearPaypalSettingsSql);
         connection.query(defaultPaypalSettingsSql);
 
-        backendLoginHelper.login(page);
+        await backendLoginHelper.login(page);
 
         await page.hover('.customers--main');
         await page.hover('.settings--payment-methods');
