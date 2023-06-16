@@ -11,15 +11,12 @@ import getPaypalPaymentMethodSelector from '../helper/getPayPalPaymentMethodSele
 const connection = MysqlFactory.getInstance();
 
 test.describe('Frontend', () => {
-    test.beforeAll(async () => {
+    test.beforeEach(async() => {
+        await connection.query(defaultPaypalSettingsSql);
         await clearCacheHelper.clearCache();
     });
 
-    test.beforeEach(() => {
-        connection.query(defaultPaypalSettingsSql);
-    });
-
-    test('Cancel payment', async ({ page }) => {
+    test('Cancel payment', async({ page }) => {
         await loginHelper.login(page);
 
         // Buy Product
@@ -71,7 +68,7 @@ test.describe('Frontend', () => {
         await expect(restoredOrderNumbers.length === 1).toBeTruthy();
     });
 
-    test('Buy a product with paypal', async ({ page }) => {
+    test('Buy a product with paypal', async({ page }) => {
         // activate customer comments
         await customerCommentHelper.updateCommentSetting();
 

@@ -10,12 +10,12 @@ const connection = MysqlFactory.getInstance();
 test.use({ viewport: { width: 1920, height: 1080 } });
 
 test.describe('Backend testing: Check if plus popup is shown', () => {
-    test.beforeEach(() => {
-        connection.query(defaultPaypalSettingsSql);
+    test.beforeEach(async() => {
+        await connection.query(defaultPaypalSettingsSql);
     });
 
-    test('Deactivate plus on save', async ({ page }) => {
-        connection.query(updatePlusSettingsSql);
+    test('Deactivate plus on save', async({ page }) => {
+        await connection.query(updatePlusSettingsSql);
 
         await backendLoginHelper.login(page);
 

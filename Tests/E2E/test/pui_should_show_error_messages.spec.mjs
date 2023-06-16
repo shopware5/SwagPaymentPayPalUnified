@@ -3,14 +3,15 @@ import MysqlFactory from '../helper/mysqlFactory.mjs';
 import defaultPaypalSettingsSql from '../helper/paypalSqlHelper.mjs';
 import loginHelper from '../helper/loginHelper.mjs';
 import getPaypalPaymentMethodSelector from '../helper/getPayPalPaymentMethodSelector.mjs';
+
 const connection = MysqlFactory.getInstance();
 
 test.describe('Pui should show error messages', () => {
-    test.beforeEach(() => {
-        connection.query(defaultPaypalSettingsSql);
+    test.beforeEach(async() => {
+        await connection.query(defaultPaypalSettingsSql);
     });
 
-    test('Check if error messages was shown to the customer', async ({ page }) => {
+    test('Check if error messages was shown to the customer', async({ page }) => {
         await loginHelper.login(page);
 
         // Buy Product

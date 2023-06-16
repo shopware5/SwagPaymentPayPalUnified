@@ -11,12 +11,12 @@ const connection = MysqlFactory.getInstance();
 test.use({ locale: 'de-DE' });
 
 test.describe('Is Pay Later fully functional', () => {
-    test.beforeEach(async () => {
-        connection.query(defaultPaypalSettingsSql);
+    test.beforeEach(async() => {
+        await connection.query(defaultPaypalSettingsSql);
         await clearCacheHelper.clearCache();
     });
 
-    test('Buy a product with Pay Later', async ({ page }) => {
+    test('Buy a product with Pay Later', async({ page }) => {
         test.skip();
         // Add product to cart
         await page.goto('/sommerwelten/beachwear/178/strandtuch-ibiza', { waitUntil: 'load' });

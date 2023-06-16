@@ -11,9 +11,9 @@ const clearOrderSql = fs.readFileSync(path.join(path.resolve(''), 'setup/sql/cle
 test.use({ viewport: { width: 1920, height: 1080 } });
 
 test.describe('Tracking url testing', () => {
-    test('Check tracking button visibility behavior', async ({ page }) => {
-        connection.query(clearOrderSql);
-        connection.query(orderSql);
+    test('Check tracking button visibility behavior', async({ page }) => {
+        await connection.query(clearOrderSql);
+        await connection.query(orderSql);
 
         await backendLoginHelper.login(page);
 
@@ -30,17 +30,17 @@ test.describe('Tracking url testing', () => {
         await page.waitForSelector('.sprite-pencil');
         const orders = await page.$$('.sprite-pencil');
 
-        orders.at(0).click();
+        await orders.at(0).click();
         await page.waitForLoadState('load');
 
         await expect(page.locator('.paypalTrackingButton')).toHaveText(/Tracking Code zu Paypal hinzufügen/);
         await page.locator('.x-order-detail-window >> .x-tool-close').click();
 
-        orders.at(-1).click();
+        await orders.at(-1).click();
         await page.waitForLoadState('load');
 
         await expect(await page.$$('.paypalTrackingButton')).toHaveLength(0);
 
-        connection.query(clearOrderSql);
+        await connection.query(clearOrderSql);
     });
 });

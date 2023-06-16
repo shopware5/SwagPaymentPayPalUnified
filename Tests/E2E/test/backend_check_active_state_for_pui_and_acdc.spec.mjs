@@ -11,8 +11,8 @@ const connection = MysqlFactory.getInstance();
 test.use({ viewport: { width: 1920, height: 1080 } });
 
 test.describe('Check the active state of PUI and ACDC', () => {
-    test('Check active state', async ({ page }) => {
-        connection.query(clearPaypalSettingsSql);
+    test('Check active state', async({ page }) => {
+        await connection.query(clearPaypalSettingsSql);
 
         await backendLoginHelper.login(page);
 

@@ -1,4 +1,4 @@
-import {test, expect} from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import defaultPaypalSettingsSql from '../helper/paypalSqlHelper.mjs';
 import MysqlFactory from '../helper/mysqlFactory.mjs';
 import loginHelper from '../helper/loginHelper.mjs';
@@ -12,7 +12,7 @@ const connection = MysqlFactory.getInstance();
 
 test.describe('Pay with credit card', () => {
     test.beforeEach(async({ page }) => {
-        connection.query(defaultPaypalSettingsSql);
+        await connection.query(defaultPaypalSettingsSql);
         await clearCacheHelper.clearCache();
     });
 
@@ -81,7 +81,7 @@ test.describe('Pay with credit card', () => {
 
         const submitTokenInput = submitTokenForm.locator('input[name="challengeDataEntry"]');
         const submitButton = await submitTokenForm.locator('input[value="SUBMIT"]');
-        await submitTokenInput.fill('1234');
+        await submitTokenInput.type('1234');
         await submitButton.click();
 
         await expect(page.locator('.teaser--title')).toHaveText(/Vielen Dank für Ihre Bestellung bei Shopware Demo/);
