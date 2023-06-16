@@ -81,8 +81,8 @@ jobs:
 
             -   name: Execute legacy E2E tests
                 run: |
-                    cd /shopware/custom/plugins/SwagPaymentPayPalUnified
-                    make run-e2e-tests
+                    cd /shopware/custom/plugins/SwagPaymentPayPalUnified/Tests/E2E
+                    npx playwright test --workers=1 --grep-invert @notIn5.2
 
             -   name: Upload artifacts
                 uses: actions/upload-artifact@v3
