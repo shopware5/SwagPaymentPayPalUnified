@@ -1,4 +1,4 @@
-import {test, expect} from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import credentials from './credentials.mjs';
 import MysqlFactory from '../helper/mysqlFactory.mjs';
 import defaultPaypalSettingsSql from '../helper/paypalSqlHelper.mjs';
@@ -18,7 +18,6 @@ test.describe('Test Pay Later is shown', () => {
     });
 
     test('Is PayLater button available: ProductDetailPage, OffCanvasBasket, CheckoutPage, ProductListingPage @notIn5.2', async({ page }) => {
-        test.skip();
         // Go to product listing
         await page.goto('/sommerwelten/beachwear/', { waitUntil: 'load' });
 

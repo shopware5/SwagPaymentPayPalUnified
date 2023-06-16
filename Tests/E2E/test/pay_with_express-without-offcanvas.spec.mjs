@@ -8,21 +8,22 @@ import offCanvasSettingHelper from '../helper/offCanvasSettingHelper.mjs';
 const connection = MysqlFactory.getInstance();
 
 test.describe('Is Express Checkout button available', () => {
-    test.beforeEach(() => {
-        connection.query(defaultPaypalSettingsSql);
+    test.beforeEach(async() => {
+        await connection.query(defaultPaypalSettingsSql);
+        await clearCacheHelper.clearCache();
     });
 
-    test.beforeAll(async () => {
+    test.beforeAll(async() => {
         await offCanvasSettingHelper.deactivateOffCanvasCart();
         await clearCacheHelper.clearCache();
     });
 
-    test.afterAll(async () => {
+    test.afterAll(async() => {
         await offCanvasSettingHelper.activateOffCanvas();
         await clearCacheHelper.clearCache();
     });
 
-    test('Check product cart modal @notIn5.2', async ({ page }) => {
+    test('Check product cart modal @notIn5.2', async({ page }) => {
         await page.goto('/sommerwelten/beachwear/178/strandtuch-ibiza', { waitUntil: 'load' });
 
         await page.locator('text=In den Warenkorb').click();

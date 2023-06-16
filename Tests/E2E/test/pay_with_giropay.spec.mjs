@@ -4,18 +4,16 @@ import defaultPaypalSettingsSql from '../helper/paypalSqlHelper.mjs';
 import loginHelper from '../helper/loginHelper.mjs';
 import clearCacheHelper from '../helper/clearCacheHelper.mjs';
 import getPaypalPaymentMethodSelector from '../helper/getPayPalPaymentMethodSelector.mjs';
+
 const connection = MysqlFactory.getInstance();
 
 test.describe('Pay with Giropay', () => {
-    test.beforeAll(async () => {
+    test.beforeEach(async() => {
+        await connection.query(defaultPaypalSettingsSql);
         await clearCacheHelper.clearCache();
     });
 
-    test.beforeEach(() => {
-        connection.query(defaultPaypalSettingsSql);
-    });
-
-    test('Buy as german customer with euro', async ({ page }) => {
+    test('Buy as german customer with euro', async({ page }) => {
         await loginHelper.login(page);
 
         // Buy Product

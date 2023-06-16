@@ -11,9 +11,9 @@ const connection = MysqlFactory.getInstance();
 test.use({ viewport: { width: 1920, height: 1080 } });
 
 test.describe('Check for a readable message if the merchant Id is wrong', () => {
-    test('Check for a readable message', async ({ page }) => {
-        connection.query(clearPaypalSettingsSql);
-        connection.query(defaultPaypalSettingsSql);
+    test('Check for a readable message', async({ page }) => {
+        await connection.query(clearPaypalSettingsSql);
+        await connection.query(defaultPaypalSettingsSql);
 
         await backendLoginHelper.login(page);
 

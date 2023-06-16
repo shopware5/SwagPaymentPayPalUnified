@@ -10,15 +10,12 @@ const connection = MysqlFactory.getInstance();
 test.use({ locale: 'de-DE' });
 
 test.describe('Pay with invoice', () => {
-    test.beforeAll(async () => {
+    test.beforeEach(async() => {
+        await connection.query(defaultPaypalSettingsSql);
         await clearCacheHelper.clearCache();
     });
 
-    test.beforeEach(() => {
-        connection.query(defaultPaypalSettingsSql);
-    });
-
-    test('Buy one product with "Pay Upon Invoice"', async ({ page }) => {
+    test('Buy one product with "Pay Upon Invoice"', async({ page }) => {
         await loginHelper.login(page);
 
         // Buy Product
@@ -50,7 +47,7 @@ test.describe('Pay with invoice', () => {
         await expect(page.locator('.unified--instruction')).toHaveText(/.*Bitte überweisen Sie.*/);
     });
 
-    test('Buy ten products with "Pay Upon Invoice"', async ({ page }) => {
+    test('Buy ten products with "Pay Upon Invoice"', async({ page }) => {
         await loginHelper.login(page);
 
         await page.goto('sommerwelten/172/sonnencreme-sunblocker-lsf-50', { waitUntil: 'load' });

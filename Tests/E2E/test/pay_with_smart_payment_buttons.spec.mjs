@@ -12,16 +12,13 @@ const connection = MysqlFactory.getInstance();
 test.use({ locale: 'de-DE' });
 
 test.describe('Is SPB fully functional', () => {
-    test.beforeAll(async () => {
+    test.beforeEach(async() => {
+        await connection.query(defaultPaypalSettingsSql);
+        await connection.query(useSmartPaymentButtonsSql);
         await clearCacheHelper.clearCache();
     });
 
-    test.beforeEach(() => {
-        connection.query(defaultPaypalSettingsSql);
-        connection.query(useSmartPaymentButtonsSql);
-    });
-
-    test('Buy a product with PayPal using Smart Payment Buttons', async ({ page }) => {
+    test('Buy a product with PayPal using Smart Payment Buttons', async({ page }) => {
         // Add product to cart
         await page.goto('/sommerwelten/beachwear/178/strandtuch-ibiza', { waitUntil: 'load' });
         await page.click('.buybox--button');

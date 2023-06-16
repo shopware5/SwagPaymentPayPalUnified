@@ -11,13 +11,13 @@ const connection = MysqlFactory.getInstance();
 test.use({ locale: 'de-DE' });
 
 test.describe('Test Pay Later is not shown', () => {
-    test.beforeAll(async () => {
+    test.beforeEach(async() => {
         await connection.query(defaultPaypalSettingsSql);
         await payLaterSettingsHelper.deactivateAll();
         await clearCacheHelper.clearCache();
     });
 
-    test('PayLater button is not shown: ProductDetailPage, OffCanvasBasket, CheckoutPage, ProductListingPage @notIn5.2', async ({ page }) => {
+    test('PayLater button is not shown: ProductDetailPage, OffCanvasBasket, CheckoutPage, ProductListingPage @notIn5.2', async({ page }) => {
 
         // Go to product listing
         await page.goto('/sommerwelten/beachwear/', { waitUntil: 'load' });
