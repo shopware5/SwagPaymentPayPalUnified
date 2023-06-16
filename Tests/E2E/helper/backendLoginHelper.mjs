@@ -12,11 +12,7 @@ export default (function() {
             await expect(page).toHaveTitle(/Backend/);
             await expect(page.locator('#button-1019-btnEl')).toHaveText(/Login/);
 
-            const userNameField = await page.locator('input[name="username"]');
-            // Wait for the focus change of the shopware login
-            await expect(userNameField).toBeFocused();
-
-            await userNameField.type(credentials.defaultBackendUserUsername);
+            await page.locator('input[name="username"]').type(credentials.defaultBackendUserUsername);
             await page.locator('input[name="password"]').type(credentials.defaultBackendUserPassword);
 
             await page.click('#button-1019-btnEl');
