@@ -77,15 +77,12 @@ test.describe('Pay with credit card', () => {
 
         await page.waitForTimeout(1000);
 
-        // TODO: REMOVE AFTER DEBUG
-        console.log(contingencyHandlerIFrame);
-        // TODO: REMOVE AFTER DEBUG
-
-        await cookieHelper.acceptCookies(submitTokenForm);
-
         const submitTokenInput = await submitTokenForm.locator('input[name="challengeDataEntry"]');
         const submitButton = await submitTokenForm.locator('input[value="SUBMIT"]');
-        await submitTokenInput.type('1234');
+
+        await submitTokenInput.scrollIntoViewIfNeeded().type('1234');
+
+        await cookieHelper.acceptCookies(contingencyHandlerIFrame);
         await submitButton.click();
 
         await expect(page.locator('.teaser--title')).toHaveText(/Vielen Dank für Ihre Bestellung bei Shopware Demo/);
