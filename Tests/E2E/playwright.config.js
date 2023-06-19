@@ -18,6 +18,7 @@ const config = {
     workers: 1,
     reporter: 'line',
     use: {
+        viewport: { width: 1920, height: 1080 },
         browserName: 'chromium',
         actionTimeout: 30000,
         baseURL: 'http://' + process.env.SW_HOST + process.env.SW_BASE_PATH ?? '',
