@@ -76,10 +76,14 @@ test.describe('Pay with credit card', () => {
         const submitTokenForm = await cardinalStepUpIFrame.locator('form[name="cardholderInput"]');
 
         await page.waitForTimeout(1000);
+        
+        // TODO: REMOVE AFTER DEBUG
+        console.log(contingencyHandlerIFrame);
+        // TODO: REMOVE AFTER DEBUG
 
-        await cookieHelper.acceptCookies(contingencyHandlerIFrame);
+        await cookieHelper.acceptCookies(submitTokenForm);
 
-        const submitTokenInput = submitTokenForm.locator('input[name="challengeDataEntry"]');
+        const submitTokenInput = await submitTokenForm.locator('input[name="challengeDataEntry"]');
         const submitButton = await submitTokenForm.locator('input[value="SUBMIT"]');
         await submitTokenInput.type('1234');
         await submitButton.click();
