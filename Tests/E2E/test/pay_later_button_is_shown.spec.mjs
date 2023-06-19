@@ -20,6 +20,7 @@ test.describe('Test Pay Later is shown', () => {
     test('Is PayLater button available: ProductDetailPage, OffCanvasBasket, CheckoutPage, ProductListingPage @notIn5.2', async({ page }) => {
         // Go to product listing
         await page.goto('/sommerwelten/beachwear/', { waitUntil: 'load' });
+        await page.reload({ waitUntil: 'networkidle' });
 
         // Check listing page
         const listingPageLocator = await page.frameLocator('.component-frame').first().locator('div[data-funding-source="paylater"]');
@@ -27,6 +28,7 @@ test.describe('Test Pay Later is shown', () => {
 
         // Go to detail page
         await page.goto('/sommerwelten/beachwear/178/strandtuch-ibiza', { waitUntil: 'load' });
+        await page.reload({ waitUntil: 'networkidle' });
 
         // Check product detail page
         const detailPageLocator = await page.frameLocator('.component-frame').locator('div[data-funding-source="paylater"]');
@@ -41,6 +43,7 @@ test.describe('Test Pay Later is shown', () => {
 
         // Go to checkout
         await page.goto('checkout/confirm', { waitUntil: 'load' });
+        await page.reload({ waitUntil: 'networkidle' });
 
         // Check checkout page
         const checkoutLocator = await page.frameLocator('.component-frame').locator('div[data-funding-source="paylater"]');
