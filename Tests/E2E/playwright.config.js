@@ -21,6 +21,8 @@ const config = {
         viewport: { width: 1920, height: 1080 },
         locale: 'de-DE',
         timezoneId: 'Europe/Berlin',
+        geolocation: { longitude: 52.515027, latitude: 13.392027 },
+        permissions: ['geolocation'],
         browserName: 'chromium',
         actionTimeout: 30000,
         baseURL: 'http://' + process.env.SW_HOST + process.env.SW_BASE_PATH ?? '',
