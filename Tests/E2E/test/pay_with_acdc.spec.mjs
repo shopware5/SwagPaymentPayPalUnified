@@ -76,7 +76,7 @@ test.describe('Pay with credit card', () => {
         const submitTokenForm = await cardinalStepUpIFrame.locator('form[name="cardholderInput"]');
 
         await page.waitForTimeout(1000);
-        
+
         // TODO: REMOVE AFTER DEBUG
         console.log(contingencyHandlerIFrame);
         // TODO: REMOVE AFTER DEBUG
