@@ -10,6 +10,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.view.LandingPageSelect', {
     queryMode: 'local',
     valueField: 'key',
     displayField: 'label',
+    value: 'NO_PREFERENCE',
 
     listConfig: {
         getInnerTpl: function() {

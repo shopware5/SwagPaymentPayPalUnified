@@ -12,6 +12,12 @@ use SwagPaymentPayPalUnified\PayPalBundle\V2\PayPalApiStruct;
 
 class ExperienceContext extends PayPalApiStruct
 {
+    const LANDING_PAGE_TYPE_LOGIN = 'LOGIN';
+
+    const LANDING_PAGE_TYPE_BILLING = 'BILLING';
+
+    const LANDING_PAGE_TYPE_NO_PREFERENCE = 'NO_PREFERENCE';
+
     const PAYMENT_METHOD_PREFERENCE = 'IMMEDIATE_PAYMENT_REQUIRED';
 
     const PAYMENT_METHOD = 'PAYPAL';
