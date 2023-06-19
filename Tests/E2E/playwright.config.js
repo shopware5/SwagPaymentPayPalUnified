@@ -19,6 +19,8 @@ const config = {
     reporter: 'line',
     use: {
         viewport: { width: 1920, height: 1080 },
+        locale: 'de-DE',
+        timezoneId: 'Europe/Berlin',
         browserName: 'chromium',
         actionTimeout: 30000,
         baseURL: 'http://' + process.env.SW_HOST + process.env.SW_BASE_PATH ?? '',
