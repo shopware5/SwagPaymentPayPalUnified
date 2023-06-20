@@ -54,7 +54,6 @@ test.describe('Pay with credit card', () => {
         await expect(page.locator('.payment--description')).toHaveText('Kredit- oder Debitkarte');
         await page.click('input[name="sAGB"]');
 
-<<<<<<< Updated upstream
         const numberFieldFrame = await page.frameLocator('#braintree-hosted-field-number');
         await numberFieldFrame.locator('#credit-card-number').type(credentials.paypalCreditCard);
 
@@ -63,11 +62,6 @@ test.describe('Pay with credit card', () => {
 
         const cvvField = await page.frameLocator('#braintree-hosted-field-cvv');
         await cvvField.locator('#cvv').type('123');
-=======
-        await page.frameLocator('#braintree-hosted-field-number').locator('#credit-card-number').type(credentials.paypalCreditCard);
-        await page.frameLocator('#braintree-hosted-field-expirationDate').locator('#expiration').type('1225');
-        await page.frameLocator('#braintree-hosted-field-cvv').locator('#cvv').type('123');
->>>>>>> Stashed changes
 
         await page.waitForLoadState('load');
 
@@ -133,7 +127,6 @@ test.describe('Pay with credit card', () => {
         await expect(page.locator('.payment--description')).toHaveText('Kredit- oder Debitkarte');
         await page.click('input[name="sAGB"]');
 
-<<<<<<< Updated upstream
         const numberFieldFrame = await page.frameLocator('#braintree-hosted-field-number');
         await numberFieldFrame.locator('#credit-card-number').type(credentials.paypalCreditCard);
 
@@ -142,11 +135,6 @@ test.describe('Pay with credit card', () => {
 
         const cvvField = await page.frameLocator('#braintree-hosted-field-cvv');
         await cvvField.locator('#cvv').type('123');
-=======
-        await page.frameLocator('#braintree-hosted-field-number').locator('#credit-card-number').type(credentials.paypalCreditCard);
-        await page.frameLocator('#braintree-hosted-field-expirationDate').locator('#expiration').type('1225');
-        await page.frameLocator('#braintree-hosted-field-cvv').locator('#cvv').type('123');
->>>>>>> Stashed changes
 
         await page.waitForLoadState('load');
 
