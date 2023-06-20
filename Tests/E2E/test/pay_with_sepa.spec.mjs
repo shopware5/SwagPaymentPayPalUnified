@@ -9,8 +9,6 @@ import loginHelper from '../helper/loginHelper.mjs';
 
 const connection = MysqlFactory.getInstance();
 
-test.use({ locale: 'de-DE' });
-
 test.describe('Is SEPA fully functional', () => {
     test.skip();
 

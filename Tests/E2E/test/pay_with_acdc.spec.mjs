@@ -67,22 +67,26 @@ test.describe('Pay with credit card', () => {
 
         await page.waitForTimeout(1000);
 
-        await page.click('button:has-text("Zahlungspflichtig bestellen")');
-        await page.waitForLoadState('load');
+        await Promise.all([
+            page.waitForResponse(/.*threeDSLookUp.*/),
+            page.waitForResponse(/.*three_ds_ddc.*/),
+            page.waitForResponse(/.*jwt.*/),
+            page.click('button:has-text("Zahlungspflichtig bestellen")')
+        ]);
 
         const contingencyHandlerIFrame = await page.frameLocator('iframe[title~="payments_sdk_contingency_handler"]');
         const threeDSecureIFrame = await contingencyHandlerIFrame.frameLocator('iframe[id="threedsIframeV2"]');
         const cardinalStepUpIFrame = await threeDSecureIFrame.frameLocator('iframe[id^="cardinal-stepUpIframe"]');
         const submitTokenForm = await cardinalStepUpIFrame.locator('form[name="cardholderInput"]');
 
-        await page.waitForTimeout(1000);
-
         const submitTokenInput = await submitTokenForm.locator('input[name="challengeDataEntry"]');
         const submitButton = await submitTokenForm.locator('input[value="SUBMIT"]');
 
-        await submitTokenInput.scrollIntoViewIfNeeded().type('1234');
-
         await cookieHelper.acceptCookies(contingencyHandlerIFrame);
+
+        await submitTokenInput.scrollIntoViewIfNeeded();
+        await submitTokenInput.type('1234');
+
         await submitButton.click();
 
         await expect(page.locator('.teaser--title')).toHaveText(/Vielen Dank für Ihre Bestellung bei Shopware Demo/);
@@ -136,17 +140,22 @@ test.describe('Pay with credit card', () => {
 
         await page.waitForTimeout(1000);
 
-        await page.click('button:has-text("Zahlungspflichtig bestellen")');
-        await page.waitForLoadState('load');
+        await Promise.all([
+            page.waitForResponse(/.*threeDSLookUp.*/),
+            page.waitForResponse(/.*three_ds_ddc.*/),
+            page.waitForResponse(/.*jwt.*/),
+            page.click('button:has-text("Zahlungspflichtig bestellen")')
+        ]);
 
         const contingencyHandlerIFrame = await page.frameLocator('iframe[title~="payments_sdk_contingency_handler"]');
         const threeDSecureIFrame = await contingencyHandlerIFrame.frameLocator('iframe[id="threedsIframeV2"]');
         const cardinalStepUpIFrame = await threeDSecureIFrame.frameLocator('iframe[id^="cardinal-stepUpIframe"]');
         const cancelForm = await cardinalStepUpIFrame.locator('form[name="cancel"]');
 
-        await page.waitForTimeout(1000);
-        const cancelButton = await cancelForm.locator('input[value="CANCEL"]');
         await cookieHelper.acceptCookies(contingencyHandlerIFrame);
+
+        const cancelButton = await cancelForm.locator('input[type="submit"]');
+        await cancelButton.scrollIntoViewIfNeeded();
         await cancelButton.click();
 
         const contingencyHandlerWrapper = await page.locator('div[id~="payments-sdk-contingency-handler"]');

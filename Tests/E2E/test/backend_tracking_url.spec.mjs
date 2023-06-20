@@ -8,8 +8,6 @@ const connection = MysqlFactory.getInstance();
 const orderSql = fs.readFileSync(path.join(path.resolve(''), 'setup/sql/order_for_check_tracking.sql'), 'utf8');
 const clearOrderSql = fs.readFileSync(path.join(path.resolve(''), 'setup/sql/clear_orders_for_check_tracking.sql'), 'utf8');
 
-test.use({ viewport: { width: 1920, height: 1080 } });
-
 test.describe('Tracking url testing', () => {
     test('Check tracking button visibility behavior', async({ page }) => {
         await connection.query(clearOrderSql);

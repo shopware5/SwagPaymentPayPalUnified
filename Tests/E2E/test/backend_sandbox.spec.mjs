@@ -9,8 +9,6 @@ import backendLoginHelper from '../helper/backendLoginHelper.mjs';
 const connection = MysqlFactory.getInstance();
 const truncateTables = fs.readFileSync(path.join(path.resolve(''), 'setup/sql/truncate_paypal_tables.sql'), 'utf8');
 
-test.use({ viewport: { width: 1920, height: 1080 } });
-
 test.describe('Backend testing', () => {
     test.beforeEach(async() => {
         await connection.query(truncateTables);

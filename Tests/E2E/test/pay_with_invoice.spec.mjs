@@ -7,8 +7,6 @@ import getPaypalPaymentMethodSelector from '../helper/getPayPalPaymentMethodSele
 
 const connection = MysqlFactory.getInstance();
 
-test.use({ locale: 'de-DE' });
-
 test.describe('Pay with invoice', () => {
     test.beforeEach(async() => {
         await connection.query(defaultPaypalSettingsSql);

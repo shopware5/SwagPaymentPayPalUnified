@@ -8,8 +8,6 @@ import payLaterSettingsHelper from '../helper/payLaterSettingsHelper.mjs';
 
 const connection = MysqlFactory.getInstance();
 
-test.use({ locale: 'de-DE' });
-
 test.describe('Test Pay Later is not shown', () => {
     test.beforeEach(async() => {
         await connection.query(defaultPaypalSettingsSql);
