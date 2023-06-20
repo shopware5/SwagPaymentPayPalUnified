@@ -4,6 +4,6 @@
     {$smarty.block.parent}
 
     {if $paypalUnifiedEcListingActive && $paypalIsNotAllowed === false}
-        <div class="paypal-unified-ec--button-placeholder"></div>
+        <div class="paypal-unified-ec--button-placeholder {if $paypalUnifiedEcButtonStyleSize == 'responsive'} paypal-button--is-responsive-size{/if}"></div>
     {/if}
 {/block}
