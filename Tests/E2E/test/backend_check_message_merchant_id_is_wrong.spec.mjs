@@ -9,10 +9,12 @@ import backendLoginHelper from '../helper/backendLoginHelper.mjs';
 const connection = MysqlFactory.getInstance();
 
 test.describe('Check for a readable message if the merchant Id is wrong', () => {
-    test('Check for a readable message', async({ page }) => {
+    test.beforeEach(async() => {
         await connection.query(clearPaypalSettingsSql);
         await connection.query(defaultPaypalSettingsSql);
+    });
 
+    test('Check for a readable message', async({ page }) => {
         await backendLoginHelper.login(page);
 
         await page.hover('.customers--main');

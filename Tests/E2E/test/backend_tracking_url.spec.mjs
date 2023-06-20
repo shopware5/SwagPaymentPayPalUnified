@@ -9,10 +9,12 @@ const orderSql = fs.readFileSync(path.join(path.resolve(''), 'setup/sql/order_fo
 const clearOrderSql = fs.readFileSync(path.join(path.resolve(''), 'setup/sql/clear_orders_for_check_tracking.sql'), 'utf8');
 
 test.describe('Tracking url testing', () => {
-    test('Check tracking button visibility behavior', async({ page }) => {
+    test.beforeEach(async() => {
         await connection.query(clearOrderSql);
         await connection.query(orderSql);
+    });
 
+    test('Check tracking button visibility behavior', async({ page }) => {
         await backendLoginHelper.login(page);
 
         await page.hover('.customers--main');
