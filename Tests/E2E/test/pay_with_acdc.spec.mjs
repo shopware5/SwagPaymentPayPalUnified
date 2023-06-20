@@ -58,7 +58,7 @@ test.describe('Pay with credit card', () => {
         await numberFieldFrame.locator('#credit-card-number').type(credentials.paypalCreditCard);
 
         const expirationDateField = await page.frameLocator('#braintree-hosted-field-expirationDate');
-        await expirationDateField.locator('#expiration').type('0530');
+        await expirationDateField.locator('#expiration').type('1225');
 
         const cvvField = await page.frameLocator('#braintree-hosted-field-cvv');
         await cvvField.locator('#cvv').type('123');
