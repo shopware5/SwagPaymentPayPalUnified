@@ -61,11 +61,6 @@ jobs:
                   restore-keys: |
                       ${{ runner.os }}-composer-
 
-            -   name: Check
-                run: |
-                    ps aux
-                    curl "http://$(hostname -i)"
-
             -   name: Move plugin
                 run: mv "$(pwd)/plugin" /shopware/custom/plugins/SwagPaymentPayPalUnified
 
