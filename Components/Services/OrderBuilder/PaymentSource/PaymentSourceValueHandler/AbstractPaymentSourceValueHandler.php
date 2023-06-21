@@ -125,7 +125,7 @@ abstract class AbstractPaymentSourceValueHandler
     {
         $currentLandingPage = $generalSettings->getLandingPageType();
 
-        if (!\in_array($currentLandingPage, ExperienceContext::LANDING_PAGES)) {
+        if (!\in_array($currentLandingPage, ExperienceContext::LANDING_PAGE_TYPES)) {
             return ExperienceContext::LANDING_PAGE_TYPE_NO_PREFERENCE;
         }
 

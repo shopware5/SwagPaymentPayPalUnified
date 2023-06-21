@@ -14,10 +14,10 @@
 
     <changelog version="REPLACE_GLOBAL_WITH_NEXT_VERSION(6.0.9)">
         <changes lang="de">
-            PT-13108 - Setzt Standard-Landingpage, wenn keine ausgewählt wurde;
+            PT-13108 - Nutzt Standard-Landingpage, wenn die Einstellung nicht korrekt gesetzt wurde;
         </changes>
         <changes lang="en">
-            PT-13108 - Sets default landing page if none is selected;
+            PT-13108 - Uses default landing page if setting is not set correctly;
         </changes>
     </changelog>
 

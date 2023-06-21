@@ -18,7 +18,7 @@ class ExperienceContext extends PayPalApiStruct
 
     const LANDING_PAGE_TYPE_NO_PREFERENCE = 'NO_PREFERENCE';
 
-    const LANDING_PAGES = [
+    const LANDING_PAGE_TYPES = [
         self::LANDING_PAGE_TYPE_BILLING,
         self::LANDING_PAGE_TYPE_LOGIN,
         self::LANDING_PAGE_TYPE_NO_PREFERENCE,
