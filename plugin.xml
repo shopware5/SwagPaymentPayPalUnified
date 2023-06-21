@@ -12,6 +12,15 @@
     <author>shopware AG</author>
     <compatibility minVersion="5.2.27" maxVersion="5.99.99"/>
 
+    <changelog version="REPLACE_GLOBAL_WITH_NEXT_VERSION(6.0.9)">
+        <changes lang="de">
+            PT-13108 - Setzt Standard-Landingpage, wenn keine ausgewählt wurde;
+        </changes>
+        <changes lang="en">
+            PT-13108 - Sets default landing page if none is selected;
+        </changes>
+    </changelog>
+
     <changelog version="6.0.8">
         <changes lang="de">
             PT-13099 - Bei wiederkehrendem Express-Checkout ist die PayPal Zahlungsart nun korrekt ausgewählt;
