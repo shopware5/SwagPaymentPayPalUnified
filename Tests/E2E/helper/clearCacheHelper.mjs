@@ -18,19 +18,5 @@ export default (function() {
                 });
             });
         },
-
-        makeCurl: async function() {
-            return new Promise((resolve, reject) => {
-                exec('curl localhost', (error, stdout, stderr) => {
-                    // TODO: REMOVE AFTER DEBUG
-                    console.log('OUT: ' + stdout);
-                    // console.log('ERROR: ' + error);
-                    // console.log('STD_ERROR: ' + stderr);
-                    // TODO: REMOVE AFTER DEBUG
-
-                    resolve();
-                });
-            });
-        }
     };
 }());

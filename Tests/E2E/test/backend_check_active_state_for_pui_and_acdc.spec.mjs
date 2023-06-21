@@ -17,7 +17,6 @@ test.describe('Check the active state of PUI and ACDC', () => {
 
     test('Check active state', async({ page }) => {
         await backendLoginHelper.login(page);
-        await clearCacheHelper.makeCurl();
 
         await page.hover('.customers--main');
         await page.hover('.settings--payment-methods');
