@@ -42,7 +42,7 @@ class ThreeDSecureResultCheckerTest extends TestCase
 
             if (\method_exists($this, 'expectExceptionMessageMatches')) {
                 $this->expectExceptionMessageMatches(
-                    '/^.* REASON: ' . ThreeDSecureExceptionDescription::getDescriptionByCode($expectedExceptionCode) . '.*$/'
+                    '/^.*' . ThreeDSecureExceptionDescription::getDescriptionByCode($expectedExceptionCode) . '.*$/'
                 );
             }
         }
@@ -182,6 +182,17 @@ class ThreeDSecureResultCheckerTest extends TestCase
             ),
             false,
             ThreeDSecureExceptionDescription::STATUS_CODE___UNKNOWN,
+        ];
+
+        yield 'Test case 14 No 3DSecure result' => [
+            $this->createPayPalOrder(
+                'ANY',
+                'ANY',
+                'ANY',
+                false
+            ),
+            false,
+            ThreeDSecureExceptionDescription::STATUS_CODE_NO_3DSECURE,
         ];
     }
 
@@ -347,10 +358,11 @@ class ThreeDSecureResultCheckerTest extends TestCase
      * @param string $enrollmentStatus
      * @param string $authenticationStatus
      * @param string $liabilityShift
+     * @param bool   $has3DResult
      *
      * @return Order
      */
-    private function createPayPalOrder($enrollmentStatus, $authenticationStatus, $liabilityShift)
+    private function createPayPalOrder($enrollmentStatus, $authenticationStatus, $liabilityShift, $has3DResult = true)
     {
         $threeDSecure = new ThreeDSecure();
         $threeDSecure->setEnrollmentStatus($enrollmentStatus);
@@ -358,7 +370,9 @@ class ThreeDSecureResultCheckerTest extends TestCase
 
         $authenticationResult = new AuthenticationResult();
         $authenticationResult->setLiabilityShift($liabilityShift);
-        $authenticationResult->setThreeDSecure($threeDSecure);
+        if ($has3DResult) {
+            $authenticationResult->setThreeDSecure($threeDSecure);
+        }
 
         $card = new Card();
         $card->setAuthenticationResult($authenticationResult);

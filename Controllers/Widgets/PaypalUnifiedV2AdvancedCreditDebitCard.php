@@ -11,6 +11,7 @@ use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\ShopwareOrderData;
 use SwagPaymentPayPalUnified\Components\Services\ThreeDSecureResultChecker\Exception\ThreeDSecureAuthorizationCanceledException;
 use SwagPaymentPayPalUnified\Components\Services\ThreeDSecureResultChecker\Exception\ThreeDSecureAuthorizationFailedException;
 use SwagPaymentPayPalUnified\Components\Services\ThreeDSecureResultChecker\Exception\ThreeDSecureAuthorizationRejectedException;
+use SwagPaymentPayPalUnified\Components\Services\ThreeDSecureResultChecker\Exception\ThreeDSecureCardHasNoAuthorization;
 use SwagPaymentPayPalUnified\Components\Services\ThreeDSecureResultChecker\ThreeDSecureResultChecker;
 use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentController;
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\InstrumentDeclinedException;
@@ -171,6 +172,14 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2AdvancedCreditDebitCard extend
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
                 ->setCode($authorizationCanceledException->getCode())
                 ->setException($authorizationCanceledException, 'captureAction: ThreeDSecure authorization canceled');
+
+            $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
+
+            return;
+        } catch (ThreeDSecureCardHasNoAuthorization $hasNoAuthorizationException) {
+            $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
+                ->setCode($hasNoAuthorizationException->getCode())
+                ->setException($hasNoAuthorizationException, 'captureAction: No ThreeDSecure');
 
             $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
 
