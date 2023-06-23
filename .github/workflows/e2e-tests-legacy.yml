@@ -64,6 +64,21 @@ jobs:
             -   name: Check
                 run: |
                     ps aux
+                    curl "http://$(hostname -i)/backend"
+
+            -   name: Check
+                run: |
+                    ps aux
+                    curl "http://localhost/backend"
+
+            -   name: Check
+                run: |
+                    ps aux
+                    curl "http://localhost/"
+
+            -   name: Check
+                run: |
+                    ps aux
                     curl "http://$(hostname -i)"
 
             -   name: Move plugin
