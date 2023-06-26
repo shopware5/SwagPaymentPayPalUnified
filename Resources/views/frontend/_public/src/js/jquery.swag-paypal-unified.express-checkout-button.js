@@ -144,10 +144,6 @@
             if (this.opts.buyProductDirectly) {
                 $.subscribe(this.getEventName('plugin/swAjaxVariant/onRequestData'), $.proxy(this.onChangeVariant, this));
             }
-
-            // TODO: REMOVE AFTER DEBUG
-            console.log('expressInit');
-            // TODO: REMOVE AFTER DEBUG
         },
 
         applyOrderNumberDataAttribute: function() {
