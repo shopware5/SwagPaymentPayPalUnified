@@ -16,7 +16,6 @@ test.describe('Test Pay Later is not shown', () => {
     });
 
     test('PayLater button is not shown: ProductDetailPage, OffCanvasBasket, CheckoutPage, ProductListingPage @notIn5.2', async({ page }) => {
-
         // Go to product listing
         await page.goto('/sommerwelten/beachwear/', { waitUntil: 'load' });
 

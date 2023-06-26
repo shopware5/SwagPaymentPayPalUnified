@@ -6,7 +6,7 @@ import clearCacheHelper from '../helper/clearCacheHelper.mjs';
 import cookieHelper from '../helper/cookieHelper.mjs';
 
 import getPaypalPaymentMethodSelector from '../helper/getPayPalPaymentMethodSelector.mjs';
-import credentials from "./credentials.mjs";
+import credentials from './credentials.mjs';
 
 const connection = MysqlFactory.getInstance();
 

@@ -4,8 +4,6 @@ export default (function() {
          * @param { FrameLocator } parentFrame
          */
         acceptCookies: async function(parentFrame) {
-
-
             const gdprCookieBanner = await parentFrame.locator('#gdprCookieBanner');
             const acceptButton = await gdprCookieBanner.locator('button#acceptAllButton');
 

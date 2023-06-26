@@ -1,13 +1,13 @@
 import credentials from '../test/credentials.mjs';
-import {expect} from '@playwright/test';
-import clearCacheHelper from "./clearCacheHelper.mjs";
+import { expect } from '@playwright/test';
+import clearCacheHelper from './clearCacheHelper.mjs';
 
 export default (function() {
     return {
         login: async function(page) {
             await clearCacheHelper.clearCache();
 
-            await page.goto('/backend', {waitUntil: 'load'});
+            await page.goto('/backend', { waitUntil: 'load' });
 
             await expect(page).toHaveTitle(/Backend/);
 

@@ -34,7 +34,7 @@ test.describe('Is Express Checkout button available', () => {
             url = url.replace(/buyerCountry=[A-Z]*/, '');
             url += '&buyerCountry=DE';
 
-            route.continue({ url: url });
+            route.continue({ url });
         });
 
         await paypalPage.locator('#email').fill(credentials.paypalCustomerEmail);
@@ -75,7 +75,7 @@ test.describe('Is Express Checkout button available', () => {
             url = url.replace(/buyerCountry=[A-Z]*/, '');
             url += '&buyerCountry=DE';
 
-            route.continue({ url: url });
+            route.continue({ url });
         });
 
         await paypalPage.locator('#email').fill(credentials.paypalCustomerEmail);
@@ -122,7 +122,7 @@ test.describe('Is Express Checkout button available', () => {
             url = url.replace(/buyerCountry=[A-Z]*/, '');
             url += '&buyerCountry=DE';
 
-            route.continue({ url: url });
+            route.continue({ url });
         });
 
         await paypalPage.locator('#email').fill(credentials.paypalCustomerEmail);
@@ -168,7 +168,7 @@ test.describe('Is Express Checkout button available', () => {
             url = url.replace(/buyerCountry=[A-Z]*/, '');
             url += '&buyerCountry=DE';
 
-            route.continue({ url: url });
+            route.continue({ url });
         });
 
         await paypalPage.locator('#email').fill(credentials.paypalCustomerEmail);
@@ -205,7 +205,7 @@ test.describe('Is Express Checkout button available', () => {
             url = url.replace(/buyerCountry=[A-Z]*/, '');
             url += '&buyerCountry=DE';
 
-            route.continue({ url: url });
+            route.continue({ url });
         });
 
         await paypalPage.locator('#email').fill(credentials.paypalCustomerEmail);

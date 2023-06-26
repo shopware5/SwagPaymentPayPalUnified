@@ -59,7 +59,7 @@ test.describe('Is SEPA fully functional', () => {
             url = url.replace(/buyerCountry=[A-Z]*/, '');
             url += '&buyerCountry=DE';
 
-            route.continue({ url: url });
+            route.continue({ url });
         });
 
         await paypalPage.locator('#bankIban').fill(credentials.sepaIban);
