@@ -75,7 +75,7 @@ jobs:
                     npm install
                     npx playwright install --with-deps chromium
 
-            - name: Run tests
+            - name: Execute E2E tests
               run: |
                     cd /shopware/custom/plugins/SwagPaymentPayPalUnified/Tests/E2E
                     npm run e2e:run

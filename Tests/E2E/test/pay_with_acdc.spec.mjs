@@ -156,6 +156,7 @@ test.describe('Pay with credit card', () => {
 
         const cancelButton = await cancelForm.locator('input[type="submit"]');
         await cancelButton.scrollIntoViewIfNeeded();
+        await page.waitForTimeout(1000);
         await cancelButton.click();
 
         const contingencyHandlerWrapper = await page.locator('div[id~="payments-sdk-contingency-handler"]');
