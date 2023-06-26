@@ -14,9 +14,7 @@ export default (function() {
             await page.locator('input[name="username"]').type(credentials.defaultBackendUserUsername);
             await page.locator('input[name="password"]').type(credentials.defaultBackendUserPassword);
 
-            await page.click('#button-1019-btnEl');
-
-            await page.waitForLoadState('networkidle', { timeout: 5000 });
+            await page.click('#button-1019-btnEl', { waitUntil: 'networkidle' });
         }
     };
 }());
