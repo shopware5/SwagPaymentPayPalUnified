@@ -15,9 +15,11 @@
     <changelog version="REPLACE_GLOBAL_WITH_NEXT_VERSION(6.0.9)">
         <changes lang="de">
             PT-13108 - Nutzt Standard-Landingpage, wenn die Einstellung nicht korrekt gesetzt wurde;
+            PT-13109 - Behebt Darstellungsfehler im Listing im Zusammenhang mit dem PayLater Button;
         </changes>
         <changes lang="en">
             PT-13108 - Uses default landing page if setting is not set correctly;
+            PT-13109 - Fixes display error in the listing in connection with the PayLater button;
         </changes>
     </changelog>
 
