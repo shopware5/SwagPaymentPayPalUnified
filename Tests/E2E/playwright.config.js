@@ -31,7 +31,12 @@ const config = {
         {
             name: 'chromium',
             use: {
-                ...devices['Desktop Chrome']
+                ...devices['Desktop Chrome'],
+                viewport: { width: 1920, height: 1080 },
+                locale: 'de-DE',
+                timezoneId: 'Europe/Berlin',
+                geolocation: { longitude: 52.515027, latitude: 13.392027 },
+                permissions: ['geolocation']
             }
         }
     ],

@@ -8,14 +8,14 @@ import backendLoginHelper from '../helper/backendLoginHelper.mjs';
 
 const connection = MysqlFactory.getInstance();
 
-test.use({ viewport: { width: 1920, height: 1080 } });
-
 test.describe('Check for a readable message if the merchant Id is wrong', () => {
-    test('Check for a readable message', async ({ page }) => {
-        connection.query(clearPaypalSettingsSql);
-        connection.query(defaultPaypalSettingsSql);
+    test.beforeEach(async() => {
+        await connection.query(clearPaypalSettingsSql);
+        await connection.query(defaultPaypalSettingsSql);
+    });
 
-        backendLoginHelper.login(page);
+    test('Check for a readable message', async({ page }) => {
+        await backendLoginHelper.login(page);
 
         await page.hover('.customers--main');
         await page.hover('.settings--payment-methods');

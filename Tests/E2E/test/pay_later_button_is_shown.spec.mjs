@@ -8,41 +8,37 @@ import payLaterSettingsHelper from '../helper/payLaterSettingsHelper.mjs';
 
 const connection = MysqlFactory.getInstance();
 
-test.describe('Test Pay Later is not shown', () => {
+test.describe('Test Pay Later is shown', () => {
     test.beforeEach(async() => {
         await connection.query(defaultPaypalSettingsSql);
-        await payLaterSettingsHelper.deactivateAll();
+        await payLaterSettingsHelper.activateAll();
         await clearCacheHelper.clearCache();
     });
 
-    test('PayLater button is not shown: ProductDetailPage, OffCanvasBasket, CheckoutPage, ProductListingPage @notIn5.2', async({ page }) => {
+    test('Is PayLater button available: ProductDetailPage, OffCanvasBasket, CheckoutPage, ProductListingPage @notIn5.2', async({ page }) => {
         // Go to product listing
         await page.goto('/sommerwelten/beachwear/', { waitUntil: 'load' });
 
         // Check listing page
-        const listingPageLocator = await page.frameLocator('.component-frame').first().locator('div[data-funding-source="paylater"]');
-        await expect(listingPageLocator).toHaveCount(0);
+        const fistPayLaterButtonContainer = await page.locator('div[data-showpaylater="1"]').first();
+        await expect(fistPayLaterButtonContainer).toBeVisible();
 
         // Go to detail page
         await page.goto('/sommerwelten/beachwear/178/strandtuch-ibiza', { waitUntil: 'load' });
 
         // Check product detail page
-        const detailPageLocator = await page.frameLocator('.component-frame').locator('div[data-funding-source="paylater"]');
-        await expect(detailPageLocator).toHaveCount(0);
+        await expect(page.locator('div[data-showpaylater="1"]')).toBeVisible();
 
         // Add product to cart
         await page.click('.buybox--button');
 
         // Check offcanvas basket
-        const offCanvasLocator = await page.locator('.ajax--cart').frameLocator('.component-frame').locator('div[data-funding-source="paylater"]');
-        await expect(offCanvasLocator).toHaveCount(0);
+        await expect(page.locator('.ajax--cart').locator('div[data-showpaylater="1"]')).toBeVisible();
 
         // Go to checkout
         await page.goto('checkout/confirm', { waitUntil: 'load' });
-
         // Check checkout page
-        const checkoutLocator = await page.frameLocator('.component-frame').locator('div[data-funding-source="paylater"]');
-        await expect(checkoutLocator).toHaveCount(0);
+        await expect(page.locator('div[data-showpaylater="1"]')).toBeVisible();
 
         // Login
         await page.fill('#email', credentials.defaultShopCustomerEmail);
@@ -51,15 +47,16 @@ test.describe('Test Pay Later is not shown', () => {
 
         // Change payment
         await page.click('.btn--change-payment');
+
         const selector = await getPaypalPaymentMethodSelector.getSelector(
             getPaypalPaymentMethodSelector.paymentMethodNames.SwagPaymentPayPalUnified
         );
+
         await page.locator(selector).check();
         await page.waitForLoadState('load');
         await page.click('text=Weiter >> nth=1');
 
         // Check checkout confirm page
-        const checkoutConfirmLocator = await page.frameLocator('.component-frame').locator('div[data-funding-source="paylater"]');
-        await expect(checkoutConfirmLocator).toHaveCount(0);
+        await expect(page.locator('div[data-showpaylater="1"]')).toBeVisible();
     });
 });

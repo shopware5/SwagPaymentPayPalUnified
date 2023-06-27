@@ -7,17 +7,14 @@ import backendLoginHelper from '../helper/backendLoginHelper.mjs';
 
 const connection = MysqlFactory.getInstance();
 
-test.use({ viewport: { width: 1920, height: 1080 } });
-
 test.describe('Backend testing: Check if plus popup is shown', () => {
-    test.beforeEach(() => {
-        connection.query(defaultPaypalSettingsSql);
+    test.beforeEach(async() => {
+        await connection.query(defaultPaypalSettingsSql);
+        await connection.query(updatePlusSettingsSql);
     });
 
-    test('Deactivate plus on save', async ({ page }) => {
-        connection.query(updatePlusSettingsSql);
-
-        backendLoginHelper.login(page);
+    test('Deactivate plus on save', async({ page }) => {
+        await backendLoginHelper.login(page);
 
         await page.hover('.customers--main');
         await page.hover('.settings--payment-methods');

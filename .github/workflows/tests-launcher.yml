@@ -6,6 +6,10 @@ on:
     schedule:
         -   cron: '30 02 * * *'
 
+concurrency:
+    group: ${{ github.head_ref || github.run_id }}
+    cancel-in-progress: true
+
 jobs:
     javascript-code-analysis:
         name: Javascript
@@ -21,18 +25,23 @@ jobs:
         name: Unit tests
         uses: ./.github/workflows/php-unit-tests-shopware-5-7.yml
         secrets: inherit
+        needs: [ javascript-code-analysis, php-code-analysis ]
 
     php-unit-tests-shopware-legacy-versions:
         name: Unit tests legacy
         uses: ./.github/workflows/php-unit-tests-shopware-legacy.yml
         secrets: inherit
+        needs: [ javascript-code-analysis, php-code-analysis ]
+
 
     php-e2e-tests-shopware-5-7:
         name: E2E
         uses: ./.github/workflows/e2e-tests.yml
         secrets: inherit
+        needs: [ php-unit-tests-shopware-5-7, php-unit-tests-shopware-legacy-versions ]
 
     php-e2e-tests-shopware-legacy:
         name: E2E legacy
         uses: ./.github/workflows/e2e-tests-legacy.yml
         secrets: inherit
+        needs: [ php-unit-tests-shopware-5-7, php-unit-tests-shopware-legacy-versions ]

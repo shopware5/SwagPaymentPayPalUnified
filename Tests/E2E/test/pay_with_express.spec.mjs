@@ -9,15 +9,12 @@ import tryUntilSucceed from '../helper/retryHelper.mjs';
 const connection = MysqlFactory.getInstance();
 
 test.describe('Is Express Checkout button available', () => {
-    test.beforeAll(async () => {
+    test.beforeEach(async() => {
+        await connection.query(defaultPaypalSettingsSql);
         await clearCacheHelper.clearCache();
     });
 
-    test.beforeEach(() => {
-        connection.query(defaultPaypalSettingsSql);
-    });
-
-    test('Check product detail page', async ({ page }) => {
+    test('Check product detail page', async({ page }) => {
         await page.goto('/sommerwelten/beachwear/178/strandtuch-ibiza', { waitUntil: 'load' });
 
         const locator = await page.frameLocator('.component-frame').locator('.paypal-button.paypal-button-number-0');
@@ -37,7 +34,7 @@ test.describe('Is Express Checkout button available', () => {
             url = url.replace(/buyerCountry=[A-Z]*/, '');
             url += '&buyerCountry=DE';
 
-            route.continue({ url: url });
+            route.continue({ url });
         });
 
         await paypalPage.locator('#email').fill(credentials.paypalCustomerEmail);
@@ -54,7 +51,7 @@ test.describe('Is Express Checkout button available', () => {
         await expect(page.locator('.teaser--title')).toHaveText(/Vielen Dank für Ihre Bestellung bei Shopware Demo/);
     });
 
-    test('Check offcanvas cart', async ({ page }) => {
+    test('Check offcanvas cart', async({ page }) => {
         await page.goto('/sommerwelten/beachwear/178/strandtuch-ibiza', { waitUntil: 'load' });
 
         await page.locator('text=In den Warenkorb').click();
@@ -78,7 +75,7 @@ test.describe('Is Express Checkout button available', () => {
             url = url.replace(/buyerCountry=[A-Z]*/, '');
             url += '&buyerCountry=DE';
 
-            route.continue({ url: url });
+            route.continue({ url });
         });
 
         await paypalPage.locator('#email').fill(credentials.paypalCustomerEmail);
@@ -95,7 +92,7 @@ test.describe('Is Express Checkout button available', () => {
         await expect(page.locator('.teaser--title')).toHaveText(/Vielen Dank für Ihre Bestellung bei Shopware Demo/);
     });
 
-    test('Check checkout cart page', async ({ page }) => {
+    test('Check checkout cart page', async({ page }) => {
         await page.goto('/sommerwelten/beachwear/178/strandtuch-ibiza', { waitUntil: 'load' });
 
         await page.locator('text=In den Warenkorb').click();
@@ -125,7 +122,7 @@ test.describe('Is Express Checkout button available', () => {
             url = url.replace(/buyerCountry=[A-Z]*/, '');
             url += '&buyerCountry=DE';
 
-            route.continue({ url: url });
+            route.continue({ url });
         });
 
         await paypalPage.locator('#email').fill(credentials.paypalCustomerEmail);
@@ -142,7 +139,7 @@ test.describe('Is Express Checkout button available', () => {
         await expect(page.locator('.teaser--title')).toHaveText(/Vielen Dank für Ihre Bestellung bei Shopware Demo/);
     });
 
-    test('Check register page', async ({ page }) => {
+    test('Check register page', async({ page }) => {
         await page.goto('/sommerwelten/beachwear/178/strandtuch-ibiza', { waitUntil: 'load' });
 
         await page.locator('text=In den Warenkorb').click();
@@ -171,7 +168,7 @@ test.describe('Is Express Checkout button available', () => {
             url = url.replace(/buyerCountry=[A-Z]*/, '');
             url += '&buyerCountry=DE';
 
-            route.continue({ url: url });
+            route.continue({ url });
         });
 
         await paypalPage.locator('#email').fill(credentials.paypalCustomerEmail);
@@ -188,7 +185,7 @@ test.describe('Is Express Checkout button available', () => {
         await expect(page.locator('.teaser--title')).toHaveText(/Vielen Dank für Ihre Bestellung bei Shopware Demo/);
     });
 
-    test('Check product listing page @notIn5.2', async ({ page }) => {
+    test('Check product listing page @notIn5.2', async({ page }) => {
         await page.goto('/sommerwelten/beachwear/', { waitUntil: 'load' });
 
         const locator = await page.frameLocator('.component-frame >> nth=1').locator('.paypal-button.paypal-button-number-0');
@@ -208,7 +205,7 @@ test.describe('Is Express Checkout button available', () => {
             url = url.replace(/buyerCountry=[A-Z]*/, '');
             url += '&buyerCountry=DE';
 
-            route.continue({ url: url });
+            route.continue({ url });
         });
 
         await paypalPage.locator('#email').fill(credentials.paypalCustomerEmail);
@@ -225,8 +222,8 @@ test.describe('Is Express Checkout button available', () => {
         await expect(page.locator('.teaser--title')).toHaveText(/Vielen Dank für Ihre Bestellung bei Shopware Demo/);
     });
 
-    test('Test if product with order number with leading zero is buy able', async ({ page }) => {
-        connection.query(leadingZeroProductSql.setProductNumberWithLeadingZero());
+    test('Test if product with order number with leading zero is buy able', async({ page }) => {
+        await connection.query(leadingZeroProductSql.setProductNumberWithLeadingZero());
 
         await page.goto('/genusswelten/koestlichkeiten/272/spachtelmasse', { waitUntil: 'load' });
 
@@ -244,6 +241,6 @@ test.describe('Is Express Checkout button available', () => {
 
         await expect(paypalPage.locator('#headerText')).toHaveText(/PayPal/);
 
-        connection.query(leadingZeroProductSql.reset());
+        await connection.query(leadingZeroProductSql.reset());
     });
 });

@@ -1,8 +1,8 @@
 import { exec } from 'child_process';
 
-export default (function () {
+export default (function() {
     return {
-        clearCache: async function () {
+        clearCache: async function() {
             return new Promise((resolve, reject) => {
                 exec('php ../../../../../bin/console sw:cache:clear', (error, stdout, stderr) => {
                     if (error) {

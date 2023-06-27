@@ -61,11 +61,6 @@ jobs:
                   restore-keys: |
                       ${{ runner.os }}-composer-
 
-            -   name: Check
-                run: |
-                    ps aux
-                    curl "http://$(hostname -i)"
-
             -   name: Move plugin
                 run: mv "$(pwd)/plugin" /shopware/custom/plugins/SwagPaymentPayPalUnified
 
@@ -79,14 +74,16 @@ jobs:
                     npx playwright install
                     npx playwright install-deps
 
-            -   name: Execute E2E tests
+            -   name: Execute legacy E2E tests
                 run: |
-                    cd /shopware/custom/plugins/SwagPaymentPayPalUnified
-                    make run-e2e-tests
+                    cd /shopware/custom/plugins/SwagPaymentPayPalUnified/Tests/E2E
+                    npx playwright test --workers=1 --grep-invert @notIn5.2
 
             -   name: Upload artifacts
                 uses: actions/upload-artifact@v3
                 if: ${{ failure() }}
                 with:
-                    name: E2E test results
-                    path: /shopware/custom/plugins/SwagPaymentPayPalUnified/Tests/E2E/results
+                    name: Legacy E2E test results
+                    path: |
+                        /shopware/custom/plugins/SwagPaymentPayPalUnified/Tests/E2E/results
+                        /shopware/var/log

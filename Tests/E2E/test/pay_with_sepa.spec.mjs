@@ -9,20 +9,15 @@ import loginHelper from '../helper/loginHelper.mjs';
 
 const connection = MysqlFactory.getInstance();
 
-test.use({ locale: 'de-DE' });
-
 test.describe('Is SEPA fully functional', () => {
     test.skip();
 
-    test.beforeAll(async () => {
+    test.beforeEach(async() => {
+        await connection.query(defaultPaypalSettingsSql);
         await clearCacheHelper.clearCache();
     });
 
-    test.beforeEach(() => {
-        connection.query(defaultPaypalSettingsSql);
-    });
-
-    test('Buy a product with SEPA', async ({ page }) => {
+    test('Buy a product with SEPA', async({ page }) => {
         await loginHelper.login(page);
 
         // Add product to cart
@@ -64,7 +59,7 @@ test.describe('Is SEPA fully functional', () => {
             url = url.replace(/buyerCountry=[A-Z]*/, '');
             url += '&buyerCountry=DE';
 
-            route.continue({ url: url });
+            route.continue({ url });
         });
 
         await paypalPage.locator('#bankIban').fill(credentials.sepaIban);

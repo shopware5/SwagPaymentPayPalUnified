@@ -5,18 +5,17 @@ import fs from 'fs';
 import path from 'path';
 import backendHandleSaveHelper from '../helper/backendHandleSaveHelper.mjs';
 import backendLoginHelper from '../helper/backendLoginHelper.mjs';
+
 const connection = MysqlFactory.getInstance();
 const truncateTables = fs.readFileSync(path.join(path.resolve(''), 'setup/sql/truncate_paypal_tables.sql'), 'utf8');
 
-test.use({ viewport: { width: 1920, height: 1080 } });
-
 test.describe('Backend testing', () => {
-    test.beforeEach(() => {
-        connection.query(truncateTables);
+    test.beforeEach(async() => {
+        await connection.query(truncateTables);
     });
 
-    test('activate the sandbox', async ({ page }) => {
-        backendLoginHelper.login(page);
+    test('activate the sandbox', async({ page }) => {
+        await backendLoginHelper.login(page);
 
         await page.hover('.customers--main');
         await page.hover('.settings--payment-methods');
