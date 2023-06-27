@@ -99,7 +99,6 @@ class AbstractPaymentSourceValueHandlerTest extends TestCase
         $this->insertGeneralSettingsFromArray([
             'active' => true,
             'brand_name' => 'AnyFancyFooBarBrandName',
-            'landing_page_type' => 'NO_PREFERENCE',
         ]);
 
         $reflectionMethod = $this->getReflectionMethod(\get_class($orderValueHandler), 'createExperienceContext');
@@ -109,12 +108,13 @@ class AbstractPaymentSourceValueHandlerTest extends TestCase
         static::assertInstanceOf(ExperienceContext::class, $result);
 
         static::assertSame('AnyFancyFooBarBrandName', $result->getBrandName());
-        static::assertSame('NO_PREFERENCE', $result->getLandingPage());
         static::assertSame(ExperienceContext::PAYMENT_METHOD_PREFERENCE, $result->getPaymentMethodPreference());
         static::assertSame(ExperienceContext::PAYMENT_METHOD, $result->getPaymentMethodSelected());
         static::assertSame(ExperienceContext::SHIPPING_PREFERENCE_PROVIDED_ADDRESS, $result->getShippingPreference());
         static::assertSame(ExperienceContext::USER_ACTION_PAY_NOW, $result->getUserAction());
         static::assertSame('de-DE', $result->getLocale());
+        // check default landing page isset
+        static::assertSame('NO_PREFERENCE', $result->getLandingPage());
     }
 
     /**

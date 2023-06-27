@@ -101,7 +101,7 @@ abstract class AbstractPaymentSourceValueHandler
         }
 
         $experienceContext->setLocale(str_replace('_', '-', $shop->getLocale()->getLocale()));
-        $experienceContext->setLandingPage($generalSettings->getLandingPageType());
+        $experienceContext->setLandingPage($this->getLandingPage($generalSettings));
 
         if ($this->requiresUrls($orderParameter->getPaymentType())) {
             $experienceContext->setCancelUrl($this->returnUrlHelper->getCancelUrl($orderParameter->getBasketUniqueId(), $orderParameter->getPaymentToken()));
@@ -116,6 +116,20 @@ abstract class AbstractPaymentSourceValueHandler
         }
 
         return $experienceContext;
+    }
+
+    /**
+     * @return string
+     */
+    private function getLandingPage(General $generalSettings)
+    {
+        $currentLandingPage = $generalSettings->getLandingPageType();
+
+        if (!\in_array($currentLandingPage, ExperienceContext::LANDING_PAGE_TYPES)) {
+            return ExperienceContext::LANDING_PAGE_TYPE_NO_PREFERENCE;
+        }
+
+        return $currentLandingPage;
     }
 
     /**
