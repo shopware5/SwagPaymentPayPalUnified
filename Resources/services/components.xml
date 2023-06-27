@@ -82,7 +82,6 @@
         <service id="paypal_unified.three_d_secure_result_checker"
                  class="SwagPaymentPayPalUnified\Components\Services\ThreeDSecureResultChecker\ThreeDSecureResultChecker"
                  public="true">
-            <argument type="service" id="paypal_unified.logger_service"/>
         </service>
 
         <service id="paypal_unified.transaction_history_builder_service"

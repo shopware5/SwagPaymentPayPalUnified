@@ -50,6 +50,13 @@ class AdvancedCreditDebitCard extends ModelEntity
     /**
      * @var bool
      *
+     * @ORM\Column(name="block_cards_from_non_three_ds_countries", type="boolean", nullable=false)
+     */
+    private $blockCardsFromNonThreeDsCountries;
+
+    /**
+     * @var bool
+     *
      * @ORM\Column(name="active", type="boolean", nullable=false)
      */
     private $active;
@@ -142,6 +149,24 @@ class AdvancedCreditDebitCard extends ModelEntity
     public function setActive($active)
     {
         $this->active = $active;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isBlockCardsFromNonThreeDsCountries()
+    {
+        return $this->blockCardsFromNonThreeDsCountries;
+    }
+
+    /**
+     * @param bool $blockCardsFromNonThreeDsCountries
+     *
+     * @return void
+     */
+    public function setBlockCardsFromNonThreeDsCountries($blockCardsFromNonThreeDsCountries)
+    {
+        $this->blockCardsFromNonThreeDsCountries = $blockCardsFromNonThreeDsCountries;
     }
 
     /**

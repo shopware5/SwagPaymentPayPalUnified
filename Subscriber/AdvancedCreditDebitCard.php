@@ -180,7 +180,7 @@ class AdvancedCreditDebitCard implements SubscriberInterface
             return $cardHolderData;
         }
 
-        $cardHolderData['contingencies'] = ['SCA_ALWAYS'];
+        $cardHolderData['contingencies'] = ['SCA_WHEN_REQUIRED'];
 
         return $cardHolderData;
     }
