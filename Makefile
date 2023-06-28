@@ -37,12 +37,13 @@ install-hooks: ## Install pre commit hooks
 
 install-plugin: .refresh-plugin-list ## Install and activate the plugin
 	@echo "Install the plugin"
-	./../../../bin/console sw:plugin:install $(dirname) --activate -c
+	php ./../../../bin/console sw:plugin:install $(dirname) --activate
+	php ./../../../bin/console sw:cache:clear
 
 install-plugin-legacy: .refresh-plugin-list ## Install and activate the plugin for older shopware versions
 	@echo "Install the plugin"
-	./../../../bin/console sw:plugin:install $(dirname) --activate
-	php ./../../../bin/console sw:cache:clear --env=$(envname)
+	php ./../../../bin/console sw:plugin:install $(dirname) --activate
+	php ./../../../bin/console sw:cache:clear
 
 install-test-environment: ## Installs the plugin test environment
 	@echo "Install the test environment"
