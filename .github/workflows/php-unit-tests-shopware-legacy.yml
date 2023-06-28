@@ -4,69 +4,40 @@ on:
     workflow_call:
 
 jobs:
-    php-unit-tests-shopware-legacy-versions:
-        name: Shopware legacy versions 5.2 - 5.6
-        runs-on: ubuntu-latest
-        container:
-            image: ghcr.io/shopware5/docker-images-testing/install:shopware_${{ matrix.versions.shopware }}_5.7_${{ matrix.versions.php }}_${{ matrix.versions.consentManager }}
-            credentials:
-                username: ${{ github.actor }}
-                password: ${{ secrets.github_token }}
-
+    call-test-workflow:
         strategy:
             matrix:
-                versions:
-                    -   shopware: '5.2'
-                        php: '5.6'
-                        consentManager: '5.2.11-5.2.27'
+                include:
+                    -   shopware-version: '5.2'
+                        php-version: '5.6'
+                        mysql-version: '5.7'
+                        consent-manager: '5.2.11-5.2.27'
 
-                    -   shopware: '5.3'
-                        php: '5.6'
-                        consentManager: '5.3.5-5.3.7'
+                    -   shopware-version: '5.3'
+                        php-version: '5.6'
+                        mysql-version: '5.7'
+                        consent-manager: '5.3.5-5.3.7'
 
-                    -   shopware: '5.4'
-                        php: '5.6'
-                        consentManager: '5.4.6'
+                    -   shopware-version: '5.4'
+                        php-version: '5.6'
+                        mysql-version: '5.7'
+                        consent-manager: '5.4.6'
 
-                    -   shopware: '5.5'
-                        php: '7.1'
-                        consentManager: '5.5.0-5.5.10'
+                    -   shopware-version: '5.5'
+                        php-version: '7.1'
+                        mysql-version: '5.7'
+                        consent-manager: '5.5.0-5.5.10'
 
-                    -   shopware: '5.6'
-                        php: '7.2'
-                        consentManager: 'none'
-
-        steps:
-            -   run: /usr/bin/supervisord -c /etc/supervisord.conf &
-
-            -   name: Checkout SwagPaymentPayPalUnified
-                uses: actions/checkout@v3
-                with:
-                    path: plugin
-
-            - name: Get Composer Cache Directory
-              id: composer-cache
-              run: |
-                  echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-            - uses: actions/cache@v3
-              with:
-                  path: ${{ steps.composer-cache.outputs.dir }}
-                  key: ${{ runner.os }}-composer-${{ hashFiles('plugin/composer.lock') }}
-                  restore-keys: |
-                      ${{ runner.os }}-composer-
+                    -   shopware-version: '5.6'
+                        php-version: '7.2'
+                        mysql-version: '5.7'
+                        consent-manager: 'none'
 
 
-            -   name: Move plugin
-                run: |
-                    mv "$(pwd)/plugin" /shopware/custom/plugins/SwagPaymentPayPalUnified
-
-            -   name: Setup SwagPaymentPayPalUnified
-                run: |
-                    cd /shopware/custom/plugins/SwagPaymentPayPalUnified
-                    make composer-install
-                    make install-plugin-legacy
-
-            -   name: Execute PHP unit tests
-                run: |
-                    cd /shopware/custom/plugins/SwagPaymentPayPalUnified
-                    make run-tests
+        uses: shopware5/docker-images-testing/.github/workflows/php-unit-tests-shopware.yml@main
+        with:
+            plugin-name: SwagPaymentPayPalUnified
+            php-version: ${{ matrix.php-version }}
+            shopware-version: ${{ matrix.shopware-version }}
+            mysql-version: ${{ matrix.mysql-version }}
+            consent-manager: ${{ matrix.consent-manager }}
