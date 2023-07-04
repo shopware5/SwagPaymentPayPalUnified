@@ -112,11 +112,12 @@ CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_settings_pay_upon_invoice
 
 CREATE TABLE IF NOT EXISTS swag_payment_paypal_unified_settings_advanced_credit_debit_card
 (
-    `id`                           INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    `shop_id`                      INT(11)    NOT NULL,
-    `onboarding_completed`         TINYINT(1) NOT NULL,
-    `sandbox_onboarding_completed` TINYINT(1) NOT NULL,
-    `active`                       TINYINT(1) NOT NULL,
+    `id`                                      INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `shop_id`                                 INT(11)    NOT NULL,
+    `onboarding_completed`                    TINYINT(1) NOT NULL,
+    `sandbox_onboarding_completed`            TINYINT(1) NOT NULL,
+    `active`                                  TINYINT(1) NOT NULL,
+    `block_cards_from_non_three_ds_countries` TINYINT(1) NOT NULL DEFAULT 0,
     CONSTRAINT unique_shop_id UNIQUE (`shop_id`)
 )
     ENGINE = InnoDB

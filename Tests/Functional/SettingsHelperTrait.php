@@ -89,6 +89,7 @@ trait SettingsHelperTrait
             'shop_id' => 1,
             'onboarding_completed' => 0,
             'sandbox_onboarding_completed' => 0,
+            'block_cards_from_non_three_ds_countries' => 0,
             'active' => 0,
         ];
 

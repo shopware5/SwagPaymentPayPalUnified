@@ -86,6 +86,11 @@ final class ThreeDSecureExceptionDescription
      */
     const STATUS_CODE___UNKNOWN = 1008;
 
+    /**
+     * The card has no authentication system (3DSecure)
+     */
+    const STATUS_CODE_NO_3DSECURE = 1009;
+
     private function __construct()
     {
     }
@@ -116,6 +121,8 @@ final class ThreeDSecureExceptionDescription
                 return 'System is unavailable at the time of the request. The 3D authentication system is not available.';
             case self::STATUS_CODE___UNKNOWN:
                 return 'The 3D authentication system is not available.';
+            case self::STATUS_CODE_NO_3DSECURE:
+                return 'Card has no 3D authentication system.';
             default:
                 return 'Code not Available.';
         }

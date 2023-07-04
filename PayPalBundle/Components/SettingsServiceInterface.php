@@ -46,6 +46,8 @@ interface SettingsServiceInterface
     const SETTING_PUI_CUSTOMER_SERVICE_INSTRUCTIONS = 'customer_service_instructions';
     const SETTING_PUI_SHOW_RATEPAY_HINT = 'show_rate_pay_hint_in_mail';
 
+    const SETTING_ACDC_BLOCK_CARDS_FROM_NON_THREE_DS_COUNTRIES = 'block_cards_from_non_three_ds_countries';
+
     /**
      * Returns the whole settings model
      *

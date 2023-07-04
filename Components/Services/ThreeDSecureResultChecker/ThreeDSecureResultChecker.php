@@ -12,6 +12,7 @@ use Exception;
 use SwagPaymentPayPalUnified\Components\Services\ThreeDSecureResultChecker\Exception\ThreeDSecureAuthorizationCanceledException;
 use SwagPaymentPayPalUnified\Components\Services\ThreeDSecureResultChecker\Exception\ThreeDSecureAuthorizationFailedException;
 use SwagPaymentPayPalUnified\Components\Services\ThreeDSecureResultChecker\Exception\ThreeDSecureAuthorizationRejectedException;
+use SwagPaymentPayPalUnified\Components\Services\ThreeDSecureResultChecker\Exception\ThreeDSecureCardHasNoAuthorization;
 use SwagPaymentPayPalUnified\Components\Services\ThreeDSecureResultChecker\Exception\ThreeDSecureExceptionDescription;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource;
@@ -148,7 +149,7 @@ class ThreeDSecureResultChecker
         $threeDSecure = $this->get3DSecure($payPalOrder);
 
         if (!$threeDSecure instanceof ThreeDSecure) {
-            $threeDSecure = new ThreeDSecure();
+            throw new ThreeDSecureCardHasNoAuthorization(ThreeDSecureExceptionDescription::STATUS_CODE_NO_3DSECURE);
         }
 
         return new ThreeDSecureResultStatus(

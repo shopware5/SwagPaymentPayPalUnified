@@ -56,6 +56,8 @@
             || $paypalUnifiedErrorCode === 1007
             || $paypalUnifiedErrorCode === 1008}
             {include file='frontend/_includes/messages.tpl' type='error' content="{s name="error/threeDSecure/1003" namespace="frontend/paypal_unified/checkout/messages"}{/s}"}
+        {elseif $paypalUnifiedErrorCode === 1009}
+            {include file='frontend/_includes/messages.tpl' type='error' content="{s name="error/threeDSecure/1009" namespace="frontend/paypal_unified/checkout/messages"}{/s}"}
         {else}
             {* Unknown error *}
             {include file='frontend/_includes/messages.tpl' type='error' content="{s name="error/unknown"}An unknown error occurred while processing the payment.{/s}"}

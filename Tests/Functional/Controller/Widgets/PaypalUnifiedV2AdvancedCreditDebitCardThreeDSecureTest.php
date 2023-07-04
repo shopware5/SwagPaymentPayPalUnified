@@ -13,6 +13,7 @@ use Enlight_Controller_Response_ResponseTestCase;
 use Enlight_View_Default;
 use Generator;
 use Shopware_Controllers_Widgets_PaypalUnifiedV2AdvancedCreditDebitCard;
+use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\Services\ThreeDSecureResultChecker\Exception\ThreeDSecureExceptionDescription;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource;
@@ -21,12 +22,84 @@ use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\Card\Authen
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\Card\AuthenticationResult\ThreeDSecure;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\OrderResource;
 use SwagPaymentPayPalUnified\Tests\Functional\AssertStringContainsTrait;
+use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
+use SwagPaymentPayPalUnified\Tests\Functional\SettingsHelperTrait;
+use SwagPaymentPayPalUnified\Tests\Functional\ShopRegistrationTrait;
 use SwagPaymentPayPalUnified\Tests\Unit\PaypalPaymentControllerTestCase;
 use Symfony\Component\HttpFoundation\HeaderBag;
 
 class PaypalUnifiedV2AdvancedCreditDebitCardThreeDSecureTest extends PaypalPaymentControllerTestCase
 {
     use AssertStringContainsTrait;
+    use SettingsHelperTrait;
+    use DatabaseTestCaseTrait;
+    use ShopRegistrationTrait;
+
+    /**
+     * @after
+     *
+     * @return void
+     */
+    public function cleanUp()
+    {
+        $session = $this->getContainer()->get('session');
+        if (method_exists($session, 'clear')) {
+            $session->clear();
+        } else {
+            $session->offsetUnset('token');
+            $session->offsetUnset('sOrderVariables');
+        }
+    }
+
+    /**
+     * @return void
+     */
+    public function testCaptuireAllowcardsWithNoThreeDsSystem()
+    {
+        $session = $this->getContainer()->get('session');
+        $session->offsetUnset('token');
+
+        $sOrderVariables = ['sBasket' => [''], 'sUserData' => ['']];
+        $session->offsetSet('sOrderVariables', $sOrderVariables);
+
+        $this->insertAdvancedCreditDebitCardSettingsFromArray([
+            'active' => 1,
+            'block_cards_from_non_three_ds_countries' => 0,
+        ]);
+
+        $paypalOrder = $this->createPayPalOrder('', '', '', false);
+
+        $orderResourceMock = $this->createMock(OrderResource::class);
+        $orderResourceMock->method('get')->willReturn($paypalOrder);
+        $orderResourceMock->method('capture')->willReturn($paypalOrder);
+
+        $dependencyProviderMock = $this->createMock(DependencyProvider::class);
+        $dependencyProviderMock->method('getSession')->willReturn($session);
+
+        $controller = $this->getController(
+            Shopware_Controllers_Widgets_PaypalUnifiedV2AdvancedCreditDebitCard::class,
+            [
+                self::SERVICE_ORDER_RESOURCE => $orderResourceMock,
+                self::SERVICE_THREE_D_SECURE_RESULT_CHECKER => $this->getContainer()->get('paypal_unified.three_d_secure_result_checker'),
+                self::SERVICE_SETTINGS_SERVICE => $this->getContainer()->get('paypal_unified.settings_service'),
+                self::SERVICE_DEPENDENCY_PROVIDER => $dependencyProviderMock,
+            ],
+            new Enlight_Controller_Request_RequestHttp(),
+            new Enlight_Controller_Response_ResponseTestCase(),
+            new Enlight_View_Default($this->getContainer()->get('template'))
+        );
+
+        $controller->Request()->setParam('token', 'anyPayPalToken');
+
+        $controller->View()->addTemplateDir(__DIR__ . '/../../../../Resources/views/');
+        $controller->View()->addTemplateDir($this->getContainer()->getParameter('kernel.root_dir') . '/themes/Frontend/Bare/');
+
+        $controller->captureAction();
+
+        $result = $session->offsetGet('token');
+
+        static::assertSame('anyPayPalToken', $result);
+    }
 
     /**
      * @dataProvider captureActionCheckThreeDSecureStatusTestDataProvider
@@ -37,6 +110,11 @@ class PaypalUnifiedV2AdvancedCreditDebitCardThreeDSecureTest extends PaypalPayme
      */
     public function testCaptureActionCheckThreeDSecureStatus(Order $paypalOrder, $expectedCode)
     {
+        $this->insertAdvancedCreditDebitCardSettingsFromArray([
+            'active' => 1,
+            'block_cards_from_non_three_ds_countries' => 1,
+        ]);
+
         $orderResourceMock = $this->createMock(OrderResource::class);
         $orderResourceMock->method('get')->willReturn($paypalOrder);
 
@@ -47,6 +125,7 @@ class PaypalUnifiedV2AdvancedCreditDebitCardThreeDSecureTest extends PaypalPayme
                 self::SERVICE_THREE_D_SECURE_RESULT_CHECKER => $this->getContainer()->get('paypal_unified.three_d_secure_result_checker'),
                 self::SERVICE_REDIRECT_DATA_BUILDER_FACTORY => $this->getContainer()->get('paypal_unified.redirect_data_builder_factory'),
                 self::SERVICE_PAYMENT_CONTROLLER_HELPER => $this->getContainer()->get('paypal_unified.payment_controller_helper'),
+                self::SERVICE_SETTINGS_SERVICE => $this->getContainer()->get('paypal_unified.settings_service'),
             ],
             new Enlight_Controller_Request_RequestHttp(),
             new Enlight_Controller_Response_ResponseTestCase(),
@@ -150,7 +229,7 @@ class PaypalUnifiedV2AdvancedCreditDebitCardThreeDSecureTest extends PaypalPayme
             ThreeDSecureExceptionDescription::STATUS_CODE___UNKNOWN,
         ];
 
-        yield 'Test case 8 unknown status' => [
+        yield 'Test case 9 unknown status' => [
             $this->createPayPalOrder(
                 'ANY',
                 'ANY',
@@ -158,16 +237,27 @@ class PaypalUnifiedV2AdvancedCreditDebitCardThreeDSecureTest extends PaypalPayme
             ),
             ThreeDSecureExceptionDescription::STATUS_CODE_DEFAULT,
         ];
+
+        yield 'Test case 10 No 3DSecure result' => [
+            $this->createPayPalOrder(
+                'ANY',
+                'ANY',
+                'ANY',
+                false
+            ),
+            ThreeDSecureExceptionDescription::STATUS_CODE_NO_3DSECURE,
+        ];
     }
 
     /**
      * @param string $enrollmentStatus
      * @param string $authenticationStatus
      * @param string $liabilityShift
+     * @param bool   $has3DsResult
      *
      * @return Order
      */
-    private function createPayPalOrder($enrollmentStatus, $authenticationStatus, $liabilityShift)
+    private function createPayPalOrder($enrollmentStatus, $authenticationStatus, $liabilityShift, $has3DsResult = true)
     {
         $threeDSecure = new ThreeDSecure();
         $threeDSecure->setEnrollmentStatus($enrollmentStatus);
@@ -175,7 +265,9 @@ class PaypalUnifiedV2AdvancedCreditDebitCardThreeDSecureTest extends PaypalPayme
 
         $authenticationResult = new AuthenticationResult();
         $authenticationResult->setLiabilityShift($liabilityShift);
-        $authenticationResult->setThreeDSecure($threeDSecure);
+        if ($has3DsResult) {
+            $authenticationResult->setThreeDSecure($threeDSecure);
+        }
 
         $card = new Card();
         $card->setAuthenticationResult($authenticationResult);

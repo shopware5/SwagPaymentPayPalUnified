@@ -11,6 +11,7 @@ use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\ShopwareOrderData;
 use SwagPaymentPayPalUnified\Components\Services\ThreeDSecureResultChecker\Exception\ThreeDSecureAuthorizationCanceledException;
 use SwagPaymentPayPalUnified\Components\Services\ThreeDSecureResultChecker\Exception\ThreeDSecureAuthorizationFailedException;
 use SwagPaymentPayPalUnified\Components\Services\ThreeDSecureResultChecker\Exception\ThreeDSecureAuthorizationRejectedException;
+use SwagPaymentPayPalUnified\Components\Services\ThreeDSecureResultChecker\Exception\ThreeDSecureCardHasNoAuthorization;
 use SwagPaymentPayPalUnified\Components\Services\ThreeDSecureResultChecker\ThreeDSecureResultChecker;
 use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentController;
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\InstrumentDeclinedException;
@@ -20,6 +21,8 @@ use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\NoOrderToProceedExc
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\PayerActionRequiredException;
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\PendingException;
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\RequireRestartException;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
+use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsTable;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
 use Symfony\Component\HttpFoundation\Response;
@@ -175,6 +178,24 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2AdvancedCreditDebitCard extend
             $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
 
             return;
+        } catch (ThreeDSecureCardHasNoAuthorization $hasNoAuthorizationException) {
+            $blockCardsFromNonThreeDsCounties = $this->settingsService->get(
+                SettingsServiceInterface::SETTING_ACDC_BLOCK_CARDS_FROM_NON_THREE_DS_COUNTRIES,
+                SettingsTable::ADVANCED_CREDIT_DEBIT_CARD
+            );
+
+            if ($blockCardsFromNonThreeDsCounties) {
+                $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
+                    ->setCode($hasNoAuthorizationException->getCode())
+                    ->setException($hasNoAuthorizationException, 'captureAction: No ThreeDSecure');
+
+                $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
+
+                return;
+            }
+
+            // else: nothing to do, because cards without 3Ds are allowed. Just log.
+            $this->logger->debug(sprintf('%s CARD WITHOUT 3DS', __METHOD__));
         } catch (Exception $exception) {
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
                 ->setCode($exception->getCode())

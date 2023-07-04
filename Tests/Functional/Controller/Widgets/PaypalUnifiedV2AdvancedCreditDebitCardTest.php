@@ -19,20 +19,32 @@ use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\Card;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\Card\AuthenticationResult;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\Card\AuthenticationResult\ThreeDSecure;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Resource\OrderResource;
 use SwagPaymentPayPalUnified\Tests\Functional\AssertStringContainsTrait;
+use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
+use SwagPaymentPayPalUnified\Tests\Functional\SettingsHelperTrait;
+use SwagPaymentPayPalUnified\Tests\Functional\ShopRegistrationTrait;
 use SwagPaymentPayPalUnified\Tests\Unit\PaypalPaymentControllerTestCase;
 use Symfony\Component\HttpFoundation\HeaderBag;
 
 class PaypalUnifiedV2AdvancedCreditDebitCardTest extends PaypalPaymentControllerTestCase
 {
     use AssertStringContainsTrait;
+    use SettingsHelperTrait;
+    use DatabaseTestCaseTrait;
+    use ShopRegistrationTrait;
 
     /**
      * @return void
      */
     public function testCaptureActionLogIfLiabilityShiftIsNotPossible()
     {
+        $this->insertAdvancedCreditDebitCardSettingsFromArray([
+            'active' => true,
+            'block_cards_from_non_three_ds_countries' => 1,
+        ]);
+
         $request = new Enlight_Controller_Request_RequestHttp();
         $request->setHeader('X-Requested-With', 'XMLHttpRequest');
         $request->setParam('token', '123456789');
@@ -85,7 +97,9 @@ class PaypalUnifiedV2AdvancedCreditDebitCardTest extends PaypalPaymentController
      */
     private function createPaypalOrder()
     {
+        $threeDSecure = new ThreeDSecure();
         $authenticationResult = new AuthenticationResult();
+        $authenticationResult->setThreeDSecure($threeDSecure);
         $authenticationResult->setLiabilityShift(AuthenticationResult::LIABILITY_SHIFT_UNKNOWN);
 
         $card = new Card();

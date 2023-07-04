@@ -15,6 +15,7 @@ Ext.define('Shopware.apps.PaypalUnifiedSettings.model.AdvancedCreditDebitCard', 
         { name: 'shopId', type: 'int' },
         { name: 'onboardingCompleted', type: 'bool', defaultValue: false },
         { name: 'sandboxOnboardingCompleted', type: 'bool', defaultValue: false },
+        { name: 'blockCardsFromNonThreeDsCountries', type: 'bool', defaultValue: false },
         { name: 'active', type: 'bool', defaultValue: false }
     ]
 });
