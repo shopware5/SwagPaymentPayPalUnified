@@ -5,21 +5,23 @@
     <label lang="de">PayPal</label>
     <label lang="en">PayPal</label>
 
-    <version>6.0.8</version>
+    <version>6.1.0</version>
     <copyright>(c) by shopware AG</copyright>
     <license>MIT</license>
     <link>http://store.shopware.com</link>
     <author>shopware AG</author>
     <compatibility minVersion="5.2.27" maxVersion="5.99.99"/>
 
-    <changelog version="REPLACE_GLOBAL_WITH_NEXT_VERSION(6.0.9)">
+    <changelog version="6.1.0">
         <changes lang="de">
             PT-13108 - Nutzt Standard-Landingpage, wenn die Einstellung nicht korrekt gesetzt wurde;
             PT-13109 - Behebt Darstellungsfehler im Listing im Zusammenhang mit dem PayLater Button;
+            PT-13115 - Kreditkartenzahlen ohne 3DS-Authentifizierung können nun erlaubt werden;
         </changes>
         <changes lang="en">
             PT-13108 - Uses default landing page if setting is not set correctly;
             PT-13109 - Fixes display error in the listing in connection with the PayLater button;
+            PT-13115 - Credit card payments without 3DS authentication can now be allowed;
         </changes>
     </changelog>
 
