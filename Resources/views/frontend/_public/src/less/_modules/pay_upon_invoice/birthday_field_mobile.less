@@ -1,0 +1,61 @@
+input[type="date"] {
+    .appearance(none);
+    .border-radius();
+    .box-sizing();
+    .unitize(line-height, 19);
+    .unitize(@input-font-size, 16, font-size);
+    .unitize-width(290);
+    .unitize-padding(10, 10, 9, 10);
+    .box-shadow(inset 0 1px 1px @gray-dark);
+    background: @input-bg;
+    border: 1px solid @input-border;
+    border-top-color: darken(@input-border, 5%);
+    color: lighten(@text-color, 15%);
+    text-align: left;
+
+    &:focus {
+        .box-shadow(0 0 0 transparent);
+        outline: none;
+        border-color: @input-focus-border;
+        background: @input-focus-bg;
+        color: @input-focus-color;
+    }
+
+    &.has--error {
+        color: @input-error-color;
+        background: @input-error-bg;
+        border-color: @input-error-border;
+    }
+
+    // Input field spacing
+    &.input--field {
+        .unitize(margin-bottom, 10);
+        width: 100%;
+
+        &.input--field-zipcode {
+            width: 30%;
+            float: left;
+        }
+
+        &.input--field-city {
+            width: 68%;
+            float: left;
+        }
+
+        &.input--spacer {
+            margin-right: 2%;
+        }
+    }
+
+    &.is--small {
+        .unitize(height, 34);
+    }
+
+    &.is--medium {
+        .unitize(height, 38);
+    }
+
+    &.is--large {
+        .unitize(height, 42);
+    }
+}
