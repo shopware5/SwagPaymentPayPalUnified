@@ -2,23 +2,27 @@
     <div class="extra-fields--birthday">
         {if {config name="birthdaySingleField"}}
             {block name='paypal_unified_pay_upon_invoice_confirm_birthday_single_field'}
-                <input type="text"
-                       data-datepicker="true"
-                       data-minDate="{date('Y')-120}-1-1"
-                       data-maxDate="today"
-                       id="puiDateOfBirth"
-                       name="puiDateOfBirth"
-                       value="{$payUponInvoiceBirthdayFieldValue}"
-                       class="pui-extra-field pui--birthday"
-                       autocomplete="off"
-                       required="required"
-                       placeholder="{s namespace="frontend/paypal_unified/checkout/confirm" name="payUponInvoice/birthday"}Date of birth{/s}"
-                       aria-label="{s namespace="frontend/paypal_unified/checkout/confirm" name="payUponInvoice/birthday"}Date of birth{/s}"/>
+                <div data-swagPuiBirthdayField="true"
+                     data-isSingleField="true">
+                    <label for="puiDateOfBirth">{s name='RegisterPlaceholderBirthday' namespace="frontend/register/personal_fieldset"}{/s}</label>
+                    <input type="text"
+                           data-datepicker="true"
+                           data-minDate="{date('Y')-120}-1-1"
+                           data-maxDate="today"
+                           id="puiDateOfBirth"
+                           name="puiDateOfBirth"
+                           value="{$payUponInvoiceBirthdayFieldValue}"
+                           class="pui-extra-field pui--birthday"
+                           autocomplete="off"
+                           required="required"
+                           placeholder="{s namespace="frontend/paypal_unified/checkout/confirm" name="payUponInvoice/birthday"}Date of birth{/s}"
+                           aria-label="{s namespace="frontend/paypal_unified/checkout/confirm" name="payUponInvoice/birthday"}Date of birth{/s}"/>
+                </div>
             {/block}
         {else}
             {block name='paypal_unified_pay_upon_invoice_confirm_birthday_field'}
                 <label for="puiDateOfBirth">{s name='RegisterPlaceholderBirthday' namespace="frontend/register/personal_fieldset"}{/s}</label>
-                <div class="pui-date-of-birth-container">
+                <div class="pui-date-of-birth-container" data-swagPuiBirthdayField="true">
                     {block name="paypal_unified_pay_upon_invoice_confirm_birthday_field_day"}
                         <div class="field--select select-field"
                              aria-label="{s name='RegisterPlaceholderBirthday' namespace="frontend/register/personal_fieldset"}{/s}">
