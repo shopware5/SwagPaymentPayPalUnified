@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test';
 import MysqlFactory from '../helper/mysqlFactory.mjs';
 import defaultPaypalSettingsSql from '../helper/paypalSqlHelper.mjs';
 import clearCacheHelper from '../helper/clearCacheHelper.mjs';
+import connector from '../helper/connectDefaultShippingMethodWithPayPalHelper.mjs';
 import credentials from './credentials.mjs';
 import leadingZeroProductSql from '../helper/updateProductNumberAddLeadingZero.mjs';
 import tryUntilSucceed from '../helper/retryHelper.mjs';
@@ -11,6 +12,7 @@ const connection = MysqlFactory.getInstance();
 test.describe('Is Express Checkout button available', () => {
     test.beforeEach(async() => {
         await connection.query(defaultPaypalSettingsSql);
+        await connector.connectDefaultShippingMethodWithPayPal();
         await clearCacheHelper.clearCache();
     });
 
