@@ -5,22 +5,19 @@ Ext.define('Shopware.apps.Payment.controller.PaymentPaypalUnified', {
     override: 'Shopware.apps.Payment.controller.Payment',
 
     snippets: {
-        onboardingMessageText: '{s name="onboardingMessageText"}Please be aware, that your PayPal-account needs to be eligible for receiving payments with "Pay Upon Invoice", for this payment method to be available to your customers. You may authorize your account in the PayPal settings module.{/s}'
+        onboardingMessageText: '{s name="onboardingMessageText"}Please be aware, that your PayPal-account needs to be eligible for receiving payments with "Pay Upon Invoice", for this payment method to be available to your customers. You may authorize your account in the PayPal settings module.{/s}',
+        myBankDisclaimerText: '{s name="myBankDisclaimerText"}Merchants enabling MyBank after February 2023 will need manual approval by PayPal. Reach out to merchant support for further information on this.{/s}',
     },
 
     onboardingMessage: null,
     payUponInvoicePaymentMethodName: 'SwagPaymentPayPalUnifiedPayUponInvoice',
+    myBankPaymentMethodName: 'SwagPaymentPayPalUnifiedMyBank',
 
     /**
      * @param { Ext.view.View } view
      * @param { Ext.data.Record } record
      */
     onItemClick: function (view, record) {
-        if (this.alreadyAdded === true) {
-            this.callParent(arguments);
-            return;
-        }
-
         var win = view.up('window'),
             form = win.generalForm,
             treeToolBar = win.down('toolbar[name=treeToolBar]'),
@@ -31,11 +28,18 @@ Ext.define('Shopware.apps.Payment.controller.PaymentPaypalUnified', {
 
         if (record.get('name') === this.payUponInvoicePaymentMethodName) {
             form.insert(0, this._createOnboardingMessage());
-            this.alreadyAdded = true;
         } else if (this.onboardingMessage !== null) {
             form.remove(this.onboardingMessage);
 
             this.onboardingMessage = null;
+        }
+
+        if (record.get('name') === this.myBankPaymentMethodName) {
+            form.insert(0, this._createMyBankDisclaimer());
+        } else if (this.myBankDisclaimer !== null) {
+            form.remove(this.myBankDisclaimer);
+
+            this.myBankDisclaimer = null;
         }
 
         this.callParent(arguments);
@@ -48,6 +52,15 @@ Ext.define('Shopware.apps.Payment.controller.PaymentPaypalUnified', {
         );
 
         return this.onboardingMessage;
+    },
+
+    _createMyBankDisclaimer: function () {
+        this.myBankDisclaimer = Shopware.Notification.createBlockMessage(
+            this.snippets.myBankDisclaimerText,
+            'alert'
+        );
+
+        return this.myBankDisclaimer;
     },
 });
 // {/block}
