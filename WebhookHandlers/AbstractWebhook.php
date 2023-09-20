@@ -13,6 +13,7 @@ use SwagPaymentPayPalUnified\Components\Services\OrderDataServiceResults\OrderAn
 use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\Webhook\WebhookEventTypes;
 use SwagPaymentPayPalUnified\PayPalBundle\Structs\Webhook;
+use UnexpectedValueException;
 
 abstract class AbstractWebhook
 {
@@ -49,9 +50,10 @@ abstract class AbstractWebhook
             return null;
         }
 
-        $transactionId = $resource['id'];
-        if (!\is_string($transactionId)) {
-            $this->logger->error(sprintf('[Webhook]Event: %s. ResourceID is not an string got: %s', $this->getEventType(), \gettype($transactionId)), $webhook->toArray());
+        try {
+            $transactionId = $this->getOrderIdFromResource($resource);
+        } catch (UnexpectedValueException $exception) {
+            $this->logger->error(sprintf('[Webhook]Event: %s. Resource structure is not valid. Message: %s', $this->getEventType(), $exception->getMessage()));
 
             return null;
         }
@@ -65,5 +67,29 @@ abstract class AbstractWebhook
         }
 
         return $shopwareOrderServiceResult;
+    }
+
+    /**
+     * @param array<string,mixed> $resource
+     *
+     * @return string
+     */
+    private function getOrderIdFromResource(array $resource)
+    {
+        if (!\array_key_exists('supplementary_data', $resource) || !\is_array($resource['supplementary_data'])) {
+            throw new UnexpectedValueException('Expect resource has array key "supplementary_data" with array value');
+        }
+
+        $supplementaryData = $resource['supplementary_data'];
+        if (!\array_key_exists('related_ids', $supplementaryData) || !\is_array($supplementaryData['related_ids'])) {
+            throw new UnexpectedValueException('Expect supplementary_data has array key "related_ids" with array value');
+        }
+
+        $relatedIds = $supplementaryData['related_ids'];
+        if (!\array_key_exists('order_id', $relatedIds) || !\is_string($relatedIds['order_id'])) {
+            throw new UnexpectedValueException('Expect related_ids has array key "order_id" with string value');
+        }
+
+        return $relatedIds['order_id'];
     }
 }

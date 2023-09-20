@@ -42,7 +42,7 @@ class CheckoutPaymentApprovalReversedTest extends TestCase
     public function testInvokeShouldThrowExceptionBecauseThereIsNoOrderServiceResult()
     {
         $webhook = new Webhook();
-        $webhook->setResource(['id' => 'unitTestTransactionId']);
+        $webhook->setResource(TestWebhookResource::create('unitTestTransactionId'));
 
         $this->expectException(WebhookException::class);
         $this->expectExceptionMessage('SwagPaymentPayPalUnified\WebhookHandlers\CheckoutPaymentApprovalReversed::invoke expect OrderAndPaymentStatusResult, got NULL');
@@ -61,7 +61,7 @@ class CheckoutPaymentApprovalReversedTest extends TestCase
         $this->getContainer()->get('dbal_connection')->exec($sql);
 
         $webhook = new Webhook();
-        $webhook->setResource(['id' => 'unitTestTransactionId']);
+        $webhook->setResource(TestWebhookResource::create('unitTestTransactionId'));
 
         $result = $this->createCheckoutPaymentApprovalReversed()->invoke($webhook);
         $databaseResult = $this->getContainer()->get('dbal_connection')->createQueryBuilder()
