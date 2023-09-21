@@ -14,6 +14,7 @@ use SwagPaymentPayPalUnified\Components\Services\ThreeDSecureResultChecker\Excep
 use SwagPaymentPayPalUnified\Components\Services\ThreeDSecureResultChecker\Exception\ThreeDSecureCardHasNoAuthorization;
 use SwagPaymentPayPalUnified\Components\Services\ThreeDSecureResultChecker\ThreeDSecureResultChecker;
 use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentController;
+use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\EmptyCartException;
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\InstrumentDeclinedException;
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\InvalidBillingAddressException;
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\InvalidShippingAddressException;
@@ -92,6 +93,11 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2AdvancedCreditDebitCard extend
         } catch (InvalidShippingAddressException $invalidShippingAddressException) {
             $this->response->setHttpResponseCode(Response::HTTP_BAD_REQUEST);
             $this->view->assign('redirectTo', $this->getInvalidAddressUrl(['invalidShippingAddress' => true]));
+
+            return;
+        } catch (EmptyCartException $emptyCartException) {
+            $this->response->setHttpResponseCode(Response::HTTP_BAD_REQUEST);
+            $this->view->assign('redirectTo', $this->getEmptyCartErrorUrl());
 
             return;
         }

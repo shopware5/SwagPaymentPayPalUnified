@@ -184,7 +184,7 @@ class PaypalUnifiedV2ExpressCheckoutTest extends PaypalPaymentControllerTestCase
     private function createOrderParameterFacade()
     {
         $facade = $this->createMock(PayPalOrderParameterFacadeInterface::class);
-        $payPalOrderParameter = new PayPalOrderParameter([], [], PaymentType::PAYPAL_EXPRESS_V2, null, null, 'anyOrderNumber');
+        $payPalOrderParameter = new PayPalOrderParameter([], ['content' => ['anyItem' => []]], PaymentType::PAYPAL_EXPRESS_V2, null, null, 'anyOrderNumber');
         $facade->method('createPayPalOrderParameter')->willReturn($payPalOrderParameter);
 
         return $facade;
