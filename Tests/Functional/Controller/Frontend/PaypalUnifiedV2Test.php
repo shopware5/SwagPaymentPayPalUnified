@@ -213,9 +213,6 @@ class PaypalUnifiedV2Test extends TestCase
         ];
     }
 
-    /**
-     * @param Container $container
-     */
     private function getController(Container $container = null)
     {
         $request = new Enlight_Controller_Request_RequestTestCase();

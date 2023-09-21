@@ -23,6 +23,7 @@ use SwagPaymentPayPalUnified\Components\DependencyInjection\RiskManagementValida
 use SwagPaymentPayPalUnified\Components\DependencyInjection\RiskManagementValueCompilerPass;
 use SwagPaymentPayPalUnified\Components\DependencyInjection\WebhookFactoryCompilerPass;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
+use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Setup\Installer;
 use SwagPaymentPayPalUnified\Setup\PaymentModels\PaymentModelFactory;
 use SwagPaymentPayPalUnified\Setup\TranslationTransformer;
@@ -115,6 +116,9 @@ class SwagPaymentPayPalUnified extends Plugin
     {
         $paymentMethodProvider = $this->getPaymentMethodProvider();
         foreach (PaymentMethodProvider::getAllUnifiedNames() as $unifiedName) {
+            if ($unifiedName === PaymentMethodProviderInterface::MY_BANK_METHOD_NAME) {
+                continue;
+            }
             $paymentMethodProvider->setPaymentMethodActiveFlag($unifiedName, true);
         }
 
