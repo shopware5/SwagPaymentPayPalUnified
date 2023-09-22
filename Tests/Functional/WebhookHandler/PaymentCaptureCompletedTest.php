@@ -42,7 +42,7 @@ class PaymentCaptureCompletedTest extends TestCase
     public function testInvokeShouldReturnFalseBecauseThereIsNoOrderServiceResult()
     {
         $webhook = new Webhook();
-        $webhook->setResource(['id' => 'unitTestTransactionId']);
+        $webhook->setResource(TestWebhookResource::create('unitTestTransactionId'));
 
         $this->expectException(WebhookException::class);
         $this->expectExceptionMessage('SwagPaymentPayPalUnified\WebhookHandlers\PaymentCaptureCompleted::invoke expect OrderAndPaymentStatusResult, got NULL');
@@ -62,7 +62,7 @@ class PaymentCaptureCompletedTest extends TestCase
         $this->updatePaymentStatus();
 
         $webhook = new Webhook();
-        $webhook->setResource(['id' => 'unitTestTransactionId']);
+        $webhook->setResource(TestWebhookResource::create('unitTestTransactionId'));
 
         $result = $this->createPaymentCaptureCompleted()->invoke($webhook);
 

@@ -12,25 +12,18 @@
     <author>shopware AG</author>
     <compatibility minVersion="5.2.27" maxVersion="5.99.99"/>
 
-    <changelog version="6.1.2">
+    <changelog version="6.1.1">
         <changes lang="de">
+            PT-13127 - Verbessert die Benutzerfreundlichkeit für den Rechnungskauf im Checkout-Formular;
             PT-13134 - Verhindert das Erstellen einer PayPal Zahlung mit einem leeren Warenkorb;
             PT-13138 - Verbessert die Bearbeitung von Webhooks;
             PT-13140 - Die Zahlungsart "MyBank" ist nun standardmäßig deaktiviert;
         </changes>
         <changes lang="en">
+            PT-13127 - Improves the usability for pay upon invoice in the checkout form;
             PT-13134 - Prevents the creation of a PayPal payment with an empty shopping cart;
             PT-13138 - Improves the processing of webhooks;
             PT-13140 - The payment method "MyBank" is now deactivated by default;
-        </changes>
-    </changelog>
-
-    <changelog version="6.1.1">
-        <changes lang="de">
-            PT-13127 - Verbessert die Benutzerfreundlichkeit für den Rechnungskauf im Checkout-Formular;
-        </changes>
-        <changes lang="en">
-            PT-13127 - Improves the usability for pay upon invoice in the checkout form;
         </changes>
     </changelog>
 
