@@ -40,6 +40,7 @@ use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\AuthorizationPendin
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\CaptureDeclinedException;
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\CaptureFailedException;
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\CapturePendingException;
+use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\EmptyCartException;
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\InstrumentDeclinedException;
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\InvalidBillingAddressException;
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\InvalidShippingAddressException;
@@ -226,6 +227,10 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
         try {
             $this->logger->debug(sprintf('%s BEFORE CREATE PAYPAL ORDER', __METHOD__));
 
+            if (empty($orderParameter->getCart()['content'])) {
+                throw new EmptyCartException();
+            }
+
             $payPalOrderData = $this->orderFactory->createOrder($orderParameter);
 
             $payPalOrder = $this->orderResource->create($payPalOrderData, $orderParameter->getPaymentType());
@@ -259,6 +264,8 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
             return null;
         } catch (PuiValidationException $puiValidationException) {
             throw $puiValidationException;
+        } catch (EmptyCartException $emptyCartException) {
+            throw $emptyCartException;
         } catch (Exception $exception) {
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
                 ->setCode(ErrorCodes::UNKNOWN)
@@ -859,6 +866,18 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
             'controller' => 'address',
             'action' => 'index',
         ], $error));
+    }
+
+    /**
+     * @return string
+     */
+    protected function getEmptyCartErrorUrl()
+    {
+        return $this->dependencyProvider->getRouter()->assemble([
+            'module' => 'frontend',
+            'controller' => 'checkout',
+            'action' => 'cart',
+        ]);
     }
 
     /**

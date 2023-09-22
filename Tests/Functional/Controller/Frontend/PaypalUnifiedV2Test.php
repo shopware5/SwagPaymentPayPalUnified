@@ -15,6 +15,9 @@ use Enlight_Class;
 use Enlight_Components_Session_Namespace as ShopwareSession;
 use Enlight_Controller_Request_RequestTestCase;
 use Enlight_Controller_Response_ResponseTestCase;
+use Enlight_Controller_Router;
+use Enlight_Template_Manager;
+use Enlight_View_Default;
 use Generator;
 use PHPUnit\Framework\TestCase;
 use Shopware\Components\BasketSignature\BasketPersister;
@@ -76,6 +79,7 @@ class PaypalUnifiedV2Test extends TestCase
         $dependencyProvider = $this->createConfiguredMock(DependencyProvider::class, [
             'getSession' => $session,
             'getModule' => new stdClass(),
+            'getRouter' => $this->createMock(Enlight_Controller_Router::class),
         ]);
 
         $redirectDataBuilder = $this->createMock(RedirectDataBuilder::class);
@@ -131,9 +135,14 @@ class PaypalUnifiedV2Test extends TestCase
             $basketPersister = $this->createMock(BasketPersister::class);
         }
 
+        $payPalOrderParameterMock = $this->createMock(PayPalOrderParameter::class);
+        if (\is_array($orderData)) {
+            $payPalOrderParameterMock->method('getCart')->willReturn(\is_array($orderData['sBasket']) ? $orderData['sBasket'] : []);
+        }
+
         $cartPersister = $this->createMock(CartPersister::class);
         $orderParameterFacade = $this->createConfiguredMock(PayPalOrderParameterFacadeInterface::class, [
-            'createPayPalOrderParameter' => $this->createMock(PayPalOrderParameter::class),
+            'createPayPalOrderParameter' => $payPalOrderParameterMock,
         ]);
 
         $dispatchValidation = $this->createMock(DispatchValidation::class);
@@ -191,7 +200,7 @@ class PaypalUnifiedV2Test extends TestCase
         yield 'Exception in OrderBuilder::getOrder should lead to ErrorCodes::UNKNOWN' => [
             [
                 'sUserData' => [],
-                'sBasket' => [],
+                'sBasket' => ['content' => [0 => ['anyItem']]],
             ],
             false,
             false,
@@ -203,7 +212,7 @@ class PaypalUnifiedV2Test extends TestCase
         yield 'Exception during order creation request should lead to ErrorCodes::COMMUNICATION_FAILURE' => [
             [
                 'sUserData' => [],
-                'sBasket' => [],
+                'sBasket' => ['content' => [0 => ['anyItem']]],
             ],
             false,
             false,
@@ -226,6 +235,7 @@ class PaypalUnifiedV2Test extends TestCase
 
         $controller->setRequest($request);
         $controller->setResponse($response);
+        $controller->setView(new Enlight_View_Default(new Enlight_Template_Manager()));
 
         if ($container instanceof Container) {
             $controller->setContainer($container);

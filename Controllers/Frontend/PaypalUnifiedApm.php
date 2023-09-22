@@ -9,6 +9,7 @@
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\ShopwareOrderData;
 use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentController;
+use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\EmptyCartException;
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\InvalidBillingAddressException;
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\InvalidShippingAddressException;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Common\Link;
@@ -68,6 +69,14 @@ class Shopware_Controllers_Frontend_PaypalUnifiedApm extends AbstractPaypalPayme
             return;
         } catch (InvalidShippingAddressException $invalidShippingAddressException) {
             $this->redirectInvalidAddress(['invalidShippingAddress' => true]);
+
+            return;
+        } catch (EmptyCartException $emptyCartException) {
+            $this->redirect([
+                'module' => 'frontend',
+                'controller' => 'checkout',
+                'action' => 'cart',
+            ]);
 
             return;
         }
