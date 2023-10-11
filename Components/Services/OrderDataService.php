@@ -15,6 +15,7 @@ use SwagPaymentPayPalUnified\Components\DependencyProvider;
 use SwagPaymentPayPalUnified\Components\Services\OrderDataServiceResults\OrderAndPaymentStatusResult;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\LoggerServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
+use SwagPaymentPayPalUnified\WebhookHandlers\OrderAndTransactionIdResult;
 use UnexpectedValueException;
 
 class OrderDataService
@@ -180,6 +181,8 @@ class OrderDataService
      * @param string $transactionId
      *
      * @return OrderAndPaymentStatusResult|null
+     *
+     * @deprecated in 6.1.2, and will be removed with 7.0.0 without replacement
      */
     public function getOrderAndPaymentStatusResultByTransactionId($transactionId)
     {
@@ -188,6 +191,28 @@ class OrderDataService
             ->from('s_order')
             ->where('transactionID = :transactionId')
             ->setParameter('transactionId', $transactionId)
+            ->execute()
+            ->fetch(PDO::FETCH_ASSOC);
+
+        if (!\is_array($order)) {
+            return null;
+        }
+
+        return new OrderAndPaymentStatusResult((int) $order['id'], (int) $order['status'], (int) $order['cleared']);
+    }
+
+    /**
+     * @return OrderAndPaymentStatusResult|null
+     */
+    public function getOrderAndPaymentStatusResultByOrderAndTransactionId(OrderAndTransactionIdResult $orderAndTransactionIdResult)
+    {
+        $order = $this->dbalConnection->createQueryBuilder()
+            ->select(['id', 'status', 'cleared'])
+            ->from('s_order')
+            ->where('transactionID = :orderId')
+            ->orWhere('transactionID = :transactionId')
+            ->setParameter('orderId', $orderAndTransactionIdResult->getOrderId())
+            ->setParameter('transactionId', $orderAndTransactionIdResult->getTransactionId())
             ->execute()
             ->fetch(PDO::FETCH_ASSOC);
 

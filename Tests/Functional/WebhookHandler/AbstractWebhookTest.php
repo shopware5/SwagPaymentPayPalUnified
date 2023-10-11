@@ -26,7 +26,7 @@ class AbstractWebhookTest extends TestCase
      */
     public function testGetOrderServiceResultWithoutResourceShouldReturnNull()
     {
-        $abstractWebhook = $this->createAbstractWebhook(true);
+        $abstractWebhook = $this->createAbstractWebhook(true, 'error');
 
         $result = $abstractWebhook->getResult(new Webhook());
 
@@ -53,7 +53,7 @@ class AbstractWebhookTest extends TestCase
      */
     public function testGetOrderServiceResultOrderServiceReturnsNullShouldReturnNull()
     {
-        $abstractWebhook = $this->createAbstractWebhook(true);
+        $abstractWebhook = $this->createAbstractWebhook(true, 'error');
 
         $webhook = new Webhook();
         $webhook->setResource(TestWebhookResource::create('anyPayPalOrderID'));
@@ -177,16 +177,17 @@ class AbstractWebhookTest extends TestCase
     }
 
     /**
-     * @param bool $loggerExpectCallErrorMethod
+     * @param bool   $loggerExpectCallErrorMethod
+     * @param string $method
      *
      * @return AbstractWebhookMock
      */
-    private function createAbstractWebhook($loggerExpectCallErrorMethod = false)
+    private function createAbstractWebhook($loggerExpectCallErrorMethod = false, $method = 'debug')
     {
         $logger = $this->createMock(LoggerServiceInterface::class);
 
         if ($loggerExpectCallErrorMethod) {
-            $logger->expects(static::once())->method('error');
+            $logger->expects(static::once())->method($method);
         }
 
         return new AbstractWebhookMock(

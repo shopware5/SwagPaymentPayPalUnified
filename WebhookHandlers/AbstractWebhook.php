@@ -51,17 +51,25 @@ abstract class AbstractWebhook
         }
 
         try {
-            $transactionId = $this->getOrderIdFromResource($resource);
+            $orderAndTransactionIdResult = $this->getOrderAndTransactionIdFromResource($resource);
         } catch (UnexpectedValueException $exception) {
-            $this->logger->error(sprintf('[Webhook]Event: %s. Resource structure is not valid. Message: %s', $this->getEventType(), $exception->getMessage()));
+            $this->logger->debug(sprintf('[Webhook]Event: %s. Resource structure is not valid. Message: %s', $this->getEventType(), $exception->getMessage()));
 
             return null;
         }
 
-        $shopwareOrderServiceResult = $this->orderDataService->getOrderAndPaymentStatusResultByTransactionId($transactionId);
+        $shopwareOrderServiceResult = $this->orderDataService->getOrderAndPaymentStatusResultByOrderAndTransactionId($orderAndTransactionIdResult);
 
         if (!$shopwareOrderServiceResult instanceof OrderAndPaymentStatusResult) {
-            $this->logger->error(sprintf('[Webhook]Event: %s. Cannot find orderID by transactionID: %s', $this->getEventType(), $transactionId), $webhook->toArray());
+            $this->logger->error(
+                sprintf(
+                    '[Webhook]Event: %s. Cannot find orderID by PayPalOrderId %s and transactionID: %s',
+                    $this->getEventType(),
+                    $orderAndTransactionIdResult->getOrderId(),
+                    $orderAndTransactionIdResult->getTransactionId()
+                ),
+                $webhook->toArray()
+            );
 
             return null;
         }
@@ -72,9 +80,9 @@ abstract class AbstractWebhook
     /**
      * @param array<string,mixed> $resource
      *
-     * @return string
+     * @return OrderAndTransactionIdResult
      */
-    private function getOrderIdFromResource(array $resource)
+    private function getOrderAndTransactionIdFromResource(array $resource)
     {
         if (!\array_key_exists('supplementary_data', $resource) || !\is_array($resource['supplementary_data'])) {
             throw new UnexpectedValueException('Expect resource has array key "supplementary_data" with array value');
@@ -90,6 +98,6 @@ abstract class AbstractWebhook
             throw new UnexpectedValueException('Expect related_ids has array key "order_id" with string value');
         }
 
-        return $relatedIds['order_id'];
+        return new OrderAndTransactionIdResult($relatedIds['order_id'], $resource['id']);
     }
 }

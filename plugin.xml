@@ -5,12 +5,21 @@
     <label lang="de">PayPal</label>
     <label lang="en">PayPal</label>
 
-    <version>6.1.1</version>
+    <version>6.1.2</version>
     <copyright>(c) by shopware AG</copyright>
     <license>MIT</license>
     <link>http://store.shopware.com</link>
     <author>shopware AG</author>
     <compatibility minVersion="5.2.27" maxVersion="5.99.99"/>
+
+    <changelog version="6.1.2">
+        <changes lang="de">
+            PT-13142 - Verbessert die Bearbeitung von Webhooks;
+        </changes>
+        <changes lang="en">
+            PT-13142 - Improves the processing of webhooks;
+        </changes>
+    </changelog>
 
     <changelog version="6.1.1">
         <changes lang="de">
