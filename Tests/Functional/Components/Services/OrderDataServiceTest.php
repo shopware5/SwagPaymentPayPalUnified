@@ -19,6 +19,7 @@ use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\SettingsHelperTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\ShopRegistrationTrait;
+use SwagPaymentPayPalUnified\WebhookHandlers\OrderAndTransactionIdResult;
 
 class OrderDataServiceTest extends TestCase
 {
@@ -221,6 +222,52 @@ class OrderDataServiceTest extends TestCase
         static::assertTrue(\is_int($result->getOrderId()));
         static::assertSame(-1, $result->getOrderStatusId());
         static::assertSame(1, $result->getPaymentStatusId());
+    }
+
+    /**
+     * @return void
+     */
+    public function testGetOrderAndPaymentStatusResultByOrderAndTransactionId()
+    {
+        $sql = file_get_contents(__DIR__ . '/_fixtures/order_status.sql');
+        static::assertTrue(\is_string($sql));
+
+        $this->getContainer()->get('dbal_connection')->exec($sql);
+
+        $resultOne = $this->getOrderDataService()->getOrderAndPaymentStatusResultByOrderAndTransactionId(
+            new OrderAndTransactionIdResult('unitTestTransactionId', 'any')
+        );
+
+        static::assertInstanceOf(OrderAndPaymentStatusResult::class, $resultOne);
+        static::assertTrue(\is_int($resultOne->getOrderId()));
+        static::assertSame(-1, $resultOne->getOrderStatusId());
+        static::assertSame(1, $resultOne->getPaymentStatusId());
+
+        $resultTwo = $this->getOrderDataService()->getOrderAndPaymentStatusResultByOrderAndTransactionId(
+            new OrderAndTransactionIdResult('any', 'unitTestTransactionId')
+        );
+
+        static::assertInstanceOf(OrderAndPaymentStatusResult::class, $resultTwo);
+        static::assertTrue(\is_int($resultTwo->getOrderId()));
+        static::assertSame(-1, $resultTwo->getOrderStatusId());
+        static::assertSame(1, $resultTwo->getPaymentStatusId());
+    }
+
+    /**
+     * @return void
+     */
+    public function testGetOrderAndPaymentStatusResultByOrderAndTransactionIdShouldReturnNull()
+    {
+        $sql = file_get_contents(__DIR__ . '/_fixtures/order_status.sql');
+        static::assertTrue(\is_string($sql));
+
+        $this->getContainer()->get('dbal_connection')->exec($sql);
+
+        $result = $this->getOrderDataService()->getOrderAndPaymentStatusResultByOrderAndTransactionId(
+            new OrderAndTransactionIdResult('any', 'any')
+        );
+
+        static::assertNull($result);
     }
 
     /**
