@@ -53,11 +53,7 @@ class AdvancedCreditDebitCartPaymentSourceHandlerTest extends TestCase
         $paymentSourceValueResult = $result->getCard();
         static::assertInstanceOf(PaymentSource\Card::class, $paymentSourceValueResult);
 
-        $experienceContextValueResult = $paymentSourceValueResult->getExperienceContext();
-        static::assertInstanceOf(PaymentSource\ExperienceContext::class, $experienceContextValueResult);
-
-        static::assertSame('SET_PROVIDED_ADDRESS', $experienceContextValueResult->getShippingPreference());
-        static::assertSame('PAY_NOW', $experienceContextValueResult->getUserAction());
+        static::assertNull($paymentSourceValueResult->getExperienceContext());
     }
 
     /**
