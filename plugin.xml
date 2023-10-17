@@ -15,9 +15,11 @@
     <changelog version="6.1.2">
         <changes lang="de">
             PT-13142 - Verbessert die Bearbeitung von Webhooks;
+            PT-13143 - Behebt ein Problem mit der Kreditkarten Zahlung;
         </changes>
         <changes lang="en">
             PT-13142 - Improves the processing of webhooks;
+            PT-13143 - Fixes a problem with credit card payment;
         </changes>
     </changelog>
 

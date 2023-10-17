@@ -199,16 +199,7 @@ class ClassicOrderHandlerTest extends TestCase
         $paymentSource = $result->getPaymentSource();
         static::assertInstanceOf(PaymentSource::class, $paymentSource);
         static::assertInstanceOf(PaymentSource\Card::class, $paymentSource->getCard());
-        $experienceContext = $paymentSource->getCard()->getExperienceContext();
-        static::assertInstanceOf(PaymentSource\ExperienceContext::class, $experienceContext);
-
-        static::assertSame('de-DE', $experienceContext->getLocale());
-        static::assertSame('UnitTest AG', $experienceContext->getBrandName());
-        static::assertSame('IMMEDIATE_PAYMENT_REQUIRED', $experienceContext->getPaymentMethodPreference());
-        static::assertSame('PAYPAL', $experienceContext->getPaymentMethodSelected());
-
-        static::assertSame('PAY_NOW', $experienceContext->getUserAction());
-        static::assertSame('SET_PROVIDED_ADDRESS', $experienceContext->getShippingPreference());
+        static::assertNull($paymentSource->getCard()->getExperienceContext());
     }
 
     /**

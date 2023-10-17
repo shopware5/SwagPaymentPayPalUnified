@@ -27,9 +27,6 @@ class AdvancedCreditDebitCardPaymentSourceValueHandler extends AbstractPaymentSo
      */
     public function createPaymentSourceValue(PayPalOrderParameter $orderParameter)
     {
-        $paymentSourceValue = new Card();
-        $paymentSourceValue->setExperienceContext($this->createExperienceContext($orderParameter));
-
-        return $paymentSourceValue;
+        return new Card();
     }
 }

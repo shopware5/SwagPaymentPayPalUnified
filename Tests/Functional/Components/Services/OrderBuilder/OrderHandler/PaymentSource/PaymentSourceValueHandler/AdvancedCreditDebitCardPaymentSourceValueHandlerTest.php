@@ -17,7 +17,6 @@ use SwagPaymentPayPalUnified\Models\Settings\General;
 use SwagPaymentPayPalUnified\PayPalBundle\Components\SettingsServiceInterface;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\Card;
-use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PaymentSource\ExperienceContext;
 use SwagPaymentPayPalUnified\Tests\Functional\AssertStringContainsTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\ShopRegistrationTrait;
@@ -48,16 +47,7 @@ class AdvancedCreditDebitCardPaymentSourceValueHandlerTest extends TestCase
 
         static::assertInstanceOf(Card::class, $result);
 
-        $experienceContextResult = $result->getExperienceContext();
-        static::assertInstanceOf(ExperienceContext::class, $experienceContextResult);
-
-        static::assertSame('de-DE', $experienceContextResult->getLocale());
-        static::assertSame('anyBrandName', $experienceContextResult->getBrandName());
-        static::assertSame('IMMEDIATE_PAYMENT_REQUIRED', $experienceContextResult->getPaymentMethodPreference());
-        static::assertSame('PAYPAL', $experienceContextResult->getPaymentMethodSelected());
-        static::assertSame('NO_PREFERENCE', $experienceContextResult->getLandingPage());
-        static::assertSame('SET_PROVIDED_ADDRESS', $experienceContextResult->getShippingPreference());
-        static::assertSame('PAY_NOW', $experienceContextResult->getUserAction());
+        static::assertNull($result->getExperienceContext());
     }
 
     /**
