@@ -306,6 +306,53 @@ class OnboardingStatusServiceTest extends TestCase
     }
 
     /**
+     * @dataProvider getIsCapableResultWithoutCapabilitiesTestDataProvider
+     *
+     * @param bool $paymentsReceivable
+     * @param bool $primaryEmailConfirmed
+     * @param bool $expectedPaymentsReceivableResult
+     * @param bool $expectedPrimaryEmailConfirmedResult
+     *
+     * @return void
+     */
+    public function testGetIsCapableResultWithoutCapabilities(
+        $paymentsReceivable,
+        $primaryEmailConfirmed,
+        $expectedPaymentsReceivableResult,
+        $expectedPrimaryEmailConfirmedResult
+    ) {
+        $response = [
+            'merchant_id' => 'FOOBAR42',
+            'products' => [],
+            'payments_receivable' => $paymentsReceivable,
+            'primary_email_confirmed' => $primaryEmailConfirmed,
+        ];
+
+        $onboardingStatusService = $this->createOnboardingStatusService(
+            $this->createMerchantIntegrationsResourceMock($response)
+        );
+
+        $result = $onboardingStatusService->getIsCapableResult('anyPayerId', 1, false);
+
+        static::assertFalse($result->isCapable());
+        static::assertSame($expectedPaymentsReceivableResult, $result->getIsPaymentsReceivable());
+        static::assertSame($expectedPrimaryEmailConfirmedResult, $result->getIsPrimaryEmailConfirmed());
+    }
+
+    /**
+     * @return array<string, array<int, bool>>
+     */
+    public function getIsCapableResultWithoutCapabilitiesTestDataProvider()
+    {
+        return [
+            'PaymentsReceivable is false and EmailConfirmed is false' => [false, false, false, false],
+            'PaymentsReceivable is true and EmailConfirmed is false' => [true, false, true, false],
+            'PaymentsReceivable is true and EmailConfirmed is true' => [true, true, true, true],
+            'PaymentsReceivable is false and EmailConfirmed is true' => [false, true, false, true],
+        ];
+    }
+
+    /**
      * @param array<string,mixed>|null $response
      *
      * @return MockObject|MerchantIntegrationsResource

@@ -13,6 +13,7 @@ use SwagPaymentPayPalUnified\Components\Services\RiskManagement\Apm\Validator\So
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
 use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\ReflectionHelperTrait;
+use Symfony\Component\Validator\ConstraintViolationInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class SofortValidatorHandlerTest extends TestCase
@@ -36,8 +37,12 @@ class SofortValidatorHandlerTest extends TestCase
         );
 
         static::assertCount(1, $violationList);
-        static::assertSame('The value you selected is not a valid choice.', $violationList[0]->getMessage());
-        static::assertSame('IT', $violationList[0]->getInvalidValue());
+
+        $violation = $violationList[0];
+        static::assertInstanceOf(ConstraintViolationInterface::class, $violation);
+
+        static::assertSame('The value you selected is not a valid choice.', $violation->getMessage());
+        static::assertSame('IT', $violation->getInvalidValue());
     }
 
     /**
