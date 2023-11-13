@@ -109,13 +109,14 @@ class OnboardingStatusService
 
             $this->loggerService->debug(sprintf('%s MERCHANT INTEGRATIONS: %s', __METHOD__, \json_encode($response)));
 
-            $capabilities = $response['capabilities'];
-            if (!\is_array($capabilities)) {
-                return new IsCapableResult(false);
-            }
-
             $this->lastResponsePaymentsReceivable = $this->getBoolValueFromResponseArray(IsCapableResult::PAYMENTS_RECEIVABLE, $response);
             $this->lastResponsePrimaryEmailConfirmed = $this->getBoolValueFromResponseArray(IsCapableResult::PRIMARY_EMAIL_CONFIRMED, $response);
+
+            if (!\array_key_exists('capabilities', $response) || !\is_array($response['capabilities'])) {
+                return new IsCapableResult(false, null, $this->lastResponsePaymentsReceivable, $this->lastResponsePrimaryEmailConfirmed);
+            }
+
+            $capabilities = $response['capabilities'];
 
             $this->lastResponseCapabilities = $capabilities;
             $this->expiry = (new DateTime())->add(new DateInterval(self::CACHE_LIFETIME));
@@ -127,7 +128,7 @@ class OnboardingStatusService
 
                 return new IsCapableResult(
                     $isCapable,
-                    $capability['limits'],
+                    \array_key_exists('limits', $capability) ? $capability['limits'] : null,
                     $this->lastResponsePaymentsReceivable,
                     $this->lastResponsePrimaryEmailConfirmed
                 );
