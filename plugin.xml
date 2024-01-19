@@ -5,12 +5,21 @@
     <label lang="de">PayPal</label>
     <label lang="en">PayPal</label>
 
-    <version>6.1.3</version>
+    <version>6.1.4</version>
     <copyright>(c) by shopware AG</copyright>
     <license>MIT</license>
     <link>http://store.shopware.com</link>
     <author>shopware AG</author>
     <compatibility minVersion="5.2.27" maxVersion="5.99.99"/>
+
+    <changelog version="6.1.4">
+        <changes lang="de">
+            PT-13146 - Die Zahlungsart "Sofort" ist nun standardmäßig deaktiviert;
+        </changes>
+        <changes lang="en">
+            PT-13146 - The payment method "Sofort" is now deactivated by default;
+        </changes>
+    </changelog>
 
     <changelog version="6.1.3">
         <changes lang="de">

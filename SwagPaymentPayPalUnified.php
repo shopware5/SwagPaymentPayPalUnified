@@ -114,9 +114,14 @@ class SwagPaymentPayPalUnified extends Plugin
      */
     public function activate(ActivateContext $context)
     {
+        $ignoreList = [
+            PaymentMethodProviderInterface::MY_BANK_METHOD_NAME,
+            PaymentMethodProviderInterface::SOFORT_METHOD_NAME,
+        ];
+
         $paymentMethodProvider = $this->getPaymentMethodProvider();
         foreach (PaymentMethodProvider::getAllUnifiedNames() as $unifiedName) {
-            if ($unifiedName === PaymentMethodProviderInterface::MY_BANK_METHOD_NAME) {
+            if (\in_array($unifiedName, $ignoreList, true)) {
                 continue;
             }
             $paymentMethodProvider->setPaymentMethodActiveFlag($unifiedName, true);

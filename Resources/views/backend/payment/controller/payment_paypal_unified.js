@@ -7,60 +7,69 @@ Ext.define('Shopware.apps.Payment.controller.PaymentPaypalUnified', {
     snippets: {
         onboardingMessageText: '{s name="onboardingMessageText"}Please be aware, that your PayPal-account needs to be eligible for receiving payments with "Pay Upon Invoice", for this payment method to be available to your customers. You may authorize your account in the PayPal settings module.{/s}',
         myBankDisclaimerText: '{s name="myBankDisclaimerText"}Merchants enabling MyBank after February 2023 will need manual approval by PayPal. Reach out to merchant support for further information on this.{/s}',
+        sofortDisclaimerText: '{s name="sofortDisclaimerText"}Enabling SOFORT after October 2023 is no longer allowed for new merchants. This is in preparation of the full product sunset by September 2024 — as announced by Klarna.{/s}',
     },
 
-    onboardingMessage: null,
+    disclaimerMessage: null,
+    messages: [
+        {
+            paymentMethodName: 'SwagPaymentPayPalUnifiedPayUponInvoice',
+            snippet: 'onboardingMessageText'
+        },
+        {
+            paymentMethodName: 'SwagPaymentPayPalUnifiedMyBank',
+            snippet: 'myBankDisclaimerText'
+        },
+        {
+            paymentMethodName: 'SwagPaymentPayPalUnifiedSofort',
+            snippet: 'sofortDisclaimerText'
+        },
+    ],
+
     payUponInvoicePaymentMethodName: 'SwagPaymentPayPalUnifiedPayUponInvoice',
     myBankPaymentMethodName: 'SwagPaymentPayPalUnifiedMyBank',
+    sofortPaymentMethodName: 'SwagPaymentPayPalUnifiedSofort',
 
     /**
      * @param { Ext.view.View } view
      * @param { Ext.data.Record } record
      */
     onItemClick: function (view, record) {
-        var win = view.up('window'),
-            form = win.generalForm,
-            treeToolBar = win.down('toolbar[name=treeToolBar]'),
-            gridToolBar = win.down('toolbar[name=gridToolBar]'),
-            btnSave = gridToolBar.down('button[name=save]'),
-            btnDelete = treeToolBar.down('button[name=delete]'),
-            surchargeGrid = win.down('payment-main-surcharge');
+        var win = view.up('window');
 
-        if (record.get('name') === this.payUponInvoicePaymentMethodName) {
-            form.insert(0, this._createOnboardingMessage());
-        } else if (this.onboardingMessage !== null) {
-            form.remove(this.onboardingMessage);
+        this.form = win.generalForm;
+        this.currentRecord = record;
 
-            this.onboardingMessage = null;
-        }
-
-        if (record.get('name') === this.myBankPaymentMethodName) {
-            form.insert(0, this._createMyBankDisclaimer());
-        } else if (this.myBankDisclaimer !== null) {
-            form.remove(this.myBankDisclaimer);
-
-            this.myBankDisclaimer = null;
-        }
+        this._handleDisclaimer();
 
         this.callParent(arguments);
     },
 
-    _createOnboardingMessage: function () {
-        this.onboardingMessage = Shopware.Notification.createBlockMessage(
-            this.snippets.onboardingMessageText,
-            'alert'
-        );
+    _handleDisclaimer: function () {
+        this._removeDisclaimer();
 
-        return this.onboardingMessage;
+        var me = this;
+        this.messages.forEach(function (message) {
+            if (me.currentRecord.get('name') === message.paymentMethodName) {
+                me._addDisclaimer(message.snippet);
+            }
+        });
     },
 
-    _createMyBankDisclaimer: function () {
-        this.myBankDisclaimer = Shopware.Notification.createBlockMessage(
-            this.snippets.myBankDisclaimerText,
+    _removeDisclaimer: function () {
+        if (this.disclaimerMessage !== null) {
+            this.form.remove(this.disclaimerMessage);
+            this.disclaimerMessage = null;
+        }
+    },
+
+    _addDisclaimer: function (snippetKey) {
+        this.disclaimerMessage = Shopware.Notification.createBlockMessage(
+            this.snippets[snippetKey],
             'alert'
         );
 
-        return this.myBankDisclaimer;
+        this.form.insert(0, this.disclaimerMessage);
     },
 });
 // {/block}
