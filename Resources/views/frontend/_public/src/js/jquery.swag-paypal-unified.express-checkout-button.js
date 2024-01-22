@@ -1,4 +1,4 @@
-;(function($, window) {
+;(function ($, window) {
     'use strict';
 
     $.plugin('swagPayPalUnifiedExpressCheckoutButton', {
@@ -123,9 +123,10 @@
          */
         expressCheckoutButton: null,
 
-        init: function() {
+        init: function () {
             this.applyDataAttributes();
             this.applyOrderNumberDataAttribute();
+            this.buttonIsRendered = false;
 
             if (this.isProductExcluded()) {
                 return;
@@ -146,7 +147,7 @@
             }
         },
 
-        applyOrderNumberDataAttribute: function() {
+        applyOrderNumberDataAttribute: function () {
             this.opts.productNumber = this.$el.attr('data-productNumber');
         },
 
@@ -154,7 +155,7 @@
          * Will be triggered when the selected variant was changed.
          * Re-initializes this plugin.
          */
-        onChangeVariant: function() {
+        onChangeVariant: function () {
             window.StateManager.addPlugin('*[data-paypalUnifiedEcButton="true"]', 'swagPayPalUnifiedExpressCheckoutButton');
         },
 
@@ -163,7 +164,7 @@
          *
          * @return {boolean}
          */
-        isProductExcluded: function() {
+        isProductExcluded: function () {
             var me = this,
                 productNumber = me.opts.productNumber,
                 excludedProductNumbers,
@@ -193,26 +194,34 @@
         /**
          * Creates the PayPal express checkout button with the loaded PayPal javascript
          */
-        createButton: function() {
+        createButton: function () {
             var me = this,
                 $head = $('head');
 
+            this.payPalObjectInterval = setInterval(this.payPalObjectCheck.bind(this), this.opts.interval);
             if (!$head.data(me.opts.paypalScriptLoadedSelector)) {
                 $.ajax({
                     url: me.renderSdkUrl(me.opts.clientId, me.opts.currency),
                     dataType: 'script',
                     cache: true,
-                    success: function() {
+                    success: function () {
                         $head.data(me.opts.paypalScriptLoadedSelector, true);
-                        me.renderButton();
                     }
                 });
-            } else {
-                me.renderButton();
             }
         },
 
-        renderSdkUrl: function(clientId, currency) {
+        payPalObjectCheck: function () {
+            if (window.paypal === undefined || window.paypal === null || typeof window.paypal.Buttons !== 'function') {
+                return;
+            }
+
+            clearInterval(this.payPalObjectInterval);
+            this.paypal = window.paypal;
+            this.renderButton();
+        },
+
+        renderSdkUrl: function (clientId, currency) {
             var enabledFundings = this.opts.enabledFundings,
                 params = {
                     'client-id': clientId,
@@ -253,36 +262,24 @@
         /**
          * Renders the ECS button
          */
-        renderButton: function() {
+        renderButton: function () {
             var me = this;
+
+            if (this.buttonIsRendered) {
+                return;
+            }
+
+            this.buttonIsRendered = true;
 
             if (this.opts.isListing && this.opts.showPayLater) {
                 $('.' + this.opts.hasNotPayLaterClass).removeClass(this.opts.hasNotPayLaterClass).addClass(this.opts.hasPayLaterClass);
             }
 
-            // wait for the PayPal javascript to be loaded
-            me.buffer(function() {
-                me.expressCheckoutButton = paypal
-                    .Buttons(me.createPayPalButtonConfiguration())
-                    .render(me.$el.get(0));
+            me.expressCheckoutButton = paypal
+                .Buttons(me.createPayPalButtonConfiguration())
+                .render(me.$el.get(0));
 
-                $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonCart/createButton', [me, me.expressCheckoutButton]);
-            });
-        },
-
-        /**
-         * Buffer helper function to set a timeout for a function
-         *
-         * @param {function} fn
-         * @param {number} timeout
-         * @return {number}
-         */
-        buffer: function(fn, timeout) {
-            var me = this;
-
-            timeout = timeout || 100;
-
-            return window.setTimeout(fn.bind(me), timeout);
+            $.publish('plugin/swagPayPalUnifiedExpressCheckoutButtonCart/createButton', [me, me.expressCheckoutButton]);
         },
 
         /**
@@ -290,7 +287,7 @@
          *
          * @return {Object}
          */
-        createPayPalButtonConfiguration: function() {
+        createPayPalButtonConfiguration: function () {
             var me = this,
                 config;
 
@@ -330,7 +327,7 @@
          * This method dispatches a request to the `\Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout`-controller (default)
          * which initialises an order at PayPal.
          */
-        createOrder: function() {
+        createOrder: function () {
             var me = this,
                 data = {};
 
@@ -350,7 +347,7 @@
             return $.ajax({
                 url: me.opts.createOrderUrl,
                 data: data
-            }).then(function(response) {
+            }).then(function (response) {
                 if (response.riskManagementFailed === true) {
                     me.isRiskManagementError = true;
 
@@ -358,7 +355,7 @@
                 }
 
                 return response.token;
-            }, function() {
+            }, function () {
             }).promise();
         },
 
@@ -366,25 +363,25 @@
          * This method dispatches a request to the `\Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout`-controller (default)
          * which creates a new customer account and also logs the user in.
          */
-        onApprove: function(data, actions) {
+        onApprove: function (data, actions) {
             var me = this;
 
             return $.ajax({
                 url: me.opts.onApproveUrl,
                 data: data
-            }).then(function(response) {
+            }).then(function (response) {
                 var params = {
                     expressCheckout: response.expressCheckout,
                     token: response.token
                 };
 
                 actions.redirect($.swagPayPalRenderUrl(me.opts.confirmUrl, params));
-            }, function() {
+            }, function () {
                 me.onPayPalAPIError();
             }).promise();
         },
 
-        onPayPalAPIError: function() {
+        onPayPalAPIError: function () {
             var content,
                 config;
 
@@ -418,7 +415,7 @@
          *
          * @returns {Number}
          */
-        getProductQuantity: function() {
+        getProductQuantity: function () {
             var me = this,
                 quantity = $(me.opts.productQuantitySelector).val();
 
@@ -432,7 +429,7 @@
         /**
          * Destroys the plugin and unsubscribes from subscribed events
          */
-        destroy: function() {
+        destroy: function () {
             var me = this;
 
             $.unsubscribe(me.getEventName('plugin/swAjaxVariant/onRequestData'));
@@ -445,15 +442,15 @@
      *  After the loading another product variant, we lose the
      *  plugin instance, therefore, we have to re-initialize it here.
      */
-    $.subscribe('plugin/swAjaxVariant/onRequestData', function() {
+    $.subscribe('plugin/swAjaxVariant/onRequestData', function () {
         window.StateManager.addPlugin('*[data-paypalUnifiedEcButton="true"]', 'swagPayPalUnifiedExpressCheckoutButton');
     });
 
-    $.subscribe('plugin/swInfiniteScrolling/onFetchNewPageFinished', function() {
+    $.subscribe('plugin/swInfiniteScrolling/onFetchNewPageFinished', function () {
         window.StateManager.addPlugin('*[data-paypalUnifiedEcButton="true"]', 'swagPayPalUnifiedExpressCheckoutButton');
     });
 
-    $.subscribe('plugin/swInfiniteScrolling/onLoadPreviousFinished', function() {
+    $.subscribe('plugin/swInfiniteScrolling/onLoadPreviousFinished', function () {
         window.StateManager.addPlugin('*[data-paypalUnifiedEcButton="true"]', 'swagPayPalUnifiedExpressCheckoutButton');
     });
 

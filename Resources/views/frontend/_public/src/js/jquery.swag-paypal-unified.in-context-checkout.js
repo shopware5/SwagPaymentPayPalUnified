@@ -1,4 +1,4 @@
-;(function($, window) {
+;(function ($, window) {
     'use strict';
 
     $.plugin('swagPayPalUnifiedInContextCheckout', {
@@ -39,8 +39,9 @@
             payLaterFunding: 'paylater'
         }),
 
-        init: function() {
+        init: function () {
             this.applyDataAttributes();
+            this.buttonIsRendered = false;
 
             this.createOrderFunction = $.createSwagPaymentPaypalCreateOrderFunction(this.opts.createOrderUrl, this);
             this.formValidityFunctions = $.createSwagPaymentPaypalFormValidityFunctions(
@@ -69,28 +70,36 @@
         /**
          * Creates the PayPal in-context button with the loaded PayPal javascript
          */
-        createButton: function() {
+        createButton: function () {
             var me = this,
                 $head = $('head');
 
+            this.payPalObjectInterval = setInterval(this.payPalObjectCheck.bind(this), this.opts.interval);
             if (!$head.hasClass(this.opts.paypalScriptLoadedSelector)) {
                 $.ajax({
                     url: this.renderSdkUrl(),
                     dataType: 'script',
                     cache: true,
-                    success: function() {
+                    success: function () {
                         $head.addClass(me.opts.paypalScriptLoadedSelector);
                         me.paypal = window.paypal;
                         me.renderButton();
                     }
                 });
-            } else {
-                this.paypal = window.paypal;
-                this.renderButton();
             }
         },
 
-        renderSdkUrl: function() {
+        payPalObjectCheck: function () {
+            if (window.paypal === undefined || window.paypal === null || typeof window.paypal.Buttons !== 'function') {
+                return;
+            }
+
+            clearInterval(this.payPalObjectInterval);
+            this.paypal = window.paypal;
+            this.renderButton();
+        },
+
+        renderSdkUrl: function () {
             var enabledFundings = this.opts.enabledFundings,
                 params = {
                     components: 'buttons,funding-eligibility',
@@ -131,7 +140,13 @@
         /**
          * Renders the ECS button
          */
-        renderButton: function() {
+        renderButton: function () {
+            if (this.buttonIsRendered) {
+                return;
+            }
+
+            this.buttonIsRendered = true;
+
             var buttonConfig = this.getButtonConfig(),
                 el = this.$el.get(0);
 
@@ -143,7 +158,7 @@
          *
          * @return { Object }
          */
-        getButtonConfig: function() {
+        getButtonConfig: function () {
             var buttonConfig = {
                 style: $.swagPayPalCreateButtonStyle(this.opts, this.buttonSize, true),
 
@@ -186,7 +201,7 @@
         /**
          * @return { Promise }
          */
-        onApprove: function(data, actions) {
+        onApprove: function (data, actions) {
             $.loadingIndicator.open({
                 openOverlay: true,
                 closeOnClick: false,
@@ -201,7 +216,7 @@
          *
          * @return { string }
          */
-        renderConfirmUrl: function(data) {
+        renderConfirmUrl: function (data) {
             var params = {
                 token: data.orderID,
                 payerId: data.payerID,
