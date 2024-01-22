@@ -11,6 +11,7 @@
 
         init: function() {
             this.applyDataAttributes();
+            this.buttonIsRendered = false;
 
             this.createOrderFunction = $.createSwagPaymentPaypalCreateOrderFunction(this.opts.createOrderUrl, this);
             this.formValidityFunctions = $.createSwagPaymentPaypalFormValidityFunctions(
@@ -41,6 +42,7 @@
             var me = this,
                 $head = $('head');
 
+            this.payPalObjectInterval = setInterval(this.payPalObjectCheck.bind(this), this.opts.interval);
             if (!$head.hasClass(this.opts.paypalScriptLoadedSelector)) {
                 $.ajax({
                     url: this.renderSdkUrl(),
@@ -52,10 +54,17 @@
                         me.renderButton();
                     }
                 });
-            } else {
-                this.paypal = window.paypal;
-                this.renderButton();
             }
+        },
+
+        payPalObjectCheck: function () {
+            if (window.paypal === undefined || window.paypal === null || typeof window.paypal.Buttons !== 'function') {
+                return;
+            }
+
+            clearInterval(this.payPalObjectInterval);
+            this.paypal = window.paypal;
+            this.renderButton();
         },
 
         renderSdkUrl: function() {
@@ -84,6 +93,12 @@
          * Renders the ECS button
          */
         renderButton: function() {
+            if (this.buttonIsRendered) {
+                return;
+            }
+
+            this.buttonIsRendered = true;
+
             var buttonConfig = this.getButtonConfig(),
                 el = this.$el.get(0);
 

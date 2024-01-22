@@ -250,7 +250,14 @@
              *
              * @type string
              */
-            paypalErrorPage: ''
+            paypalErrorPage: '',
+
+            /**
+             * Interval for the PayPal object check
+             *
+             * @type number
+             */
+            interval: 50
         };
     };
 })(jQuery);

@@ -25,6 +25,7 @@
 
         init: function() {
             this.applyDataAttributes();
+            this.buttonIsRendered = false;
 
             this.createOrderFunction = $.createSwagPaymentPaypalCreateOrderFunction(this.opts.createOrderUrl, this);
             this.formValidityFunctions = $.createSwagPaymentPaypalFormValidityFunctions(
@@ -65,6 +66,7 @@
             var me = this,
                 $head = $('head');
 
+            this.payPalObjectInterval = setInterval(this.payPalObjectCheck.bind(this), this.opts.interval);
             if (!$head.hasClass(this.opts.paypalScriptLoadedSelector)) {
                 $.ajax({
                     url: this.renderSdkUrl(),
@@ -76,10 +78,17 @@
                         me.renderButtons();
                     }
                 });
-            } else {
-                this.paypal = window.paypal;
-                this.renderButtons();
             }
+        },
+
+        payPalObjectCheck: function () {
+            if (window.paypal === undefined || window.paypal === null || typeof window.paypal.Buttons !== 'function') {
+                return;
+            }
+
+            clearInterval(this.payPalObjectInterval);
+            this.paypal = window.paypal;
+            this.renderButtons();
         },
 
         renderSdkUrl: function() {
@@ -112,6 +121,12 @@
         },
 
         renderButtons: function() {
+            if (this.buttonIsRendered) {
+                return;
+            }
+
+            this.buttonIsRendered = true;
+
             var me = this,
                 buttonConfig = this.getButtonConfig(),
                 el = this.$el.get(0);

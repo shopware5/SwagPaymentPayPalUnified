@@ -113,6 +113,7 @@
 
         init: function() {
             this.applyDataAttributes();
+            this.fieldsAreRendered = false;
 
             this.$submitBtn = $(this.opts.confirmFormSubmitButtonSelector);
             this.$submitBtn.prop('disabled', true);
@@ -126,6 +127,7 @@
         insertScript: function() {
             var $head = $('head');
 
+            this.payPalObjectInterval = setInterval(this.payPalObjectCheck.bind(this), this.opts.interval);
             if (!$head.hasClass(this.opts.paypalScriptLoadedSelector)) {
                 var payPalScript = document.createElement('script');
 
@@ -137,9 +139,16 @@
 
                 document.head.appendChild(payPalScript);
                 $head.addClass(this.opts.paypalScriptLoadedSelector);
-            } else {
-                this.renderHostedFields();
             }
+        },
+
+        payPalObjectCheck: function () {
+            if (window.paypal === undefined || window.paypal === null || typeof window.paypal.Buttons !== 'function') {
+                return;
+            }
+
+            clearInterval(this.payPalObjectInterval);
+            this.renderHostedFields();
         },
 
         registerEventListeners: function() {
@@ -199,8 +208,13 @@
                 return;
             }
 
-            var me = this;
+            if (this.fieldsAreRendered) {
+                return;
+            }
 
+            this.fieldsAreRendered = true;
+
+            var me = this;
             paypal.HostedFields.render({
                 createOrder: me.createPaypalOrder.bind(me),
                 fields: me.getFieldsConfig()
