@@ -7,16 +7,32 @@
  */
 
 use SwagPaymentPayPalUnified\Components\ErrorCodes;
+use SwagPaymentPayPalUnified\Components\Exception\InvalidOrderException;
+use SwagPaymentPayPalUnified\Components\Exception\TimeoutInfoException;
 use SwagPaymentPayPalUnified\Components\PayPalOrderParameter\ShopwareOrderData;
+use SwagPaymentPayPalUnified\Components\Services\TimeoutRefundService;
 use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentController;
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\EmptyCartException;
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\InvalidBillingAddressException;
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\InvalidShippingAddressException;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Common\Link;
 use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Payments\Capture;
 
 class Shopware_Controllers_Frontend_PaypalUnifiedApm extends AbstractPaypalPaymentController
 {
+    /**
+     * @var TimeoutRefundService
+     */
+    private $timeoutRefundService;
+
+    public function preDispatch()
+    {
+        parent::preDispatch();
+
+        $this->timeoutRefundService = $this->get('swag_payment_paypal_unified.timeout_refund_service');
+    }
+
     /**
      * @return void
      */
@@ -85,6 +101,8 @@ class Shopware_Controllers_Frontend_PaypalUnifiedApm extends AbstractPaypalPayme
             return;
         }
 
+        $this->timeoutRefundService->saveInfo($payPalOrder->getId(), $this->getAmount());
+
         $url = $this->getUrl($payPalOrder, Link::RELATION_PAYER_ACTION_REQUIRED);
 
         $this->logger->debug(sprintf('%s REDIRECT TO: %s', __METHOD__, $url));
@@ -113,6 +131,27 @@ class Shopware_Controllers_Frontend_PaypalUnifiedApm extends AbstractPaypalPayme
         }
 
         if (!$this->isCartValid($payPalOrder)) {
+            if ($this->getUser() === null) {
+                try {
+                    $this->timeoutRefundService->refund($payPalOrderId, $this->getCaptureId($payPalOrder));
+                } catch (TimeoutInfoException $exception) {
+                    $this->logger->error($exception->getMessage());
+                } catch (InvalidOrderException $exception) {
+                    $this->logger->error($exception->getMessage());
+                }
+
+                $this->timeoutRefundService->deleteInfo($payPalOrderId);
+
+                $this->redirect([
+                    'module' => 'frontend',
+                    'controller' => 'register',
+                    'action' => 'index',
+                    'paymentApproveTimeout' => true,
+                ]);
+
+                return;
+            }
+
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
                 ->setCode(ErrorCodes::BASKET_VALIDATION_ERROR);
 
@@ -120,6 +159,8 @@ class Shopware_Controllers_Frontend_PaypalUnifiedApm extends AbstractPaypalPayme
 
             return;
         }
+
+        $this->timeoutRefundService->deleteInfo($payPalOrderId);
 
         if ($this->Request()->isXmlHttpRequest()) {
             $this->view->assign('token', $payPalOrderId);
@@ -179,5 +220,18 @@ class Shopware_Controllers_Frontend_PaypalUnifiedApm extends AbstractPaypalPayme
             'sUniqueID' => $payPalOrderId,
             'requireContactToMerchant' => true,
         ]);
+    }
+
+    /**
+     * @return string
+     */
+    private function getCaptureId(Order $payPalOrder)
+    {
+        $capture = $this->orderPropertyHelper->getFirstCapture($payPalOrder);
+        if (!$capture instanceof Capture) {
+            throw new InvalidOrderException($payPalOrder->getId());
+        }
+
+        return $capture->getId();
     }
 }

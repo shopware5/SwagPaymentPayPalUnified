@@ -42,7 +42,7 @@ class Phone extends PayPalApiStruct
     }
 
     /**
-     * @return \SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\Payer\Phone\PhoneNumber
+     * @return PhoneNumber
      */
     public function getPhoneNumber()
     {

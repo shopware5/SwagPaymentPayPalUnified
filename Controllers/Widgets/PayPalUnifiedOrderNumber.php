@@ -48,7 +48,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedOrderNumber extends Enlight_Cont
 
         try {
             $this->orderNumberService->restoreOrderNumberToPool();
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             $this->logger->error(sprintf('%s Cannot restore order number to pool.', __METHOD__), [
                 'exceptionMessage' => $exception->getMessage(),
                 'exceptionTrace' => $exception->getTrace(),

@@ -32,10 +32,11 @@ class AbstractPayPalPaymentControllerThrowsExceptionOnCreateOrderWithEmptyCartTe
      *
      * @param class-string<Enlight_Controller_Action> $controllerClass
      * @param string                                  $actionName
+     * @param bool                                    $shouldAssignToView
      *
      * @return void
      */
-    public function testCreatePayPalOrderShouldThrowExceptionWithEmptyCart($controllerClass, $actionName, bool $shouldAssignToView)
+    public function testCreatePayPalOrderShouldThrowExceptionWithEmptyCart($controllerClass, $actionName, $shouldAssignToView)
     {
         $sOrderVariables = [
             'sUserData' => require __DIR__ . '/_fixtures/getUser_result.php',

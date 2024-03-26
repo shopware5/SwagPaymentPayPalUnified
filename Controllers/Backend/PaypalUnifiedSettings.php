@@ -236,7 +236,7 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
             $credentialsService->updateCredentials($credentials, $shopId, $sandbox);
 
             $this->updateOnboardingStatus($shopId, $sandbox);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
             $this->view->assign([
                 'exception' => $e->getMessage(),

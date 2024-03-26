@@ -59,6 +59,7 @@ return (new Config())
         'single_line_throw' => false,
         'visibility_required' => ['elements' => ['property', 'method']],
         'yoda_style' => ['equal' => false, 'identical' => false, 'less_and_greater' => false],
+        'nullable_type_declaration_for_default_null_value' => false,
 
         NoSuperfluousConcatenationFixer::name() => true,
         NoUselessCommentFixer::name() => true,

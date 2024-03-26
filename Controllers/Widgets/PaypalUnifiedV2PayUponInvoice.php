@@ -35,7 +35,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2PayUponInvoice extends Enlight
         $payPalOrderId = $this->request->get('sUniqueID');
 
         if (!\is_string($payPalOrderId)) {
-            throw new \DomainException('The Paypal id must exist in the session');
+            throw new DomainException('The Paypal id must exist in the session');
         }
 
         $order = $this->orderResource->get($payPalOrderId);

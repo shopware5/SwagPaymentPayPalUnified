@@ -197,5 +197,12 @@
             <argument type="service" id="paypal_unified.payment_method_provider"/>
         </service>
 
+        <service id="swag_payment_paypal_unified.timeout_refund_service"
+                 class="SwagPaymentPayPalUnified\Components\Services\TimeoutRefundService"
+                 public="true">
+            <argument type="service" id="dbal_connection"/>
+            <argument type="service" id="shopware_storefront.context_service"/>
+            <argument type="service" id="paypal_unified.v2.capture_resource"/>
+        </service>
     </services>
 </container>
