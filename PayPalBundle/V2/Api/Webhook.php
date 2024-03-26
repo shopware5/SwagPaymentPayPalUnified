@@ -178,7 +178,7 @@ class Webhook extends PayPalApiStruct
     }
 
     /**
-     * @return \SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Order\PurchaseUnit\Payments\Payment|null
+     * @return Payment|null
      */
     public function getResource()
     {

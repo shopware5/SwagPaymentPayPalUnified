@@ -24,18 +24,22 @@ jobs:
         uses: ./.github/workflows/php-code-analysis.yml
         secrets: inherit
 
+    php-code-analysis-legacy:
+        name: PHP
+        uses: ./.github/workflows/php-code-analysis-legacy.yml
+        secrets: inherit
+
     php-unit-tests-shopware-5-7:
         name: Unit tests
         uses: ./.github/workflows/php-unit-tests-shopware-5-7.yml
         secrets: inherit
-        needs: [ javascript-code-analysis, php-code-analysis ]
+        needs: [ javascript-code-analysis, php-code-analysis, php-code-analysis-legacy ]
 
     php-unit-tests-shopware-legacy-versions:
         name: Unit tests legacy
         uses: ./.github/workflows/php-unit-tests-shopware-legacy.yml
         secrets: inherit
-        needs: [ javascript-code-analysis, php-code-analysis ]
-
+        needs: [ javascript-code-analysis, php-code-analysis, php-code-analysis-legacy ]
 
     php-e2e-tests-shopware-5-7:
         name: E2E

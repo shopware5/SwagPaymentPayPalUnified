@@ -5,12 +5,21 @@
     <label lang="de">PayPal</label>
     <label lang="en">PayPal</label>
 
-    <version>6.1.5</version>
+    <version>6.1.6</version>
     <copyright>(c) by shopware AG</copyright>
     <license>MIT</license>
     <link>http://store.shopware.com</link>
     <author>shopware AG</author>
     <compatibility minVersion="5.2.27" maxVersion="5.99.99"/>
+
+    <changelog version="6.1.6">
+        <changes lang="de">
+            PT-13151 - Verbessert den Bestellabschluss für alternative Zahlungsarten (APMs) in Verbindung mit Session-Timeouts;
+        </changes>
+        <changes lang="en">
+            PT-13151 - Improves order completion for alternative payment methods (APMs) in combination with session timeouts;
+        </changes>
+    </changelog>
 
     <changelog version="6.1.5">
         <changes lang="de">

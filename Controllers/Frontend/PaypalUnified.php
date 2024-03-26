@@ -60,7 +60,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_F
     private $settingsService;
 
     /**
-     * @var \Shopware_Components_Config
+     * @var Shopware_Components_Config
      */
     private $shopwareConfig;
 
@@ -141,7 +141,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_F
             $this->handleError(ErrorCodes::COMMUNICATION_FAILURE, $requestEx);
 
             return;
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             $this->handleError(ErrorCodes::UNKNOWN, $exception);
 
             return;
@@ -163,7 +163,7 @@ class Shopware_Controllers_Frontend_PaypalUnified extends Shopware_Controllers_F
                 $addressPatch,
                 $payerInfoPatch,
             ]);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             $this->handleError(ErrorCodes::ADDRESS_VALIDATION_ERROR, $exception);
 
             return;

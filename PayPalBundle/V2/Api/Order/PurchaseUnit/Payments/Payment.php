@@ -89,7 +89,7 @@ abstract class Payment extends PayPalApiStruct
     }
 
     /**
-     * @return \SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Common\Money|null
+     * @return Money|null
      */
     public function getAmount()
     {
@@ -97,7 +97,7 @@ abstract class Payment extends PayPalApiStruct
     }
 
     /**
-     * @param \SwagPaymentPayPalUnified\PayPalBundle\V2\Api\Common\Money|null $amount
+     * @param Money|null $amount
      *
      * @return void
      */

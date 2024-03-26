@@ -48,6 +48,13 @@
             <tag name="shopware.event_subscriber"/>
         </service>
 
+        <service id="paypal_unified.subscriber.controller.register"
+                 class="SwagPaymentPayPalUnified\Subscriber\Register"
+                 public="true">
+            <argument type="service" id="snippets"/>
+            <tag name="shopware.event_subscriber"/>
+        </service>
+
         <service id="paypal_unified.subscriber.backend"
                  class="SwagPaymentPayPalUnified\Subscriber\Backend"
                  public="true">
