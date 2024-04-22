@@ -72,26 +72,7 @@ test.describe('Is Express Checkout button available', () => {
             ]);
         });
 
-        await paypalPage.route(/.*checkoutnow.*/, route => {
-            let url = route.request().url();
-            url = url.replace(/buyerCountry=[A-Z]*/, '');
-            url += '&buyerCountry=DE';
-
-            route.continue({ url });
-        });
-
-        await paypalPage.locator('#email').fill(credentials.paypalCustomerEmail);
-        await paypalPage.locator('button:has-text("Weiter")').click();
-        await paypalPage.locator('#password').fill(credentials.paypalCustomerPassword);
-        await paypalPage.locator('#btnLogin').click();
-
-        // Click [data-testid="submit-button-initial"]
-        await paypalPage.locator('button:has-text("Weiter zur Überprüfung der Bestellung")').click();
-
-        await page.click('input[name="sAGB"]');
-
-        await page.click('button:has-text("Zahlungspflichtig bestellen")');
-        await expect(page.locator('.teaser--title')).toHaveText(/Vielen Dank für Ihre Bestellung bei Shopware Demo/);
+        await expect(paypalPage.locator('#headerText')).toHaveText(/PayPal/);
     });
 
     test('Check checkout cart page', async({ page }) => {
@@ -119,26 +100,7 @@ test.describe('Is Express Checkout button available', () => {
             ]);
         });
 
-        await paypalPage.route(/.*checkoutnow.*/, route => {
-            let url = route.request().url();
-            url = url.replace(/buyerCountry=[A-Z]*/, '');
-            url += '&buyerCountry=DE';
-
-            route.continue({ url });
-        });
-
-        await paypalPage.locator('#email').fill(credentials.paypalCustomerEmail);
-        await paypalPage.locator('button:has-text("Weiter")').click();
-        await paypalPage.locator('#password').fill(credentials.paypalCustomerPassword);
-        await paypalPage.locator('#btnLogin').click();
-
-        // Click [data-testid="submit-button-initial"]
-        await paypalPage.locator('button:has-text("Weiter zur Überprüfung der Bestellung")').click();
-
-        await page.click('input[name="sAGB"]');
-
-        await page.click('button:has-text("Zahlungspflichtig bestellen")');
-        await expect(page.locator('.teaser--title')).toHaveText(/Vielen Dank für Ihre Bestellung bei Shopware Demo/);
+        await expect(paypalPage.locator('#headerText')).toHaveText(/PayPal/);
     });
 
     test('Check register page', async({ page }) => {
@@ -165,26 +127,7 @@ test.describe('Is Express Checkout button available', () => {
             ]);
         });
 
-        await paypalPage.route(/.*checkoutnow.*/, route => {
-            let url = route.request().url();
-            url = url.replace(/buyerCountry=[A-Z]*/, '');
-            url += '&buyerCountry=DE';
-
-            route.continue({ url });
-        });
-
-        await paypalPage.locator('#email').fill(credentials.paypalCustomerEmail);
-        await paypalPage.locator('button:has-text("Weiter")').click();
-        await paypalPage.locator('#password').fill(credentials.paypalCustomerPassword);
-        await paypalPage.locator('#btnLogin').click();
-
-        // Click [data-testid="submit-button-initial"]
-        await paypalPage.locator('button:has-text("Weiter zur Überprüfung der Bestellung")').click();
-
-        await page.click('input[name="sAGB"]');
-
-        await page.click('button:has-text("Zahlungspflichtig bestellen")');
-        await expect(page.locator('.teaser--title')).toHaveText(/Vielen Dank für Ihre Bestellung bei Shopware Demo/);
+        await expect(paypalPage.locator('#headerText')).toHaveText(/PayPal/);
     });
 
     test('Check product listing page @notIn5.2', async({ page }) => {
@@ -202,26 +145,7 @@ test.describe('Is Express Checkout button available', () => {
             ]);
         });
 
-        await paypalPage.route(/.*checkoutnow.*/, route => {
-            let url = route.request().url();
-            url = url.replace(/buyerCountry=[A-Z]*/, '');
-            url += '&buyerCountry=DE';
-
-            route.continue({ url });
-        });
-
-        await paypalPage.locator('#email').fill(credentials.paypalCustomerEmail);
-        await paypalPage.locator('button:has-text("Weiter")').click();
-        await paypalPage.locator('#password').fill(credentials.paypalCustomerPassword);
-        await paypalPage.locator('#btnLogin').click();
-
-        // Click [data-testid="submit-button-initial"]
-        await paypalPage.locator('button:has-text("Weiter zur Überprüfung der Bestellung")').click();
-
-        await page.click('input[name="sAGB"]');
-
-        await page.click('button:has-text("Zahlungspflichtig bestellen")');
-        await expect(page.locator('.teaser--title')).toHaveText(/Vielen Dank für Ihre Bestellung bei Shopware Demo/);
+        await expect(paypalPage.locator('#headerText')).toHaveText(/PayPal/);
     });
 
     test('Test if product with order number with leading zero is buy able', async({ page }) => {

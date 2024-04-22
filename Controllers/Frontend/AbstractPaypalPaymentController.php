@@ -34,6 +34,7 @@ use SwagPaymentPayPalUnified\Components\Services\PaymentStatusService;
 use SwagPaymentPayPalUnified\Components\Services\RequestIdService;
 use SwagPaymentPayPalUnified\Components\Services\Validation\RedirectDataBuilderFactory;
 use SwagPaymentPayPalUnified\Components\Services\Validation\SimpleBasketValidator;
+use SwagPaymentPayPalUnified\Components\TransactionReport\TransactionReport;
 use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentControllerResults\DeterminedStatus;
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\AuthorizationDeniedException;
 use SwagPaymentPayPalUnified\Controllers\Frontend\Exceptions\AuthorizationPendingException;
@@ -705,6 +706,16 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
 
         $this->orderNumberService->releaseOrderNumber();
 
+        if ($paymentStatusId === Status::PAYMENT_STATE_COMPLETELY_PAID) {
+            try {
+                $orderId = $this->getOrderId($orderNumber);
+            } catch (OrderNotFoundException $exception) {
+                return $orderNumber;
+            }
+
+            (new TransactionReport($this->get('dbal_connection')))->reportOrder($orderId);
+        }
+
         return $orderNumber;
     }
 
@@ -808,6 +819,8 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
         } else {
             $this->paymentStatusService->updatePaymentStatusV2($shopwareOrderId, Status::PAYMENT_STATE_RESERVED);
         }
+
+        (new TransactionReport($this->get('dbal_connection')))->reportOrder($shopwareOrderId);
     }
 
     /**

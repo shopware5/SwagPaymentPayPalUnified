@@ -67,16 +67,22 @@ jobs:
                 run: mv "$(pwd)/plugin" /shopware/custom/plugins/SwagPaymentPayPalUnified
 
             -   name: Setup SwagPaymentPayPalUnified
+                # Fix Firefox behavior in GitHub actions. You can remove the env for other browsers.
+                env:
+                    HOME: /root
                 run: |
                     cd /shopware/custom/plugins/SwagPaymentPayPalUnified
                     make composer-install
                     make install-plugin
                     cd /shopware/custom/plugins/SwagPaymentPayPalUnified/Tests/E2E
                     npm install
-                    npx playwright install --with-deps chromium
+                    npx playwright install --with-deps firefox
 
-            - name: Execute E2E tests
-              run: |
+            -   name: Execute E2E tests
+                # Fix Firefox behavior in GitHub actions. You can remove the env for other browsers.
+                env:
+                  HOME: /root
+                run: |
                     cd /shopware/custom/plugins/SwagPaymentPayPalUnified/Tests/E2E
                     npm run e2e:run
 

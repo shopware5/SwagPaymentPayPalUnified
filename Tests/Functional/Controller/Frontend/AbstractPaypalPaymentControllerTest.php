@@ -8,10 +8,13 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Controller\Frontend;
 
+use PDO;
 use ReflectionClass;
 use Shopware\Models\Order\Status;
+use SwagPaymentPayPalUnified\Components\TransactionReport\TransactionReport;
 use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentController;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
+use SwagPaymentPayPalUnified\PayPalBundle\V2\PaymentIntentV2;
 use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\ShopRegistrationTrait;
@@ -94,6 +97,41 @@ class AbstractPaypalPaymentControllerTest extends UnifiedControllerTestCase
     }
 
     /**
+     * @return void
+     */
+    public function testCreateShopwareOrderCallTransactionReport()
+    {
+        $this->importFixture();
+
+        $session = $this->getContainer()->get('session');
+        $session->offsetSet('sUserId', 3);
+        $session->offsetSet('sOrderVariables', ['sUserData' => ['additional' => ['payment' => ['id' => 1]]]]);
+
+        $orderNumber = $this->getController(TestPaypalPaymentController::class)
+            ->createShopwareOrder(
+                self::TRANSACTION_ID,
+                PaymentType::PAYPAL_CLASSIC_V2,
+                Status::PAYMENT_STATE_COMPLETELY_PAID
+            );
+
+        $actualPaymentStatus = $this->getContainer()->get('dbal_connection')
+            ->executeQuery(
+                'SELECT id, cleared FROM s_order WHERE ordernumber = :orderNumber;',
+                ['orderNumber' => $orderNumber]
+            )
+            ->fetch(PDO::FETCH_ASSOC);
+
+        $orderIds = $this->getContainer()->get('dbal_connection')
+            ->createQueryBuilder()
+            ->select(['order_id'])
+            ->from(TransactionReport::TRANSACTION_REPORT_TABLE)
+            ->execute()
+            ->fetchAll(PDO::FETCH_COLUMN);
+
+        static::assertTrue(\in_array($actualPaymentStatus['id'], $orderIds));
+    }
+
+    /**
      * @return array<string, array<Status::PAYMENT_STATE_*>>
      */
     public function createShopwareOrderPaymentStatusProvider()
@@ -147,5 +185,16 @@ class TestPaypalPaymentController extends AbstractPaypalPaymentController
     public function createShopwareOrder($payPalOrderId, $paymentType, $paymentStatusId = null)
     {
         return parent::createShopwareOrder($payPalOrderId, $paymentType, $paymentStatusId);
+    }
+
+    /**
+     * @param PaymentIntentV2::* $intent
+     * @param int                $shopwareOrderId
+     *
+     * @return void
+     */
+    public function updatePaymentStatus($intent, $shopwareOrderId)
+    {
+        parent::updatePaymentStatus($intent, $shopwareOrderId);
     }
 }

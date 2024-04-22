@@ -20,7 +20,8 @@ test.describe('Test Pay Later is shown', () => {
         await page.goto('/sommerwelten/beachwear/', { waitUntil: 'load' });
 
         // Check listing page
-        const fistPayLaterButtonContainer = await page.locator('div[data-showpaylater="1"]').first();
+        const fistPayLaterButtonContainer = await page.locator('div[data-showpaylater="1"] iframe').first();
+        await fistPayLaterButtonContainer.scrollIntoViewIfNeeded();
         await expect(fistPayLaterButtonContainer).toBeVisible();
 
         // Go to detail page

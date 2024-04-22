@@ -51,4 +51,4 @@ jobs:
         name: E2E legacy
         uses: ./.github/workflows/e2e-tests-legacy.yml
         secrets: inherit
-        needs: [ php-unit-tests-shopware-5-7, php-unit-tests-shopware-legacy-versions ]
+        needs: [ php-e2e-tests-shopware-5-7 ]

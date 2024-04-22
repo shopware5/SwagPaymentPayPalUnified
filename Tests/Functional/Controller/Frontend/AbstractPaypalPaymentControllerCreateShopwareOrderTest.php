@@ -50,6 +50,7 @@ class AbstractPaypalPaymentControllerCreateShopwareOrderTest extends PaypalPayme
         $abstractController = $this->getController(AbstractPaypalPaymentController::class, [
             self::SERVICE_ORDER_DATA_SERVICE => $orderDataServiceMock,
             self::SERVICE_ORDER_NUMBER_SERVICE => $orderNumberServiceMock,
+            self::SERVICE_DBAL_CONNECTION => $this->getContainer()->get('dbal_connection'),
         ]);
 
         $reflectionMethod = $this->getReflectionMethod(AbstractPaypalPaymentController::class, 'createShopwareOrder');

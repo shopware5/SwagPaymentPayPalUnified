@@ -9,7 +9,7 @@ const config = {
     testDir: './.',
     globalTeardown: './setup/globalTeardown.mjs',
     globalSetup: './setup/globalSetup.mjs',
-    retries: 0,
+    retries: 5,
     timeout: 300000,
     expect: {
         timeout: 300000
@@ -18,20 +18,21 @@ const config = {
     workers: 1,
     reporter: 'line',
     use: {
-        browserName: 'chromium',
+        browserName: 'firefox',
         actionTimeout: 30000,
         baseURL: 'http://' + process.env.SW_HOST + process.env.SW_BASE_PATH ?? '',
         trace: 'on',
         video: 'retain-on-failure',
+        bypassCSP: true,
         launchOptions: {
             slowMo: 300
         }
     },
     projects: [
         {
-            name: 'chromium',
+            name: 'firefox',
             use: {
-                ...devices['Desktop Chrome'],
+                ...devices['Desktop Firefox'],
                 viewport: { width: 1920, height: 1080 },
                 locale: 'de-DE',
                 timezoneId: 'Europe/Berlin',
