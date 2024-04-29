@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<cronjobs xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/shopware5/shopware/5.3/engine/Shopware/Components/Plugin/schema/cronjob.xsd">
+
+    <cronjob>
+        <name>Execute PayPal transaktion report</name>
+        <action>SwagPaymentPayPalUnifiedTransaktionReport</action>
+        <active>true</active>
+        <interval>86400</interval>
+        <disableOnError>false</disableOnError>
+    </cronjob>
+</cronjobs>

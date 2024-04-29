@@ -142,3 +142,11 @@ CREATE TABLE IF NOT EXISTS `swag_payment_paypal_unified_order_refund_info`
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8
   COLLATE = utf8_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS `swag_payment_paypal_unified_transaction_report`
+(
+    `id`       INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `order_id` INT(11) NOT NULL
+) ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COLLATE = utf8_unicode_ci;
