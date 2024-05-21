@@ -69,7 +69,6 @@ test.describe('Pay with credit card', () => {
 
         await Promise.all([
             page.waitForResponse(/.*threeDSLookUp.*/),
-            page.waitForResponse(/.*three_ds_ddc.*/),
             page.waitForResponse(/.*jwt.*/),
             page.click('button:has-text("Zahlungspflichtig bestellen")')
         ]);

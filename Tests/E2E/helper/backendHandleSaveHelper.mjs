@@ -8,7 +8,6 @@ export default (function () {
 
             await Promise.all([
                 page.waitForResponse(/.*PaypalUnifiedSettings.*/),
-                page.waitForResponse(/.*PaypalUnifiedExpressSettings.*/),
                 page.waitForResponse(/.*PaypalUnifiedPlusSettings.*/),
                 page.waitForResponse(/.*PaypalUnifiedInstallmentsSettings.*/),
                 page.waitForResponse(/.*PaypalUnifiedPayUponInvoiceSettings.*/),
@@ -19,7 +18,6 @@ export default (function () {
         saveWithoutPayerId: async function (page) {
             await Promise.all([
                 page.waitForResponse(/.*PaypalUnifiedSettings.*/),
-                page.waitForResponse(/.*PaypalUnifiedExpressSettings.*/),
                 page.waitForResponse(/.*PaypalUnifiedPlusSettings.*/),
                 page.waitForResponse(/.*PaypalUnifiedInstallmentsSettings.*/),
                 page.waitForResponse(/.*PaypalUnifiedPayUponInvoiceSettings.*/),
