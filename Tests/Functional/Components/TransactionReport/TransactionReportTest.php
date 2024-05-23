@@ -12,6 +12,7 @@ use Doctrine\DBAL\Connection;
 use GuzzleHttp\Client;
 use PDO;
 use PHPUnit\Framework\TestCase;
+use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\TransactionReport\TransactionReport;
 use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseTestCaseTrait;
@@ -198,7 +199,9 @@ class TransactionReportTest extends TestCase
         $reflectionMethod = $this->getReflectionMethod(TransactionReport::class, 'getPaymentIds');
         $result = $reflectionMethod->invoke($transactionReport);
 
-        static::assertCount(15, $result);
+        $expected = \count(PaymentMethodProvider::getAllUnifiedNames()) - \count(PaymentMethodProvider::getDeactivatedPaymentMethods());
+
+        static::assertCount($expected, $result);
     }
 
     /**

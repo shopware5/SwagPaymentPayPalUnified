@@ -8,8 +8,11 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Controller\Frontend;
 
+use Doctrine\DBAL\Connection;
 use Generator;
 use ReflectionClass;
+use Shopware\Components\Model\ModelManager;
+use SwagPaymentPayPalUnified\Components\PaymentMethodProvider;
 use SwagPaymentPayPalUnified\Components\PaymentMethodProviderInterface;
 use SwagPaymentPayPalUnified\Controllers\Frontend\AbstractPaypalPaymentController;
 use SwagPaymentPayPalUnified\PayPalBundle\PaymentType;
@@ -52,80 +55,19 @@ class AbstractPaypalPaymentControllerGetPaymentTypeTest extends PaypalPaymentCon
      */
     public function getPaymentTypeTestDataProvider()
     {
-        yield 'Expect PAYPAL_SEPA' => [
-            PaymentMethodProviderInterface::PAYPAL_UNIFIED_SEPA_METHOD_NAME,
-            PaymentType::PAYPAL_SEPA,
-        ];
+        $paymentMethods = PaymentMethodProvider::getAllUnifiedNames();
+        $deactivatedPaymentMethods = PaymentMethodProvider::getDeactivatedPaymentMethods();
+        $paymentMethodProvider = $this->createDummyPaymentMethodProvider();
+        foreach ($paymentMethods as $paymentMethod) {
+            if (\in_array($paymentMethod, $deactivatedPaymentMethods, true)) {
+                continue;
+            }
 
-        yield 'Expect PAYPAL_ADVANCED_CREDIT_DEBIT_CARD' => [
-            PaymentMethodProviderInterface::PAYPAL_UNIFIED_ADVANCED_CREDIT_DEBIT_CARD_METHOD_NAME,
-            PaymentType::PAYPAL_ADVANCED_CREDIT_DEBIT_CARD,
-        ];
-
-        yield 'Expect PAYPAL_PAY_LATER' => [
-            PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_LATER_METHOD_NAME,
-            PaymentType::PAYPAL_PAY_LATER,
-        ];
-
-        yield 'Expect PAYPAL_CLASSIC_V2' => [
-            PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME,
-            PaymentType::PAYPAL_CLASSIC_V2,
-        ];
-
-        yield 'Expect PAYPAL_PAY_UPON_INVOICE_V2' => [
-            PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_UPON_INVOICE_METHOD_NAME,
-            PaymentType::PAYPAL_PAY_UPON_INVOICE_V2,
-        ];
-
-        yield 'Expect APM_BANCONTACT' => [
-            PaymentMethodProviderInterface::BANCONTACT_METHOD_NAME,
-            PaymentType::APM_BANCONTACT,
-        ];
-
-        yield 'Expect APM_BLIK' => [
-            PaymentMethodProviderInterface::BLIK_METHOD_NAME,
-            PaymentType::APM_BLIK,
-        ];
-
-        yield 'Expect APM_GIROPAY' => [
-            PaymentMethodProviderInterface::GIROPAY_METHOD_NAME,
-            PaymentType::APM_GIROPAY,
-        ];
-
-        yield 'Expect APM_IDEAL' => [
-            PaymentMethodProviderInterface::IDEAL_METHOD_NAME,
-            PaymentType::APM_IDEAL,
-        ];
-
-        yield 'Expect APM_MULTIBANCO' => [
-            PaymentMethodProviderInterface::MULTIBANCO_METHOD_NAME,
-            PaymentType::APM_MULTIBANCO,
-        ];
-
-        yield 'Expect APM_MYBANK' => [
-            PaymentMethodProviderInterface::MY_BANK_METHOD_NAME,
-            PaymentType::APM_MYBANK,
-        ];
-
-        yield 'Expect APM_P24' => [
-            PaymentMethodProviderInterface::P24_METHOD_NAME,
-            PaymentType::APM_P24,
-        ];
-
-        yield 'Expect APM_SOFORT' => [
-            PaymentMethodProviderInterface::SOFORT_METHOD_NAME,
-            PaymentType::APM_SOFORT,
-        ];
-
-        yield 'Expect APM_TRUSTLY' => [
-            PaymentMethodProviderInterface::TRUSTLY_METHOD_NAME,
-            PaymentType::APM_TRUSTLY,
-        ];
-
-        yield 'Expect APM_EPS' => [
-            PaymentMethodProviderInterface::EPS_METHOD_NAME,
-            PaymentType::APM_EPS,
-        ];
+            yield 'Expect ' . $paymentMethod => [
+                $paymentMethod,
+                $paymentMethodProvider->getPaymentTypeByName($paymentMethod),
+            ];
+        }
 
         yield 'Expect Exception' => [
             self::ANY_PAYMENT_NAME,
@@ -160,6 +102,17 @@ class AbstractPaypalPaymentControllerGetPaymentTypeTest extends PaypalPaymentCon
                     ],
                 ],
             ]
+        );
+    }
+
+    /**
+     * @return PaymentMethodProviderInterface
+     */
+    private function createDummyPaymentMethodProvider()
+    {
+        return new PaymentMethodProvider(
+            $this->createMock(Connection::class),
+            $this->createMock(ModelManager::class)
         );
     }
 }

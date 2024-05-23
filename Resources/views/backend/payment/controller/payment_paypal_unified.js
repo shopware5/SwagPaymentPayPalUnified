@@ -29,6 +29,9 @@ Ext.define('Shopware.apps.Payment.controller.PaymentPaypalUnified', {
     payUponInvoicePaymentMethodName: 'SwagPaymentPayPalUnifiedPayUponInvoice',
     myBankPaymentMethodName: 'SwagPaymentPayPalUnifiedMyBank',
     sofortPaymentMethodName: 'SwagPaymentPayPalUnifiedSofort',
+    trustlyPaymentMethodName: 'SwagPaymentPayPalUnifiedTrustly',
+
+    deactivatedPaymentMethods: '{$deactivatedPaymentMethods|json_encode}',
 
     /**
      * @param { Ext.view.View } view
@@ -41,6 +44,22 @@ Ext.define('Shopware.apps.Payment.controller.PaymentPaypalUnified', {
         this.currentRecord = record;
 
         this._handleDisclaimer();
+
+        this.callParent(arguments);
+    },
+
+    onSavePayment: function(generalForm, countryGrid, subShopGrid, surchargeGrid) {
+        var deactivatedPaymentMethods = JSON.parse(this.deactivatedPaymentMethods);
+
+        var index = deactivatedPaymentMethods.indexOf(this.currentRecord.data.name);
+        if (index > -1) {
+            this.currentRecord.set('active', false);
+
+            generalForm.getForm().setValues({
+                active: false,
+                name: deactivatedPaymentMethods[index],
+            });
+        }
 
         this.callParent(arguments);
     },

@@ -27,7 +27,18 @@ class UpdateTo617
      */
     public function update()
     {
+        $this->deactivateSofortPayment();
         $this->createOrderTurnoverTable();
+    }
+
+    /**
+     * @return void
+     */
+    private function deactivateSofortPayment()
+    {
+        $this->connection->executeQuery(
+            'UPDATE s_core_paymentmeans SET active = 0 WHERE name = "SwagPaymentPayPalUnifiedSofort"'
+        );
     }
 
     /**
