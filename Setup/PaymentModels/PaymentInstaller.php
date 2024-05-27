@@ -42,7 +42,9 @@ class PaymentInstaller
 
     public function installPayments()
     {
-        foreach (PaymentMethodProvider::getAllUnifiedNames() as $paymentMethodName) {
+        $paymentMethods = $this->getPaymentMethods();
+
+        foreach ($paymentMethods as $paymentMethodName) {
             $payment = $this->paymentMethodProvider->getPaymentMethodModel($paymentMethodName);
 
             if ($payment instanceof Payment) {
@@ -55,5 +57,22 @@ class PaymentInstaller
             $this->modelManager->persist($payment);
             $this->modelManager->flush($payment);
         }
+    }
+
+    /**
+     * @return list<PaymentMethodProvider::*>
+     */
+    private function getPaymentMethods()
+    {
+        $deactivatedPaymentMethods = PaymentMethodProvider::getDeactivatedPaymentMethods();
+        $paymentMethods = \array_filter(
+            PaymentMethodProvider::getAllUnifiedNames(),
+            function ($paymentMethodName) use ($deactivatedPaymentMethods) {
+                return !\in_array($paymentMethodName, $deactivatedPaymentMethods, true);
+            },
+            \ARRAY_FILTER_USE_BOTH
+        );
+
+        return $paymentMethods;
     }
 }

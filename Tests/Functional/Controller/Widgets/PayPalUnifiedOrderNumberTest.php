@@ -87,7 +87,7 @@ class PayPalUnifiedOrderNumberTest extends PaypalPaymentControllerTestCase
         return $this->getController(
             Shopware_Controllers_Widgets_PaypalUnifiedOrderNumber::class,
             [
-               self::SERVICE_ORDER_NUMBER_SERVICE => $orderNumberService,
+                self::SERVICE_ORDER_NUMBER_SERVICE => $orderNumberService,
             ],
             new Enlight_Controller_Request_RequestTestCase(),
             new Enlight_Controller_Response_ResponseTestCase(),

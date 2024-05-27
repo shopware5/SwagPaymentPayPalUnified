@@ -128,6 +128,7 @@ class Backend implements SubscriberInterface
         $view->addTemplateDir($this->pluginDir . '/Resources/views/');
 
         if ($args->get('request')->getActionName() === 'load') {
+            $view->assign('deactivatedPaymentMethods', PaymentMethodProvider::getDeactivatedPaymentMethods());
             $view->extendsTemplate('backend/payment/controller/payment_paypal_unified.js');
         }
     }

@@ -135,19 +135,26 @@ class ApmRiskManagement implements SubscriberInterface
         $values = $this->valueFactory->createValue($paymentType, $basket, $user);
         $validator = $this->validatorFactory->createValidator($paymentType);
 
-        // This is temporary to disable Trustly as it will not available until the end of quarter 2 2023.
-        if ($paymentType === PaymentType::APM_TRUSTLY) {
+        $deactivatedPaymentTypes = $this->getDeactivatedPaymentTypes();
+        if (\in_array($paymentType, $deactivatedPaymentTypes, true)) {
             return true;
         }
 
-        if ($paymentType === PaymentType::APM_SOFORT) {
-            $group = $user['additional']['country']['countryiso'] === 'GB' ? self::GROUP_UK : self::GROUP_EURO;
-
-            $violationList = $this->validator->validate($values, $validator, [$group]);
-        } else {
-            $violationList = $this->validator->validate($values, $validator);
-        }
+        $violationList = $this->validator->validate($values, $validator);
 
         return $violationList->count() > 0;
+    }
+
+    /**
+     * @return list<PaymentType::*>
+     */
+    private function getDeactivatedPaymentTypes()
+    {
+        $deactivatedPaymentTypes = [];
+        foreach (PaymentMethodProvider::getDeactivatedPaymentMethods() as $deactivatedPaymentMethod) {
+            $deactivatedPaymentTypes[] = $this->paymentMethodProvider->getPaymentTypeByName($deactivatedPaymentMethod);
+        }
+
+        return $deactivatedPaymentTypes;
     }
 }

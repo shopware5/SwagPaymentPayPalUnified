@@ -134,7 +134,7 @@ class PaymentMethodProvider implements PaymentMethodProviderInterface
     }
 
     /**
-     * @return array<self::*>
+     * @return list<self::*>
      */
     public static function getAllUnifiedNames()
     {
@@ -185,6 +185,17 @@ class PaymentMethodProvider implements PaymentMethodProviderInterface
         throw new UnexpectedValueException(
             sprintf('Payment type for payment method "%s" not found', $paymentMethodName)
         );
+    }
+
+    /**
+     * @return list<self::*>
+     */
+    public static function getDeactivatedPaymentMethods()
+    {
+        return [
+            self::SOFORT_METHOD_NAME,
+            self::TRUSTLY_METHOD_NAME,
+        ];
     }
 
     /**
