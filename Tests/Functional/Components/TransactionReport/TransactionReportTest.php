@@ -73,7 +73,7 @@ class TransactionReportTest extends TestCase
         }
 
         $clientMock->expects(static::exactly(4))->method('post');
-        $transactionReport->report('5.7.18', $clientMock);
+        $transactionReport->report('5.7.18', 'instanceId', $clientMock);
     }
 
     /**

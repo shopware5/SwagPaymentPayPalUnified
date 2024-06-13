@@ -150,3 +150,10 @@ CREATE TABLE IF NOT EXISTS `swag_payment_paypal_unified_transaction_report`
 ) ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COLLATE = utf8_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS `swag_payment_paypal_unified_instance`
+(
+    `instance_id` VARCHAR(255) NOT NULL
+) ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COLLATE = utf8_unicode_ci;

@@ -87,9 +87,9 @@ class Installer
     }
 
     /**
+     * @return bool
      * @throws InstallationException
      *
-     * @return bool
      */
     public function install()
     {
@@ -107,6 +107,13 @@ class Installer
             $this->translationTransformer->getTranslations('config_payment', Translations::CONFIG_PAYMENT_TRANSLATIONS),
             true
         );
+
+        try {
+            // call the instance id service to create the instance id
+            (new InstanceIdService($this->connection))->getInstanceId();
+        } catch (\Exception $e) {
+            throw new InstallationException($e->getMessage());
+        }
 
         return true;
     }

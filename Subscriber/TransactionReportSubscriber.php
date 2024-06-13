@@ -13,6 +13,7 @@ use Enlight\Event\SubscriberInterface;
 use GuzzleHttp\Client;
 use Shopware;
 use SwagPaymentPayPalUnified\Components\TransactionReport\TransactionReport;
+use SwagPaymentPayPalUnified\Setup\InstanceIdService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class TransactionReportSubscriber implements SubscriberInterface
@@ -54,6 +55,7 @@ class TransactionReportSubscriber implements SubscriberInterface
 
         (new TransactionReport($this->connection))->report(
             $shopwareVersion,
+            (new InstanceIdService($this->connection))->getInstanceId(),
             new Client(['base_uri' => TransactionReport::POST_URL])
         );
     }
