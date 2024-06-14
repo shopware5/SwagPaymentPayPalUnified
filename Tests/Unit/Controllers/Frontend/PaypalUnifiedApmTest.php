@@ -83,19 +83,19 @@ class PaypalUnifiedApmTest extends PaypalPaymentControllerTestCase
         $this->givenThePayPalOrder(
             self::PAYPAL_ORDER_ID,
             (new Order())->assign([
-            'id' => self::PAYPAL_ORDER_ID,
-            'intent' => $intent,
-            'status' => $paypalOrderState,
-            'purchaseUnits' => [
-                $this->createConfiguredMock(PurchaseUnit::class, [
-                    'getAmount' => $this->createMock(Amount::class),
-                    'getPayments' => $this->createConfiguredMock(Payments::class, [
-                        'getCaptures' => [$capture],
-                        'getAuthorizations' => [$authorization],
+                'id' => self::PAYPAL_ORDER_ID,
+                'intent' => $intent,
+                'status' => $paypalOrderState,
+                'purchaseUnits' => [
+                    $this->createConfiguredMock(PurchaseUnit::class, [
+                        'getAmount' => $this->createMock(Amount::class),
+                        'getPayments' => $this->createConfiguredMock(Payments::class, [
+                            'getCaptures' => [$capture],
+                            'getAuthorizations' => [$authorization],
+                        ]),
                     ]),
-                ]),
-            ],
-        ]),
+                ],
+            ]),
             $orderWillReturnOrder
         );
         $this->givenTheCustomer(self::DEFAULT_CUSTOMER_DATA);

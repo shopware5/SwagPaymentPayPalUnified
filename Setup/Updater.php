@@ -32,6 +32,7 @@ use SwagPaymentPayPalUnified\Setup\Versions\UpdateTo604;
 use SwagPaymentPayPalUnified\Setup\Versions\UpdateTo610;
 use SwagPaymentPayPalUnified\Setup\Versions\UpdateTo616;
 use SwagPaymentPayPalUnified\Setup\Versions\UpdateTo617;
+use SwagPaymentPayPalUnified\Setup\Versions\UpdateTo618;
 
 class Updater
 {
@@ -253,6 +254,12 @@ class Updater
 
         if (\version_compare($oldVersion, '6.1.7', '<')) {
             (new UpdateTo617(
+                $this->connection
+            ))->update();
+        }
+
+        if (\version_compare($oldVersion, '6.1.8', '<')) {
+            (new UpdateTo618(
                 $this->connection
             ))->update();
         }

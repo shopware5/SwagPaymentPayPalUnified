@@ -47,10 +47,11 @@ final class TransactionReport
 
     /**
      * @param string $shopwareVersion
+     * @param string $instanceId
      *
      * @return void
      */
-    public function report($shopwareVersion, Client $client)
+    public function report($shopwareVersion, $instanceId, Client $client)
     {
         $reportResult = $this->getReportResult($this->getReportedOrderIds());
         $currencies = $reportResult->getCurrencies();
@@ -60,6 +61,7 @@ final class TransactionReport
                 'identifier' => self::API_IDENTIFIER,
                 'reportDate' => (new DateTime())->format('Y-m-d\\TH:i:sP'),
                 'shopwareVersion' => $shopwareVersion,
+                'instanceId' => $instanceId,
                 'currency' => $currency,
                 'reportDataKeys' => ['turnover' => $reportResult->getTurnover($currency)],
             ];

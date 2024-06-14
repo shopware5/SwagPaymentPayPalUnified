@@ -135,12 +135,12 @@ class PayUponInvoiceRiskManagementTest extends TestCase
         $argsMock->method('get')->willReturnMap([
             [
                 'user', [
-                'additional' => [
-                    'country' => ['countryiso' => 'DE'],
-                    'user' => ['birthday' => '1970-01-01'],
+                    'additional' => [
+                        'country' => ['countryiso' => 'DE'],
+                        'user' => ['birthday' => '1970-01-01'],
+                    ],
+                    'billingaddress' => ['phone' => '01519999999'],
                 ],
-                'billingaddress' => ['phone' => '01519999999'],
-            ],
             ],
         ]);
 

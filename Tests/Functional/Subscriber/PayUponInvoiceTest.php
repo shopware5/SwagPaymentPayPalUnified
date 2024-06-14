@@ -506,16 +506,16 @@ class PayUponInvoiceTest extends TestCase
         $subscriber->assignPaypalPaymentInstructions($args);
 
         static::assertEquals([
-                'id' => null,
-                    'orderNumber' => '000000',
-        'order' => null,
-        'bankName' => 'FOO Bank',
-        'accountHolder' => 'FOO BAR',
-        'iban' => 'IBAN',
-        'bic' => 'BIC',
-        'amount' => '99',
-        'dueDate' => null,
-        'reference' => null,
+            'id' => null,
+            'orderNumber' => '000000',
+            'order' => null,
+            'bankName' => 'FOO Bank',
+            'accountHolder' => 'FOO BAR',
+            'iban' => 'IBAN',
+            'bic' => 'BIC',
+            'amount' => '99',
+            'dueDate' => null,
+            'reference' => null,
         ], $args->getSubject()->View()->getAssign('paypalUnifiedPaymentInstructions'));
     }
 

@@ -73,9 +73,9 @@ class GetPaymentOrder
                                     'total' => '45.94',
                                     'currency' => 'EUR',
                                     'details' => [
-                                            'subtotal' => '19.95',
-                                            'shipping' => '25.99',
-                                        ],
+                                        'subtotal' => '19.95',
+                                        'shipping' => '25.99',
+                                    ],
                                 ],
                                 'state' => 'COMPLETED',
                                 'links' => [

@@ -9,6 +9,7 @@
 namespace SwagPaymentPayPalUnified\Setup;
 
 use Doctrine\DBAL\Connection;
+use Exception;
 use Shopware\Bundle\AttributeBundle\Service\CrudService;
 use Shopware\Bundle\AttributeBundle\Service\CrudServiceInterface;
 use Shopware\Bundle\AttributeBundle\Service\TypeMapping;
@@ -107,6 +108,13 @@ class Installer
             $this->translationTransformer->getTranslations('config_payment', Translations::CONFIG_PAYMENT_TRANSLATIONS),
             true
         );
+
+        try {
+            // call the instance id service to create the instance id
+            (new InstanceIdService($this->connection))->getInstanceId();
+        } catch (Exception $exception) {
+            // no need to handle this exception
+        }
 
         return true;
     }
