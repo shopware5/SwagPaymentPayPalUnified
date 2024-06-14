@@ -10,6 +10,7 @@ namespace SwagPaymentPayPalUnified\Subscriber;
 
 use Doctrine\DBAL\Connection;
 use Enlight\Event\SubscriberInterface;
+use Exception;
 use GuzzleHttp\Client;
 use Shopware;
 use SwagPaymentPayPalUnified\Components\TransactionReport\TransactionReport;
@@ -53,9 +54,15 @@ class TransactionReportSubscriber implements SubscriberInterface
             $shopwareVersion = $this->container->getParameter('shopware.release.version');
         }
 
+        try {
+            $instanceId = (new InstanceIdService($this->connection))->getInstanceId();
+        } catch (Exception $exception) {
+            $instanceId = '';
+        }
+
         (new TransactionReport($this->connection))->report(
             $shopwareVersion,
-            (new InstanceIdService($this->connection))->getInstanceId(),
+            $instanceId,
             new Client(['base_uri' => TransactionReport::POST_URL])
         );
     }

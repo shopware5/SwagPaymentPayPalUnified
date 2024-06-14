@@ -9,6 +9,7 @@
 namespace SwagPaymentPayPalUnified\Setup;
 
 use Doctrine\DBAL\Connection;
+use RuntimeException;
 use SwagPaymentPayPalUnified\Components\Uuid;
 
 final class InstanceIdService
@@ -69,7 +70,7 @@ final class InstanceIdService
             ->execute();
 
         if ($instanceId !== $this->get()) {
-            throw new \RuntimeException('Could not create instance id');
+            throw new RuntimeException('Could not create instance id');
         }
 
         return $instanceId;

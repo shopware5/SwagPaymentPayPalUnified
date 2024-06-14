@@ -47,6 +47,7 @@ final class TransactionReport
 
     /**
      * @param string $shopwareVersion
+     * @param string $instanceId
      *
      * @return void
      */

@@ -9,10 +9,16 @@
 namespace SwagPaymentPayPalUnified\Setup\Versions;
 
 use Doctrine\DBAL\Connection;
+use Exception;
 use SwagPaymentPayPalUnified\Setup\InstanceIdService;
 
 class UpdateTo618
 {
+    /**
+     * @var Connection
+     */
+    private $connection;
+
     public function __construct(Connection $connection)
     {
         $this->connection = $connection;
@@ -25,7 +31,11 @@ class UpdateTo618
     {
         $this->createInstanceTable();
 
-        (new InstanceIdService($this->connection))->getInstanceId();
+        try {
+            (new InstanceIdService($this->connection))->getInstanceId();
+        } catch (Exception $e) {
+            // no need to handle this exception
+        }
     }
 
     /**
@@ -37,7 +47,7 @@ class UpdateTo618
             '
             CREATE TABLE IF NOT EXISTS `swag_payment_paypal_unified_instance`
             (
-                `instance_id` VARCHAR(255) NOT NULL
+                `instance_id` VARCHAR(36) NOT NULL
             ) ENGINE = InnoDB
                 DEFAULT CHARSET = utf8
                 COLLATE = utf8_unicode_ci;'

@@ -9,6 +9,7 @@
 namespace SwagPaymentPayPalUnified\Setup;
 
 use Doctrine\DBAL\Connection;
+use Exception;
 use Shopware\Bundle\AttributeBundle\Service\CrudService;
 use Shopware\Bundle\AttributeBundle\Service\CrudServiceInterface;
 use Shopware\Bundle\AttributeBundle\Service\TypeMapping;
@@ -87,9 +88,9 @@ class Installer
     }
 
     /**
-     * @return bool
      * @throws InstallationException
      *
+     * @return bool
      */
     public function install()
     {
@@ -111,8 +112,8 @@ class Installer
         try {
             // call the instance id service to create the instance id
             (new InstanceIdService($this->connection))->getInstanceId();
-        } catch (\Exception $e) {
-            throw new InstallationException($e->getMessage());
+        } catch (Exception $exception) {
+            // no need to handle this exception
         }
 
         return true;

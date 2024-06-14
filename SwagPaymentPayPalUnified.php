@@ -102,8 +102,7 @@ class SwagPaymentPayPalUnified extends Plugin
             $this->getPaymentMethodProvider(),
             new PaymentModelFactory($context->getPlugin()),
             $this->getTranslation(),
-            new TranslationTransformer($this->container->get('models')),
-            $this->getPath()
+            new TranslationTransformer($this->container->get('models'))
         );
         $updater->update($context->getCurrentVersion());
 

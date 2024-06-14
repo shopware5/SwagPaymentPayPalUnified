@@ -153,7 +153,7 @@ CREATE TABLE IF NOT EXISTS `swag_payment_paypal_unified_transaction_report`
 
 CREATE TABLE IF NOT EXISTS `swag_payment_paypal_unified_instance`
 (
-    `instance_id` VARCHAR(255) NOT NULL
+    `instance_id` VARCHAR(36) NOT NULL
 ) ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COLLATE = utf8_unicode_ci;

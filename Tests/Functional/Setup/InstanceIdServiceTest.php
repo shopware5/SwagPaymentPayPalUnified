@@ -25,11 +25,13 @@ class InstanceIdServiceTest extends TestCase
         $instanceIdService = new InstanceIdService($connection);
 
         $instanceId = $instanceIdService->getInstanceId();
+        static::assertSame(36, \strlen($instanceId));
         static::assertNotEmpty($instanceId);
 
         $connection->executeQuery('DELETE FROM swag_payment_paypal_unified_instance WHERE true');
 
         $instanceId = $instanceIdService->getInstanceId();
+        static::assertSame(36, \strlen($instanceId));
         static::assertNotEmpty($instanceId);
     }
 }

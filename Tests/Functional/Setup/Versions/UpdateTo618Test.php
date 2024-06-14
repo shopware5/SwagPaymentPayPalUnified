@@ -8,8 +8,8 @@
 
 namespace SwagPaymentPayPalUnified\Tests\Functional\Setup;
 
+use Doctrine\DBAL\Connection;
 use PHPUnit\Framework\TestCase;
-use SwagPaymentPayPalUnified\Setup\InstanceIdService;
 use SwagPaymentPayPalUnified\Setup\Versions\UpdateTo618;
 use SwagPaymentPayPalUnified\Tests\Functional\ContainerTrait;
 use SwagPaymentPayPalUnified\Tests\Functional\DatabaseHelperTrait;
@@ -31,16 +31,27 @@ class UpdateTo618Test extends TestCase
 
         $updater = new UpdateTo618($connection);
         $updater->update();
+        $firstResult = $this->getInstanceId($connection);
+        static::assertNotEmpty($firstResult);
         $updater->update();
 
         static::assertTrue($this->checkTableExists($connection, 'swag_payment_paypal_unified_instance'));
 
-        $result = $connection->createQueryBuilder()
+        $secondResult = $this->getInstanceId($connection);
+        static::assertNotEmpty($secondResult);
+
+        static::assertSame($firstResult, $secondResult);
+    }
+
+    /**
+     * @return string
+     */
+    private function getInstanceId(Connection $connection)
+    {
+        return $connection->createQueryBuilder()
             ->select('instance_id')
             ->from('swag_payment_paypal_unified_instance')
             ->execute()
             ->fetchColumn();
-
-        static::assertNotEmpty($result);
     }
 }
