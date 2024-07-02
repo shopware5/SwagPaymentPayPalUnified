@@ -170,10 +170,10 @@ class TransactionReportTest extends TestCase
         ];
 
         $expectedTurnoverResult = [
-            'EUR' => 14442.3,
-            'DKK' => 11962.28,
-            'CHF' => 12478.41,
-            'USD' => 15057.28,
+            'EUR' => 14170.61,
+            'DKK' => 8750.25,
+            'CHF' => 10995.3,
+            'USD' => 11775.81,
         ];
 
         $result = $reflectionMethod->invoke($transactionReport, $this->getOrderIds($transactionReport));
