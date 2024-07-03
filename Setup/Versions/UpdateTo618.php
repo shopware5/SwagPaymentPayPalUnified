@@ -29,6 +29,7 @@ class UpdateTo618
      */
     public function update()
     {
+        $this->deactivateGiropayPayment();
         $this->createInstanceTable();
 
         try {
@@ -36,6 +37,16 @@ class UpdateTo618
         } catch (Exception $e) {
             // no need to handle this exception
         }
+    }
+
+    /**
+     * @return void
+     */
+    private function deactivateGiropayPayment()
+    {
+        $this->connection->executeQuery(
+            'UPDATE s_core_paymentmeans SET active = 0 WHERE name = "SwagPaymentPayPalUnifiedGiropay"'
+        );
     }
 
     /**

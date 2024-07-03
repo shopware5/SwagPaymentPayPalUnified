@@ -12,7 +12,6 @@ export default (function () {
             SwagPaymentPayPalUnifiedBancontact: 'SwagPaymentPayPalUnifiedBancontact',
             SwagPaymentPayPalUnifiedBlik: 'SwagPaymentPayPalUnifiedBlik',
             SwagPaymentPayPalUnifiedEps: 'SwagPaymentPayPalUnifiedEps',
-            SwagPaymentPayPalUnifiedGiropay: 'SwagPaymentPayPalUnifiedGiropay',
             SwagPaymentPayPalUnifiedIdeal: 'SwagPaymentPayPalUnifiedIdeal',
             SwagPaymentPayPalUnifiedMultibanco: 'SwagPaymentPayPalUnifiedMultibanco',
             SwagPaymentPayPalUnifiedMyBank: 'SwagPaymentPayPalUnifiedMyBank',

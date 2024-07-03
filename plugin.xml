@@ -5,12 +5,21 @@
     <label lang="de">PayPal</label>
     <label lang="en">PayPal</label>
 
-    <version>6.1.7</version>
+    <version>6.1.8</version>
     <copyright>(c) by shopware AG</copyright>
     <license>MIT</license>
     <link>http://store.shopware.com</link>
     <author>shopware AG</author>
     <compatibility minVersion="5.2.27" maxVersion="5.99.99"/>
+
+    <changelog version="6.1.8">
+        <changes lang="de">
+            PT-13157 - Die Zahlungsart "Giropay" wird deaktiviert kann nicht mehr verwendet werden;
+        </changes>
+        <changes lang="en">
+            PT-13157 - The “Giropay” payment method is deactivated and can no longer be used;
+        </changes>
+    </changelog>
 
     <changelog version="6.1.7">
         <changes lang="de">

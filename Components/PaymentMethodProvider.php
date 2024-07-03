@@ -195,6 +195,7 @@ class PaymentMethodProvider implements PaymentMethodProviderInterface
         return [
             self::SOFORT_METHOD_NAME,
             self::TRUSTLY_METHOD_NAME,
+            self::GIROPAY_METHOD_NAME,
         ];
     }
 
