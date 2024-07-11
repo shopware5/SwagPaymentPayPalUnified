@@ -10,6 +10,7 @@ namespace SwagPaymentPayPalUnified\Components\TransactionReport;
 
 use DateTime;
 use Doctrine\DBAL\Connection;
+use Exception;
 use GuzzleHttp\Client;
 use PDO;
 use Shopware\Models\Order\Status;
@@ -66,9 +67,12 @@ final class TransactionReport
                 'reportDataKeys' => ['turnover' => $reportResult->getTurnover($currency)],
             ];
 
-            $client->post(self::POST_URL_ENDPOINT, ['json' => $requestBody]);
-
-            $this->deleteReportedOrders($reportResult->getOrderIds($currency));
+            try {
+                $client->post(self::POST_URL_ENDPOINT, ['json' => $requestBody]);
+                $this->deleteReportedOrders($reportResult->getOrderIds($currency));
+            } catch (Exception $e) {
+                // nothing to do
+            }
         }
     }
 
