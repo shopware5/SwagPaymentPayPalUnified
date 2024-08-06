@@ -102,10 +102,10 @@
         renderSdkUrl: function () {
             var enabledFundings = this.opts.enabledFundings,
                 params = {
-                    components: 'buttons,funding-eligibility',
                     'client-id': this.opts.clientId,
                     'disable-funding': this.opts.disabledFundings,
-                    intent: this.opts.paypalIntent.toLowerCase()
+                    intent: this.opts.paypalIntent.toLowerCase(),
+                    commit: false
                 };
 
             if (this.opts.showPayLater) {
