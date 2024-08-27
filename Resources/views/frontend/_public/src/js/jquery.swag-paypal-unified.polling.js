@@ -43,11 +43,11 @@
         },
 
         redirectToSuccess() {
-            window.location = this.opts.successUrl;
+            $.redirectToUrl(this.opts.successUrl);
         },
 
         redirectToError() {
-            window.location = this.opts.errorUrl;
+            $.redirectToUrl(this.opts.errorUrl);
         },
 
         retryPolling() {

@@ -65,7 +65,7 @@
             var url = new URL(window.location);
             url.searchParams.set(this.opts.requireAddressPatchKey, requireAddressPatch.toString());
 
-            window.location.href = url.toString();
+            $.redirectToUrl(url.toString());
             window.history.pushState({ path: url.toString() }, '', url.toString());
         },
 

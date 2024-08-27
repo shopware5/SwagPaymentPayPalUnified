@@ -5,12 +5,21 @@
     <label lang="de">PayPal</label>
     <label lang="en">PayPal</label>
 
-    <version>6.1.9</version>
+    <version>6.1.10</version>
     <copyright>(c) by shopware AG</copyright>
     <license>MIT</license>
     <link>http://store.shopware.com</link>
     <author>shopware AG</author>
     <compatibility minVersion="5.2.27" maxVersion="5.99.99"/>
+
+    <changelog version="6.1.10">
+        <changes lang="de">
+            PT-13158 - Fehler während des Bestellabschlusses in iOS Web-Views behoben;
+        </changes>
+        <changes lang="en">
+            PT-13158 - Fix error during order checkout in iOS web views;
+        </changes>
+    </changelog>
 
     <changelog version="6.1.9">
         <changes lang="de">

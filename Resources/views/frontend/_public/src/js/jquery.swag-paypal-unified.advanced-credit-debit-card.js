@@ -387,7 +387,7 @@
                 jsonResponse = JSON.parse(response.responseText);
 
                 if (jsonResponse.redirectTo) {
-                    window.location.replace(jsonResponse.redirectTo);
+                    $.redirectToUrl(jsonResponse.redirectTo);
 
                     return;
                 }
