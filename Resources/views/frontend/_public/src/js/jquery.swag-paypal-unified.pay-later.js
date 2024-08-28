@@ -167,7 +167,8 @@
                 theme: 'light'
             });
 
-            return actions.redirect(this.renderConfirmUrl(data));
+            var url = this.renderConfirmUrl(data);
+            $.redirectToUrl(url);
         },
 
         /**
@@ -186,7 +187,7 @@
         },
 
         onPayPalAPIError: function() {
-            window.location.replace(this.opts.paypalErrorPage);
+            $.redirectToUrl(this.opts.paypalErrorPage);
         }
     });
 

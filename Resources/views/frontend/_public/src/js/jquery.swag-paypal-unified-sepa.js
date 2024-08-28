@@ -183,10 +183,11 @@
 
         onApprove: function(data, actions) {
             var params = {
-                token: data.orderID,
-                payerId: data.payerID,
-                basketId: this.opts.basketId
-            };
+                    token: data.orderID,
+                    payerId: data.payerID,
+                    basketId: this.opts.basketId
+                },
+                url = $.swagPayPalRenderUrl(this.opts.returnUrl, params);
 
             $.loadingIndicator.open({
                 openOverlay: true,
@@ -194,7 +195,7 @@
                 theme: 'light'
             });
 
-            actions.redirect($.swagPayPalRenderUrl(this.opts.returnUrl, params));
+            $.redirectToUrl(url);
         },
 
         /**
@@ -205,7 +206,8 @@
                 extraParams = {};
             }
 
-            window.location.replace($.swagPayPalRenderUrl(this.opts.paypalErrorPage, extraParams));
+            var url = $.swagPayPalRenderUrl(this.opts.paypalErrorPageUrl, extraParams);
+            $.redirectToUrl(url);
         }
     });
 

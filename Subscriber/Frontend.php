@@ -98,6 +98,7 @@ class Frontend implements SubscriberInterface
             $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.pui-phone-number-field.js',
             $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.pui-birthday-field.js',
             $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.swag-paypal-unified.polling.js',
+            $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.redirect.js',
         ];
 
         return new ArrayCollection($jsPath);

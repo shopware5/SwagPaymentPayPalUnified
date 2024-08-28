@@ -41,7 +41,7 @@
             delete this.latestResponse;
 
             if (jsonResponse.redirectTo) {
-                window.location.replace(jsonResponse.redirectTo);
+                $.redirectToUrl(jsonResponse.redirectTo);
                 return;
             }
         }
@@ -121,7 +121,7 @@
             return;
         }
 
-        window.location.replace(this.sourcePlugin.opts.paypalErrorPage);
+        $.redirectToUrl(this.sourcePlugin.opts.paypalErrorPage);
     };
 
     $.createSwagPaymentPaypalCreateOrderFunction = function(createOrderUrl, sourcePlugin) {

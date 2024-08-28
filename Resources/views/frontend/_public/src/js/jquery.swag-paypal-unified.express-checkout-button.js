@@ -371,11 +371,12 @@
                 data: data
             }).then(function (response) {
                 var params = {
-                    expressCheckout: response.expressCheckout,
-                    token: response.token
-                };
+                        expressCheckout: response.expressCheckout,
+                        token: response.token
+                    },
+                    url = $.swagPayPalRenderUrl(me.opts.confirmUrl, params);
 
-                actions.redirect($.swagPayPalRenderUrl(me.opts.confirmUrl, params));
+                $.redirectToUrl(url);
             }, function () {
                 me.onPayPalAPIError();
             }).promise();
