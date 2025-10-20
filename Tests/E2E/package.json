@@ -12,7 +12,7 @@
         "e2e:codegen": "npx playwright codegen"
     },
     "dependencies": {
-        "@playwright/test": "^1.35.1",
+        "@playwright/test": "^1.56.1",
         "dotenv": "^16.3.1",
         "mysql": "^2.18.1"
     },
