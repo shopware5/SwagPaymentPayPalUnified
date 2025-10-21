@@ -19,7 +19,7 @@ jobs:
             -   run: /usr/bin/supervisord -c /etc/supervisord.conf &
 
             -   name: Checkout SwagPaymentPayPalUnified
-                uses: actions/checkout@v4
+                uses: actions/checkout@v5
                 with:
                     path: plugin
 
