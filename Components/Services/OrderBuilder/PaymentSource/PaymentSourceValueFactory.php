@@ -49,7 +49,7 @@ class PaymentSourceValueFactory
         }
 
         throw new UnexpectedValueException(
-            sprintf('Payment source value handler for payment type %s not found', $paymentType)
+            \sprintf('Payment source value handler for payment type %s not found', $paymentType)
         );
     }
 }

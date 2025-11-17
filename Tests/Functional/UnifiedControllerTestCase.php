@@ -66,7 +66,7 @@ class UnifiedControllerTestCase extends TestCase
         );
 
         if (!$controller instanceof $controllerClass) {
-            throw new UnexpectedValueException(sprintf('Expected instance of %s, got %s.', $controllerClass, \get_class($controller)));
+            throw new UnexpectedValueException(\sprintf('Expected instance of %s, got %s.', $controllerClass, \get_class($controller)));
         }
 
         $controller->setRequest($this->Request());

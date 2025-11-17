@@ -78,7 +78,7 @@ class ClientTokenResource
         $dateTimeExpire = $token->getExpires();
 
         if ($dateTimeNow < $dateTimeExpire) {
-            $this->logger->debug(sprintf('%s CLIENT TOKEN IS VALID', __METHOD__), [
+            $this->logger->debug(\sprintf('%s CLIENT TOKEN IS VALID', __METHOD__), [
                 'expire_date' => $dateTimeExpire->format('Y-m-d H:i:s'),
                 'now_date' => $dateTimeNow->format('Y-m-d H:i:s'),
             ]);
@@ -86,7 +86,7 @@ class ClientTokenResource
             return false;
         }
 
-        $this->logger->debug(sprintf('%s CLIENT TOKEN IS NO LONGER VALID', __METHOD__), [
+        $this->logger->debug(\sprintf('%s CLIENT TOKEN IS NO LONGER VALID', __METHOD__), [
             'expire_date' => $dateTimeExpire->format('Y-m-d H:i:s'),
             'now_date' => $dateTimeNow->format('Y-m-d H:i:s'),
         ]);
@@ -103,13 +103,13 @@ class ClientTokenResource
     {
         $serializedToken = serialize($clientToken);
 
-        $this->logger->debug(sprintf('%s SAVE CLIENT TOKEN TO CACHE', __METHOD__), [
+        $this->logger->debug(\sprintf('%s SAVE CLIENT TOKEN TO CACHE', __METHOD__), [
             'client_token' => $serializedToken,
         ]);
 
         $this->cacheManager->getCoreCache()->save(
             $serializedToken,
-            sprintf(self::CACHE_KEY_TEMPLATE, $shopId)
+            \sprintf(self::CACHE_KEY_TEMPLATE, $shopId)
         );
     }
 
@@ -124,7 +124,7 @@ class ClientTokenResource
 
         $clientToken = unserialize(
             $this->cacheManager->getCoreCache()->load(
-                sprintf(self::CACHE_KEY_TEMPLATE, $shopId)
+                \sprintf(self::CACHE_KEY_TEMPLATE, $shopId)
             )
         );
 

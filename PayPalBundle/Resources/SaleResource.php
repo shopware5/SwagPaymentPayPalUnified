@@ -39,9 +39,9 @@ class SaleResource
      */
     public function get($saleId)
     {
-        $this->logger->debug(sprintf('%s GET WITH ID %s', __METHOD__, $saleId));
+        $this->logger->debug(\sprintf('%s GET WITH ID %s', __METHOD__, $saleId));
 
-        return $this->clientService->sendRequest(RequestType::GET, sprintf('%s/%s', RequestUri::SALE_RESOURCE, $saleId));
+        return $this->clientService->sendRequest(RequestType::GET, \sprintf('%s/%s', RequestUri::SALE_RESOURCE, $saleId));
     }
 
     /**
@@ -51,13 +51,13 @@ class SaleResource
      */
     public function refund($saleId, SaleRefund $refund)
     {
-        $this->logger->debug(sprintf('%s REFUND WITH ID %s', __METHOD__, $saleId), $refund->toArray());
+        $this->logger->debug(\sprintf('%s REFUND WITH ID %s', __METHOD__, $saleId), $refund->toArray());
 
         $requestData = $refund->toArray();
 
         return $this->clientService->sendRequest(
             RequestType::POST,
-            sprintf('%s/%s/refund', RequestUri::SALE_RESOURCE, $saleId),
+            \sprintf('%s/%s/refund', RequestUri::SALE_RESOURCE, $saleId),
             $requestData
         );
     }

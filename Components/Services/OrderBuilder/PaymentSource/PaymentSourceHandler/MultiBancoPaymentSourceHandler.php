@@ -34,7 +34,7 @@ class MultiBancoPaymentSourceHandler extends AbstractPaymentSourceHandler
 
         if (!$apmPaymentSourceValue instanceof Multibanco) {
             throw new UnexpectedValueException(
-                sprintf(
+                \sprintf(
                     'Payment source Multibanco expected. Got "%s"',
                     \get_class($apmPaymentSourceValue)
                 )

@@ -104,7 +104,7 @@ class AmountProviderTest extends TestCase
         static::assertSame(
             $total,
             $taxTotal + $itemTotal,
-            sprintf('The breakdown is inconsistent (itemTotal + taxTotal != total). %.2f + %.2f = %.2f != %.2f', $itemTotal, $taxTotal, $taxTotal + $itemTotal, $total)
+            \sprintf('The breakdown is inconsistent (itemTotal + taxTotal != total). %.2f + %.2f = %.2f != %.2f', $itemTotal, $taxTotal, $taxTotal + $itemTotal, $total)
         );
     }
 

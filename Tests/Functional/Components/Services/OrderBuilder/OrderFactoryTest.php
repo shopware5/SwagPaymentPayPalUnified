@@ -41,7 +41,7 @@ class OrderFactoryTest extends TestCase
 
         if ($expectException) {
             $this->expectException(UnexpectedValueException::class);
-            $this->expectExceptionMessage(sprintf('Create order handler for payment type "%s" not found', $orderParameter->getPaymentType()));
+            $this->expectExceptionMessage(\sprintf('Create order handler for payment type "%s" not found', $orderParameter->getPaymentType()));
         }
 
         $order = $orderFactory->createOrder($orderParameter);

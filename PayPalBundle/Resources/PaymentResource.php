@@ -41,7 +41,7 @@ class PaymentResource
      */
     public function create(Payment $payment)
     {
-        $this->logger->debug(sprintf('%s CREATE', __METHOD__));
+        $this->logger->debug(\sprintf('%s CREATE', __METHOD__));
 
         return $this->clientService->sendRequest(RequestType::POST, RequestUri::PAYMENT_RESOURCE, $payment->toArray());
     }
@@ -56,13 +56,13 @@ class PaymentResource
      */
     public function execute($payerId, $paymentId)
     {
-        $this->logger->debug(sprintf('%s EXECUTE WITH PAYER ID %s, PAYMENT ID %s', __METHOD__, $payerId, $paymentId));
+        $this->logger->debug(\sprintf('%s EXECUTE WITH PAYER ID %s, PAYMENT ID %s', __METHOD__, $payerId, $paymentId));
 
         $requestData = ['payer_id' => $payerId];
 
         return $this->clientService->sendRequest(
             RequestType::POST,
-            sprintf('%s/%s/execute', RequestUri::PAYMENT_RESOURCE, $paymentId),
+            \sprintf('%s/%s/execute', RequestUri::PAYMENT_RESOURCE, $paymentId),
             $requestData
         );
     }
@@ -76,11 +76,11 @@ class PaymentResource
      */
     public function get($paymentId)
     {
-        $this->logger->debug(sprintf('%s GET WITH PAYMENT ID %s', __METHOD__, $paymentId));
+        $this->logger->debug(\sprintf('%s GET WITH PAYMENT ID %s', __METHOD__, $paymentId));
 
         return $this->clientService->sendRequest(
             RequestType::GET,
-            sprintf('%s/%s', RequestUri::PAYMENT_RESOURCE, $paymentId)
+            \sprintf('%s/%s', RequestUri::PAYMENT_RESOURCE, $paymentId)
         );
     }
 
@@ -92,12 +92,12 @@ class PaymentResource
      */
     public function patch($paymentId, array $patches)
     {
-        $this->logger->debug(sprintf('%s PATCH WITH PAYMENT ID %s', __METHOD__, $paymentId));
+        $this->logger->debug(\sprintf('%s PATCH WITH PAYMENT ID %s', __METHOD__, $paymentId));
 
         $requestData = [];
         foreach ($patches as $patch) {
             $this->logger->debug(
-                sprintf(
+                \sprintf(
                     '%s PATCH OPERATION: %s, PATH: %s, VALUE: %s',
                     __METHOD__,
                     $patch->getOperation(),
@@ -115,7 +115,7 @@ class PaymentResource
 
         $this->clientService->sendRequest(
             RequestType::PATCH,
-            sprintf('%s/%s', RequestUri::PAYMENT_RESOURCE, $paymentId),
+            \sprintf('%s/%s', RequestUri::PAYMENT_RESOURCE, $paymentId),
             $requestData
         );
     }

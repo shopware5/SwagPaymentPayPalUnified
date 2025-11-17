@@ -126,7 +126,7 @@ class Carrier implements SubscriberInterface
         $attributes = $args->getReturn();
         $attributes['swag_paypal_unified_carrier'] = $carrier;
 
-        $this->logger->debug(sprintf('%s CARRIER %s FOR SHIPPING METHODE %s IS USED FOR ORDER %s', __METHOD__, $carrier, (string) $dispatchId, $args->get('orderParams')['ordernumber']));
+        $this->logger->debug(\sprintf('%s CARRIER %s FOR SHIPPING METHODE %s IS USED FOR ORDER %s', __METHOD__, $carrier, (string) $dispatchId, $args->get('orderParams')['ordernumber']));
 
         $args->setReturn($attributes);
     }
@@ -155,20 +155,20 @@ class Carrier implements SubscriberInterface
             return;
         }
 
-        $this->logger->debug(sprintf('%s START ORDERS WITH CARRIERS SYNCING OF %s', __METHOD__, implode(' ', array_column($shopOrders, 'id'))));
+        $this->logger->debug(\sprintf('%s START ORDERS WITH CARRIERS SYNCING OF %s', __METHOD__, implode(' ', array_column($shopOrders, 'id'))));
 
         foreach ($shopOrders as $shopId => $orders) {
             $settings = $this->settingsService->getSettings($shopId);
             if ($settings === null) {
-                $this->logger->debug(sprintf('%s SETTINGS ARE NOT AVAILABLE FOR SHOP %s', __METHOD__, $shopId));
-                throw new RuntimeException(sprintf('Settings are not available for shop %s', $shopId));
+                $this->logger->debug(\sprintf('%s SETTINGS ARE NOT AVAILABLE FOR SHOP %s', __METHOD__, $shopId));
+                throw new RuntimeException(\sprintf('Settings are not available for shop %s', $shopId));
             }
             $this->clientService->configure($settings->toArray());
 
             $trackers = [];
             foreach ($orders as $order) {
                 foreach ($this->getTrackerFromOrder($order) as $tracker) {
-                    $trackers[sprintf('%s_%s', $order['id'], $tracker->getTrackingNumber())] = $tracker;
+                    $trackers[\sprintf('%s_%s', $order['id'], $tracker->getTrackingNumber())] = $tracker;
                 }
 
                 // Only send 3 orders to support multiple Transaction numbers per order
@@ -222,11 +222,11 @@ class Carrier implements SubscriberInterface
         $shipping = new Shipping();
         $shipping->setTrackers(array_values($trackers));
 
-        $this->logger->debug(sprintf('%s ORDERS %s ARE SYNCED', __METHOD__, implode(' ', array_keys($trackers))));
+        $this->logger->debug(\sprintf('%s ORDERS %s ARE SYNCED', __METHOD__, implode(' ', array_keys($trackers))));
         try {
             $this->shippingResource->batch($shipping);
         } catch (Throwable $e) {
-            $this->logger->debug(sprintf('%s TRACKERS FOR ORDERS %s COULD NOT BE SYNCED', __METHOD__, implode(' ', array_values($orderIds))));
+            $this->logger->debug(\sprintf('%s TRACKERS FOR ORDERS %s COULD NOT BE SYNCED', __METHOD__, implode(' ', array_values($orderIds))));
 
             return;
         }

@@ -107,7 +107,7 @@ abstract class AbstractOrderHandler implements OrderBuilderHandlerInterface
         $intent = $this->settings->get(SettingsServiceInterface::SETTING_GENERAL_INTENT);
 
         if (!\in_array($intent, [PaymentIntentV2::CAPTURE, PaymentIntentV2::AUTHORIZE], true)) {
-            throw new RuntimeException(sprintf('The intent %s is not supported!', $intent));
+            throw new RuntimeException(\sprintf('The intent %s is not supported!', $intent));
         }
 
         return $intent;
@@ -223,7 +223,7 @@ abstract class AbstractOrderHandler implements OrderBuilderHandlerInterface
     protected function createShipping(array $customer)
     {
         if (!\array_key_exists('shippingaddress', $customer)) {
-            throw new RuntimeException(sprintf('Customer with ID "%s" has no shipping address', $customer['additional']['user']['id']));
+            throw new RuntimeException(\sprintf('Customer with ID "%s" has no shipping address', $customer['additional']['user']['id']));
         }
 
         $shippingAddress = $customer['shippingaddress'];
@@ -272,7 +272,7 @@ abstract class AbstractOrderHandler implements OrderBuilderHandlerInterface
     protected function createShippingName(array $shippingAddress)
     {
         $shippingName = new ShippingName();
-        $shippingName->setFullName(sprintf('%s %s', $shippingAddress['firstname'], $shippingAddress['lastname']));
+        $shippingName->setFullName(\sprintf('%s %s', $shippingAddress['firstname'], $shippingAddress['lastname']));
 
         return $shippingName;
     }

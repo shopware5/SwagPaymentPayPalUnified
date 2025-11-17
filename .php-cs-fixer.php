@@ -57,6 +57,7 @@ return (new Config())
         'phpdoc_var_annotation_correct_order' => true,
         'php_unit_test_case_static_method_calls' => true,
         'single_line_throw' => false,
+        'trailing_comma_in_multiline' => false,
         'visibility_required' => ['elements' => ['property', 'method']],
         'yoda_style' => ['equal' => false, 'identical' => false, 'less_and_greater' => false],
         'nullable_type_declaration_for_default_null_value' => false,

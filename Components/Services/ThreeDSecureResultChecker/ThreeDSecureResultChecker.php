@@ -131,7 +131,7 @@ class ThreeDSecureResultChecker
         }
 
         $messageTemplate = 'ThreeDSecure: Something went wrong: EnrollmentStatus: %s, AuthenticationStatus: %s, LiabilityShift: %s';
-        $message = sprintf(
+        $message = \sprintf(
             $messageTemplate,
             $status->getEnrollmentStatus(),
             $status->getAuthenticationStatus(),

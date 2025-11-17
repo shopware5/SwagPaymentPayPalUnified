@@ -161,7 +161,7 @@ class AdvancedCreditDebitCard implements SubscriberInterface
         $additional = $userData['additional'];
 
         $cardHolderData = [
-            'cardHolderName' => sprintf('%s %s', $billingAddress['firstname'], $billingAddress['lastname']),
+            'cardHolderName' => \sprintf('%s %s', $billingAddress['firstname'], $billingAddress['lastname']),
             'billingAddress' => [
                 // Street address, line 1
                 'streetAddress' => $billingAddress['street'] ?: '',

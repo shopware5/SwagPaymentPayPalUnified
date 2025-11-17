@@ -101,7 +101,7 @@ class PuiInvoiceDocumentHandler
      */
     private function prepareTemplateString($templateString)
     {
-        return sprintf('string:%s', $templateString);
+        return \sprintf('string:%s', $templateString);
     }
 
     /**

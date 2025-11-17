@@ -32,7 +32,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2SmartPaymentButtons extends Ab
      */
     public function createOrderAction()
     {
-        $this->logger->debug(sprintf('%s START', __METHOD__));
+        $this->logger->debug(\sprintf('%s START', __METHOD__));
 
         $session = $this->dependencyProvider->getSession();
         $shopwareSessionOrderData = $session->get('sOrderVariables');
