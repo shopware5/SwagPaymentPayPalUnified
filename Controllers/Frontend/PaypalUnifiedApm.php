@@ -38,7 +38,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedApm extends AbstractPaypalPayme
      */
     public function indexAction()
     {
-        $this->logger->debug(sprintf('%s START', __METHOD__));
+        $this->logger->debug(\sprintf('%s START', __METHOD__));
 
         $requestId = $this->requestIdService->getRequestIdFromRequest($this->Request());
         $isRequestIdAlreadyUsed = $this->requestIdService->checkRequestIdIsAlreadySetToSession($requestId);
@@ -105,7 +105,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedApm extends AbstractPaypalPayme
 
         $url = $this->getUrl($payPalOrder, Link::RELATION_PAYER_ACTION_REQUIRED);
 
-        $this->logger->debug(sprintf('%s REDIRECT TO: %s', __METHOD__, $url));
+        $this->logger->debug(\sprintf('%s REDIRECT TO: %s', __METHOD__, $url));
 
         $this->redirect($url);
     }
@@ -121,7 +121,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedApm extends AbstractPaypalPayme
      */
     public function returnAction()
     {
-        $this->logger->debug(sprintf('%s START', __METHOD__));
+        $this->logger->debug(\sprintf('%s START', __METHOD__));
 
         $payPalOrderId = $this->Request()->getParam('token');
 
@@ -165,7 +165,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedApm extends AbstractPaypalPayme
         if ($this->Request()->isXmlHttpRequest()) {
             $this->view->assign('token', $payPalOrderId);
 
-            $this->logger->debug(sprintf('%s IS XHR REQUEST', __METHOD__));
+            $this->logger->debug(\sprintf('%s IS XHR REQUEST', __METHOD__));
 
             return;
         }
@@ -188,7 +188,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedApm extends AbstractPaypalPayme
 
             $this->updatePaymentStatus($payPalOrder->getIntent(), $this->getOrderId($shopwareOrderNumber));
 
-            $this->logger->debug(sprintf('%s REDIRECT TO checkout/finish', __METHOD__));
+            $this->logger->debug(\sprintf('%s REDIRECT TO checkout/finish', __METHOD__));
 
             $this->redirect([
                 'module' => 'frontend',
@@ -205,7 +205,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedApm extends AbstractPaypalPayme
         $shopwareOrderNumber = $this->createShopwareOrder($payPalOrderId, $paymentType);
 
         $this->logger->warning(
-            sprintf('A payment with type: %s has failed. Review previous error messages to clarify the issue. The customer was invited to contact the merchant.', $paymentType),
+            \sprintf('A payment with type: %s has failed. Review previous error messages to clarify the issue. The customer was invited to contact the merchant.', $paymentType),
             [
                 'paymentType' => $paymentType,
                 'paypalOrderId' => $payPalOrderId,

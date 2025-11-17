@@ -69,7 +69,7 @@ class PatchOrderService
         try {
             $this->orderResource->update($patches, $payPalOrderId);
         } catch (Exception $exception) {
-            $this->loggerService->warning(sprintf('%s CANNOT PATCH EXPRESS ORDER ADDRESS. OrderId: %s', __METHOD__, $payPalOrderId));
+            $this->loggerService->warning(\sprintf('%s CANNOT PATCH EXPRESS ORDER ADDRESS. OrderId: %s', __METHOD__, $payPalOrderId));
         }
     }
 
@@ -87,21 +87,21 @@ class PatchOrderService
 
         $purchaseUnit = $order->getPurchaseUnits()[0];
         if (!$purchaseUnit instanceof PurchaseUnit) {
-            $this->loggerService->warning(sprintf('%s CANNOT CREATE PATCH. REQUIRED "PurchaseUnit" NOT FOUND', __METHOD__));
+            $this->loggerService->warning(\sprintf('%s CANNOT CREATE PATCH. REQUIRED "PurchaseUnit" NOT FOUND', __METHOD__));
 
             return null;
         }
 
         $shipping = $purchaseUnit->getShipping();
         if (!$shipping instanceof Shipping) {
-            $this->loggerService->warning(sprintf('%s CANNOT CREATE PATCH. REQUIRED "Shipping" NOT FOUND', __METHOD__));
+            $this->loggerService->warning(\sprintf('%s CANNOT CREATE PATCH. REQUIRED "Shipping" NOT FOUND', __METHOD__));
 
             return null;
         }
 
         $shippingAddress = $shipping->getAddress();
         if (!$shippingAddress instanceof Address) {
-            $this->loggerService->warning(sprintf('%s CANNOT CREATE PATCH. REQUIRED "Address" NOT FOUND', __METHOD__));
+            $this->loggerService->warning(\sprintf('%s CANNOT CREATE PATCH. REQUIRED "Address" NOT FOUND', __METHOD__));
 
             return null;
         }
@@ -112,7 +112,7 @@ class PatchOrderService
 
         $patch->setValue($shippingAddress->toArray());
 
-        $this->loggerService->debug(sprintf('%s PATCH CREATED', __METHOD__));
+        $this->loggerService->debug(\sprintf('%s PATCH CREATED', __METHOD__));
 
         return $patch;
     }

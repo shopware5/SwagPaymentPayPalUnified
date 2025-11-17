@@ -27,7 +27,7 @@ class ShopRegistrationServiceTest extends TestCase
     public function skipTestIfShopRegistrationServiceInterfaceDoesNotExist()
     {
         if (!interface_exists(ShopRegistrationServiceInterface::class)) {
-            static::markTestSkipped(sprintf('Skipping %s, as %s does not exist.', self::class, 'Shopware\Components\ShopRegistrationServiceInterface'));
+            static::markTestSkipped(\sprintf('Skipping %s, as %s does not exist.', self::class, 'Shopware\Components\ShopRegistrationServiceInterface'));
         }
     }
 

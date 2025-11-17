@@ -212,7 +212,7 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
             $shopwareErrorCode = ErrorCodes::COMMUNICATION_FAILURE;
         }
 
-        $this->logger->debug(sprintf('%s CANCELED_BY_USER', __METHOD__));
+        $this->logger->debug(\sprintf('%s CANCELED_BY_USER', __METHOD__));
 
         $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
             ->setCode($shopwareErrorCode);
@@ -226,7 +226,7 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
     protected function createPayPalOrder(PayPalOrderParameter $orderParameter)
     {
         try {
-            $this->logger->debug(sprintf('%s BEFORE CREATE PAYPAL ORDER', __METHOD__));
+            $this->logger->debug(\sprintf('%s BEFORE CREATE PAYPAL ORDER', __METHOD__));
 
             if (empty($orderParameter->getCart()['content'])) {
                 throw new EmptyCartException();
@@ -236,7 +236,7 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
 
             $payPalOrder = $this->orderResource->create($payPalOrderData, $orderParameter->getPaymentType());
 
-            $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFUL CREATED - ID: %s', __METHOD__, $payPalOrder->getId()));
+            $this->logger->debug(\sprintf('%s PAYPAL ORDER SUCCESSFUL CREATED - ID: %s', __METHOD__, $payPalOrder->getId()));
         } catch (RequestException $exception) {
             $exceptionBody = json_decode($exception->getBody(), true);
 
@@ -289,11 +289,11 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
     protected function updatePayPalOrder($payPalOrderId, array $patches)
     {
         try {
-            $this->logger->debug(sprintf('%s UPDATE PAYPAL ORDER WITH ID: %s', __METHOD__, $payPalOrderId));
+            $this->logger->debug(\sprintf('%s UPDATE PAYPAL ORDER WITH ID: %s', __METHOD__, $payPalOrderId));
 
             $this->orderResource->update($patches, $payPalOrderId);
 
-            $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFULLY UPDATED', __METHOD__));
+            $this->logger->debug(\sprintf('%s PAYPAL ORDER SUCCESSFULLY UPDATED', __METHOD__));
         } catch (RequestException $exception) {
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
                 ->setCode($this->getErrorCode($exception->getBody()))
@@ -328,20 +328,20 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
 
         try {
             if ($payPalOrder->getIntent() === PaymentIntentV2::AUTHORIZE) {
-                $this->logger->debug(sprintf('%s AUTHORIZE PAYPAL ORDER WITH ID: %s', __METHOD__, $payPalOrder->getId()));
+                $this->logger->debug(\sprintf('%s AUTHORIZE PAYPAL ORDER WITH ID: %s', __METHOD__, $payPalOrder->getId()));
 
                 $authorizedPayPalOrder = $this->orderResource->authorize($payPalOrder->getId(), false);
 
-                $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFULLY AUTHORIZED', __METHOD__));
+                $this->logger->debug(\sprintf('%s PAYPAL ORDER SUCCESSFULLY AUTHORIZED', __METHOD__));
 
                 return $authorizedPayPalOrder;
             }
 
-            $this->logger->debug(sprintf('%s CAPTURE PAYPAL ORDER WITH ID: %s', __METHOD__, $payPalOrder->getId()));
+            $this->logger->debug(\sprintf('%s CAPTURE PAYPAL ORDER WITH ID: %s', __METHOD__, $payPalOrder->getId()));
 
             $capturedPayPalOrder = $this->orderResource->capture($payPalOrder->getId(), false);
 
-            $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFULLY CAPTURED', __METHOD__));
+            $this->logger->debug(\sprintf('%s PAYPAL ORDER SUCCESSFULLY CAPTURED', __METHOD__));
 
             return $capturedPayPalOrder;
         } catch (RequestException $exception) {
@@ -390,13 +390,13 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
      */
     protected function checkCaptureAuthorizationStatus(Order $payPalOrder)
     {
-        $this->logger->debug(sprintf('%s PAYPAL CHECK CAPTURE OR AUTHORIZATION STATUS START', __METHOD__));
+        $this->logger->debug(\sprintf('%s PAYPAL CHECK CAPTURE OR AUTHORIZATION STATUS START', __METHOD__));
 
         try {
             if ($payPalOrder->getIntent() === PaymentIntentV2::CAPTURE) {
                 $capture = $this->orderPropertyHelper->getFirstCapture($payPalOrder);
                 if (!$capture instanceof Capture) {
-                    throw new UnexpectedValueException(sprintf('%s expected. Got %s', Capture::class, \gettype($capture)));
+                    throw new UnexpectedValueException(\sprintf('%s expected. Got %s', Capture::class, \gettype($capture)));
                 }
 
                 if ($capture->getStatus() === PaymentStatusV2::ORDER_CAPTURE_DECLINED) {
@@ -415,7 +415,7 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
             if ($payPalOrder->getIntent() === PaymentIntentV2::AUTHORIZE) {
                 $authorization = $this->orderPropertyHelper->getAuthorization($payPalOrder);
                 if (!$authorization instanceof Authorization) {
-                    throw new UnexpectedValueException(sprintf('%s expected. Got %s', Authorization::class, \gettype($authorization)));
+                    throw new UnexpectedValueException(\sprintf('%s expected. Got %s', Authorization::class, \gettype($authorization)));
                 }
 
                 if ($authorization->getStatus() === PaymentStatusV2::ORDER_AUTHORIZATION_DENIED) {
@@ -444,7 +444,7 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
             return false;
         }
 
-        $this->logger->debug(sprintf('%s PAYPAL CHECK CAPTURE OR AUTHORIZATION STATUS END', __METHOD__));
+        $this->logger->debug(\sprintf('%s PAYPAL CHECK CAPTURE OR AUTHORIZATION STATUS END', __METHOD__));
 
         return true;
     }
@@ -457,11 +457,11 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
     protected function getPayPalOrder($payPalOrderId)
     {
         try {
-            $this->logger->debug(sprintf('%s GET PAYPAL ORDER WITH ID: %s', __METHOD__, $payPalOrderId));
+            $this->logger->debug(\sprintf('%s GET PAYPAL ORDER WITH ID: %s', __METHOD__, $payPalOrderId));
 
             $payPalOrder = $this->orderResource->get($payPalOrderId);
 
-            $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFULLY LOADED', __METHOD__));
+            $this->logger->debug(\sprintf('%s PAYPAL ORDER SUCCESSFULLY LOADED', __METHOD__));
         } catch (RequestException $exception) {
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
                 ->setCode($this->getErrorCode($exception->getBody()))
@@ -624,15 +624,15 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
     protected function isPaymentCompleted($payPalOrderId, $awaitedStatus = PaymentStatusV2::ORDER_CAPTURE_COMPLETED)
     {
         $methodStart = microtime(true);
-        $this->logger->debug(sprintf('%s START POLLING AT: %f', __METHOD__, microtime(true)));
+        $this->logger->debug(\sprintf('%s START POLLING AT: %f', __METHOD__, microtime(true)));
 
         for ($i = 0; $i <= static::MAXIMUM_RETRIES; ++$i) {
-            $this->logger->debug(sprintf('%s POLLING TRY NR: %d AT: %f', __METHOD__, $i, microtime(true)));
+            $this->logger->debug(\sprintf('%s POLLING TRY NR: %d AT: %f', __METHOD__, $i, microtime(true)));
 
             $timeoutStart = microtime(true);
             $paypalOrder = $this->getPayPalOrder($payPalOrderId);
             if (!$paypalOrder instanceof Order) {
-                $this->logger->error(sprintf('%s CANNOT FIND ORDER WITH ID: %s AT TRY NR: %d', __METHOD__, $payPalOrderId, $i));
+                $this->logger->error(\sprintf('%s CANNOT FIND ORDER WITH ID: %s AT TRY NR: %d', __METHOD__, $payPalOrderId, $i));
                 break;
             }
 
@@ -640,7 +640,7 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
             if ($determinedStatus->isSuccess()) {
                 $currentTime = microtime(true);
                 $elapsedTime = $currentTime - $timeoutStart;
-                $this->logger->debug(sprintf('%s POLLING SUCCESSFUL AFTER TRY NR: %d AT: %f AFTER: %f SECONDS', __METHOD__, $i, $currentTime, $elapsedTime));
+                $this->logger->debug(\sprintf('%s POLLING SUCCESSFUL AFTER TRY NR: %d AT: %f AFTER: %f SECONDS', __METHOD__, $i, $currentTime, $elapsedTime));
 
                 return true;
             }
@@ -682,7 +682,7 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
 
         $currentTime = microtime(true);
         $elapsedTime = $currentTime - $methodStart;
-        $this->logger->debug(sprintf('%s POLLING FAILED AT: %f AFTER: %f SECONDS AND TRY NR: %d', __METHOD__, $currentTime, $elapsedTime, $i));
+        $this->logger->debug(\sprintf('%s POLLING FAILED AT: %f AFTER: %f SECONDS AND TRY NR: %d', __METHOD__, $currentTime, $elapsedTime, $i));
 
         return false;
     }
@@ -696,13 +696,13 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
      */
     protected function createShopwareOrder($payPalOrderId, $paymentType, $paymentStatusId = null)
     {
-        $this->logger->debug(sprintf('%s CREATE SHOPWARE ORDER', __METHOD__));
+        $this->logger->debug(\sprintf('%s CREATE SHOPWARE ORDER', __METHOD__));
 
         $orderNumber = (string) $this->saveOrder($payPalOrderId, $payPalOrderId, $paymentStatusId ?: Status::PAYMENT_STATE_OPEN);
 
         $this->orderDataService->applyPaymentTypeAttribute($orderNumber, $paymentType);
 
-        $this->logger->debug(sprintf('%s ORDER SUCCESSFUL CREATED WITH NUMBER: %s', __METHOD__, $orderNumber));
+        $this->logger->debug(\sprintf('%s ORDER SUCCESSFUL CREATED WITH NUMBER: %s', __METHOD__, $orderNumber));
 
         $this->orderNumberService->releaseOrderNumber();
 
@@ -730,7 +730,7 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
 
         $invoiceIdPatch = new OrderAddInvoiceIdPatch();
         $invoiceIdPatch->setOp(Patch::OPERATION_ADD);
-        $invoiceIdPatch->setValue(sprintf('%s%s', $orderNumberPrefix, $shopwareOrderNumber));
+        $invoiceIdPatch->setValue(\sprintf('%s%s', $orderNumberPrefix, $shopwareOrderNumber));
         $invoiceIdPatch->setPath(OrderAddInvoiceIdPatch::PATH);
 
         return $invoiceIdPatch;
@@ -745,7 +745,7 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
     {
         if (!\is_string($shopwareOrderNumber)) {
             $logTemplate = 'Cannot set transactionId because order number is not valid. token (PayPalOrderId): %s';
-            $this->logger->warning(sprintf($logTemplate, $payPalOrder->getId()));
+            $this->logger->warning(\sprintf($logTemplate, $payPalOrder->getId()));
 
             return;
         }
@@ -940,11 +940,11 @@ class AbstractPaypalPaymentController extends Shopware_Controllers_Frontend_Paym
     {
         $shopwareOrderNumber = $this->createShopwareOrder($payPalOrder->getId(), $this->getPaymentType());
 
-        $this->logger->notify(sprintf('%s PAYMENT IS PENDING. ORDER NUMBER: %s PAYPAL ORDER ID: %s', __METHOD__, $shopwareOrderNumber, $payPalOrder->getId()));
+        $this->logger->notify(\sprintf('%s PAYMENT IS PENDING. ORDER NUMBER: %s PAYPAL ORDER ID: %s', __METHOD__, $shopwareOrderNumber, $payPalOrder->getId()));
 
         $this->setTransactionId($shopwareOrderNumber, $payPalOrder);
 
-        $this->logger->debug(sprintf('%s REDIRECT TO checkout/finish', __METHOD__));
+        $this->logger->debug(\sprintf('%s REDIRECT TO checkout/finish', __METHOD__));
 
         $this->redirect([
             'module' => 'frontend',

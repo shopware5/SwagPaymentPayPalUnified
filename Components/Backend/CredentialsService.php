@@ -79,7 +79,7 @@ class CredentialsService
     public function getAccessToken($authCode, $sharedId, $nonce, $sandbox)
     {
         $this->logger->debug(
-            sprintf(
+            \sprintf(
                 '%s AUTHCODE: %s, SHARED ID: %s, NONCE: %s, SANDBOX: %s',
                 __METHOD__,
                 $authCode,
@@ -104,7 +104,7 @@ class CredentialsService
     public function getCredentials($accessToken, $partnerId, $sandbox)
     {
         $this->logger->debug(
-            sprintf(
+            \sprintf(
                 '%s ACCESS TOKEN: %s, PARTNER ID: %s, SANDBOX: %s',
                 __METHOD__,
                 $accessToken,
@@ -128,7 +128,7 @@ class CredentialsService
     public function updateCredentials($credentials, $shopId, $sandbox)
     {
         $this->logger->debug(
-            sprintf(
+            \sprintf(
                 '%s SHOP ID: %s, SANDBOX: %s',
                 __METHOD__,
                 $shopId,
@@ -140,8 +140,8 @@ class CredentialsService
         $settings = $this->settingsService->getSettings($shopId);
 
         if (!$settings instanceof General) {
-            $this->logger->debug(sprintf('%s SETTINGS NOT FOUND', __METHOD__));
-            throw new UnexpectedValueException(sprintf('Expected instance of %s, got %s.', General::class, $settings === null ? 'null' : \get_class($settings)));
+            $this->logger->debug(\sprintf('%s SETTINGS NOT FOUND', __METHOD__));
+            throw new UnexpectedValueException(\sprintf('Expected instance of %s, got %s.', General::class, $settings === null ? 'null' : \get_class($settings)));
         }
 
         $settings->setSandbox($sandbox);
@@ -170,6 +170,6 @@ class CredentialsService
             'sandboxClientSecret' => $settings->getSandboxClientSecret(),
         ]);
 
-        $this->logger->debug(sprintf('%s SUCCESSFUL', __METHOD__));
+        $this->logger->debug(\sprintf('%s SUCCESSFUL', __METHOD__));
     }
 }

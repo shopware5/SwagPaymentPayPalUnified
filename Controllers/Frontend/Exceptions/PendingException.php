@@ -23,6 +23,6 @@ class PendingException extends Exception
     {
         $code = $type === self::TYPE_CAPTURE ? ErrorCodes::CAPTURE_PENDING : ErrorCodes::AUTHORIZATION_PENDING;
 
-        parent::__construct(sprintf('The status for %s is PENDNG', $type), $code);
+        parent::__construct(\sprintf('The status for %s is PENDNG', $type), $code);
     }
 }

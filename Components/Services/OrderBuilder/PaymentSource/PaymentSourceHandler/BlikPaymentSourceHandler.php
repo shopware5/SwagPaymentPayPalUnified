@@ -34,7 +34,7 @@ class BlikPaymentSourceHandler extends AbstractPaymentSourceHandler
 
         if (!$apmPaymentSourceValue instanceof Blik) {
             throw new UnexpectedValueException(
-                sprintf(
+                \sprintf(
                     'Payment source Blik expected. Got "%s"',
                     \get_class($apmPaymentSourceValue)
                 )

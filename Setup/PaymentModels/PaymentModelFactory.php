@@ -64,7 +64,7 @@ class PaymentModelFactory
     public function getPaymentModel($name)
     {
         if (!isset($this->paymentModels[$name])) {
-            throw new InvalidArgumentException(sprintf('The payment method %s was not found.', $name));
+            throw new InvalidArgumentException(\sprintf('The payment method %s was not found.', $name));
         }
 
         return $this->paymentModels[$name];

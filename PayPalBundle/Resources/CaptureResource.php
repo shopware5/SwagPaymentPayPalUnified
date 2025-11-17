@@ -39,9 +39,9 @@ class CaptureResource
      */
     public function get($id)
     {
-        $this->logger->debug(sprintf('%s GET WITH ID %s', __METHOD__, $id));
+        $this->logger->debug(\sprintf('%s GET WITH ID %s', __METHOD__, $id));
 
-        return $this->clientService->sendRequest(RequestType::GET, sprintf('%s/%s', RequestUri::CAPTURE_RESOURCE, $id));
+        return $this->clientService->sendRequest(RequestType::GET, \sprintf('%s/%s', RequestUri::CAPTURE_RESOURCE, $id));
     }
 
     /**
@@ -51,13 +51,13 @@ class CaptureResource
      */
     public function refund($id, CaptureRefund $refund)
     {
-        $this->logger->debug(sprintf('%s REFUND WITH ID %s', __METHOD__, $id), $refund->toArray());
+        $this->logger->debug(\sprintf('%s REFUND WITH ID %s', __METHOD__, $id), $refund->toArray());
 
         $requestData = $refund->toArray();
 
         return $this->clientService->sendRequest(
             RequestType::POST,
-            sprintf('%s/%s/refund', RequestUri::CAPTURE_RESOURCE, $id),
+            \sprintf('%s/%s/refund', RequestUri::CAPTURE_RESOURCE, $id),
             $requestData
         );
     }

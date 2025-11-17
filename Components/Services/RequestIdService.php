@@ -42,7 +42,7 @@ class RequestIdService
     {
         $newRequestId = Uuid::generateUuid();
 
-        $this->loggerService->debug(sprintf('%s GENERATES NEW REQUEST ID: %s', __METHOD__, $newRequestId));
+        $this->loggerService->debug(\sprintf('%s GENERATES NEW REQUEST ID: %s', __METHOD__, $newRequestId));
 
         return $newRequestId;
     }
@@ -54,7 +54,7 @@ class RequestIdService
      */
     public function saveRequestIdToSession($requestId)
     {
-        $this->loggerService->debug(sprintf('%s SAVE REQUEST ID: %s TO SESSION', __METHOD__, $requestId));
+        $this->loggerService->debug(\sprintf('%s SAVE REQUEST ID: %s TO SESSION', __METHOD__, $requestId));
 
         $requestId = $this->validateRequestId($requestId);
 
@@ -72,7 +72,7 @@ class RequestIdService
 
         $requestId = $session->offsetGet(self::REQUEST_ID_KEY);
 
-        $this->loggerService->debug(sprintf('%s GET REQUEST ID: %s FROM SESSION', __METHOD__, $requestId));
+        $this->loggerService->debug(\sprintf('%s GET REQUEST ID: %s FROM SESSION', __METHOD__, $requestId));
 
         return $this->validateRequestId($requestId);
     }
@@ -84,7 +84,7 @@ class RequestIdService
     {
         $session = $this->dependencyProvider->getSession();
 
-        $this->loggerService->debug(sprintf('%s REMOVE REQUEST ID FROM SESSION', __METHOD__));
+        $this->loggerService->debug(\sprintf('%s REMOVE REQUEST ID FROM SESSION', __METHOD__));
 
         $session->offsetUnset(self::REQUEST_ID_KEY);
     }
@@ -96,7 +96,7 @@ class RequestIdService
      */
     public function checkRequestIdIsAlreadySetToSession($requestId)
     {
-        $this->loggerService->debug(sprintf('%s CHECK REQUEST ID: %s FROM SESSION', __METHOD__, $requestId));
+        $this->loggerService->debug(\sprintf('%s CHECK REQUEST ID: %s FROM SESSION', __METHOD__, $requestId));
 
         $requestId = $this->validateRequestId($requestId);
 
@@ -122,12 +122,12 @@ class RequestIdService
         try {
             $byRequestProvidedId = $this->validateRequestId($request->getParam(self::REQUEST_ID_KEY));
         } catch (UnexpectedValueException $exception) {
-            $this->loggerService->debug(sprintf('%s REQUEST DOES NOT CONTAIN A VALID REQUEST ID', __METHOD__));
+            $this->loggerService->debug(\sprintf('%s REQUEST DOES NOT CONTAIN A VALID REQUEST ID', __METHOD__));
 
             return '';
         }
 
-        $this->loggerService->debug(sprintf('%s GET REQUEST ID: %s FROM REQUEST', __METHOD__, $byRequestProvidedId));
+        $this->loggerService->debug(\sprintf('%s GET REQUEST ID: %s FROM REQUEST', __METHOD__, $byRequestProvidedId));
 
         return $byRequestProvidedId;
     }
@@ -142,12 +142,12 @@ class RequestIdService
         $supportedPaymentTypes = array_merge(PaymentType::getApmPaymentTypes(), [PaymentType::PAYPAL_PAY_UPON_INVOICE_V2]);
 
         if (!\in_array($paymentType, $supportedPaymentTypes)) {
-            $this->loggerService->debug(sprintf('%s REQUEST ID FOR PAYMENT TYPE: %s IS NOT REQUIRED', __METHOD__, $paymentType));
+            $this->loggerService->debug(\sprintf('%s REQUEST ID FOR PAYMENT TYPE: %s IS NOT REQUIRED', __METHOD__, $paymentType));
 
             return false;
         }
 
-        $this->loggerService->debug(sprintf('%s REQUEST ID FOR PAYMENT TYPE: %s IS REQUIRED', __METHOD__, $paymentType));
+        $this->loggerService->debug(\sprintf('%s REQUEST ID FOR PAYMENT TYPE: %s IS REQUIRED', __METHOD__, $paymentType));
 
         return true;
     }
@@ -160,7 +160,7 @@ class RequestIdService
     private function validateRequestId($requestId)
     {
         if (!\is_string($requestId)) {
-            $this->loggerService->debug(sprintf('%s PROVIDED REQUEST ID: %s IS NOT A STRING', __METHOD__, print_r($requestId, true)));
+            $this->loggerService->debug(\sprintf('%s PROVIDED REQUEST ID: %s IS NOT A STRING', __METHOD__, print_r($requestId, true)));
 
             throw new UnexpectedValueException(
                 \sprintf('Provided requestId expect to be of type string got %s', \gettype($requestId))
@@ -168,12 +168,12 @@ class RequestIdService
         }
 
         if (trim($requestId) === '') {
-            $this->loggerService->debug(sprintf('%s PROVIDED REQUEST ID IS EMPTY', __METHOD__));
+            $this->loggerService->debug(\sprintf('%s PROVIDED REQUEST ID IS EMPTY', __METHOD__));
 
             throw new UnexpectedValueException('The provided requestId is empty');
         }
 
-        $this->loggerService->debug(sprintf('%s PROVIDED REQUEST ID: %s IS VALID', __METHOD__, $requestId));
+        $this->loggerService->debug(\sprintf('%s PROVIDED REQUEST ID: %s IS VALID', __METHOD__, $requestId));
 
         return $requestId;
     }

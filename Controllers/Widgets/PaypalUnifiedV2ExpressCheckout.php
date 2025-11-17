@@ -38,7 +38,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout extends Abstra
      */
     public function createOrderAction()
     {
-        $this->logger->debug(sprintf('%s START', __METHOD__));
+        $this->logger->debug(\sprintf('%s START', __METHOD__));
 
         $paymentId = $this->paymentMethodProvider->getPaymentId(PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAYMENT_METHOD_NAME);
 
@@ -86,7 +86,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout extends Abstra
      */
     public function onApproveAction()
     {
-        $this->logger->debug(sprintf('%s START', __METHOD__));
+        $this->logger->debug(\sprintf('%s START', __METHOD__));
 
         $payPalOrderId = $this->Request()->get('orderID');
 
@@ -109,11 +109,11 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout extends Abstra
      */
     public function patchAddressAction()
     {
-        $this->logger->debug(sprintf('%s START', __METHOD__));
+        $this->logger->debug(\sprintf('%s START', __METHOD__));
 
         $payPalOrderId = $this->request->getParam('token');
         if (!\is_string($payPalOrderId)) {
-            $this->logger->warning(sprintf('%s REQUIRED REQUEST PARAMETER "token" NOT FOUND', __METHOD__));
+            $this->logger->warning(\sprintf('%s REQUIRED REQUEST PARAMETER "token" NOT FOUND', __METHOD__));
 
             return;
         }
@@ -126,7 +126,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout extends Abstra
         if ($shippingAddressPatch instanceof OrderPurchaseUnitShippingAddressPatch) {
             $patches[] = $shippingAddressPatch;
         } else {
-            $this->logger->debug(sprintf('%s COULD NOT CREATE ADDRESS PATCH FOR PAYPAL ORDER: %s', __METHOD__, $payPalOrderId));
+            $this->logger->debug(\sprintf('%s COULD NOT CREATE ADDRESS PATCH FOR PAYPAL ORDER: %s', __METHOD__, $payPalOrderId));
         }
 
         $shippingNamePatch = $this->patchOrderService->createExpressShippingNamePatch($userData);
@@ -134,12 +134,12 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout extends Abstra
         if ($shippingNamePatch instanceof OrderPurchaseUnitShippingNamePatch) {
             $patches[] = $shippingNamePatch;
         } else {
-            $this->logger->debug(sprintf('%s COULD NOT CREATE NAME PATCH FOR PAYPAL ORDER: %s', __METHOD__, $payPalOrderId));
+            $this->logger->debug(\sprintf('%s COULD NOT CREATE NAME PATCH FOR PAYPAL ORDER: %s', __METHOD__, $payPalOrderId));
         }
 
         $this->patchOrderService->patchPayPalExpressOrder($patches, $payPalOrderId);
 
-        $this->logger->debug(sprintf('%s END', __METHOD__));
+        $this->logger->debug(\sprintf('%s END', __METHOD__));
     }
 
     /**
@@ -147,7 +147,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout extends Abstra
      */
     private function addProductToCart()
     {
-        $this->logger->debug(sprintf('%s START', __METHOD__));
+        $this->logger->debug(\sprintf('%s START', __METHOD__));
 
         /** @var sBasket $basketModule */
         $basketModule = $this->dependencyProvider->getModule('basket');
@@ -155,11 +155,11 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout extends Abstra
         $productNumber = $request->getParam('productNumber');
         $quantity = (int) $request->getParam('productQuantity', 1);
 
-        $this->logger->debug(sprintf('%s DELETE BASKET', __METHOD__));
+        $this->logger->debug(\sprintf('%s DELETE BASKET', __METHOD__));
 
         $basketModule->sDeleteBasket();
 
-        $this->logger->debug(sprintf('%s ADD PRODUCT WITH NUMBER: %s AND QUANTITY: %d', __METHOD__, $productNumber, $quantity));
+        $this->logger->debug(\sprintf('%s ADD PRODUCT WITH NUMBER: %s AND QUANTITY: %d', __METHOD__, $productNumber, $quantity));
 
         $basketModule->sAddArticle($productNumber, $quantity);
 
@@ -176,11 +176,11 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2ExpressCheckout extends Abstra
 
         $admin->sGetPremiumShippingcosts($country);
 
-        $this->logger->debug(sprintf('%s REFRESH BASKET', __METHOD__));
+        $this->logger->debug(\sprintf('%s REFRESH BASKET', __METHOD__));
 
         $basketModule->sGetBasket();
 
-        $this->logger->debug(sprintf('%s PRODUCT SUCCESSFUL ADDED', __METHOD__));
+        $this->logger->debug(\sprintf('%s PRODUCT SUCCESSFUL ADDED', __METHOD__));
     }
 
     /**

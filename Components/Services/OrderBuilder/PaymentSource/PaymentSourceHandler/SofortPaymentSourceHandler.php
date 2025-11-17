@@ -34,7 +34,7 @@ class SofortPaymentSourceHandler extends AbstractPaymentSourceHandler
 
         if (!$apmPaymentSourceValue instanceof Sofort) {
             throw new UnexpectedValueException(
-                sprintf(
+                \sprintf(
                     'Payment source Sofort expected. Got "%s"',
                     \get_class($apmPaymentSourceValue)
                 )

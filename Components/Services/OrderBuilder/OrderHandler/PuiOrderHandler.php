@@ -92,7 +92,7 @@ class PuiOrderHandler extends AbstractOrderHandler
 
         $payUponInvoice = $paymentSource->getPayUponInvoice();
         if (!$payUponInvoice instanceof PayUponInvoice) {
-            throw new UnexpectedValueException(sprintf('PayUponInvoice expected. Got "%s"', \gettype($payUponInvoice)));
+            throw new UnexpectedValueException(\sprintf('PayUponInvoice expected. Got "%s"', \gettype($payUponInvoice)));
         }
 
         $payUponInvoice->setBillingAddress($order->getPayer()->getAddress());

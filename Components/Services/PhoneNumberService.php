@@ -69,7 +69,7 @@ class PhoneNumberService
         try {
             $output = $this->phoneNumberUtil->parse($phoneNumberRawInput, self::DEFAULT_REGION);
 
-            $phoneNumber->setCountryCode(sprintf('%d', $output->getCountryCode()));
+            $phoneNumber->setCountryCode(\sprintf('%d', $output->getCountryCode()));
             $phoneNumber->setNationalNumber($output->getNationalNumber() ?: '');
         } catch (NumberParseException $numberParseException) {
             /*
