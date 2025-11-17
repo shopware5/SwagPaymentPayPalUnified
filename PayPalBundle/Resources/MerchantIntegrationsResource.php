@@ -56,7 +56,7 @@ class MerchantIntegrationsResource
     public function getMerchantIntegrations($partnerId, $shopId, $payerId)
     {
         $this->logger->debug(
-            sprintf(
+            \sprintf(
                 '%s PARTNER ID: %s, SHOP ID: %s, NONCE: %s, PAYER ID:',
                 __METHOD__,
                 $partnerId,
@@ -67,16 +67,16 @@ class MerchantIntegrationsResource
         $settings = $this->settingsService->getSettings($shopId);
 
         if (!$settings instanceof General) {
-            $this->logger->debug(sprintf('%s SETTINGS NOT FOUND', __METHOD__));
+            $this->logger->debug(\sprintf('%s SETTINGS NOT FOUND', __METHOD__));
 
-            throw new UnexpectedValueException(sprintf('Expected instance of "%s", got "%s".', General::class, $settings === null ? 'null' : \get_class($settings)));
+            throw new UnexpectedValueException(\sprintf('Expected instance of "%s", got "%s".', General::class, $settings === null ? 'null' : \get_class($settings)));
         }
 
         $this->clientService->configure($settings->toArray());
 
         return $this->clientService->sendRequest(
             RequestType::GET,
-            sprintf(RequestUri::MERCHANT_INTEGRATIONS_RESOURCE, $partnerId, $payerId)
+            \sprintf(RequestUri::MERCHANT_INTEGRATIONS_RESOURCE, $partnerId, $payerId)
         );
     }
 }

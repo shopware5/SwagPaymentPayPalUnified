@@ -45,7 +45,7 @@ class CredentialsResource
     public function getAccessToken($authCode, $sharedId, $nonce, $sandbox)
     {
         $this->logger->debug(
-            sprintf(
+            \sprintf(
                 '%s AUTHCODE: %s, SHARED ID: %s, NONCE: %s, SANDBOX: %s',
                 __METHOD__,
                 $authCode,
@@ -62,9 +62,9 @@ class CredentialsResource
         ];
 
         $response = $this->client->post(
-            sprintf('%s%s', $sandbox ? BaseURL::SANDBOX : BaseURL::LIVE, RequestUri::TOKEN_RESOURCE),
+            \sprintf('%s%s', $sandbox ? BaseURL::SANDBOX : BaseURL::LIVE, RequestUri::TOKEN_RESOURCE),
             [
-                'Authorization' => sprintf('Basic %s', base64_encode(sprintf('%s:', $sharedId))),
+                'Authorization' => \sprintf('Basic %s', base64_encode(\sprintf('%s:', $sharedId))),
             ],
             $data
         );
@@ -84,7 +84,7 @@ class CredentialsResource
     public function getCredentials($accessToken, $partnerId, $sandbox)
     {
         $this->logger->debug(
-            sprintf(
+            \sprintf(
                 '%s ACCESS TOKEN: %s, PARTNER ID: %s, SANDBOX: %s',
                 __METHOD__,
                 $accessToken,
@@ -94,9 +94,9 @@ class CredentialsResource
         );
 
         $response = $this->client->get(
-            sprintf('%s%s', $sandbox ? BaseURL::SANDBOX : BaseURL::LIVE, sprintf(RequestUri::CREDENTIALS_RESOURCE, $partnerId)),
+            \sprintf('%s%s', $sandbox ? BaseURL::SANDBOX : BaseURL::LIVE, \sprintf(RequestUri::CREDENTIALS_RESOURCE, $partnerId)),
             [
-                'Authorization' => sprintf('Bearer %s', $accessToken),
+                'Authorization' => \sprintf('Bearer %s', $accessToken),
             ]
         );
 

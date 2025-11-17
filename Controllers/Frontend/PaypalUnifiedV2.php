@@ -34,7 +34,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
             $this->Front()->Plugins()->Json()->setRenderer();
             $this->View()->setTemplate();
 
-            $this->logger->debug(sprintf('%s %s', __METHOD__, 'IS XHR REQUEST'));
+            $this->logger->debug(\sprintf('%s %s', __METHOD__, 'IS XHR REQUEST'));
         }
     }
 
@@ -43,7 +43,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
      */
     public function indexAction()
     {
-        $this->logger->debug(sprintf('%s START', __METHOD__));
+        $this->logger->debug(\sprintf('%s START', __METHOD__));
 
         $session = $this->dependencyProvider->getSession();
         $shopwareSessionOrderData = $session->get('sOrderVariables');
@@ -103,7 +103,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
         $this->view->assign('token', $payPalOrder->getId());
         $this->view->assign('basketId', $orderParams->getBasketUniqueId());
 
-        $this->logger->debug(sprintf('%s END WITH PAYPAL ORDER ID: %s', __METHOD__, $payPalOrder->getId()));
+        $this->logger->debug(\sprintf('%s END WITH PAYPAL ORDER ID: %s', __METHOD__, $payPalOrder->getId()));
     }
 
     /**
@@ -111,7 +111,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
      */
     public function returnAction()
     {
-        $this->logger->debug(sprintf('%s START', __METHOD__));
+        $this->logger->debug(\sprintf('%s START', __METHOD__));
 
         $this->handleComment();
 
@@ -124,7 +124,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
                         'Cannot get token (PayPalOrderId) from request',
                         ErrorCodes::NO_ORDER_TO_PROCESS
                     ),
-                    sprintf('%s try to get token (PayPalOrderId) from request', __METHOD__)
+                    \sprintf('%s try to get token (PayPalOrderId) from request', __METHOD__)
                 );
 
             $this->paymentControllerHelper->handleError($this, $redirectDataBuilder);
@@ -154,7 +154,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
         try {
             $payPalOrder = $this->captureOrAuthorizeOrder($payPalOrder);
         } catch (RequireRestartException $requireRestartException) {
-            $this->logger->debug(sprintf('%s REQUIRES A RESTART', __METHOD__));
+            $this->logger->debug(\sprintf('%s REQUIRES A RESTART', __METHOD__));
 
             $this->redirect([
                 'module' => 'frontend',
@@ -165,7 +165,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
 
             return;
         } catch (PayerActionRequiredException $payerActionRequiredException) {
-            $this->logger->debug(sprintf('%s PAYER_ACTION_REQUIRED', __METHOD__));
+            $this->logger->debug(\sprintf('%s PAYER_ACTION_REQUIRED', __METHOD__));
 
             $this->redirect([
                 'module' => 'frontend',
@@ -176,7 +176,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
 
             return;
         } catch (InstrumentDeclinedException $instrumentDeclinedException) {
-            $this->logger->debug(sprintf('%s INSTRUMENT_DECLINED', __METHOD__));
+            $this->logger->debug(\sprintf('%s INSTRUMENT_DECLINED', __METHOD__));
 
             $this->redirect([
                 'module' => 'frontend',
@@ -216,7 +216,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2 extends AbstractPaypalPaymen
 
         $this->updatePaymentStatus($payPalOrder->getIntent(), $this->getOrderId($shopwareOrderNumber));
 
-        $this->logger->debug(sprintf('%s REDIRECT TO checkout/finish', __METHOD__));
+        $this->logger->debug(\sprintf('%s REDIRECT TO checkout/finish', __METHOD__));
 
         $this->redirect([
             'module' => 'frontend',

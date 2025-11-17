@@ -44,12 +44,12 @@ class Shopware_Controllers_Widgets_PaypalUnifiedOrderNumber extends Enlight_Cont
      */
     public function restoreOrderNumberAction()
     {
-        $this->logger->debug(sprintf('%s START restoring order number', __METHOD__));
+        $this->logger->debug(\sprintf('%s START restoring order number', __METHOD__));
 
         try {
             $this->orderNumberService->restoreOrderNumberToPool();
         } catch (Exception $exception) {
-            $this->logger->error(sprintf('%s Cannot restore order number to pool.', __METHOD__), [
+            $this->logger->error(\sprintf('%s Cannot restore order number to pool.', __METHOD__), [
                 'exceptionMessage' => $exception->getMessage(),
                 'exceptionTrace' => $exception->getTrace(),
             ]);
@@ -59,7 +59,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedOrderNumber extends Enlight_Cont
             return;
         }
 
-        $this->logger->debug(sprintf('%s Restoring order number successful', __METHOD__));
+        $this->logger->debug(\sprintf('%s Restoring order number successful', __METHOD__));
 
         $this->View()->assign('success', true);
     }

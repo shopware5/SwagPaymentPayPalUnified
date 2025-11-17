@@ -41,7 +41,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2PayUponInvoice extends Abstra
      */
     public function indexAction()
     {
-        $this->logger->debug(sprintf('%s START', __METHOD__));
+        $this->logger->debug(\sprintf('%s START', __METHOD__));
 
         $requestId = $this->requestIdService->getRequestIdFromRequest($this->Request());
         $isRequestIdAlreadyUsed = $this->requestIdService->checkRequestIdIsAlreadySetToSession($requestId);
@@ -115,7 +115,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2PayUponInvoice extends Abstra
 
             $this->setTransactionId($shopwareOrderNumber, $payPalOrder);
 
-            $this->logger->debug(sprintf('%s REDIRECT TO checkout/finish', __METHOD__));
+            $this->logger->debug(\sprintf('%s REDIRECT TO checkout/finish', __METHOD__));
 
             $this->redirect([
                 'module' => 'frontend',
@@ -143,7 +143,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2PayUponInvoice extends Abstra
     private function redirectToConfirmWithError(array $error, PuiValidationException $exception)
     {
         $this->logger->debug(
-            sprintf(
+            \sprintf(
                 '%s %s',
                 __METHOD__,
                 $exception->getMessage()

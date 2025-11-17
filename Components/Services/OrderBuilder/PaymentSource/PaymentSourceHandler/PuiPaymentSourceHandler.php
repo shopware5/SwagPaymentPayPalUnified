@@ -34,7 +34,7 @@ class PuiPaymentSourceHandler extends AbstractPaymentSourceHandler
 
         if (!$paymentSourceValue instanceof PayUponInvoice) {
             throw new UnexpectedValueException(
-                sprintf(
+                \sprintf(
                     'Payment source PayUponInvoice expected. Got "%s"',
                     \gettype($paymentSourceValue)
                 )

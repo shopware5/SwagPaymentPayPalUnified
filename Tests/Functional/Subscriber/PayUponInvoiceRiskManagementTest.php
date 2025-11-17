@@ -208,7 +208,7 @@ class PayUponInvoiceRiskManagementTest extends TestCase
                     ]));
             }
 
-            yield sprintf('Payment method is %s', $paymentMethodDescription) => [
+            yield \sprintf('Payment method is %s', $paymentMethodDescription) => [
                 $this->getPayUponInvoiceRiskManagement($paymentMethodProviderMock),
                 $argsMock,
                 $isPayUponInvoice,

@@ -47,7 +47,7 @@ class ShopRegistrationService
     {
         if (!\is_int($shopId)) {
             throw new InvalidArgumentException(
-                sprintf(
+                \sprintf(
                     'The parameter "shopId" does not match. Expected int, got: %s, of type %s.',
                     $shopId,
                     \gettype($shopId)

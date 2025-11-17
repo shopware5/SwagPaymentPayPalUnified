@@ -42,7 +42,7 @@ class OrderArrayFactory
         }
 
         throw new UnexpectedValueException(
-            sprintf('OrderToArrayHandler handler for payment type "%s" not found', $paymentType)
+            \sprintf('OrderToArrayHandler handler for payment type "%s" not found', $paymentType)
         );
     }
 }

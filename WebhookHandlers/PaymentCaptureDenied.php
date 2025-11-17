@@ -63,7 +63,7 @@ class PaymentCaptureDenied extends AbstractWebhook implements WebhookHandler
         $shopwareOrderServiceResult = $this->getOrderServiceResult($webhook);
 
         if (!$shopwareOrderServiceResult instanceof OrderAndPaymentStatusResult) {
-            $webhookException = new WebhookException(sprintf('%s expect OrderAndPaymentStatusResult, got %s', __METHOD__, \gettype($shopwareOrderServiceResult)));
+            $webhookException = new WebhookException(\sprintf('%s expect OrderAndPaymentStatusResult, got %s', __METHOD__, \gettype($shopwareOrderServiceResult)));
             $webhookException->setEventType($this->getEventType());
 
             throw $webhookException;

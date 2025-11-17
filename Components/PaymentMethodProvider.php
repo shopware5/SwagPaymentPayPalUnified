@@ -183,7 +183,7 @@ class PaymentMethodProvider implements PaymentMethodProviderInterface
         }
 
         throw new UnexpectedValueException(
-            sprintf('Payment type for payment method "%s" not found', $paymentMethodName)
+            \sprintf('Payment type for payment method "%s" not found', $paymentMethodName)
         );
     }
 

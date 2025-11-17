@@ -131,12 +131,12 @@ class PaypalUnifiedApmTest extends PaypalPaymentControllerTestCase
         $template = 'Intent: %s, PayPal Order Status: %s';
 
         return [
-            sprintf($template, PaymentIntentV2::CAPTURE, PaymentStatusV2::ORDER_COMPLETED) => [
+            \sprintf($template, PaymentIntentV2::CAPTURE, PaymentStatusV2::ORDER_COMPLETED) => [
                 PaymentIntentV2::CAPTURE,
                 PaymentStatusV2::ORDER_COMPLETED,
                 Status::PAYMENT_STATE_COMPLETELY_PAID,
             ],
-            sprintf($template, PaymentIntentV2::AUTHORIZE, PaymentStatusV2::ORDER_COMPLETED) => [
+            \sprintf($template, PaymentIntentV2::AUTHORIZE, PaymentStatusV2::ORDER_COMPLETED) => [
                 PaymentIntentV2::AUTHORIZE,
                 PaymentStatusV2::ORDER_COMPLETED,
                 Status::PAYMENT_STATE_RESERVED,
