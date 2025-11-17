@@ -34,7 +34,7 @@ class GiropayPaymentSourceHandler extends AbstractPaymentSourceHandler
 
         if (!$apmPaymentSourceValue instanceof Giropay) {
             throw new UnexpectedValueException(
-                \sprintf(
+                sprintf(
                     'Payment source Giropay expected. Got "%s"',
                     \get_class($apmPaymentSourceValue)
                 )

@@ -38,8 +38,8 @@ class RefundResource
      */
     public function get($refundId)
     {
-        $this->logger->debug(\sprintf('%s GET WITH ID %s', __METHOD__, $refundId));
+        $this->logger->debug(sprintf('%s GET WITH ID %s', __METHOD__, $refundId));
 
-        return $this->clientService->sendRequest(RequestType::GET, \sprintf('%s/%s', RequestUri::REFUND_RESOURCE, $refundId));
+        return $this->clientService->sendRequest(RequestType::GET, sprintf('%s/%s', RequestUri::REFUND_RESOURCE, $refundId));
     }
 }

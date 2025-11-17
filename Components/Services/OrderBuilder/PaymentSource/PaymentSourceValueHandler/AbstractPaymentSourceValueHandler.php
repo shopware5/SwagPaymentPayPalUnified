@@ -140,7 +140,7 @@ abstract class AbstractPaymentSourceValueHandler
      */
     private function createName($firstname, $lastname)
     {
-        return \sprintf(self::NAME_TEMPLATE, $firstname, $lastname);
+        return sprintf(self::NAME_TEMPLATE, $firstname, $lastname);
     }
 
     /**

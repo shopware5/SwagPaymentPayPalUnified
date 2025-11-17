@@ -20,7 +20,7 @@ class ThreeDSecureAuthorizationFailedException extends Exception
     {
         $messageTemplate = 'ThreeDSecure failed with status: EnrollmentStatus: %s, AuthenticationStatus: %s, LiabilityShift: %s REASON: %s';
 
-        $message = \sprintf(
+        $message = sprintf(
             $messageTemplate,
             $status->getEnrollmentStatus(),
             $status->getAuthenticationStatus(),

@@ -34,7 +34,7 @@ class TrustlyPaymentSourceHandler extends AbstractPaymentSourceHandler
 
         if (!$apmPaymentSourceValue instanceof Trustly) {
             throw new UnexpectedValueException(
-                \sprintf(
+                sprintf(
                     'Payment source Trustly expected. Got "%s"',
                     \get_class($apmPaymentSourceValue)
                 )

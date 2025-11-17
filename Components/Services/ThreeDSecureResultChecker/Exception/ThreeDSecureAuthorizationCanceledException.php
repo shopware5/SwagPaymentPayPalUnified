@@ -20,7 +20,7 @@ class ThreeDSecureAuthorizationCanceledException extends Exception
     public function __construct(ThreeDSecureResultStatus $status, $code)
     {
         $messageTemplate = 'ThreeDSecure canceled with status: EnrollmentStatus: %s, AuthenticationStatus: %s, LiabilityShift: %s REASON: %s';
-        $message = \sprintf(
+        $message = sprintf(
             $messageTemplate,
             $status->getEnrollmentStatus(),
             $status->getAuthenticationStatus(),

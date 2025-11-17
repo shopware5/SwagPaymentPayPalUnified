@@ -62,13 +62,13 @@ class PaymentStatusService
     public function updatePaymentStatus($parentPayment, $paymentStateId)
     {
         $this->logger->debug(
-            \sprintf('%s PaymentID: %s PaymentStateID : %d', __METHOD__, $parentPayment, $paymentStateId)
+            sprintf('%s PaymentID: %s PaymentStateID : %d', __METHOD__, $parentPayment, $paymentStateId)
         );
 
         $orderModel = $this->modelManager->getRepository(Order::class)->findOneBy(['temporaryId' => $parentPayment]);
 
         if (!$orderModel instanceof Order) {
-            $this->logger->debug(\sprintf('%s ORDER WITH TMP ID: %s NOT FOUND', __METHOD__, $parentPayment));
+            $this->logger->debug(sprintf('%s ORDER WITH TMP ID: %s NOT FOUND', __METHOD__, $parentPayment));
 
             throw new OrderNotFoundException('temporaryId', $parentPayment);
         }
@@ -86,7 +86,7 @@ class PaymentStatusService
     public function updatePaymentStatusV2($shopwareOrderId, $paymentStateId)
     {
         $this->logger->debug(
-            \sprintf('%s ShopwareOrderID: %s PaymentStateID : %d', __METHOD__, $shopwareOrderId, $paymentStateId)
+            sprintf('%s ShopwareOrderID: %s PaymentStateID : %d', __METHOD__, $shopwareOrderId, $paymentStateId)
         );
 
         $this->setPaymentStatus($shopwareOrderId, $paymentStateId);
@@ -134,13 +134,13 @@ class PaymentStatusService
                 'Set automatically by PayPal integration'
             );
         } catch (Zend_Mail_Transport_Exception $e) {
-            $this->logger->error(\sprintf('%s CANNOT SEND STATUS MAIL FOR ORDER: %s', __METHOD__, $shopwareOrderId));
+            $this->logger->error(sprintf('%s CANNOT SEND STATUS MAIL FOR ORDER: %s', __METHOD__, $shopwareOrderId));
         }
         if ($paymentStateId === Status::PAYMENT_STATE_COMPLETELY_PAID || $paymentStateId === Status::PAYMENT_STATE_PARTIALLY_PAID) {
             $this->updateClearedDate($shopwareOrderId);
         }
 
-        $this->logger->debug(\sprintf('%s UPDATE PAYMENT STATUS SUCCESSFUL', __METHOD__));
+        $this->logger->debug(sprintf('%s UPDATE PAYMENT STATUS SUCCESSFUL', __METHOD__));
     }
 
     /**

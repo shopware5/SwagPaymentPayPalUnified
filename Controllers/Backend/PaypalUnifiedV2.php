@@ -79,7 +79,7 @@ class Shopware_Controllers_Backend_PaypalUnifiedV2 extends Shopware_Controllers_
 
     public function orderDetailsAction()
     {
-        $this->logger->debug(\sprintf('%s START', __METHOD__));
+        $this->logger->debug(sprintf('%s START', __METHOD__));
 
         $orderId = $this->request->getParam('id');
         if ($orderId === null) {
@@ -89,11 +89,11 @@ class Shopware_Controllers_Backend_PaypalUnifiedV2 extends Shopware_Controllers_
         }
 
         try {
-            $this->logger->debug(\sprintf('%s GET PAYPAL ORDER WITH ID : %s', __METHOD__, $orderId));
+            $this->logger->debug(sprintf('%s GET PAYPAL ORDER WITH ID : %s', __METHOD__, $orderId));
 
             $paypalOrder = $this->orderResource->get($orderId);
 
-            $this->logger->debug(\sprintf('%s PAYPAL ORDER SUCCESSFULLY LOADED', __METHOD__));
+            $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFULLY LOADED', __METHOD__));
         } catch (Exception $exception) {
             $error = $this->exceptionHandler->handle($exception, 'backend/PaypalUnifiedV2/orderDetails');
             $this->view->assign(['success' => false, 'message' => $error->getCompleteMessage()]);
@@ -106,7 +106,7 @@ class Shopware_Controllers_Backend_PaypalUnifiedV2 extends Shopware_Controllers_
 
     public function captureOrderAction()
     {
-        $this->logger->debug(\sprintf('%s START', __METHOD__));
+        $this->logger->debug(sprintf('%s START', __METHOD__));
 
         $authorizationId = $this->Request()->getParam('authorizationId');
         $amountToCapture = $this->Request()->getParam('amount');
@@ -124,11 +124,11 @@ class Shopware_Controllers_Backend_PaypalUnifiedV2 extends Shopware_Controllers_
         $capture->setFinalCapture($finalize);
 
         try {
-            $this->logger->debug(\sprintf('%s CAPTURE PAYPAL ORDER WITH ID: %s', __METHOD__, $authorizationId));
+            $this->logger->debug(sprintf('%s CAPTURE PAYPAL ORDER WITH ID: %s', __METHOD__, $authorizationId));
 
             $this->authorizationResource->capture($authorizationId, $capture);
 
-            $this->logger->debug(\sprintf('%s PAYPAL ORDER SUCCESSFULLY AUTHORIZED', __METHOD__));
+            $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFULLY AUTHORIZED', __METHOD__));
         } catch (Exception $exception) {
             $payPalException = $this->exceptionHandler->handle($exception, 'backend/PaypalUnifiedV2/captureOrder');
             $this->view->assign([
@@ -150,7 +150,7 @@ class Shopware_Controllers_Backend_PaypalUnifiedV2 extends Shopware_Controllers_
 
     public function refundOrderAction()
     {
-        $this->logger->debug(\sprintf('%s START', __METHOD__));
+        $this->logger->debug(sprintf('%s START', __METHOD__));
 
         $shopwareOrderId = (int) $this->request->getParam('shopwareOrderId');
         $captureId = $this->request->getParam('captureId');
@@ -168,11 +168,11 @@ class Shopware_Controllers_Backend_PaypalUnifiedV2 extends Shopware_Controllers_
         $refund->setNoteToPayer($note);
 
         try {
-            $this->logger->debug(\sprintf('%s REFUND PAYPAL ORDER WITH ID: %s AMOUNT: %d', __METHOD__, $captureId, $amount->getValue()));
+            $this->logger->debug(sprintf('%s REFUND PAYPAL ORDER WITH ID: %s AMOUNT: %d', __METHOD__, $captureId, $amount->getValue()));
 
             $refundResult = $this->captureResource->refund($captureId, $refund);
 
-            $this->logger->debug(\sprintf('%s PAYPAL ORDER SUCCESSFULLY REFUNDED', __METHOD__));
+            $this->logger->debug(sprintf('%s PAYPAL ORDER SUCCESSFULLY REFUNDED', __METHOD__));
         } catch (Exception $exception) {
             $payPalException = $this->exceptionHandler->handle($exception, 'backend/PaypalUnifiedV2/refundOrder');
             $this->view->assign([
@@ -198,20 +198,20 @@ class Shopware_Controllers_Backend_PaypalUnifiedV2 extends Shopware_Controllers_
 
     public function cancelAuthorizationAction()
     {
-        $this->logger->debug(\sprintf('%s START', __METHOD__));
+        $this->logger->debug(sprintf('%s START', __METHOD__));
 
         $authorizationId = $this->Request()->getParam('authorizationId');
         $paypalOrderId = $this->Request()->getParam('token');
         $shopwareOrderId = $this->Request()->getParam('shopwareOrderId');
 
         try {
-            $this->logger->debug(\sprintf('%s CANCEL AUTHORIZATION OF PAYPAL ORDER WITH ID: %s', __METHOD__, $authorizationId));
+            $this->logger->debug(sprintf('%s CANCEL AUTHORIZATION OF PAYPAL ORDER WITH ID: %s', __METHOD__, $authorizationId));
 
             $this->authorizationResource->void($authorizationId);
 
             $paypalOrder = $this->orderResource->get($paypalOrderId);
 
-            $this->logger->debug(\sprintf('%s CANCEL AUTHORIZATION SUCCESSFUL', __METHOD__));
+            $this->logger->debug(sprintf('%s CANCEL AUTHORIZATION SUCCESSFUL', __METHOD__));
         } catch (Exception $exception) {
             $payPalException = $this->exceptionHandler->handle($exception, 'backend/PaypalUnifiedV2/cancelAuthorization');
             $this->view->assign([

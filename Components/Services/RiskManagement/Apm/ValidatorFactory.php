@@ -52,7 +52,7 @@ class ValidatorFactory
         }
 
         throw new UnexpectedValueException(
-            \sprintf('Validator handler for payment type "%s" not found', $paymentType)
+            sprintf('Validator handler for payment type "%s" not found', $paymentType)
         );
     }
 }

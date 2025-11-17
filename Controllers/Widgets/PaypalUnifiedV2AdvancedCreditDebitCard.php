@@ -55,7 +55,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2AdvancedCreditDebitCard extend
      */
     public function createOrderAction()
     {
-        $this->logger->debug(\sprintf('%s START', __METHOD__));
+        $this->logger->debug(sprintf('%s START', __METHOD__));
 
         $session = $this->dependencyProvider->getSession();
         $shopwareSessionOrderData = $session->get('sOrderVariables');
@@ -119,7 +119,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2AdvancedCreditDebitCard extend
      */
     public function captureAction()
     {
-        $this->logger->debug(\sprintf('%s START', __METHOD__));
+        $this->logger->debug(sprintf('%s START', __METHOD__));
 
         $payPalOrderId = $this->request->getParam('token');
         $threeDSecureRetry = (int) $this->request->getParam('threeDSecureRetry', 0);
@@ -201,7 +201,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2AdvancedCreditDebitCard extend
             }
 
             // else: nothing to do, because cards without 3Ds are allowed. Just log.
-            $this->logger->debug(\sprintf('%s CARD WITHOUT 3DS', __METHOD__));
+            $this->logger->debug(sprintf('%s CARD WITHOUT 3DS', __METHOD__));
         } catch (Exception $exception) {
             $redirectDataBuilder = $this->redirectDataBuilderFactory->createRedirectDataBuilder()
                 ->setCode($exception->getCode())
@@ -224,7 +224,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2AdvancedCreditDebitCard extend
         try {
             $payPalOrder = $this->captureOrAuthorizeOrder($payPalOrder);
         } catch (RequireRestartException $requireRestartException) {
-            $this->logger->debug(\sprintf('%s REQUIRES A RESTART', __METHOD__));
+            $this->logger->debug(sprintf('%s REQUIRES A RESTART', __METHOD__));
 
             $this->redirect([
                 'module' => 'widgets',
@@ -235,7 +235,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2AdvancedCreditDebitCard extend
 
             return;
         } catch (PayerActionRequiredException $payerActionRequiredException) {
-            $this->logger->debug(\sprintf('%s PAYER_ACTION_REQUIRED', __METHOD__));
+            $this->logger->debug(sprintf('%s PAYER_ACTION_REQUIRED', __METHOD__));
 
             $this->Response()->setHttpResponseCode(Response::HTTP_BAD_REQUEST);
             $redirectUrl = $this->dependencyProvider->getRouter()->assemble([
@@ -249,7 +249,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2AdvancedCreditDebitCard extend
 
             return;
         } catch (InstrumentDeclinedException $instrumentDeclinedException) {
-            $this->logger->debug(\sprintf('%s INSTRUMENT_DECLINED', __METHOD__));
+            $this->logger->debug(sprintf('%s INSTRUMENT_DECLINED', __METHOD__));
 
             $this->Response()->setHttpResponseCode(Response::HTTP_BAD_REQUEST);
             $redirectUrl = $this->dependencyProvider->getRouter()->assemble([
@@ -280,7 +280,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2AdvancedCreditDebitCard extend
             return;
         }
 
-        $this->logger->debug(\sprintf('%s SET PAYPAL ORDER ID TO SESSION: ID: %s', __METHOD__, $payPalOrderId));
+        $this->logger->debug(sprintf('%s SET PAYPAL ORDER ID TO SESSION: ID: %s', __METHOD__, $payPalOrderId));
 
         $this->dependencyProvider->getSession()->offsetSet('token', $payPalOrderId);
     }
@@ -292,7 +292,7 @@ class Shopware_Controllers_Widgets_PaypalUnifiedV2AdvancedCreditDebitCard extend
     {
         $paypalUnifiedErrorCode = $this->request->getParam('code');
 
-        $this->logger->error(\sprintf('%s ERROR WITH CODE: %d', __METHOD__, $paypalUnifiedErrorCode ?: ErrorCodes::UNKNOWN));
+        $this->logger->error(sprintf('%s ERROR WITH CODE: %d', __METHOD__, $paypalUnifiedErrorCode ?: ErrorCodes::UNKNOWN));
 
         $this->View()->assign('paypalUnifiedErrorCode', $paypalUnifiedErrorCode ?: ErrorCodes::UNKNOWN);
         $this->View()->extendsTemplate($this->container->getParameter('paypal_unified.plugin_dir') . '/Resources/views/frontend/paypal_unified/checkout/error_message.tpl');

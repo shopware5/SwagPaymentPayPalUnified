@@ -41,7 +41,7 @@ class PayPalPaymentSourceHandler extends AbstractPaymentSourceHandler
 
         if (!$payPalPaymentSourceValue instanceof PayPal) {
             throw new UnexpectedValueException(
-                \sprintf(
+                sprintf(
                     'Payment source PayPal expected. Got "%s"',
                     \gettype($payPalPaymentSourceValue)
                 )

@@ -39,7 +39,7 @@ class OrderFactory
         }
 
         throw new UnexpectedValueException(
-            \sprintf('Create order handler for payment type "%s" not found', $orderParameter->getPaymentType())
+            sprintf('Create order handler for payment type "%s" not found', $orderParameter->getPaymentType())
         );
     }
 }

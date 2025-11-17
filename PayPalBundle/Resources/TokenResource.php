@@ -37,7 +37,7 @@ class TokenResource
      */
     public function get(OAuthCredentials $credentials)
     {
-        $this->logger->debug(\sprintf('%s GET NEW TOKEN FROM API WITH CREDENTIALS: %s', __METHOD__, $credentials->toString()));
+        $this->logger->debug(sprintf('%s GET NEW TOKEN FROM API WITH CREDENTIALS: %s', __METHOD__, $credentials->toString()));
 
         $data = [
             'grant_type' => 'client_credentials',

@@ -102,12 +102,12 @@ class OnboardingStatusService
 
             if (!\is_array($response)) {
                 // Coarse logging is enough here, as the request parameters are logged inside the resource class
-                $this->loggerService->debug(\sprintf('%s MERCHANT INTEGRATIONS CALL UNSUCCESSFUL', __METHOD__));
+                $this->loggerService->debug(sprintf('%s MERCHANT INTEGRATIONS CALL UNSUCCESSFUL', __METHOD__));
 
                 return new IsCapableResult(false);
             }
 
-            $this->loggerService->debug(\sprintf('%s MERCHANT INTEGRATIONS: %s', __METHOD__, \json_encode($response)));
+            $this->loggerService->debug(sprintf('%s MERCHANT INTEGRATIONS: %s', __METHOD__, \json_encode($response)));
 
             $this->lastResponsePaymentsReceivable = $this->getBoolValueFromResponseArray(IsCapableResult::PAYMENTS_RECEIVABLE, $response);
             $this->lastResponsePrimaryEmailConfirmed = $this->getBoolValueFromResponseArray(IsCapableResult::PRIMARY_EMAIL_CONFIRMED, $response);
@@ -158,12 +158,12 @@ class OnboardingStatusService
 
             if (!\is_array($response)) {
                 // Coarse logging is enough here, as the request parameters are logged inside the resource class
-                $this->loggerService->debug(\sprintf('%s MERCHANT INTEGRATIONS CALL UNSUCCESSFUL', __METHOD__));
+                $this->loggerService->debug(sprintf('%s MERCHANT INTEGRATIONS CALL UNSUCCESSFUL', __METHOD__));
 
                 return false;
             }
 
-            $this->loggerService->debug(\sprintf('%s MERCHANT INTEGRATIONS: %s', __METHOD__, \json_encode($response)));
+            $this->loggerService->debug(sprintf('%s MERCHANT INTEGRATIONS: %s', __METHOD__, \json_encode($response)));
 
             $products = $response['products'];
             if (!\is_array($products)) {

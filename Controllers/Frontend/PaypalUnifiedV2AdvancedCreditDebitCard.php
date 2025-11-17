@@ -18,7 +18,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2AdvancedCreditDebitCard exten
      */
     public function indexAction()
     {
-        $this->logger->debug(\sprintf('%s START', __METHOD__));
+        $this->logger->debug(sprintf('%s START', __METHOD__));
 
         $session = $this->dependencyProvider->getSession();
 
@@ -55,7 +55,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2AdvancedCreditDebitCard exten
 
             $this->updatePaymentStatus($payPalOrder->getIntent(), $this->getOrderId($shopwareOrderNumber));
 
-            $this->logger->debug(\sprintf('%s REDIRECT TO checkout/finish', __METHOD__));
+            $this->logger->debug(sprintf('%s REDIRECT TO checkout/finish', __METHOD__));
 
             $this->redirect([
                 'module' => 'frontend',

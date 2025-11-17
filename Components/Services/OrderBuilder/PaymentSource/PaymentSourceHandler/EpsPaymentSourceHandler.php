@@ -34,7 +34,7 @@ class EpsPaymentSourceHandler extends AbstractPaymentSourceHandler
 
         if (!$apmPaymentSourceValue instanceof Eps) {
             throw new UnexpectedValueException(
-                \sprintf(
+                sprintf(
                     'Payment source Eps expected. Got "%s"',
                     \get_class($apmPaymentSourceValue)
                 )

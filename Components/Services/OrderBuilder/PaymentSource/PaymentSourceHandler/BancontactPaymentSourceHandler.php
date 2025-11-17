@@ -36,7 +36,7 @@ class BancontactPaymentSourceHandler extends AbstractPaymentSourceHandler
 
         if (!$apmPaymentSourceValue instanceof Bancontact) {
             throw new UnexpectedValueException(
-                \sprintf(
+                sprintf(
                     'Payment source Bancontact expected. Got "%s"',
                     \get_class($apmPaymentSourceValue)
                 )

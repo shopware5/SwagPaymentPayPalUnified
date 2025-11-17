@@ -193,8 +193,8 @@ class AbstractOrderHandlerCreatePurchaseUnitTest extends TestCase
      */
     private function createPayPalOrderParameter($paymentType, $customerFixtureName, $cartFixtureName)
     {
-        $customerData = require __DIR__ . \sprintf('/_fixtures/%s.php', $customerFixtureName);
-        $basketData = require __DIR__ . \sprintf('/_fixtures/%s.php', $cartFixtureName);
+        $customerData = require __DIR__ . sprintf('/_fixtures/%s.php', $customerFixtureName);
+        $basketData = require __DIR__ . sprintf('/_fixtures/%s.php', $cartFixtureName);
 
         return new PayPalOrderParameter(
             $customerData,

@@ -256,7 +256,7 @@ class PaypalPaymentControllerTestCase extends TestCase
         );
 
         if (!$controller instanceof $controllerClass) {
-            throw new UnexpectedValueException(\sprintf('Instantiation of controller %s failed.', $controllerClass));
+            throw new UnexpectedValueException(sprintf('Instantiation of controller %s failed.', $controllerClass));
         }
 
         if ($view === null) {

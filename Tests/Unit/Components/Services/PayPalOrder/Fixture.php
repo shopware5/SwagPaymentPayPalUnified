@@ -440,11 +440,11 @@ class Fixture
             'name' => 'Test product',
             'unitAmount' => (new UnitAmount())->assign([
                 'currencyCode' => 'EUR',
-                'value' => \sprintf('%.2f', self::getPrice() / self::getTaxRate()),
+                'value' => sprintf('%.2f', self::getPrice() / self::getTaxRate()),
             ]),
             'tax' => (new Tax())->assign([
                 'currencyCode' => 'EUR',
-                'value' => \sprintf('%.2f', self::getPrice() - self::getPrice() / self::getTaxRate()),
+                'value' => sprintf('%.2f', self::getPrice() - self::getPrice() / self::getTaxRate()),
             ]),
             'taxRate' => '19',
             'quantity' => self::getQuantity(),

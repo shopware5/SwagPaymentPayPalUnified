@@ -224,7 +224,7 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
         $nonce = (string) $this->request->getParam('nonce');
         $sandbox = (bool) $this->request->getParam('sandbox');
 
-        $this->logger->debug(\sprintf('%s START', __METHOD__));
+        $this->logger->debug(sprintf('%s START', __METHOD__));
 
         /** @var CredentialsService $credentialsService */
         $credentialsService = $this->get('paypal_unified.backend.credentials_service');
@@ -275,7 +275,7 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
      */
     private function updateOnboardingStatus($shopId, $sandbox)
     {
-        $this->logger->debug(\sprintf('%s START', __METHOD__));
+        $this->logger->debug(sprintf('%s START', __METHOD__));
 
         $entityManager = $this->container->get('models');
         $settingsService = $this->container->get('paypal_unified.settings_service');
@@ -291,18 +291,18 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
         ];
 
         if (!$puiSettings instanceof PayUponInvoice) {
-            $this->logger->debug(\sprintf('%s CREATE NEW %s SETTINGS OBJECT', __METHOD__, PayUponInvoice::class));
+            $this->logger->debug(sprintf('%s CREATE NEW %s SETTINGS OBJECT', __METHOD__, PayUponInvoice::class));
 
             $puiSettings = (new PayUponInvoice())->fromArray($defaultSettings);
         }
 
         if (!$acdcSettings instanceof AdvancedCreditDebitCard) {
-            $this->logger->debug(\sprintf('%s CREATE NEW %s SETTINGS OBJECT', __METHOD__, AdvancedCreditDebitCard::class));
+            $this->logger->debug(sprintf('%s CREATE NEW %s SETTINGS OBJECT', __METHOD__, AdvancedCreditDebitCard::class));
 
             $acdcSettings = (new AdvancedCreditDebitCard())->fromArray($defaultSettings);
         }
 
-        $this->logger->debug(\sprintf('%s IS SANDBOX: %s', __METHOD__, $sandbox ? 'TRUE' : 'FALSE'));
+        $this->logger->debug(sprintf('%s IS SANDBOX: %s', __METHOD__, $sandbox ? 'TRUE' : 'FALSE'));
 
         if ($sandbox) {
             $puiSettings->setSandboxOnboardingCompleted(true);
@@ -317,6 +317,6 @@ class Shopware_Controllers_Backend_PaypalUnifiedSettings extends Shopware_Contro
 
         $entityManager->flush();
 
-        $this->logger->debug(\sprintf('%s ONBOARDING STATUS SUCCESSFUL UPDATED', __METHOD__));
+        $this->logger->debug(sprintf('%s ONBOARDING STATUS SUCCESSFUL UPDATED', __METHOD__));
     }
 }

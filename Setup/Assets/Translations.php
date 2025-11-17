@@ -24,7 +24,7 @@ final class Translations
 <br>
 <!-- PayPal Logo -->
 <span>Paying with PayPal - easy, fast and secure.</span>
-EOD,
+EOD
             ],
             PaymentMethodProviderInterface::PAYPAL_UNIFIED_ADVANCED_CREDIT_DEBIT_CARD_METHOD_NAME => [
                 'description' => 'Credit or debit card',
@@ -38,14 +38,14 @@ EOD,
                 'description' => 'Direct debit',
                 'additionalDescription' => <<<'EOD'
 <img src="{link file='frontend/_public/src/img/sepa_payment.png' fullPath}" alt="SEPA Direct debit">
-EOD,
+EOD
             ],
             PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_LATER_METHOD_NAME => [
                 'description' => 'PayPal, Pay in 3',
                 'additionalDescription' => <<<'EOD'
 <!-- PayPal PayLater Message -->
 <div data-pp-message data-pp-style-logo-type="primary" data-pp-placement="payment" data-pp-style-logo-position="left" data-pp-style-text-size="14" data-pp-style-text-color="black" style="margin-top: 5px;"></div>
-EOD,
+EOD
             ],
         ],
         'de_DE' => [
@@ -59,7 +59,7 @@ EOD,
 <br>
 <!-- PayPal Logo -->
 <span>Bezahlung per PayPal - einfach, schnell und sicher.</span>
-EOD,
+EOD
             ],
             PaymentMethodProviderInterface::PAYPAL_UNIFIED_ADVANCED_CREDIT_DEBIT_CARD_METHOD_NAME => [
                 'description' => 'Kredit- oder Debitkarte',
@@ -73,14 +73,14 @@ EOD,
                 'description' => 'Lastschrift',
                 'additionalDescription' => <<<'EOD'
 <img src="{link file='frontend/_public/src/img/sepa_payment.png' fullPath}" alt="SEPA Lastschrift'">
-EOD,
+EOD
             ],
             PaymentMethodProviderInterface::PAYPAL_UNIFIED_PAY_LATER_METHOD_NAME => [
                 'description' => 'PayPal, Später Bezahlen',
                 'additionalDescription' => <<<'EOD'
 <!-- PayPal PayLater Message -->
 <div data-pp-message data-pp-style-logo-type="primary" data-pp-placement="payment" data-pp-style-logo-position="left" data-pp-style-text-size="14" data-pp-style-text-color="black" style="margin-top: 5px;"></div>
-EOD,
+EOD
             ],
         ],
         'en_US' => [
@@ -89,7 +89,7 @@ EOD,
                 'additionalDescription' => <<<'EOD'
 <!-- PayPal PayLater Message -->
 <div data-pp-message data-pp-style-logo-type="primary" data-pp-placement="payment" data-pp-style-logo-position="left" data-pp-style-text-size="14" data-pp-style-text-color="black" style="margin-top: 5px;"></div>
-EOD,
+EOD
             ],
         ],
         'fr_FR' => [
@@ -98,7 +98,7 @@ EOD,
                 'additionalDescription' => <<<'EOD'
 <!-- PayPal PayLater Message -->
 <div data-pp-message data-pp-style-logo-type="primary" data-pp-placement="payment" data-pp-style-logo-position="left" data-pp-style-text-size="14" data-pp-style-text-color="black" style="margin-top: 5px;"></div>
-EOD,
+EOD
             ],
         ],
         'it_IT' => [
@@ -107,7 +107,7 @@ EOD,
                 'additionalDescription' => <<<'EOD'
 <!-- PayPal PayLater Message -->
 <div data-pp-message data-pp-style-logo-type="primary" data-pp-placement="payment" data-pp-style-logo-position="left" data-pp-style-text-size="14" data-pp-style-text-color="black" style="margin-top: 5px;"></div>
-EOD,
+EOD
             ],
         ],
         'es_ES' => [
@@ -116,7 +116,7 @@ EOD,
                 'additionalDescription' => <<<'EOD'
 <!-- PayPal PayLater Message -->
 <div data-pp-message data-pp-style-logo-type="primary" data-pp-placement="payment" data-pp-style-logo-position="left" data-pp-style-text-size="14" data-pp-style-text-color="black" style="margin-top: 5px;"></div>
-EOD,
+EOD
             ],
         ],
         'en_AU' => [
@@ -125,7 +125,7 @@ EOD,
                 'additionalDescription' => <<<'EOD'
 <!-- PayPal PayLater Message -->
 <div data-pp-message data-pp-style-logo-type="primary" data-pp-placement="payment" data-pp-style-logo-position="left" data-pp-style-text-size="14" data-pp-style-text-color="black" style="margin-top: 5px;"></div>
-EOD,
+EOD
             ],
         ],
     ];

@@ -94,7 +94,7 @@ class AmountProvider
                 if (!$item->getTax() instanceof Tax) {
                     $discountValue += $item->getQuantity() * abs($itemUnitAmount);
                 } else {
-                    $discountValue += $item->getQuantity() * (abs($itemUnitAmount) + abs((float) $item->getTax()->getValue()));
+                    $discountValue += $item->getQuantity() * (abs($itemUnitAmount) + abs($item->getTax()->getValue()));
                 }
             } else {
                 $itemTotalValue += $item->getQuantity() * $itemUnitAmount;

@@ -34,7 +34,7 @@ class AdvancedCreditDebitCardPaymentSourceHandler extends AbstractPaymentSourceH
 
         if (!$payPalPaymentSourceValue instanceof Card) {
             throw new UnexpectedValueException(
-                \sprintf(
+                sprintf(
                     'Payment source Card expected. Got "%s"',
                     \gettype($payPalPaymentSourceValue)
                 )

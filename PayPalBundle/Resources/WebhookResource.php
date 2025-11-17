@@ -36,7 +36,7 @@ class WebhookResource
      */
     public function getList()
     {
-        $this->logger->debug(\sprintf('%s GET LIST', __METHOD__));
+        $this->logger->debug(sprintf('%s GET LIST', __METHOD__));
 
         return $this->client->sendRequest(RequestType::GET, RequestUri::WEBHOOK_RESOURCE);
     }
@@ -48,7 +48,7 @@ class WebhookResource
      */
     public function create($url, array $events)
     {
-        $this->logger->debug(\sprintf('%s CREATE WITH URL: %s', __METHOD__, $url));
+        $this->logger->debug(sprintf('%s CREATE WITH URL: %s', __METHOD__, $url));
 
         $data = [
             'url' => $url,

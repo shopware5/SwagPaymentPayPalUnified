@@ -271,7 +271,7 @@ class PaymentBuilderService implements PaymentBuilderInterface
         $shop = $this->dependencyProvider->getShop();
 
         if (!$shop instanceof Shop) {
-            throw new UnexpectedValueException(\sprintf('Tried to access %s, but it\'s not set in the DIC.', Shop::class));
+            throw new UnexpectedValueException(sprintf('Tried to access %s, but it\'s not set in the DIC.', Shop::class));
         }
 
         $applicationContext->setBrandName($this->getBrandName());

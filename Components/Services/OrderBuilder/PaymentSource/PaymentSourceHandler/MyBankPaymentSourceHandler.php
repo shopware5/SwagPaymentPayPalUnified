@@ -34,7 +34,7 @@ class MyBankPaymentSourceHandler extends AbstractPaymentSourceHandler
 
         if (!$apmPaymentSourceValue instanceof Mybank) {
             throw new UnexpectedValueException(
-                \sprintf(
+                sprintf(
                     'Payment source MyBank expected. Got "%s"',
                     \get_class($apmPaymentSourceValue)
                 )

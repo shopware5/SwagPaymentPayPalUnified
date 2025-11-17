@@ -39,11 +39,11 @@ class AuthorizationResource
      */
     public function get($id)
     {
-        $this->logger->debug(\sprintf('%s GET WITH ID %s', __METHOD__, $id));
+        $this->logger->debug(sprintf('%s GET WITH ID %s', __METHOD__, $id));
 
         return $this->clientService->sendRequest(
             RequestType::GET,
-            \sprintf('%s/%s', RequestUri::AUTHORIZATION_RESOURCE, $id)
+            sprintf('%s/%s', RequestUri::AUTHORIZATION_RESOURCE, $id)
         );
     }
 
@@ -54,11 +54,11 @@ class AuthorizationResource
      */
     public function void($id)
     {
-        $this->logger->debug(\sprintf('%s VOID WITH ID %s', __METHOD__, $id));
+        $this->logger->debug(sprintf('%s VOID WITH ID %s', __METHOD__, $id));
 
         return $this->clientService->sendRequest(
             RequestType::POST,
-            \sprintf('%s/%s/void', RequestUri::AUTHORIZATION_RESOURCE, $id)
+            sprintf('%s/%s/void', RequestUri::AUTHORIZATION_RESOURCE, $id)
         );
     }
 
@@ -69,13 +69,13 @@ class AuthorizationResource
      */
     public function capture($id, Capture $capture)
     {
-        $this->logger->debug(\sprintf('%s CAPTURE WITH ID %s', __METHOD__, $id), $capture->toArray());
+        $this->logger->debug(sprintf('%s CAPTURE WITH ID %s', __METHOD__, $id), $capture->toArray());
 
         $requestData = $capture->toArray();
 
         return $this->clientService->sendRequest(
             RequestType::POST,
-            \sprintf('%s/%s/capture', RequestUri::AUTHORIZATION_RESOURCE, $id),
+            sprintf('%s/%s/capture', RequestUri::AUTHORIZATION_RESOURCE, $id),
             $requestData
         );
     }

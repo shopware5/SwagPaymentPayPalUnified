@@ -110,8 +110,8 @@ class ItemListProviderTest extends TestCase
         $taxRate = Fixture::getTaxRate();
 
         static::assertInstanceOf(Tax::class, $item->getTax());
-        static::assertSame(\sprintf('%.2f', $price / $taxRate), $item->getUnitAmount()->getValue());
-        static::assertSame(\sprintf('%.2f', $price - $price / $taxRate), $item->getTax()->getValue());
+        static::assertSame(sprintf('%.2f', $price / $taxRate), $item->getUnitAmount()->getValue());
+        static::assertSame(sprintf('%.2f', $price - $price / $taxRate), $item->getTax()->getValue());
     }
 
     /**

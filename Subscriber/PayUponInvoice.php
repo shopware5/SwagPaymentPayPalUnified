@@ -118,7 +118,7 @@ class PayUponInvoice implements SubscriberInterface
             $phoneNumber = $args->getRequest()->getParam('puiTelephoneNumber');
 
             if (\is_array($dateOfBirth)) {
-                $dateOfBirth = \sprintf('%s-%s-%s', $dateOfBirth['year'], $dateOfBirth['month'], $dateOfBirth['day']);
+                $dateOfBirth = sprintf('%s-%s-%s', $dateOfBirth['year'], $dateOfBirth['month'], $dateOfBirth['day']);
             }
 
             $this->handleExtraData($dateOfBirth, $phoneNumber);

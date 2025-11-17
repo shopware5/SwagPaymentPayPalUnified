@@ -43,7 +43,7 @@ class TokenService
      */
     public function getToken(ClientService $client, OAuthCredentials $credentials, $shopId)
     {
-        $this->logger->debug(\sprintf('%s START GET TOKEN WITH CREDENTIALS: %s AND SHOP ID: %s', __METHOD__, $credentials->toString(), $shopId));
+        $this->logger->debug(sprintf('%s START GET TOKEN WITH CREDENTIALS: %s AND SHOP ID: %s', __METHOD__, $credentials->toString(), $shopId));
 
         $token = $this->getTokenFromCache($shopId);
         if ($token === false || !$this->isTokenValid($token)) {
@@ -52,9 +52,9 @@ class TokenService
             $token = Token::fromArray($tokenResource->get($credentials));
             $this->setToken($token, $shopId);
 
-            $this->logger->debug(\sprintf('%s GENERATED NEW TOKEN FOR SHOP ID: %s', __METHOD__, $shopId));
+            $this->logger->debug(sprintf('%s GENERATED NEW TOKEN FOR SHOP ID: %s', __METHOD__, $shopId));
         } else {
-            $this->logger->debug(\sprintf('%s GOT TOKEN FROM CACHE FOR SHOP ID: %s', __METHOD__, $shopId));
+            $this->logger->debug(sprintf('%s GOT TOKEN FROM CACHE FOR SHOP ID: %s', __METHOD__, $shopId));
         }
 
         return $token;
@@ -67,7 +67,7 @@ class TokenService
      */
     public function invalidateCache($shopId)
     {
-        $this->logger->debug(\sprintf('%s INVALIDATING AUTHENTICATION CACHE FOR SHOP ID: %d', __METHOD__, $shopId));
+        $this->logger->debug(sprintf('%s INVALIDATING AUTHENTICATION CACHE FOR SHOP ID: %d', __METHOD__, $shopId));
 
         $this->cacheManager->getCoreCache()->remove(self::CACHE_ID . $shopId);
     }
@@ -79,12 +79,12 @@ class TokenService
      */
     private function getTokenFromCache($shopId)
     {
-        $this->logger->debug(\sprintf('%s START READ TOKEN FROM CACHE WITH SHOP ID: %s', __METHOD__, $shopId));
+        $this->logger->debug(sprintf('%s START READ TOKEN FROM CACHE WITH SHOP ID: %s', __METHOD__, $shopId));
 
         $token = \unserialize($this->cacheManager->getCoreCache()->load(self::CACHE_ID . $shopId));
 
         if (!$token instanceof Token) {
-            $this->logger->debug(\sprintf('%s TOKEN CANNOT BE READ FROM CACHE WITH SHOP ID: %s', __METHOD__, $shopId));
+            $this->logger->debug(sprintf('%s TOKEN CANNOT BE READ FROM CACHE WITH SHOP ID: %s', __METHOD__, $shopId));
         }
 
         return $token;
@@ -95,7 +95,7 @@ class TokenService
      */
     private function setToken(Token $token, $shopId)
     {
-        $this->logger->debug(\sprintf('%s SET TOKEN WITH SHOP ID: %s TO CACHE', __METHOD__, $shopId));
+        $this->logger->debug(sprintf('%s SET TOKEN WITH SHOP ID: %s TO CACHE', __METHOD__, $shopId));
 
         $this->cacheManager->getCoreCache()->save(\serialize($token), self::CACHE_ID . $shopId);
     }
@@ -111,7 +111,7 @@ class TokenService
         $dateTimeExpire = $dateTimeExpire->sub(new DateInterval('PT1M'));
 
         if ($dateTimeExpire < $dateTimeNow) {
-            $this->logger->debug(\sprintf('%s TOKEN IS NO LONGER VALID', __METHOD__), [
+            $this->logger->debug(sprintf('%s TOKEN IS NO LONGER VALID', __METHOD__), [
                 'expire_date' => $dateTimeExpire->format('Y-m-d H:i:s'),
                 'now_date' => $dateTimeNow->format('Y-m-d H:i:s'),
             ]);
@@ -119,7 +119,7 @@ class TokenService
             return false;
         }
 
-        $this->logger->debug(\sprintf('%s TOKEN IS STILL VALID', __METHOD__), [
+        $this->logger->debug(sprintf('%s TOKEN IS STILL VALID', __METHOD__), [
             'expire_date' => $dateTimeExpire->format('Y-m-d H:i:s'),
             'now_date' => $dateTimeNow->format('Y-m-d H:i:s'),
         ]);

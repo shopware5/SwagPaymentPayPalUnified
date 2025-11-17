@@ -145,7 +145,7 @@ class ItemListProvider
         $tax = new Tax();
 
         $tax->setCurrencyCode($currency);
-        $tax->setValue(\sprintf('%.2f', $this->getSingleItemTaxAmount($lineItem, $customer)));
+        $tax->setValue(sprintf('%.2f', $this->getSingleItemTaxAmount($lineItem, $customer)));
 
         $item->setTax($tax);
         $item->setTaxRate($lineItem['tax_rate']);

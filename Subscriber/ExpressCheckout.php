@@ -310,7 +310,7 @@ class ExpressCheckout implements SubscriberInterface
         $shop = $this->dependencyProvider->getShop();
 
         if (!$shop instanceof Shop) {
-            throw new UnexpectedValueException(\sprintf('Expected instance of %s, got null.', Shop::class));
+            throw new UnexpectedValueException(sprintf('Expected instance of %s, got null.', Shop::class));
         }
 
         $view->assign('paypalUnifiedCurrency', $shop->getCurrency()->getCurrency());

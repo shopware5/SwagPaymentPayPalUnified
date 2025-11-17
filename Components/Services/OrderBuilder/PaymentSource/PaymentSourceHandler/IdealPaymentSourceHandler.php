@@ -34,7 +34,7 @@ class IdealPaymentSourceHandler extends AbstractPaymentSourceHandler
 
         if (!$apmPaymentSourceValue instanceof Ideal) {
             throw new UnexpectedValueException(
-                \sprintf(
+                sprintf(
                     'Payment source Ideal expected. Got "%s"',
                     \get_class($apmPaymentSourceValue)
                 )

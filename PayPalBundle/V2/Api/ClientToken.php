@@ -123,7 +123,7 @@ class ClientToken extends PayPalApiStruct
     {
         parent::assign($arrayDataWithSnakeCaseKeys);
 
-        $intervalString = \sprintf(
+        $intervalString = sprintf(
             self::INTERVAL_TEMPLATE,
             $arrayDataWithSnakeCaseKeys[self::EXPIRES_IN_KEY] - self::COMPENSATION_BUFFER
         );

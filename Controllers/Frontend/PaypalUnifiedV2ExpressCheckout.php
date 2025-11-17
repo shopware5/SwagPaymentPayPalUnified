@@ -29,7 +29,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2ExpressCheckout extends Abstr
      */
     public function expressCheckoutFinishAction()
     {
-        $this->logger->debug(\sprintf('%s START', __METHOD__));
+        $this->logger->debug(sprintf('%s START', __METHOD__));
 
         $payPalOrderId = $this->request->getParam('token');
 
@@ -80,7 +80,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2ExpressCheckout extends Abstr
         try {
             $payPalOrder = $this->captureOrAuthorizeOrder($payPalOrder);
         } catch (RequireRestartException $requireRestartException) {
-            $this->logger->debug(\sprintf('%s REQUIRES A RESTART', __METHOD__));
+            $this->logger->debug(sprintf('%s REQUIRES A RESTART', __METHOD__));
 
             $this->redirect([
                 'module' => 'frontend',
@@ -91,7 +91,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2ExpressCheckout extends Abstr
 
             return;
         } catch (PayerActionRequiredException $payerActionRequiredException) {
-            $this->logger->debug(\sprintf('%s PAYER_ACTION_REQUIRED', __METHOD__));
+            $this->logger->debug(sprintf('%s PAYER_ACTION_REQUIRED', __METHOD__));
 
             $this->redirect([
                 'module' => 'frontend',
@@ -102,7 +102,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2ExpressCheckout extends Abstr
 
             return;
         } catch (InstrumentDeclinedException $instrumentDeclinedException) {
-            $this->logger->debug(\sprintf('%s INSTRUMENT_DECLINED', __METHOD__));
+            $this->logger->debug(sprintf('%s INSTRUMENT_DECLINED', __METHOD__));
 
             $this->redirect([
                 'module' => 'frontend',
@@ -142,7 +142,7 @@ class Shopware_Controllers_Frontend_PaypalUnifiedV2ExpressCheckout extends Abstr
 
         $this->updatePaymentStatus($payPalOrder->getIntent(), $this->getOrderId($shopwareOrderNumber));
 
-        $this->logger->debug(\sprintf('%s REDIRECT TO checkout/finish', __METHOD__));
+        $this->logger->debug(sprintf('%s REDIRECT TO checkout/finish', __METHOD__));
 
         $this->redirect([
             'module' => 'frontend',

@@ -113,13 +113,13 @@ class CustomerService
      */
     public function upsertCustomer(Order $orderStruct)
     {
-        $this->logger->debug(\sprintf('%s CREATE OR UPDATE CUSTOMER FOR PAYPAL EXPRESS ORDER WITH ID: %s', __METHOD__, $orderStruct->getId()));
+        $this->logger->debug(sprintf('%s CREATE OR UPDATE CUSTOMER FOR PAYPAL EXPRESS ORDER WITH ID: %s', __METHOD__, $orderStruct->getId()));
 
         $payer = $orderStruct->getPayer();
 
         $customerModel = $this->getCustomerByPayerId($payer->getPayerId());
         if (!$customerModel instanceof Customer) {
-            $this->logger->debug(\sprintf('%s NO CUSTOMER FOUND WITH PAYER-ID: %s CONTINUE WITH CREATING A NEW CUSTOMER', __METHOD__, $payer->getPayerId()));
+            $this->logger->debug(sprintf('%s NO CUSTOMER FOUND WITH PAYER-ID: %s CONTINUE WITH CREATING A NEW CUSTOMER', __METHOD__, $payer->getPayerId()));
 
             $this->createNewCustomer($orderStruct);
 
@@ -128,7 +128,7 @@ class CustomerService
 
         $address = $customerModel->getDefaultBillingAddress();
         if (!$address instanceof Address) {
-            $this->logger->debug(\sprintf('%s CUSTOMER WITH ID: %s HAS NO ADDRESS.', __METHOD__, $customerModel->getId()));
+            $this->logger->debug(sprintf('%s CUSTOMER WITH ID: %s HAS NO ADDRESS.', __METHOD__, $customerModel->getId()));
 
             return;
         }
@@ -143,13 +143,13 @@ class CustomerService
         $addressForm = $this->formFactory->create(AddressFormType::class, $address);
         $addressForm->submit($customerData);
 
-        $this->logger->debug(\sprintf('%s UPDATE ADDRESS WITH ID: %s FOR QUICK ORDERER: %s', __METHOD__, $address->getId(), $customerModel->getId()));
+        $this->logger->debug(sprintf('%s UPDATE ADDRESS WITH ID: %s FOR QUICK ORDERER: %s', __METHOD__, $address->getId(), $customerModel->getId()));
 
         $this->modelManager->persist($customerModel);
         $this->modelManager->persist($address);
         $this->modelManager->flush();
 
-        $this->logger->debug(\sprintf('%s LOG IN EXISTING QUICK ORDERER WITH ID: %s', __METHOD__, $customerModel->getId()));
+        $this->logger->debug(sprintf('%s LOG IN EXISTING QUICK ORDERER WITH ID: %s', __METHOD__, $customerModel->getId()));
 
         $this->loginCustomer($customerModel);
     }
@@ -167,7 +167,7 @@ class CustomerService
         $customerModel = $this->registerCustomer($customerData);
         $this->addIdentifierToCustomerAttribute($customerModel->getId(), $orderStruct->getPayer()->getPayerId());
 
-        $this->logger->debug(\sprintf('%s NEW CUSTOMER CREATED WITH ID: %s', __METHOD__, $customerModel->getId()));
+        $this->logger->debug(sprintf('%s NEW CUSTOMER CREATED WITH ID: %s', __METHOD__, $customerModel->getId()));
 
         $this->loginCustomer($customerModel);
     }
@@ -181,7 +181,7 @@ class CustomerService
         if (!empty($orderStruct->getPurchaseUnits())) {
             $shipping = $orderStruct->getPurchaseUnits()[0]->getShipping();
             if (!$shipping instanceof Shipping) {
-                $this->logger->error(\sprintf('%s COULD NOT CREATE CUSTOMER. ADDRESS IS MISSING', __METHOD__));
+                $this->logger->error(sprintf('%s COULD NOT CREATE CUSTOMER. ADDRESS IS MISSING', __METHOD__));
 
                 return null;
             }
@@ -293,13 +293,13 @@ class CustomerService
 
     private function loginCustomer(Customer $customerModel)
     {
-        $this->logger->debug(\sprintf('%s LOGIN CUSTOMER WITH ID: %s', __METHOD__, $customerModel->getId()));
+        $this->logger->debug(sprintf('%s LOGIN CUSTOMER WITH ID: %s', __METHOD__, $customerModel->getId()));
 
         $request = $this->front->Request();
 
         if (!$request instanceof Enlight_Controller_Request_Request) {
-            $this->logger->debug(\sprintf('%s NO REQUEST GIVEN', __METHOD__));
-            throw new UnexpectedValueException(\sprintf('Expected instance of %s, got null', Enlight_Controller_Request_Request::class));
+            $this->logger->debug(sprintf('%s NO REQUEST GIVEN', __METHOD__));
+            throw new UnexpectedValueException(sprintf('Expected instance of %s, got null', Enlight_Controller_Request_Request::class));
         }
 
         $request->setPost('email', $customerModel->getEmail());
@@ -313,7 +313,7 @@ class CustomerService
         $session->offsetSet('sCountry', $customerShippingCountry->getId());
         $session->offsetSet('sArea', $customerShippingCountry->getArea()->getId());
 
-        $this->logger->debug(\sprintf('%s CUSTOMER WITH ID: %s SUCCESSFUL LOGGED IN', __METHOD__, $customerModel->getId()));
+        $this->logger->debug(sprintf('%s CUSTOMER WITH ID: %s SUCCESSFUL LOGGED IN', __METHOD__, $customerModel->getId()));
     }
 
     /**

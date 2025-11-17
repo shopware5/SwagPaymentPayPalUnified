@@ -53,7 +53,7 @@ class ValueFactory
         }
 
         throw new UnexpectedValueException(
-            \sprintf('Value handler for payment type "%s" not found', $paymentType)
+            sprintf('Value handler for payment type "%s" not found', $paymentType)
         );
     }
 }

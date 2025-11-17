@@ -34,7 +34,7 @@ class P24PaymentSourceHandler extends AbstractPaymentSourceHandler
 
         if (!$apmPaymentSourceValue instanceof P24) {
             throw new UnexpectedValueException(
-                \sprintf(
+                sprintf(
                     'Payment source P24 expected. Got "%s"',
                     \get_class($apmPaymentSourceValue)
                 )

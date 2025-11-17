@@ -293,7 +293,7 @@ class CustomerServiceTest extends TestCase
     private function createShipping()
     {
         $shippingName = new ShippingName();
-        $shippingName->setFullName(\sprintf('%s %s', self::FULL_NAME_1, self::FULL_NAME_2));
+        $shippingName->setFullName(sprintf('%s %s', self::FULL_NAME_1, self::FULL_NAME_2));
 
         $shippingAddress = new ShippingAddress();
         $shippingAddress->setCountryCode(self::COUNTRY_CODE);

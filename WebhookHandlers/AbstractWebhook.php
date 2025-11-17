@@ -45,7 +45,7 @@ abstract class AbstractWebhook
     {
         $resource = $webhook->getResource();
         if (!\is_array($resource)) {
-            $this->logger->error(\sprintf('[Webhook]Event: %s. Resource is not an array got: %s', $this->getEventType(), \gettype($resource)), $webhook->toArray());
+            $this->logger->error(sprintf('[Webhook]Event: %s. Resource is not an array got: %s', $this->getEventType(), \gettype($resource)), $webhook->toArray());
 
             return null;
         }
@@ -53,7 +53,7 @@ abstract class AbstractWebhook
         try {
             $orderAndTransactionIdResult = $this->getOrderAndTransactionIdFromResource($resource);
         } catch (UnexpectedValueException $exception) {
-            $this->logger->debug(\sprintf('[Webhook]Event: %s. Resource structure is not valid. Message: %s', $this->getEventType(), $exception->getMessage()));
+            $this->logger->debug(sprintf('[Webhook]Event: %s. Resource structure is not valid. Message: %s', $this->getEventType(), $exception->getMessage()));
 
             return null;
         }
@@ -62,7 +62,7 @@ abstract class AbstractWebhook
 
         if (!$shopwareOrderServiceResult instanceof OrderAndPaymentStatusResult) {
             $this->logger->error(
-                \sprintf(
+                sprintf(
                     '[Webhook]Event: %s. Cannot find orderID by PayPalOrderId %s and transactionID: %s',
                     $this->getEventType(),
                     $orderAndTransactionIdResult->getOrderId(),
