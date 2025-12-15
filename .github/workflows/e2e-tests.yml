@@ -87,7 +87,7 @@ jobs:
                     npm run e2e:run
 
             -   name: Upload artifacts
-                uses: actions/upload-artifact@v5
+                uses: actions/upload-artifact@v6
                 if: ${{ failure() }}
                 with:
                     name: E2E test results
