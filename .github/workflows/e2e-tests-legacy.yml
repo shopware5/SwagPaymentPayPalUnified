@@ -85,7 +85,7 @@ jobs:
                     npx playwright test --workers=1 --grep-invert @notIn5.2
 
             -   name: Upload artifacts
-                uses: actions/upload-artifact@v5
+                uses: actions/upload-artifact@v6
                 if: ${{ failure() }}
                 with:
                     name: Legacy E2E test results
